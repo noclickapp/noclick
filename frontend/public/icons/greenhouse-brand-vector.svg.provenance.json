@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/greenhouse-brand-vector.svg",
+  "source": "https://github.com/noclickapp/noclick-cloud/pull/2396 (Greenhouse mark carried over from original integration; upstream brand portal https://brand.greenhouse.io/brand-portal/p/6)",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "59a0ff9555f23f45aaf7960655df110c100e10481c9a8b88726dec876dd37bb6"
+}

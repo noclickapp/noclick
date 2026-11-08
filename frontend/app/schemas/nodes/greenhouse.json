@@ -1,0 +1,1333 @@
+{
+  "$defs": {
+    "GreenhouseApplyTagConfig": {
+      "description": "Attach an existing candidate tag to a candidate.",
+      "properties": {
+        "operation": {
+          "const": "apply_candidate_tag",
+          "default": "apply_candidate_tag",
+          "title": "Apply Candidate Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Apply Candidate Tag"
+        },
+        "candidate_id": {
+          "title": "Candidate ID",
+          "type": "integer"
+        },
+        "candidate_tag_id": {
+          "title": "Candidate Tag ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "candidate_tag_id"
+      ],
+      "title": "GreenhouseApplyTagConfig",
+      "type": "object"
+    },
+    "GreenhouseCreateApplicationConfig": {
+      "description": "Apply an existing candidate to a job.",
+      "properties": {
+        "operation": {
+          "const": "create_application",
+          "default": "create_application",
+          "title": "Create Application",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "Create Application"
+        },
+        "candidate_id": {
+          "title": "Candidate ID",
+          "type": "integer"
+        },
+        "job_id": {
+          "title": "Job ID",
+          "type": "integer"
+        },
+        "initial_stage_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Initial Stage ID"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "job_id"
+      ],
+      "title": "GreenhouseCreateApplicationConfig",
+      "type": "object"
+    },
+    "GreenhouseCreateCandidateConfig": {
+      "description": "Create a candidate, optionally applying them to a job.",
+      "properties": {
+        "operation": {
+          "const": "create_candidate",
+          "default": "create_candidate",
+          "title": "Create Candidate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Candidates",
+          "x-display-name": "Create Candidate"
+        },
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally create the first application in the same request.",
+          "title": "Apply to Job ID"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "GreenhouseCreateCandidateConfig",
+      "type": "object"
+    },
+    "GreenhouseCreateNoteConfig": {
+      "description": "Add a note to a candidate or one of their applications.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Candidate Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Candidates",
+          "x-display-name": "Create Candidate Note"
+        },
+        "candidate_id": {
+          "title": "Candidate ID",
+          "type": "integer"
+        },
+        "body": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "visibility": {
+          "default": "public",
+          "enum": [
+            "public",
+            "private",
+            "admin_only"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "application_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Application ID"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "body"
+      ],
+      "title": "GreenhouseCreateNoteConfig",
+      "type": "object"
+    },
+    "GreenhouseCreateTagConfig": {
+      "description": "Create a candidate tag in the organization dictionary.",
+      "properties": {
+        "operation": {
+          "const": "create_candidate_tag",
+          "default": "create_candidate_tag",
+          "title": "Create Candidate Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Create Candidate Tag"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GreenhouseCreateTagConfig",
+      "type": "object"
+    },
+    "GreenhouseGetApplicationConfig": {
+      "description": "Find one application by its Harvest ID.",
+      "properties": {
+        "operation": {
+          "const": "get_application",
+          "default": "get_application",
+          "title": "Get Application",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "Get Application"
+        },
+        "application_id": {
+          "title": "Application ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "GreenhouseGetApplicationConfig",
+      "type": "object"
+    },
+    "GreenhouseGetCandidateConfig": {
+      "description": "Find one candidate by its Harvest ID.",
+      "properties": {
+        "operation": {
+          "const": "get_candidate",
+          "default": "get_candidate",
+          "title": "Get Candidate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Candidates",
+          "x-display-name": "Get Candidate"
+        },
+        "candidate_id": {
+          "title": "Candidate ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "GreenhouseGetCandidateConfig",
+      "type": "object"
+    },
+    "GreenhouseGetJobConfig": {
+      "description": "Find one job by its Harvest ID.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Get Job"
+        },
+        "job_id": {
+          "title": "Job ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GreenhouseGetJobConfig",
+      "type": "object"
+    },
+    "GreenhouseHireApplicationConfig": {
+      "description": "Mark an application hired and close its job opening.",
+      "properties": {
+        "operation": {
+          "const": "hire_application",
+          "default": "hire_application",
+          "title": "Hire Application",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "Hire Application"
+        },
+        "application_id": {
+          "title": "Application ID",
+          "type": "integer"
+        },
+        "opening_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required by Greenhouse when the job has more than one open opening.",
+          "title": "Opening ID"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date and time.",
+          "title": "Start Date",
+          "ui:widget": "datetime"
+        },
+        "close_reason_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Close Reason ID"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "GreenhouseHireApplicationConfig",
+      "type": "object"
+    },
+    "GreenhouseListApplicationsConfig": {
+      "description": "Find applications by candidate, job, or lifecycle status.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_applications",
+          "default": "list_applications",
+          "title": "List Applications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "List Applications"
+        },
+        "candidate_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate ID"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "rejected",
+                "hired",
+                "converted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "rejected",
+            "hired",
+            "converted"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "GreenhouseListApplicationsConfig",
+      "type": "object"
+    },
+    "GreenhouseListCandidatesConfig": {
+      "description": "Find candidates by email or tag, with cursor pagination.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_candidates",
+          "default": "list_candidates",
+          "title": "List Candidates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Candidates",
+          "x-display-name": "List Candidates"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        }
+      },
+      "title": "GreenhouseListCandidatesConfig",
+      "type": "object"
+    },
+    "GreenhouseListDepartmentsConfig": {
+      "description": "List the organization's departments.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "title": "List Departments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Departments"
+        }
+      },
+      "title": "GreenhouseListDepartmentsConfig",
+      "type": "object"
+    },
+    "GreenhouseListJobInterviewStagesConfig": {
+      "description": "List the interview stages defined on a job's hiring plan.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_job_interview_stages",
+          "default": "list_job_interview_stages",
+          "title": "List Job Interview Stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Job Interview Stages"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Find the interview stage IDs for this job.",
+          "title": "Job ID"
+        }
+      },
+      "title": "GreenhouseListJobInterviewStagesConfig",
+      "type": "object"
+    },
+    "GreenhouseListJobPostsConfig": {
+      "description": "List candidate-facing job posts for a job or organization.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_job_posts",
+          "default": "list_job_posts",
+          "title": "List Job Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Job Posts"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job ID"
+        }
+      },
+      "title": "GreenhouseListJobPostsConfig",
+      "type": "object"
+    },
+    "GreenhouseListJobsConfig": {
+      "description": "List job requisitions and filter by status.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Jobs"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "GreenhouseListJobsConfig",
+      "type": "object"
+    },
+    "GreenhouseListOpeningsConfig": {
+      "description": "List available or filled headcount openings for a job.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_openings",
+          "default": "list_openings",
+          "title": "List Openings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Openings"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job ID"
+        },
+        "open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Open Only"
+        }
+      },
+      "title": "GreenhouseListOpeningsConfig",
+      "type": "object"
+    },
+    "GreenhouseListRejectionReasonsConfig": {
+      "description": "List the configured reasons available when rejecting applicants.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_rejection_reasons",
+          "default": "list_rejection_reasons",
+          "title": "List Rejection Reasons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "List Rejection Reasons"
+        }
+      },
+      "title": "GreenhouseListRejectionReasonsConfig",
+      "type": "object"
+    },
+    "GreenhouseListSourcesConfig": {
+      "description": "List recruiting sources used for application attribution.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_sources",
+          "default": "list_sources",
+          "title": "List Sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Sources"
+        }
+      },
+      "title": "GreenhouseListSourcesConfig",
+      "type": "object"
+    },
+    "GreenhouseListStagesConfig": {
+      "description": "List a candidate application's interview stage history.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_application_stages",
+          "default": "list_application_stages",
+          "title": "List Application Stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "List Application Stages"
+        },
+        "application_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the history to this application.",
+          "title": "Application ID"
+        }
+      },
+      "title": "GreenhouseListStagesConfig",
+      "type": "object"
+    },
+    "GreenhouseListTagsConfig": {
+      "description": "List candidate tags defined for the organization.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_candidate_tags",
+          "default": "list_candidate_tags",
+          "title": "List Candidate Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Candidate Tags"
+        }
+      },
+      "title": "GreenhouseListTagsConfig",
+      "type": "object"
+    },
+    "GreenhouseListUsersConfig": {
+      "description": "List recruiters and other Greenhouse users.",
+      "properties": {
+        "per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous response. Other filters are ignored when set.",
+          "title": "Next Page Cursor"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Users"
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "GreenhouseListUsersConfig",
+      "type": "object"
+    },
+    "GreenhouseMoveApplicationConfig": {
+      "description": "Move an application to another interview stage or job.",
+      "properties": {
+        "operation": {
+          "const": "move_application",
+          "default": "move_application",
+          "title": "Move Application",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "Move Application"
+        },
+        "application_id": {
+          "title": "Application ID",
+          "type": "integer"
+        },
+        "from_stage_id": {
+          "description": "Guard against a stale stage transition.",
+          "title": "Current Stage ID",
+          "type": "integer"
+        },
+        "to_stage_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Stage ID"
+        },
+        "to_job_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Job ID"
+        }
+      },
+      "required": [
+        "application_id",
+        "from_stage_id"
+      ],
+      "title": "GreenhouseMoveApplicationConfig",
+      "type": "object"
+    },
+    "GreenhouseOAuthCredential": {
+      "description": "Customer-created Harvest v3 OAuth client, never exposed to the browser.",
+      "properties": {
+        "credential_type": {
+          "const": "greenhouse_oauth_client",
+          "default": "greenhouse_oauth_client",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "title": "Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "sub": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional numeric Greenhouse Site Admin user ID. Leave blank to use the integration service user.",
+          "title": "Acting User ID"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ],
+      "title": "Greenhouse Account",
+      "type": "object",
+      "x-credential-instructions": "In Greenhouse API Credentials, create Harvest V3 (OAuth) credentials and grant the scopes required for the operations you use. Enter the Client ID and Client Secret. Greenhouse permits OAuth client credentials for custom integrations; one-click authorization-code login requires a Greenhouse partner app.",
+      "x-credential-url": "https://support.greenhouse.io/hc/en-us/articles/360029266032-Harvest-API-overview"
+    },
+    "GreenhouseRejectApplicationConfig": {
+      "description": "Reject an application with a documented reason.",
+      "properties": {
+        "operation": {
+          "const": "reject_application",
+          "default": "reject_application",
+          "title": "Reject Application",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "Reject Application"
+        },
+        "application_id": {
+          "title": "Application ID",
+          "type": "integer"
+        },
+        "rejection_reason_id": {
+          "title": "Rejection Reason ID",
+          "type": "integer"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "application_id",
+        "rejection_reason_id"
+      ],
+      "title": "GreenhouseRejectApplicationConfig",
+      "type": "object"
+    },
+    "GreenhouseUnrejectApplicationConfig": {
+      "description": "Restore a rejected application to its previous stage.",
+      "properties": {
+        "operation": {
+          "const": "unreject_application",
+          "default": "unreject_application",
+          "title": "Unreject Application",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Applications",
+          "x-display-name": "Unreject Application"
+        },
+        "application_id": {
+          "title": "Application ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "GreenhouseUnrejectApplicationConfig",
+      "type": "object"
+    },
+    "GreenhouseUpdateCandidateConfig": {
+      "description": "Change a candidate's profile details.",
+      "properties": {
+        "operation": {
+          "const": "update_candidate",
+          "default": "update_candidate",
+          "title": "Update Candidate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Candidates",
+          "x-display-name": "Update Candidate"
+        },
+        "candidate_id": {
+          "title": "Candidate ID",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces all existing candidate email addresses when set.",
+          "title": "Email"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "GreenhouseUpdateCandidateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "apply_candidate_tag": "#/$defs/GreenhouseApplyTagConfig",
+          "create_application": "#/$defs/GreenhouseCreateApplicationConfig",
+          "create_candidate": "#/$defs/GreenhouseCreateCandidateConfig",
+          "create_candidate_tag": "#/$defs/GreenhouseCreateTagConfig",
+          "create_note": "#/$defs/GreenhouseCreateNoteConfig",
+          "get_application": "#/$defs/GreenhouseGetApplicationConfig",
+          "get_candidate": "#/$defs/GreenhouseGetCandidateConfig",
+          "get_job": "#/$defs/GreenhouseGetJobConfig",
+          "hire_application": "#/$defs/GreenhouseHireApplicationConfig",
+          "list_application_stages": "#/$defs/GreenhouseListStagesConfig",
+          "list_applications": "#/$defs/GreenhouseListApplicationsConfig",
+          "list_candidate_tags": "#/$defs/GreenhouseListTagsConfig",
+          "list_candidates": "#/$defs/GreenhouseListCandidatesConfig",
+          "list_departments": "#/$defs/GreenhouseListDepartmentsConfig",
+          "list_job_interview_stages": "#/$defs/GreenhouseListJobInterviewStagesConfig",
+          "list_job_posts": "#/$defs/GreenhouseListJobPostsConfig",
+          "list_jobs": "#/$defs/GreenhouseListJobsConfig",
+          "list_openings": "#/$defs/GreenhouseListOpeningsConfig",
+          "list_rejection_reasons": "#/$defs/GreenhouseListRejectionReasonsConfig",
+          "list_sources": "#/$defs/GreenhouseListSourcesConfig",
+          "list_users": "#/$defs/GreenhouseListUsersConfig",
+          "move_application": "#/$defs/GreenhouseMoveApplicationConfig",
+          "reject_application": "#/$defs/GreenhouseRejectApplicationConfig",
+          "unreject_application": "#/$defs/GreenhouseUnrejectApplicationConfig",
+          "update_candidate": "#/$defs/GreenhouseUpdateCandidateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GreenhouseListCandidatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseGetCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseCreateCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseUpdateCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListApplicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseGetApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseCreateApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseMoveApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseRejectApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseUnrejectApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseHireApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListJobPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListOpeningsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListJobInterviewStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListRejectionReasonsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseApplyTagConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListDepartmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GreenhouseListSourcesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GreenhouseOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Greenhouse Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find a candidate by email",
+    "Create a candidate and apply them to a job",
+    "Move an application to the next interview stage",
+    "Reject an application",
+    "Add a note to a candidate",
+    "List open jobs and applicants"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
