@@ -1,0 +1,19 @@
+<!-- Heartbeat app icon, no padding, corners rounded at the brand radius (8.125/32) so browser tabs show the rounded mark. The blur sits on a pink base (#FEA6BE), not white, so the top-right corner stays pink like the app's favicon instead of fading to white, which on dark tab bars read as a square white edge. Google's circle crop sits inside the rounded square, so it still fills edge to edge. apple-touch-icon.png stays square and opaque because iOS rounds it itself. Source: cortex knowledge/brand-kit/svg/heartbeat-icon.svg -->
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<clipPath id="hb-square"><rect width="32" height="32" rx="8.125"/></clipPath>
+<filter id="hb-blur" x="-20" y="-20" width="72" height="72" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="3.125"/></filter>
+</defs>
+<g clip-path="url(#hb-square)">
+<g filter="url(#hb-blur)">
+<rect x="-20" y="-20" width="72" height="72" fill="#FEA6BE"/>
+<circle cx="10.5449" cy="27.2188" r="28.6563" fill="#F91E87" fill-opacity="0.8"/>
+<circle cx="7.8125" cy="9.5625" r="16.6875" fill="#FFBA54" fill-opacity="0.5"/>
+<circle cx="7.8125" cy="9.5625" r="10.125" fill="#FFBA54"/>
+<circle cx="25.0625" cy="29.0625" r="15" fill="#FD8467" fill-opacity="0.5"/>
+<circle cx="24.1562" cy="22.9062" r="10.7188" fill="#FD8467"/>
+<circle cx="6.08716" cy="30.7122" r="11.7122" fill="#F91E87"/>
+</g>
+<path d="M14.5859 25.125C14.5859 25.125 18.4145 22.9848 21.0604 21.401C24.706 19.2137 25.6716 16.8595 25.9439 15.0274C26.2161 13.1954 25.6078 9.71542 21.6517 9.15469C19.7204 8.88074 17.8572 9.129 16.547 11.1965C15.8238 8.83793 14.101 8.08886 12.1697 7.81491C8.21359 7.25417 6.70345 10.4602 6.44822 12.2837C6.19299 14.1072 6.478 16.6369 9.38342 19.7359C11.4806 22.0046 14.5859 25.125 14.5859 25.125Z" fill="#FFFFFF"/>
+</g>
+</svg>

@@ -1,0 +1,1184 @@
+{
+  "$defs": {
+    "AddToGroup": {
+      "additionalProperties": false,
+      "description": "Add users to a group",
+      "properties": {
+        "operation": {
+          "const": "add_group_members",
+          "default": "add_group_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "emails": {
+          "description": "The emails of the users that should be added to the group",
+          "items": {
+            "format": "email",
+            "type": "string"
+          },
+          "title": "Emails",
+          "type": "array"
+        },
+        "shouldRemoveFromSiblingGroups": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the users will be removed from any other groups that share a parent group with the selected group. Useful when moving users between different stages",
+          "title": "Shouldremovefromsiblinggroups"
+        }
+      },
+      "required": [
+        "groupID",
+        "emails"
+      ],
+      "title": "AddToGroup",
+      "type": "object"
+    },
+    "CreateComment": {
+      "additionalProperties": false,
+      "description": "Create a new comment",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "description": "See the Rich Text page to learn more about formatting",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "threadID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Threadid",
+          "type": "string"
+        },
+        "parentCommentID": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Heartbeat comments have two levels of nesting. If null is provided, then the comment will be a direct reply to the thread. If a comment id is provided, then the comment will be a reply to that comment. The provided comment id must be a comment that is a direct reply to the thread.",
+          "title": "Parentcommentid"
+        },
+        "userID": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user that will be shown as the author of the comment. Only an admin user can be chosen. If this field is not provided, the user that created the API key will be used",
+          "title": "Userid"
+        }
+      },
+      "required": [
+        "text",
+        "threadID",
+        "parentCommentID"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "description": "Create a new Group in a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "",
+          "maxLength": 10000,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        },
+        "members": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "email",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email addresses of the users that should be added to the group",
+          "title": "Members"
+        },
+        "parentGroupID": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the parent group",
+          "title": "Parentgroupid"
+        },
+        "isIsolated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the group is isolated. Refer to Heartbeat docs to learn more about what this entails",
+          "title": "Isisolated"
+        },
+        "isJoinable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the group is joinable. Refer to Heartbeat docs to learn more about what this entails",
+          "title": "Isjoinable"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "CreateInvitation": {
+      "additionalProperties": false,
+      "description": "Create a new invitation link within a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "create_invitation",
+          "default": "create_invitation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "roleID": {
+          "description": "Members joining via this invitation link will join as this role",
+          "format": "uuid",
+          "title": "Roleid",
+          "type": "string"
+        },
+        "groupIDs": {
+          "description": "Members joining via this invitation link will automatically be in these groups",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Groupids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "roleID",
+        "groupIDs"
+      ],
+      "title": "CreateInvitation",
+      "type": "object"
+    },
+    "CreateThread": {
+      "additionalProperties": false,
+      "description": "Create a new thread",
+      "properties": {
+        "operation": {
+          "const": "create_thread",
+          "default": "create_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "description": "See the Rich Text page to learn more about formatting",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "channelID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Channelid",
+          "type": "string"
+        },
+        "userID": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user that will be shown as the author of the thread. Only an admin user can be chosen. If this field is not provided, the user that created the API key will be used",
+          "title": "Userid"
+        }
+      },
+      "required": [
+        "text",
+        "channelID"
+      ],
+      "title": "CreateThread",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "description": "Create a new user in a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "The user's email. Must be unique to the community",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "description": "The user's full name",
+          "maxLength": 10000,
+          "title": "Name",
+          "type": "string"
+        },
+        "roleID": {
+          "description": "The id of the role the user should have",
+          "format": "uuid",
+          "title": "Roleid",
+          "type": "string"
+        },
+        "groupIDs": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of the ids of the groups that the user should belong to",
+          "title": "Groupids"
+        },
+        "bio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user's bio",
+          "title": "Bio"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user's status",
+          "title": "Status"
+        },
+        "linkedin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's LinkedIn profile",
+          "title": "Linkedin"
+        },
+        "twitter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's Twitter profile",
+          "title": "Twitter"
+        },
+        "instagram": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's Instagram profile",
+          "title": "Instagram"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's website",
+          "title": "Website"
+        },
+        "createIntroductionThread": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true and a value for bio is provided, an introduction thread for the user will be created in the channel designated for introductions in your community settings. The introduction thread will include the user's bio",
+          "title": "Createintroductionthread"
+        }
+      },
+      "required": [
+        "email",
+        "name",
+        "roleID"
+      ],
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "DeleteUser": {
+      "additionalProperties": false,
+      "description": "Remove a user from a Heartbeat community. The user will no longer be able to access the community. Threads, comments & messages from the user will not be removed",
+      "properties": {
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "The email of the user to be deleted. If no user with the provided email exists, will return a 404 response.",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DeleteUser",
+      "type": "object"
+    },
+    "FindUser": {
+      "additionalProperties": false,
+      "description": "Get a user by email",
+      "properties": {
+        "operation": {
+          "const": "find_user",
+          "default": "find_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "The email of the user",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FindUser",
+      "type": "object"
+    },
+    "GetChannels": {
+      "additionalProperties": false,
+      "description": "Returns an array of all channels",
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetChannels",
+      "type": "object"
+    },
+    "GetCourses": {
+      "additionalProperties": false,
+      "description": "Get all of the courses in your community",
+      "properties": {
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCourses",
+      "type": "object"
+    },
+    "GetDocument": {
+      "additionalProperties": false,
+      "description": "Get a document by ID, including its content",
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "documentID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Documentid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "documentID"
+      ],
+      "title": "GetDocument",
+      "type": "object"
+    },
+    "GetDocuments": {
+      "additionalProperties": false,
+      "description": "Return an array of all documents (wiki posts) within a Heartbeat community. Results are paginated using cursor-based pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination - return results after this document ID",
+          "title": "Startingafter"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "title": "GetDocuments",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "description": "Get an event",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "eventID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Eventid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "eventID"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetEvents": {
+      "additionalProperties": false,
+      "description": "Return an array all Events within a Community",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupID": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, only events that have been assigned to this group will be returned",
+          "title": "Groupid"
+        }
+      },
+      "title": "GetEvents",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "description": "Get a group",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Groupid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupID"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetGroups": {
+      "additionalProperties": false,
+      "description": "Returns an array of all Groups within a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetGroups",
+      "type": "object"
+    },
+    "GetInvitations": {
+      "additionalProperties": false,
+      "description": "Return an array of all the invitations within a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "list_invitations",
+          "default": "list_invitations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetInvitations",
+      "type": "object"
+    },
+    "GetRoles": {
+      "additionalProperties": false,
+      "description": "Returns an array of all the roles in a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "list_roles",
+          "default": "list_roles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetRoles",
+      "type": "object"
+    },
+    "GetThread": {
+      "additionalProperties": false,
+      "description": "Get a thread",
+      "properties": {
+        "operation": {
+          "const": "get_thread",
+          "default": "get_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "threadID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Threadid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "threadID"
+      ],
+      "title": "GetThread",
+      "type": "object"
+    },
+    "GetThreads": {
+      "additionalProperties": false,
+      "description": "Returns threads in a channel, newest first. Results are paginated using cursor-based pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_threads",
+          "default": "list_threads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channelID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Channelid",
+          "type": "string"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination - return results after this thread ID",
+          "title": "Startingafter"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "channelID"
+      ],
+      "title": "GetThreads",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Get a user by id",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "userID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Userid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "userID"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "GetUsers": {
+      "additionalProperties": false,
+      "description": "Return an array of all users within a Heartbeat community",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetUsers",
+      "type": "object"
+    },
+    "HeartbeatAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "heartbeat_api_key",
+          "default": "heartbeat_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Heartbeat API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste a Heartbeat community API key. NoClick sends it as a Bearer token to api.heartbeat.chat. Listing community users verifies access; it does not identify the person who created the key.",
+      "x-credential-url": "https://heartbeat.readme.io/reference/authentication"
+    },
+    "RemoveFromGroup": {
+      "additionalProperties": false,
+      "description": "Remove users from a group",
+      "properties": {
+        "operation": {
+          "const": "remove_group_members",
+          "default": "remove_group_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupID": {
+          "description": "",
+          "format": "uuid",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "emails": {
+          "description": "The emails of the users that should be removed from the group",
+          "items": {
+            "format": "email",
+            "type": "string"
+          },
+          "title": "Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "groupID",
+        "emails"
+      ],
+      "title": "RemoveFromGroup",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "description": "Edit a group. All fields are optional, only fields that are provided will be changed.",
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupID": {
+          "description": "The id of the group",
+          "format": "uuid",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        },
+        "isIsolated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the group is isolated. Refer to Heartbeat docs to learn more about what this entails",
+          "title": "Isisolated"
+        },
+        "isJoinable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the group is joinable. Refer to Heartbeat docs to learn more about what this entails",
+          "title": "Isjoinable"
+        }
+      },
+      "required": [
+        "groupID"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "description": "Update a user's profile information",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "The email of the user that will be updated. If no user with the provided email exists, will return a 404 response.",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user's full name",
+          "title": "Name"
+        },
+        "bio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user's bio",
+          "title": "Bio"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user's status",
+          "title": "Status"
+        },
+        "linkedin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's LinkedIn profile",
+          "title": "Linkedin"
+        },
+        "twitter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's Twitter profile",
+          "title": "Twitter"
+        },
+        "instagram": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to the user's Instagram profile",
+          "title": "Instagram"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_members": "#/$defs/AddToGroup",
+          "create_comment": "#/$defs/CreateComment",
+          "create_group": "#/$defs/CreateGroup",
+          "create_invitation": "#/$defs/CreateInvitation",
+          "create_thread": "#/$defs/CreateThread",
+          "create_user": "#/$defs/CreateUser",
+          "delete_user": "#/$defs/DeleteUser",
+          "find_user": "#/$defs/FindUser",
+          "get_document": "#/$defs/GetDocument",
+          "get_event": "#/$defs/GetEvent",
+          "get_group": "#/$defs/GetGroup",
+          "get_thread": "#/$defs/GetThread",
+          "get_user": "#/$defs/GetUser",
+          "list_channels": "#/$defs/GetChannels",
+          "list_courses": "#/$defs/GetCourses",
+          "list_documents": "#/$defs/GetDocuments",
+          "list_events": "#/$defs/GetEvents",
+          "list_groups": "#/$defs/GetGroups",
+          "list_invitations": "#/$defs/GetInvitations",
+          "list_roles": "#/$defs/GetRoles",
+          "list_threads": "#/$defs/GetThreads",
+          "list_users": "#/$defs/GetUsers",
+          "remove_group_members": "#/$defs/RemoveFromGroup",
+          "update_group": "#/$defs/UpdateGroup",
+          "update_user": "#/$defs/UpdateUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/GetUsers"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUser"
+        },
+        {
+          "$ref": "#/$defs/FindUser"
+        },
+        {
+          "$ref": "#/$defs/GetInvitations"
+        },
+        {
+          "$ref": "#/$defs/CreateInvitation"
+        },
+        {
+          "$ref": "#/$defs/GetRoles"
+        },
+        {
+          "$ref": "#/$defs/GetGroups"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/AddToGroup"
+        },
+        {
+          "$ref": "#/$defs/RemoveFromGroup"
+        },
+        {
+          "$ref": "#/$defs/GetChannels"
+        },
+        {
+          "$ref": "#/$defs/GetThreads"
+        },
+        {
+          "$ref": "#/$defs/GetThread"
+        },
+        {
+          "$ref": "#/$defs/CreateThread"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        },
+        {
+          "$ref": "#/$defs/GetEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/GetCourses"
+        },
+        {
+          "$ref": "#/$defs/GetDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocument"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HeartbeatAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Heartbeat Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
