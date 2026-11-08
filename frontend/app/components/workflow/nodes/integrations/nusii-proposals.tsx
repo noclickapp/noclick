@@ -23,6 +23,7 @@ const NusiiIcon = ({
 export const NusiiProposalsNode: NodeDefinition = {
     type: 'automation-nusii-proposals',
     label: 'Nusii Proposals',
+    category: 'documents',
     description:
         'Create and send proposals, manage clients, sections and pricing',
     keywords: ['nusii', 'proposals', 'quotes'],
