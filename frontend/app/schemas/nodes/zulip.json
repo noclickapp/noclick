@@ -1,0 +1,631 @@
+{
+  "$defs": {
+    "AddReaction": {
+      "additionalProperties": false,
+      "description": "Add the account's emoji reaction.",
+      "properties": {
+        "operation": {
+          "const": "add_reaction",
+          "default": "add_reaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_id": {
+          "exclusiveMinimum": 0,
+          "title": "Message Id",
+          "type": "integer"
+        },
+        "emoji_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Emoji Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "emoji_name"
+      ],
+      "title": "AddReaction",
+      "type": "object"
+    },
+    "DeleteMessage": {
+      "additionalProperties": false,
+      "description": "Delete a message when the account and organization permit it.",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_id": {
+          "exclusiveMinimum": 0,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "DeleteMessage",
+      "type": "object"
+    },
+    "GetMessage": {
+      "additionalProperties": false,
+      "description": "Read a single message visible to the account.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_id": {
+          "exclusiveMinimum": 0,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GetMessage",
+      "type": "object"
+    },
+    "GetMessages": {
+      "additionalProperties": false,
+      "description": "Read one message window; use first/last returned IDs as later anchors.",
+      "properties": {
+        "operation": {
+          "const": "get_messages",
+          "default": "get_messages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "anchor": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "enum": [
+                "newest",
+                "oldest",
+                "first_unread"
+              ],
+              "type": "string"
+            }
+          ],
+          "default": "newest",
+          "title": "Anchor"
+        },
+        "num_before": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Num Before",
+          "type": "integer"
+        },
+        "num_after": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Num After",
+          "type": "integer"
+        },
+        "narrow": {
+          "items": {
+            "$ref": "#/$defs/Narrow"
+          },
+          "maxItems": 20,
+          "title": "Narrow",
+          "type": "array"
+        }
+      },
+      "title": "GetMessages",
+      "type": "object"
+    },
+    "GetOwnUser": {
+      "additionalProperties": false,
+      "description": "Read the account authenticated by the API key.",
+      "properties": {
+        "operation": {
+          "const": "get_own_user",
+          "default": "get_own_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetOwnUser",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Read one user by numeric ID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListChannels": {
+      "additionalProperties": false,
+      "description": "List accessible public and subscribed channels.",
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListChannels",
+      "type": "object"
+    },
+    "ListSubscriptions": {
+      "additionalProperties": false,
+      "description": "List the current account's subscribed channels.",
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSubscriptions",
+      "type": "object"
+    },
+    "ListTopics": {
+      "additionalProperties": false,
+      "description": "List topics in a channel accessible to the current account.",
+      "properties": {
+        "operation": {
+          "const": "list_topics",
+          "default": "list_topics",
+          "title": "Operation",
+          "type": "string"
+        },
+        "stream_id": {
+          "exclusiveMinimum": 0,
+          "title": "Channel ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stream_id"
+      ],
+      "title": "ListTopics",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users visible to this account.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "Narrow": {
+      "additionalProperties": false,
+      "properties": {
+        "operator": {
+          "description": "Zulip narrow operator, e.g. channel, topic, sender or search.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Operator",
+          "type": "string"
+        },
+        "operand": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Operand",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator",
+        "operand"
+      ],
+      "title": "Narrow",
+      "type": "object"
+    },
+    "RemoveReaction": {
+      "additionalProperties": false,
+      "description": "Remove the account's emoji reaction.",
+      "properties": {
+        "operation": {
+          "const": "remove_reaction",
+          "default": "remove_reaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_id": {
+          "exclusiveMinimum": 0,
+          "title": "Message Id",
+          "type": "integer"
+        },
+        "emoji_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Emoji Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "emoji_name"
+      ],
+      "title": "RemoveReaction",
+      "type": "object"
+    },
+    "RenderMessage": {
+      "additionalProperties": false,
+      "description": "Render Zulip Markdown without sending a message.",
+      "properties": {
+        "operation": {
+          "const": "render_message",
+          "default": "render_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "RenderMessage",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "description": "Send a channel or direct message. Server permissions and length limits apply.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "default": "direct",
+          "enum": [
+            "direct",
+            "channel"
+          ],
+          "title": "Message type",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "items": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Channel name/ID, or a list of user IDs or API email addresses for direct messages.",
+          "title": "To"
+        },
+        "content": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "topic": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for a channel message.",
+          "title": "Topic"
+        }
+      },
+      "required": [
+        "to",
+        "content"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "Subscribe": {
+      "additionalProperties": false,
+      "description": "Subscribe yourself to channels, creating missing channels if permitted.",
+      "properties": {
+        "operation": {
+          "const": "subscribe",
+          "default": "subscribe",
+          "title": "Operation",
+          "type": "string"
+        },
+        "subscriptions": {
+          "items": {
+            "$ref": "#/$defs/Subscription"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Subscriptions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subscriptions"
+      ],
+      "title": "Subscribe",
+      "type": "object"
+    },
+    "Subscription": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Subscription",
+      "type": "object"
+    },
+    "Unsubscribe": {
+      "additionalProperties": false,
+      "description": "Unsubscribe yourself from the named channels.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe",
+          "default": "unsubscribe",
+          "title": "Operation",
+          "type": "string"
+        },
+        "subscriptions": {
+          "items": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Subscriptions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subscriptions"
+      ],
+      "title": "Unsubscribe",
+      "type": "object"
+    },
+    "UpdateMessage": {
+      "additionalProperties": false,
+      "description": "Edit only this message's content, without moving messages or topics.",
+      "properties": {
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_id": {
+          "exclusiveMinimum": 0,
+          "title": "Message Id",
+          "type": "integer"
+        },
+        "content": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "content"
+      ],
+      "title": "UpdateMessage",
+      "type": "object"
+    },
+    "ZulipAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zulip_api_key",
+          "default": "zulip_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "Organization origin, e.g. https://example.zulipchat.com. Public HTTPS self-hosted servers are supported.",
+          "title": "Zulip server URL",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Account email",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "server_url",
+        "email",
+        "api_key"
+      ],
+      "title": "Zulip API Key",
+      "type": "object",
+      "x-credential-instructions": "In Zulip, open Personal settings > Account & privacy and copy your API key. Paste the email that owns that key and your organization's HTTPS URL. Bot email and API key pairs also work, subject to the bot's permissions. NoClick uses HTTP Basic authentication and reads your subscribed channels to check the connection.",
+      "x-credential-url": "https://zulip.com/api/api-keys"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_reaction": "#/$defs/AddReaction",
+          "delete_message": "#/$defs/DeleteMessage",
+          "get_message": "#/$defs/GetMessage",
+          "get_messages": "#/$defs/GetMessages",
+          "get_own_user": "#/$defs/GetOwnUser",
+          "get_user": "#/$defs/GetUser",
+          "list_channels": "#/$defs/ListChannels",
+          "list_subscriptions": "#/$defs/ListSubscriptions",
+          "list_topics": "#/$defs/ListTopics",
+          "list_users": "#/$defs/ListUsers",
+          "remove_reaction": "#/$defs/RemoveReaction",
+          "render_message": "#/$defs/RenderMessage",
+          "send_message": "#/$defs/SendMessage",
+          "subscribe": "#/$defs/Subscribe",
+          "unsubscribe": "#/$defs/Unsubscribe",
+          "update_message": "#/$defs/UpdateMessage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetOwnUser"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/ListTopics"
+        },
+        {
+          "$ref": "#/$defs/GetMessages"
+        },
+        {
+          "$ref": "#/$defs/GetMessage"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/UpdateMessage"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessage"
+        },
+        {
+          "$ref": "#/$defs/AddReaction"
+        },
+        {
+          "$ref": "#/$defs/RemoveReaction"
+        },
+        {
+          "$ref": "#/$defs/Subscribe"
+        },
+        {
+          "$ref": "#/$defs/Unsubscribe"
+        },
+        {
+          "$ref": "#/$defs/RenderMessage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZulipAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zulip Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
