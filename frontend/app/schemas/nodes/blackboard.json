@@ -1,0 +1,818 @@
+{
+  "$defs": {
+    "BlackboardAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "blackboard_access_token",
+          "default": "blackboard_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_url": {
+          "description": "Your institution's public HTTPS Blackboard Learn origin, for example https://school.blackboard.com.",
+          "title": "Blackboard site URL",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "site_url",
+        "access_token"
+      ],
+      "title": "Blackboard Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Blackboard Learn HTTPS site URL and an existing bearer access token for that site, without the Bearer prefix. Ask your Blackboard administrator for a token from an already registered REST integration with the permissions your operations need. Blackboard tokens expire after one hour; replace an expired token here. NoClick does not create or refresh tokens. Connection testing lists courses and does not verify all write permissions.",
+      "x-credential-url": "https://docs.blackboard.com/docs/blackboard/rest-apis/getting-started/basic-authentication"
+    },
+    "CreateAnnouncement": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_announcement",
+          "default": "create_announcement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Announcement text in Blackboard BbML/HTML format.",
+          "title": "Body"
+        },
+        "draft": {
+          "default": true,
+          "description": "Keep as a draft; false makes the announcement available according to Blackboard's defaults.",
+          "title": "Draft",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "course_id",
+        "title"
+      ],
+      "title": "CreateAnnouncement",
+      "type": "object"
+    },
+    "CreateCourse": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_course",
+          "default": "create_course",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_code": {
+          "description": "Unique courseId for the new course.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Course Code",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 333,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "available": {
+          "default": "No",
+          "description": "Whether students may access this course.",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "title": "Available",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_code",
+        "name"
+      ],
+      "title": "CreateCourse",
+      "type": "object"
+    },
+    "CreateMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_membership",
+          "default": "create_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "course_role": {
+          "default": "Student",
+          "description": "courseRoleId: role granted in this course.",
+          "enum": [
+            "Instructor",
+            "BbFacilitator",
+            "TeachingAssistant",
+            "CourseBuilder",
+            "Grader",
+            "Student",
+            "Guest",
+            "BbSpectator"
+          ],
+          "title": "Course Role",
+          "type": "string"
+        },
+        "available": {
+          "default": "Yes",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "title": "Available",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "user_id"
+      ],
+      "title": "CreateMembership",
+      "type": "object"
+    },
+    "DeleteAnnouncement": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_announcement",
+          "default": "delete_announcement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "announcement_id": {
+          "title": "Announcement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "announcement_id"
+      ],
+      "title": "DeleteAnnouncement",
+      "type": "object"
+    },
+    "DeleteMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_membership",
+          "default": "delete_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "user_id"
+      ],
+      "title": "DeleteMembership",
+      "type": "object"
+    },
+    "GetAnnouncement": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_announcement",
+          "default": "get_announcement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "announcement_id": {
+          "title": "Announcement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "announcement_id"
+      ],
+      "title": "GetAnnouncement",
+      "type": "object"
+    },
+    "GetCourse": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetCourse",
+      "type": "object"
+    },
+    "GetMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_membership",
+          "default": "get_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "user_id"
+      ],
+      "title": "GetMembership",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListAnnouncements": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this single page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip. Use the offset in the returned paging.nextPage for another page; NoClick never follows that URL.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_announcements",
+          "default": "list_announcements",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListAnnouncements",
+      "type": "object"
+    },
+    "ListCourses": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this single page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip. Use the offset in the returned paging.nextPage for another page; NoClick never follows that URL.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 333,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "course_code": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blackboard's courseId query filter.",
+          "title": "Course Code"
+        }
+      },
+      "title": "ListCourses",
+      "type": "object"
+    },
+    "ListMemberships": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this single page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip. Use the offset in the returned paging.nextPage for another page; NoClick never follows that URL.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListMemberships",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this single page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip. Use the offset in the returned paging.nextPage for another page; NoClick never follows that URL.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact Blackboard userName filter.",
+          "title": "User Name"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "UpdateAnnouncement": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_announcement",
+          "default": "update_announcement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "announcement_id": {
+          "title": "Announcement Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Announcement text in Blackboard BbML/HTML format.",
+          "title": "Body"
+        },
+        "draft": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "False releases a draft according to Blackboard's availability defaults.",
+          "title": "Draft"
+        }
+      },
+      "required": [
+        "course_id",
+        "announcement_id"
+      ],
+      "title": "UpdateAnnouncement",
+      "type": "object"
+    },
+    "UpdateCourse": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_course",
+          "default": "update_course",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 333,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "available": {
+          "anyOf": [
+            {
+              "enum": [
+                "Yes",
+                "No"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "UpdateCourse",
+      "type": "object"
+    },
+    "UpdateMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_membership",
+          "default": "update_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "title": "Course Id",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "course_role": {
+          "anyOf": [
+            {
+              "enum": [
+                "Instructor",
+                "BbFacilitator",
+                "TeachingAssistant",
+                "CourseBuilder",
+                "Grader",
+                "Student",
+                "Guest",
+                "BbSpectator"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Course Role",
+          "enum": [
+            "Instructor",
+            "BbFacilitator",
+            "TeachingAssistant",
+            "CourseBuilder",
+            "Grader",
+            "Student",
+            "Guest",
+            "BbSpectator"
+          ],
+          "x-enum-searchable": true
+        },
+        "available": {
+          "anyOf": [
+            {
+              "enum": [
+                "Yes",
+                "No"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "course_id",
+        "user_id"
+      ],
+      "title": "UpdateMembership",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_announcement": "#/$defs/CreateAnnouncement",
+          "create_course": "#/$defs/CreateCourse",
+          "create_membership": "#/$defs/CreateMembership",
+          "delete_announcement": "#/$defs/DeleteAnnouncement",
+          "delete_membership": "#/$defs/DeleteMembership",
+          "get_announcement": "#/$defs/GetAnnouncement",
+          "get_course": "#/$defs/GetCourse",
+          "get_membership": "#/$defs/GetMembership",
+          "get_user": "#/$defs/GetUser",
+          "list_announcements": "#/$defs/ListAnnouncements",
+          "list_courses": "#/$defs/ListCourses",
+          "list_memberships": "#/$defs/ListMemberships",
+          "list_users": "#/$defs/ListUsers",
+          "update_announcement": "#/$defs/UpdateAnnouncement",
+          "update_course": "#/$defs/UpdateCourse",
+          "update_membership": "#/$defs/UpdateMembership"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListCourses"
+        },
+        {
+          "$ref": "#/$defs/GetCourse"
+        },
+        {
+          "$ref": "#/$defs/CreateCourse"
+        },
+        {
+          "$ref": "#/$defs/UpdateCourse"
+        },
+        {
+          "$ref": "#/$defs/ListMemberships"
+        },
+        {
+          "$ref": "#/$defs/GetMembership"
+        },
+        {
+          "$ref": "#/$defs/CreateMembership"
+        },
+        {
+          "$ref": "#/$defs/UpdateMembership"
+        },
+        {
+          "$ref": "#/$defs/DeleteMembership"
+        },
+        {
+          "$ref": "#/$defs/ListAnnouncements"
+        },
+        {
+          "$ref": "#/$defs/GetAnnouncement"
+        },
+        {
+          "$ref": "#/$defs/CreateAnnouncement"
+        },
+        {
+          "$ref": "#/$defs/UpdateAnnouncement"
+        },
+        {
+          "$ref": "#/$defs/DeleteAnnouncement"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BlackboardAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Blackboard Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

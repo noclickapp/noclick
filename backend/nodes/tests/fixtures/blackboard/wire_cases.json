@@ -1,0 +1,239 @@
+[
+  {
+    "operation": "list_users",
+    "config": {},
+    "method": "GET",
+    "path": "/learn/api/public/v1/users",
+    "status": 200,
+    "body": null,
+    "params": {
+      "limit": "100",
+      "offset": "0"
+    }
+  },
+  {
+    "operation": "get_user",
+    "config": {
+      "user_id": "userName:jsmith"
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v1/users/userName:jsmith",
+    "status": 200,
+    "body": null,
+    "params": {}
+  },
+  {
+    "operation": "list_courses",
+    "config": {
+      "name": "Math",
+      "course_code": "math101",
+      "limit": 25,
+      "offset": 50
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v3/courses",
+    "status": 200,
+    "body": null,
+    "params": {
+      "limit": "25",
+      "offset": "50",
+      "name": "Math",
+      "courseId": "math101"
+    }
+  },
+  {
+    "operation": "get_course",
+    "config": {
+      "course_id": "_123_1"
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v3/courses/_123_1",
+    "status": 200,
+    "body": null,
+    "params": {}
+  },
+  {
+    "operation": "create_course",
+    "config": {
+      "course_code": "math101",
+      "name": "Math",
+      "description": "Course"
+    },
+    "method": "POST",
+    "path": "/learn/api/public/v3/courses",
+    "status": 201,
+    "body": {
+      "courseId": "math101",
+      "name": "Math",
+      "description": "Course",
+      "availability": {
+        "available": "No"
+      }
+    },
+    "params": {}
+  },
+  {
+    "operation": "update_course",
+    "config": {
+      "course_id": "_123_1",
+      "description": "Revised",
+      "available": "Yes"
+    },
+    "method": "PATCH",
+    "path": "/learn/api/public/v3/courses/_123_1",
+    "status": 200,
+    "body": {
+      "description": "Revised",
+      "availability": {
+        "available": "Yes"
+      }
+    },
+    "params": {}
+  },
+  {
+    "operation": "list_memberships",
+    "config": {
+      "course_id": "_123_1"
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v1/courses/_123_1/users",
+    "status": 200,
+    "body": null,
+    "params": {
+      "limit": "100",
+      "offset": "0"
+    }
+  },
+  {
+    "operation": "get_membership",
+    "config": {
+      "course_id": "_123_1",
+      "user_id": "_456_1"
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v1/courses/_123_1/users/_456_1",
+    "status": 200,
+    "body": null,
+    "params": {}
+  },
+  {
+    "operation": "create_membership",
+    "config": {
+      "course_id": "_123_1",
+      "user_id": "_456_1"
+    },
+    "method": "PUT",
+    "path": "/learn/api/public/v1/courses/_123_1/users/_456_1",
+    "status": 201,
+    "body": {
+      "courseRoleId": "Student",
+      "availability": {
+        "available": "Yes"
+      }
+    },
+    "params": {}
+  },
+  {
+    "operation": "update_membership",
+    "config": {
+      "course_id": "_123_1",
+      "user_id": "_456_1",
+      "course_role": "TeachingAssistant",
+      "available": "No"
+    },
+    "method": "PATCH",
+    "path": "/learn/api/public/v1/courses/_123_1/users/_456_1",
+    "status": 200,
+    "body": {
+      "courseRoleId": "TeachingAssistant",
+      "availability": {
+        "available": "No"
+      }
+    },
+    "params": {}
+  },
+  {
+    "operation": "delete_membership",
+    "config": {
+      "course_id": "_123_1",
+      "user_id": "_456_1"
+    },
+    "method": "DELETE",
+    "path": "/learn/api/public/v1/courses/_123_1/users/_456_1",
+    "status": 204,
+    "body": null,
+    "params": {}
+  },
+  {
+    "operation": "list_announcements",
+    "config": {
+      "course_id": "_123_1",
+      "title": "Welcome"
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v1/courses/_123_1/announcements",
+    "status": 200,
+    "body": null,
+    "params": {
+      "limit": "100",
+      "offset": "0",
+      "title": "Welcome"
+    }
+  },
+  {
+    "operation": "get_announcement",
+    "config": {
+      "course_id": "_123_1",
+      "announcement_id": "_789_1"
+    },
+    "method": "GET",
+    "path": "/learn/api/public/v1/courses/_123_1/announcements/_789_1",
+    "status": 200,
+    "body": null,
+    "params": {}
+  },
+  {
+    "operation": "create_announcement",
+    "config": {
+      "course_id": "_123_1",
+      "title": "Welcome",
+      "body": "<p>Hello</p>"
+    },
+    "method": "POST",
+    "path": "/learn/api/public/v1/courses/_123_1/announcements",
+    "status": 201,
+    "body": {
+      "title": "Welcome",
+      "body": "<p>Hello</p>",
+      "draft": true
+    },
+    "params": {}
+  },
+  {
+    "operation": "update_announcement",
+    "config": {
+      "course_id": "_123_1",
+      "announcement_id": "_789_1",
+      "draft": false
+    },
+    "method": "PATCH",
+    "path": "/learn/api/public/v1/courses/_123_1/announcements/_789_1",
+    "status": 200,
+    "body": {
+      "draft": false
+    },
+    "params": {}
+  },
+  {
+    "operation": "delete_announcement",
+    "config": {
+      "course_id": "_123_1",
+      "announcement_id": "_789_1"
+    },
+    "method": "DELETE",
+    "path": "/learn/api/public/v1/courses/_123_1/announcements/_789_1",
+    "status": 204,
+    "body": null,
+    "params": {}
+  }
+]
