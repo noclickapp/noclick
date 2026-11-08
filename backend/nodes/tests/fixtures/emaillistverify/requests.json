@@ -1,0 +1,165 @@
+[
+  {
+    "config": {
+      "operation": "verify_email",
+      "email": "john.smith@gmail.com"
+    },
+    "method": "GET",
+    "path": "/api/verifyEmail",
+    "query": {
+      "email": "john.smith@gmail.com"
+    },
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "verify_email_detailed",
+      "email": "john.smith@gmail.com"
+    },
+    "method": "GET",
+    "path": "/api/verifyEmailDetailed",
+    "query": {
+      "email": "john.smith@gmail.com"
+    },
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "create_email_job",
+      "email": "john.smith@gmail.com",
+      "quality": "high"
+    },
+    "method": "POST",
+    "path": "/api/emailJobs",
+    "query": {},
+    "body": {
+      "email": "john.smith@gmail.com",
+      "quality": "high"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_email_job",
+      "id": "example-job"
+    },
+    "method": "GET",
+    "path": "/api/emailJobs/example-job",
+    "query": {},
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "find_contact",
+      "firstName": "Adela",
+      "lastName": "Franey",
+      "domain": "connelycorp.com"
+    },
+    "method": "POST",
+    "path": "/api/findContact",
+    "query": {},
+    "body": {
+      "firstName": "Adela",
+      "lastName": "Franey",
+      "domain": "connelycorp.com"
+    }
+  },
+  {
+    "config": {
+      "operation": "check_disposable",
+      "domain": "temporarydomain.net"
+    },
+    "method": "POST",
+    "path": "/api/checkDisposable",
+    "query": {
+      "domain": "temporarydomain.net"
+    },
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "check_blacklists",
+      "value": "172.75.233.15"
+    },
+    "method": "POST",
+    "path": "/api/checkBlacklists",
+    "query": {},
+    "body": {
+      "value": "172.75.233.15"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_list_progress",
+      "id": "example-job"
+    },
+    "method": "GET",
+    "path": "/api/maillists/example-job/progress",
+    "query": {},
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "reverify_list",
+      "id": "2200875"
+    },
+    "method": "POST",
+    "path": "/api/maillists/2200875/reverify",
+    "query": {},
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "delete_list",
+      "id": "2200875"
+    },
+    "method": "DELETE",
+    "path": "/api/maillists/2200875",
+    "query": {},
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "get_credits"
+    },
+    "method": "GET",
+    "path": "/api/credits",
+    "query": {},
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "create_placement_test",
+      "name": "Q1 2025 Campaign Test",
+      "webhookUrl": "https://yourapp.com/webhooks/placement-test"
+    },
+    "method": "POST",
+    "path": "/api/inboxPlacementTests",
+    "query": {},
+    "body": {
+      "name": "Q1 2025 Campaign Test",
+      "webhookUrl": "https://yourapp.com/webhooks/placement-test"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_placement_test",
+      "code": "ELV-A1B2C3D4E5"
+    },
+    "method": "GET",
+    "path": "/api/inboxPlacementTests/ELV-A1B2C3D4E5",
+    "query": {},
+    "body": {}
+  },
+  {
+    "config": {
+      "operation": "get_file_info",
+      "id": "2200875"
+    },
+    "method": "GET",
+    "path": "/api/getApiFileInfo",
+    "query": {
+      "id": "2200875"
+    },
+    "body": {}
+  }
+]
