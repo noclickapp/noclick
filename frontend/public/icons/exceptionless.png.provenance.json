@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/exceptionless.png",
+  "source": "https://raw.githubusercontent.com/exceptionless/Exceptionless/b9f86694dd06424b966255427129a3d68680f2b5/src/Exceptionless.Web/ClientApp/static/favicon.png",
+  "license": "Apache-2.0; official Exceptionless project icon. Trademark rights remain with Exceptionless.",
+  "sha256": "086e425570f8756b8e0b0f3dc1e3320581996bb4e28f9694ffba8153655d70fe"
+}

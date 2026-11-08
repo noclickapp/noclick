@@ -1,0 +1,914 @@
+{
+  "$defs": {
+    "AddStackLink": {
+      "additionalProperties": false,
+      "description": "Add stack link.",
+      "properties": {
+        "operation": {
+          "const": "add_stack_link",
+          "default": "add_stack_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Stack Id",
+          "type": "string"
+        },
+        "link": {
+          "description": "Reference URL to add or remove.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stack_id",
+        "link"
+      ],
+      "title": "AddStackLink",
+      "type": "object"
+    },
+    "CountEvents": {
+      "additionalProperties": false,
+      "description": "Count events.",
+      "properties": {
+        "operation": {
+          "const": "count_events",
+          "default": "count_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time"
+        }
+      },
+      "title": "CountEvents",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "description": "Create project.",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "delete_bot_data_enabled": {
+          "default": false,
+          "title": "Delete Bot Data Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "ExceptionlessUserTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "exceptionless_user_token",
+          "default": "exceptionless_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Exceptionless User Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing user-scoped token, without Bearer. A project client token cannot manage projects or triage stacks. User tokens have full account access; keep them secret. NoClick sends this token only to api.exceptionless.io.",
+      "x-credential-url": "https://exceptionless.com/docs/api/api-getting-started/"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Get current user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "description": "Get event.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "description": "Get organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Organization Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "description": "Get project.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetStack": {
+      "additionalProperties": false,
+      "description": "Get stack.",
+      "properties": {
+        "operation": {
+          "const": "get_stack",
+          "default": "get_stack",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Stack Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stack_id"
+      ],
+      "title": "GetStack",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "description": "List events.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "description": "List organizations.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "ListProjectStacks": {
+      "additionalProperties": false,
+      "description": "List project stacks.",
+      "properties": {
+        "operation": {
+          "const": "list_project_stacks",
+          "default": "list_project_stacks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListProjectStacks",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "description": "List projects.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListStackEvents": {
+      "additionalProperties": false,
+      "description": "List stack events.",
+      "properties": {
+        "operation": {
+          "const": "list_stack_events",
+          "default": "list_stack_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Stack Id",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stack_id"
+      ],
+      "title": "ListStackEvents",
+      "type": "object"
+    },
+    "ListStacks": {
+      "additionalProperties": false,
+      "description": "List stacks.",
+      "properties": {
+        "operation": {
+          "const": "list_stacks",
+          "default": "list_stacks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListStacks",
+      "type": "object"
+    },
+    "MarkStacksCritical": {
+      "additionalProperties": false,
+      "description": "Mark stacks critical.",
+      "properties": {
+        "operation": {
+          "const": "mark_stacks_critical",
+          "default": "mark_stacks_critical",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_ids": {
+          "description": "Comma-separated stack IDs; at most 100.",
+          "maxLength": 3699,
+          "pattern": "^[a-zA-Z0-9]{24,36}(,[a-zA-Z0-9]{24,36})*$",
+          "title": "Stack Ids",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stack_ids"
+      ],
+      "title": "MarkStacksCritical",
+      "type": "object"
+    },
+    "MarkStacksFixed": {
+      "additionalProperties": false,
+      "description": "Mark stacks fixed.",
+      "properties": {
+        "operation": {
+          "const": "mark_stacks_fixed",
+          "default": "mark_stacks_fixed",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_ids": {
+          "description": "Comma-separated stack IDs; at most 100.",
+          "maxLength": 3699,
+          "pattern": "^[a-zA-Z0-9]{24,36}(,[a-zA-Z0-9]{24,36})*$",
+          "title": "Stack Ids",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "stack_ids"
+      ],
+      "title": "MarkStacksFixed",
+      "type": "object"
+    },
+    "RemoveStackLink": {
+      "additionalProperties": false,
+      "description": "Remove stack link.",
+      "properties": {
+        "operation": {
+          "const": "remove_stack_link",
+          "default": "remove_stack_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Stack Id",
+          "type": "string"
+        },
+        "link": {
+          "description": "Reference URL to add or remove.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stack_id",
+        "link"
+      ],
+      "title": "RemoveStackLink",
+      "type": "object"
+    },
+    "SnoozeStacks": {
+      "additionalProperties": false,
+      "description": "Snooze stacks.",
+      "properties": {
+        "operation": {
+          "const": "snooze_stacks",
+          "default": "snooze_stacks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_ids": {
+          "description": "Comma-separated stack IDs; at most 100.",
+          "maxLength": 3699,
+          "pattern": "^[a-zA-Z0-9]{24,36}(,[a-zA-Z0-9]{24,36})*$",
+          "title": "Stack Ids",
+          "type": "string"
+        },
+        "snooze_until_utc": {
+          "description": "Timezone-aware ISO 8601 timestamp for snoozeUntilUtc.",
+          "format": "date-time",
+          "title": "Snooze Until Utc",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stack_ids",
+        "snooze_until_utc"
+      ],
+      "title": "SnoozeStacks",
+      "type": "object"
+    },
+    "UnmarkStacksCritical": {
+      "additionalProperties": false,
+      "description": "Unmark stacks critical.",
+      "properties": {
+        "operation": {
+          "const": "unmark_stacks_critical",
+          "default": "unmark_stacks_critical",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "stack_ids": {
+          "description": "Comma-separated stack IDs; at most 100.",
+          "maxLength": 3699,
+          "pattern": "^[a-zA-Z0-9]{24,36}(,[a-zA-Z0-9]{24,36})*$",
+          "title": "Stack Ids",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stack_ids"
+      ],
+      "title": "UnmarkStacksCritical",
+      "type": "object"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "description": "Update project.",
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "pattern": "^[a-zA-Z0-9]{24,36}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_stack_link": "#/$defs/AddStackLink",
+          "count_events": "#/$defs/CountEvents",
+          "create_project": "#/$defs/CreateProject",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_event": "#/$defs/GetEvent",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_project": "#/$defs/GetProject",
+          "get_stack": "#/$defs/GetStack",
+          "list_events": "#/$defs/ListEvents",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "list_project_stacks": "#/$defs/ListProjectStacks",
+          "list_projects": "#/$defs/ListProjects",
+          "list_stack_events": "#/$defs/ListStackEvents",
+          "list_stacks": "#/$defs/ListStacks",
+          "mark_stacks_critical": "#/$defs/MarkStacksCritical",
+          "mark_stacks_fixed": "#/$defs/MarkStacksFixed",
+          "remove_stack_link": "#/$defs/RemoveStackLink",
+          "snooze_stacks": "#/$defs/SnoozeStacks",
+          "unmark_stacks_critical": "#/$defs/UnmarkStacksCritical",
+          "update_project": "#/$defs/UpdateProject"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/ListStacks"
+        },
+        {
+          "$ref": "#/$defs/GetStack"
+        },
+        {
+          "$ref": "#/$defs/ListProjectStacks"
+        },
+        {
+          "$ref": "#/$defs/MarkStacksFixed"
+        },
+        {
+          "$ref": "#/$defs/SnoozeStacks"
+        },
+        {
+          "$ref": "#/$defs/MarkStacksCritical"
+        },
+        {
+          "$ref": "#/$defs/UnmarkStacksCritical"
+        },
+        {
+          "$ref": "#/$defs/AddStackLink"
+        },
+        {
+          "$ref": "#/$defs/RemoveStackLink"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/CountEvents"
+        },
+        {
+          "$ref": "#/$defs/ListStackEvents"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExceptionlessUserTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Exceptionless Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List Exceptionless events",
+    "Mark stacks fixed after a deployment",
+    "Create an Exceptionless project"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
