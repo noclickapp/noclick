@@ -1,0 +1,2295 @@
+{
+  "$defs": {
+    "LinklyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "linkly_api_key",
+          "default": "linkly_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Linkly API Key",
+      "type": "object",
+      "x-credential-instructions": "In Linkly, open Settings, then Account Settings, and copy your API key here. NoClick uses it to list your workspaces and access the workspace you select in each operation.",
+      "x-credential-url": "https://linklyhq.com/support/api"
+    },
+    "LinklyCreateConversionConfig": {
+      "additionalProperties": false,
+      "description": "Report a conversion; an unattributed 202 response is discarded, not stored. Preserve attributed and event_id from the response.",
+      "properties": {
+        "operation": {
+          "const": "create_conversion",
+          "default": "create_conversion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The ID of the workspace. Required when authenticating with an API key. Omit it with an OAuth token, which is bound to one workspace.",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "amount_cents": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value in the smallest currency unit. May be negative to record a refund or chargeback, which nets against earlier revenue.",
+          "examples": [
+            4999
+          ],
+          "title": "Amount Cents"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter country code for the conversion. Inferred for browser-side calls; supply it explicitly from a server-side integration, where the connecting address is your own infrastructure rather than the customer's.",
+          "examples": [
+            "US"
+          ],
+          "title": "Country"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 4217 currency code. Defaults to USD.",
+          "examples": [
+            "USD"
+          ],
+          "title": "Currency"
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your identifier for this event. Used as an idempotency key \u2014 reporting the same value twice will not create a second conversion. Applies to any event type, not just purchases.",
+          "examples": [
+            "shopify-1234"
+          ],
+          "title": "Event Id"
+        },
+        "event_name": {
+          "description": "What happened, e.g. `purchase`, `signup`, `trial_started`",
+          "examples": [
+            "purchase"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Event Name",
+          "type": "string"
+        },
+        "event_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "sale",
+                "custom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Coarse type driving the funnel. `lead` establishes customer identity, `sale` records revenue. Defaults to `custom`.",
+          "examples": [
+            "sale"
+          ],
+          "title": "Event Type",
+          "enum": [
+            "lead",
+            "sale",
+            "custom"
+          ],
+          "x-enum-searchable": true
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your identifier for the customer. Send it on every event: it is what links a later server-side sale back to the click that produced the signup.",
+          "examples": [
+            "customer-42"
+          ],
+          "title": "External Id"
+        },
+        "linkly_cid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The attribution token captured from the landing page URL. Omit if unavailable \u2014 the conversion is then recorded without a link attribution.",
+          "examples": [
+            "2on1Y.01KYPGEEPJSPR3S564QRBDGA1W"
+          ],
+          "title": "Linkly Cid"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Arbitrary JSON, up to 10,000 bytes encoded.",
+          "examples": [
+            {
+              "sku": "ABC-123"
+            }
+          ],
+          "title": "Metadata"
+        },
+        "occurred_at": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the conversion happened. Defaults to now.",
+          "examples": [
+            "2026-07-29T10:30:00Z"
+          ],
+          "title": "Occurred At"
+        },
+        "visitor_ip": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end customer's IP, when your server has it. Omit unless you do \u2014 for server-side calls Linkly otherwise records the connecting address as your server, not the customer, and excludes it from geographic reporting. Sending this asserts you have a lawful basis to share it. Never returned by the API.",
+          "examples": [
+            "203.0.113.42"
+          ],
+          "title": "Visitor Ip"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "event_name"
+      ],
+      "title": "LinklyCreateConversionConfig",
+      "type": "object"
+    },
+    "LinklyCreateDomainInWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Create domain in workspace",
+      "properties": {
+        "operation": {
+          "const": "create_domain_in_workspace",
+          "default": "create_domain_in_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Domain name (e.g., links.example.com)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "LinklyCreateDomainInWorkspaceConfig",
+      "type": "object"
+    },
+    "LinklyCreateOrUpdateWorkspaceLinkConfig": {
+      "additionalProperties": false,
+      "description": "Create or update a link",
+      "properties": {
+        "operation": {
+          "const": "create_or_update_workspace_link",
+          "default": "create_or_update_workspace_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "fb_pixel_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Facebook Pixel ID",
+          "title": "Fb Pixel Id"
+        },
+        "tiktok_pixel_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TikTok Pixel ID",
+          "title": "Tiktok Pixel Id"
+        },
+        "hide_referrer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hide referrer from destination",
+          "title": "Hide Referrer"
+        },
+        "expiry_datetime": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Link expiration date/time",
+          "title": "Expiry Datetime"
+        },
+        "expiry_destination": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Redirect URL after expiry",
+          "title": "Expiry Destination"
+        },
+        "rules": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LinklyRedirectRule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Redirect rules",
+          "title": "Rules"
+        },
+        "domain_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Domain ID (alternative to domain name)",
+          "title": "Domain Id"
+        },
+        "cloaking": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable link cloaking",
+          "title": "Cloaking"
+        },
+        "linkify_words": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Words to linkify",
+          "title": "Linkify Words"
+        },
+        "sticky_rotator": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rotator links only: send a returning visitor to the same destination as last time, remembered in a cookie for 30 days. Not available on privacy-mode links; turning privacy mode on switches it off.",
+          "title": "Sticky Rotator"
+        },
+        "og_description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Open Graph description",
+          "title": "Og Description"
+        },
+        "skip_social_crawler_tracking": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip tracking social media crawlers",
+          "title": "Skip Social Crawler Tracking"
+        },
+        "body_tags": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom HTML tags for body",
+          "title": "Body Tags"
+        },
+        "og_title": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Open Graph title",
+          "title": "Og Title"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private note about this link",
+          "title": "Note"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nickname for the link",
+          "title": "Name"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Link ID (include to update existing link)",
+          "title": "Id"
+        },
+        "gtm_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Tag Manager ID",
+          "title": "Gtm Id"
+        },
+        "og_image": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Open Graph image URL",
+          "title": "Og Image"
+        },
+        "block_bots": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Block bot traffic",
+          "title": "Block Bots"
+        },
+        "utm_content": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Content"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the link is active",
+          "title": "Enabled"
+        },
+        "privacy_mode": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Record clicks without personal data (no IP, location, network, user agent, referrer or query parameters; click times kept to the hour). Turning it on also clears tracking pixels, custom scripts, conversion tracking, webhooks and click notifications on the link, and click webhooks stop firing for it. Paid plans only.",
+          "title": "Privacy Mode"
+        },
+        "url": {
+          "description": "The destination URL",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "replacements": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL parameter replacements",
+          "title": "Replacements"
+        },
+        "qr_styles": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "QR code styling options",
+          "title": "Qr Styles"
+        },
+        "webhooks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URLs",
+          "title": "Webhooks"
+        },
+        "expiry_clicks": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expire link after this many clicks",
+          "title": "Expiry Clicks"
+        },
+        "public_analytics": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Make analytics publicly accessible",
+          "title": "Public Analytics"
+        },
+        "utm_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Source"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom slug (must start with /)",
+          "title": "Slug"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom domain (without trailing /)",
+          "title": "Domain"
+        },
+        "forward_params": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Forward query parameters to destination",
+          "title": "Forward Params"
+        },
+        "utm_medium": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Medium"
+        },
+        "head_tags": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom HTML tags for head",
+          "title": "Head Tags"
+        },
+        "ga4_tag_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Analytics 4 Tag ID",
+          "title": "Ga4 Tag Id"
+        },
+        "utm_term": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Term"
+        },
+        "utm_campaign": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Campaign"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "url"
+      ],
+      "title": "LinklyCreateOrUpdateWorkspaceLinkConfig",
+      "type": "object"
+    },
+    "LinklyDeleteDomainConfig": {
+      "additionalProperties": false,
+      "description": "Delete a domain",
+      "properties": {
+        "operation": {
+          "const": "delete_domain",
+          "default": "delete_domain",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "domain_id": {
+          "description": "The id of the Domain",
+          "examples": [
+            "103"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Domain Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "domain_id"
+      ],
+      "title": "LinklyDeleteDomainConfig",
+      "type": "object"
+    },
+    "LinklyDeleteLinkConfig": {
+      "additionalProperties": false,
+      "description": "Delete a single link",
+      "properties": {
+        "operation": {
+          "const": "delete_link",
+          "default": "delete_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "id": {
+          "description": "The id of the Link",
+          "examples": [
+            24
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "id"
+      ],
+      "title": "LinklyDeleteLinkConfig",
+      "type": "object"
+    },
+    "LinklyDeleteLinksConfig": {
+      "additionalProperties": false,
+      "description": "Delete links",
+      "properties": {
+        "operation": {
+          "const": "delete_links",
+          "default": "delete_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "ids": {
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "ids"
+      ],
+      "title": "LinklyDeleteLinksConfig",
+      "type": "object"
+    },
+    "LinklyExportLinksConfig": {
+      "additionalProperties": false,
+      "description": "Export links",
+      "properties": {
+        "operation": {
+          "const": "export_links",
+          "default": "export_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "format": {
+          "const": "json",
+          "default": "json",
+          "description": "Export format",
+          "examples": [
+            "json"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search query to filter links",
+          "examples": [
+            "campaign"
+          ],
+          "title": "Search"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "LinklyExportLinksConfig",
+      "type": "object"
+    },
+    "LinklyGetClickCountersConfig": {
+      "additionalProperties": false,
+      "description": "Get click counts grouped by dimension; only the top 10,000 groups are returned, while total includes all groups.",
+      "properties": {
+        "operation": {
+          "const": "get_click_counters",
+          "default": "get_click_counters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "counter": {
+          "description": "The dimension to group clicks by. Options: country, city, region, platform, destination, referer, bot_name, isp, link_id, remote_ip, top_params, ad_network, and the UTM dimensions utm_source, utm_medium, utm_campaign, utm_content, utm_term. Any other value returns 400. For `link_id` each `value` is the full Link object rather than a string; for `top_params` each item also carries a `key` (the parameter name).",
+          "enum": [
+            "country",
+            "city",
+            "region",
+            "platform",
+            "destination",
+            "referer",
+            "bot_name",
+            "isp",
+            "link_id",
+            "remote_ip",
+            "top_params",
+            "ad_network",
+            "utm_source",
+            "utm_medium",
+            "utm_campaign",
+            "utm_content",
+            "utm_term"
+          ],
+          "title": "Counter",
+          "type": "string"
+        },
+        "link_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of a single Link",
+          "examples": [
+            "24"
+          ],
+          "title": "Link Id"
+        },
+        "link_ids": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hyphen-separated list of Link IDs",
+          "examples": [
+            "24-25-26"
+          ],
+          "title": "Link Ids"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date for the date range (format: YYYY-MM-DD)",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date for the date range (format: YYYY-MM-DD)",
+          "title": "End"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by country using ISO 3166-1 alpha-2 country code",
+          "title": "Country"
+        },
+        "bots": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to false to exclude bot clicks from the results",
+          "examples": [
+            "false"
+          ],
+          "title": "Bots"
+        },
+        "unique": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to only count unique clicks",
+          "examples": [
+            "false"
+          ],
+          "title": "Unique"
+        },
+        "format": {
+          "const": "json",
+          "default": "json",
+          "description": "Return structured JSON analytics.",
+          "examples": [
+            "json"
+          ],
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "counter"
+      ],
+      "title": "LinklyGetClickCountersConfig",
+      "type": "object"
+    },
+    "LinklyGetClicksConfig": {
+      "additionalProperties": false,
+      "description": "Get click analytics",
+      "properties": {
+        "operation": {
+          "const": "get_clicks",
+          "default": "get_clicks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "link_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of a single Link",
+          "examples": [
+            "24"
+          ],
+          "title": "Link Id"
+        },
+        "link_ids": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter clicks by multiple links. Provide a hyphen-separated list of link IDs.",
+          "examples": [
+            "24-25-26"
+          ],
+          "title": "Link Ids"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date for the date range (format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ)",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date for the date range (format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ)",
+          "title": "End"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter clicks by country using ISO 3166-1 alpha-2 country code e.g US",
+          "title": "Country"
+        },
+        "browser": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter clicks by browser name e.g Chrome, Firefox, Safari",
+          "title": "Browser"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter clicks by platform/operating system e.g Windows, Mac, iOS, Android",
+          "title": "Platform"
+        },
+        "referer": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter clicks by referrer domain",
+          "title": "Referer"
+        },
+        "isp": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter clicks by Internet Service Provider name",
+          "title": "Isp"
+        },
+        "bots": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to false to exclude bot clicks from the results",
+          "examples": [
+            "false"
+          ],
+          "title": "Bots"
+        },
+        "unique": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to only include unique clicks in the results",
+          "examples": [
+            "false"
+          ],
+          "title": "Unique"
+        },
+        "format": {
+          "const": "json",
+          "default": "json",
+          "description": "Return structured JSON analytics.",
+          "examples": [
+            "json"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "pivot": {
+          "anyOf": [
+            {
+              "const": "link_id",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return data as a matrix. When pivot=link_id, returns dates as rows and links as columns. CSV/TSV includes header rows for name, full_url, and id.",
+          "examples": [
+            "link_id"
+          ],
+          "title": "Pivot"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The timezone to use for date/time calculations",
+          "examples": [
+            "America/New_York"
+          ],
+          "title": "Timezone"
+        },
+        "frequency": {
+          "default": "day",
+          "description": "The frequency of data points in the response. Available options are 'day' (default) or 'hour'.",
+          "enum": [
+            "day",
+            "hour"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "LinklyGetClicksConfig",
+      "type": "object"
+    },
+    "LinklyGetWorkspaceLinkConfig": {
+      "additionalProperties": false,
+      "description": "Get link details",
+      "properties": {
+        "operation": {
+          "const": "get_workspace_link",
+          "default": "get_workspace_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The id of the Link",
+          "examples": [
+            24
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LinklyGetWorkspaceLinkConfig",
+      "type": "object"
+    },
+    "LinklyLinkFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "utm_campaign": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Campaign"
+        },
+        "utm_content": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Content"
+        },
+        "utm_medium": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Medium"
+        },
+        "utm_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Source"
+        },
+        "utm_term": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utm Term"
+        }
+      },
+      "title": "LinklyLinkFilter",
+      "type": "object"
+    },
+    "LinklyListConversionsConfig": {
+      "additionalProperties": false,
+      "description": "List conversions; pass since, then the last conversion ID as after while has_more is true.",
+      "properties": {
+        "operation": {
+          "const": "list_conversions",
+          "default": "list_conversions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The ID of the workspace. Required when authenticating with an API key. Omit it with an OAuth token, which is bound to one workspace.",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum conversions to return (1\u20131000, default 100)",
+          "examples": [
+            100
+          ],
+          "title": "Limit"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return conversions recorded after this conversion `id`, oldest first. Use the `id` of the last conversion on the previous page.",
+          "examples": [
+            "01KYPH20SEJY4HQSCPMWW60QE0"
+          ],
+          "title": "After"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return conversions Linkly recorded at or after this time, oldest first. An ISO 8601 date (`2026-07-29`) or date-time (`2026-07-29T10:30:00Z`); a date-time without an offset is read as UTC.",
+          "examples": [
+            "2026-07-29T10:30:00Z"
+          ],
+          "title": "Since"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "LinklyListConversionsConfig",
+      "type": "object"
+    },
+    "LinklyListDomainsConfig": {
+      "additionalProperties": false,
+      "description": "List domains",
+      "properties": {
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "LinklyListDomainsConfig",
+      "type": "object"
+    },
+    "LinklyListLinkWebhooksConfig": {
+      "additionalProperties": false,
+      "description": "List webhooks for a link",
+      "properties": {
+        "operation": {
+          "const": "list_link_webhooks",
+          "default": "list_link_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "description": "The ID of the link",
+          "examples": [
+            12345
+          ],
+          "title": "Link Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "LinklyListLinkWebhooksConfig",
+      "type": "object"
+    },
+    "LinklyListLinksConfig": {
+      "additionalProperties": false,
+      "description": "List links",
+      "properties": {
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The search query",
+          "examples": [
+            "test"
+          ],
+          "title": "Search"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 1000,
+          "description": "Number of links to return",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort by field. Accepts any link column, plus the computed click aggregates: `clicks_total`, `clicks_today`, `clicks_previous_day`, `clicks_thirty_days`, `human_clicks_total`, `human_clicks_thirty_days`, `human_clicks_today`, `human_clicks_previous_day`.",
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "title": "Sort Dir"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LinklyLinkFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter links by exact field match. Composable \u2014 multiple filters are ANDed. e.g. filter[utm_campaign]=summer_sale&filter[utm_source]=newsletter"
+        },
+        "deleted": {
+          "default": false,
+          "description": "Return soft-deleted (trashed) links instead of active ones",
+          "title": "Deleted",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "LinklyListLinksConfig",
+      "type": "object"
+    },
+    "LinklyListWorkspaceWebhooksConfig": {
+      "additionalProperties": false,
+      "description": "List webhooks for a workspace",
+      "properties": {
+        "operation": {
+          "const": "list_workspace_webhooks",
+          "default": "list_workspace_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The ID of the workspace",
+          "examples": [
+            42
+          ],
+          "title": "Workspace Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "LinklyListWorkspaceWebhooksConfig",
+      "type": "object"
+    },
+    "LinklyListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List user workspaces",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LinklyListWorkspacesConfig",
+      "type": "object"
+    },
+    "LinklyRedirectRule": {
+      "additionalProperties": false,
+      "properties": {
+        "matches": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matches"
+        },
+        "percentage": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Percentage"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "what": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "What"
+        }
+      },
+      "title": "LinklyRedirectRule",
+      "type": "object"
+    },
+    "LinklyRestoreLinksConfig": {
+      "additionalProperties": false,
+      "description": "Restore links",
+      "properties": {
+        "operation": {
+          "const": "restore_links",
+          "default": "restore_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "ids": {
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "ids"
+      ],
+      "title": "LinklyRestoreLinksConfig",
+      "type": "object"
+    },
+    "LinklySubscribeWebhookToLinkConfig": {
+      "additionalProperties": false,
+      "description": "Subscribe webhook to a link",
+      "properties": {
+        "operation": {
+          "const": "subscribe_webhook_to_link",
+          "default": "subscribe_webhook_to_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "description": "The ID of the link to subscribe to",
+          "examples": [
+            12345
+          ],
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "url": {
+          "description": "The webhook URL to receive click notifications",
+          "examples": [
+            "https://hooks.zapier.com/hooks/catch/123456/abcdef/"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id",
+        "url"
+      ],
+      "title": "LinklySubscribeWebhookToLinkConfig",
+      "type": "object"
+    },
+    "LinklySubscribeWebhookToWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Subscribe webhook to a workspace",
+      "properties": {
+        "operation": {
+          "const": "subscribe_webhook_to_workspace",
+          "default": "subscribe_webhook_to_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The ID of the workspace to subscribe to",
+          "examples": [
+            42
+          ],
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "url": {
+          "description": "The webhook URL to receive click notifications",
+          "examples": [
+            "https://hooks.zapier.com/hooks/catch/123456/abcdef/"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "url"
+      ],
+      "title": "LinklySubscribeWebhookToWorkspaceConfig",
+      "type": "object"
+    },
+    "LinklyUnsubscribeWebhookFromLinkConfig": {
+      "additionalProperties": false,
+      "description": "Unsubscribe webhook from a link",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_webhook_from_link",
+          "default": "unsubscribe_webhook_from_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "description": "The ID of the link",
+          "examples": [
+            12345
+          ],
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "hook_id": {
+          "description": "The webhook URL (URL-encoded)",
+          "examples": [
+            "https%3A%2F%2Fhooks.example.com%2Fabc123"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Hook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id",
+        "hook_id"
+      ],
+      "title": "LinklyUnsubscribeWebhookFromLinkConfig",
+      "type": "object"
+    },
+    "LinklyUnsubscribeWebhookFromWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Unsubscribe webhook from a workspace",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_webhook_from_workspace",
+          "default": "unsubscribe_webhook_from_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The ID of the workspace",
+          "examples": [
+            42
+          ],
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "hook_id": {
+          "description": "The webhook URL (URL-encoded)",
+          "examples": [
+            "https%3A%2F%2Fhooks.example.com%2Fabc123"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Hook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "hook_id"
+      ],
+      "title": "LinklyUnsubscribeWebhookFromWorkspaceConfig",
+      "type": "object"
+    },
+    "LinklyUpdateDomainFaviconConfig": {
+      "additionalProperties": false,
+      "description": "Update domain favicon",
+      "properties": {
+        "operation": {
+          "const": "update_domain_favicon",
+          "default": "update_domain_favicon",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "description": "The id of the Workspace",
+          "examples": [
+            "42"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "id": {
+          "description": "The id of the Domain",
+          "examples": [
+            "103"
+          ],
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "favicon_url": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to favicon image",
+          "title": "Favicon Url"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "id"
+      ],
+      "title": "LinklyUpdateDomainFaviconConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_conversion": "#/$defs/LinklyCreateConversionConfig",
+          "create_domain_in_workspace": "#/$defs/LinklyCreateDomainInWorkspaceConfig",
+          "create_or_update_workspace_link": "#/$defs/LinklyCreateOrUpdateWorkspaceLinkConfig",
+          "delete_domain": "#/$defs/LinklyDeleteDomainConfig",
+          "delete_link": "#/$defs/LinklyDeleteLinkConfig",
+          "delete_links": "#/$defs/LinklyDeleteLinksConfig",
+          "export_links": "#/$defs/LinklyExportLinksConfig",
+          "get_click_counters": "#/$defs/LinklyGetClickCountersConfig",
+          "get_clicks": "#/$defs/LinklyGetClicksConfig",
+          "get_workspace_link": "#/$defs/LinklyGetWorkspaceLinkConfig",
+          "list_conversions": "#/$defs/LinklyListConversionsConfig",
+          "list_domains": "#/$defs/LinklyListDomainsConfig",
+          "list_link_webhooks": "#/$defs/LinklyListLinkWebhooksConfig",
+          "list_links": "#/$defs/LinklyListLinksConfig",
+          "list_workspace_webhooks": "#/$defs/LinklyListWorkspaceWebhooksConfig",
+          "list_workspaces": "#/$defs/LinklyListWorkspacesConfig",
+          "restore_links": "#/$defs/LinklyRestoreLinksConfig",
+          "subscribe_webhook_to_link": "#/$defs/LinklySubscribeWebhookToLinkConfig",
+          "subscribe_webhook_to_workspace": "#/$defs/LinklySubscribeWebhookToWorkspaceConfig",
+          "unsubscribe_webhook_from_link": "#/$defs/LinklyUnsubscribeWebhookFromLinkConfig",
+          "unsubscribe_webhook_from_workspace": "#/$defs/LinklyUnsubscribeWebhookFromWorkspaceConfig",
+          "update_domain_favicon": "#/$defs/LinklyUpdateDomainFaviconConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LinklyListConversionsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyCreateConversionConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyGetWorkspaceLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyListLinkWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklySubscribeWebhookToLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyUnsubscribeWebhookFromLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyGetClicksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyGetClickCountersConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyListDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyCreateDomainInWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyDeleteDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyUpdateDomainFaviconConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyDeleteLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyCreateOrUpdateWorkspaceLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyExportLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyRestoreLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyDeleteLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyListLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyListWorkspaceWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklySubscribeWebhookToWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyUnsubscribeWebhookFromWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/LinklyListWorkspacesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinklyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linkly Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
