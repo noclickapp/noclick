@@ -1,0 +1,2290 @@
+{
+  "POST /v1/ingest/by-url": {
+    "body": {
+      "accountId": "000000000000000000000007",
+      "environmentId": "000000000000000000000008",
+      "importId": "000000000000000000000009",
+      "files": [
+        {
+          "filename": "file.pdf",
+          "id": "00000000000000000000000f",
+          "documentId": "00000000000000000000000d"
+        }
+      ]
+    },
+    "source": "https://developers.invofox.com/api-reference/ingest-reference/files/upload-by-url-controller-upload-by-url"
+  },
+  "POST /v1/ingest/single-url": {
+    "body": {
+      "accountId": "000000000000000000000007",
+      "environmentId": "000000000000000000000008",
+      "importId": "000000000000000000000009",
+      "fileId": "00000000000000000000000b",
+      "filename": "document.pdf",
+      "documentId": "00000000000000000000000a"
+    },
+    "source": "https://developers.invofox.com/api-reference/ingest-reference/files/upload-single-url-controller-upload-single-url"
+  },
+  "GET /v1/ingest/files/{fileId}": {
+    "body": {
+      "id": "000000000000000000000011",
+      "accountId": "00000000000000000000000f",
+      "environmentId": "000000000000000000000010",
+      "importId": "00000000000000000000000c",
+      "filename": "invoice.pdf",
+      "compressed": false,
+      "status": "processed",
+      "mimeType": "application/pdf",
+      "companyId": "000000000000000000000007",
+      "parentFileId": "000000000000000000000011",
+      "documentIds": [
+        "00000000000000000000000d",
+        "00000000000000000000000e"
+      ],
+      "error": "ERR_UNSUPPORTED_FILE_FORMAT",
+      "createdAt": "2024-09-26T10:30:00.000Z",
+      "updatedAt": "2024-09-26T10:35:00.000Z",
+      "clientData": {
+        "invofoxAccountName": "company-name",
+        "invofoxCompanyId": "12345",
+        "userId": "507f1f77bcf86cd799439015"
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/ingest-reference/files/files-controller-get-file"
+  },
+  "GET /companies/{id}/clients": {
+    "body": {
+      "result": [
+        {
+          "_id": "string",
+          "account": "string",
+          "environment": "string",
+          "company": "string",
+          "name": "string",
+          "countryCode": "string",
+          "taxId": "string",
+          "type": "client",
+          "state": "pending"
+        }
+      ],
+      "count": 1.1
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/clients/get-a-list-of-clients"
+  },
+  "GET /documents/{id}/text": {
+    "body": {
+      "result": [
+        "string"
+      ]
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/get-document-plain-ocr-text"
+  },
+  "PUT /companies/{id}": {
+    "body": {
+      "result": {
+        "_id": "string",
+        "account": "string",
+        "environment": "string",
+        "name": "string",
+        "countryCode": "string",
+        "taxId": "string",
+        "data": {
+          "custom": {}
+        },
+        "clientData": {}
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/companies/update-a-company"
+  },
+  "PUT /companies/{id}/providers/{providerId}": {
+    "body": {
+      "result": {
+        "_id": "string",
+        "account": "string",
+        "environment": "string",
+        "company": "string",
+        "name": "string",
+        "countryCode": "string",
+        "taxId": "string",
+        "type": "client",
+        "state": "pending"
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/providers/modify-a-provider"
+  },
+  "PUT /documents/{id}": {
+    "body": {
+      "_id": "000000000000000000000001",
+      "company": "000000000000000000000002",
+      "clientData": {},
+      "type": "invoice",
+      "name": "Invoice_INVCZ4761199.pdf",
+      "isGroundTruth": false,
+      "creation": "2022-04-11T14:44:22.785Z",
+      "images": [
+        "https://storage.example.com/invoices/images/000000000000000000000004-1.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-2.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-3.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-4.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-5.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-6.png"
+      ],
+      "original": "https://storage.example.com/invoices/originals/000000000000000000000001",
+      "mimetype": "application/pdf",
+      "data": {
+        "IBAN": {},
+        "SWIFT": {},
+        "additionalChargesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalData": [
+          {
+            "_id": {
+              "$oid": "000000000000000000000005",
+              "values": {}
+            }
+          }
+        ],
+        "additionalDataMode": "global",
+        "additionalDiscountsAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountName": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankRoutingNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankSortCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "breakdowns": {
+          "REAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "RERate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "grossAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 20.91
+          },
+          "taxBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxRate": {
+            "confidence": 0.7916666666666666,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 120.47
+          }
+        },
+        "clientCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "companyActsLike": {
+          "confidence": 1,
+          "value": "recipient"
+        },
+        "contractRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "currency": {
+          "confidence": 1,
+          "value": "EUR"
+        },
+        "deliveryNoteRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentNumber": {
+          "confidence": 1,
+          "value": "ZI20-002898113"
+        },
+        "documentReference": {},
+        "documentSeries": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentType": {
+          "confidence": 1,
+          "value": "normal"
+        },
+        "dues": {
+          "amount": {
+            "confidence": 0,
+            "value": null
+          },
+          "date": {
+            "confidence": 1,
+            "value": "2023-01-31"
+          }
+        },
+        "exchangeRate": {},
+        "incoterms": {
+          "confidence": 0,
+          "value": null
+        },
+        "invoiceRef": {
+          "confidence": 0,
+          "value": ""
+        },
+        "isCreditNote": {},
+        "issueDate": {
+          "confidence": 1,
+          "value": "2023-01-31"
+        },
+        "issuerAddress": {
+          "confidence": 1,
+          "value": "Avenida de Am\u00e9rica 115, 28042, Madrid"
+        },
+        "issuerAddressDetails": {
+          "confidence": 1,
+          "value": {
+            "addressNumber": "115",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Alameda de Osuna",
+            "postalCode": "28042",
+            "region": "Comunidad de Madrid",
+            "street": "Avenida de Am\u00e9rica",
+            "subRegion": "Madrid",
+            "text": "Avenida de Am\u00e9rica 115, 28042, Alameda de Osuna, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "issuerCountry": {
+          "confidence": 1,
+          "value": "ES"
+        },
+        "issuerEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerName": {
+          "confidence": 0.9318181818181819,
+          "value": "VODAFONE SERVICIOS SLU"
+        },
+        "issuerPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerTaxId": {
+          "confidence": 0.9318181818181819,
+          "value": "ESB87539284"
+        },
+        "issuerWebsite": {
+          "confidence": 1,
+          "value": "vodafone.es"
+        },
+        "language": {
+          "confidence": 1,
+          "value": "es"
+        },
+        "legalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "lines": {
+          "date": {
+            "confidence": 0,
+            "value": null
+          },
+          "description": {
+            "confidence": 1,
+            "value": "Vodafone One Ilimitada Super (Fibra 600Mb) (681166545 - 912873472) Jun. a 21 Jul.)"
+          },
+          "discountAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "discountRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossUnitPrice": {
+            "confidence": 1,
+            "value": 70.24
+          },
+          "group": {
+            "confidence": 0,
+            "value": ""
+          },
+          "identifier": {
+            "confidence": 0,
+            "value": ""
+          },
+          "quantity": {
+            "confidence": 1,
+            "value": 0.82
+          },
+          "taxAmount": {
+            "confidence": 0.85625,
+            "value": 12.15
+          },
+          "taxBaseAmount": {
+            "confidence": 1,
+            "value": 57.84
+          },
+          "taxBaseUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "taxRate": {
+            "confidence": 0.7125,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.928125,
+            "value": 69.99
+          },
+          "totalUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "unitOfMeasurement": {
+            "confidence": 0,
+            "value": ""
+          }
+        },
+        "meterNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "numberFormat": {
+          "confidence": 1,
+          "value": [
+            ".,"
+          ]
+        },
+        "orderRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "paymentMethod": {
+          "confidence": 1,
+          "value": "Domiciliaci\u00f3n bancaria"
+        },
+        "paymentTerms": {
+          "confidence": 0,
+          "value": null
+        },
+        "readings": {
+          "current": {
+            "confidence": 0,
+            "value": 0
+          },
+          "previous": {
+            "confidence": 0,
+            "value": 0
+          },
+          "usage": {
+            "confidence": 0,
+            "value": 0
+          }
+        },
+        "recipientAddress": {
+          "confidence": 1,
+          "value": "CL BRAVO MURILLO 102 2\u00ba IZ 28020 MADRID MADRID Espa\u00f1a"
+        },
+        "recipientAddressDetails": {
+          "confidence": 0.9909,
+          "value": {
+            "addressNumber": "102",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Cuatro Caminos",
+            "postalCode": "28020",
+            "region": "Comunidad de Madrid",
+            "street": "Calle de Bravo Murillo",
+            "subRegion": "Madrid",
+            "text": "Calle de Bravo Murillo 102, 28020, Cuatro Caminos, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "recipientCountry": {
+          "confidence": 0.9909,
+          "value": "ES"
+        },
+        "recipientEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientName": {
+          "confidence": 1,
+          "value": "EXAMPLE CORP SL"
+        },
+        "recipientPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientTaxId": {
+          "confidence": 1,
+          "value": "ESB87334876"
+        },
+        "recipientWebsite": {
+          "confidence": 0,
+          "value": null
+        },
+        "reimbursableExpensesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "seriesCode": {
+          "confidence": 0,
+          "value": ""
+        },
+        "serviceAddress": {
+          "confidence": 0,
+          "values": ""
+        },
+        "shippingAddress": {
+          "confidence": 0,
+          "value": null
+        },
+        "supplyNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "taxClass": {
+          "confidence": 1,
+          "value": "IGIC"
+        },
+        "totalAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalDiscountAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalDueAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalFeesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalGrossAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 20.91
+        },
+        "totalTaxBaseAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalUsage": {
+          "confidence": 0,
+          "value": "0,"
+        },
+        "usageUnitOfMeasurement": {
+          "confidence": 0,
+          "value": 0
+        },
+        "withholdingTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "withholdingTaxRate": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        }
+      },
+      "publicState": "approved",
+      "confidence": "high",
+      "validationInfo": {
+        "errors": []
+      },
+      "approvalInfo": {
+        "beginning": "2024-01-15T09:30:00Z",
+        "result": "approved",
+        "steps": []
+      },
+      "import": {
+        "_id": "000000000000000000000003"
+      },
+      "exports": [],
+      "deleted": true,
+      "user": null
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/update-document-information"
+  },
+  "DELETE /companies/{id}/providers/{providerId}": {
+    "body": {},
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/providers/delete-provider"
+  },
+  "POST /companies": {
+    "body": {
+      "result": {
+        "_id": "string",
+        "account": "string",
+        "environment": "string",
+        "name": "string",
+        "countryCode": "string",
+        "taxId": "string",
+        "data": {
+          "custom": {}
+        },
+        "clientData": {}
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/companies/create-a-new-company"
+  },
+  "GET /documents/{id}/ocr": {
+    "body": {
+      "result": [
+        {
+          "page": 1.1,
+          "angle": 1.1,
+          "width": 1.1,
+          "height": 1.1,
+          "unit": "inch",
+          "lines": [
+            {
+              "boundingBox": [
+                1.1
+              ],
+              "text": "string",
+              "appearance": {},
+              "words": [
+                {
+                  "boundingBox": "string",
+                  "text": "string",
+                  "confidence": 1.1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/get-document-ocr-info"
+  },
+  "GET /documents": {
+    "body": {
+      "skip": 1.1,
+      "limit": 1.1,
+      "count": 1.1,
+      "result": [
+        {
+          "_id": "string",
+          "account": "string",
+          "environment": "string",
+          "company": "string",
+          "creator": "string",
+          "clientData": {},
+          "type": "invoice",
+          "name": "string",
+          "isGroundTruth": true,
+          "creation": "2024-01-15T09:30:00Z",
+          "images": [
+            "string"
+          ],
+          "original": "string",
+          "mimetype": "string",
+          "data": {},
+          "publicState": "processing",
+          "confidence": "high",
+          "processInfo": {
+            "result": "verified"
+          },
+          "validationInfo": {
+            "errors": [
+              {
+                "severity": "high",
+                "code": "ERR_FILE_TOO_BIG",
+                "timestamp": "2024-01-15T09:30:00Z",
+                "user": "string",
+                "info": {},
+                "fields": [
+                  {
+                    "name": "string",
+                    "prefix": "string",
+                    "index": 1.1,
+                    "groupIndex": 1.1,
+                    "splitIndex": 1.1
+                  }
+                ]
+              }
+            ],
+            "result": "valid",
+            "comments": "string",
+            "validator": "string"
+          },
+          "approvalInfo": {
+            "beginning": "2024-01-15T09:30:00Z",
+            "result": "approved",
+            "comments": "string",
+            "appliedWorkflow": {},
+            "steps": [
+              {
+                "date": "2024-01-15T09:30:00Z",
+                "type": "string",
+                "info": {}
+              }
+            ]
+          },
+          "import": {
+            "ref": "string",
+            "channel": "string",
+            "info": {}
+          },
+          "exports": [
+            {
+              "timestamp": "2024-01-15T09:30:00Z",
+              "ref": "string",
+              "summary": [
+                {}
+              ]
+            }
+          ],
+          "geometry": {
+            "pages": [
+              {
+                "width": 1.1,
+                "height": 1.1,
+                "unit": "inch",
+                "angle": 1.1
+              }
+            ],
+            "boxes": {}
+          },
+          "deleted": true,
+          "duplicated": true
+        }
+      ]
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/get-a-list-of-documents"
+  },
+  "GET /v1/ingest/imports": {
+    "body": {
+      "count": 156,
+      "result": [
+        {
+          "id": "000000000000000000000011",
+          "accountId": "507f1f77bcf86cd799439011",
+          "environmentId": "507f1f77bcf86cd799439012",
+          "channel": "upload",
+          "status": "processed",
+          "createdAt": "2023-10-15T10:30:00.000Z",
+          "documents": 42
+        }
+      ]
+    },
+    "source": "https://developers.invofox.com/api-reference/ingest-reference/imports/list-imports-controller-list-imports"
+  },
+  "GET /companies/{id}/providers": {
+    "body": {
+      "result": [
+        {
+          "_id": "string",
+          "account": "string",
+          "environment": "string",
+          "company": "string",
+          "name": "string",
+          "countryCode": "string",
+          "taxId": "string",
+          "type": "client",
+          "state": "pending"
+        }
+      ],
+      "count": 1.1
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/providers/get-a-list-of-providers"
+  },
+  "POST /companies/{id}/providers": {
+    "body": {
+      "result": {
+        "_id": "string",
+        "account": "string",
+        "environment": "string",
+        "company": "string",
+        "name": "string",
+        "countryCode": "string",
+        "taxId": "string",
+        "type": "client",
+        "state": "pending"
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/providers/create-a-new-provider"
+  },
+  "PUT /documents/{id}/type": {
+    "body": {
+      "_id": "000000000000000000000001",
+      "company": "000000000000000000000002",
+      "clientData": {},
+      "type": "invoice",
+      "name": "Invoice_INVCZ4761199.pdf",
+      "isGroundTruth": false,
+      "creation": "2022-04-11T14:44:22.785Z",
+      "images": [
+        "https://storage.example.com/invoices/images/000000000000000000000004-1.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-2.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-3.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-4.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-5.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-6.png"
+      ],
+      "original": "https://storage.example.com/invoices/originals/000000000000000000000001",
+      "mimetype": "application/pdf",
+      "data": {
+        "IBAN": {},
+        "SWIFT": {},
+        "additionalChargesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalData": [
+          {
+            "_id": {
+              "$oid": "000000000000000000000005",
+              "values": {}
+            }
+          }
+        ],
+        "additionalDataMode": "global",
+        "additionalDiscountsAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountName": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankRoutingNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankSortCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "breakdowns": {
+          "REAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "RERate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "grossAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 20.91
+          },
+          "taxBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxRate": {
+            "confidence": 0.7916666666666666,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 120.47
+          }
+        },
+        "clientCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "companyActsLike": {
+          "confidence": 1,
+          "value": "recipient"
+        },
+        "contractRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "currency": {
+          "confidence": 1,
+          "value": "EUR"
+        },
+        "deliveryNoteRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentNumber": {
+          "confidence": 1,
+          "value": "ZI20-002898113"
+        },
+        "documentReference": {},
+        "documentSeries": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentType": {
+          "confidence": 1,
+          "value": "normal"
+        },
+        "dues": {
+          "amount": {
+            "confidence": 0,
+            "value": null
+          },
+          "date": {
+            "confidence": 1,
+            "value": "2023-01-31"
+          }
+        },
+        "exchangeRate": {},
+        "incoterms": {
+          "confidence": 0,
+          "value": null
+        },
+        "invoiceRef": {
+          "confidence": 0,
+          "value": ""
+        },
+        "isCreditNote": {},
+        "issueDate": {
+          "confidence": 1,
+          "value": "2023-01-31"
+        },
+        "issuerAddress": {
+          "confidence": 1,
+          "value": "Avenida de Am\u00e9rica 115, 28042, Madrid"
+        },
+        "issuerAddressDetails": {
+          "confidence": 1,
+          "value": {
+            "addressNumber": "115",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Alameda de Osuna",
+            "postalCode": "28042",
+            "region": "Comunidad de Madrid",
+            "street": "Avenida de Am\u00e9rica",
+            "subRegion": "Madrid",
+            "text": "Avenida de Am\u00e9rica 115, 28042, Alameda de Osuna, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "issuerCountry": {
+          "confidence": 1,
+          "value": "ES"
+        },
+        "issuerEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerName": {
+          "confidence": 0.9318181818181819,
+          "value": "VODAFONE SERVICIOS SLU"
+        },
+        "issuerPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerTaxId": {
+          "confidence": 0.9318181818181819,
+          "value": "ESB87539284"
+        },
+        "issuerWebsite": {
+          "confidence": 1,
+          "value": "vodafone.es"
+        },
+        "language": {
+          "confidence": 1,
+          "value": "es"
+        },
+        "legalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "lines": {
+          "date": {
+            "confidence": 0,
+            "value": null
+          },
+          "description": {
+            "confidence": 1,
+            "value": "Vodafone One Ilimitada Super (Fibra 600Mb) (681166545 - 912873472) Jun. a 21 Jul.)"
+          },
+          "discountAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "discountRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossUnitPrice": {
+            "confidence": 1,
+            "value": 70.24
+          },
+          "group": {
+            "confidence": 0,
+            "value": ""
+          },
+          "identifier": {
+            "confidence": 0,
+            "value": ""
+          },
+          "quantity": {
+            "confidence": 1,
+            "value": 0.82
+          },
+          "taxAmount": {
+            "confidence": 0.85625,
+            "value": 12.15
+          },
+          "taxBaseAmount": {
+            "confidence": 1,
+            "value": 57.84
+          },
+          "taxBaseUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "taxRate": {
+            "confidence": 0.7125,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.928125,
+            "value": 69.99
+          },
+          "totalUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "unitOfMeasurement": {
+            "confidence": 0,
+            "value": ""
+          }
+        },
+        "meterNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "numberFormat": {
+          "confidence": 1,
+          "value": [
+            ".,"
+          ]
+        },
+        "orderRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "paymentMethod": {
+          "confidence": 1,
+          "value": "Domiciliaci\u00f3n bancaria"
+        },
+        "paymentTerms": {
+          "confidence": 0,
+          "value": null
+        },
+        "readings": {
+          "current": {
+            "confidence": 0,
+            "value": 0
+          },
+          "previous": {
+            "confidence": 0,
+            "value": 0
+          },
+          "usage": {
+            "confidence": 0,
+            "value": 0
+          }
+        },
+        "recipientAddress": {
+          "confidence": 1,
+          "value": "CL BRAVO MURILLO 102 2\u00ba IZ 28020 MADRID MADRID Espa\u00f1a"
+        },
+        "recipientAddressDetails": {
+          "confidence": 0.9909,
+          "value": {
+            "addressNumber": "102",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Cuatro Caminos",
+            "postalCode": "28020",
+            "region": "Comunidad de Madrid",
+            "street": "Calle de Bravo Murillo",
+            "subRegion": "Madrid",
+            "text": "Calle de Bravo Murillo 102, 28020, Cuatro Caminos, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "recipientCountry": {
+          "confidence": 0.9909,
+          "value": "ES"
+        },
+        "recipientEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientName": {
+          "confidence": 1,
+          "value": "EXAMPLE CORP SL"
+        },
+        "recipientPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientTaxId": {
+          "confidence": 1,
+          "value": "ESB87334876"
+        },
+        "recipientWebsite": {
+          "confidence": 0,
+          "value": null
+        },
+        "reimbursableExpensesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "seriesCode": {
+          "confidence": 0,
+          "value": ""
+        },
+        "serviceAddress": {
+          "confidence": 0,
+          "values": ""
+        },
+        "shippingAddress": {
+          "confidence": 0,
+          "value": null
+        },
+        "supplyNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "taxClass": {
+          "confidence": 1,
+          "value": "IGIC"
+        },
+        "totalAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalDiscountAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalDueAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalFeesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalGrossAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 20.91
+        },
+        "totalTaxBaseAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalUsage": {
+          "confidence": 0,
+          "value": "0,"
+        },
+        "usageUnitOfMeasurement": {
+          "confidence": 0,
+          "value": 0
+        },
+        "withholdingTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "withholdingTaxRate": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        }
+      },
+      "publicState": "approved",
+      "confidence": "high",
+      "validationInfo": {
+        "errors": []
+      },
+      "approvalInfo": {
+        "beginning": "2024-01-15T09:30:00Z",
+        "result": "approved",
+        "steps": []
+      },
+      "import": {
+        "_id": "000000000000000000000003"
+      },
+      "exports": [],
+      "deleted": true,
+      "user": null
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/change-the-type-of-a-document"
+  },
+  "DELETE /companies/{id}": {
+    "body": {},
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/companies/delete-a-company"
+  },
+  "PUT /companies/{id}/clients/{clientId}": {
+    "body": {
+      "result": {
+        "_id": "string",
+        "account": "string",
+        "environment": "string",
+        "company": "string",
+        "name": "string",
+        "countryCode": "string",
+        "taxId": "string",
+        "type": "client",
+        "state": "pending"
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/clients/modify-a-client"
+  },
+  "GET /companies": {
+    "body": {
+      "result": [
+        {
+          "_id": "string",
+          "account": "string",
+          "environment": "string",
+          "name": "string",
+          "countryCode": "string",
+          "taxId": "string",
+          "data": {
+            "custom": {}
+          },
+          "clientData": {}
+        }
+      ],
+      "count": 1.1
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/companies/retrieve-a-list-of-managed-companies"
+  },
+  "GET /v1/ingest/imports/{importId}": {
+    "body": {
+      "id": "000000000000000000000011",
+      "accountId": "507f1f77bcf86cd799439011",
+      "environmentId": "507f1f77bcf86cd799439012",
+      "channel": "upload",
+      "status": "processed",
+      "createdAt": "2023-10-15T10:30:00.000Z",
+      "documents": 42,
+      "files": [
+        {
+          "id": "000000000000000000000011",
+          "accountId": "00000000000000000000000f",
+          "environmentId": "000000000000000000000010",
+          "importId": "00000000000000000000000c",
+          "filename": "invoice.pdf",
+          "compressed": false,
+          "status": "processed",
+          "mimeType": "application/pdf",
+          "companyId": "000000000000000000000007",
+          "parentFileId": "000000000000000000000011",
+          "documentIds": [
+            "00000000000000000000000d",
+            "00000000000000000000000e"
+          ],
+          "error": "ERR_UNSUPPORTED_FILE_FORMAT",
+          "createdAt": "2024-09-26T10:30:00.000Z",
+          "updatedAt": "2024-09-26T10:35:00.000Z",
+          "clientData": {
+            "invofoxAccountName": "company-name",
+            "invofoxCompanyId": "12345",
+            "userId": "507f1f77bcf86cd799439015"
+          }
+        }
+      ],
+      "clientData": {
+        "invofoxAccountName": "company-name",
+        "invofoxCompanyId": "12345",
+        "userId": "507f1f77bcf86cd799439015"
+      },
+      "providerInfo": {}
+    },
+    "source": "https://developers.invofox.com/api-reference/ingest-reference/imports/get-import-controller-get-import"
+  },
+  "POST /companies/{id}/clients": {
+    "body": {
+      "result": {
+        "_id": "string",
+        "account": "string",
+        "environment": "string",
+        "company": "string",
+        "name": "string",
+        "countryCode": "string",
+        "taxId": "string",
+        "type": "client",
+        "state": "pending"
+      }
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/clients/create-a-new-client"
+  },
+  "PUT /documents/{id}/publicState": {
+    "body": {
+      "_id": "000000000000000000000001",
+      "company": "000000000000000000000002",
+      "clientData": {},
+      "type": "invoice",
+      "name": "Invoice_INVCZ4761199.pdf",
+      "isGroundTruth": false,
+      "creation": "2022-04-11T14:44:22.785Z",
+      "images": [
+        "https://storage.example.com/invoices/images/000000000000000000000004-1.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-2.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-3.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-4.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-5.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-6.png"
+      ],
+      "original": "https://storage.example.com/invoices/originals/000000000000000000000001",
+      "mimetype": "application/pdf",
+      "data": {
+        "IBAN": {},
+        "SWIFT": {},
+        "additionalChargesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalData": [
+          {
+            "_id": {
+              "$oid": "000000000000000000000005",
+              "values": {}
+            }
+          }
+        ],
+        "additionalDataMode": "global",
+        "additionalDiscountsAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountName": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankRoutingNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankSortCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "breakdowns": {
+          "REAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "RERate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "grossAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 20.91
+          },
+          "taxBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxRate": {
+            "confidence": 0.7916666666666666,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 120.47
+          }
+        },
+        "clientCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "companyActsLike": {
+          "confidence": 1,
+          "value": "recipient"
+        },
+        "contractRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "currency": {
+          "confidence": 1,
+          "value": "EUR"
+        },
+        "deliveryNoteRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentNumber": {
+          "confidence": 1,
+          "value": "ZI20-002898113"
+        },
+        "documentReference": {},
+        "documentSeries": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentType": {
+          "confidence": 1,
+          "value": "normal"
+        },
+        "dues": {
+          "amount": {
+            "confidence": 0,
+            "value": null
+          },
+          "date": {
+            "confidence": 1,
+            "value": "2023-01-31"
+          }
+        },
+        "exchangeRate": {},
+        "incoterms": {
+          "confidence": 0,
+          "value": null
+        },
+        "invoiceRef": {
+          "confidence": 0,
+          "value": ""
+        },
+        "isCreditNote": {},
+        "issueDate": {
+          "confidence": 1,
+          "value": "2023-01-31"
+        },
+        "issuerAddress": {
+          "confidence": 1,
+          "value": "Avenida de Am\u00e9rica 115, 28042, Madrid"
+        },
+        "issuerAddressDetails": {
+          "confidence": 1,
+          "value": {
+            "addressNumber": "115",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Alameda de Osuna",
+            "postalCode": "28042",
+            "region": "Comunidad de Madrid",
+            "street": "Avenida de Am\u00e9rica",
+            "subRegion": "Madrid",
+            "text": "Avenida de Am\u00e9rica 115, 28042, Alameda de Osuna, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "issuerCountry": {
+          "confidence": 1,
+          "value": "ES"
+        },
+        "issuerEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerName": {
+          "confidence": 0.9318181818181819,
+          "value": "VODAFONE SERVICIOS SLU"
+        },
+        "issuerPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerTaxId": {
+          "confidence": 0.9318181818181819,
+          "value": "ESB87539284"
+        },
+        "issuerWebsite": {
+          "confidence": 1,
+          "value": "vodafone.es"
+        },
+        "language": {
+          "confidence": 1,
+          "value": "es"
+        },
+        "legalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "lines": {
+          "date": {
+            "confidence": 0,
+            "value": null
+          },
+          "description": {
+            "confidence": 1,
+            "value": "Vodafone One Ilimitada Super (Fibra 600Mb) (681166545 - 912873472) Jun. a 21 Jul.)"
+          },
+          "discountAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "discountRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossUnitPrice": {
+            "confidence": 1,
+            "value": 70.24
+          },
+          "group": {
+            "confidence": 0,
+            "value": ""
+          },
+          "identifier": {
+            "confidence": 0,
+            "value": ""
+          },
+          "quantity": {
+            "confidence": 1,
+            "value": 0.82
+          },
+          "taxAmount": {
+            "confidence": 0.85625,
+            "value": 12.15
+          },
+          "taxBaseAmount": {
+            "confidence": 1,
+            "value": 57.84
+          },
+          "taxBaseUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "taxRate": {
+            "confidence": 0.7125,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.928125,
+            "value": 69.99
+          },
+          "totalUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "unitOfMeasurement": {
+            "confidence": 0,
+            "value": ""
+          }
+        },
+        "meterNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "numberFormat": {
+          "confidence": 1,
+          "value": [
+            ".,"
+          ]
+        },
+        "orderRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "paymentMethod": {
+          "confidence": 1,
+          "value": "Domiciliaci\u00f3n bancaria"
+        },
+        "paymentTerms": {
+          "confidence": 0,
+          "value": null
+        },
+        "readings": {
+          "current": {
+            "confidence": 0,
+            "value": 0
+          },
+          "previous": {
+            "confidence": 0,
+            "value": 0
+          },
+          "usage": {
+            "confidence": 0,
+            "value": 0
+          }
+        },
+        "recipientAddress": {
+          "confidence": 1,
+          "value": "CL BRAVO MURILLO 102 2\u00ba IZ 28020 MADRID MADRID Espa\u00f1a"
+        },
+        "recipientAddressDetails": {
+          "confidence": 0.9909,
+          "value": {
+            "addressNumber": "102",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Cuatro Caminos",
+            "postalCode": "28020",
+            "region": "Comunidad de Madrid",
+            "street": "Calle de Bravo Murillo",
+            "subRegion": "Madrid",
+            "text": "Calle de Bravo Murillo 102, 28020, Cuatro Caminos, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "recipientCountry": {
+          "confidence": 0.9909,
+          "value": "ES"
+        },
+        "recipientEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientName": {
+          "confidence": 1,
+          "value": "EXAMPLE CORP SL"
+        },
+        "recipientPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientTaxId": {
+          "confidence": 1,
+          "value": "ESB87334876"
+        },
+        "recipientWebsite": {
+          "confidence": 0,
+          "value": null
+        },
+        "reimbursableExpensesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "seriesCode": {
+          "confidence": 0,
+          "value": ""
+        },
+        "serviceAddress": {
+          "confidence": 0,
+          "values": ""
+        },
+        "shippingAddress": {
+          "confidence": 0,
+          "value": null
+        },
+        "supplyNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "taxClass": {
+          "confidence": 1,
+          "value": "IGIC"
+        },
+        "totalAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalDiscountAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalDueAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalFeesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalGrossAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 20.91
+        },
+        "totalTaxBaseAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalUsage": {
+          "confidence": 0,
+          "value": "0,"
+        },
+        "usageUnitOfMeasurement": {
+          "confidence": 0,
+          "value": 0
+        },
+        "withholdingTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "withholdingTaxRate": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        }
+      },
+      "publicState": "approved",
+      "confidence": "high",
+      "validationInfo": {
+        "errors": []
+      },
+      "approvalInfo": {
+        "beginning": "2024-01-15T09:30:00Z",
+        "result": "approved",
+        "steps": []
+      },
+      "import": {
+        "_id": "000000000000000000000003"
+      },
+      "exports": [],
+      "deleted": true,
+      "user": null
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/change-the-public-state-of-a-document"
+  },
+  "GET /documents/{id}": {
+    "body": {
+      "_id": "000000000000000000000001",
+      "company": "000000000000000000000002",
+      "clientData": {},
+      "type": "invoice",
+      "name": "Invoice_INVCZ4761199.pdf",
+      "isGroundTruth": false,
+      "creation": "2022-04-11T14:44:22.785Z",
+      "images": [
+        "https://storage.example.com/invoices/images/000000000000000000000004-1.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-2.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-3.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-4.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-5.png",
+        "https://storage.example.com/invoices/images/000000000000000000000004-6.png"
+      ],
+      "original": "https://storage.example.com/invoices/originals/000000000000000000000001",
+      "mimetype": "application/pdf",
+      "data": {
+        "IBAN": {},
+        "SWIFT": {},
+        "additionalChargesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalData": [
+          {
+            "_id": {
+              "$oid": "000000000000000000000005",
+              "values": {}
+            }
+          }
+        ],
+        "additionalDataMode": "global",
+        "additionalDiscountsAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "additionalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountName": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankAccountNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankRoutingNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "bankSortCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "breakdowns": {
+          "REAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "RERate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "discountRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "feesRate": {
+            "confidence": 0.7916666666666666,
+            "value": 0
+          },
+          "grossAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 20.91
+          },
+          "taxBaseAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 99.56
+          },
+          "taxRate": {
+            "confidence": 0.7916666666666666,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.7916666666666666,
+            "value": 120.47
+          }
+        },
+        "clientCode": {
+          "confidence": 0,
+          "value": null
+        },
+        "companyActsLike": {
+          "confidence": 1,
+          "value": "recipient"
+        },
+        "contractRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "currency": {
+          "confidence": 1,
+          "value": "EUR"
+        },
+        "deliveryNoteRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentNumber": {
+          "confidence": 1,
+          "value": "ZI20-002898113"
+        },
+        "documentReference": {},
+        "documentSeries": {
+          "confidence": 0,
+          "value": null
+        },
+        "documentType": {
+          "confidence": 1,
+          "value": "normal"
+        },
+        "dues": {
+          "amount": {
+            "confidence": 0,
+            "value": null
+          },
+          "date": {
+            "confidence": 1,
+            "value": "2023-01-31"
+          }
+        },
+        "exchangeRate": {},
+        "incoterms": {
+          "confidence": 0,
+          "value": null
+        },
+        "invoiceRef": {
+          "confidence": 0,
+          "value": ""
+        },
+        "isCreditNote": {},
+        "issueDate": {
+          "confidence": 1,
+          "value": "2023-01-31"
+        },
+        "issuerAddress": {
+          "confidence": 1,
+          "value": "Avenida de Am\u00e9rica 115, 28042, Madrid"
+        },
+        "issuerAddressDetails": {
+          "confidence": 1,
+          "value": {
+            "addressNumber": "115",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Alameda de Osuna",
+            "postalCode": "28042",
+            "region": "Comunidad de Madrid",
+            "street": "Avenida de Am\u00e9rica",
+            "subRegion": "Madrid",
+            "text": "Avenida de Am\u00e9rica 115, 28042, Alameda de Osuna, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "issuerCountry": {
+          "confidence": 1,
+          "value": "ES"
+        },
+        "issuerEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerName": {
+          "confidence": 0.9318181818181819,
+          "value": "VODAFONE SERVICIOS SLU"
+        },
+        "issuerPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "issuerTaxId": {
+          "confidence": 0.9318181818181819,
+          "value": "ESB87539284"
+        },
+        "issuerWebsite": {
+          "confidence": 1,
+          "value": "vodafone.es"
+        },
+        "language": {
+          "confidence": 1,
+          "value": "es"
+        },
+        "legalNotes": {
+          "confidence": 0,
+          "value": null
+        },
+        "lines": {
+          "date": {
+            "confidence": 0,
+            "value": null
+          },
+          "description": {
+            "confidence": 1,
+            "value": "Vodafone One Ilimitada Super (Fibra 600Mb) (681166545 - 912873472) Jun. a 21 Jul.)"
+          },
+          "discountAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "discountRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "feesRate": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossAmount": {
+            "confidence": 0,
+            "value": null
+          },
+          "grossUnitPrice": {
+            "confidence": 1,
+            "value": 70.24
+          },
+          "group": {
+            "confidence": 0,
+            "value": ""
+          },
+          "identifier": {
+            "confidence": 0,
+            "value": ""
+          },
+          "quantity": {
+            "confidence": 1,
+            "value": 0.82
+          },
+          "taxAmount": {
+            "confidence": 0.85625,
+            "value": 12.15
+          },
+          "taxBaseAmount": {
+            "confidence": 1,
+            "value": 57.84
+          },
+          "taxBaseUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "taxRate": {
+            "confidence": 0.7125,
+            "value": 21
+          },
+          "totalAmount": {
+            "confidence": 0.928125,
+            "value": 69.99
+          },
+          "totalUnitPrice": {
+            "confidence": 0,
+            "value": null
+          },
+          "unitOfMeasurement": {
+            "confidence": 0,
+            "value": ""
+          }
+        },
+        "meterNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "numberFormat": {
+          "confidence": 1,
+          "value": [
+            ".,"
+          ]
+        },
+        "orderRef": {
+          "confidence": 0,
+          "value": null
+        },
+        "paymentMethod": {
+          "confidence": 1,
+          "value": "Domiciliaci\u00f3n bancaria"
+        },
+        "paymentTerms": {
+          "confidence": 0,
+          "value": null
+        },
+        "readings": {
+          "current": {
+            "confidence": 0,
+            "value": 0
+          },
+          "previous": {
+            "confidence": 0,
+            "value": 0
+          },
+          "usage": {
+            "confidence": 0,
+            "value": 0
+          }
+        },
+        "recipientAddress": {
+          "confidence": 1,
+          "value": "CL BRAVO MURILLO 102 2\u00ba IZ 28020 MADRID MADRID Espa\u00f1a"
+        },
+        "recipientAddressDetails": {
+          "confidence": 0.9909,
+          "value": {
+            "addressNumber": "102",
+            "country": "ES",
+            "municipality": "Madrid",
+            "neighborhood": "Cuatro Caminos",
+            "postalCode": "28020",
+            "region": "Comunidad de Madrid",
+            "street": "Calle de Bravo Murillo",
+            "subRegion": "Madrid",
+            "text": "Calle de Bravo Murillo 102, 28020, Cuatro Caminos, Madrid, Comunidad de Madrid, ESP"
+          }
+        },
+        "recipientCountry": {
+          "confidence": 0.9909,
+          "value": "ES"
+        },
+        "recipientEmail": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientFax": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientName": {
+          "confidence": 1,
+          "value": "EXAMPLE CORP SL"
+        },
+        "recipientPhoneNumber": {
+          "confidence": 0,
+          "value": null
+        },
+        "recipientTaxId": {
+          "confidence": 1,
+          "value": "ESB87334876"
+        },
+        "recipientWebsite": {
+          "confidence": 0,
+          "value": null
+        },
+        "reimbursableExpensesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "seriesCode": {
+          "confidence": 0,
+          "value": ""
+        },
+        "serviceAddress": {
+          "confidence": 0,
+          "values": ""
+        },
+        "shippingAddress": {
+          "confidence": 0,
+          "value": null
+        },
+        "supplyNumber": {
+          "confidence": 0,
+          "value": 0
+        },
+        "taxClass": {
+          "confidence": 1,
+          "value": "IGIC"
+        },
+        "totalAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalDiscountAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalDueAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 120.47
+        },
+        "totalFeesAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "totalGrossAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 20.91
+        },
+        "totalTaxBaseAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 99.56
+        },
+        "totalUsage": {
+          "confidence": 0,
+          "value": "0,"
+        },
+        "usageUnitOfMeasurement": {
+          "confidence": 0,
+          "value": 0
+        },
+        "withholdingTaxAmount": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        },
+        "withholdingTaxRate": {
+          "confidence": 0.7916666666666666,
+          "value": 0
+        }
+      },
+      "publicState": "approved",
+      "confidence": "high",
+      "validationInfo": {
+        "errors": []
+      },
+      "approvalInfo": {
+        "beginning": "2024-01-15T09:30:00Z",
+        "result": "approved",
+        "steps": []
+      },
+      "import": {
+        "_id": "000000000000000000000003"
+      },
+      "exports": [],
+      "deleted": true,
+      "user": null
+    },
+    "source": "https://developers.invofox.com/api-reference/main-reference/documents/get-document-info"
+  },
+  "DELETE /companies/{id}/clients/{clientId}": {
+    "body": {},
+    "source": "https://developers.invofox.com/api-reference/main-reference/collections/clients/delete-client"
+  }
+}

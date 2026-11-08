@@ -1,0 +1,1263 @@
+{
+  "$defs": {
+    "BatchFile": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "HTTPS URL of the file Invofox should download.",
+          "title": "Url",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PerFileMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BatchFile",
+      "type": "object"
+    },
+    "ChangeDocumentState": {
+      "additionalProperties": false,
+      "description": "Change the document's public review or export state.",
+      "properties": {
+        "document_id": {
+          "description": "Invofox document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "change_document_state",
+          "default": "change_document_state",
+          "title": "Operation",
+          "type": "string"
+        },
+        "public_state": {
+          "enum": [
+            "pendingCorrection",
+            "discarded",
+            "approved",
+            "exported"
+          ],
+          "title": "Public State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "public_state"
+      ],
+      "title": "ChangeDocumentState",
+      "type": "object"
+    },
+    "ChangeDocumentType": {
+      "additionalProperties": false,
+      "description": "Set the document type by ID or environment alias.",
+      "properties": {
+        "document_id": {
+          "description": "Invofox document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "change_document_type",
+          "default": "change_document_type",
+          "title": "Operation",
+          "type": "string"
+        },
+        "document_type": {
+          "description": "Document type ID or alias, such as invoice or receipt.",
+          "minLength": 1,
+          "title": "Document Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "document_type"
+      ],
+      "title": "ChangeDocumentType",
+      "type": "object"
+    },
+    "CreateClient": {
+      "additionalProperties": false,
+      "description": "Create a client linked to a company.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string"
+        },
+        "country_code": {
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "country_code",
+        "name"
+      ],
+      "title": "CreateClient",
+      "type": "object"
+    },
+    "CreateCompany": {
+      "additionalProperties": false,
+      "description": "Create a managed company.",
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "tax_id": {
+          "description": "Tax ID number.",
+          "minLength": 1,
+          "title": "Tax Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Business name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string"
+        },
+        "client_data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Data"
+        }
+      },
+      "required": [
+        "country_code",
+        "tax_id",
+        "name"
+      ],
+      "title": "CreateCompany",
+      "type": "object"
+    },
+    "CreateProvider": {
+      "additionalProperties": false,
+      "description": "Create a provider linked to a company.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "tax_id": {
+          "description": "Tax ID number.",
+          "minLength": 1,
+          "title": "Tax Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Business name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_provider",
+          "default": "create_provider",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "country_code",
+        "tax_id",
+        "name"
+      ],
+      "title": "CreateProvider",
+      "type": "object"
+    },
+    "DeleteClient": {
+      "additionalProperties": false,
+      "description": "Delete the selected client from a company.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_client",
+          "default": "delete_client",
+          "title": "Operation",
+          "type": "string"
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "client_id"
+      ],
+      "title": "DeleteClient",
+      "type": "object"
+    },
+    "DeleteCompany": {
+      "additionalProperties": false,
+      "description": "Delete the selected managed company.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_company",
+          "default": "delete_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "DeleteCompany",
+      "type": "object"
+    },
+    "DeleteProvider": {
+      "additionalProperties": false,
+      "description": "Delete the selected provider from a company.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_provider",
+          "default": "delete_provider",
+          "title": "Operation",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "provider_id"
+      ],
+      "title": "DeleteProvider",
+      "type": "object"
+    },
+    "FileMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "useSplitter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usesplitter"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required unless the environment has a classifier or default type.",
+          "title": "Type"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        },
+        "clientData": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientdata"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company context applies to the whole batch.",
+          "title": "Company"
+        }
+      },
+      "title": "FileMetadata",
+      "type": "object"
+    },
+    "GetDocument": {
+      "additionalProperties": false,
+      "description": "Get structured extraction data and processing state for one document.",
+      "properties": {
+        "document_id": {
+          "description": "Invofox document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocument",
+      "type": "object"
+    },
+    "GetDocumentOCR": {
+      "additionalProperties": false,
+      "description": "Get OCR geometry and text per page.",
+      "properties": {
+        "document_id": {
+          "description": "Invofox document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document_ocr",
+          "default": "get_document_ocr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocumentOCR",
+      "type": "object"
+    },
+    "GetDocumentText": {
+      "additionalProperties": false,
+      "description": "Get plain OCR text per page.",
+      "properties": {
+        "document_id": {
+          "description": "Invofox document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document_text",
+          "default": "get_document_text",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocumentText",
+      "type": "object"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "description": "Get file status and extracted document IDs.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetImport": {
+      "additionalProperties": false,
+      "description": "Get import progress, files and extracted document count.",
+      "properties": {
+        "operation": {
+          "const": "get_import",
+          "default": "get_import",
+          "title": "Operation",
+          "type": "string"
+        },
+        "import_id": {
+          "minLength": 1,
+          "title": "Import Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "title": "GetImport",
+      "type": "object"
+    },
+    "InvofoxAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "invofox_api_key",
+          "default": "invofox_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Invofox API Key",
+      "type": "object",
+      "x-credential-instructions": "In Invofox, open your environment's API and Webhooks and create or copy an API key. Paste the key here. The key selects the account and environment; NoClick sends it in the x-api-key header.",
+      "x-credential-url": "https://app.invofox.com/"
+    },
+    "ListClients": {
+      "additionalProperties": false,
+      "description": "Read clients linked to a company; this endpoint has no paging parameters.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ListClients",
+      "type": "object"
+    },
+    "ListCompanies": {
+      "additionalProperties": false,
+      "description": "Read a page of companies managed by this account.",
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListCompanies",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "additionalProperties": false,
+      "description": "Read a page of documents, optionally filtering the extracted fields.",
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded Invofox document filter.",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded sort expression.",
+          "title": "Sort"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document fields to select.",
+          "title": "Select"
+        }
+      },
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListImports": {
+      "additionalProperties": false,
+      "description": "Read one page of imports for this environment.",
+      "properties": {
+        "operation": {
+          "const": "list_imports",
+          "default": "list_imports",
+          "title": "Operation",
+          "type": "string"
+        },
+        "environment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Id"
+        },
+        "skip": {
+          "default": 0,
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 5,
+          "maximum": 15,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListImports",
+      "type": "object"
+    },
+    "ListProviders": {
+      "additionalProperties": false,
+      "description": "Read a page of providers linked to a company.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_providers",
+          "default": "list_providers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ListProviders",
+      "type": "object"
+    },
+    "PerFileMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "useSplitter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usesplitter"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        },
+        "clientData": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientdata"
+        }
+      },
+      "title": "PerFileMetadata",
+      "type": "object"
+    },
+    "UpdateClient": {
+      "additionalProperties": false,
+      "description": "Update the selected client's business details.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "tax_id": {
+          "description": "Tax ID number.",
+          "minLength": 1,
+          "title": "Tax Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Business name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string"
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "country_code",
+        "tax_id",
+        "name",
+        "client_id"
+      ],
+      "title": "UpdateClient",
+      "type": "object"
+    },
+    "UpdateCompany": {
+      "additionalProperties": false,
+      "description": "Replace the company name, country and tax ID.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "tax_id": {
+          "description": "Tax ID number.",
+          "minLength": 1,
+          "title": "Tax Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Business name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "country_code",
+        "tax_id",
+        "name"
+      ],
+      "title": "UpdateCompany",
+      "type": "object"
+    },
+    "UpdateDocument": {
+      "additionalProperties": false,
+      "description": "Correct extracted values or merge custom client metadata.",
+      "properties": {
+        "document_id": {
+          "description": "Invofox document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Corrected fields, each containing a string value, e.g. {\"invoiceNumber\": {\"value\": \"INV-001\"}}.",
+          "title": "Data"
+        },
+        "client_data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metadata merged recursively; arrays replace, null values are stored, omitted keys remain.",
+          "title": "Client Data"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "UpdateDocument",
+      "type": "object"
+    },
+    "UpdateProvider": {
+      "additionalProperties": false,
+      "description": "Update the selected provider's business details.",
+      "properties": {
+        "company_id": {
+          "description": "Invofox company ID.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "tax_id": {
+          "description": "Tax ID number.",
+          "minLength": 1,
+          "title": "Tax Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Business name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_provider",
+          "default": "update_provider",
+          "title": "Operation",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "country_code",
+        "tax_id",
+        "name",
+        "provider_id"
+      ],
+      "title": "UpdateProvider",
+      "type": "object"
+    },
+    "UploadFilesByURL": {
+      "additionalProperties": false,
+      "description": "Queue files for download and processing, with batch company context.",
+      "properties": {
+        "operation": {
+          "const": "upload_files_by_url",
+          "default": "upload_files_by_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/BatchFile"
+          },
+          "minItems": 1,
+          "title": "Files",
+          "type": "array"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "title": "UploadFilesByURL",
+      "type": "object"
+    },
+    "UploadSingleByURL": {
+      "additionalProperties": false,
+      "description": "Queue a single document without splitting (deprecated by Invofox; prefer batch URL upload).",
+      "properties": {
+        "url": {
+          "description": "HTTPS URL of the file Invofox should download.",
+          "title": "Url",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "operation": {
+          "const": "upload_single_by_url",
+          "default": "upload_single_by_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "UploadSingleByURL",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "change_document_state": "#/$defs/ChangeDocumentState",
+          "change_document_type": "#/$defs/ChangeDocumentType",
+          "create_client": "#/$defs/CreateClient",
+          "create_company": "#/$defs/CreateCompany",
+          "create_provider": "#/$defs/CreateProvider",
+          "delete_client": "#/$defs/DeleteClient",
+          "delete_company": "#/$defs/DeleteCompany",
+          "delete_provider": "#/$defs/DeleteProvider",
+          "get_document": "#/$defs/GetDocument",
+          "get_document_ocr": "#/$defs/GetDocumentOCR",
+          "get_document_text": "#/$defs/GetDocumentText",
+          "get_file": "#/$defs/GetFile",
+          "get_import": "#/$defs/GetImport",
+          "list_clients": "#/$defs/ListClients",
+          "list_companies": "#/$defs/ListCompanies",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_imports": "#/$defs/ListImports",
+          "list_providers": "#/$defs/ListProviders",
+          "update_client": "#/$defs/UpdateClient",
+          "update_company": "#/$defs/UpdateCompany",
+          "update_document": "#/$defs/UpdateDocument",
+          "update_provider": "#/$defs/UpdateProvider",
+          "upload_files_by_url": "#/$defs/UploadFilesByURL",
+          "upload_single_by_url": "#/$defs/UploadSingleByURL"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocument"
+        },
+        {
+          "$ref": "#/$defs/UpdateDocument"
+        },
+        {
+          "$ref": "#/$defs/GetDocumentOCR"
+        },
+        {
+          "$ref": "#/$defs/GetDocumentText"
+        },
+        {
+          "$ref": "#/$defs/ChangeDocumentType"
+        },
+        {
+          "$ref": "#/$defs/ChangeDocumentState"
+        },
+        {
+          "$ref": "#/$defs/ListCompanies"
+        },
+        {
+          "$ref": "#/$defs/CreateCompany"
+        },
+        {
+          "$ref": "#/$defs/UpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/DeleteCompany"
+        },
+        {
+          "$ref": "#/$defs/ListProviders"
+        },
+        {
+          "$ref": "#/$defs/CreateProvider"
+        },
+        {
+          "$ref": "#/$defs/UpdateProvider"
+        },
+        {
+          "$ref": "#/$defs/DeleteProvider"
+        },
+        {
+          "$ref": "#/$defs/ListClients"
+        },
+        {
+          "$ref": "#/$defs/CreateClient"
+        },
+        {
+          "$ref": "#/$defs/UpdateClient"
+        },
+        {
+          "$ref": "#/$defs/DeleteClient"
+        },
+        {
+          "$ref": "#/$defs/UploadFilesByURL"
+        },
+        {
+          "$ref": "#/$defs/UploadSingleByURL"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/ListImports"
+        },
+        {
+          "$ref": "#/$defs/GetImport"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InvofoxAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Invofox Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
