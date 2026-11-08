@@ -1,0 +1,1056 @@
+{
+  "$defs": {
+    "Contact": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedin Url"
+        },
+        "enrich_fields": {
+          "items": {
+            "enum": [
+              "contact.work_emails",
+              "contact.personal_emails",
+              "contact.phones"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Enrich Fields",
+          "type": "array"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "maxProperties": 10,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom"
+        }
+      },
+      "required": [
+        "enrich_fields"
+      ],
+      "title": "Contact",
+      "type": "object"
+    },
+    "CreateSubAccount": {
+      "additionalProperties": false,
+      "description": "Create a named sub-account within the workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_sub_account",
+          "default": "create_sub_account",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateSubAccount",
+      "type": "object"
+    },
+    "EnrichContacts": {
+      "additionalProperties": false,
+      "description": "Start an asynchronous contact enrichment batch.",
+      "properties": {
+        "name": {
+          "description": "Batch name shown in FullEnrich",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url"
+        },
+        "webhook_events": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WebhookEvents"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "silent_fail": {
+          "default": false,
+          "description": "Skip invalid contacts instead of failing the entire batch",
+          "title": "Silent Fail",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "enrich_contacts",
+          "default": "enrich_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "data"
+      ],
+      "title": "EnrichContacts",
+      "type": "object"
+    },
+    "FullenrichAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "fullenrich_api_key",
+          "default": "fullenrich_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Fullenrich API Key",
+      "type": "object",
+      "x-credential-instructions": "In FullEnrich, open API and copy an API key. Paste the key here without the Bearer prefix. NoClick verifies the key by reading its workspace ID.",
+      "x-credential-url": "https://app.fullenrich.com/app/api"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Read the current spendable credit balance.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetEnrichment": {
+      "additionalProperties": false,
+      "description": "Fetch the status and results of a contact enrichment batch.",
+      "properties": {
+        "enrichment_id": {
+          "description": "enrichment_id returned by the batch creation operation",
+          "format": "uuid",
+          "title": "Enrichment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_enrichment",
+          "default": "get_enrichment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "force_results": {
+          "default": false,
+          "description": "Return partial results even before the batch finishes",
+          "title": "Force Results",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enrichment_id"
+      ],
+      "title": "GetEnrichment",
+      "type": "object"
+    },
+    "GetReverseLookup": {
+      "additionalProperties": false,
+      "description": "Fetch a reverse email lookup batch and its profiles.",
+      "properties": {
+        "enrichment_id": {
+          "description": "enrichment_id returned by the batch creation operation",
+          "format": "uuid",
+          "title": "Enrichment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_reverse_lookup",
+          "default": "get_reverse_lookup",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enrichment_id"
+      ],
+      "title": "GetReverseLookup",
+      "type": "object"
+    },
+    "GetSubAccount": {
+      "additionalProperties": false,
+      "description": "Read one sub-account.",
+      "properties": {
+        "sub_account_id": {
+          "format": "uuid",
+          "title": "Sub Account Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sub_account",
+          "default": "get_sub_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sub_account_id"
+      ],
+      "title": "GetSubAccount",
+      "type": "object"
+    },
+    "ListSubAccounts": {
+      "additionalProperties": false,
+      "description": "List active sub-accounts, optionally including archived accounts.",
+      "properties": {
+        "operation": {
+          "const": "list_sub_accounts",
+          "default": "list_sub_accounts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "archived": {
+          "default": false,
+          "title": "Archived",
+          "type": "boolean"
+        }
+      },
+      "title": "ListSubAccounts",
+      "type": "object"
+    },
+    "LookupCompany": {
+      "additionalProperties": false,
+      "description": "Look up a company by domain or professional network URL/ID.",
+      "properties": {
+        "operation": {
+          "const": "lookup_company",
+          "default": "lookup_company",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "professional_network_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Professional Network Url"
+        },
+        "professional_network_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Professional Network Id"
+        }
+      },
+      "title": "LookupCompany",
+      "type": "object"
+    },
+    "LookupPerson": {
+      "additionalProperties": false,
+      "description": "Look up a person using a professional profile or name and company.",
+      "properties": {
+        "operation": {
+          "const": "lookup_person",
+          "default": "lookup_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "person_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Name"
+        },
+        "person_professional_network_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Professional Network Url"
+        },
+        "person_professional_network_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Professional Network Id"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Domain"
+        },
+        "company_professional_network_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Professional Network Url"
+        },
+        "company_professional_network_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Professional Network Id"
+        }
+      },
+      "title": "LookupPerson",
+      "type": "object"
+    },
+    "RangeFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max"
+        },
+        "exclude": {
+          "default": false,
+          "title": "Exclude",
+          "type": "boolean"
+        }
+      },
+      "title": "RangeFilter",
+      "type": "object"
+    },
+    "ReverseContact": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "maxProperties": 10,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ReverseContact",
+      "type": "object"
+    },
+    "ReverseEmails": {
+      "additionalProperties": false,
+      "description": "Start an asynchronous reverse lookup from email addresses.",
+      "properties": {
+        "name": {
+          "description": "Batch name shown in FullEnrich",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url"
+        },
+        "webhook_events": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WebhookEvents"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "silent_fail": {
+          "default": false,
+          "description": "Skip invalid contacts instead of failing the entire batch",
+          "title": "Silent Fail",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "reverse_emails",
+          "default": "reverse_emails",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "$ref": "#/$defs/ReverseContact"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "data"
+      ],
+      "title": "ReverseEmails",
+      "type": "object"
+    },
+    "SearchCompanies": {
+      "additionalProperties": false,
+      "description": "Search company profiles; returns one page and metadata for continuation.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy metadata.search_after from the previous response to continue beyond 10,000 results",
+          "title": "Search After"
+        },
+        "operation": {
+          "const": "search_companies",
+          "default": "search_companies",
+          "title": "Operation",
+          "type": "string"
+        },
+        "names": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Names"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domains"
+        },
+        "industries": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industries"
+        },
+        "technologies": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Technologies"
+        },
+        "headquarters_locations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headquarters Locations"
+        },
+        "headcounts": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/RangeFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headcounts"
+        }
+      },
+      "title": "SearchCompanies",
+      "type": "object"
+    },
+    "SearchPeople": {
+      "additionalProperties": false,
+      "description": "Search prospect profiles; returns one page and metadata for continuation.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy metadata.search_after from the previous response to continue beyond 10,000 results",
+          "title": "Search After"
+        },
+        "operation": {
+          "const": "search_people",
+          "default": "search_people",
+          "title": "Operation",
+          "type": "string"
+        },
+        "person_names": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Names"
+        },
+        "person_locations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Locations"
+        },
+        "current_company_names": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Company Names"
+        },
+        "current_company_domains": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Company Domains"
+        },
+        "current_company_industries": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Company Industries"
+        },
+        "current_company_headcounts": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/RangeFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Company Headcounts"
+        },
+        "current_position_titles": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TextFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Position Titles"
+        }
+      },
+      "title": "SearchPeople",
+      "type": "object"
+    },
+    "TextFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "exact_match": {
+          "default": false,
+          "title": "Exact Match",
+          "type": "boolean"
+        },
+        "exclude": {
+          "default": false,
+          "title": "Exclude",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextFilter",
+      "type": "object"
+    },
+    "UpdateSubAccount": {
+      "additionalProperties": false,
+      "description": "Rename, archive or restore a sub-account.",
+      "properties": {
+        "sub_account_id": {
+          "format": "uuid",
+          "title": "Sub Account Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_sub_account",
+          "default": "update_sub_account",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        }
+      },
+      "required": [
+        "sub_account_id"
+      ],
+      "title": "UpdateSubAccount",
+      "type": "object"
+    },
+    "VerifyKey": {
+      "additionalProperties": false,
+      "description": "Read the workspace associated with this API key.",
+      "properties": {
+        "operation": {
+          "const": "verify_api_key",
+          "default": "verify_api_key",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "VerifyKey",
+      "type": "object"
+    },
+    "WebhookEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_finished": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Finished"
+        }
+      },
+      "title": "WebhookEvents",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_sub_account": "#/$defs/CreateSubAccount",
+          "enrich_contacts": "#/$defs/EnrichContacts",
+          "get_credits": "#/$defs/GetCredits",
+          "get_enrichment": "#/$defs/GetEnrichment",
+          "get_reverse_lookup": "#/$defs/GetReverseLookup",
+          "get_sub_account": "#/$defs/GetSubAccount",
+          "list_sub_accounts": "#/$defs/ListSubAccounts",
+          "lookup_company": "#/$defs/LookupCompany",
+          "lookup_person": "#/$defs/LookupPerson",
+          "reverse_emails": "#/$defs/ReverseEmails",
+          "search_companies": "#/$defs/SearchCompanies",
+          "search_people": "#/$defs/SearchPeople",
+          "update_sub_account": "#/$defs/UpdateSubAccount",
+          "verify_api_key": "#/$defs/VerifyKey"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VerifyKey"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/EnrichContacts"
+        },
+        {
+          "$ref": "#/$defs/GetEnrichment"
+        },
+        {
+          "$ref": "#/$defs/ReverseEmails"
+        },
+        {
+          "$ref": "#/$defs/GetReverseLookup"
+        },
+        {
+          "$ref": "#/$defs/SearchPeople"
+        },
+        {
+          "$ref": "#/$defs/SearchCompanies"
+        },
+        {
+          "$ref": "#/$defs/LookupPerson"
+        },
+        {
+          "$ref": "#/$defs/LookupCompany"
+        },
+        {
+          "$ref": "#/$defs/CreateSubAccount"
+        },
+        {
+          "$ref": "#/$defs/ListSubAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetSubAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubAccount"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FullenrichAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fullenrich Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
