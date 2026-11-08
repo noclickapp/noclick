@@ -1,0 +1,1200 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country_code": {
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "street_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street Address"
+        }
+      },
+      "required": [
+        "country_code"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "AirwallexAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "airwallex_api_key",
+          "default": "airwallex_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "production",
+          "enum": [
+            "production",
+            "sandbox"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when a scoped API key covers multiple accounts. Sent as x-login-as during token creation.",
+          "title": "Target account ID"
+        }
+      },
+      "required": [
+        "client_id",
+        "api_key"
+      ],
+      "title": "Airwallex API Key",
+      "type": "object",
+      "x-credential-instructions": "In Airwallex Settings > Developer > API keys, copy your client ID and API key. Grant the read and write permissions your operations need. Choose the matching production or sandbox environment. NoClick obtains a short-lived access token for each run; connecting reads your global accounts and does not prove write permissions.",
+      "x-credential-url": "https://www.airwallex.com/docs/developer-tools/api/manage-api-keys"
+    },
+    "BalanceHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "page_num": {
+          "default": 0,
+          "description": "Zero-based page number; this operation returns one page.",
+          "minimum": 0,
+          "title": "Page Num",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_balance_history",
+          "default": "list_balance_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "from_post_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Post At"
+        },
+        "to_post_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Post At"
+        }
+      },
+      "title": "BalanceHistory",
+      "type": "object"
+    },
+    "BankDetails": {
+      "additionalProperties": false,
+      "properties": {
+        "account_currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Account Currency",
+          "type": "string"
+        },
+        "account_name": {
+          "minLength": 1,
+          "title": "Account Name",
+          "type": "string"
+        },
+        "bank_country_code": {
+          "pattern": "^[A-Z]{2}$",
+          "title": "Bank Country Code",
+          "type": "string"
+        },
+        "account_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Number"
+        },
+        "iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iban"
+        },
+        "swift_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Swift Code"
+        },
+        "account_routing_type1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Routing Type1"
+        },
+        "account_routing_value1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Routing Value1"
+        },
+        "bank_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Name"
+        }
+      },
+      "required": [
+        "account_currency",
+        "account_name",
+        "bank_country_code"
+      ],
+      "title": "BankDetails",
+      "type": "object"
+    },
+    "Beneficiary": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_type": {
+          "enum": [
+            "COMPANY",
+            "PERSONAL"
+          ],
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "bank_details": {
+          "$ref": "#/$defs/BankDetails"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "entity_type",
+        "bank_details"
+      ],
+      "title": "Beneficiary",
+      "type": "object"
+    },
+    "CancelTransfer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_transfer",
+          "default": "cancel_transfer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CancelTransfer",
+      "type": "object"
+    },
+    "CreateBeneficiary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_beneficiary",
+          "default": "create_beneficiary",
+          "title": "Operation",
+          "type": "string"
+        },
+        "beneficiary": {
+          "$ref": "#/$defs/Beneficiary"
+        },
+        "transfer_methods": {
+          "items": {
+            "enum": [
+              "LOCAL",
+              "SWIFT"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Transfer Methods",
+          "type": "array"
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nickname"
+        }
+      },
+      "required": [
+        "beneficiary",
+        "transfer_methods"
+      ],
+      "title": "CreateBeneficiary",
+      "type": "object"
+    },
+    "CreateTransfer": {
+      "additionalProperties": false,
+      "properties": {
+        "beneficiary_id": {
+          "description": "ID of an existing beneficiary.",
+          "title": "Beneficiary Id",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "Unique idempotency identifier. Reuse it when retrying the same transfer.",
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "transfer_amount": {
+          "description": "Amount in major currency units, as a decimal string.",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Transfer Amount",
+          "type": "string"
+        },
+        "transfer_currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Transfer Currency",
+          "type": "string"
+        },
+        "source_currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Source Currency",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Provider-supported transfer reason, for example travel.",
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "reference": {
+          "description": "Reference shown to the recipient.",
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "transfer_method": {
+          "enum": [
+            "LOCAL",
+            "SWIFT"
+          ],
+          "title": "Transfer Method",
+          "type": "string"
+        },
+        "transfer_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scheduled date, YYYY-MM-DD.",
+          "title": "Transfer Date"
+        },
+        "swift_charge_option": {
+          "anyOf": [
+            {
+              "enum": [
+                "SHARED",
+                "PAYER"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Swift Charge Option",
+          "enum": [
+            "SHARED",
+            "PAYER"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_transfer",
+          "default": "create_transfer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "beneficiary_id",
+        "request_id",
+        "transfer_amount",
+        "transfer_currency",
+        "source_currency",
+        "reason",
+        "reference",
+        "transfer_method"
+      ],
+      "title": "CreateTransfer",
+      "type": "object"
+    },
+    "DeleteBeneficiary": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_beneficiary",
+          "default": "delete_beneficiary",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteBeneficiary",
+      "type": "object"
+    },
+    "GetBeneficiary": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_beneficiary",
+          "default": "get_beneficiary",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetBeneficiary",
+      "type": "object"
+    },
+    "GetGlobalAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_global_account",
+          "default": "get_global_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetGlobalAccount",
+      "type": "object"
+    },
+    "GetTransaction": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_financial_transaction",
+          "default": "get_financial_transaction",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTransaction",
+      "type": "object"
+    },
+    "GetTransfer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_transfer",
+          "default": "get_transfer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTransfer",
+      "type": "object"
+    },
+    "ListBalances": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_balances",
+          "default": "list_balances",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_type": {
+          "default": "cash",
+          "title": "Account Type",
+          "type": "string"
+        }
+      },
+      "title": "ListBalances",
+      "type": "object"
+    },
+    "ListBeneficiaries": {
+      "additionalProperties": false,
+      "properties": {
+        "page_num": {
+          "default": 0,
+          "description": "Zero-based page number; this operation returns one page.",
+          "minimum": 0,
+          "title": "Page Num",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_beneficiaries",
+          "default": "list_beneficiaries",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "bank_account_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Number"
+        }
+      },
+      "title": "ListBeneficiaries",
+      "type": "object"
+    },
+    "ListGlobalAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque page_after or page_before from the preceding response.",
+          "title": "Page"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_global_accounts",
+          "default": "list_global_accounts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "nick_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nick Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "ListGlobalAccounts",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "additionalProperties": false,
+      "properties": {
+        "page_num": {
+          "default": 0,
+          "description": "Zero-based page number; this operation returns one page.",
+          "minimum": 0,
+          "title": "Page Num",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_financial_transactions",
+          "default": "list_financial_transactions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "from_created_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Created At"
+        },
+        "to_created_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Created At"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "ListTransfers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque page_after or page_before from the preceding response.",
+          "title": "Page"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_transfers",
+          "default": "list_transfers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "beneficiary_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Beneficiary Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "transfer_currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transfer Currency"
+        },
+        "from_created_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Created At"
+        },
+        "to_created_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To Created At"
+        }
+      },
+      "title": "ListTransfers",
+      "type": "object"
+    },
+    "UpdateGlobalAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Airwallex resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_global_account",
+          "default": "update_global_account",
+          "title": "Operation",
+          "type": "string"
+        },
+        "nick_name": {
+          "minLength": 1,
+          "title": "Nick Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "nick_name"
+      ],
+      "title": "UpdateGlobalAccount",
+      "type": "object"
+    },
+    "ValidateTransfer": {
+      "additionalProperties": false,
+      "properties": {
+        "beneficiary_id": {
+          "description": "ID of an existing beneficiary.",
+          "title": "Beneficiary Id",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "Unique idempotency identifier. Reuse it when retrying the same transfer.",
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "transfer_amount": {
+          "description": "Amount in major currency units, as a decimal string.",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Transfer Amount",
+          "type": "string"
+        },
+        "transfer_currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Transfer Currency",
+          "type": "string"
+        },
+        "source_currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Source Currency",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Provider-supported transfer reason, for example travel.",
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "reference": {
+          "description": "Reference shown to the recipient.",
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "transfer_method": {
+          "enum": [
+            "LOCAL",
+            "SWIFT"
+          ],
+          "title": "Transfer Method",
+          "type": "string"
+        },
+        "transfer_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scheduled date, YYYY-MM-DD.",
+          "title": "Transfer Date"
+        },
+        "swift_charge_option": {
+          "anyOf": [
+            {
+              "enum": [
+                "SHARED",
+                "PAYER"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Swift Charge Option",
+          "enum": [
+            "SHARED",
+            "PAYER"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "validate_transfer",
+          "default": "validate_transfer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "beneficiary_id",
+        "request_id",
+        "transfer_amount",
+        "transfer_currency",
+        "source_currency",
+        "reason",
+        "reference",
+        "transfer_method"
+      ],
+      "title": "ValidateTransfer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_transfer": "#/$defs/CancelTransfer",
+          "create_beneficiary": "#/$defs/CreateBeneficiary",
+          "create_transfer": "#/$defs/CreateTransfer",
+          "delete_beneficiary": "#/$defs/DeleteBeneficiary",
+          "get_beneficiary": "#/$defs/GetBeneficiary",
+          "get_financial_transaction": "#/$defs/GetTransaction",
+          "get_global_account": "#/$defs/GetGlobalAccount",
+          "get_transfer": "#/$defs/GetTransfer",
+          "list_balance_history": "#/$defs/BalanceHistory",
+          "list_balances": "#/$defs/ListBalances",
+          "list_beneficiaries": "#/$defs/ListBeneficiaries",
+          "list_financial_transactions": "#/$defs/ListTransactions",
+          "list_global_accounts": "#/$defs/ListGlobalAccounts",
+          "list_transfers": "#/$defs/ListTransfers",
+          "update_global_account": "#/$defs/UpdateGlobalAccount",
+          "validate_transfer": "#/$defs/ValidateTransfer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBalances"
+        },
+        {
+          "$ref": "#/$defs/BalanceHistory"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/GetTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListBeneficiaries"
+        },
+        {
+          "$ref": "#/$defs/GetBeneficiary"
+        },
+        {
+          "$ref": "#/$defs/CreateBeneficiary"
+        },
+        {
+          "$ref": "#/$defs/DeleteBeneficiary"
+        },
+        {
+          "$ref": "#/$defs/ListTransfers"
+        },
+        {
+          "$ref": "#/$defs/GetTransfer"
+        },
+        {
+          "$ref": "#/$defs/CreateTransfer"
+        },
+        {
+          "$ref": "#/$defs/ValidateTransfer"
+        },
+        {
+          "$ref": "#/$defs/CancelTransfer"
+        },
+        {
+          "$ref": "#/$defs/ListGlobalAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetGlobalAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateGlobalAccount"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AirwallexAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Airwallex Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
