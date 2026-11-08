@@ -165,10 +165,14 @@ it('shows the next page under the first, and stays on it', async () => {
 
 it('pages a filtered table the same way', async () => {
     await open();
+    // The count comes from the page's groups at once, the filtered rows only with their read: a slow read, as on a CI runner.
+    socketCall.mockImplementation((event: string, payload: Record<string, unknown>) =>
+        event === 'usage:page' ? Promise.resolve(answerPage()) : new Promise((r) => setTimeout(() => r(page(rows, payload as { keys?: string[]; cursor?: string })), 50))
+    );
     fireEvent.change(screen.getByRole('searchbox', { name: 'Search charges' }), { target: { value: 'sonnet' } });
     const sonnet = rows.filter((r) => r.usage_subtype === SONNET);
-    await waitFor(() => expect(screen.getByText(`Showing 50 of ${sonnet.length} charges`)).toBeTruthy());
-    expect(shown()).toEqual(amounts(sonnet.slice(0, 50)));
+    await waitFor(() => expect(shown()).toEqual(amounts(sonnet.slice(0, 50))));
+    expect(screen.getByText(`Showing 50 of ${sonnet.length} charges`)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: `Show ${sonnet.length - 50} more` }));
     await waitFor(() => expect(shown()).toHaveLength(sonnet.length));
     await settle();
