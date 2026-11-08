@@ -12,9 +12,10 @@ const TalenthrIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTM
 TalenthrIcon.displayName = 'TalenthrIcon';
 
 // Exact publisher asset; provenance is recorded beside the SVG.
-export const TalenthrNode: NodeDefinition = {
+export const TalenthrNode: NodeDefinition & { category: string } = {
     type: 'automation-talenthr',
     label: 'TalentHR',
+    category: 'hr-recruiting',
     description: 'Employees, departments, locations and time off',
     Icon: TalenthrIcon,
     iconColor: '',
