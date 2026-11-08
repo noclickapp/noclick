@@ -15,6 +15,7 @@ JumpCloudIcon.displayName = 'JumpCloudIcon';
 export const JumpCloudNode: NodeDefinition = {
     type: 'automation-jumpcloud',
     label: 'JumpCloud',
+    category: 'developer-tools',
     description: 'Manage directory users, devices, groups and membership',
     Icon: JumpCloudIcon,
     iconColor: '',
