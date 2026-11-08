@@ -1,0 +1,20 @@
+{
+  "source": "https://public-api.process.st/api/v1.1/docs/openapi.json",
+  "configs": [
+    {
+      "operation": "create_workflow_run",
+      "workflow_id": "qHI72tAb8KsBobaKydF5EQ",
+      "name": "Project Kickoff"
+    },
+    {
+      "operation": "update_form_field_values",
+      "workflow_run_id": "rGDurSofIm8BobaKyO13pQ",
+      "fields": [
+        {
+          "id": "sPo-YlPiZB4BobaKwWN5Xg",
+          "value": "It's over Anakin, I have the high ground"
+        }
+      ]
+    }
+  ]
+}
