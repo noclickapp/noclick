@@ -1,0 +1,14 @@
+{
+  "contract_version": "1.0.0",
+  "contract_sha256": "0b65211e835aef5c6ce3e43d2412f9a76f3ea293f8a7e3f4d6ee81f975ce9ba4",
+  "spec_defects": [
+    {
+      "kind": "provider_contract_contradiction",
+      "operation": "list_message_templates",
+      "schema": "#/components/schemas/message-template",
+      "description": "font_size is declared as integer but its enum and published responses use strings (small, auto). Published list responses also return null for additional_pages and custom_background_url although those schema fields allow only strings. The harness falls back to a schema-valid empty object, which the node correctly refuses as a list response. The unmodified provider-authored list example parses successfully in the node fixture test.",
+      "docs": "https://docs.thanks.io/api-reference/endpoint/message-templates/list-all-message-templates",
+      "fixture": "published_cases.json:list_message_templates"
+    }
+  ]
+}

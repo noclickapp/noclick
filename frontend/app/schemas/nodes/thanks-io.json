@@ -1,0 +1,2025 @@
+{
+  "$defs": {
+    "CancelOrder": {
+      "additionalProperties": false,
+      "description": "Request cancellation and credit refund; only Reviewing orders can be cancelled.",
+      "properties": {
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "CancelOrder",
+      "type": "object"
+    },
+    "CreateMailingList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_mailing_list",
+          "default": "create_mailing_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "sub_account_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account Id"
+        },
+        "qrcode_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qrcode Url"
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "title": "CreateMailingList",
+      "type": "object"
+    },
+    "CreateMessageTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_message_template",
+          "default": "create_message_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "type": {
+          "default": "postcard",
+          "enum": [
+            "postcard",
+            "postcard6x9",
+            "postcard6x11",
+            "letter",
+            "windowlessletter",
+            "notecard",
+            "magnacard"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "handwriting_style_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Style Id"
+        },
+        "font_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Font Color"
+        },
+        "handwriting_realism": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Realism"
+        },
+        "sub_account_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account Id"
+        }
+      },
+      "required": [
+        "name",
+        "content"
+      ],
+      "title": "CreateMessageTemplate",
+      "type": "object"
+    },
+    "CreateRecipient": {
+      "additionalProperties": false,
+      "description": "Add to a mailing list; existing campaigns may send mail. Email-only lookup may incur a fee.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "province": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Province"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "dob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dob"
+        },
+        "anniversary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Anniversary"
+        },
+        "custom1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom1"
+        },
+        "custom2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom2"
+        },
+        "custom3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom3"
+        },
+        "custom4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom4"
+        },
+        "custom5": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom5"
+        },
+        "custom6": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom6"
+        },
+        "custom7": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom7"
+        },
+        "custom8": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom8"
+        },
+        "custom9": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom9"
+        },
+        "custom10": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom10"
+        },
+        "operation": {
+          "const": "create_recipient",
+          "default": "create_recipient",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mailing_list_id": {
+          "minimum": 1,
+          "title": "Mailing List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailing_list_id"
+      ],
+      "title": "CreateRecipient",
+      "type": "object"
+    },
+    "DeleteMailingList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_mailing_list",
+          "default": "delete_mailing_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mailing_list_id": {
+          "minimum": 1,
+          "title": "Mailing List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailing_list_id"
+      ],
+      "title": "DeleteMailingList",
+      "type": "object"
+    },
+    "DeleteMessageTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_message_template",
+          "default": "delete_message_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_template_id": {
+          "minimum": 1,
+          "title": "Message Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_template_id"
+      ],
+      "title": "DeleteMessageTemplate",
+      "type": "object"
+    },
+    "DeleteRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_recipient",
+          "default": "delete_recipient",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minimum": 1,
+          "title": "Recipient Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "DeleteRecipient",
+      "type": "object"
+    },
+    "EstimatePostcard": {
+      "additionalProperties": false,
+      "description": "Estimate costs without charging, printing, mailing or creating an order.",
+      "properties": {
+        "mailing_list_ids": {
+          "description": "Mailing lists to target; sending creates a paid direct-mail order.",
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Mailing List Ids",
+          "type": "array"
+        },
+        "size": {
+          "default": "4x6",
+          "enum": [
+            "4x6",
+            "6x9",
+            "6x11"
+          ],
+          "title": "Size",
+          "type": "string"
+        },
+        "creative_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Saved creative; replaces image and message settings.",
+          "title": "Creative Id"
+        },
+        "image_template_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Template Id"
+        },
+        "front_image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Front Image Url"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "message_template_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Template Id"
+        },
+        "handwriting_style_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Style Id"
+        },
+        "handwriting_color": {
+          "anyOf": [
+            {
+              "enum": [
+                "blue",
+                "black",
+                "green",
+                "purple",
+                "red"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Color",
+          "enum": [
+            "blue",
+            "black",
+            "green",
+            "purple",
+            "red"
+          ],
+          "x-enum-searchable": true
+        },
+        "handwriting_realism": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Realism"
+        },
+        "sub_account": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account"
+        },
+        "qrcode_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qrcode Url"
+        },
+        "postage_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "first_class",
+                "standard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postage Class",
+          "enum": [
+            "first_class",
+            "standard"
+          ],
+          "x-enum-searchable": true
+        },
+        "return_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Name"
+        },
+        "return_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Address"
+        },
+        "return_address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Address2"
+        },
+        "return_city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return City"
+        },
+        "return_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return State"
+        },
+        "return_postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Postal Code"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "operation": {
+          "const": "estimate_postcard",
+          "default": "estimate_postcard",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mailing_list_ids"
+      ],
+      "title": "EstimatePostcard",
+      "type": "object"
+    },
+    "GetMailingList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_mailing_list",
+          "default": "get_mailing_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mailing_list_id": {
+          "minimum": 1,
+          "title": "Mailing List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailing_list_id"
+      ],
+      "title": "GetMailingList",
+      "type": "object"
+    },
+    "GetMessageTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_message_template",
+          "default": "get_message_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_template_id": {
+          "minimum": 1,
+          "title": "Message Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_template_id"
+      ],
+      "title": "GetMessageTemplate",
+      "type": "object"
+    },
+    "GetRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_recipient",
+          "default": "get_recipient",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minimum": 1,
+          "title": "Recipient Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "GetRecipient",
+      "type": "object"
+    },
+    "ListImageTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_image_templates",
+          "default": "list_image_templates",
+          "title": "Operation",
+          "type": "string"
+        },
+        "items_per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "sub_account_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account Id"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "postcard",
+                "postcard6x9",
+                "postcard6x11",
+                "letter",
+                "windowlessletter",
+                "notecard",
+                "giftcard",
+                "magnacard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "postcard",
+            "postcard6x9",
+            "postcard6x11",
+            "letter",
+            "windowlessletter",
+            "notecard",
+            "giftcard",
+            "magnacard"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListImageTemplates",
+      "type": "object"
+    },
+    "ListMailingLists": {
+      "additionalProperties": false,
+      "description": "List one page of account mailing lists with provider pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_mailing_lists",
+          "default": "list_mailing_lists",
+          "title": "Operation",
+          "type": "string"
+        },
+        "items_per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListMailingLists",
+      "type": "object"
+    },
+    "ListMessageTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_message_templates",
+          "default": "list_message_templates",
+          "title": "Operation",
+          "type": "string"
+        },
+        "items_per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "sub_account_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account Id"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "postcard",
+                "postcard6x9",
+                "postcard6x11",
+                "letter",
+                "windowlessletter",
+                "notecard",
+                "giftcard",
+                "magnacard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "postcard",
+            "postcard6x9",
+            "postcard6x11",
+            "letter",
+            "windowlessletter",
+            "notecard",
+            "giftcard",
+            "magnacard"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListMessageTemplates",
+      "type": "object"
+    },
+    "ListOrderItems": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_order_items",
+          "default": "list_order_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ListOrderItems",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "items_per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "sub_account_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account Id"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "postcard",
+                "postcard6x9",
+                "postcard6x11",
+                "letter",
+                "windowlessletter",
+                "notecard",
+                "giftcard",
+                "magnacard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "postcard",
+            "postcard6x9",
+            "postcard6x11",
+            "letter",
+            "windowlessletter",
+            "notecard",
+            "giftcard",
+            "magnacard"
+          ],
+          "x-enum-searchable": true
+        },
+        "creative_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creative Id"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListRecipients": {
+      "additionalProperties": false,
+      "description": "Bounded recipient listing; updated_since filters changed recipients.",
+      "properties": {
+        "operation": {
+          "const": "list_recipients",
+          "default": "list_recipients",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mailing_list_id": {
+          "minimum": 1,
+          "title": "Mailing List Id",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 1000,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timestamp, e.g. 2020-04-06 01:55:50",
+          "title": "Updated Since"
+        }
+      },
+      "required": [
+        "mailing_list_id"
+      ],
+      "title": "ListRecipients",
+      "type": "object"
+    },
+    "SendPostcard": {
+      "additionalProperties": false,
+      "description": "Submit a paid postcard order, or generate previews when preview is true.",
+      "properties": {
+        "mailing_list_ids": {
+          "description": "Mailing lists to target; sending creates a paid direct-mail order.",
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Mailing List Ids",
+          "type": "array"
+        },
+        "size": {
+          "default": "4x6",
+          "enum": [
+            "4x6",
+            "6x9",
+            "6x11"
+          ],
+          "title": "Size",
+          "type": "string"
+        },
+        "creative_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Saved creative; replaces image and message settings.",
+          "title": "Creative Id"
+        },
+        "image_template_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Template Id"
+        },
+        "front_image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Front Image Url"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "message_template_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Template Id"
+        },
+        "handwriting_style_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Style Id"
+        },
+        "handwriting_color": {
+          "anyOf": [
+            {
+              "enum": [
+                "blue",
+                "black",
+                "green",
+                "purple",
+                "red"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Color",
+          "enum": [
+            "blue",
+            "black",
+            "green",
+            "purple",
+            "red"
+          ],
+          "x-enum-searchable": true
+        },
+        "handwriting_realism": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Realism"
+        },
+        "sub_account": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Account"
+        },
+        "qrcode_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qrcode Url"
+        },
+        "postage_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "first_class",
+                "standard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postage Class",
+          "enum": [
+            "first_class",
+            "standard"
+          ],
+          "x-enum-searchable": true
+        },
+        "return_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Name"
+        },
+        "return_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Address"
+        },
+        "return_address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Address2"
+        },
+        "return_city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return City"
+        },
+        "return_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return State"
+        },
+        "return_postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Postal Code"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "operation": {
+          "const": "send_postcard",
+          "default": "send_postcard",
+          "title": "Operation",
+          "type": "string"
+        },
+        "preview": {
+          "default": false,
+          "description": "True generates preview images without placing an order.",
+          "title": "Preview",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "mailing_list_ids"
+      ],
+      "title": "SendPostcard",
+      "type": "object"
+    },
+    "ThanksIoApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "thanks_io_api_key",
+          "default": "thanks_io_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Thanks Io API Key",
+      "type": "object",
+      "x-credential-instructions": "In thanks.io, open Settings \u2192 API Access. Create and copy an API key, then paste it here to connect your account. NoClick sends it as a bearer token to api.thanks.io.",
+      "x-credential-url": "https://dashboard.thanks.io/app/settings/api-access"
+    },
+    "TrackOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "track_order",
+          "default": "track_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "TrackOrder",
+      "type": "object"
+    },
+    "UpdateMessageTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_message_template",
+          "default": "update_message_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message_template_id": {
+          "minimum": 1,
+          "title": "Message Template Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "handwriting_style_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Style Id"
+        },
+        "font_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Font Color"
+        },
+        "handwriting_realism": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handwriting Realism"
+        }
+      },
+      "required": [
+        "message_template_id"
+      ],
+      "title": "UpdateMessageTemplate",
+      "type": "object"
+    },
+    "UpdateRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "province": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Province"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "dob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dob"
+        },
+        "anniversary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Anniversary"
+        },
+        "custom1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom1"
+        },
+        "custom2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom2"
+        },
+        "custom3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom3"
+        },
+        "custom4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom4"
+        },
+        "custom5": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom5"
+        },
+        "custom6": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom6"
+        },
+        "custom7": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom7"
+        },
+        "custom8": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom8"
+        },
+        "custom9": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom9"
+        },
+        "custom10": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom10"
+        },
+        "operation": {
+          "const": "update_recipient",
+          "default": "update_recipient",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minimum": 1,
+          "title": "Recipient Id",
+          "type": "integer"
+        },
+        "mailing_list_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mailing List Id"
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "UpdateRecipient",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_order": "#/$defs/CancelOrder",
+          "create_mailing_list": "#/$defs/CreateMailingList",
+          "create_message_template": "#/$defs/CreateMessageTemplate",
+          "create_recipient": "#/$defs/CreateRecipient",
+          "delete_mailing_list": "#/$defs/DeleteMailingList",
+          "delete_message_template": "#/$defs/DeleteMessageTemplate",
+          "delete_recipient": "#/$defs/DeleteRecipient",
+          "estimate_postcard": "#/$defs/EstimatePostcard",
+          "get_mailing_list": "#/$defs/GetMailingList",
+          "get_message_template": "#/$defs/GetMessageTemplate",
+          "get_recipient": "#/$defs/GetRecipient",
+          "list_image_templates": "#/$defs/ListImageTemplates",
+          "list_mailing_lists": "#/$defs/ListMailingLists",
+          "list_message_templates": "#/$defs/ListMessageTemplates",
+          "list_order_items": "#/$defs/ListOrderItems",
+          "list_orders": "#/$defs/ListOrders",
+          "list_recipients": "#/$defs/ListRecipients",
+          "send_postcard": "#/$defs/SendPostcard",
+          "track_order": "#/$defs/TrackOrder",
+          "update_message_template": "#/$defs/UpdateMessageTemplate",
+          "update_recipient": "#/$defs/UpdateRecipient"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListMailingLists"
+        },
+        {
+          "$ref": "#/$defs/CreateMailingList"
+        },
+        {
+          "$ref": "#/$defs/GetMailingList"
+        },
+        {
+          "$ref": "#/$defs/DeleteMailingList"
+        },
+        {
+          "$ref": "#/$defs/ListRecipients"
+        },
+        {
+          "$ref": "#/$defs/CreateRecipient"
+        },
+        {
+          "$ref": "#/$defs/GetRecipient"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecipient"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecipient"
+        },
+        {
+          "$ref": "#/$defs/ListImageTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListMessageTemplates"
+        },
+        {
+          "$ref": "#/$defs/CreateMessageTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetMessageTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateMessageTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessageTemplate"
+        },
+        {
+          "$ref": "#/$defs/SendPostcard"
+        },
+        {
+          "$ref": "#/$defs/EstimatePostcard"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/TrackOrder"
+        },
+        {
+          "$ref": "#/$defs/ListOrderItems"
+        },
+        {
+          "$ref": "#/$defs/CancelOrder"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ThanksIoApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Thanks-io Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
