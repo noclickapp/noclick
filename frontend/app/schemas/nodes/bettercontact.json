@@ -1,0 +1,1842 @@
+{
+  "$defs": {
+    "BettercontactAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bettercontact_api_key",
+          "default": "bettercontact_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Bettercontact API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from BetterContact's API section and paste it here. NoClick sends it in the X-API-Key header. Connecting reads your account email and credit balance.",
+      "x-credential-url": "https://app.bettercontact.rocks/api_requests"
+    },
+    "CompanyDescriptionFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text phrases searched in the company description.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phrases that must NOT appear in the company description.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyDescriptionFilter",
+      "type": "object"
+    },
+    "CompanyDomainFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domains that must match.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domains that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyDomainFilter",
+      "type": "object"
+    },
+    "CompanyFinderFilters": {
+      "additionalProperties": false,
+      "properties": {
+        "company": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domains, in lowercase: the match is case-sensitive, so `HUBSPOT.COM` finds nothing. A leading `http://`, `https://` or `www.` is stripped, but a path is not: pass `acme.com`, not `https://acme.com/about`."
+        },
+        "company_linkedin_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company LinkedIn page URLs."
+        },
+        "company_industry": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Industries. Must be exact values from [Taxonomies - Industries](/api-reference/taxonomies#industries)."
+        },
+        "company_hq_location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matched against the full headquarters address, so a city, a state or a country all work."
+        },
+        "company_technologies": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Technologies the company uses. Must be exact values from [Taxonomies - Technologies](/api-reference/taxonomies#technologies)."
+        },
+        "company_keywords": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords or phrases matched against the company profile. Matched the same way as `company_description`."
+        },
+        "company_description": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phrases matched against the company profile. Matched the same way as `company_keywords`."
+        },
+        "company_headcount_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of employees, inclusive. Mapped onto the size buckets of [Taxonomies - Company size ranges](/api-reference/taxonomies#company-size-ranges): every bucket that overlaps your range is kept, so `60` still returns companies from the `51-200` bucket.",
+          "title": "Company Headcount Min"
+        },
+        "company_headcount_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of employees, inclusive. Mapped onto size buckets the same way as `company_headcount_min`.",
+          "title": "Company Headcount Max"
+        },
+        "is_b2b": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`true` keeps companies that sell to businesses. Omit the field when you do not want to filter on it.",
+          "title": "Is B2B"
+        },
+        "is_b2c": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`true` keeps companies that sell to consumers. Omit the field when you do not want to filter on it.",
+          "title": "Is B2C"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`true` keeps publicly listed companies. Omit the field when you do not want to filter on it.",
+          "title": "Is Public"
+        },
+        "revenue_ranges": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Revenue brackets. Must be exact values from [Taxonomies - Revenue ranges](/api-reference/taxonomies#revenue-ranges)."
+        },
+        "last_funding_round_names": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the latest funding round. Must be exact values from [Taxonomies - Funding round names](/api-reference/taxonomies#funding-round-names)."
+        },
+        "last_funding_date_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date of the last funding round, as `YYYY-MM-DD` strings."
+        },
+        "last_amount_raised_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amount raised in the last round, in USD, as integers."
+        },
+        "total_amount_raised_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total amount raised, in USD, as integers."
+        },
+        "job_post_titles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job titles the company is currently hiring for."
+        },
+        "job_posting_countries": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Countries the company is currently hiring in."
+        },
+        "job_posting_locations": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyFinderIncludeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cities or regions the company is currently hiring in."
+        }
+      },
+      "title": "CompanyFinderFilters",
+      "type": "object"
+    },
+    "CompanyFinderIncludeFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must match.",
+          "title": "Include"
+        }
+      },
+      "title": "CompanyFinderIncludeFilter",
+      "type": "object"
+    },
+    "CompanyHqLocationFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HQ locations that must match. Accepts country names (e.g. \"United States\"), and also states or cities.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HQ locations that must NOT match. Same format as `include`.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyHqLocationFilter",
+      "type": "object"
+    },
+    "CompanyIndustryFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company industries that must match. Must be exact values from the predefined list, see [Taxonomies - Industries](/api-reference/taxonomies#industries).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company industries that must NOT match. Same accepted values as `include`.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyIndustryFilter",
+      "type": "object"
+    },
+    "CompanyKeywordsFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text keywords searched across the company profile.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords that must NOT appear.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyKeywordsFilter",
+      "type": "object"
+    },
+    "CompanyLinkedinUrlFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company LinkedIn page URLs that must match. Normalised server-side, so both the full URL and the slug are accepted.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company LinkedIn page URLs that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyLinkedinUrlFilter",
+      "type": "object"
+    },
+    "CompanyTechnologiesFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Technologies that must match. Must be exact values from the predefined list, see [Taxonomies - Technologies](/api-reference/taxonomies#technologies).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Technologies that must NOT match. Same accepted values as `include`.",
+          "title": "Exclude"
+        }
+      },
+      "title": "CompanyTechnologiesFilter",
+      "type": "object"
+    },
+    "CreateCompanyFinderSearch": {
+      "additionalProperties": false,
+      "description": "Start a company search; paginate with limit and offset. Consumes search credits; no webhooks.",
+      "properties": {
+        "filters": {
+          "$ref": "#/$defs/CompanyFinderFilters"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of companies to return for this page, between 1 and 200. Defaults to 100. A value above 200 is refused with `422`; `0`, a negative number or a non-numeric value falls back to the default.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Zero-based number of matches to skip. A negative value is treated as `0`.\n\nTo walk through results, keep `limit` constant and increase `offset` by `limit` on each call. The total number of matching companies is returned as `summary.companies_found`.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_company_finder_search",
+          "default": "create_company_finder_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "filters"
+      ],
+      "title": "CreateCompanyFinderSearch",
+      "type": "object"
+    },
+    "CreateEnrichment": {
+      "additionalProperties": false,
+      "description": "Start email, phone or LinkedIn profile enrichment for 1\u2013100 leads. Consumes credits.",
+      "properties": {
+        "data": {
+          "description": "Leads to enrich. Between 1 and 100 per call. Sending more than 100 is rejected with `400`.",
+          "items": {
+            "$ref": "#/$defs/NewLeadsEnrichmentDataItem"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        },
+        "enrich_email_address": {
+          "default": true,
+          "description": "Enrich the work email address. When `enrich_email_address`, `enrich_phone_number` and `enrich_profile` are all omitted or `false`, email enrichment is applied by default.",
+          "title": "Enrich Email Address",
+          "type": "boolean"
+        },
+        "enrich_phone_number": {
+          "default": false,
+          "description": "Enrich the mobile phone number. Requires the phone add-on on your plan, otherwise the call is rejected with `402`. Provide `linkedin_url` for best results.",
+          "title": "Enrich Phone Number",
+          "type": "boolean"
+        },
+        "enrich_profile": {
+          "default": false,
+          "description": "Enrich the full LinkedIn profile of the contact (headline, seniority, location, current company). Requires `linkedin_url`.",
+          "title": "Enrich Profile",
+          "type": "boolean"
+        },
+        "verify_catch_all": {
+          "default": false,
+          "description": "Run the extra catch-all verification layer. When enabled, `contact_email_address_status` returns `catch_all_safe` / `catch_all_not_safe` instead of `catch_all`. Requires the catch-all add-on on your plan, otherwise the call is rejected with `402`.",
+          "title": "Verify Catch All",
+          "type": "boolean"
+        },
+        "webhook": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL that receives the full result payload as soon as the whole batch is done. Recommended over polling. See [Webhooks](/api-reference/webhooks).",
+          "title": "Webhook"
+        },
+        "push_contact_individually": {
+          "default": false,
+          "description": "When `true`, each lead is pushed to `contact_webhook` as soon as it is enriched, instead of waiting for the whole batch. Useful for batches of 100.",
+          "title": "Push Contact Individually",
+          "type": "boolean"
+        },
+        "contact_webhook": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL that receives one payload per lead. Only used when `push_contact_individually` is `true`.",
+          "title": "Contact Webhook"
+        },
+        "process_flow": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifier of the process flow to use for this enrichment. Only for accounts subscribed to the process flow add-on.",
+          "title": "Process Flow"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum time the waterfall is allowed to run before the request is terminated with whatever has been found. Defaults to the timeout configured on your account.",
+          "title": "Timeout Seconds"
+        },
+        "operation": {
+          "const": "create_enrichment",
+          "default": "create_enrichment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "CreateEnrichment",
+      "type": "object"
+    },
+    "CreateLeadFinderSearch": {
+      "additionalProperties": false,
+      "description": "Start a lead search; paginate by keeping limit fixed and increasing offset. May consume credits.",
+      "properties": {
+        "filters": {
+          "$ref": "#/$defs/LeadFinderFilters"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of leads to return for this request, between 1 and 200. Use it together with `offset` to paginate. Mutually exclusive with `max_leads`: when `limit` is set, `max_leads` is ignored.",
+          "title": "Limit"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Zero-based number of leads to skip before returning matches. Only taken into account when `limit` is set.\n\nTo walk through results, keep `limit` constant and increase `offset` by `limit` on each call: `0`, then `100`, then `200`, and so on. The total number of matching leads is returned as `summary.leads_found`.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "max_leads": {
+          "default": 100,
+          "description": "Number of leads to return when you do not paginate. Between 1 and 200, defaults to 100. Ignored when `limit` is set.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Max Leads",
+          "type": "integer"
+        },
+        "webhook": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL that receives the results as soon as the search is done, removing the need to poll. See [Webhooks](/api-reference/webhooks).",
+          "title": "Webhook"
+        },
+        "enrich_email_address": {
+          "default": false,
+          "description": "When `true`, every lead found is also run through the waterfall email enrichment before the results are returned. This consumes enrichment credits on top of the search, and the request stays in `processing` until enrichment is done.",
+          "title": "Enrich Email Address",
+          "type": "boolean"
+        },
+        "enrich_phone_number": {
+          "default": false,
+          "description": "When `true`, every lead found is also run through the waterfall mobile phone enrichment before the results are returned. This consumes enrichment credits on top of the search. Requires the phone add-on on your plan.",
+          "title": "Enrich Phone Number",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_lead_finder_search",
+          "default": "create_lead_finder_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "filters"
+      ],
+      "title": "CreateLeadFinderSearch",
+      "type": "object"
+    },
+    "EnrichCompany": {
+      "additionalProperties": false,
+      "description": "Look up a company profile synchronously by domain or LinkedIn URL; consumes no credits.",
+      "properties": {
+        "company_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company website or domain.",
+          "title": "Company Domain"
+        },
+        "company_linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company LinkedIn page URL.",
+          "title": "Company Linkedin Url"
+        },
+        "operation": {
+          "const": "enrich_company",
+          "default": "enrich_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "EnrichCompany",
+      "type": "object"
+    },
+    "EnrichLeadByLinkedin": {
+      "additionalProperties": false,
+      "description": "Look up a lead profile by LinkedIn URL; costs 0.1 credit when found. No email or phone is returned.",
+      "properties": {
+        "operation": {
+          "const": "enrich_lead_by_linkedin",
+          "default": "enrich_lead_by_linkedin",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "linkedin_url": {
+          "description": "Public LinkedIn profile URL.",
+          "minLength": 1,
+          "title": "Linkedin Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "linkedin_url"
+      ],
+      "title": "EnrichLeadByLinkedin",
+      "type": "object"
+    },
+    "EnrichLeadByName": {
+      "additionalProperties": false,
+      "description": "Look up a lead profile by name and company domain; costs 0.1 credit when found.",
+      "properties": {
+        "operation": {
+          "const": "enrich_lead_by_name",
+          "default": "enrich_lead_by_name",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company_domain": {
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "company_domain"
+      ],
+      "title": "EnrichLeadByName",
+      "type": "object"
+    },
+    "FilterObject": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must match.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "FilterObject",
+      "type": "object"
+    },
+    "FundingRoundNamesFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last funding round names that must match. Must be exact values from the predefined list, see [Taxonomies - Funding round names](/api-reference/taxonomies#funding-round-names).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last funding round names that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "FundingRoundNamesFilter",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read the account email and remaining credits.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCompanyFinderSearch": {
+      "additionalProperties": false,
+      "description": "Read a company search job; terminated can have an empty companies array.",
+      "properties": {
+        "request_id": {
+          "description": "The id or request_id returned by the matching create action.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_company_finder_search",
+          "default": "get_company_finder_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetCompanyFinderSearch",
+      "type": "object"
+    },
+    "GetEnrichment": {
+      "additionalProperties": false,
+      "description": "Read one enrichment job. Only status terminated means processing is finished.",
+      "properties": {
+        "request_id": {
+          "description": "The id or request_id returned by the matching create action.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_enrichment",
+          "default": "get_enrichment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetEnrichment",
+      "type": "object"
+    },
+    "GetLeadFinderSearch": {
+      "additionalProperties": false,
+      "description": "Read a lead search job; on_hold needs more credits, processing needs another read later.",
+      "properties": {
+        "request_id": {
+          "description": "The id or request_id returned by the matching create action.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_lead_finder_search",
+          "default": "get_lead_finder_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetLeadFinderSearch",
+      "type": "object"
+    },
+    "JobPostingFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must match on the company's active job postings.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must NOT match on the company's active job postings.",
+          "title": "Exclude"
+        }
+      },
+      "title": "JobPostingFilter",
+      "type": "object"
+    },
+    "JobTitleFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must match.",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values that must NOT match.",
+          "title": "Exclude"
+        },
+        "exact_match": {
+          "default": false,
+          "description": "Match include titles exactly instead of by substring.",
+          "title": "Exact Match",
+          "type": "boolean"
+        }
+      },
+      "title": "JobTitleFilter",
+      "type": "object"
+    },
+    "LeadDepartmentFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead departments that must match. Must be exact values from the predefined list, see [Taxonomies - Departments](/api-reference/taxonomies#departments).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead departments that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "LeadDepartmentFilter",
+      "type": "object"
+    },
+    "LeadFinderFilters": {
+      "additionalProperties": false,
+      "properties": {
+        "company": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyDomainFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_linkedin_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyLinkedinUrlFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_industry": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyIndustryFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_hq_location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyHqLocationFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_technologies": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyTechnologiesFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_keywords": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyKeywordsFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_description": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyDescriptionFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_headcount_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum employee count. Converted server-side into the overlapping company size ranges listed in [Taxonomies - Company size ranges](/api-reference/taxonomies#company-size-ranges).",
+          "title": "Company Headcount Min"
+        },
+        "company_headcount_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum employee count. Converted server-side into the overlapping company size ranges listed in [Taxonomies - Company size ranges](/api-reference/taxonomies#company-size-ranges).",
+          "title": "Company Headcount Max"
+        },
+        "revenue_ranges": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RevenueRangesFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "last_funding_round_names": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FundingRoundNamesFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "last_funding_date_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date of the last funding round, as `YYYY-MM-DD` strings."
+        },
+        "last_amount_raised_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amount raised in the last round, in USD."
+        },
+        "total_amount_raised_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total amount raised to date, in USD."
+        },
+        "is_b2b": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to companies selling to businesses. `false` is a meaningful value and is sent as-is.",
+          "title": "Is B2B"
+        },
+        "is_b2c": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to companies selling to consumers. `false` is a meaningful value and is sent as-is.",
+          "title": "Is B2C"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to publicly traded companies.",
+          "title": "Is Public"
+        },
+        "job_post_titles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobPostingFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job titles the company is currently hiring for."
+        },
+        "job_posting_countries": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobPostingFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Countries the company is currently hiring in."
+        },
+        "job_posting_locations": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobPostingFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cities or regions the company is currently hiring in."
+        },
+        "limit_per_company": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caps how many leads are returned per company. Useful to spread results across accounts instead of returning a whole org chart. Maximum 100.",
+          "title": "Limit Per Company"
+        },
+        "lead_fullname": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FilterObject"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_linkedin_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FilterObject"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_job_title": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobTitleFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_seniority": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeniorityFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_department": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LeadDepartmentFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_function": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LeadFunctionFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_skills": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FilterObject"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lead_location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FilterObject"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "LeadFinderFilters",
+      "type": "object"
+    },
+    "LeadFunctionFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead functions that must match. Uses the same accepted values and the same underlying field as `lead_department`, see [Taxonomies - Functions](/api-reference/taxonomies#functions).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead functions that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "LeadFunctionFilter",
+      "type": "object"
+    },
+    "NewLeadsEnrichmentDataItem": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "description": "First name of the contact.",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Last name of the contact.",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name. Provide either `company` or `company_domain`. `company_domain` gives better results.",
+          "title": "Company"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domain. Provide either `company` or `company_domain`.",
+          "title": "Company Domain"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public LinkedIn profile URL. Strongly recommended when `enrich_phone_number` is `true`, and required for `enrich_profile`.",
+          "title": "Linkedin Url"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Any data you want echoed back in the response, such as a CRM record id. Keys are free-form; `uuid` and `list_name` below are only an example.\n\nSent as an object, returned as an array of `{ name, value, position }` entries.",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "NewLeadsEnrichmentDataItem",
+      "type": "object"
+    },
+    "RangeFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "gte": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Greater than or equal to.",
+          "title": "Gte"
+        },
+        "lte": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower than or equal to.",
+          "title": "Lte"
+        }
+      },
+      "title": "RangeFilter",
+      "type": "object"
+    },
+    "RevenueRangesFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Revenue brackets that must match. Must be exact values from the predefined list, see [Taxonomies - Revenue ranges](/api-reference/taxonomies#revenue-ranges).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Revenue brackets that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "RevenueRangesFilter",
+      "type": "object"
+    },
+    "SeniorityFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Seniority levels that must match. Must be exact values from the predefined list, see [Taxonomies - Seniority levels](/api-reference/taxonomies#seniority-levels).",
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Seniority levels that must NOT match.",
+          "title": "Exclude"
+        }
+      },
+      "title": "SeniorityFilter",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_company_finder_search": "#/$defs/CreateCompanyFinderSearch",
+          "create_enrichment": "#/$defs/CreateEnrichment",
+          "create_lead_finder_search": "#/$defs/CreateLeadFinderSearch",
+          "enrich_company": "#/$defs/EnrichCompany",
+          "enrich_lead_by_linkedin": "#/$defs/EnrichLeadByLinkedin",
+          "enrich_lead_by_name": "#/$defs/EnrichLeadByName",
+          "get_account": "#/$defs/GetAccount",
+          "get_company_finder_search": "#/$defs/GetCompanyFinderSearch",
+          "get_enrichment": "#/$defs/GetEnrichment",
+          "get_lead_finder_search": "#/$defs/GetLeadFinderSearch"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/CreateEnrichment"
+        },
+        {
+          "$ref": "#/$defs/GetEnrichment"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadFinderSearch"
+        },
+        {
+          "$ref": "#/$defs/GetLeadFinderSearch"
+        },
+        {
+          "$ref": "#/$defs/CreateCompanyFinderSearch"
+        },
+        {
+          "$ref": "#/$defs/GetCompanyFinderSearch"
+        },
+        {
+          "$ref": "#/$defs/EnrichCompany"
+        },
+        {
+          "$ref": "#/$defs/EnrichLeadByLinkedin"
+        },
+        {
+          "$ref": "#/$defs/EnrichLeadByName"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BettercontactAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bettercontact Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
