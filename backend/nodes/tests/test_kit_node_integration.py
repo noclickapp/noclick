@@ -5,6 +5,7 @@ import hmac
 import json
 import time
 from unittest.mock import Mock
+from urllib.parse import parse_qs
 
 import httpx
 import pytest
@@ -49,18 +50,22 @@ async def test_oauth_code_exchange_and_single_use_refresh(monkeypatch):
     assert first.refresh_token == "rotate-1"
     assert second.refresh_token == "rotate-2"
     assert route.call_count == 2
-    assert json.loads(route.calls[0].request.content) == {
-        "client_id": "client", "client_secret": "secret", "grant_type": "authorization_code",
-        "code": "code", "redirect_uri": "https://noclick.com/api/auth/oauth/kit/callback",
+    assert all(call.request.headers["content-type"] == "application/x-www-form-urlencoded"
+               for call in route.calls)
+    assert dict(parse_qs(route.calls[0].request.content.decode(), strict_parsing=True)) == {
+        "client_id": ["client"], "client_secret": ["secret"], "grant_type": ["authorization_code"],
+        "code": ["code"], "redirect_uri": ["https://noclick.com/api/auth/oauth/kit/callback"],
     }
-    assert json.loads(route.calls[1].request.content) == {
-        "client_id": "client", "grant_type": "refresh_token", "refresh_token": "rotate-1",
+    assert dict(parse_qs(route.calls[1].request.content.decode(), strict_parsing=True)) == {
+        "client_id": ["client"], "client_secret": ["secret"],
+        "grant_type": ["refresh_token"], "refresh_token": ["rotate-1"],
     }
 
 
 @pytest.mark.asyncio
 async def test_missing_rotated_refresh_token_is_rejected(monkeypatch):
     monkeypatch.setenv("KIT_CLIENT_ID", "client")
+    monkeypatch.setenv("KIT_CLIENT_SECRET", "secret")
     with respx.mock:
         respx.post("https://api.kit.com/v4/oauth/token").mock(
             return_value=httpx.Response(200, json={"access_token": "new", "expires_in": 3600}))
@@ -278,3 +283,14 @@ async def test_required_form_referrer_and_broadcast_timestamp(name, values, path
         result = await node(name, **values).execute({})
     assert json.loads(route.calls[0].request.content) == body
     assert result == {"status": "success", "operation": name, "data": response}
+
+
+def test_kit_oauth_has_a_discoverable_standard_provider_declaration():
+    from nodes.core.oauth_provider import OAuthProviderSpec
+    from nodes.core.oauth_registry import get_oauth_provider
+
+    assert type(OAUTH_PROVIDER) is OAuthProviderSpec
+    assert get_oauth_provider("kit") is OAUTH_PROVIDER
+    assert OAUTH_PROVIDER.credential_type == "kit_oauth"
+    assert OAUTH_PROVIDER.scopes == ["public"]
+    assert OAUTH_PROVIDER.identity_url == "https://api.kit.com/v4/account"

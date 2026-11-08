@@ -1,29 +1,15 @@
-"""Kit OAuth declaration and its documented JSON token transport.
+"""Kit OAuth declaration using the shared authorization-code transport.
 
 Authorize/token: https://developers.kit.com/api-reference/oauth-refresh-token-flow
 Identity: https://developers.kit.com/api-reference/accounts/get-current-account
+Kit’s official strategy uses the standard OAuth2 client:
+https://github.com/Kit/omniauth-kit-oauth2/blob/main/lib/omniauth/strategies/kit_oauth2.rb
 """
-import os
-
 from nodes.core.oauth_provider import OAuthProviderSpec
 from nodes.scopes.kit import KIT_SCOPES
 
 
-class KitOAuthProviderSpec(OAuthProviderSpec):
-    def token_request(self, grant: dict[str, str]) -> dict:
-        # Kit documents JSON token requests, and only requires the client secret
-        # for code exchange, not for single-use refresh-token rotation.
-        payload = {**grant, "client_id": os.environ[self.client_id_env]}
-        if grant["grant_type"] == "authorization_code":
-            payload["client_secret"] = os.environ[self.client_secret_env]
-        return {
-            "url": self.token_url,
-            "json": payload,
-            "headers": {"Accept": "application/json"},
-        }
-
-
-OAUTH_PROVIDER = KitOAuthProviderSpec(
+OAUTH_PROVIDER = OAuthProviderSpec(
     provider="kit",
     authorize_url="https://api.kit.com/v4/oauth/authorize",
     token_url="https://api.kit.com/v4/oauth/token",
@@ -34,6 +20,7 @@ OAUTH_PROVIDER = KitOAuthProviderSpec(
     client_secret_env="KIT_CLIENT_SECRET",
     redirect_uri_env="KIT_REDIRECT_URI",
     credential_type="kit_oauth",
+    token_auth="body",
     rotates_refresh_tokens=True,
 )
 
