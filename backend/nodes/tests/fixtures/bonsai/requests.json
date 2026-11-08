@@ -1,0 +1,199 @@
+{
+  "list_companies": {
+    "config": {
+      "operation": "list_companies"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/companies"
+  },
+  "create_company": {
+    "config": {
+      "operation": "create_company",
+      "name": "Acme Corp"
+    },
+    "method": "POST",
+    "path": "/public-api/v1/companies"
+  },
+  "get_company": {
+    "config": {
+      "operation": "get_company",
+      "company_id": 42
+    },
+    "method": "GET",
+    "path": "/public-api/v1/companies/{id}"
+  },
+  "update_company": {
+    "config": {
+      "operation": "update_company",
+      "company_id": 42,
+      "name": "Acme Corp"
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/companies/{id}"
+  },
+  "list_contacts": {
+    "config": {
+      "operation": "list_contacts"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/contacts"
+  },
+  "create_contact": {
+    "config": {
+      "operation": "create_contact",
+      "name": "Alex Johnson",
+      "email": "alex@example.com"
+    },
+    "method": "POST",
+    "path": "/public-api/v1/contacts"
+  },
+  "get_contact": {
+    "config": {
+      "operation": "get_contact",
+      "contact_id": 42
+    },
+    "method": "GET",
+    "path": "/public-api/v1/contacts/{id}"
+  },
+  "update_contact": {
+    "config": {
+      "operation": "update_contact",
+      "contact_id": 42,
+      "name": "Alex Johnson"
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/contacts/{id}"
+  },
+  "list_deals": {
+    "config": {
+      "operation": "list_deals"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/deals"
+  },
+  "create_deal": {
+    "config": {
+      "operation": "create_deal",
+      "title": "Acme Website Redesign",
+      "company_id": 42
+    },
+    "method": "POST",
+    "path": "/public-api/v1/deals"
+  },
+  "update_deal": {
+    "config": {
+      "operation": "update_deal",
+      "deal_id": 42,
+      "title": "Acme Website"
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/deals/{id}"
+  },
+  "list_invoices": {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/invoices"
+  },
+  "create_invoice": {
+    "config": {
+      "operation": "create_invoice",
+      "contact_id": 7
+    },
+    "method": "POST",
+    "path": "/public-api/v1/invoices"
+  },
+  "update_invoice": {
+    "config": {
+      "operation": "update_invoice",
+      "invoice_id": 42,
+      "title": "Acme Website"
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/invoices/{id}"
+  },
+  "list_projects": {
+    "config": {
+      "operation": "list_projects"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/projects"
+  },
+  "create_project": {
+    "config": {
+      "operation": "create_project",
+      "title": "Acme Website",
+      "company_id": 42,
+      "billing_type": "time"
+    },
+    "method": "POST",
+    "path": "/public-api/v1/projects"
+  },
+  "update_project": {
+    "config": {
+      "operation": "update_project",
+      "project_id": 42,
+      "title": "Acme Website"
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/projects/{id}"
+  },
+  "list_tasks": {
+    "config": {
+      "operation": "list_tasks"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/tasks"
+  },
+  "create_task": {
+    "config": {
+      "operation": "create_task",
+      "title": "Finalize homepage mockups"
+    },
+    "method": "POST",
+    "path": "/public-api/v1/tasks"
+  },
+  "get_task": {
+    "config": {
+      "operation": "get_task",
+      "task_uuid": "ad3fdad8-5072-46df-8800-bb57299179df"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/tasks/{uuid}"
+  },
+  "update_task": {
+    "config": {
+      "operation": "update_task",
+      "task_uuid": "ad3fdad8-5072-46df-8800-bb57299179df",
+      "title": "Acme Website"
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/tasks/{uuid}"
+  },
+  "list_time_entries": {
+    "config": {
+      "operation": "list_time_entries"
+    },
+    "method": "GET",
+    "path": "/public-api/v1/time_entries"
+  },
+  "create_time_entry": {
+    "config": {
+      "operation": "create_time_entry",
+      "seconds": 3600,
+      "date": "2026-06-17"
+    },
+    "method": "POST",
+    "path": "/public-api/v1/time_entries"
+  },
+  "update_time_entry": {
+    "config": {
+      "operation": "update_time_entry",
+      "time_entry_key": "ad3fdad8-5072-46df-8800-bb57299179df",
+      "seconds": 5400
+    },
+    "method": "PATCH",
+    "path": "/public-api/v1/time_entries/{key}"
+  }
+}
