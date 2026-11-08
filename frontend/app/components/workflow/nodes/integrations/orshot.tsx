@@ -11,6 +11,7 @@ const OrshotIcon = ({ className, style }: { className?: string; style?: CSSPrope
 
 export const OrshotNode: NodeDefinition = {
     type: 'automation-orshot', label: 'Orshot',
+    category: 'media',
     description: 'Render templates and manage render jobs, folders and brand assets',
     Icon: OrshotIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
