@@ -177,3 +177,25 @@ declarations allow are chosen. Encoded content without type evidence,
 conflicting filename/MIME declarations and unsatisfied constraints are fixture
 errors: the harness never guesses an image, audio or document type. These files
 make an input executable; they are never evidence of a provider's response.
+
+## Merge verdict
+
+`verdict.py` turns a report and its catalog into the verdict the integration
+merge gate reads: a re-cut integration PR merges only when the verdict is ready
+(or `postman-checked`, once Postman evidence lands), its CI is green and its
+scope check passes. It blocks on any operation without a checked request, a
+request the contract rejects, a fixture error, or a parser failure on a
+provider-authored response; failures on generated responses are advisory.
+JSON held in string fields counts by its values, and docs pages match by their
+rendered text and JSON-escaped values.
+
+```sh
+cd backend
+python -m tests.conformance.verdict "$CONFORMANCE_CATALOG/report.json" "$CONFORMANCE_CATALOG"
+python -m tests.conformance.verdict REPORT.json CATALOG --no-audit   # offline
+```
+
+The source audit fetches each documented input's and witness's source page
+(cached under `$CONFORMANCE_PAGES`, default `~/.cache/noclick-conformance/pages`)
+and checks its values appear there. It is a command-line step: the tests use
+fixed pages and never touch the network.
