@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "CrewAIBearerCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "crew_ai_bearer",
+          "default": "crew_ai_bearer",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deployment_url": {
+          "description": "Your crew's HTTPS origin, such as https://my-travel-crew.crewai.com.",
+          "title": "Deployment URL",
+          "type": "string"
+        },
+        "bearer_token": {
+          "title": "Bearer token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "deployment_url",
+        "bearer_token"
+      ],
+      "title": "CrewAI Bearer Token",
+      "type": "object",
+      "x-credential-instructions": "Open your deployed crew in CrewAI AMP and copy its deployment URL and Bearer Token or User Bearer Token from the Status tab. Paste the token without the Bearer prefix. NoClick reads this deployment's inputs to check access; this does not verify your identity or write permissions.",
+      "x-credential-url": "https://docs.crewai.com/v1.15.37/en/api-reference/introduction"
+    },
+    "GetInputs": {
+      "description": "Discover accepted inputs and the subset required to start this crew.",
+      "properties": {
+        "operation": {
+          "const": "get_inputs",
+          "default": "get_inputs",
+          "title": "Get Inputs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetInputs",
+      "type": "object"
+    },
+    "GetStatus": {
+      "description": "Read running, completed or error status and available execution results.",
+      "properties": {
+        "operation": {
+          "const": "get_status",
+          "default": "get_status",
+          "title": "Get Execution Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kickoff_id": {
+          "description": "Kickoff ID returned by Start Execution.",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Kickoff Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kickoff_id"
+      ],
+      "title": "GetStatus",
+      "type": "object"
+    },
+    "ResumeExecution": {
+      "description": "Resume a paused task with approval or revision feedback.\n\nSend the original webhook URLs again: CrewAI does not carry them over.",
+      "properties": {
+        "taskWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Callback after each task. Resend the original URL when resuming.",
+          "format": "uri",
+          "title": "Task webhook URL"
+        },
+        "stepWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Callback after each agent thought/action. Resend when resuming.",
+          "format": "uri",
+          "title": "Step webhook URL"
+        },
+        "crewWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Callback when execution completes. Resend when resuming.",
+          "format": "uri",
+          "title": "Crew webhook URL"
+        },
+        "operation": {
+          "const": "resume_execution",
+          "default": "resume_execution",
+          "title": "Resume Execution",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "execution_id": {
+          "description": "Execution ID from kickoff.",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Execution Id",
+          "type": "string"
+        },
+        "task_id": {
+          "description": "Task waiting for human input.",
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "human_feedback": {
+          "description": "Feedback supplied as context for subsequent tasks.",
+          "title": "Human Feedback",
+          "type": "string"
+        },
+        "is_approve": {
+          "description": "Yes continues; No retries the task with your feedback.",
+          "title": "Is Approve",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "execution_id",
+        "task_id",
+        "human_feedback",
+        "is_approve"
+      ],
+      "title": "ResumeExecution",
+      "type": "object"
+    },
+    "StartExecution": {
+      "description": "Start one crew execution and return its kickoff ID for later polling.",
+      "properties": {
+        "taskWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Callback after each task. Resend the original URL when resuming.",
+          "format": "uri",
+          "title": "Task webhook URL"
+        },
+        "stepWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Callback after each agent thought/action. Resend when resuming.",
+          "format": "uri",
+          "title": "Step webhook URL"
+        },
+        "crewWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Callback when execution completes. Resend when resuming.",
+          "format": "uri",
+          "title": "Crew webhook URL"
+        },
+        "operation": {
+          "const": "start_execution",
+          "default": "start_execution",
+          "title": "Start Execution",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Key/value inputs required by this deployment. Use Get Inputs to discover them.",
+          "placeholder": "{\"budget\": \"1000 USD\"}",
+          "title": "Inputs",
+          "type": "object",
+          "ui:widget": "state_editor"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional metadata passed to the crew.",
+          "title": "Meta",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "inputs"
+      ],
+      "title": "StartExecution",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_inputs": "#/$defs/GetInputs",
+          "get_status": "#/$defs/GetStatus",
+          "resume_execution": "#/$defs/ResumeExecution",
+          "start_execution": "#/$defs/StartExecution"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetInputs"
+        },
+        {
+          "$ref": "#/$defs/StartExecution"
+        },
+        {
+          "$ref": "#/$defs/GetStatus"
+        },
+        {
+          "$ref": "#/$defs/ResumeExecution"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CrewAIBearerCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Crew-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
