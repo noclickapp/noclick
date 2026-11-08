@@ -1,0 +1,988 @@
+{
+  "$defs": {
+    "FeltAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "felt_api_token",
+          "default": "felt_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Felt API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in Workspace Settings \u2192 Developers and paste it here. Felt REST API access requires a Business or Enterprise plan, or a trial. The token is sent as a Bearer token to felt.com.",
+      "x-credential-url": "https://felt.com/maps/latest/developers"
+    },
+    "FeltCreateMapConfig": {
+      "additionalProperties": false,
+      "description": "Create map.",
+      "properties": {
+        "operation": {
+          "const": "create_map",
+          "default": "create_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "public_access": {
+          "default": "private",
+          "enum": [
+            "private",
+            "view_only",
+            "view_and_comment",
+            "view_comment_and_edit"
+          ],
+          "title": "Public Access",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Id"
+        },
+        "basemap": {
+          "anyOf": [
+            {
+              "enum": [
+                "default",
+                "light",
+                "dark",
+                "satellite"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Basemap",
+          "enum": [
+            "default",
+            "light",
+            "dark",
+            "satellite"
+          ],
+          "x-enum-searchable": true
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lon"
+        },
+        "zoom": {
+          "anyOf": [
+            {
+              "maximum": 24,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zoom"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "FeltCreateMapConfig",
+      "type": "object"
+    },
+    "FeltCreateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Create project.",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "visibility": {
+          "enum": [
+            "workspace",
+            "private"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "max_inherited_permission": {
+          "anyOf": [
+            {
+              "enum": [
+                "view_only",
+                "view_and_contribute",
+                "view_and_edit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Inherited Permission",
+          "enum": [
+            "view_only",
+            "view_and_contribute",
+            "view_and_edit"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "visibility"
+      ],
+      "title": "FeltCreateProjectConfig",
+      "type": "object"
+    },
+    "FeltDeleteMapConfig": {
+      "additionalProperties": false,
+      "description": "Delete map.",
+      "properties": {
+        "operation": {
+          "const": "delete_map",
+          "default": "delete_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltDeleteMapConfig",
+      "type": "object"
+    },
+    "FeltDeleteMapElementConfig": {
+      "additionalProperties": false,
+      "description": "Delete map element.",
+      "properties": {
+        "operation": {
+          "const": "delete_map_element",
+          "default": "delete_map_element",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "element_id": {
+          "description": "Paste the Felt element id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Element Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id",
+        "element_id"
+      ],
+      "title": "FeltDeleteMapElementConfig",
+      "type": "object"
+    },
+    "FeltDeleteMapLayerConfig": {
+      "additionalProperties": false,
+      "description": "Delete map layer.",
+      "properties": {
+        "operation": {
+          "const": "delete_map_layer",
+          "default": "delete_map_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "layer_id": {
+          "description": "Paste the Felt layer id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Layer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id",
+        "layer_id"
+      ],
+      "title": "FeltDeleteMapLayerConfig",
+      "type": "object"
+    },
+    "FeltDeleteProjectConfig": {
+      "additionalProperties": false,
+      "description": "Delete a project and all folders and maps inside it.",
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Paste the Felt project id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FeltDeleteProjectConfig",
+      "type": "object"
+    },
+    "FeltDuplicateMapConfig": {
+      "additionalProperties": false,
+      "description": "Duplicate map.",
+      "properties": {
+        "operation": {
+          "const": "duplicate_map",
+          "default": "duplicate_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltDuplicateMapConfig",
+      "type": "object"
+    },
+    "FeltGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Get current user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FeltGetCurrentUserConfig",
+      "type": "object"
+    },
+    "FeltGetMapConfig": {
+      "additionalProperties": false,
+      "description": "Get map.",
+      "properties": {
+        "operation": {
+          "const": "get_map",
+          "default": "get_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltGetMapConfig",
+      "type": "object"
+    },
+    "FeltGetMapLayerConfig": {
+      "additionalProperties": false,
+      "description": "Get map layer.",
+      "properties": {
+        "operation": {
+          "const": "get_map_layer",
+          "default": "get_map_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "layer_id": {
+          "description": "Paste the Felt layer id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Layer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id",
+        "layer_id"
+      ],
+      "title": "FeltGetMapLayerConfig",
+      "type": "object"
+    },
+    "FeltGetMapLayerGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get map layer group.",
+      "properties": {
+        "operation": {
+          "const": "get_map_layer_group",
+          "default": "get_map_layer_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "layer_group_id": {
+          "description": "Paste the Felt layer group id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Layer Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id",
+        "layer_group_id"
+      ],
+      "title": "FeltGetMapLayerGroupConfig",
+      "type": "object"
+    },
+    "FeltGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Get project.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Paste the Felt project id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FeltGetProjectConfig",
+      "type": "object"
+    },
+    "FeltListMapElementsConfig": {
+      "additionalProperties": false,
+      "description": "List map elements.",
+      "properties": {
+        "operation": {
+          "const": "list_map_elements",
+          "default": "list_map_elements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltListMapElementsConfig",
+      "type": "object"
+    },
+    "FeltListMapLayerGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List map layer groups.",
+      "properties": {
+        "operation": {
+          "const": "list_map_layer_groups",
+          "default": "list_map_layer_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "include_uploading": {
+          "default": true,
+          "title": "Include Uploading",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltListMapLayerGroupsConfig",
+      "type": "object"
+    },
+    "FeltListMapLayersConfig": {
+      "additionalProperties": false,
+      "description": "List map layers.",
+      "properties": {
+        "operation": {
+          "const": "list_map_layers",
+          "default": "list_map_layers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "include_uploading": {
+          "default": true,
+          "title": "Include Uploading",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltListMapLayersConfig",
+      "type": "object"
+    },
+    "FeltListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List projects.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Id"
+        }
+      },
+      "title": "FeltListProjectsConfig",
+      "type": "object"
+    },
+    "FeltMoveMapConfig": {
+      "additionalProperties": false,
+      "description": "Move map.",
+      "properties": {
+        "operation": {
+          "const": "move_map",
+          "default": "move_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "project_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id",
+        "project_id"
+      ],
+      "title": "FeltMoveMapConfig",
+      "type": "object"
+    },
+    "FeltRefreshMapLayerConfig": {
+      "additionalProperties": false,
+      "description": "Request a layer refresh; processing continues asynchronously.",
+      "properties": {
+        "operation": {
+          "const": "refresh_map_layer",
+          "default": "refresh_map_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "layer_id": {
+          "description": "Paste the Felt layer id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Layer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id",
+        "layer_id"
+      ],
+      "title": "FeltRefreshMapLayerConfig",
+      "type": "object"
+    },
+    "FeltUpdateMapConfig": {
+      "additionalProperties": false,
+      "description": "Update map.",
+      "properties": {
+        "operation": {
+          "const": "update_map",
+          "default": "update_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "description": "Paste the Felt map id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Map Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "public_access": {
+          "anyOf": [
+            {
+              "enum": [
+                "private",
+                "view_only",
+                "view_and_comment",
+                "view_comment_and_edit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Access",
+          "enum": [
+            "private",
+            "view_only",
+            "view_and_comment",
+            "view_comment_and_edit"
+          ],
+          "x-enum-searchable": true
+        },
+        "basemap": {
+          "anyOf": [
+            {
+              "enum": [
+                "default",
+                "light",
+                "dark",
+                "satellite"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Basemap",
+          "enum": [
+            "default",
+            "light",
+            "dark",
+            "satellite"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "FeltUpdateMapConfig",
+      "type": "object"
+    },
+    "FeltUpdateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Update project.",
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Paste the Felt project id.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "workspace",
+                "private"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility",
+          "enum": [
+            "workspace",
+            "private"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_inherited_permission": {
+          "anyOf": [
+            {
+              "enum": [
+                "view_only",
+                "view_and_contribute",
+                "view_and_edit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Inherited Permission",
+          "enum": [
+            "view_only",
+            "view_and_contribute",
+            "view_and_edit"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FeltUpdateProjectConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_map": "#/$defs/FeltCreateMapConfig",
+          "create_project": "#/$defs/FeltCreateProjectConfig",
+          "delete_map": "#/$defs/FeltDeleteMapConfig",
+          "delete_map_element": "#/$defs/FeltDeleteMapElementConfig",
+          "delete_map_layer": "#/$defs/FeltDeleteMapLayerConfig",
+          "delete_project": "#/$defs/FeltDeleteProjectConfig",
+          "duplicate_map": "#/$defs/FeltDuplicateMapConfig",
+          "get_current_user": "#/$defs/FeltGetCurrentUserConfig",
+          "get_map": "#/$defs/FeltGetMapConfig",
+          "get_map_layer": "#/$defs/FeltGetMapLayerConfig",
+          "get_map_layer_group": "#/$defs/FeltGetMapLayerGroupConfig",
+          "get_project": "#/$defs/FeltGetProjectConfig",
+          "list_map_elements": "#/$defs/FeltListMapElementsConfig",
+          "list_map_layer_groups": "#/$defs/FeltListMapLayerGroupsConfig",
+          "list_map_layers": "#/$defs/FeltListMapLayersConfig",
+          "list_projects": "#/$defs/FeltListProjectsConfig",
+          "move_map": "#/$defs/FeltMoveMapConfig",
+          "refresh_map_layer": "#/$defs/FeltRefreshMapLayerConfig",
+          "update_map": "#/$defs/FeltUpdateMapConfig",
+          "update_project": "#/$defs/FeltUpdateProjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FeltGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltCreateMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltGetMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltUpdateMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltDeleteMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltDuplicateMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltMoveMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltListMapLayersConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltGetMapLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltDeleteMapLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltRefreshMapLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltListMapElementsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltDeleteMapElementConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltListMapLayerGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeltGetMapLayerGroupConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FeltAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Felt Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
