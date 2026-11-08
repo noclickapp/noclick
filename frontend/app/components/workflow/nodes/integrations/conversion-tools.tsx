@@ -13,6 +13,7 @@ const ConversionToolsIcon = ({ className, style }: { className?: string; style?:
 
 export const ConversionToolsNode: NodeDefinition = {
     type: 'automation-conversion-tools', label: 'Conversion Tools',
+    category: 'productivity',
     description: 'Upload files, convert documents and data, track tasks and download results',
     keywords: ['conversiontools', 'convert', 'PDF', 'XML', 'JSON', 'CSV', 'Excel'],
     Icon: ConversionToolsIcon, iconColor: '',
