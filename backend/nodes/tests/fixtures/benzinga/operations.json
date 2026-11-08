@@ -1,0 +1,70 @@
+{
+  "list_news": {
+    "operation": "list_news"
+  },
+  "get_news": {
+    "operation": "get_news",
+    "nodeID": 123
+  },
+  "list_removed_news": {
+    "operation": "list_removed_news"
+  },
+  "list_earnings": {
+    "operation": "list_earnings"
+  },
+  "list_dividends": {
+    "operation": "list_dividends"
+  },
+  "list_ratings": {
+    "operation": "list_ratings"
+  },
+  "list_splits": {
+    "operation": "list_splits"
+  },
+  "list_ipos": {
+    "operation": "list_ipos"
+  },
+  "list_economics": {
+    "operation": "list_economics"
+  },
+  "list_guidance": {
+    "operation": "list_guidance"
+  },
+  "list_offerings": {
+    "operation": "list_offerings"
+  },
+  "list_conference_calls": {
+    "operation": "list_conference_calls"
+  },
+  "list_market_movers": {
+    "operation": "list_market_movers"
+  },
+  "get_delayed_quotes": {
+    "operation": "get_delayed_quotes"
+  },
+  "get_short_interest": {
+    "operation": "get_short_interest",
+    "symbols": "AAPL"
+  },
+  "get_company_profile": {
+    "operation": "get_company_profile",
+    "symbols": "AAPL"
+  },
+  "get_bars": {
+    "operation": "get_bars",
+    "symbols": "AAPL",
+    "from_date": "2024-01-01"
+  },
+  "get_balance_sheet": {
+    "operation": "get_balance_sheet",
+    "symbols": "AAPL"
+  },
+  "get_cash_flow": {
+    "operation": "get_cash_flow",
+    "symbols": "AAPL"
+  },
+  "get_income_statement": {
+    "operation": "get_income_statement",
+    "symbols": "AAPL"
+  }
+}
