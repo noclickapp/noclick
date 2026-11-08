@@ -1,0 +1,1043 @@
+{
+  "$defs": {
+    "DevtoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "devto_api_key",
+          "default": "devto_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Devto API Key",
+      "type": "object",
+      "x-credential-instructions": "In DEV Settings \u2192 Extensions, create a DEV API Key and paste the key alone. NoClick sends it only to dev.to and reads your profile to check the connection. The key can read and publish articles with your account's permissions.",
+      "x-credential-url": "https://dev.to/settings/extensions"
+    },
+    "DevtoCreateArticleConfig": {
+      "additionalProperties": false,
+      "description": "Create article in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "create_article",
+          "default": "create_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body_markdown": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body Markdown",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "published": {
+          "default": false,
+          "description": "Set true to publish immediately; false creates a draft.",
+          "title": "Published",
+          "type": "boolean"
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series"
+        },
+        "main_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Image"
+        },
+        "canonical_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canonical Url"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags, as required by Forem API v1.",
+          "title": "Tags"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        }
+      },
+      "required": [
+        "title",
+        "body_markdown"
+      ],
+      "title": "DevtoCreateArticleConfig",
+      "type": "object"
+    },
+    "DevtoGetArticleByPathConfig": {
+      "additionalProperties": false,
+      "description": "Get article by path in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "get_article_by_path",
+          "default": "get_article_by_path",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Username",
+          "type": "string"
+        },
+        "slug": {
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username",
+        "slug"
+      ],
+      "title": "DevtoGetArticleByPathConfig",
+      "type": "object"
+    },
+    "DevtoGetArticleConfig": {
+      "additionalProperties": false,
+      "description": "Get article in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "get_article",
+          "default": "get_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "article_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Article Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "article_id"
+      ],
+      "title": "DevtoGetArticleConfig",
+      "type": "object"
+    },
+    "DevtoGetCommentConfig": {
+      "additionalProperties": false,
+      "description": "Get comment in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "comment_id": {
+          "description": "Alphanumeric comment id_code, not its numeric database ID.",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "DevtoGetCommentConfig",
+      "type": "object"
+    },
+    "DevtoGetMeConfig": {
+      "additionalProperties": false,
+      "description": "Get me in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoGetMeConfig",
+      "type": "object"
+    },
+    "DevtoGetOrganizationConfig": {
+      "additionalProperties": false,
+      "description": "Get organization by its numeric ID in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "DevtoGetOrganizationConfig",
+      "type": "object"
+    },
+    "DevtoGetReadingListConfig": {
+      "additionalProperties": false,
+      "description": "Get reading list in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_reading_list",
+          "default": "get_reading_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoGetReadingListConfig",
+      "type": "object"
+    },
+    "DevtoGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get user in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Numeric user ID or username, as documented by Forem API v1.",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DevtoGetUserConfig",
+      "type": "object"
+    },
+    "DevtoListAllMyArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List all my articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_all_my_articles",
+          "default": "list_all_my_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListAllMyArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_articles",
+          "default": "list_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags, matching any.",
+          "title": "Tags"
+        },
+        "tags_exclude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Exclude"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Username"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "fresh",
+                "rising",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "fresh",
+            "rising",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "top": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top"
+        },
+        "collection_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collection Id"
+        }
+      },
+      "title": "DevtoListArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListCommentsConfig": {
+      "additionalProperties": false,
+      "description": "List comments in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "a_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Article ID to fetch comments for.",
+          "title": "A Id"
+        },
+        "p_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Podcast episode ID to fetch comments for.",
+          "title": "P Id"
+        }
+      },
+      "title": "DevtoListCommentsConfig",
+      "type": "object"
+    },
+    "DevtoListFollowedTagsConfig": {
+      "additionalProperties": false,
+      "description": "List followed tags in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "list_followed_tags",
+          "default": "list_followed_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListFollowedTagsConfig",
+      "type": "object"
+    },
+    "DevtoListFollowersConfig": {
+      "additionalProperties": false,
+      "description": "List followers in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_followers",
+          "default": "list_followers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "created_at",
+                "-created_at"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "created_at",
+            "-created_at"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "DevtoListFollowersConfig",
+      "type": "object"
+    },
+    "DevtoListLatestArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List latest articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_latest_articles",
+          "default": "list_latest_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListLatestArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListMyArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List my articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_my_articles",
+          "default": "list_my_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListMyArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListMyPublishedArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List my published articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_my_published_articles",
+          "default": "list_my_published_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListMyPublishedArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListMyUnpublishedArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List my unpublished articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_my_unpublished_articles",
+          "default": "list_my_unpublished_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListMyUnpublishedArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListOrganizationArticlesConfig": {
+      "additionalProperties": false,
+      "description": "List organization articles in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "description": "Maximum items on this page. An empty page ends pagination.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_organization_articles",
+          "default": "list_organization_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id_or_username": {
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Id Or Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id_or_username"
+      ],
+      "title": "DevtoListOrganizationArticlesConfig",
+      "type": "object"
+    },
+    "DevtoListTagsConfig": {
+      "additionalProperties": false,
+      "description": "List tags in DEV Community.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run returns one page; increase page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 10,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevtoListTagsConfig",
+      "type": "object"
+    },
+    "DevtoUpdateArticleConfig": {
+      "additionalProperties": false,
+      "description": "Update article in DEV Community.",
+      "properties": {
+        "operation": {
+          "const": "update_article",
+          "default": "update_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "article_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Article Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "body_markdown": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body Markdown",
+          "ui:widget": "textarea"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True publishes; false saves as a draft. Omit to preserve.",
+          "title": "Published"
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series"
+        },
+        "main_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Image"
+        },
+        "canonical_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canonical Url"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags.",
+          "title": "Tags"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        }
+      },
+      "required": [
+        "article_id"
+      ],
+      "title": "DevtoUpdateArticleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_article": "#/$defs/DevtoCreateArticleConfig",
+          "get_article": "#/$defs/DevtoGetArticleConfig",
+          "get_article_by_path": "#/$defs/DevtoGetArticleByPathConfig",
+          "get_comment": "#/$defs/DevtoGetCommentConfig",
+          "get_me": "#/$defs/DevtoGetMeConfig",
+          "get_organization": "#/$defs/DevtoGetOrganizationConfig",
+          "get_reading_list": "#/$defs/DevtoGetReadingListConfig",
+          "get_user": "#/$defs/DevtoGetUserConfig",
+          "list_all_my_articles": "#/$defs/DevtoListAllMyArticlesConfig",
+          "list_articles": "#/$defs/DevtoListArticlesConfig",
+          "list_comments": "#/$defs/DevtoListCommentsConfig",
+          "list_followed_tags": "#/$defs/DevtoListFollowedTagsConfig",
+          "list_followers": "#/$defs/DevtoListFollowersConfig",
+          "list_latest_articles": "#/$defs/DevtoListLatestArticlesConfig",
+          "list_my_articles": "#/$defs/DevtoListMyArticlesConfig",
+          "list_my_published_articles": "#/$defs/DevtoListMyPublishedArticlesConfig",
+          "list_my_unpublished_articles": "#/$defs/DevtoListMyUnpublishedArticlesConfig",
+          "list_organization_articles": "#/$defs/DevtoListOrganizationArticlesConfig",
+          "list_tags": "#/$defs/DevtoListTagsConfig",
+          "update_article": "#/$defs/DevtoUpdateArticleConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DevtoGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListLatestArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoGetArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoGetArticleByPathConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListMyArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListMyPublishedArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListMyUnpublishedArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListAllMyArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoCreateArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoUpdateArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListFollowedTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoGetReadingListConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoListOrganizationArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/DevtoGetUserConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DevtoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Devto Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
