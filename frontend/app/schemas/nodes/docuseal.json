@@ -1,0 +1,1509 @@
+{
+  "$defs": {
+    "ArchiveSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Archive submission.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Submission ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "archive_submission",
+          "default": "archive_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ArchiveSubmissionConfig",
+      "type": "object"
+    },
+    "ArchiveTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Archive template.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Template ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "archive_template",
+          "default": "archive_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ArchiveTemplateConfig",
+      "type": "object"
+    },
+    "CloneTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Clone template.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Template ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "clone_template",
+          "default": "clone_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "folder_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Name"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CloneTemplateConfig",
+      "type": "object"
+    },
+    "CreateSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Create submission.",
+      "properties": {
+        "operation": {
+          "const": "create_submission",
+          "default": "create_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        },
+        "submitters": {
+          "items": {
+            "$ref": "#/$defs/SubmissionSubmitter"
+          },
+          "minItems": 1,
+          "title": "Submitters",
+          "type": "array"
+        },
+        "send_email": {
+          "default": true,
+          "description": "Send signature request emails. Set false to create without emailing.",
+          "title": "Send Email",
+          "type": "boolean"
+        },
+        "send_sms": {
+          "default": false,
+          "title": "Send Sms",
+          "type": "boolean"
+        },
+        "order": {
+          "default": "preserved",
+          "enum": [
+            "random",
+            "preserved"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "completed_redirect_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed Redirect Url"
+        },
+        "bcc_completed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc Completed"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "expire_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expire At"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Message"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "template_id",
+        "submitters"
+      ],
+      "title": "CreateSubmissionConfig",
+      "type": "object"
+    },
+    "CreateTemplateFromHtmlConfig": {
+      "additionalProperties": false,
+      "description": "Create template from html.",
+      "properties": {
+        "operation": {
+          "const": "create_template_from_html",
+          "default": "create_template_from_html",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "html": {
+          "description": "HTML with DocuSeal field tags.",
+          "minLength": 1,
+          "title": "Html",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "html_header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html Header"
+        },
+        "html_footer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html Footer"
+        },
+        "folder_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing templates with this external ID will be updated.",
+          "title": "External Id"
+        },
+        "shared_link": {
+          "default": false,
+          "description": "Make this template available via a shared link.",
+          "title": "Shared Link",
+          "type": "boolean"
+        },
+        "size": {
+          "default": "Letter",
+          "enum": [
+            "Letter",
+            "Legal",
+            "Tabloid",
+            "Ledger",
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6"
+          ],
+          "title": "Size",
+          "type": "string"
+        }
+      },
+      "required": [
+        "html"
+      ],
+      "title": "CreateTemplateFromHtmlConfig",
+      "type": "object"
+    },
+    "CreateTemplateFromPdfConfig": {
+      "additionalProperties": false,
+      "description": "Create template from pdf.",
+      "properties": {
+        "operation": {
+          "const": "create_template_from_pdf",
+          "default": "create_template_from_pdf",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "documents": {
+          "items": {
+            "$ref": "#/$defs/PdfDocument"
+          },
+          "minItems": 1,
+          "title": "Documents",
+          "type": "array"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "folder_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing templates with this external ID will be updated.",
+          "title": "External Id"
+        },
+        "shared_link": {
+          "default": false,
+          "description": "Make this template available via a shared link.",
+          "title": "Shared Link",
+          "type": "boolean"
+        },
+        "flatten": {
+          "default": false,
+          "title": "Flatten",
+          "type": "boolean"
+        },
+        "remove_tags": {
+          "default": true,
+          "title": "Remove Tags",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "documents"
+      ],
+      "title": "CreateTemplateFromPdfConfig",
+      "type": "object"
+    },
+    "DocusealAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "docuseal_api_key",
+          "default": "docuseal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "global",
+          "enum": [
+            "global",
+            "eu"
+          ],
+          "title": "Account region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Docuseal API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the DocuSeal API console and paste the key alone. Choose the region that holds your account. NoClick sends X-Auth-Token only to that region's DocuSeal API. Connecting reads your templates; writes use this key's permissions. Creating submissions sends signature request emails by default; turn Send email off to create without emailing signers.",
+      "x-credential-url": "https://console.docuseal.com/api"
+    },
+    "GetSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Get submission.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Submission ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_submission",
+          "default": "get_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSubmissionConfig",
+      "type": "object"
+    },
+    "GetSubmissionDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "Get submission documents.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Submission ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_submission_documents",
+          "default": "get_submission_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "merge": {
+          "default": false,
+          "description": "Return a merged document URL instead of separate documents.",
+          "title": "Merge",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSubmissionDocumentsConfig",
+      "type": "object"
+    },
+    "GetSubmitterConfig": {
+      "additionalProperties": false,
+      "description": "Get submitter.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Submitter ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_submitter",
+          "default": "get_submitter",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSubmitterConfig",
+      "type": "object"
+    },
+    "GetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get template.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Template ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTemplateConfig",
+      "type": "object"
+    },
+    "ListSubmissionsConfig": {
+      "additionalProperties": false,
+      "description": "List submissions.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only. Use pagination.next as After for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read records after this cursor ID.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read records before this cursor ID.",
+          "title": "Before"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "completed",
+                "declined",
+                "expired",
+                "pending"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "completed",
+            "declined",
+            "expired",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        },
+        "template_folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Folder"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        }
+      },
+      "title": "ListSubmissionsConfig",
+      "type": "object"
+    },
+    "ListSubmittersConfig": {
+      "additionalProperties": false,
+      "description": "List submitters.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only. Use pagination.next as After for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read records after this cursor ID.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read records before this cursor ID.",
+          "title": "Before"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "operation": {
+          "const": "list_submitters",
+          "default": "list_submitters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "submission_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submission Id"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "completed_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date and time.",
+          "title": "Completed After"
+        },
+        "completed_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date and time.",
+          "title": "Completed Before"
+        }
+      },
+      "title": "ListSubmittersConfig",
+      "type": "object"
+    },
+    "ListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List templates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only. Use pagination.next as After for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read records after this cursor ID.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read records before this cursor ID.",
+          "title": "Before"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        },
+        "shared": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shared"
+        }
+      },
+      "title": "ListTemplatesConfig",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        }
+      },
+      "title": "Message",
+      "type": "object"
+    },
+    "PdfDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "file": {
+          "description": "Downloadable PDF URL or base64-encoded PDF content.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "file"
+      ],
+      "title": "PdfDocument",
+      "type": "object"
+    },
+    "SubmissionSubmitter": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role name from the template, for example First Party.",
+          "title": "Role"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Values"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "send_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Email"
+        },
+        "send_sms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Sms"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SubmissionSubmitter",
+      "type": "object"
+    },
+    "UpdateSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Update submission.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Submission ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_submission",
+          "default": "update_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "expire_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration date and time. Omit to leave unchanged.",
+          "title": "Expire At"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateSubmissionConfig",
+      "type": "object"
+    },
+    "UpdateSubmitterConfig": {
+      "additionalProperties": false,
+      "description": "Update submitter.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Submitter ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_submitter",
+          "default": "update_submitter",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pre-filled values keyed by document field name.",
+          "title": "Values"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "send_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set true to re-send the signature request email.",
+          "title": "Send Email"
+        },
+        "send_sms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set true to re-send the signature request SMS.",
+          "title": "Send Sms"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "completed_redirect_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed Redirect Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateSubmitterConfig",
+      "type": "object"
+    },
+    "UpdateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Update template.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Template ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "folder_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Name"
+        },
+        "roles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Roles"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateTemplateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_submission": "#/$defs/ArchiveSubmissionConfig",
+          "archive_template": "#/$defs/ArchiveTemplateConfig",
+          "clone_template": "#/$defs/CloneTemplateConfig",
+          "create_submission": "#/$defs/CreateSubmissionConfig",
+          "create_template_from_html": "#/$defs/CreateTemplateFromHtmlConfig",
+          "create_template_from_pdf": "#/$defs/CreateTemplateFromPdfConfig",
+          "get_submission": "#/$defs/GetSubmissionConfig",
+          "get_submission_documents": "#/$defs/GetSubmissionDocumentsConfig",
+          "get_submitter": "#/$defs/GetSubmitterConfig",
+          "get_template": "#/$defs/GetTemplateConfig",
+          "list_submissions": "#/$defs/ListSubmissionsConfig",
+          "list_submitters": "#/$defs/ListSubmittersConfig",
+          "list_templates": "#/$defs/ListTemplatesConfig",
+          "update_submission": "#/$defs/UpdateSubmissionConfig",
+          "update_submitter": "#/$defs/UpdateSubmitterConfig",
+          "update_template": "#/$defs/UpdateTemplateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSubmittersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/ArchiveTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/CloneTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/ArchiveSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSubmissionDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSubmitterConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubmitterConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplateFromPdfConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplateFromHtmlConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DocusealAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Docuseal Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
