@@ -1,0 +1,1019 @@
+{
+  "$defs": {
+    "AddContactToListConfig": {
+      "additionalProperties": false,
+      "description": "Add a contact to a list.",
+      "properties": {
+        "operation": {
+          "const": "add_contact_to_list",
+          "default": "add_contact_to_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "description": "ID of the contact to add",
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "AddContactToListConfig",
+      "type": "object"
+    },
+    "AttachContactTagConfig": {
+      "additionalProperties": false,
+      "description": "Attach a tag to a contact.",
+      "properties": {
+        "operation": {
+          "const": "attach_contact_tag",
+          "default": "attach_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "AttachContactTagConfig",
+      "type": "object"
+    },
+    "CreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create a new contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "lists": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of list IDs to add the contact to",
+          "title": "Lists"
+        },
+        "contact_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of contact tags (see `/contact-tags`) to add, up to 100. Applies to existing and\nunsubscribed contacts too; a tag the contact already has is left alone. An ID the account\ndoesn't own returns 400 and nothing is written.\n",
+          "title": "Contact Tags"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateContactConfig",
+      "type": "object"
+    },
+    "CreateContactListConfig": {
+      "additionalProperties": false,
+      "description": "Create a new contact list.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_list",
+          "default": "create_contact_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContactListConfig",
+      "type": "object"
+    },
+    "CreateContactTagConfig": {
+      "additionalProperties": false,
+      "description": "Create a contact tag.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_tag",
+          "default": "create_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional brand palette hex color; auto-assigned when omitted.",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContactTagConfig",
+      "type": "object"
+    },
+    "DeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete a contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteContactConfig",
+      "type": "object"
+    },
+    "DeleteContactListConfig": {
+      "additionalProperties": false,
+      "description": "Delete a contact list.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_list",
+          "default": "delete_contact_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteContactListConfig",
+      "type": "object"
+    },
+    "DeleteContactTagConfig": {
+      "additionalProperties": false,
+      "description": "Delete a contact tag.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_tag",
+          "default": "delete_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteContactTagConfig",
+      "type": "object"
+    },
+    "DetachContactTagConfig": {
+      "additionalProperties": false,
+      "description": "Remove a tag from a contact.",
+      "properties": {
+        "operation": {
+          "const": "detach_contact_tag",
+          "default": "detach_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "DetachContactTagConfig",
+      "type": "object"
+    },
+    "GetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Get a specific campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaignConfig",
+      "type": "object"
+    },
+    "GetCampaignStatsConfig": {
+      "additionalProperties": false,
+      "description": "Get campaign performance statistics.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_stats",
+          "default": "get_campaign_stats",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "include_link_stats": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Include Link Stats"
+        },
+        "link_limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Link Limit"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaignStatsConfig",
+      "type": "object"
+    },
+    "GetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get a specific contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactConfig",
+      "type": "object"
+    },
+    "GetContactListConfig": {
+      "additionalProperties": false,
+      "description": "Get a specific contact list.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_list",
+          "default": "get_contact_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactListConfig",
+      "type": "object"
+    },
+    "GetContactTagConfig": {
+      "additionalProperties": false,
+      "description": "Get a contact tag.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_tag",
+          "default": "get_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactTagConfig",
+      "type": "object"
+    },
+    "GetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Get current user information.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCurrentUserConfig",
+      "type": "object"
+    },
+    "ListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List Id"
+        }
+      },
+      "title": "ListCampaignsConfig",
+      "type": "object"
+    },
+    "ListContactListsConfig": {
+      "additionalProperties": false,
+      "description": "List contact lists.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_lists",
+          "default": "list_contact_lists",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ListContactListsConfig",
+      "type": "object"
+    },
+    "ListContactTagsConfig": {
+      "additionalProperties": false,
+      "description": "List contact tags.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_tags",
+          "default": "list_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListContactTagsConfig",
+      "type": "object"
+    },
+    "ListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "unsubscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribed"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Per Page"
+        },
+        "count_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Count Only"
+        }
+      },
+      "title": "ListContactsConfig",
+      "type": "object"
+    },
+    "ListContactsInListConfig": {
+      "additionalProperties": false,
+      "description": "Get contacts in a list.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts_in_list",
+          "default": "list_contacts_in_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "subscribed",
+                "unsubscribed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "subscribed",
+            "unsubscribed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ListContactsInListConfig",
+      "type": "object"
+    },
+    "RemoveContactFromListConfig": {
+      "additionalProperties": false,
+      "description": "Remove a contact from a list.",
+      "properties": {
+        "operation": {
+          "const": "remove_contact_from_list",
+          "default": "remove_contact_from_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "RemoveContactFromListConfig",
+      "type": "object"
+    },
+    "SendfoxTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sendfox_token",
+          "default": "sendfox_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "SendFox Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create a personal access token in SendFox Account \u2192 OAuth and paste it here. Your plan controls API access; some operations require Lifetime or Pro.",
+      "x-credential-url": "https://sendfox.com/account/oauth"
+    },
+    "UnsubscribeContactConfig": {
+      "additionalProperties": false,
+      "description": "Unsubscribe a contact by email.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_contact",
+          "default": "unsubscribe_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "UnsubscribeContactConfig",
+      "type": "object"
+    },
+    "UpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "lists": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of list IDs (replaces all current list memberships)",
+          "title": "Lists"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateContactConfig",
+      "type": "object"
+    },
+    "UpdateContactListConfig": {
+      "additionalProperties": false,
+      "description": "Update a contact list.",
+      "properties": {
+        "operation": {
+          "const": "update_contact_list",
+          "default": "update_contact_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "public_description": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name subscribers see on the unsubscribe and preference pages. Blank uses the list's own name.",
+          "title": "Public Description"
+        },
+        "subscriber_description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What subscribers can expect from this list, shown below its name on those pages. Blank clears it.",
+          "title": "Subscriber Description"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateContactListConfig",
+      "type": "object"
+    },
+    "UpdateContactTagConfig": {
+      "additionalProperties": false,
+      "description": "Update a contact tag.",
+      "properties": {
+        "operation": {
+          "const": "update_contact_tag",
+          "default": "update_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateContactTagConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_to_list": "#/$defs/AddContactToListConfig",
+          "attach_contact_tag": "#/$defs/AttachContactTagConfig",
+          "create_contact": "#/$defs/CreateContactConfig",
+          "create_contact_list": "#/$defs/CreateContactListConfig",
+          "create_contact_tag": "#/$defs/CreateContactTagConfig",
+          "delete_contact": "#/$defs/DeleteContactConfig",
+          "delete_contact_list": "#/$defs/DeleteContactListConfig",
+          "delete_contact_tag": "#/$defs/DeleteContactTagConfig",
+          "detach_contact_tag": "#/$defs/DetachContactTagConfig",
+          "get_campaign": "#/$defs/GetCampaignConfig",
+          "get_campaign_stats": "#/$defs/GetCampaignStatsConfig",
+          "get_contact": "#/$defs/GetContactConfig",
+          "get_contact_list": "#/$defs/GetContactListConfig",
+          "get_contact_tag": "#/$defs/GetContactTagConfig",
+          "get_current_user": "#/$defs/GetCurrentUserConfig",
+          "list_campaigns": "#/$defs/ListCampaignsConfig",
+          "list_contact_lists": "#/$defs/ListContactListsConfig",
+          "list_contact_tags": "#/$defs/ListContactTagsConfig",
+          "list_contacts": "#/$defs/ListContactsConfig",
+          "list_contacts_in_list": "#/$defs/ListContactsInListConfig",
+          "remove_contact_from_list": "#/$defs/RemoveContactFromListConfig",
+          "unsubscribe_contact": "#/$defs/UnsubscribeContactConfig",
+          "update_contact": "#/$defs/UpdateContactConfig",
+          "update_contact_list": "#/$defs/UpdateContactListConfig",
+          "update_contact_tag": "#/$defs/UpdateContactTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribeContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AttachContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/DetachContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactListsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactsInListConfig"
+        },
+        {
+          "$ref": "#/$defs/AddContactToListConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactFromListConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SendfoxTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sendfox Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
