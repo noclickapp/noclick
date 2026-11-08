@@ -11,6 +11,7 @@ const ZigpollIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const ZigpollNode: NodeDefinition = {
     type: 'automation-zigpoll', label: 'Zigpoll',
+    category: 'forms',
     description: 'Create surveys, collect feedback, send invitations and analyze responses',
     Icon: ZigpollIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
