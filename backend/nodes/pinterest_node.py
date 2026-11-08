@@ -184,7 +184,7 @@ class PinterestNode(WorkflowNode):
         "List Pinterest ad accounts",
     ]
     connection_evidence = ConnectionEvidence(
-        operation="user_account_get", noun="account"
+        operation="get_user_account", noun="account"
     )
 
     @classmethod
@@ -223,6 +223,20 @@ class PinterestNode(WorkflowNode):
             provider="pinterest",
         )
 
+    async def _ensure_fresh_token(self, credential: PinterestOAuthCredential):
+        """Refresh through the shared execute-path caller scope and adopt rotation."""
+        cred_dict = credential.model_dump()
+        await ensure_fresh_oauth_token(
+            credential_id=(self.node_data or {}).get("credential_id"),
+            user_id=self.user_id,
+            credential=cred_dict,
+            refresh=refresh_access_token,
+            provider="pinterest",
+        )
+        credential.access_token = cred_dict["access_token"]
+        credential.refresh_token = cred_dict.get("refresh_token")
+        credential.expires_at = cred_dict.get("expires_at")
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         config = self.config
         if not isinstance(config, PinterestNodeConfig):
@@ -237,17 +251,7 @@ class PinterestNode(WorkflowNode):
                 name, granted_scopes(credential.model_dump())
             )
         if isinstance(credential, PinterestOAuthCredential):
-            cred_dict = credential.model_dump()
-            await ensure_fresh_oauth_token(
-                credential_id=(self.node_data or {}).get("credential_id"),
-                user_id=self.user_id,
-                credential=cred_dict,
-                refresh=refresh_access_token,
-                provider="pinterest",
-            )
-            credential.access_token = cred_dict["access_token"]
-            credential.refresh_token = cred_dict.get("refresh_token")
-            credential.expires_at = cred_dict.get("expires_at")
+            await self._ensure_fresh_token(credential)
 
         op = config.config
         name = op.operation

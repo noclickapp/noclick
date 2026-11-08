@@ -58,7 +58,7 @@ def make_node(operation: str, **fields) -> PinterestNode:
         ),
         ("pins_get", {"pin_id": "12/34"}, "GET", "/v5/pins/12%2F34", None),
         ("pins_delete", {"pin_id": "123"}, "DELETE", "/v5/pins/123", None),
-        ("user_account_get", {}, "GET", "/v5/user_account", None),
+        ("get_user_account", {}, "GET", "/v5/user_account", None),
     ],
 )
 async def test_operation_request(operation, fields, method, path, body):
@@ -270,3 +270,39 @@ async def test_catalog_report_keeps_json_selector_in_named_query_field():
         await make_node("reports_stats", parameters=selector).execute({})
     assert json.loads(seen[0].url.params["parameters"]) == selector
     assert "catalog_type" not in seen[0].url.params
+
+
+@pytest.mark.asyncio
+async def test_execute_adopts_rotated_tokens_without_overriding_caller_scope():
+    from nodes.core.oauth_audit import caller_path_scope, current_caller_path
+    from nodes.pinterest_node import PinterestOAuthCredential
+
+    node = make_node("get_user_account")
+    node.config.credentials = PinterestOAuthCredential(
+        access_token="old-access", refresh_token="old-refresh"
+    )
+    seen = []
+
+    async def freshen(**kwargs):
+        assert current_caller_path() == "mcp"
+        assert "caller_path" not in kwargs
+        kwargs["credential"].update(
+            access_token="new-access",
+            refresh_token="new-refresh",
+            expires_at="2099-01-01T00:00:00+00:00",
+        )
+        return "new-access"
+
+    transport = httpx.MockTransport(
+        lambda request: (seen.append(request) or httpx.Response(200, json={"username": "creator"}))
+    )
+    original = httpx.AsyncClient
+    with patch("nodes.pinterest_node.ensure_fresh_oauth_token", side_effect=freshen), patch(
+        "nodes.pinterest_node.httpx.AsyncClient",
+        side_effect=lambda **kw: original(transport=transport, **kw),
+    ), caller_path_scope("mcp"):
+        result = await node.execute({})
+    assert result["status"] == "success"
+    assert seen[0].headers["authorization"] == "Bearer new-access"
+    assert node.config.credentials.refresh_token == "new-refresh"
+    assert node.config.credentials.expires_at == "2099-01-01T00:00:00+00:00"

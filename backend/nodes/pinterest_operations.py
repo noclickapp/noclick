@@ -117697,7 +117697,7 @@ OPERATIONS = json.loads(r'''
    "user_accounts:read"
   ]
  },
- "user_account_get":{
+ "get_user_account":{
   "method":"GET",
   "path":"/user_account",
   "category":"User Account",

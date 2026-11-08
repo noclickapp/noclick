@@ -86155,6 +86155,39 @@
       "title": "PinterestGetInvitesConfig",
       "type": "object"
     },
+    "PinterestGetUserAccountConfig": {
+      "description": "Get account information for the \"operation user_account\"\n- By default, the \"operation user_account\" is the token user_account.\n\n[Understanding Business Access]: https://developers.pinterest.com/docs/getting-started/using-business-access/ \"Understanding Business Access\"\nIf using Business Access: Specify an ad_account_id to use the owner of that ad_account as ",
+      "properties": {
+        "operation": {
+          "const": "get_user_account",
+          "default": "get_user_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Account",
+          "x-display-name": "Get user account",
+          "x-is-trigger": false
+        },
+        "ad_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier of an ad account.",
+          "maxLength": 18,
+          "pattern": "^\\d+$",
+          "title": "Ad Account Id",
+          "type": "string"
+        }
+      },
+      "title": "PinterestGetUserAccountConfig",
+      "type": "object"
+    },
     "PinterestIntegrationsCommerceDelConfig": {
       "description": "Delete commerce integration metadata for the given external business ID. Note: If you're interested in joining the beta, please reach out to your Pinterest account manager.",
       "properties": {
@@ -117405,39 +117438,6 @@
       "title": "PinterestUserAccountFollowedInterestsConfig",
       "type": "object"
     },
-    "PinterestUserAccountGetConfig": {
-      "description": "Get account information for the \"operation user_account\"\n- By default, the \"operation user_account\" is the token user_account.\n\n[Understanding Business Access]: https://developers.pinterest.com/docs/getting-started/using-business-access/ \"Understanding Business Access\"\nIf using Business Access: Specify an ad_account_id to use the owner of that ad_account as ",
-      "properties": {
-        "operation": {
-          "const": "user_account_get",
-          "default": "user_account_get",
-          "title": "Operation",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "User Account",
-          "x-display-name": "Get user account",
-          "x-is-trigger": false
-        },
-        "ad_account_id": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Unique identifier of an ad account.",
-          "maxLength": 18,
-          "pattern": "^\\d+$",
-          "title": "Ad Account Id",
-          "type": "string"
-        }
-      },
-      "title": "PinterestUserAccountGetConfig",
-      "type": "object"
-    },
     "PinterestUserFollowingGetConfig": {
       "description": "Get a list of who a certain user follows.",
       "properties": {
@@ -117844,6 +117844,7 @@
           "get_business_partners": "#/$defs/PinterestGetBusinessPartnersConfig",
           "get_campaign_delivery_estimates": "#/$defs/PinterestGetCampaignDeliveryEstimatesConfig",
           "get_invites": "#/$defs/PinterestGetInvitesConfig",
+          "get_user_account": "#/$defs/PinterestGetUserAccountConfig",
           "integrations_commerce_del": "#/$defs/PinterestIntegrationsCommerceDelConfig",
           "integrations_commerce_get": "#/$defs/PinterestIntegrationsCommerceGetConfig",
           "integrations_commerce_patch": "#/$defs/PinterestIntegrationsCommercePatchConfig",
@@ -117949,7 +117950,6 @@
           "user_account_analytics_top_pins": "#/$defs/PinterestUserAccountAnalyticsTopPinsConfig",
           "user_account_analytics_top_video_pins": "#/$defs/PinterestUserAccountAnalyticsTopVideoPinsConfig",
           "user_account_followed_interests": "#/$defs/PinterestUserAccountFollowedInterestsConfig",
-          "user_account_get": "#/$defs/PinterestUserAccountGetConfig",
           "user_following_get": "#/$defs/PinterestUserFollowingGetConfig",
           "user_websites_get": "#/$defs/PinterestUserWebsitesGetConfig",
           "verify_website_update": "#/$defs/PinterestVerifyWebsiteUpdateConfig",
@@ -118736,7 +118736,7 @@
           "$ref": "#/$defs/PinterestUserAccountFollowedInterestsConfig"
         },
         {
-          "$ref": "#/$defs/PinterestUserAccountGetConfig"
+          "$ref": "#/$defs/PinterestGetUserAccountConfig"
         },
         {
           "$ref": "#/$defs/PinterestUserFollowingGetConfig"
