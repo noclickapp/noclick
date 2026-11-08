@@ -1,0 +1,637 @@
+[
+  {
+    "provider": "icypeas",
+    "node_type": "automation-icypeas",
+    "checked": 15,
+    "passed": 6,
+    "failed": 9,
+    "fixture_errors": 0,
+    "response_checked": 15,
+    "auth_checked": 15,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 15,
+      "total": 19
+    },
+    "operations": [
+      {
+        "operation": "get_subscription",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/a/actions/subscription-information",
+            "content_type": "application/json",
+            "body": "{\"email\":\"example@icypeas.com\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "31"
+            },
+            "spec_operation": "POST /a/actions/subscription-information",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "9da0a2ed3edff190972f1df0a5ddf5c5c7938220a76c6df08bc78b053c68b9c9"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_subscription"
+        },
+        "passed": false
+      },
+      {
+        "operation": "read_bulk_progress",
+        "scenario": "read_bulk_progress",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/search-files/read",
+            "content_type": "application/json",
+            "body": "{\"limit\":2}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "11"
+            },
+            "spec_operation": "POST /search-files/read",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "39ee6df374293f61c057e1095762be253f4c7cd4c0f1cada8d6bba10776e7a64"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 2,
+          "operation": "read_bulk_progress"
+        },
+        "passed": false
+      },
+      {
+        "operation": "create_bulk_search",
+        "scenario": "create_bulk_search",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/bulk-search",
+            "content_type": "application/json",
+            "body": "{\"name\":\"Icypeas Prospects to analyze\",\"task\":\"email-search\",\"data\":[[\"John\",\"Doe\",\"icypeas.com\"],[\"John\",\"Doe\",\"Icypeas\"]]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "124"
+            },
+            "spec_operation": "POST /bulk-search",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /bulk-search",
+            "response_source_url": "https://api-doc.icypeas.com/reference/bulk-search",
+            "response_status": 200,
+            "response_sha256": "c4b056b2481f8adad6bfc06230a299f9a3348d9d9283b17f87032979b71c4e2d"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "name": "Icypeas Prospects to analyze",
+          "task": "email-search",
+          "data": [
+            [
+              "John",
+              "Doe",
+              "icypeas.com"
+            ],
+            [
+              "John",
+              "Doe",
+              "Icypeas"
+            ]
+          ],
+          "operation": "create_bulk_search"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_domain_search",
+        "scenario": "create_domain_search",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/domain-search",
+            "content_type": "application/json",
+            "body": "{\"domainOrCompany\":\"icypeas.com\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "33"
+            },
+            "spec_operation": "POST /domain-search",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /domain-search",
+            "response_source_url": "https://api-doc.icypeas.com/reference/domain-search",
+            "response_status": 200,
+            "response_sha256": "234763d3e56388541cb5dcbd3adbebb36db28d3be5b391c6fb6ae246272dbc88"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "domainOrCompany": "icypeas.com",
+          "operation": "create_domain_search"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_email_search",
+        "scenario": "create_email_search",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/email-search",
+            "content_type": "application/json",
+            "body": "{\"firstname\":\"John\",\"lastname\":\"Doe\",\"domainOrCompany\":\"icypeas.com\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "69"
+            },
+            "spec_operation": "POST /email-search",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /email-search",
+            "response_source_url": "https://api-doc.icypeas.com/reference/email-search",
+            "response_status": 200,
+            "response_sha256": "234763d3e56388541cb5dcbd3adbebb36db28d3be5b391c6fb6ae246272dbc88"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "firstname": "John",
+          "lastname": "Doe",
+          "domainOrCompany": "icypeas.com",
+          "operation": "create_email_search"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_email_verification",
+        "scenario": "create_email_verification",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/email-verification",
+            "content_type": "application/json",
+            "body": "{\"email\":\"example-email@icypeas.com\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "37"
+            },
+            "spec_operation": "POST /email-verification",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /email-verification",
+            "response_source_url": "https://api-doc.icypeas.com/reference/email-verification",
+            "response_status": 200,
+            "response_sha256": "234763d3e56388541cb5dcbd3adbebb36db28d3be5b391c6fb6ae246272dbc88"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "email": "example-email@icypeas.com",
+          "operation": "create_email_verification"
+        },
+        "passed": true
+      },
+      {
+        "operation": "find_company_url",
+        "scenario": "find_company_url",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/url-search/company",
+            "content_type": "application/json",
+            "body": "{\"companyOrDomain\":\"nec technologies\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "38"
+            },
+            "spec_operation": "POST /url-search/company",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "8a68d0bef63ab17fe292e659b7f8208879ab7e98fc6d8a50181392283599bf8d"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "companyOrDomain": "nec technologies",
+          "operation": "find_company_url"
+        },
+        "passed": false
+      },
+      {
+        "operation": "find_profile_url",
+        "scenario": "find_profile_url",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/url-search/profile",
+            "content_type": "application/json",
+            "body": "{\"firstname\":\"Marc\",\"lastname\":\"Lachabody\",\"companyOrDomain\":\"nec technologies\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "80"
+            },
+            "spec_operation": "POST /url-search/profile",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "8a68d0bef63ab17fe292e659b7f8208879ab7e98fc6d8a50181392283599bf8d"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "firstname": "Marc",
+          "lastname": "Lachabody",
+          "companyOrDomain": "nec technologies",
+          "operation": "find_profile_url"
+        },
+        "passed": false
+      },
+      {
+        "operation": "find_urls",
+        "scenario": "find_urls",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/url-search",
+            "content_type": "application/json",
+            "body": "{\"type\":\"company\",\"data\":[{\"companyOrDomain\":\"nec technologies\"},{\"companyOrDomain\":\"icypessaezeaze\"}]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "103"
+            },
+            "spec_operation": "POST /url-search",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /url-search",
+            "response_source_url": "https://api-doc.icypeas.com/reference/find-company-url",
+            "response_status": 200,
+            "response_sha256": "98a2b18d60c267b20c2d9a64ecd6c6309c31fa8856d23865b1c2cac68836bf2a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "type": "company",
+          "data": [
+            {
+              "companyOrDomain": "nec technologies"
+            },
+            {
+              "companyOrDomain": "icypessaezeaze"
+            }
+          ],
+          "operation": "find_urls"
+        },
+        "passed": true
+      },
+      {
+        "operation": "read_results",
+        "scenario": "read_results",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/bulk-single-searchs/read",
+            "content_type": "application/json",
+            "body": "{\"mode\":\"bulk\",\"file\":\"#FILEID#\",\"limit\":50}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "44"
+            },
+            "spec_operation": "POST /bulk-single-searchs/read",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "39ee6df374293f61c057e1095762be253f4c7cd4c0f1cada8d6bba10776e7a64"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "mode": "bulk",
+          "limit": 50,
+          "file": "#FILEID#",
+          "operation": "read_results"
+        },
+        "passed": false
+      },
+      {
+        "operation": "reverse_email_lookup",
+        "scenario": "reverse_email_lookup",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/reverse-email-lookup",
+            "content_type": "application/json",
+            "body": "{\"email\":\"pierre.landoin@icypeas.com\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "38"
+            },
+            "spec_operation": "POST /reverse-email-lookup",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "3601253295748c85c65259b463d74470b683e23ed8b0d5b58d8ac8db0ff672f8"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "email": "pierre.landoin@icypeas.com",
+          "operation": "reverse_email_lookup"
+        },
+        "passed": false
+      },
+      {
+        "operation": "reverse_email_lookups",
+        "scenario": "reverse_email_lookups",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/reverse-email-lookups",
+            "content_type": "application/json",
+            "body": "{\"data\":[\"pierre.landoin@icypeas.com\",\"magnus@icypeas.com\"]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "60"
+            },
+            "spec_operation": "POST /reverse-email-lookups",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /reverse-email-lookups",
+            "response_source_url": "https://api-doc.icypeas.com/reference/reverse-email-lookup",
+            "response_status": 200,
+            "response_sha256": "cafcec32d39fe8bd3f2d0ac8f5e9222fd98fb446a46d83bd29ef9c1c2f906e0c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "data": [
+            "pierre.landoin@icypeas.com",
+            "magnus@icypeas.com"
+          ],
+          "operation": "reverse_email_lookups"
+        },
+        "passed": true
+      },
+      {
+        "operation": "scrape_company",
+        "scenario": "scrape_company",
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.icypeas.com/api/scrape/company?url=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fnec-technologies",
+            "content_type": "application/json",
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json"
+            },
+            "spec_operation": "GET /scrape/company",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "e3e0fc19e54a5b69a51c2aa77e36b67b8267417d5fca6b55bc3c8903ceefd7bd"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "url": "https://www.linkedin.com/company/nec-technologies",
+          "operation": "scrape_company"
+        },
+        "passed": false
+      },
+      {
+        "operation": "scrape_profile",
+        "scenario": "scrape_profile",
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.icypeas.com/api/scrape/profile?url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fcorentin-ribeyre-30085a3b",
+            "content_type": "application/json",
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json"
+            },
+            "spec_operation": "GET /scrape/profile",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "84c78af7b60a0b96a7cd7a6cc73b6ef007578d9b79788632d499d8985cf8a020"
+          }
+        ],
+        "failures": [
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "url": "https://www.linkedin.com/in/corentin-ribeyre-30085a3b",
+          "operation": "scrape_profile"
+        },
+        "passed": false
+      },
+      {
+        "operation": "scrape_pages",
+        "scenario": "scrape_pages",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.icypeas.com/api/scrape",
+            "content_type": "application/json",
+            "body": "{\"type\":\"company\",\"data\":[\"https://www.linkedin.com/company/nec-technologies\",\"https://www.linkedin.com/company/icypessaezeaze\"]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.icypeas.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "conformance-fake-token",
+              "accept": "application/json",
+              "content-type": "application/json",
+              "content-length": "129"
+            },
+            "spec_operation": "POST /scrape",
+            "security_declared": true,
+            "response_source": "spec_example",
+            "response_status": 200,
+            "response_sha256": "08ec89df0f6a04f23ed19ef1ead77a54346f49138c72a36f47d1c78f6dc6092f"
+          }
+        ],
+        "failures": [
+          "request: InvalidRequestBody: Request body validation error: Value {'type': 'company', 'data': ['https://www.linkedin.com/company/nec-technologies', 'https://www.linkedin.com/company/icypessaezeaze']} not valid for schema of type any: (<ValidationError: '{\\'type\\': \\'company\\', \\'data\\': [\\'https://www.linkedin.com/company/nec-technologies\\', \\'https://www.linkedin.com/company/icypessaezeaze\\']} is valid under each of {\\'type\\': \\'object\\', \\'properties\\': {\\'type\\': {\\'type\\': \\'string\\', \\'description\\': \"The type of data Rule: should always be \\'profile\\'.\"}, \\'data\\': {\\'type\\': \\'array\\', \\'items\\': {}, \\'description\\': \\'An array containing the profile URLs to scrape. Max number of profiles per request is 50 Rule: should be valid profile URLs.\\'}}, \\'required\\': [\\'type\\', \\'data\\']}, {\\'type\\': \\'object\\', \\'properties\\': {\\'type\\': {\\'type\\': \\'string\\', \\'description\\': \"The type of data Rule: should always be \\'company\\'.\"}, \\'data\\': {\\'type\\': \\'array\\', \\'items\\': {}, \\'description\\': \\'An array containing the company URLs to scrape. Max number of companies per request is 50 Rule: should be valid company URLs.\\'}}, \\'required\\': [\\'type\\', \\'data\\']}'>,) / InvalidSchemaValue: Value {'type': 'company', 'data': ['https://www.linkedin.com/company/nec-technologies', 'https://www.linkedin.com/company/icypessaezeaze']} not valid for schema of type any: (<ValidationError: '{\\'type\\': \\'company\\', \\'data\\': [\\'https://www.linkedin.com/company/nec-technologies\\', \\'https://www.linkedin.com/company/icypessaezeaze\\']} is valid under each of {\\'type\\': \\'object\\', \\'properties\\': {\\'type\\': {\\'type\\': \\'string\\', \\'description\\': \"The type of data Rule: should always be \\'profile\\'.\"}, \\'data\\': {\\'type\\': \\'array\\', \\'items\\': {}, \\'description\\': \\'An array containing the profile URLs to scrape. Max number of profiles per request is 50 Rule: should be valid profile URLs.\\'}}, \\'required\\': [\\'type\\', \\'data\\']}, {\\'type\\': \\'object\\', \\'properties\\': {\\'type\\': {\\'type\\': \\'string\\', \\'description\\': \"The type of data Rule: should always be \\'company\\'.\"}, \\'data\\': {\\'type\\': \\'array\\', \\'items\\': {}, \\'description\\': \\'An array containing the company URLs to scrape. Max number of companies per request is 50 Rule: should be valid company URLs.\\'}}, \\'required\\': [\\'type\\', \\'data\\']}'>,)",
+          "node error envelope: {'status': 'error'}"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "type": "company",
+          "data": [
+            "https://www.linkedin.com/company/nec-technologies",
+            "https://www.linkedin.com/company/icypessaezeaze"
+          ],
+          "operation": "scrape_pages"
+        },
+        "passed": false
+      }
+    ]
+  }
+]

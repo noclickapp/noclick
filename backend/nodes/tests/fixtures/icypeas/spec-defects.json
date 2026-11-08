@@ -1,0 +1,76 @@
+[
+  {
+    "operations": [
+      "get_subscription"
+    ],
+    "kind": "d",
+    "description": "The successful subscription example has no success field and matches both the success object and the validation-error object, whose success=false field is optional. OpenAPI oneOf therefore rejects it. The harness falls back to the validation-error example, which the node correctly reports as error.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/subscription"
+    ]
+  },
+  {
+    "operations": [
+      "read_bulk_progress"
+    ],
+    "kind": "d",
+    "description": "The documented success response returns sorts as arrays of timestamp arrays; its schema requires object items. The node preserves that response and accepts returned cursor arrays. The harness instead selects the spec-valid validation-error example.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/bulk-files"
+    ]
+  },
+  {
+    "operations": [
+      "find_company_url",
+      "find_profile_url"
+    ],
+    "kind": "d",
+    "description": "The FOUND and NOT_FOUND response oneOf branches have identical string types without status discriminators, so the documented NOT_FOUND example matches both. The node accepts the published response; the harness falls back to the validation-error example.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/find-company-url",
+      "https://api-doc.icypeas.com/reference/find-profile-url"
+    ]
+  },
+  {
+    "operations": [
+      "read_results"
+    ],
+    "kind": "d",
+    "description": "The published success response omits results.saasServices required by the schema, and returns sorts as timestamp/id arrays rather than the declared object items. The node preserves the published response; the harness falls back to the validation-error example.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/get-results"
+    ]
+  },
+  {
+    "operations": [
+      "reverse_email_lookup"
+    ],
+    "kind": "d",
+    "description": "The published NOT_FOUND response has results (plural), whereas both success schemas require result (singular). The node preserves either response; the harness falls back to the validation-error example.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/reverse-email-lookup"
+    ]
+  },
+  {
+    "operations": [
+      "scrape_company",
+      "scrape_profile"
+    ],
+    "kind": "d",
+    "description": "The published NOT_FOUND response has result:null, but both success schemas require an object. The node preserves null; the harness falls back to the validation-error example.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/scrape-company",
+      "https://api-doc.icypeas.com/reference/scrape-profile"
+    ]
+  },
+  {
+    "operations": [
+      "scrape_pages"
+    ],
+    "kind": "d",
+    "description": "The two request oneOf branches have the same structural constraints and no const/enum on type; every documented request matches both. The published response also has foundedYear as a string (schema: number), employeeGrowth entries without required growth, no required company id, and result:null for NOT_FOUND (schema: object). The node sends the exact published request and preserves the exact published response.",
+    "docs": [
+      "https://api-doc.icypeas.com/reference/scrape-company"
+    ]
+  }
+]

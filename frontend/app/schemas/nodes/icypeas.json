@@ -1,0 +1,879 @@
+{
+  "$defs": {
+    "BulkCustom": {
+      "additionalProperties": false,
+      "properties": {
+        "webhookUrlItem": {
+          "anyOf": [
+            {
+              "pattern": "^https://[^/\\s]+(?:/.*)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurlitem"
+        },
+        "webhookUrlBulkDone": {
+          "anyOf": [
+            {
+              "pattern": "^https://[^/\\s]+(?:/.*)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurlbulkdone"
+        },
+        "externalIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalids"
+        },
+        "includeResultsInWebhook": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeresultsinwebhook"
+        }
+      },
+      "title": "BulkCustom",
+      "type": "object"
+    },
+    "CompanyInput": {
+      "additionalProperties": false,
+      "properties": {
+        "companyOrDomain": {
+          "minLength": 1,
+          "title": "Companyordomain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "companyOrDomain"
+      ],
+      "title": "CompanyInput",
+      "type": "object"
+    },
+    "CreateBulkSearch": {
+      "additionalProperties": false,
+      "description": "Submit up to 5,000 rows. This starts a search and can spend credits.",
+      "properties": {
+        "operation": {
+          "const": "create_bulk_search",
+          "default": "create_bulk_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "task": {
+          "enum": [
+            "domain-search",
+            "email-search",
+            "email-verification"
+          ],
+          "title": "Task",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BulkCustom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "task",
+        "data"
+      ],
+      "title": "CreateBulkSearch",
+      "type": "object"
+    },
+    "CreateDomainSearch": {
+      "additionalProperties": false,
+      "description": "Start an asynchronous domain search; read_results retrieves its result.",
+      "properties": {
+        "operation": {
+          "const": "create_domain_search",
+          "default": "create_domain_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domainOrCompany": {
+          "minLength": 1,
+          "title": "Domainorcompany",
+          "type": "string"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchCustom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "domainOrCompany"
+      ],
+      "title": "CreateDomainSearch",
+      "type": "object"
+    },
+    "CreateEmailSearch": {
+      "additionalProperties": false,
+      "description": "Start a professional email search; at least one name must be supplied.",
+      "properties": {
+        "operation": {
+          "const": "create_email_search",
+          "default": "create_email_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "firstname": {
+          "default": "",
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "default": "",
+          "title": "Lastname",
+          "type": "string"
+        },
+        "domainOrCompany": {
+          "minLength": 1,
+          "title": "Domainorcompany",
+          "type": "string"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchCustom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "domainOrCompany"
+      ],
+      "title": "CreateEmailSearch",
+      "type": "object"
+    },
+    "CreateEmailVerification": {
+      "additionalProperties": false,
+      "description": "Start an email verification search; this can spend credits.",
+      "properties": {
+        "operation": {
+          "const": "create_email_verification",
+          "default": "create_email_verification",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchCustom"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateEmailVerification",
+      "type": "object"
+    },
+    "CreationDateSort": {
+      "additionalProperties": false,
+      "properties": {
+        "creationDate": {
+          "title": "Creationdate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "creationDate"
+      ],
+      "title": "CreationDateSort",
+      "type": "object"
+    },
+    "FindCompanyURL": {
+      "additionalProperties": false,
+      "description": "Find a company's profile URL.",
+      "properties": {
+        "companyOrDomain": {
+          "minLength": 1,
+          "title": "Companyordomain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "find_company_url",
+          "default": "find_company_url",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "companyOrDomain"
+      ],
+      "title": "FindCompanyURL",
+      "type": "object"
+    },
+    "FindProfileURL": {
+      "additionalProperties": false,
+      "description": "Find a person's profile URL.",
+      "properties": {
+        "firstname": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "companyOrDomain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyordomain"
+        },
+        "jobTitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Jobtitle"
+        },
+        "operation": {
+          "const": "find_profile_url",
+          "default": "find_profile_url",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstname",
+        "lastname"
+      ],
+      "title": "FindProfileURL",
+      "type": "object"
+    },
+    "FindURLs": {
+      "additionalProperties": false,
+      "description": "Find up to 50 company or profile URLs in one request.",
+      "properties": {
+        "operation": {
+          "const": "find_urls",
+          "default": "find_urls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "company",
+            "profile"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CompanyInput"
+              },
+              {
+                "$ref": "#/$defs/ProfileInput"
+              }
+            ]
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ],
+      "title": "FindURLs",
+      "type": "object"
+    },
+    "GetSubscription": {
+      "additionalProperties": false,
+      "description": "Read the connected account subscription and remaining credits (free).",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetSubscription",
+      "type": "object"
+    },
+    "IcypeasAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "icypeas_api_key",
+          "default": "icypeas_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Account email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "email"
+      ],
+      "title": "Icypeas API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Icypeas API key and account email. The key is sent as Authorization without a Bearer prefix. NoClick reads your subscription and remaining credits to check the connection. Searches and scraping can consume credits.",
+      "x-credential-url": "https://app.icypeas.com/api"
+    },
+    "ProfileInput": {
+      "additionalProperties": false,
+      "properties": {
+        "firstname": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "companyOrDomain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyordomain"
+        },
+        "jobTitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Jobtitle"
+        }
+      },
+      "required": [
+        "firstname",
+        "lastname"
+      ],
+      "title": "ProfileInput",
+      "type": "object"
+    },
+    "ReadBulkProgress": {
+      "additionalProperties": false,
+      "description": "Read a page of bulk search progress; pass the returned sorts explicitly.",
+      "properties": {
+        "operation": {
+          "const": "read_bulk_progress",
+          "default": "read_bulk_progress",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "in_progress",
+                "done"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "in_progress",
+            "done"
+          ],
+          "x-enum-searchable": true
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        },
+        "sorts": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/CreationDateSort"
+                  },
+                  {
+                    "maxItems": 1,
+                    "minItems": 1,
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass provider-returned sorts unchanged. The docs example uses one-element timestamp arrays; the OpenAPI schema describes creationDate objects.",
+          "title": "Sorts"
+        }
+      },
+      "title": "ReadBulkProgress",
+      "type": "object"
+    },
+    "ReadResults": {
+      "additionalProperties": false,
+      "description": "Read the first page or an exact single/bulk search. No implicit polling.",
+      "properties": {
+        "operation": {
+          "const": "read_results",
+          "default": "read_results",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "single",
+                "bulk"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "single",
+            "bulk"
+          ],
+          "x-enum-searchable": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ReadResults",
+      "type": "object"
+    },
+    "ReverseEmailLookup": {
+      "additionalProperties": false,
+      "description": "Look up the person behind one professional email address.",
+      "properties": {
+        "operation": {
+          "const": "reverse_email_lookup",
+          "default": "reverse_email_lookup",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ReverseEmailLookup",
+      "type": "object"
+    },
+    "ReverseEmailLookups": {
+      "additionalProperties": false,
+      "description": "Look up people behind 2 to 50 professional email addresses.",
+      "properties": {
+        "operation": {
+          "const": "reverse_email_lookups",
+          "default": "reverse_email_lookups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 2,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "ReverseEmailLookups",
+      "type": "object"
+    },
+    "ScrapeCompany": {
+      "additionalProperties": false,
+      "description": "Scrape one company page; returns an acknowledgement or result.",
+      "properties": {
+        "operation": {
+          "const": "scrape_company",
+          "default": "scrape_company",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "pattern": "^https://(?:www\\.)?linkedin\\.com/company/[^\\s]+$",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScrapeCompany",
+      "type": "object"
+    },
+    "ScrapePages": {
+      "additionalProperties": false,
+      "description": "Submit up to 50 company or profile pages for scraping.",
+      "properties": {
+        "operation": {
+          "const": "scrape_pages",
+          "default": "scrape_pages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "company",
+            "profile"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "data"
+      ],
+      "title": "ScrapePages",
+      "type": "object"
+    },
+    "ScrapeProfile": {
+      "additionalProperties": false,
+      "description": "Scrape one profile; returns an acknowledgement or result.",
+      "properties": {
+        "operation": {
+          "const": "scrape_profile",
+          "default": "scrape_profile",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "pattern": "^https://(?:www\\.)?linkedin\\.com/in/[^\\s]+$",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScrapeProfile",
+      "type": "object"
+    },
+    "SearchCustom": {
+      "additionalProperties": false,
+      "properties": {
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalid"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https://[^/\\s]+(?:/.*)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional HTTPS endpoint Icypeas calls when the search finishes.",
+          "title": "Webhookurl"
+        }
+      },
+      "title": "SearchCustom",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_bulk_search": "#/$defs/CreateBulkSearch",
+          "create_domain_search": "#/$defs/CreateDomainSearch",
+          "create_email_search": "#/$defs/CreateEmailSearch",
+          "create_email_verification": "#/$defs/CreateEmailVerification",
+          "find_company_url": "#/$defs/FindCompanyURL",
+          "find_profile_url": "#/$defs/FindProfileURL",
+          "find_urls": "#/$defs/FindURLs",
+          "get_subscription": "#/$defs/GetSubscription",
+          "read_bulk_progress": "#/$defs/ReadBulkProgress",
+          "read_results": "#/$defs/ReadResults",
+          "reverse_email_lookup": "#/$defs/ReverseEmailLookup",
+          "reverse_email_lookups": "#/$defs/ReverseEmailLookups",
+          "scrape_company": "#/$defs/ScrapeCompany",
+          "scrape_pages": "#/$defs/ScrapePages",
+          "scrape_profile": "#/$defs/ScrapeProfile"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetSubscription"
+        },
+        {
+          "$ref": "#/$defs/ReadBulkProgress"
+        },
+        {
+          "$ref": "#/$defs/CreateBulkSearch"
+        },
+        {
+          "$ref": "#/$defs/CreateDomainSearch"
+        },
+        {
+          "$ref": "#/$defs/CreateEmailSearch"
+        },
+        {
+          "$ref": "#/$defs/CreateEmailVerification"
+        },
+        {
+          "$ref": "#/$defs/FindCompanyURL"
+        },
+        {
+          "$ref": "#/$defs/FindProfileURL"
+        },
+        {
+          "$ref": "#/$defs/FindURLs"
+        },
+        {
+          "$ref": "#/$defs/ReadResults"
+        },
+        {
+          "$ref": "#/$defs/ReverseEmailLookup"
+        },
+        {
+          "$ref": "#/$defs/ReverseEmailLookups"
+        },
+        {
+          "$ref": "#/$defs/ScrapeCompany"
+        },
+        {
+          "$ref": "#/$defs/ScrapeProfile"
+        },
+        {
+          "$ref": "#/$defs/ScrapePages"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IcypeasAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Icypeas Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
