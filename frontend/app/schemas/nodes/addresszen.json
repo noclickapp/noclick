@@ -1,0 +1,1200 @@
+{
+  "$defs": {
+    "AddresszenAPIKeysCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "addresszen_api_keys",
+          "default": "addresszen_api_keys",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "management_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Management key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "management_key"
+      ],
+      "title": "Addresszen API Keys",
+      "type": "object",
+      "x-credential-instructions": "Paste your API key and management key from your Addresszen account, without a Bearer prefix. The API key authorizes address, place, email and phone lookups. The management key authorizes key details, usage, licensees and configuration changes. Connecting reads the selected key's details.",
+      "x-credential-url": "https://addresszen.com/account"
+    },
+    "CreateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_config",
+          "default": "create_config",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "payload": {
+          "description": "Serialized configuration, for example a JSON string. Sent as a string, not a nested object.",
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Payload",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "payload"
+      ],
+      "title": "CreateConfig",
+      "type": "object"
+    },
+    "CreateLicensee": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "whitelist": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Whitelist"
+        },
+        "daily": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Limit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_licensee",
+          "default": "create_licensee",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateLicensee",
+      "type": "object"
+    },
+    "DeleteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "config_name": {
+          "description": "Name of the stored configuration.",
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Config Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_config",
+          "default": "delete_config",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_name"
+      ],
+      "title": "DeleteConfig",
+      "type": "object"
+    },
+    "DeleteLicensee": {
+      "additionalProperties": false,
+      "description": "Cancel the selected licensee's access to this API key.",
+      "properties": {
+        "licensee": {
+          "description": "Licensee key (sl_...), not its immutable ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Licensee",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_licensee",
+          "default": "delete_licensee",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licensee"
+      ],
+      "title": "DeleteLicensee",
+      "type": "object"
+    },
+    "FindAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_address",
+          "default": "find_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 150,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        },
+        "bias_lonlat": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bias Lonlat"
+        },
+        "is_pobox": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Pobox",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "is_business": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Business",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FindAddress",
+      "type": "object"
+    },
+    "FindPlace": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_place",
+          "default": "find_place",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "country_iso": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Iso"
+        },
+        "bias_country_iso": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bias Country Iso"
+        },
+        "bias_lonlat": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bias Lonlat"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FindPlace",
+      "type": "object"
+    },
+    "GetConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "config_name": {
+          "description": "Name of the stored configuration.",
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Config Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_config",
+          "default": "get_config",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_name"
+      ],
+      "title": "GetConfig",
+      "type": "object"
+    },
+    "GetKeyDetails": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_key_details",
+          "default": "get_key_details",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetKeyDetails",
+      "type": "object"
+    },
+    "GetKeyUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_key_usage",
+          "default": "get_key_usage",
+          "title": "Operation",
+          "type": "string"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive Unix timestamp in milliseconds.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusive Unix timestamp in milliseconds.",
+          "title": "End"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "licensee": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Licensee"
+        }
+      },
+      "title": "GetKeyUsage",
+      "type": "object"
+    },
+    "GetLicensee": {
+      "additionalProperties": false,
+      "properties": {
+        "licensee": {
+          "description": "Licensee key (sl_...), not its immutable ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Licensee",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_licensee",
+          "default": "get_licensee",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licensee"
+      ],
+      "title": "GetLicensee",
+      "type": "object"
+    },
+    "ListConfigs": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_configs",
+          "default": "list_configs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListConfigs",
+      "type": "object"
+    },
+    "ListLicensees": {
+      "additionalProperties": false,
+      "description": "Return one page, preserving hasMore and licensee IDs for continuation.",
+      "properties": {
+        "operation": {
+          "const": "list_licensees",
+          "default": "list_licensees",
+          "title": "Operation",
+          "type": "string"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor as specified by OpenAPI 4.2.0.",
+          "title": "Starting After"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ListLicensees",
+      "type": "object"
+    },
+    "ResolvePlace": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resolve_place",
+          "default": "resolve_place",
+          "title": "Operation",
+          "type": "string"
+        },
+        "place": {
+          "description": "Opaque place ID returned by Find Place.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Place",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "place"
+      ],
+      "title": "ResolvePlace",
+      "type": "object"
+    },
+    "RetrieveAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "retrieve_address",
+          "default": "retrieve_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "address": {
+          "description": "Opaque address ID returned by Find Address; US retrieval endpoint.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma separated response fields.",
+          "title": "Filter"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "RetrieveAddress",
+      "type": "object"
+    },
+    "UpdateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "config_name": {
+          "description": "Name of the stored configuration.",
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Config Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_config",
+          "default": "update_config",
+          "title": "Operation",
+          "type": "string"
+        },
+        "payload": {
+          "description": "Serialized replacement configuration.",
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Payload",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_name",
+        "payload"
+      ],
+      "title": "UpdateConfig",
+      "type": "object"
+    },
+    "UpdateKeyDetails": {
+      "additionalProperties": false,
+      "description": "Update only supplied settings on the API key.",
+      "properties": {
+        "operation": {
+          "const": "update_key_details",
+          "default": "update_key_details",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "pattern": "^(\\w|\\s){0,32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "daily_limit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Limit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "monthly_limit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Limit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "individual_limit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Limit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "allowed_urls": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[^\\s]+$",
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allowed Urls"
+        },
+        "redact_days": {
+          "anyOf": [
+            {
+              "maximum": 1095,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Redact Days"
+        }
+      },
+      "title": "UpdateKeyDetails",
+      "type": "object"
+    },
+    "UpdateLicensee": {
+      "additionalProperties": false,
+      "properties": {
+        "licensee": {
+          "description": "Licensee key (sl_...), not its immutable ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Licensee",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "whitelist": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Whitelist"
+        },
+        "daily": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Limit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_licensee",
+          "default": "update_licensee",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licensee"
+      ],
+      "title": "UpdateLicensee",
+      "type": "object"
+    },
+    "ValidateEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_email",
+          "default": "validate_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "description": "Email address to validate.",
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Query",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ValidateEmail",
+      "type": "object"
+    },
+    "ValidatePhoneNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_phone_number",
+          "default": "validate_phone_number",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "description": "Phone number including its country code.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "current_carrier": {
+          "anyOf": [
+            {
+              "const": "true",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Carrier"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ValidatePhoneNumber",
+      "type": "object"
+    },
+    "VerifyAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "verify_address",
+          "default": "verify_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip Code"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country context, for example usa.",
+          "title": "Context"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "VerifyAddress",
+      "type": "object"
+    },
+    "_Limit": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Set null to disable the limit.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "limit"
+      ],
+      "title": "_Limit",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_config": "#/$defs/CreateConfig",
+          "create_licensee": "#/$defs/CreateLicensee",
+          "delete_config": "#/$defs/DeleteConfig",
+          "delete_licensee": "#/$defs/DeleteLicensee",
+          "find_address": "#/$defs/FindAddress",
+          "find_place": "#/$defs/FindPlace",
+          "get_config": "#/$defs/GetConfig",
+          "get_key_details": "#/$defs/GetKeyDetails",
+          "get_key_usage": "#/$defs/GetKeyUsage",
+          "get_licensee": "#/$defs/GetLicensee",
+          "list_configs": "#/$defs/ListConfigs",
+          "list_licensees": "#/$defs/ListLicensees",
+          "resolve_place": "#/$defs/ResolvePlace",
+          "retrieve_address": "#/$defs/RetrieveAddress",
+          "update_config": "#/$defs/UpdateConfig",
+          "update_key_details": "#/$defs/UpdateKeyDetails",
+          "update_licensee": "#/$defs/UpdateLicensee",
+          "validate_email": "#/$defs/ValidateEmail",
+          "validate_phone_number": "#/$defs/ValidatePhoneNumber",
+          "verify_address": "#/$defs/VerifyAddress"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetKeyDetails"
+        },
+        {
+          "$ref": "#/$defs/UpdateKeyDetails"
+        },
+        {
+          "$ref": "#/$defs/GetKeyUsage"
+        },
+        {
+          "$ref": "#/$defs/VerifyAddress"
+        },
+        {
+          "$ref": "#/$defs/FindAddress"
+        },
+        {
+          "$ref": "#/$defs/RetrieveAddress"
+        },
+        {
+          "$ref": "#/$defs/FindPlace"
+        },
+        {
+          "$ref": "#/$defs/ResolvePlace"
+        },
+        {
+          "$ref": "#/$defs/ListLicensees"
+        },
+        {
+          "$ref": "#/$defs/CreateLicensee"
+        },
+        {
+          "$ref": "#/$defs/GetLicensee"
+        },
+        {
+          "$ref": "#/$defs/UpdateLicensee"
+        },
+        {
+          "$ref": "#/$defs/DeleteLicensee"
+        },
+        {
+          "$ref": "#/$defs/ListConfigs"
+        },
+        {
+          "$ref": "#/$defs/CreateConfig"
+        },
+        {
+          "$ref": "#/$defs/GetConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ValidateEmail"
+        },
+        {
+          "$ref": "#/$defs/ValidatePhoneNumber"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AddresszenAPIKeysCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Addresszen Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

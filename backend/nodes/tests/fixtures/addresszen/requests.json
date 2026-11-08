@@ -1,0 +1,22 @@
+[
+  {"config":{"operation":"get_key_details"},"method":"GET","path":"/keys/ak_fixture/details"},
+  {"config":{"operation":"update_key_details","name":"My API Key","daily_limit":{"limit":null},"allowed_urls":[]},"method":"PUT","path":"/keys/ak_fixture/details","body":{"name":"My API Key","daily_limit":{"limit":null},"allowed_urls":[]}},
+  {"config":{"operation":"get_key_usage","start":1418556452651,"end":1418556492651,"tags":"foo,bar"},"method":"GET","path":"/keys/ak_fixture/usage","query":{"start":"1418556452651","end":"1418556492651","tags":"foo,bar"}},
+  {"config":{"operation":"verify_address","query":"123 Main St","zip_code":"81073-1119","context":"usa","tags":"foo,bar"},"method":"POST","path":"/verify/addresses","query":{"context":"usa","tags":"foo,bar"},"body":{"query":"123 Main St","zip_code":"81073-1119"}},
+  {"config":{"operation":"find_address","query":"123 main st spring","context":"USA","limit":5},"method":"GET","path":"/autocomplete/addresses","query":{"query":"123 main st spring","context":"USA","limit":"5"}},
+  {"config":{"operation":"retrieve_address","address":"usps_V118834572|310||3191","filter":"line_1,line_2,line_3"},"method":"GET","path":"/autocomplete/addresses/usps_V118834572|310||3191/usa","query":{"filter":"line_1,line_2,line_3"}},
+  {"config":{"operation":"find_place","query":"London","country_iso":"GBR"},"method":"GET","path":"/places","query":{"query":"London","country_iso":"GBR"}},
+  {"config":{"operation":"resolve_place","place":"place|opaque/id?value","tags":"foo,bar"},"method":"GET","path":"/places/place|opaque/id?value","query":{"tags":"foo,bar"}},
+  {"config":{"operation":"list_licensees","starting_after":12,"limit":5,"query":"Widgets"},"method":"GET","path":"/keys/ak_fixture/licensees","query":{"starting_after":"12","limit":"5","query":"Widgets"}},
+  {"config":{"operation":"create_licensee","name":"Qwerty Widgets Limited","daily":{"limit":10000}},"method":"POST","path":"/keys/ak_fixture/licensees","body":{"name":"Qwerty Widgets Limited","daily":{"limit":10000}}},
+  {"config":{"operation":"get_licensee","licensee":"sl_fixture"},"method":"GET","path":"/keys/ak_fixture/licensees/sl_fixture"},
+  {"config":{"operation":"update_licensee","licensee":"sl_fixture","postcode":"BR8 7RE","daily":{"limit":null}},"method":"POST","path":"/keys/ak_fixture/licensees/sl_fixture","body":{"postcode":"BR8 7RE","daily":{"limit":null}}},
+  {"config":{"operation":"delete_licensee","licensee":"sl_fixture"},"method":"DELETE","path":"/keys/ak_fixture/licensees/sl_fixture"},
+  {"config":{"operation":"list_configs"},"method":"GET","path":"/keys/ak_fixture/configs"},
+  {"config":{"operation":"create_config","name":"woocommerce","payload":"{\n  \"removeOrganisation\": false\n}\n"},"method":"POST","path":"/keys/ak_fixture/configs","body":{"name":"woocommerce","payload":"{\n  \"removeOrganisation\": false\n}\n"}},
+  {"config":{"operation":"get_config","config_name":"checkout-form"},"method":"GET","path":"/keys/ak_fixture/configs/checkout-form"},
+  {"config":{"operation":"update_config","config_name":"checkout-form","payload":"{}"},"method":"POST","path":"/keys/ak_fixture/configs/checkout-form","body":{"payload":"{}"}},
+  {"config":{"operation":"delete_config","config_name":"checkout-form"},"method":"DELETE","path":"/keys/ak_fixture/configs/checkout-form"},
+  {"config":{"operation":"validate_email","query":"person@example.com","tags":"foo,bar"},"method":"GET","path":"/emails","query":{"query":"person@example.com","tags":"foo,bar"}},
+  {"config":{"operation":"validate_phone_number","query":"+44 20 7112 8019","current_carrier":"true"},"method":"GET","path":"/phone_numbers","query":{"query":"+44 20 7112 8019","current_carrier":"true"}}
+]
