@@ -1,0 +1,1311 @@
+{
+  "$defs": {
+    "BulkCreateScores": {
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "enum": [
+            "trace",
+            "span",
+            "generation",
+            "session"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "bulk_create_scores",
+          "default": "bulk_create_scores",
+          "description": "Create multiple scores for one source; inspect returned errors for partial failures.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scores": {
+          "items": {
+            "$ref": "#/$defs/Score"
+          },
+          "minItems": 1,
+          "title": "Scores",
+          "type": "array"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "scores"
+      ],
+      "title": "BulkCreateScores",
+      "type": "object"
+    },
+    "CreateLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type-specific JSON, for example {\"no_of_stars\": 5}.",
+          "title": "Label Settings"
+        },
+        "allow_notes": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Notes"
+        },
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "enum": [
+            "text",
+            "categorical",
+            "numeric",
+            "star",
+            "thumbs_up_down"
+          ],
+          "title": "Label Type",
+          "type": "string"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "CreateLabel",
+      "type": "object"
+    },
+    "CreateQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Queue Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "assignment_strategy": {
+          "anyOf": [
+            {
+              "enum": [
+                "manual",
+                "round_robin",
+                "load_balanced"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignment Strategy",
+          "enum": [
+            "manual",
+            "round_robin",
+            "load_balanced"
+          ],
+          "x-enum-searchable": true
+        },
+        "annotations_required": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotations Required"
+        },
+        "reservation_timeout_minutes": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reservation Timeout Minutes"
+        },
+        "requires_review": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requires Review"
+        },
+        "auto_assign": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Assign"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Labels to attach; updates replace the existing set.",
+          "title": "Label Ids"
+        },
+        "annotator_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Annotators to assign; updates replace the existing set.",
+          "title": "Annotator Ids"
+        },
+        "annotator_roles": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "annotator",
+                  "manager",
+                  "reviewer"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotator Roles"
+        },
+        "operation": {
+          "const": "create_queue",
+          "default": "create_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "active",
+                "paused"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "active",
+            "paused"
+          ],
+          "x-enum-searchable": true
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "dataset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset Id"
+        },
+        "agent_definition_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Definition Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateQueue",
+      "type": "object"
+    },
+    "CreateScore": {
+      "additionalProperties": false,
+      "properties": {
+        "label_id": {
+          "minLength": 1,
+          "title": "Label UUID",
+          "type": "string"
+        },
+        "value": {
+          "additionalProperties": true,
+          "description": "JSON matching the label type, for example {\"rating\": 5}.",
+          "title": "Score Value",
+          "type": "object"
+        },
+        "score_source": {
+          "default": "human",
+          "enum": [
+            "human",
+            "automation",
+            "sdk"
+          ],
+          "title": "Score Source",
+          "type": "string"
+        },
+        "source_type": {
+          "enum": [
+            "trace",
+            "span",
+            "generation",
+            "session"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_score",
+          "default": "create_score",
+          "description": "May automatically complete an associated queue item when all required labels are scored.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "label_id",
+        "value",
+        "source_type",
+        "source_id"
+      ],
+      "title": "CreateScore",
+      "type": "object"
+    },
+    "DeleteLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_label",
+          "default": "delete_label",
+          "description": "Soft-delete a label; restore_label can recover it.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteLabel",
+      "type": "object"
+    },
+    "DeleteQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_queue",
+          "default": "delete_queue",
+          "description": "Soft-delete an annotation queue.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteQueue",
+      "type": "object"
+    },
+    "DeleteScore": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_score",
+          "default": "delete_score",
+          "description": "Soft-delete a score and its legacy annotation. Requires creator or organization admin permissions.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteScore",
+      "type": "object"
+    },
+    "FutureagiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "futureagi_api_key",
+          "default": "futureagi_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Futureagi API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the API key from Future AGI Settings \u2192 API Keys. It is sent as a Bearer token, as in the published API request examples.",
+      "x-credential-url": "https://app.futureagi.com/dashboard/keys"
+    },
+    "GetLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_label",
+          "default": "get_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetLabel",
+      "type": "object"
+    },
+    "GetQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_queue",
+          "default": "get_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetQueue",
+      "type": "object"
+    },
+    "GetScoresForSource": {
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "enum": [
+            "trace",
+            "span",
+            "generation",
+            "session"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_scores_for_source",
+          "default": "get_scores_for_source",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "label_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Id"
+        },
+        "annotator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotator Id"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id"
+      ],
+      "title": "GetScoresForSource",
+      "type": "object"
+    },
+    "ListLabels": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "categorical",
+                "numeric",
+                "star",
+                "thumbs_up_down"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "text",
+            "categorical",
+            "numeric",
+            "star",
+            "thumbs_up_down"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "dataset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset"
+        },
+        "include_usage_count": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Usage Count"
+        }
+      },
+      "title": "ListLabels",
+      "type": "object"
+    },
+    "ListQueues": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_queues",
+          "default": "list_queues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "include_counts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Counts"
+        }
+      },
+      "title": "ListQueues",
+      "type": "object"
+    },
+    "ListScores": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_scores",
+          "default": "list_scores",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "trace",
+                "span",
+                "generation",
+                "session"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Type",
+          "enum": [
+            "trace",
+            "span",
+            "generation",
+            "session"
+          ],
+          "x-enum-searchable": true
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "label_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Id"
+        },
+        "annotator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotator Id"
+        }
+      },
+      "title": "ListScores",
+      "type": "object"
+    },
+    "RestoreLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "restore_label",
+          "default": "restore_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RestoreLabel",
+      "type": "object"
+    },
+    "Score": {
+      "additionalProperties": false,
+      "properties": {
+        "label_id": {
+          "minLength": 1,
+          "title": "Label UUID",
+          "type": "string"
+        },
+        "value": {
+          "additionalProperties": true,
+          "description": "JSON matching the label type, for example {\"rating\": 5}.",
+          "title": "Score Value",
+          "type": "object"
+        },
+        "score_source": {
+          "default": "human",
+          "enum": [
+            "human",
+            "automation",
+            "sdk"
+          ],
+          "title": "Score Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label_id",
+        "value"
+      ],
+      "title": "Score",
+      "type": "object"
+    },
+    "UpdateLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type-specific JSON, for example {\"no_of_stars\": 5}.",
+          "title": "Label Settings"
+        },
+        "allow_notes": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Notes"
+        },
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_label",
+          "default": "update_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateLabel",
+      "type": "object"
+    },
+    "UpdateQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Queue Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "assignment_strategy": {
+          "anyOf": [
+            {
+              "enum": [
+                "manual",
+                "round_robin",
+                "load_balanced"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignment Strategy",
+          "enum": [
+            "manual",
+            "round_robin",
+            "load_balanced"
+          ],
+          "x-enum-searchable": true
+        },
+        "annotations_required": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotations Required"
+        },
+        "reservation_timeout_minutes": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reservation Timeout Minutes"
+        },
+        "requires_review": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requires Review"
+        },
+        "auto_assign": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Assign"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Labels to attach; updates replace the existing set.",
+          "title": "Label Ids"
+        },
+        "annotator_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Annotators to assign; updates replace the existing set.",
+          "title": "Annotator Ids"
+        },
+        "annotator_roles": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "annotator",
+                  "manager",
+                  "reviewer"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotator Roles"
+        },
+        "id": {
+          "description": "The label, score, or queue UUID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_queue",
+          "default": "update_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateQueue",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "bulk_create_scores": "#/$defs/BulkCreateScores",
+          "create_label": "#/$defs/CreateLabel",
+          "create_queue": "#/$defs/CreateQueue",
+          "create_score": "#/$defs/CreateScore",
+          "delete_label": "#/$defs/DeleteLabel",
+          "delete_queue": "#/$defs/DeleteQueue",
+          "delete_score": "#/$defs/DeleteScore",
+          "get_label": "#/$defs/GetLabel",
+          "get_queue": "#/$defs/GetQueue",
+          "get_scores_for_source": "#/$defs/GetScoresForSource",
+          "list_labels": "#/$defs/ListLabels",
+          "list_queues": "#/$defs/ListQueues",
+          "list_scores": "#/$defs/ListScores",
+          "restore_label": "#/$defs/RestoreLabel",
+          "update_label": "#/$defs/UpdateLabel",
+          "update_queue": "#/$defs/UpdateQueue"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListLabels"
+        },
+        {
+          "$ref": "#/$defs/GetLabel"
+        },
+        {
+          "$ref": "#/$defs/CreateLabel"
+        },
+        {
+          "$ref": "#/$defs/UpdateLabel"
+        },
+        {
+          "$ref": "#/$defs/DeleteLabel"
+        },
+        {
+          "$ref": "#/$defs/RestoreLabel"
+        },
+        {
+          "$ref": "#/$defs/ListScores"
+        },
+        {
+          "$ref": "#/$defs/GetScoresForSource"
+        },
+        {
+          "$ref": "#/$defs/CreateScore"
+        },
+        {
+          "$ref": "#/$defs/BulkCreateScores"
+        },
+        {
+          "$ref": "#/$defs/DeleteScore"
+        },
+        {
+          "$ref": "#/$defs/ListQueues"
+        },
+        {
+          "$ref": "#/$defs/GetQueue"
+        },
+        {
+          "$ref": "#/$defs/CreateQueue"
+        },
+        {
+          "$ref": "#/$defs/UpdateQueue"
+        },
+        {
+          "$ref": "#/$defs/DeleteQueue"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FutureagiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Futureagi Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
