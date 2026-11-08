@@ -1,0 +1,1643 @@
+{
+  "$defs": {
+    "CheckLinkPath": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "subdomain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subdomain"
+        },
+        "link_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link Id"
+        },
+        "operation": {
+          "const": "check_link_path",
+          "default": "check_link_path",
+          "title": "Check Link Path",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Check Link Path"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "CheckLinkPath",
+      "type": "object"
+    },
+    "CreateAttachment": {
+      "additionalProperties": false,
+      "properties": {
+        "artwork_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artwork Url"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "is_private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Private"
+        },
+        "is_hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hidden"
+        },
+        "link_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link Path"
+        },
+        "owner_id": {
+          "exclusiveMinimum": 0,
+          "title": "Owner Id",
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "unlock",
+            "contest"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_attachment",
+          "default": "create_attachment",
+          "title": "Create Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Attachment"
+        }
+      },
+      "required": [
+        "owner_id",
+        "type",
+        "title"
+      ],
+      "title": "CreateAttachment",
+      "type": "object"
+    },
+    "CreateLink": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "target_url": {
+          "minLength": 1,
+          "title": "Target Url",
+          "type": "string"
+        },
+        "target_type": {
+          "enum": [
+            "music",
+            "podcast",
+            "livestream",
+            "event",
+            "tour",
+            "biglink",
+            "fundraiser",
+            "smartlink",
+            "custom"
+          ],
+          "title": "Target Type",
+          "type": "string"
+        },
+        "shortened_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortened Path"
+        },
+        "subdomain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subdomain"
+        },
+        "custom_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Domain"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header"
+        },
+        "metadata_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Title"
+        },
+        "metadata_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Description"
+        },
+        "metadata_image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Image Url"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Url"
+        },
+        "show_socials": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Show Socials"
+        },
+        "skip_landing_page": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skip Landing Page"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_link",
+          "default": "create_link",
+          "title": "Create Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Link"
+        }
+      },
+      "required": [
+        "title",
+        "target_url",
+        "target_type",
+        "user_id"
+      ],
+      "title": "CreateLink",
+      "type": "object"
+    },
+    "DeleteAttachment": {
+      "additionalProperties": false,
+      "properties": {
+        "attachment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Attachment Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_attachment",
+          "default": "delete_attachment",
+          "title": "Delete Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Attachment"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "DeleteAttachment",
+      "type": "object"
+    },
+    "DeleteLink": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "exclusiveMinimum": 0,
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_link",
+          "default": "delete_link",
+          "title": "Delete Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Link"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "DeleteLink",
+      "type": "object"
+    },
+    "ExpandLink": {
+      "additionalProperties": false,
+      "properties": {
+        "target_type": {
+          "enum": [
+            "music",
+            "podcast",
+            "livestream",
+            "event",
+            "tour",
+            "biglink",
+            "fundraiser",
+            "smartlink",
+            "custom"
+          ],
+          "title": "Target Type",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "upc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upc"
+        },
+        "isrc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isrc"
+        },
+        "operation": {
+          "const": "expand_link",
+          "default": "expand_link",
+          "title": "Expand Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Expand Link"
+        }
+      },
+      "required": [
+        "target_type"
+      ],
+      "title": "ExpandLink",
+      "type": "object"
+    },
+    "GetAdCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_ad_campaign",
+          "default": "get_ad_campaign",
+          "title": "Get Ad Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Ad Campaign"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetAdCampaign",
+      "type": "object"
+    },
+    "GetAdCampaignInsights": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_ad_campaign_insights",
+          "default": "get_ad_campaign_insights",
+          "title": "Get Ad Campaign Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Ad Campaign Insights"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetAdCampaignInsights",
+      "type": "object"
+    },
+    "GetAdCreativeInsights": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_ad_creative_insights",
+          "default": "get_ad_creative_insights",
+          "title": "Get Ad Creative Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Ad Creative Insights"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetAdCreativeInsights",
+      "type": "object"
+    },
+    "GetAttachment": {
+      "additionalProperties": false,
+      "properties": {
+        "attachment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Attachment Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_attachment",
+          "default": "get_attachment",
+          "title": "Get Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Attachment"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "GetAttachment",
+      "type": "object"
+    },
+    "GetAttachmentEntries": {
+      "additionalProperties": false,
+      "properties": {
+        "attachment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Attachment Id",
+          "type": "integer"
+        },
+        "aggregate_interval": {
+          "default": "day",
+          "enum": [
+            "day",
+            "hour",
+            "week"
+          ],
+          "title": "Aggregate Interval",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "operation": {
+          "const": "get_attachment_entries",
+          "default": "get_attachment_entries",
+          "title": "Get Attachment Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Attachment Entries"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "GetAttachmentEntries",
+      "type": "object"
+    },
+    "GetAttachmentUnlocks": {
+      "additionalProperties": false,
+      "properties": {
+        "attachment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Attachment Id",
+          "type": "integer"
+        },
+        "aggregate_interval": {
+          "default": "day",
+          "enum": [
+            "day",
+            "hour",
+            "week"
+          ],
+          "title": "Aggregate Interval",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "operation": {
+          "const": "get_attachment_unlocks",
+          "default": "get_attachment_unlocks",
+          "title": "Get Attachment Unlocks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Attachment Unlocks"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "GetAttachmentUnlocks",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Current User"
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetLink": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "exclusiveMinimum": 0,
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_link",
+          "default": "get_link",
+          "title": "Get Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Link"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "GetLink",
+      "type": "object"
+    },
+    "GetLinkInsights": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "exclusiveMinimum": 0,
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "metric": {
+          "default": "clicks",
+          "description": "RSVPs are supported for livestream links only.",
+          "enum": [
+            "clicks",
+            "clickthroughs",
+            "rsvps"
+          ],
+          "title": "Metric",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start date.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end date.",
+          "title": "End Date"
+        },
+        "aggregate_interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "day",
+                "hour",
+                "week"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aggregate Interval",
+          "enum": [
+            "day",
+            "hour",
+            "week"
+          ],
+          "x-enum-searchable": true
+        },
+        "aggregate_geo": {
+          "anyOf": [
+            {
+              "enum": [
+                "city",
+                "country",
+                "region"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aggregate Geo",
+          "enum": [
+            "city",
+            "country",
+            "region"
+          ],
+          "x-enum-searchable": true
+        },
+        "aggregate_by_referrer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aggregate By Referrer"
+        },
+        "aggregate_by_service": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aggregate By Service"
+        },
+        "for_distinct_fans": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "For Distinct Fans"
+        },
+        "operation": {
+          "const": "get_link_insights",
+          "default": "get_link_insights",
+          "title": "Get Link Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Link Insights"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "GetLinkInsights",
+      "type": "object"
+    },
+    "GetLinkOverview": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "exclusiveMinimum": 0,
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_link_overview",
+          "default": "get_link_overview",
+          "title": "Get Link Overview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Link Overview"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "GetLinkOverview",
+      "type": "object"
+    },
+    "GetPlaybookCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_playbook_campaign",
+          "default": "get_playbook_campaign",
+          "title": "Get Playbook Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Playbook Campaign"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetPlaybookCampaign",
+      "type": "object"
+    },
+    "ListAdCampaigns": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "live",
+            "recent",
+            "paused",
+            "error",
+            "inactive",
+            "scheduled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_ad_campaigns",
+          "default": "list_ad_campaigns",
+          "title": "List Ad Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Ad Campaigns"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "ListAdCampaigns",
+      "type": "object"
+    },
+    "ListAttachments": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "unlock",
+            "contest"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_attachments",
+          "default": "list_attachments",
+          "title": "List Attachments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Attachments"
+        }
+      },
+      "required": [
+        "user_id",
+        "type"
+      ],
+      "title": "ListAttachments",
+      "type": "object"
+    },
+    "ListLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "description": "Numeric ToneDen profile ID. Use Get Current User to find your account ID.",
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page; increase offset explicitly for the next page.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "target_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "music",
+                "podcast",
+                "livestream",
+                "event",
+                "tour",
+                "biglink",
+                "fundraiser",
+                "smartlink",
+                "custom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Type",
+          "enum": [
+            "music",
+            "podcast",
+            "livestream",
+            "event",
+            "tour",
+            "biglink",
+            "fundraiser",
+            "smartlink",
+            "custom"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "List Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Links"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "ListLinks",
+      "type": "object"
+    },
+    "TonedenOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "toneden_oauth",
+          "default": "toneden_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Toneden OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your ToneDen account. The instance administrator must register a ToneDen app in Developer Settings and obtain ToneDen review before API access. Reconnect if the access token is revoked; ToneDen documents no refresh-token flow.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.toneden.io/docs/getting-started",
+      "x-oauth-provider": "toneden",
+      "x-oauth-scopes": []
+    },
+    "UpdateAdCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "draft",
+                "error",
+                "pending",
+                "pending-update",
+                "paused",
+                "pending-review"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Changing campaign status can start or stop paid advertising.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "draft",
+            "error",
+            "pending",
+            "pending-update",
+            "paused",
+            "pending-review"
+          ],
+          "x-enum-searchable": true
+        },
+        "budget_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "lifetime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Type",
+          "enum": [
+            "daily",
+            "lifetime"
+          ],
+          "x-enum-searchable": true
+        },
+        "budget_amount": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Changing the budget affects advertising spend.",
+          "title": "Budget Amount"
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Archived"
+        },
+        "disable_all_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disable All Notifications"
+        },
+        "operation": {
+          "const": "update_ad_campaign",
+          "default": "update_ad_campaign",
+          "title": "Update Ad Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Ad Campaign"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "title"
+      ],
+      "title": "UpdateAdCampaign",
+      "type": "object"
+    },
+    "UpdateAttachment": {
+      "additionalProperties": false,
+      "properties": {
+        "artwork_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artwork Url"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "is_private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Private"
+        },
+        "is_hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hidden"
+        },
+        "link_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link Path"
+        },
+        "attachment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Attachment Id",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_attachment",
+          "default": "update_attachment",
+          "title": "Update Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Attachment"
+        }
+      },
+      "required": [
+        "attachment_id",
+        "title"
+      ],
+      "title": "UpdateAttachment",
+      "type": "object"
+    },
+    "UpdateLink": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "New link title. Other supplied fields are updated in the same request.",
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "target_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Url"
+        },
+        "target_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "music",
+                "podcast",
+                "livestream",
+                "event",
+                "tour",
+                "biglink",
+                "fundraiser",
+                "smartlink",
+                "custom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Type",
+          "enum": [
+            "music",
+            "podcast",
+            "livestream",
+            "event",
+            "tour",
+            "biglink",
+            "fundraiser",
+            "smartlink",
+            "custom"
+          ],
+          "x-enum-searchable": true
+        },
+        "shortened_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortened Path"
+        },
+        "subdomain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subdomain"
+        },
+        "custom_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Domain"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header"
+        },
+        "metadata_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Title"
+        },
+        "metadata_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Description"
+        },
+        "metadata_image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Image Url"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Url"
+        },
+        "show_socials": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Show Socials"
+        },
+        "skip_landing_page": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skip Landing Page"
+        },
+        "link_id": {
+          "exclusiveMinimum": 0,
+          "title": "Link Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_link",
+          "default": "update_link",
+          "title": "Update Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Link"
+        }
+      },
+      "required": [
+        "title",
+        "link_id"
+      ],
+      "title": "UpdateLink",
+      "type": "object"
+    },
+    "UpdatePlaybookCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "paused",
+                "inactive",
+                "draft",
+                "error",
+                "pending"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Activating a playbook can run its configured campaigns.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "paused",
+            "inactive",
+            "draft",
+            "error",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Archived"
+        },
+        "operation": {
+          "const": "update_playbook_campaign",
+          "default": "update_playbook_campaign",
+          "title": "Update Playbook Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Playbook Campaign"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "title"
+      ],
+      "title": "UpdatePlaybookCampaign",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_link_path": "#/$defs/CheckLinkPath",
+          "create_attachment": "#/$defs/CreateAttachment",
+          "create_link": "#/$defs/CreateLink",
+          "delete_attachment": "#/$defs/DeleteAttachment",
+          "delete_link": "#/$defs/DeleteLink",
+          "expand_link": "#/$defs/ExpandLink",
+          "get_ad_campaign": "#/$defs/GetAdCampaign",
+          "get_ad_campaign_insights": "#/$defs/GetAdCampaignInsights",
+          "get_ad_creative_insights": "#/$defs/GetAdCreativeInsights",
+          "get_attachment": "#/$defs/GetAttachment",
+          "get_attachment_entries": "#/$defs/GetAttachmentEntries",
+          "get_attachment_unlocks": "#/$defs/GetAttachmentUnlocks",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_link": "#/$defs/GetLink",
+          "get_link_insights": "#/$defs/GetLinkInsights",
+          "get_link_overview": "#/$defs/GetLinkOverview",
+          "get_playbook_campaign": "#/$defs/GetPlaybookCampaign",
+          "list_ad_campaigns": "#/$defs/ListAdCampaigns",
+          "list_attachments": "#/$defs/ListAttachments",
+          "list_links": "#/$defs/ListLinks",
+          "update_ad_campaign": "#/$defs/UpdateAdCampaign",
+          "update_attachment": "#/$defs/UpdateAttachment",
+          "update_link": "#/$defs/UpdateLink",
+          "update_playbook_campaign": "#/$defs/UpdatePlaybookCampaign"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListLinks"
+        },
+        {
+          "$ref": "#/$defs/GetLink"
+        },
+        {
+          "$ref": "#/$defs/CreateLink"
+        },
+        {
+          "$ref": "#/$defs/UpdateLink"
+        },
+        {
+          "$ref": "#/$defs/DeleteLink"
+        },
+        {
+          "$ref": "#/$defs/ExpandLink"
+        },
+        {
+          "$ref": "#/$defs/CheckLinkPath"
+        },
+        {
+          "$ref": "#/$defs/GetLinkInsights"
+        },
+        {
+          "$ref": "#/$defs/GetLinkOverview"
+        },
+        {
+          "$ref": "#/$defs/ListAdCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetAdCampaign"
+        },
+        {
+          "$ref": "#/$defs/UpdateAdCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetAdCampaignInsights"
+        },
+        {
+          "$ref": "#/$defs/GetAdCreativeInsights"
+        },
+        {
+          "$ref": "#/$defs/ListAttachments"
+        },
+        {
+          "$ref": "#/$defs/GetAttachment"
+        },
+        {
+          "$ref": "#/$defs/CreateAttachment"
+        },
+        {
+          "$ref": "#/$defs/UpdateAttachment"
+        },
+        {
+          "$ref": "#/$defs/DeleteAttachment"
+        },
+        {
+          "$ref": "#/$defs/GetAttachmentEntries"
+        },
+        {
+          "$ref": "#/$defs/GetAttachmentUnlocks"
+        },
+        {
+          "$ref": "#/$defs/GetPlaybookCampaign"
+        },
+        {
+          "$ref": "#/$defs/UpdatePlaybookCampaign"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TonedenOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Toneden Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
