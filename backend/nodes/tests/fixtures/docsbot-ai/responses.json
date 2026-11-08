@@ -1,0 +1,11 @@
+{
+  "chat": {"answer": "WordPress is an open source free software distributed under the GPL license. It is a self-hosted content management system that enables users to create and manage websites.", "sources": [{"title": "Introduction to Open-Source | Learn WordPress ", "url": "https://learn.wordpress.org/tutorial/introduction-to-open-source/"}]},
+  "agent": {"answer": "How can I help?", "conversationId": "conv-1"},
+  "search": [{"title": "High-Level Overview | Learn WordPress ", "url": "https://learn.wordpress.org/lesson-plan/high-level-overview/", "fileId": "abc123", "page": null, "content": "Title: High-Level Overview | Learn WordPress \nURL: https://learn.wordpress.org/lesson-plan/high-level-overview/\n\nDescription\nThis lesson is an introduction to WordPress..."}],
+  "fetch": {"title": "High-Level Overview | Learn WordPress ", "url": "https://learn.wordpress.org/lesson-plan/high-level-overview/", "fileId": "abc123", "page": 1, "content": "Full reconstructed document text..."},
+  "ack": true,
+  "summary": {"title": "Password reset", "summary": "The user requested help resetting their password.", "sentiment": "neutral", "topic": "Account access"},
+  "ticket": {"subject": "Password reset assistance", "message": "The user needs assistance resetting their password."},
+  "research": {"jobId": "550e8400-e29b-41d4-a716-446655440000", "clarifications": "- Are you interested in trends from a specific industry or use case?", "title": "AI Customer Support Trends", "status": "clarifying"},
+  "queued": {"jobId": "550e8400-e29b-41d4-a716-446655440000", "status": "queued", "title": "AI Customer Support Trends"}
+}
