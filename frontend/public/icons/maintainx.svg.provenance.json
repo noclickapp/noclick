@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/maintainx.svg",
+  "source": "https://maintainx-static.s3.us-west-2.amazonaws.com/logo/adsk-maintainx-logo.svg",
+  "license": "MaintainX trademark; used to identify the MaintainX integration",
+  "sha256": "84126830b66587ee7695b65cbc7849cbe78c64f0f77a44cdb1401252aeab5b9c"
+}
