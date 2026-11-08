@@ -1,0 +1,1511 @@
+{
+  "$defs": {
+    "CartInput": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "description": "An array of cart items.",
+          "items": {
+            "$ref": "#/$defs/CartItemInput"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "CartInput",
+      "type": "object"
+    },
+    "CartItemInput": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the product. Preferred over URL since this is always stable. Either `product_id` or `product_url` must be provided.",
+          "title": "Product Id"
+        },
+        "product_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL of the product. Either `product_id` or `product_url` must be provided.",
+          "title": "Product Url"
+        },
+        "quantity": {
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "variable_price": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this product has a variable price (e.g. a flex gift or a gift card), then this must be provided. A positive integer represented in cents.",
+          "title": "Variable Price"
+        },
+        "variants": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of variant names (not IDs). When using the Direct Send send method with a product with variants, the variants must be provided. The length of the array must be equal to `variants_num_selectable` on the product, and the variants must come from the names of the `varaints` on the product. For example, for a t-shirt with `variants_num_selectable` = 1 and variants S, M, L, pass ['M']. Or, for a box of cookies with `variants_num_selectable` = 2 and variants Sugar, Caramel, Chocolate, pass ['Sugar', 'Chocolate'].",
+          "title": "Variants"
+        }
+      },
+      "required": [
+        "quantity"
+      ],
+      "title": "CartItemInput",
+      "type": "object"
+    },
+    "GoodyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "goody_api_key",
+          "default": "goody_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Goody API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Goody account, then paste it here. NoClick sends it as a bearer token to api.ongoody.com. Connecting reads your workspaces and current user. Creating an order batch can charge your payment method and send gifts; use Calculate order batch price first to estimate the cost.",
+      "x-credential-url": "https://developer.ongoody.com/introduction"
+    },
+    "GoodyCalculateOrderBatchPriceConfig": {
+      "additionalProperties": false,
+      "description": "Calculate the price for an order batch.",
+      "properties": {
+        "operation": {
+          "const": "calculate_order_batch_price",
+          "default": "calculate_order_batch_price",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipients": {
+          "items": {
+            "$ref": "#/$defs/RecipientInput"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Recipients",
+          "type": "array"
+        },
+        "cart": {
+          "$ref": "#/$defs/CartInput"
+        },
+        "send_method": {
+          "enum": [
+            "email_and_link",
+            "link_multiple_custom_list",
+            "direct_send"
+          ],
+          "title": "Send Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipients",
+        "cart",
+        "send_method"
+      ],
+      "title": "GoodyCalculateOrderBatchPriceConfig",
+      "type": "object"
+    },
+    "GoodyCancelOrderConfig": {
+      "additionalProperties": false,
+      "description": "Cancel an order.",
+      "properties": {
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "id",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyCancelOrderConfig",
+      "type": "object"
+    },
+    "GoodyCreateOrderBatchConfig": {
+      "additionalProperties": false,
+      "description": "Create an order batch.",
+      "properties": {
+        "operation": {
+          "const": "create_order_batch",
+          "default": "create_order_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_name": {
+          "description": "The name of the sender of the order (typically a gift), to be displayed as \"from\".",
+          "title": "From Name",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For gifts, a message for the gift to be displayed in the digital unwrapping and email notifications, if enabled.",
+          "title": "Message"
+        },
+        "recipients": {
+          "items": {
+            "$ref": "#/$defs/RecipientInput"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Recipients",
+          "type": "array"
+        },
+        "cart": {
+          "$ref": "#/$defs/CartInput"
+        },
+        "send_method": {
+          "enum": [
+            "email_and_link",
+            "link_multiple_custom_list",
+            "direct_send"
+          ],
+          "title": "Send Method",
+          "type": "string"
+        },
+        "card_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The digital greeting card to attach to gifts. A card must be specified if a message is specified, since the message is displayed after the card is opened.",
+          "title": "Card Id"
+        },
+        "custom_form_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. An existing custom form (a set of question fields recipients answer when they accept) to attach to gifts. Must be a form you own or one shared with the workspace. This does not create new questions, and is ignored for the `direct_send` send method.",
+          "title": "Custom Form Id"
+        },
+        "payment_method_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The payment method used to pay for this order batch. If not specified, defaults to the first payment method on the account. If the account has no payment methods, then the order batch creation will fail.",
+          "title": "Payment Method Id"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace to create the order batch in. If not specified, creates the order batch in the oldest workspace the user has access to.",
+          "title": "Workspace Id"
+        },
+        "scheduled_send_on": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time at which the order batch will be sent. If not specified, the order batch is sent immediately. If an order batch is scheduled to be sent in the future, then orders will not be created until the scheduled send time. ISO 8601 format.",
+          "title": "Scheduled Send On"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time at which the order batch will expire. If not specified, the order batch does not expire. An expiry must be set for orders paid using account balance. ISO 8601 format.",
+          "title": "Expires At"
+        },
+        "swap": {
+          "anyOf": [
+            {
+              "enum": [
+                "single",
+                "multiple",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Swap",
+          "enum": [
+            "single",
+            "multiple",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "international_shipping_tier": {
+          "anyOf": [
+            {
+              "enum": [
+                "disabled",
+                "standard",
+                "full"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "International Shipping Tier",
+          "enum": [
+            "disabled",
+            "standard",
+            "full"
+          ],
+          "x-enum-searchable": true
+        },
+        "international_gift_cards_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to enable international gift cards on this order. If `true` and the `international_shipping_tier` is `standard`, then international gift cards can be swapped to. If `false`, then international gift cards are not available to be swapped to.",
+          "title": "International Gift Cards Enabled"
+        },
+        "allow_recipient_topup": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether recipients can pay to upgrade their gift. If `true` and `swap` is `multiple`, recipients see gift prices when swapping and can pay the difference to choose a more expensive item. If `false` (default), recipients can only swap to items at or below the gift's value.",
+          "title": "Allow Recipient Topup"
+        },
+        "notifications_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Direct Send only. Whether to enable notifications for Direct Send orders. If `true`, we send confirmation and shipping notifications to Direct Send recipients. If `false`, we do not send any notifications to Direct Send recipients.",
+          "title": "Notifications Enabled"
+        },
+        "commerce_end_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If associating this gift with a Commerce End User (i.e. your app's user), provide the user ID here. Required if using a Commerce User Payment Method in the `payment_method_id` field.",
+          "title": "Commerce End User Id"
+        },
+        "customer_reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique, client-supplied identifier for this order batch, which can be used as an idempotency key to prevent duplicate creation. If an order batch with the same `customer_reference_id` already exists for your account, the request is rejected with an error instead of creating a duplicate. Returned on the order batch as `customer_reference_id`.",
+          "title": "Customer Reference Id"
+        }
+      },
+      "required": [
+        "from_name",
+        "recipients",
+        "cart",
+        "send_method"
+      ],
+      "title": "GoodyCreateOrderBatchConfig",
+      "type": "object"
+    },
+    "GoodyGetCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a collection.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Collection ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyGetCollectionConfig",
+      "type": "object"
+    },
+    "GoodyGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve current user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoodyGetCurrentUserConfig",
+      "type": "object"
+    },
+    "GoodyGetGiftTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a gift template.",
+      "properties": {
+        "operation": {
+          "const": "get_gift_template",
+          "default": "get_gift_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Gift template ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyGetGiftTemplateConfig",
+      "type": "object"
+    },
+    "GoodyGetOrderBatchConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an order batch.",
+      "properties": {
+        "operation": {
+          "const": "get_order_batch",
+          "default": "get_order_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Order batch ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyGetOrderBatchConfig",
+      "type": "object"
+    },
+    "GoodyGetOrderConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an order.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "id",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyGetOrderConfig",
+      "type": "object"
+    },
+    "GoodyGetProductConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a product.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Product ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "US",
+          "description": "Look up the product in a specific shipping country's catalog. Products are scoped to a country (default US), so a product that only ships elsewhere \u2014 e.g. an international gift card \u2014 404s unless its country is passed here.",
+          "title": "Country Code"
+        },
+        "use_custom_catalog": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to custom catalog only (for approved API partners)",
+          "title": "Use Custom Catalog"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyGetProductConfig",
+      "type": "object"
+    },
+    "GoodyListBrandsConfig": {
+      "additionalProperties": false,
+      "description": "List all active brands.",
+      "properties": {
+        "operation": {
+          "const": "list_brands",
+          "default": "list_brands",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "US",
+          "description": "Filter by a specific shipping country code",
+          "title": "Country Code"
+        }
+      },
+      "title": "GoodyListBrandsConfig",
+      "type": "object"
+    },
+    "GoodyListCardsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve cards.",
+      "properties": {
+        "operation": {
+          "const": "list_cards",
+          "default": "list_cards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return the caller's custom cards (their own, their organization's, and their teams') instead of Goody's stock cards.",
+          "title": "Custom"
+        }
+      },
+      "title": "GoodyListCardsConfig",
+      "type": "object"
+    },
+    "GoodyListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List collections.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination (starts at 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Number of collections to return per page (maximum 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only published collections when true",
+          "title": "Published"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only collections in this workspace. Must be a workspace the caller belongs to.",
+          "title": "Workspace Id"
+        },
+        "exclude_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude archived collections when true",
+          "title": "Exclude Archived"
+        }
+      },
+      "title": "GoodyListCollectionsConfig",
+      "type": "object"
+    },
+    "GoodyListGiftTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List all gift templates.",
+      "properties": {
+        "operation": {
+          "const": "list_gift_templates",
+          "default": "list_gift_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "GoodyListGiftTemplatesConfig",
+      "type": "object"
+    },
+    "GoodyListGiftsOfChoiceConfig": {
+      "additionalProperties": false,
+      "description": "List Gifts of Choice.",
+      "properties": {
+        "operation": {
+          "const": "list_gifts_of_choice",
+          "default": "list_gifts_of_choice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoodyListGiftsOfChoiceConfig",
+      "type": "object"
+    },
+    "GoodyListOrderActivitiesConfig": {
+      "additionalProperties": false,
+      "description": "List order activities.",
+      "properties": {
+        "operation": {
+          "const": "list_order_activities",
+          "default": "list_order_activities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter activities created at or after this timestamp (ISO 8601)",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter activities created at or before this timestamp (ISO 8601)",
+          "title": "Before"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of statuses to filter by (e.g. \"created,opened,shipped\")",
+          "title": "Statuses"
+        }
+      },
+      "title": "GoodyListOrderActivitiesConfig",
+      "type": "object"
+    },
+    "GoodyListOrderBatchOrdersConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve orders for an order batch.",
+      "properties": {
+        "operation": {
+          "const": "list_order_batch_orders",
+          "default": "list_order_batch_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Order batch ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyListOrderBatchOrdersConfig",
+      "type": "object"
+    },
+    "GoodyListOrderBatchRecipientsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve recipients for an order batch.",
+      "properties": {
+        "operation": {
+          "const": "list_order_batch_recipients",
+          "default": "list_order_batch_recipients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Order batch ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GoodyListOrderBatchRecipientsConfig",
+      "type": "object"
+    },
+    "GoodyListOrderBatchesConfig": {
+      "additionalProperties": false,
+      "description": "List order batches.",
+      "properties": {
+        "operation": {
+          "const": "list_order_batches",
+          "default": "list_order_batches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "GoodyListOrderBatchesConfig",
+      "type": "object"
+    },
+    "GoodyListOrdersConfig": {
+      "additionalProperties": false,
+      "description": "List orders.",
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "created_at[after]": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter orders created at or after this timestamp (ISO 8601, UTC unless otherwise specified in timestamp)",
+          "title": "Created At[After]"
+        },
+        "created_at[before]": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter orders created at or before this timestamp (ISO 8601, UTC unless otherwise specified in timestamp)",
+          "title": "Created At[Before]"
+        }
+      },
+      "title": "GoodyListOrdersConfig",
+      "type": "object"
+    },
+    "GoodyListPaymentMethodsConfig": {
+      "additionalProperties": false,
+      "description": "List all payment methods.",
+      "properties": {
+        "operation": {
+          "const": "list_payment_methods",
+          "default": "list_payment_methods",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoodyListPaymentMethodsConfig",
+      "type": "object"
+    },
+    "GoodyListProductsConfig": {
+      "additionalProperties": false,
+      "description": "List all active products.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page for pagination, starting at 1",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Items per page for pagination",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "use_custom_catalog": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to custom catalog only (for approved API partners)",
+          "title": "Use Custom Catalog"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "US",
+          "description": "Filter by a specific shipping country code",
+          "title": "Country Code"
+        },
+        "custom_catalog_show_inactive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show inactive products in the custom catalog. Only for Commerce API customers with a custom catalog.",
+          "title": "Custom Catalog Show Inactive"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to products from a specific brand",
+          "title": "Brand Id"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to products in a category (see the categories endpoint). Accepts a single ID or an array of IDs.",
+          "title": "Category Id"
+        },
+        "min_price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to products priced at or above this amount, in cents",
+          "title": "Min Price"
+        },
+        "max_price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to products priced at or below this amount, in cents",
+          "title": "Max Price"
+        },
+        "brand_values": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to products whose brand has at least one of these brand values (e.g. Sustainable, Female Founded)",
+          "title": "Brand Values"
+        }
+      },
+      "title": "GoodyListProductsConfig",
+      "type": "object"
+    },
+    "GoodyListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List all workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoodyListWorkspacesConfig",
+      "type": "object"
+    },
+    "GoodyUpdateOrderExpirationConfig": {
+      "additionalProperties": false,
+      "description": "Update expiration for an order.",
+      "properties": {
+        "operation": {
+          "const": "update_order_expiration",
+          "default": "update_order_expiration",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "id",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "expiration": {
+          "description": "New expiration date in ISO 8601 format",
+          "format": "date-time",
+          "title": "Expiration",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "expiration"
+      ],
+      "title": "GoodyUpdateOrderExpirationConfig",
+      "type": "object"
+    },
+    "MailingAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "address_1": {
+          "title": "Address 1",
+          "type": "string"
+        },
+        "address_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address 2"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "title": "State",
+          "type": "string"
+        },
+        "postal_code": {
+          "title": "Postal Code",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The two-letter country code, e.g. \"US\". Only US is supported at this time.",
+          "title": "Country"
+        }
+      },
+      "required": [
+        "address_1",
+        "city",
+        "state",
+        "postal_code",
+        "country"
+      ],
+      "title": "MailingAddress",
+      "type": "object"
+    },
+    "RecipientInput": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. Phone number for text notifications. E164 format (e.g. +15552347890), US only.",
+          "title": "Phone"
+        },
+        "mailing_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MailingAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional mailing address to pre-populate into the order. This field is only available for approved API partners."
+        }
+      },
+      "required": [
+        "first_name"
+      ],
+      "title": "RecipientInput",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "calculate_order_batch_price": "#/$defs/GoodyCalculateOrderBatchPriceConfig",
+          "cancel_order": "#/$defs/GoodyCancelOrderConfig",
+          "create_order_batch": "#/$defs/GoodyCreateOrderBatchConfig",
+          "get_collection": "#/$defs/GoodyGetCollectionConfig",
+          "get_current_user": "#/$defs/GoodyGetCurrentUserConfig",
+          "get_gift_template": "#/$defs/GoodyGetGiftTemplateConfig",
+          "get_order": "#/$defs/GoodyGetOrderConfig",
+          "get_order_batch": "#/$defs/GoodyGetOrderBatchConfig",
+          "get_product": "#/$defs/GoodyGetProductConfig",
+          "list_brands": "#/$defs/GoodyListBrandsConfig",
+          "list_cards": "#/$defs/GoodyListCardsConfig",
+          "list_collections": "#/$defs/GoodyListCollectionsConfig",
+          "list_gift_templates": "#/$defs/GoodyListGiftTemplatesConfig",
+          "list_gifts_of_choice": "#/$defs/GoodyListGiftsOfChoiceConfig",
+          "list_order_activities": "#/$defs/GoodyListOrderActivitiesConfig",
+          "list_order_batch_orders": "#/$defs/GoodyListOrderBatchOrdersConfig",
+          "list_order_batch_recipients": "#/$defs/GoodyListOrderBatchRecipientsConfig",
+          "list_order_batches": "#/$defs/GoodyListOrderBatchesConfig",
+          "list_orders": "#/$defs/GoodyListOrdersConfig",
+          "list_payment_methods": "#/$defs/GoodyListPaymentMethodsConfig",
+          "list_products": "#/$defs/GoodyListProductsConfig",
+          "list_workspaces": "#/$defs/GoodyListWorkspacesConfig",
+          "update_order_expiration": "#/$defs/GoodyUpdateOrderExpirationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoodyListBrandsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListGiftTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyGetGiftTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListGiftsOfChoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListOrderActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyCreateOrderBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListOrderBatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListOrderBatchOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyCalculateOrderBatchPriceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListOrderBatchRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyGetOrderBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyCancelOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyUpdateOrderExpirationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListPaymentMethodsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/GoodyListWorkspacesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoodyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Goody Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

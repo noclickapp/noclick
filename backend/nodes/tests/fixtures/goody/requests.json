@@ -1,0 +1,61 @@
+{
+  "create_order_batch": {
+    "operation": "create_order_batch",
+    "from_name": "John",
+    "message": "Thank you!",
+    "send_method": "link_multiple_custom_list",
+    "payment_method_id": null,
+    "workspace_id": null,
+    "card_id": "d3fa24f3-9911-4b45-a887-836ed87b1337",
+    "custom_form_id": null,
+    "recipients": [
+      {
+        "first_name": "Alena",
+        "last_name": "Kenter",
+        "email": "alena@ongoody.com"
+      },
+      {
+        "first_name": "Michael",
+        "last_name": "Franci",
+        "email": "michael@ongoody.com"
+      }
+    ],
+    "cart": {
+      "items": [
+        {
+          "product_id": "9aaf7c33-ec44-4612-bb48-c84a21416ca5",
+          "quantity": 1
+        }
+      ]
+    }
+  },
+  "calculate_order_batch_price": {
+    "operation": "calculate_order_batch_price",
+    "send_method": "direct_send",
+    "recipients": [
+      {
+        "first_name": "Alena",
+        "last_name": "Kenter",
+        "email": "alena@example.com",
+        "mailing_address": {
+          "first_name": "Alena",
+          "last_name": "Kenter",
+          "address_1": "140 E 55th St",
+          "address_2": "",
+          "city": "New York",
+          "state": "NY",
+          "postal_code": "10022",
+          "country": "US"
+        }
+      }
+    ],
+    "cart": {
+      "items": [
+        {
+          "product_id": "bfc310a9-de69-48b6-95c1-6ce8cc163069",
+          "quantity": 1
+        }
+      ]
+    }
+  }
+}
