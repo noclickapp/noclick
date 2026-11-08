@@ -1,0 +1,578 @@
+{
+  "$defs": {
+    "BrowserbaseToolApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "browserbase_tool_api_key",
+          "default": "browserbase_tool_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Browserbase API key, sent in the X-BB-API-Key header.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Browserbase Tool API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your Browserbase API key from Settings and paste it below.",
+      "x-credential-url": "https://www.browserbase.com/settings"
+    },
+    "CreateContext": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Copy the project ID from Browserbase Settings.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_context",
+          "default": "create_context",
+          "title": "Create Context",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "CreateContext",
+      "type": "object"
+    },
+    "CreateSession": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Copy the project ID from Browserbase Settings.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Create Session",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 21600,
+              "minimum": 60,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout in Seconds"
+        },
+        "keep_alive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keep the browser running after disconnecting; plan restrictions apply.",
+          "title": "Keep Alive"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us-west-2",
+                "us-east-1",
+                "eu-central-1",
+                "ap-southeast-1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region",
+          "enum": [
+            "us-west-2",
+            "us-east-1",
+            "eu-central-1",
+            "ap-southeast-1"
+          ],
+          "x-enum-searchable": true
+        },
+        "extension_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extension ID"
+        },
+        "context_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context ID"
+        },
+        "persist_context": {
+          "default": false,
+          "description": "Save browsing state into the selected context after the session.",
+          "title": "Persist Context",
+          "type": "boolean"
+        },
+        "record_session": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Record Session"
+        },
+        "log_session": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Log Session"
+        },
+        "block_ads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Ads"
+        },
+        "solve_captchas": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Solve Captchas"
+        },
+        "proxies": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enabling the managed proxy can incur additional charges.",
+          "title": "Use Browserbase Proxy"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "CreateSession",
+      "type": "object"
+    },
+    "DeleteExtension": {
+      "additionalProperties": false,
+      "properties": {
+        "extension_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Extension ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_extension",
+          "default": "delete_extension",
+          "title": "Delete Extension",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "extension_id"
+      ],
+      "title": "DeleteExtension",
+      "type": "object"
+    },
+    "GetContext": {
+      "additionalProperties": false,
+      "properties": {
+        "context_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Context ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_context",
+          "default": "get_context",
+          "title": "Get Context",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "context_id"
+      ],
+      "title": "GetContext",
+      "type": "object"
+    },
+    "GetExtension": {
+      "additionalProperties": false,
+      "properties": {
+        "extension_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Extension ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_extension",
+          "default": "get_extension",
+          "title": "Get Extension",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "extension_id"
+      ],
+      "title": "GetExtension",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Copy the project ID from Browserbase Settings.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetProjectUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Copy the project ID from Browserbase Settings.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project_usage",
+          "default": "get_project_usage",
+          "title": "Get Project Usage",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProjectUsage",
+      "type": "object"
+    },
+    "GetSession": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Get Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSession",
+      "type": "object"
+    },
+    "GetSessionLiveUrls": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session_live_urls",
+          "default": "get_session_live_urls",
+          "title": "Get Session Live URLs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSessionLiveUrls",
+      "type": "object"
+    },
+    "GetSessionLogs": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session_logs",
+          "default": "get_session_logs",
+          "title": "Get Session Logs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSessionLogs",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "List Sessions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "RUNNING",
+                "ERROR",
+                "TIMED_OUT",
+                "COMPLETED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Filter",
+          "enum": [
+            "RUNNING",
+            "ERROR",
+            "TIMED_OUT",
+            "COMPLETED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSessions",
+      "type": "object"
+    },
+    "ReleaseSession": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Copy the project ID from Browserbase Settings.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "session_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "release_session",
+          "default": "release_session",
+          "title": "Release Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "session_id"
+      ],
+      "title": "ReleaseSession",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_context": "#/$defs/CreateContext",
+          "create_session": "#/$defs/CreateSession",
+          "delete_extension": "#/$defs/DeleteExtension",
+          "get_context": "#/$defs/GetContext",
+          "get_extension": "#/$defs/GetExtension",
+          "get_project": "#/$defs/GetProject",
+          "get_project_usage": "#/$defs/GetProjectUsage",
+          "get_session": "#/$defs/GetSession",
+          "get_session_live_urls": "#/$defs/GetSessionLiveUrls",
+          "get_session_logs": "#/$defs/GetSessionLogs",
+          "list_projects": "#/$defs/ListProjects",
+          "list_sessions": "#/$defs/ListSessions",
+          "release_session": "#/$defs/ReleaseSession"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/GetProjectUsage"
+        },
+        {
+          "$ref": "#/$defs/ListSessions"
+        },
+        {
+          "$ref": "#/$defs/CreateSession"
+        },
+        {
+          "$ref": "#/$defs/GetSession"
+        },
+        {
+          "$ref": "#/$defs/ReleaseSession"
+        },
+        {
+          "$ref": "#/$defs/GetSessionLiveUrls"
+        },
+        {
+          "$ref": "#/$defs/GetSessionLogs"
+        },
+        {
+          "$ref": "#/$defs/CreateContext"
+        },
+        {
+          "$ref": "#/$defs/GetContext"
+        },
+        {
+          "$ref": "#/$defs/GetExtension"
+        },
+        {
+          "$ref": "#/$defs/DeleteExtension"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrowserbaseToolApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Browserbase-tool Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
