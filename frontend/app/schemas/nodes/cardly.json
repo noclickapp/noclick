@@ -1,0 +1,1779 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "address": {
+          "minLength": 1,
+          "title": "Street address",
+          "type": "string"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City or suburb",
+          "type": "string"
+        },
+        "region": {
+          "title": "State or province",
+          "type": "string"
+        },
+        "postcode": {
+          "title": "Postal code",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Country code",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address line 2"
+        }
+      },
+      "required": [
+        "firstName",
+        "address",
+        "city",
+        "region",
+        "postcode",
+        "country"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "CardlyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cardly_api_key",
+          "default": "cardly_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Cardly API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Cardly organisation portal, copy an API key. Paste a test key to validate requests without changing data, or a live key to make changes and place billable orders. NoClick sends it in the API-Key header to api.card.ly. Connecting reads your organisation's contact lists.",
+      "x-credential-url": "https://www.cardly.net/"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "address": {
+          "minLength": 1,
+          "title": "Street address",
+          "type": "string"
+        },
+        "locality": {
+          "minLength": 1,
+          "title": "City or suburb",
+          "type": "string"
+        },
+        "region": {
+          "title": "State or province",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Country code",
+          "type": "string"
+        },
+        "postcode": {
+          "title": "Postal code",
+          "type": "string"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address line 2"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom field values"
+        },
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "description": "",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "firstName",
+        "address",
+        "locality",
+        "region",
+        "country",
+        "postcode",
+        "list_id"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateContactList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact_list",
+          "default": "create_contact_list",
+          "description": "",
+          "title": "Create Contact List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CustomField"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContactList",
+      "type": "object"
+    },
+    "CustomField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "enum": [
+            "text",
+            "date",
+            "number",
+            "url"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "CustomField",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "description": "",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "list_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteContactList": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact_list",
+          "default": "delete_contact_list",
+          "description": "Deletion disables linked automations.",
+          "title": "Delete Contact List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteContactList",
+      "type": "object"
+    },
+    "GetArtwork": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_artwork",
+          "default": "get_artwork",
+          "description": "",
+          "title": "Retrieve Artwork",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetArtwork",
+      "type": "object"
+    },
+    "GetBalance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "description": "",
+          "title": "Retrieve Account Balance",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetBalance",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "description": "",
+          "title": "Retrieve Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "list_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetContactList": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact_list",
+          "default": "get_contact_list",
+          "description": "",
+          "title": "Retrieve Contact List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactList",
+      "type": "object"
+    },
+    "GetOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "description": "",
+          "title": "Retrieve Order",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "ListArtwork": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_artwork",
+          "default": "list_artwork",
+          "description": "",
+          "title": "List Artwork",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ownOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only own artwork"
+        }
+      },
+      "title": "ListArtwork",
+      "type": "object"
+    },
+    "ListContactLists": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contact_lists",
+          "default": "list_contact_lists",
+          "description": "",
+          "title": "List Contact Lists",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContactLists",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "description": "",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListCreditHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_credit_history",
+          "default": "list_credit_history",
+          "description": "",
+          "title": "List Credit History",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCreditHistory",
+      "type": "object"
+    },
+    "ListFonts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_fonts",
+          "default": "list_fonts",
+          "description": "",
+          "title": "List Fonts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organisationOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only organisation fonts"
+        }
+      },
+      "title": "ListFonts",
+      "type": "object"
+    },
+    "ListGiftCreditHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_gift_credit_history",
+          "default": "list_gift_credit_history",
+          "description": "",
+          "title": "List Gift Credit History",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGiftCreditHistory",
+      "type": "object"
+    },
+    "ListMedia": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_media",
+          "default": "list_media",
+          "description": "",
+          "title": "List Media",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organisationOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only organisation media"
+        }
+      },
+      "title": "ListMedia",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "description": "",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "description": "",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ListWritingStyles": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Maximum records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Use next_offset from the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_writing_styles",
+          "default": "list_writing_styles",
+          "description": "",
+          "title": "List Writing Styles",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWritingStyles",
+      "type": "object"
+    },
+    "MessagePage": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page",
+        "text"
+      ],
+      "title": "MessagePage",
+      "type": "object"
+    },
+    "Messages": {
+      "additionalProperties": false,
+      "properties": {
+        "pages": {
+          "items": {
+            "$ref": "#/$defs/MessagePage"
+          },
+          "minItems": 1,
+          "title": "Pages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pages"
+      ],
+      "title": "Messages",
+      "type": "object"
+    },
+    "OrderLine": {
+      "additionalProperties": false,
+      "properties": {
+        "artwork": {
+          "description": "Artwork UUID or slug from your organisation.",
+          "minLength": 1,
+          "title": "Artwork",
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/Address"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional template UUID or slug.",
+          "title": "Template"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "messages": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Messages"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sender": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sender"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "shippingMethod": {
+          "anyOf": [
+            {
+              "enum": [
+                "standard",
+                "tracked",
+                "express"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shipping method",
+          "enum": [
+            "standard",
+            "tracked",
+            "express"
+          ],
+          "x-enum-searchable": true
+        },
+        "shipToMe": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "May incur extra credit cost.",
+          "title": "Include blank envelope"
+        },
+        "requestedArrival": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested arrival date"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "artwork",
+        "recipient"
+      ],
+      "title": "OrderLine",
+      "type": "object"
+    },
+    "PlaceOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "place_order",
+          "default": "place_order",
+          "description": "A live key places a billable order; test keys validate without mutations.",
+          "title": "Place Order",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lines": {
+          "description": "A live key places and charges this order. A test key validates without placing it. Do not retry an uncertain result without checking Cardly.",
+          "items": {
+            "$ref": "#/$defs/OrderLine"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        },
+        "purchaseOrderNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase order number"
+        }
+      },
+      "required": [
+        "lines"
+      ],
+      "title": "PlaceOrder",
+      "type": "object"
+    },
+    "PreviewOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "artwork": {
+          "description": "Artwork UUID or slug from your organisation.",
+          "minLength": 1,
+          "title": "Artwork",
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/Address"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional template UUID or slug.",
+          "title": "Template"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "messages": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Messages"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sender": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sender"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "shippingMethod": {
+          "anyOf": [
+            {
+              "enum": [
+                "standard",
+                "tracked",
+                "express"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shipping method",
+          "enum": [
+            "standard",
+            "tracked",
+            "express"
+          ],
+          "x-enum-searchable": true
+        },
+        "shipToMe": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "May incur extra credit cost.",
+          "title": "Include blank envelope"
+        },
+        "requestedArrival": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested arrival date"
+        },
+        "operation": {
+          "const": "preview_order",
+          "default": "preview_order",
+          "description": "",
+          "title": "Generate Order Preview",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "purchaseOrderNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase order number"
+        }
+      },
+      "required": [
+        "artwork",
+        "recipient"
+      ],
+      "title": "PreviewOrder",
+      "type": "object"
+    },
+    "SearchContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "description": "",
+          "title": "Search Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Email address or external identifier.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "query"
+      ],
+      "title": "SearchContacts",
+      "type": "object"
+    },
+    "Sender": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "address": {
+          "minLength": 1,
+          "title": "Street address",
+          "type": "string"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City or suburb",
+          "type": "string"
+        },
+        "region": {
+          "title": "State or province",
+          "type": "string"
+        },
+        "postcode": {
+          "title": "Postal code",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Country code",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address line 2"
+        },
+        "omitAddress": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Omit return address"
+        }
+      },
+      "required": [
+        "firstName",
+        "address",
+        "city",
+        "region",
+        "postcode",
+        "country"
+      ],
+      "title": "Sender",
+      "type": "object"
+    },
+    "SyncContact": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "address": {
+          "minLength": 1,
+          "title": "Street address",
+          "type": "string"
+        },
+        "locality": {
+          "minLength": 1,
+          "title": "City or suburb",
+          "type": "string"
+        },
+        "region": {
+          "title": "State or province",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Country code",
+          "type": "string"
+        },
+        "postcode": {
+          "title": "Postal code",
+          "type": "string"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address line 2"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom field values"
+        },
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "sync_contact",
+          "default": "sync_contact",
+          "description": "",
+          "title": "Sync Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "firstName",
+        "address",
+        "locality",
+        "region",
+        "country",
+        "postcode",
+        "list_id"
+      ],
+      "title": "SyncContact",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "address": {
+          "minLength": 1,
+          "title": "Street address",
+          "type": "string"
+        },
+        "locality": {
+          "minLength": 1,
+          "title": "City or suburb",
+          "type": "string"
+        },
+        "region": {
+          "title": "State or province",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Country code",
+          "type": "string"
+        },
+        "postcode": {
+          "title": "Postal code",
+          "type": "string"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address line 2"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom field values"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "list_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact list ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "description": "",
+          "title": "Edit Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "firstName",
+        "address",
+        "locality",
+        "region",
+        "country",
+        "postcode",
+        "id",
+        "list_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_contact_list": "#/$defs/CreateContactList",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_contact_list": "#/$defs/DeleteContactList",
+          "get_artwork": "#/$defs/GetArtwork",
+          "get_balance": "#/$defs/GetBalance",
+          "get_contact": "#/$defs/GetContact",
+          "get_contact_list": "#/$defs/GetContactList",
+          "get_order": "#/$defs/GetOrder",
+          "list_artwork": "#/$defs/ListArtwork",
+          "list_contact_lists": "#/$defs/ListContactLists",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_credit_history": "#/$defs/ListCreditHistory",
+          "list_fonts": "#/$defs/ListFonts",
+          "list_gift_credit_history": "#/$defs/ListGiftCreditHistory",
+          "list_media": "#/$defs/ListMedia",
+          "list_orders": "#/$defs/ListOrders",
+          "list_templates": "#/$defs/ListTemplates",
+          "list_writing_styles": "#/$defs/ListWritingStyles",
+          "place_order": "#/$defs/PlaceOrder",
+          "preview_order": "#/$defs/PreviewOrder",
+          "search_contacts": "#/$defs/SearchContacts",
+          "sync_contact": "#/$defs/SyncContact",
+          "update_contact": "#/$defs/UpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetBalance"
+        },
+        {
+          "$ref": "#/$defs/ListCreditHistory"
+        },
+        {
+          "$ref": "#/$defs/ListGiftCreditHistory"
+        },
+        {
+          "$ref": "#/$defs/ListArtwork"
+        },
+        {
+          "$ref": "#/$defs/GetArtwork"
+        },
+        {
+          "$ref": "#/$defs/ListContactLists"
+        },
+        {
+          "$ref": "#/$defs/CreateContactList"
+        },
+        {
+          "$ref": "#/$defs/GetContactList"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactList"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/SearchContacts"
+        },
+        {
+          "$ref": "#/$defs/SyncContact"
+        },
+        {
+          "$ref": "#/$defs/ListFonts"
+        },
+        {
+          "$ref": "#/$defs/ListMedia"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/PreviewOrder"
+        },
+        {
+          "$ref": "#/$defs/PlaceOrder"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListWritingStyles"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CardlyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cardly Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
