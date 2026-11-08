@@ -1,0 +1,206 @@
+{
+  "source": "https://api.conversiontools.io/openapi.yaml",
+  "cases": [
+    {
+      "operation": "upload_file",
+      "method": "POST",
+      "path": "/v1/files",
+      "config": {
+        "operation": "upload_file",
+        "file_base64": "aGVsbG8K",
+        "filename": "data.txt"
+      },
+      "response": {
+        "error": null,
+        "file_id": "file-123"
+      },
+      "request_body": null
+    },
+    {
+      "operation": "download_file",
+      "method": "GET",
+      "path": "/v1/files/file-123",
+      "config": {
+        "operation": "download_file",
+        "file_id": "file-123"
+      },
+      "response": null,
+      "request_body": null
+    },
+    {
+      "operation": "get_file_info",
+      "method": "GET",
+      "path": "/v1/files/file-123/info",
+      "config": {
+        "operation": "get_file_info",
+        "file_id": "file-123"
+      },
+      "response": {
+        "preview": false,
+        "size": 6,
+        "name": "data.txt",
+        "previewData": [
+          "hello"
+        ]
+      },
+      "request_body": null
+    },
+    {
+      "operation": "create_task",
+      "method": "POST",
+      "path": "/v1/tasks",
+      "config": {
+        "operation": "create_task",
+        "conversion_type": "convert.xml_to_excel",
+        "options_json": "{\"file_id\":\"file-123\",\"sandbox\":true}",
+        "callback_url": "https://example.com/webhook"
+      },
+      "response": {
+        "error": null,
+        "task_id": "task-123"
+      },
+      "request_body": {
+        "type": "convert.xml_to_excel",
+        "options": {
+          "file_id": "file-123",
+          "sandbox": true
+        },
+        "callbackUrl": "https://example.com/webhook"
+      }
+    },
+    {
+      "operation": "list_tasks",
+      "method": "GET",
+      "path": "/v1/tasks",
+      "config": {
+        "operation": "list_tasks",
+        "status": "SUCCESS"
+      },
+      "response": {
+        "error": null,
+        "data": [
+          {
+            "id": "task-123",
+            "type": "xml_to_excel",
+            "status": "SUCCESS"
+          }
+        ]
+      },
+      "request_body": null
+    },
+    {
+      "operation": "get_task_status",
+      "method": "GET",
+      "path": "/v1/tasks/task-123",
+      "config": {
+        "operation": "get_task_status",
+        "task_id": "task-123"
+      },
+      "response": {
+        "error": null,
+        "status": "SUCCESS",
+        "file_id": "file-123",
+        "conversionProgress": 100
+      },
+      "request_body": null
+    },
+    {
+      "operation": "update_task_retention",
+      "method": "PATCH",
+      "path": "/v1/tasks/task-123/retention",
+      "config": {
+        "operation": "update_task_retention",
+        "task_id": "task-123",
+        "retention_mode": "ttl_15m"
+      },
+      "response": {
+        "error": null,
+        "retentionMode": "ttl_15m",
+        "dateExpires": "2026-11-08T12:15:00Z"
+      },
+      "request_body": {
+        "retentionMode": "ttl_15m"
+      }
+    },
+    {
+      "operation": "delete_task_files",
+      "method": "POST",
+      "path": "/v1/tasks/task-123/delete",
+      "config": {
+        "operation": "delete_task_files",
+        "task_id": "task-123"
+      },
+      "response": {
+        "error": null,
+        "message": "File deletion scheduled",
+        "dateDeleted": "2025-12-21T10:30:00.000Z"
+      },
+      "request_body": null
+    },
+    {
+      "operation": "get_config",
+      "method": "GET",
+      "path": "/v1/config",
+      "config": {
+        "operation": "get_config"
+      },
+      "response": {
+        "error": null,
+        "conversions": []
+      },
+      "request_body": null
+    },
+    {
+      "operation": "list_conversions",
+      "method": "GET",
+      "path": "/v1/conversions",
+      "config": {
+        "operation": "list_conversions",
+        "input_format": "xml",
+        "output_format": "xlsx",
+        "ai": false
+      },
+      "response": {
+        "error": null,
+        "count": 1,
+        "conversions": [
+          {
+            "type": "convert.xml_to_excel",
+            "title": "XML to Excel"
+          }
+        ]
+      },
+      "request_body": null
+    },
+    {
+      "operation": "get_conversion",
+      "method": "GET",
+      "path": "/v1/conversions/convert.xml_to_excel",
+      "config": {
+        "operation": "get_conversion",
+        "conversion_type": "convert.xml_to_excel"
+      },
+      "response": {
+        "error": null,
+        "conversion": {
+          "type": "convert.xml_to_excel",
+          "options": []
+        }
+      },
+      "request_body": null
+    },
+    {
+      "operation": "get_auth_info",
+      "method": "GET",
+      "path": "/v1/auth",
+      "config": {
+        "operation": "get_auth_info"
+      },
+      "response": {
+        "error": null,
+        "email": "user@example.com"
+      },
+      "request_body": null
+    }
+  ]
+}
