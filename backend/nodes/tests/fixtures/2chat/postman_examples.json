@@ -393,7 +393,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"count\": 1,\n    \"page\": 0,\n    \"numbers\": [\n        {\n            \"uuid\": \"WPN95841312-b54d-46e3-b0bc-6414f4a5296b\",\n            \"friendly_name\": \"my testing number\",\n            \"phone_number\": \"+595981048477\",\n            \"iso_country_code\": \"PY\",\n            \"pushname\": \"\u270c\ufe0f\",\n            \"server\": \"12025550101@c.us\",\n            \"platform\": \"iphone\",\n            \"connection_status\": \"C\",\n            \"enabled\": true,\n            \"is_business_profile\": false,\n            \"channel_type\": \"WW\",\n            \"sync_contacts\": true,\n            \"created_at\": \"2022-10-31 22:05:44\",\n            \"updated_at\": \"2022-12-01 21:40:04\"\n        }\n    ]\n}"
+          "body_sha256": "a0a55b0b1784b32ed51a9ecca7141ed4a30bf2afd8b1ef2850bee33da260de5a",
+          "external_example_index": 0
         }
       ]
     },
@@ -427,7 +428,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"channel\": {\n        \"id\": \"WPNf3ea6c85-0dca-4d8a-a9a6-2b918f59cc97\",\n        \"uuid\": \"WPNf3ea6c85-0dca-4d8a-a9a6-2b918f59cc97\",\n        \"friendly_name\": \"Test Number\",\n        \"phone_number\": \"+525633334444\",\n        \"iso_country_code\": \"MX\",\n        \"pushname\": \"Tech\",\n        \"server\": \"12025550108@c.us\",\n        \"platform\": \"android\",\n        \"connection_status\": \"C\",\n        \"enabled\": true,\n        \"is_business_profile\": true,\n        \"channel_type\": \"WW\",\n        \"sync_contacts\": false,\n        \"timezone\": \"America/Mexico_City\",\n        \"lang\": \"es\",\n        \"created_at\": \"2025-11-05T17:50:42Z\",\n        \"updated_at\": \"2025-12-03T18:04:06Z\"\n    }\n}"
+          "body_sha256": "addbac22c31002c414e50d9d6c145a2b316e74e7099f4097e15805d322e1afb4",
+          "external_example_index": 0
         }
       ]
     },
@@ -518,7 +520,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"page_number\": 0,\n    \"messages\": [\n        {\n            \"uuid\": \"MSGaf1fa3a1-0d8d-4aa5-b117-f9425b651485\",\n            \"timestamp\": 1670454681.0,\n            \"session_key\": \"WW-WPN95841312-b54d-46e3-b0bc-6414f4a5296b-12025550107@c.us\",\n            \"message\": {\n                \"media\": {\n                    \"url\": \"https://2chat-user-data-dev.s3.amazonaws.com/ACC91be87af-5a29-4034-b599-342f2aeb5d52/accm/sfe4d7e29cd9dfad63b535dec54c5992055498dcd13cfc319f723c4b962b8803a.svg\",\n                    \"type\": \"image\",\n                    \"mime_type\": \"image/svg+xml\"\n                }\n            },\n            \"remote_phone_number\": \"+5215512345432\",\n            \"channel_phone_number\": \"+595981048477\",\n            \"sent_by\": \"api\"\n        },\n        {\n            \"uuid\": \"MSG8c39a0a9-01cf-46c9-ab46-3c0fb0477e99\",\n            \"timestamp\": 1670378997.0,\n            \"session_key\": \"WW-WPN95841312-b54d-46e3-b0bc-6414f4a5296b-12025550107@c.us\",\n            \"message\": {\n                \"text\": \"you can see my replies here\"\n            },\n            \"remote_phone_number\": \"+5215512345432\",\n            \"channel_phone_number\": \"+595981048477\",\n            \"sent_by\": \"agent\"\n        }\n    ]\n}"
+          "body_sha256": "021ea6efa3f8f2c88b6920be6f83c1b6bef787435664c79a9b466a2226d83fb5",
+          "external_example_index": 0
         }
       ]
     },
@@ -546,7 +549,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"message\": {\n        \"id\": \"MSG205dec10-523d-4ab3-b739-fd56e7cdeba2\",\n        \"uuid\": \"MSG205dec10-523d-4ab3-b739-fd56e7cdeba2\",\n        \"session_key\": \"WW-WPN66037eca-9ad1-4c96-9eff-526a90a48c77-12025550101@c.us\",\n        \"message\": {\n            \"text\": \"the content of the message\"\n        },\n        \"created_at\": \"2024-04-02T23:02:03Z\",\n        \"remote_phone_number\": \"+5215511112222\",\n        \"sent_by\": \"agent\",\n        \"is_from_flow_run\": false,\n        \"is_from_api\": false,\n        \"is_from_chatter\": true,\n        \"is_from_agent\": false,\n        \"wa_msg_id\": \"3A8AE0BEDA97E2F99557\",\n        \"wa_msg_ack\": 3,\n        \"sent\": true,\n        \"received\": true,\n        \"read\": true,\n        \"read_at\": \"2024-04-02T23:03:15Z\"\n    }\n}"
+          "body_sha256": "d90c1e0ef27bc7c1166ecc2a4b2b0a7870335a28cb47c33045d00dbf2396c8c5",
+          "external_example_index": 0
         }
       ]
     },
@@ -599,7 +603,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"page_number\": 0,\n    \"total\": 2,\n    \"search_term\": \"123\",\n    \"sessions\": [\n        {\n            \"session_key\": \"WW-WPN582e4db7-6391-4e58-b79e-1b92e93a8374-12025550101@c.us\",\n            \"friendly_name\": \"John\",\n            \"region_name\": \"Miamiy, FL\",\n            \"iso_country_code\": \"US\",\n            \"device\": \"android\",\n            \"channel_uuid\": \"WPN582e4db7-6391-4e58-b79e-1b92e93a8374\",\n            \"phone_number\": \"+1713123456\",\n            \"timezone\": \"America/Miami\",\n            \"profile_pic_url\": \"https://2chat-user-data-dev.s3.amazonaws.com/pp/contacts/...jpeg\",\n            \"is_group_chat\": false,\n            \"last_user_message_sent_at\": \"2025-01-07T13:27:55Z\",\n            \"last_activity_at\": \"2025-01-07T13:27:55Z\",\n            \"created_at\": \"2024-06-26T20:54:21Z\",\n            \"contact\": {\n                \"id\": 1342,\n                \"uuid\": \"CONe6226cd2-cb09-491f-9854-8a9b0626406a\",\n                \"first_name\": \"John\",\n                \"last_name\": \"Forta\",\n                \"channel_uuid\": null,\n                \"profile_pic_url\": null\n            }\n        },\n        {\n            \"session_key\": \"WW-WPN582e4db7-6391-4e58-b79e-1b92e93a8374-12025550107@c.us\",\n            \"friendly_name\": null,\n            \"region_name\": \"Mexico City, FD\",\n            \"iso_country_code\": \"MX\",\n            \"device\": null,\n            \"channel_uuid\": \"WPN582e4db7-6391-4e58-b79e-1b92e93a8374\",\n            \"phone_number\": \"+5255512345678\",\n            \"timezone\": \"America/Mexico_City\",\n            \"profile_pic_url\": null,\n            \"is_group_chat\": false,\n            \"last_user_message_sent_at\": null,\n            \"last_activity_at\": \"2024-10-22T01:37:23Z\",\n            \"created_at\": \"2024-10-22T01:06:36Z\"\n        }\n    ]\n}"
+          "body_sha256": "03e0d0a878759772ce2203f2c2fbf134b24c3020a99acdd28bfe9e27d630a097",
+          "external_example_index": 0
         }
       ]
     },
@@ -627,7 +632,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"uuid\": \"WAG768beeef-2b96-4bc7-9b7f-045078568723\",\n            \"channel_uuid\": \"WPN95841312-b54d-46e3-b0bc-6414f4a5296b\",\n            \"wa_group_id\": \"....@g.us\",\n            \"profile_pic_url\": \"...\",\n            \"wa_owner_id\": \"12025550107@c.us\",\n            \"wa_group_name\": \"2chat test group \ud83d\udc4c\",\n            \"wa_created_at\": \"2022-10-23T17:11:41Z\",\n            \"wa_subject\": \"daily motivational quotes \ud83d\udcaa\",\n            \"size\": 4,\n            \"is_muted\": false,\n            \"is_read_only\": false,\n            \"channel_is_owner\": false,\n            \"created_at\": \"2023-06-22T20:02:56Z\",\n            \"updated_at\": \"2023-07-12T19:18:41Z\",\n            \"owner_contact\": {\n                \"uuid\": \"CON1653490d-194b-4992-8353-e4b46a64e321\",\n                \"first_name\": \"Mikey\",\n                \"last_name\": \"Mike\",\n                \"channel_uuid\": \"WPNc568c832-606c-4d50-8092-fc51b5149d16\",\n                \"profile_pic_url\": \"...\"\n            }\n        }\n    ]\n}"
+          "body_sha256": "38913f1cb2ad812c336a5ec463394138b57d94870991ab6c2cc8c84bcbe0ecb3",
+          "external_example_index": 0
         }
       ]
     },
@@ -655,7 +661,8 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"success\": true,\n    \"data\": {\n        \"uuid\": \"WAG768beeef-2b96-4bc7-9b7f-045078568723\",\n        \"channel_uuid\": \"WPN95841312-b54d-46e3-b0bc-6414f4a5296b\",\n        \"wa_group_id\": \"...@g.us\",\n        \"profile_pic_url\": \"...\",\n        \"wa_owner_id\": \"12025550108@c.us\",\n        \"wa_group_name\": \"2chat test group \ud83d\udc4c\",\n        \"wa_created_at\": \"2022-10-23T17:11:41Z\",\n        \"wa_subject\": \"daily motivational quotes \ud83d\udcaa\",\n        \"size\": 3,\n        \"is_muted\": false,\n        \"is_read_only\": false,\n        \"channel_is_owner\": false,\n        \"created_at\": \"2023-06-22T20:02:56Z\",\n        \"updated_at\": \"2023-07-12T19:18:41Z\",\n        \"owner_contact\": {\n            \"uuid\": \"CON1653490d-194b-4992-8353-e4b46a64e321\",\n            \"first_name\": \"Mikey\",\n            \"last_name\": \"Mike\",\n            \"channel_uuid\": \"WPNc568c832-606c-4d50-8092-fc51b5149d16\",\n            \"profile_pic_url\": \"...\"\n        },\n        \"owner_data\": {\n            \"phone_number\": \"...\",\n            \"formatted_phone_number\": \"...\",\n            \"iso_country_code\": \"MX\"\n        },\n        \"participants\": [\n            {\n                \"wa_participant_id\": \"12025550108@c.us\",\n                \"wa_pushname\": \"Carlos @ 2Chat\",\n                \"profile_pic_url\": \"...\",\n                \"wa_is_super_admin\": false,\n                \"wa_is_admin\": false,\n                \"device\": \"ios\",\n                \"created_at\": \"2023-07-11T19:21:45Z\",\n                \"updated_at\": \"2023-07-12T19:18:41Z\",\n                \"contact\": {\n                    \"uuid\": \"CON767f3ab9-e2c1-48e0-9234-092e835fa089\",\n                    \"first_name\": \"2Chat\",\n                    \"last_name\": \"UK\",\n                    \"channel_uuid\": null,\n                    \"profile_pic_url\": null\n                },\n                \"phone_number\": \"+447700176576\",\n                \"formatted_phone_number\": \"+44 7700 176576\",\n                \"iso_country_code\": \"GB\"\n            },\n            {\n                \"wa_participant_id\": \"12025550101@c.us\",\n                \"wa_pushname\": \"Mikey\",\n                \"profile_pic_url\": \"...\",\n                \"wa_is_super_admin\": false,\n                \"wa_is_admin\": false,\n                \"device\": null,\n                \"created_at\": \"2023-07-11T19:30:03Z\",\n                \"updated_at\": \"2023-07-12T19:18:41Z\",\n                \"phone_number\": \"+525617554529\",\n                \"formatted_phone_number\": \"+52 56 1755 4529\",\n                \"iso_country_code\": \"MX\"\n            },\n            {\n                \"wa_participant_id\": \"12025550101@c.us\",\n                \"wa_pushname\": null,\n                \"profile_pic_url\": null,\n                \"wa_is_super_admin\": false,\n                \"wa_is_admin\": true,\n                \"device\": null,\n                \"created_at\": \"2023-06-23T19:43:31Z\",\n                \"updated_at\": \"2023-07-12T19:18:40Z\",\n                \"contact\": {\n                    \"uuid\": \"CON36b2bc38-c21a-4712-8015-99bf2f8001f6\",\n                    \"first_name\": \"2Chat\",\n                    \"last_name\": \"PAR\",\n                    \"channel_uuid\": \"WPNc568c832-606c-4d50-8092-fc51b5149d16\",\n                    \"profile_pic_url\": null\n                },\n                \"phone_number\": \"+595981048477\",\n                \"formatted_phone_number\": \"+595 981 048477\",\n                \"iso_country_code\": \"PY\"\n            }\n        ]\n    }\n}"
+          "body_sha256": "cafeec2924eb4bdf3bf745ec10a128f6a45b7a008877dd20053caa98e69a35ac",
+          "external_example_index": 0
         }
       ]
     },
@@ -1243,5 +1250,6 @@
     }
   },
   "collection_sha256": "861f0204f841f0b8d13875153e32ec41e29820138564d8429ca9e77bae1fd5ef",
-  "collection_version": null
+  "collection_version": null,
+  "external_bodies": "Account-shaped WhatsApp payloads stay in the unchanged external pinned collection. Replay verifies exact bytes against body_sha256; no identities or payloads are rewritten."
 }

@@ -1,5 +1,8 @@
-"""Replay unmodified 2Chat Postman responses through the real node factory."""
+"""Replay provider responses; account-shaped payloads use the external contract."""
 import importlib
+import hashlib
+import os
+import re
 import json
 from pathlib import Path
 import httpx
@@ -8,7 +11,9 @@ from nodes.core.registry import NodeFactory, NODE_REGISTRY
 from nodes.core.connection_evidence import collect_evidence
 
 native = importlib.import_module('nodes.2chat_node')
-FIXTURE = json.loads((Path(__file__).parent / 'fixtures/2chat/postman_examples.json').read_text())['operations']
+FIXTURE_PATH = Path(__file__).parent / 'fixtures/2chat/postman_examples.json'
+FIXTURE_DOCUMENT = json.loads(FIXTURE_PATH.read_text())
+FIXTURE = FIXTURE_DOCUMENT['operations']
 TOKEN = 'synthetic-2chat-key'
 CREDENTIAL = {'credential_type': '2chat_api_key', 'api_key': TOKEN}
 VALUES = {
@@ -53,13 +58,37 @@ def mock_client(monkeypatch, response):
 CASES = [(op, response) for op, entry in FIXTURE.items() for response in entry['responses']]
 
 
+def response_body(operation, response):
+    if "body" in response:
+        return response["body"]
+    catalog = os.environ.get("CONFORMANCE_CATALOG")
+    if not catalog:
+        pytest.skip("Account-shaped provider payload is external; set CONFORMANCE_CATALOG to replay it")
+    catalog = Path(catalog)
+    pin = json.loads((catalog / "manifest.json").read_text())["2chat"]
+    collection_bytes = (catalog / pin["file"]).read_bytes()
+    assert hashlib.sha256(collection_bytes).hexdigest() == FIXTURE_DOCUMENT["collection_sha256"]
+    collection = json.loads(collection_bytes)
+    def items(entries):
+        for entry in entries:
+            if "item" in entry:
+                yield from items(entry["item"])
+            else:
+                yield entry
+    item = next(entry for entry in items(collection["item"]) if entry["name"] == FIXTURE[operation]["name"])
+    body = item["response"][response["external_example_index"]]["body"]
+    assert hashlib.sha256(body.encode()).hexdigest() == response["body_sha256"]
+    return body
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize('operation,response', CASES, ids=[f'{op}-{r["name"]}' for op, r in CASES])
 async def test_every_saved_provider_response(monkeypatch, operation, response):
-    calls = mock_client(monkeypatch, httpx.Response(response['code'], content=response['body'],
+    raw_body = response_body(operation, response)
+    calls = mock_client(monkeypatch, httpx.Response(response['code'], content=raw_body,
         headers=[(h['key'], h['value']) for h in response.get('header', [])]))
     node = make_node(operation)
-    body = json.loads(response['body'])
+    body = json.loads(raw_body)
     if not 200 <= response['code'] < 300 or body.get('success') is not True or body.get('error'):
         with pytest.raises(ValueError, match='2Chat'):
             await node.execute({})
@@ -139,3 +168,31 @@ def test_discovery_and_required_shapes():
     for key in ['https://example.com', '<token>', 'key\nvalue', 'Bearer value']:
         with pytest.raises(ValueError):
             native.TwoChatAPIKeyCredential(api_key=key)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation', FIXTURE)
+async def test_request_construction_without_external_payloads(monkeypatch, operation):
+    def fail(request):
+        raise httpx.ConnectError('offline request capture', request=request)
+    calls = mock_client(monkeypatch, fail)
+    with pytest.raises(ValueError, match='2Chat request did not complete'):
+        await make_node(operation).execute({})
+    assert len(calls) == 1
+    request = calls[0]
+    assert request.method == FIXTURE[operation]['method']
+    assert request.url.host == 'api.p.2chat.io'
+    path = FIXTURE[operation]['path']
+    for name, value in VALUES.items():
+        if '{' + name + '}' in path:
+            from urllib.parse import quote
+            path = path.replace('{' + name + '}', quote(str(value), safe=''))
+    assert request.url.raw_path.split(b'?')[0].decode() == path
+    assert request.headers['X-User-API-Key'] == TOKEN
+    assert TOKEN not in str(request.url) and TOKEN.encode() not in request.content
+
+
+def test_public_fixture_contains_no_account_shaped_whatsapp_ids():
+    assert not re.search(r'[0-9]{10,20}@(?:s[.]whatsapp[.]net|c[.]us|g[.]us|newsletter|lid)', FIXTURE_PATH.read_text())
+    external = [r for entry in FIXTURE.values() for r in entry['responses'] if 'body_sha256' in r]
+    assert len(external) == 7
