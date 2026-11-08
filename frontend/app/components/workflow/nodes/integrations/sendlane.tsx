@@ -10,7 +10,7 @@ const SendlaneIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const SendlaneNode: NodeDefinition = {
-    type: 'automation-sendlane', label: 'Sendlane',
+    type: 'automation-sendlane', category: 'marketing', label: 'Sendlane',
     description: 'Manage contacts, lists, tags and custom fields; read campaigns and segments',
     keywords: ['email', 'marketing', 'audience', 'subscriber', 'contacts'],
     Icon: SendlaneIcon, iconColor: '',

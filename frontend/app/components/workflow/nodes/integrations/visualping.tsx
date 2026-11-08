@@ -12,7 +12,7 @@ const VisualpingIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const VisualpingNode: NodeDefinition = {
-    type: 'automation-visualping', label: 'Visualping',
+    type: 'automation-visualping', category: 'content-research', label: 'Visualping',
     description: 'Monitor pages, find changes and manage website monitoring jobs',
     keywords: ['website monitoring', 'page changes', 'monitors', 'web monitoring'],
     Icon: VisualpingIcon, iconColor: '',

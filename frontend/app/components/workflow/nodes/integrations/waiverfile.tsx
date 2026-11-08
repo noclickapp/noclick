@@ -24,6 +24,7 @@ const WaiverfileIcon = ({
 
 export const WaiverfileNode: NodeDefinition = {
     type: 'automation-waiverfile',
+    category: 'documents',
     label: 'WaiverFile',
     description:
         'Manage waivers, events, categories, forms and SMS subscriber exports',

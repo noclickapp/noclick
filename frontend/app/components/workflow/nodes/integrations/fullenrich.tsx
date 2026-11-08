@@ -12,7 +12,7 @@ const FullenrichIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const FullenrichNode: NodeDefinition = {
-    type: 'automation-fullenrich', label: 'FullEnrich',
+    type: 'automation-fullenrich', category: 'crm-sales', label: 'FullEnrich',
     description: 'Enrich contacts, reverse email lookup, search prospects and manage sub-accounts',
     keywords: ['fullenrich', 'email enrichment', 'phone enrichment', 'B2B', 'prospecting'],
     Icon: FullenrichIcon, iconColor: '',

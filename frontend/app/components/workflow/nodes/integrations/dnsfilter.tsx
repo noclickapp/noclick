@@ -16,6 +16,7 @@ export const DNSFilterNode: NodeDefinition = {
     type: 'automation-dnsfilter',
     label: 'DNSFilter',
     description: 'Manage networks, filtering policies and domain allowlists or blocklists',
+    category: 'cloud-hosting',
     keywords: ['dns', 'dnsfilter', 'web filtering', 'roaming agents', 'security'],
     Icon: DNSFilterIcon,
     iconColor: '',
