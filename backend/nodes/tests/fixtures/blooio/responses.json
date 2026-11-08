@@ -1,0 +1,46 @@
+{
+  "POST /chats": {
+    "body": {
+      "id": "chat_...",
+      "channel_id": "ch_...",
+      "channel_type": "blooio",
+      "contact_id": "ct_...",
+      "identity_id": "cid_...",
+      "state": "open",
+      "created": true
+    },
+    "source": "https://docs.blooio.com/chats"
+  },
+  "POST /messages": {
+    "body": {
+      "id": "msg_...",
+      "chat_id": "chat_...",
+      "from": "+12025550101",
+      "channel_id": "ch_...",
+      "channel_type": "blooio",
+      "status": "queued",
+      "routing": {
+        "mode": "priority",
+        "channel_type": "blooio",
+        "priority": 1
+      }
+    },
+    "source": "https://docs.blooio.com/message-sending"
+  },
+  "POST /chats/{chatId}/messages": {
+    "body": {
+      "id": "msg_...",
+      "chat_id": "chat_...",
+      "from": "+12025550101",
+      "channel_id": "ch_...",
+      "channel_type": "blooio",
+      "status": "queued",
+      "routing": {
+        "mode": "priority",
+        "channel_type": "blooio",
+        "priority": 1
+      }
+    },
+    "source": "https://docs.blooio.com/message-sending"
+  }
+}

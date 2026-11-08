@@ -1,0 +1,315 @@
+{
+  "source": "https://docs.blooio.com/openapi.json",
+  "version": "4.0.0-beta",
+  "cases": [
+    [
+      "get_account",
+      {},
+      "GET",
+      "/me",
+      {},
+      null
+    ],
+    [
+      "list_channels",
+      {
+        "limit": 2,
+        "cursor": "after"
+      },
+      "GET",
+      "/channels",
+      {
+        "limit": "2",
+        "cursor": "after"
+      },
+      null
+    ],
+    [
+      "get_channel",
+      {
+        "channel": "+15551234567"
+      },
+      "GET",
+      "/channels/%2B15551234567",
+      {},
+      null
+    ],
+    [
+      "get_channel_health",
+      {
+        "channel": "support",
+        "days": 5
+      },
+      "GET",
+      "/channels/support/health",
+      {
+        "days": "5"
+      },
+      null
+    ],
+    [
+      "list_contacts",
+      {
+        "q": "Alice",
+        "tag": "VIP"
+      },
+      "GET",
+      "/contacts",
+      {
+        "limit": "50",
+        "q": "Alice",
+        "tag": "VIP"
+      },
+      null
+    ],
+    [
+      "create_contact",
+      {
+        "name": "Alice",
+        "identifier": "+15551234567"
+      },
+      "POST",
+      "/contacts",
+      {},
+      {
+        "name": "Alice",
+        "identifier": "+15551234567"
+      }
+    ],
+    [
+      "get_contact",
+      {
+        "contact_id": "ct_123"
+      },
+      "GET",
+      "/contacts/ct_123",
+      {},
+      null
+    ],
+    [
+      "update_contact",
+      {
+        "contact_id": "ct_123",
+        "name": "Alice Smith"
+      },
+      "PATCH",
+      "/contacts/ct_123",
+      {},
+      {
+        "name": "Alice Smith"
+      }
+    ],
+    [
+      "delete_contact",
+      {
+        "contact_id": "ct_123"
+      },
+      "DELETE",
+      "/contacts/ct_123",
+      {},
+      null
+    ],
+    [
+      "list_contact_tags",
+      {
+        "contact_id": "ct_123"
+      },
+      "GET",
+      "/contacts/ct_123/tags",
+      {},
+      null
+    ],
+    [
+      "add_contact_tags",
+      {
+        "contact_id": "ct_123",
+        "tags": [
+          "VIP"
+        ]
+      },
+      "POST",
+      "/contacts/ct_123/tags",
+      {},
+      {
+        "tags": [
+          "VIP"
+        ]
+      }
+    ],
+    [
+      "remove_contact_tag",
+      {
+        "contact_id": "ct_123",
+        "tag": "a/b +"
+      },
+      "DELETE",
+      "/contacts/ct_123/tags/a%2Fb%20%2B",
+      {},
+      null
+    ],
+    [
+      "list_chats",
+      {
+        "channel_id": "ch_123",
+        "contact_id": "ct_123"
+      },
+      "GET",
+      "/chats",
+      {
+        "limit": "50",
+        "channel_id": "ch_123",
+        "contact_id": "ct_123"
+      },
+      null
+    ],
+    [
+      "create_chat",
+      {
+        "channel_id": "ch_123",
+        "to": "+15551234567"
+      },
+      "POST",
+      "/chats",
+      {},
+      {
+        "channel_id": "ch_123",
+        "to": "+15551234567"
+      }
+    ],
+    [
+      "get_chat",
+      {
+        "chat_id": "chat_123"
+      },
+      "GET",
+      "/chats/chat_123",
+      {},
+      null
+    ],
+    [
+      "update_chat",
+      {
+        "chat_id": "chat_123",
+        "state": "closed"
+      },
+      "PATCH",
+      "/chats/chat_123",
+      {},
+      {
+        "state": "closed"
+      }
+    ],
+    [
+      "mark_chat_read",
+      {
+        "chat_id": "chat_123"
+      },
+      "POST",
+      "/chats/chat_123/read",
+      {},
+      null
+    ],
+    [
+      "list_chat_messages",
+      {
+        "chat_id": "chat_123",
+        "order": "asc"
+      },
+      "GET",
+      "/chats/chat_123/messages",
+      {
+        "limit": "50",
+        "order": "asc"
+      },
+      null
+    ],
+    [
+      "send_message_to_chat",
+      {
+        "chat_id": "chat_123",
+        "text": "Hello",
+        "idempotency_key": "send-1"
+      },
+      "POST",
+      "/chats/chat_123/messages",
+      {},
+      {
+        "text": "Hello",
+        "format": "plain",
+        "dry_run": false
+      }
+    ],
+    [
+      "send_message",
+      {
+        "to": "+15551234567",
+        "sender": "support",
+        "text": "Hello",
+        "dry_run": true
+      },
+      "POST",
+      "/messages",
+      {},
+      {
+        "to": "+15551234567",
+        "from": "support",
+        "text": "Hello",
+        "format": "plain",
+        "dry_run": true
+      }
+    ],
+    [
+      "get_message",
+      {
+        "chat_id": "chat_123",
+        "message_id": "msg_123"
+      },
+      "GET",
+      "/chats/chat_123/messages/msg_123",
+      {},
+      null
+    ],
+    [
+      "get_message_status",
+      {
+        "chat_id": "chat_123",
+        "message_id": "msg_123"
+      },
+      "GET",
+      "/chats/chat_123/messages/msg_123/status",
+      {},
+      null
+    ],
+    [
+      "add_reaction",
+      {
+        "chat_id": "chat_123",
+        "message_id": "msg_123",
+        "reaction": "+love"
+      },
+      "POST",
+      "/chats/chat_123/messages/msg_123/reactions",
+      {},
+      {
+        "reaction": "+love"
+      }
+    ],
+    [
+      "list_events",
+      {
+        "type": "message.*",
+        "chat_id": "chat_123",
+        "message_id": "msg_123"
+      },
+      "GET",
+      "/events",
+      {
+        "limit": "50",
+        "type": "message.*",
+        "chat_id": "chat_123",
+        "message_id": "msg_123"
+      },
+      null
+    ]
+  ]
+}

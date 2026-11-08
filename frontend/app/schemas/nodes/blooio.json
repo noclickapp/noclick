@@ -1,0 +1,1021 @@
+{
+  "$defs": {
+    "AddContactTags": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_contact_tags",
+          "default": "add_contact_tags",
+          "title": "Add Contact Tags",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tags"
+      ],
+      "title": "AddContactTags",
+      "type": "object"
+    },
+    "AddReaction": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_reaction",
+          "default": "add_reaction",
+          "title": "Add Reaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reaction": {
+          "description": "For example +love to add or -love to remove a reaction.",
+          "minLength": 1,
+          "title": "Reaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id",
+        "reaction"
+      ],
+      "title": "AddReaction",
+      "type": "object"
+    },
+    "BlooioApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "blooio_api_key",
+          "default": "blooio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Blooio API key from the dashboard. Paste the key alone, without Bearer.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Blooio API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the Blooio dashboard, then paste it here without the Bearer prefix.",
+      "x-credential-url": "https://app.blooio.com"
+    },
+    "CreateChat": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_chat",
+          "default": "create_chat",
+          "title": "Create Chat",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "minLength": 1,
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "to": {
+          "description": "Phone, email, or provider recipient identifier.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id",
+        "to"
+      ],
+      "title": "CreateChat",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E.164 phone number or email to attach as the first identity.",
+          "title": "Phone or Email"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "description": "Channel ID, alias, or sender phone number.",
+          "minLength": 1,
+          "title": "Channel",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_channel",
+          "default": "get_channel",
+          "title": "Get Channel",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "channel"
+      ],
+      "title": "GetChannel",
+      "type": "object"
+    },
+    "GetChannelHealth": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "description": "Channel ID, alias, or sender phone number.",
+          "minLength": 1,
+          "title": "Channel",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_channel_health",
+          "default": "get_channel_health",
+          "title": "Get Channel Health",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "days": {
+          "default": 7,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Trailing Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "channel"
+      ],
+      "title": "GetChannelHealth",
+      "type": "object"
+    },
+    "GetChat": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_chat",
+          "default": "get_chat",
+          "title": "Get Chat",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "GetChat",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Get Message",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "title": "GetMessage",
+      "type": "object"
+    },
+    "GetMessageStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_message_status",
+          "default": "get_message_status",
+          "title": "Get Message Status",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "title": "GetMessageStatus",
+      "type": "object"
+    },
+    "ListChannels": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous response to fetch another page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "List Channels",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListChannels",
+      "type": "object"
+    },
+    "ListChatMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous response to fetch another page.",
+          "title": "Cursor"
+        },
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_chat_messages",
+          "default": "list_chat_messages",
+          "title": "List Chat Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "ListChatMessages",
+      "type": "object"
+    },
+    "ListChats": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous response to fetch another page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_chats",
+          "default": "list_chats",
+          "title": "List Chats",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel ID"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact ID"
+        }
+      },
+      "title": "ListChats",
+      "type": "object"
+    },
+    "ListContactTags": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contact_tags",
+          "default": "list_contact_tags",
+          "title": "List Contact Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListContactTags",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous response to fetch another page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone or Email"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous response to fetch another page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Type or Wildcard"
+        },
+        "chat_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message ID"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "MarkChatRead": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_chat_read",
+          "default": "mark_chat_read",
+          "title": "Mark Chat Read",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "MarkChatRead",
+      "type": "object"
+    },
+    "RemoveContactTag": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_contact_tag",
+          "default": "remove_contact_tag",
+          "title": "Remove Contact Tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag": {
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag"
+      ],
+      "title": "RemoveContactTag",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "format": {
+          "default": "plain",
+          "enum": [
+            "plain",
+            "markdown"
+          ],
+          "title": "Text Format",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate and route without sending a message.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key only when retrying the same send.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "to": {
+          "description": "One phone number, email, or provider recipient identifier.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "sender": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact sender phone number, alias, or channel ID. Omit for automatic routing.",
+          "title": "Sender"
+        }
+      },
+      "required": [
+        "text",
+        "to"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "SendMessageToChat": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "format": {
+          "default": "plain",
+          "enum": [
+            "plain",
+            "markdown"
+          ],
+          "title": "Text Format",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate and route without sending a message.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key only when retrying the same send.",
+          "title": "Idempotency Key"
+        },
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_message_to_chat",
+          "default": "send_message_to_chat",
+          "title": "Send Message To Chat",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "text",
+        "chat_id"
+      ],
+      "title": "SendMessageToChat",
+      "type": "object"
+    },
+    "UpdateChat": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_chat",
+          "default": "update_chat",
+          "title": "Update Chat",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "state": {
+          "description": "Apple Messages for Business only. Closing blocks sends until the customer messages again.",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Chat State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id",
+        "state"
+      ],
+      "title": "UpdateChat",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "name"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_tags": "#/$defs/AddContactTags",
+          "add_reaction": "#/$defs/AddReaction",
+          "create_chat": "#/$defs/CreateChat",
+          "create_contact": "#/$defs/CreateContact",
+          "delete_contact": "#/$defs/DeleteContact",
+          "get_account": "#/$defs/GetAccount",
+          "get_channel": "#/$defs/GetChannel",
+          "get_channel_health": "#/$defs/GetChannelHealth",
+          "get_chat": "#/$defs/GetChat",
+          "get_contact": "#/$defs/GetContact",
+          "get_message": "#/$defs/GetMessage",
+          "get_message_status": "#/$defs/GetMessageStatus",
+          "list_channels": "#/$defs/ListChannels",
+          "list_chat_messages": "#/$defs/ListChatMessages",
+          "list_chats": "#/$defs/ListChats",
+          "list_contact_tags": "#/$defs/ListContactTags",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_events": "#/$defs/ListEvents",
+          "mark_chat_read": "#/$defs/MarkChatRead",
+          "remove_contact_tag": "#/$defs/RemoveContactTag",
+          "send_message": "#/$defs/SendMessage",
+          "send_message_to_chat": "#/$defs/SendMessageToChat",
+          "update_chat": "#/$defs/UpdateChat",
+          "update_contact": "#/$defs/UpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        },
+        {
+          "$ref": "#/$defs/GetChannel"
+        },
+        {
+          "$ref": "#/$defs/GetChannelHealth"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListContactTags"
+        },
+        {
+          "$ref": "#/$defs/AddContactTags"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactTag"
+        },
+        {
+          "$ref": "#/$defs/ListChats"
+        },
+        {
+          "$ref": "#/$defs/CreateChat"
+        },
+        {
+          "$ref": "#/$defs/GetChat"
+        },
+        {
+          "$ref": "#/$defs/UpdateChat"
+        },
+        {
+          "$ref": "#/$defs/MarkChatRead"
+        },
+        {
+          "$ref": "#/$defs/ListChatMessages"
+        },
+        {
+          "$ref": "#/$defs/SendMessageToChat"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/GetMessage"
+        },
+        {
+          "$ref": "#/$defs/GetMessageStatus"
+        },
+        {
+          "$ref": "#/$defs/AddReaction"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BlooioApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Blooio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
