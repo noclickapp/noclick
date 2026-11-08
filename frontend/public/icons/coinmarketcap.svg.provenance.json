@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/coinmarketcap.svg",
+  "source": "https://s2.coinmarketcap.com/static/cloud/img/coinmarketcap_1.svg",
+  "license": "CoinMarketCap trademark; official asset used to identify the CoinMarketCap integration.",
+  "sha256": "e8bd9cd02dc50c289fff9ceea02e6f652c744de4a82a9d80f9fe97aa5b67b080"
+}

@@ -1,0 +1,654 @@
+{
+  "$defs": {
+    "CoinMarketCapAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "coinmarketcap_api_key",
+          "default": "coinmarketcap_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "CoinMarketCap API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your CoinMarketCap Pro API key. NoClick sends it in the X-CMC_PRO_API_KEY header. Connecting reads your key's plan and usage; it does not identify a person. Endpoint access and usage credits depend on your subscription.",
+      "x-credential-url": "https://pro.coinmarketcap.com/account"
+    },
+    "CoinMarketCapConvertPriceConfig": {
+      "additionalProperties": false,
+      "description": "Convert a currency amount.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "id": {
+          "description": "One fiat or cryptocurrency ID, e.g. 1 for Bitcoin.",
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^\\d+$",
+          "title": "Source currency ID",
+          "type": "string"
+        },
+        "amount": {
+          "maximum": 1000000000000,
+          "minimum": 1e-08,
+          "title": "Amount",
+          "type": "number"
+        },
+        "operation": {
+          "const": "convert_price",
+          "default": "convert_price",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id",
+        "amount"
+      ],
+      "title": "CoinMarketCapConvertPriceConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetCryptocurrencyInfoConfig": {
+      "additionalProperties": false,
+      "description": "Cryptocurrency metadata.",
+      "properties": {
+        "id": {
+          "description": "Comma-separated stable CoinMarketCap IDs. For example 1,1027 for Bitcoin/Ethereum; use exchange IDs for exchange operations.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\d+(?:,\\d+)*$",
+          "title": "CoinMarketCap IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_cryptocurrency_info",
+          "default": "get_cryptocurrency_info",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CoinMarketCapGetCryptocurrencyInfoConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetExchangeInfoConfig": {
+      "additionalProperties": false,
+      "description": "Exchange metadata.",
+      "properties": {
+        "id": {
+          "description": "Comma-separated stable CoinMarketCap IDs. For example 1,1027 for Bitcoin/Ethereum; use exchange IDs for exchange operations.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\d+(?:,\\d+)*$",
+          "title": "CoinMarketCap IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_exchange_info",
+          "default": "get_exchange_info",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CoinMarketCapGetExchangeInfoConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetExchangeQuotesConfig": {
+      "additionalProperties": false,
+      "description": "Latest exchange volumes.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "id": {
+          "description": "Comma-separated stable CoinMarketCap IDs. For example 1,1027 for Bitcoin/Ethereum; use exchange IDs for exchange operations.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\d+(?:,\\d+)*$",
+          "title": "CoinMarketCap IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_exchange_quotes",
+          "default": "get_exchange_quotes",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CoinMarketCapGetExchangeQuotesConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetFearAndGreedConfig": {
+      "additionalProperties": false,
+      "description": "Latest Fear and Greed Index.",
+      "properties": {
+        "operation": {
+          "const": "get_fear_and_greed",
+          "default": "get_fear_and_greed",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapGetFearAndGreedConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetFearAndGreedHistoryConfig": {
+      "additionalProperties": false,
+      "description": "Historical Fear and Greed Index.",
+      "properties": {
+        "start": {
+          "default": 1,
+          "description": "One-based result offset. Each run reads only this page.",
+          "minimum": 1,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_fear_and_greed_history",
+          "default": "get_fear_and_greed_history",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapGetFearAndGreedHistoryConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetGlobalMetricsConfig": {
+      "additionalProperties": false,
+      "description": "Global market metrics.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_global_metrics",
+          "default": "get_global_metrics",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapGetGlobalMetricsConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetHistoricalOhlcvConfig": {
+      "additionalProperties": false,
+      "description": "Historical cryptocurrency OHLCV.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "id": {
+          "description": "Comma-separated stable CoinMarketCap IDs. For example 1,1027 for Bitcoin/Ethereum; use exchange IDs for exchange operations.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\d+(?:,\\d+)*$",
+          "title": "CoinMarketCap IDs",
+          "type": "string"
+        },
+        "time_start": {
+          "description": "Unix or ISO 8601 timestamp, e.g. 2024-01-01. Historical access requires an eligible plan.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Start time",
+          "type": "string"
+        },
+        "time_end": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix or ISO 8601 timestamp, inclusive. Defaults to current time at the provider.",
+          "title": "End time"
+        },
+        "time_period": {
+          "default": "daily",
+          "enum": [
+            "daily",
+            "hourly"
+          ],
+          "title": "Time period",
+          "type": "string"
+        },
+        "count": {
+          "default": 10,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_historical_ohlcv",
+          "default": "get_historical_ohlcv",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id",
+        "time_start"
+      ],
+      "title": "CoinMarketCapGetHistoricalOhlcvConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetKeyInfoConfig": {
+      "additionalProperties": false,
+      "description": "API key plan and usage.",
+      "properties": {
+        "operation": {
+          "const": "get_key_info",
+          "default": "get_key_info",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapGetKeyInfoConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetLatestOhlcvConfig": {
+      "additionalProperties": false,
+      "description": "Latest cryptocurrency OHLCV.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "id": {
+          "description": "Comma-separated stable CoinMarketCap IDs. For example 1,1027 for Bitcoin/Ethereum; use exchange IDs for exchange operations.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\d+(?:,\\d+)*$",
+          "title": "CoinMarketCap IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_latest_ohlcv",
+          "default": "get_latest_ohlcv",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CoinMarketCapGetLatestOhlcvConfig",
+      "type": "object"
+    },
+    "CoinMarketCapGetLatestQuotesConfig": {
+      "additionalProperties": false,
+      "description": "Latest cryptocurrency prices.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "id": {
+          "description": "Comma-separated stable CoinMarketCap IDs. For example 1,1027 for Bitcoin/Ethereum; use exchange IDs for exchange operations.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\d+(?:,\\d+)*$",
+          "title": "CoinMarketCap IDs",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_latest_quotes",
+          "default": "get_latest_quotes",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CoinMarketCapGetLatestQuotesConfig",
+      "type": "object"
+    },
+    "CoinMarketCapListCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "Cryptocurrency categories.",
+      "properties": {
+        "start": {
+          "default": 1,
+          "description": "One-based result offset. Each run reads only this page.",
+          "minimum": 1,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page. Advance start by limit to read another page.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapListCategoriesConfig",
+      "type": "object"
+    },
+    "CoinMarketCapListCryptocurrenciesConfig": {
+      "additionalProperties": false,
+      "description": "Cryptocurrency ID map.",
+      "properties": {
+        "start": {
+          "default": 1,
+          "description": "One-based result offset. Each run reads only this page.",
+          "minimum": 1,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page. Advance start by limit to read another page.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_cryptocurrencies",
+          "default": "list_cryptocurrencies",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapListCryptocurrenciesConfig",
+      "type": "object"
+    },
+    "CoinMarketCapListExchangesConfig": {
+      "additionalProperties": false,
+      "description": "Exchange ID map.",
+      "properties": {
+        "start": {
+          "default": 1,
+          "description": "One-based result offset. Each run reads only this page.",
+          "minimum": 1,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page. Advance start by limit to read another page.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_exchanges",
+          "default": "list_exchanges",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapListExchangesConfig",
+      "type": "object"
+    },
+    "CoinMarketCapListFiatCurrenciesConfig": {
+      "additionalProperties": false,
+      "description": "Fiat currency ID map.",
+      "properties": {
+        "start": {
+          "default": 1,
+          "description": "One-based result offset. Each run reads only this page.",
+          "minimum": 1,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page. Advance start by limit to read another page.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_fiat_currencies",
+          "default": "list_fiat_currencies",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapListFiatCurrenciesConfig",
+      "type": "object"
+    },
+    "CoinMarketCapListLatestListingsConfig": {
+      "additionalProperties": false,
+      "description": "Latest ranked cryptocurrencies.",
+      "properties": {
+        "convert": {
+          "default": "USD",
+          "description": "Comma-separated fiat or cryptocurrency symbols. Additional conversions may use more credits.",
+          "maxLength": 2000,
+          "pattern": "^[0-9A-Za-z$@-]+(?:,[0-9A-Za-z$@-]+)*$",
+          "title": "Quote currencies",
+          "type": "string"
+        },
+        "start": {
+          "default": 1,
+          "description": "One-based result offset; one page per run.",
+          "minimum": 1,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "market_cap",
+          "enum": [
+            "market_cap",
+            "name",
+            "symbol",
+            "date_added",
+            "price",
+            "volume_24h",
+            "percent_change_24h"
+          ],
+          "title": "Sort by",
+          "type": "string"
+        },
+        "sort_dir": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_latest_listings",
+          "default": "list_latest_listings",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CoinMarketCapListLatestListingsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "convert_price": "#/$defs/CoinMarketCapConvertPriceConfig",
+          "get_cryptocurrency_info": "#/$defs/CoinMarketCapGetCryptocurrencyInfoConfig",
+          "get_exchange_info": "#/$defs/CoinMarketCapGetExchangeInfoConfig",
+          "get_exchange_quotes": "#/$defs/CoinMarketCapGetExchangeQuotesConfig",
+          "get_fear_and_greed": "#/$defs/CoinMarketCapGetFearAndGreedConfig",
+          "get_fear_and_greed_history": "#/$defs/CoinMarketCapGetFearAndGreedHistoryConfig",
+          "get_global_metrics": "#/$defs/CoinMarketCapGetGlobalMetricsConfig",
+          "get_historical_ohlcv": "#/$defs/CoinMarketCapGetHistoricalOhlcvConfig",
+          "get_key_info": "#/$defs/CoinMarketCapGetKeyInfoConfig",
+          "get_latest_ohlcv": "#/$defs/CoinMarketCapGetLatestOhlcvConfig",
+          "get_latest_quotes": "#/$defs/CoinMarketCapGetLatestQuotesConfig",
+          "list_categories": "#/$defs/CoinMarketCapListCategoriesConfig",
+          "list_cryptocurrencies": "#/$defs/CoinMarketCapListCryptocurrenciesConfig",
+          "list_exchanges": "#/$defs/CoinMarketCapListExchangesConfig",
+          "list_fiat_currencies": "#/$defs/CoinMarketCapListFiatCurrenciesConfig",
+          "list_latest_listings": "#/$defs/CoinMarketCapListLatestListingsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CoinMarketCapGetKeyInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapListCryptocurrenciesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapListLatestListingsConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetLatestQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetCryptocurrencyInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetLatestOhlcvConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetHistoricalOhlcvConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetGlobalMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapListFiatCurrenciesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapConvertPriceConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapListExchangesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetExchangeInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetExchangeQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetFearAndGreedConfig"
+        },
+        {
+          "$ref": "#/$defs/CoinMarketCapGetFearAndGreedHistoryConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoinMarketCapAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Coinmarketcap Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,82 @@
+{
+  "get_key_info": {
+    "path": "/v1/key/info",
+    "config": {}
+  },
+  "list_cryptocurrencies": {
+    "path": "/v1/cryptocurrency/map",
+    "config": {}
+  },
+  "list_latest_listings": {
+    "path": "/v3/cryptocurrency/listings/latest",
+    "config": {}
+  },
+  "get_latest_quotes": {
+    "path": "/v3/cryptocurrency/quotes/latest",
+    "config": {
+      "id": "1"
+    }
+  },
+  "get_cryptocurrency_info": {
+    "path": "/v2/cryptocurrency/info",
+    "config": {
+      "id": "1"
+    }
+  },
+  "get_latest_ohlcv": {
+    "path": "/v2/cryptocurrency/ohlcv/latest",
+    "config": {
+      "id": "1"
+    }
+  },
+  "get_historical_ohlcv": {
+    "path": "/v2/cryptocurrency/ohlcv/historical",
+    "config": {
+      "id": "1",
+      "time_start": "2024-01-01"
+    }
+  },
+  "get_global_metrics": {
+    "path": "/v1/global-metrics/quotes/latest",
+    "config": {}
+  },
+  "list_fiat_currencies": {
+    "path": "/v1/fiat/map",
+    "config": {}
+  },
+  "convert_price": {
+    "path": "/v2/tools/price-conversion",
+    "config": {
+      "id": "1",
+      "amount": 10.43
+    }
+  },
+  "list_exchanges": {
+    "path": "/v1/exchange/map",
+    "config": {}
+  },
+  "get_exchange_info": {
+    "path": "/v1/exchange/info",
+    "config": {
+      "id": "1"
+    }
+  },
+  "get_exchange_quotes": {
+    "path": "/v1/exchange/quotes/latest",
+    "config": {
+      "id": "1"
+    }
+  },
+  "list_categories": {
+    "path": "/v1/cryptocurrency/categories",
+    "config": {}
+  },
+  "get_fear_and_greed": {
+    "path": "/v3/fear-and-greed/latest",
+    "config": {}
+  },
+  "get_fear_and_greed_history": {
+    "path": "/v3/fear-and-greed/historical",
+    "config": {}
+  }
+}
