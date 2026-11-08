@@ -1,0 +1,890 @@
+{
+  "$defs": {
+    "AdyntelAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "adyntel_api_key",
+          "default": "adyntel_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Account email",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "email",
+        "api_key"
+      ],
+      "title": "Adyntel API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from your Adyntel profile under Integrations and enter the same account email. NoClick sends both in JSON to api.adyntel.com. Connecting searches TikTok for the documented keyword toys to check API reachability and can consume one credit; it does not establish account identity. Searches and Shopping job creation use Adyntel credits. Provider-side all-ads requests can use many credits and cannot be stopped.",
+      "x-credential-url": "https://platform.adyntel.com"
+    },
+    "CreateGoogleShoppingSearchConfig": {
+      "additionalProperties": false,
+      "description": "Google Shopping Ads.",
+      "properties": {
+        "operation": {
+          "const": "create_google_shopping_search",
+          "default": "create_google_shopping_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_domain": {
+          "description": "Company website Use a bare domain without www, a protocol or a path.",
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "shopping": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, use Railway parser for direct synchronous results. When false, use DataForSEO (async, poll with /google_shopping_status).",
+          "title": "Shopping"
+        }
+      },
+      "required": [
+        "company_domain"
+      ],
+      "title": "CreateGoogleShoppingSearchConfig",
+      "type": "object"
+    },
+    "GetDomainKeywordsConfig": {
+      "additionalProperties": false,
+      "description": "Paid vs Organic Keywords.",
+      "properties": {
+        "operation": {
+          "const": "get_domain_keywords",
+          "default": "get_domain_keywords",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_domain": {
+          "description": "Company website (without www or http) Use a bare domain without www, a protocol or a path.",
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language for keyword results",
+          "title": "Language"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "company_domain"
+      ],
+      "title": "GetDomainKeywordsConfig",
+      "type": "object"
+    },
+    "GetGoogleShoppingStatusConfig": {
+      "additionalProperties": false,
+      "description": "Google Shopping Status.",
+      "properties": {
+        "operation": {
+          "const": "get_google_shopping_status",
+          "default": "get_google_shopping_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The id you received as response",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetGoogleShoppingStatusConfig",
+      "type": "object"
+    },
+    "GetTikTokAdDetailsConfig": {
+      "additionalProperties": false,
+      "description": "TikTok Ad Details.",
+      "properties": {
+        "operation": {
+          "const": "get_tiktok_ad_details",
+          "default": "get_tiktok_ad_details",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Ad id",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTikTokAdDetailsConfig",
+      "type": "object"
+    },
+    "SearchFacebookAdsConfig": {
+      "additionalProperties": false,
+      "description": "Facebook & Instagram Ads.",
+      "properties": {
+        "operation": {
+          "const": "search_facebook_ads",
+          "default": "search_facebook_ads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "facebook_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Facebook page url (needs to start with https://)",
+          "title": "Facebook Url"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company website Use a bare domain without www, a protocol or a path.",
+          "title": "Company Domain"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parameter used to filter results for a specific country.",
+          "title": "Country Code"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token used to grab the next set of ads",
+          "title": "Continuation Token"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "image",
+                "meme",
+                "image_and_meme",
+                "video"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parameter used to filter results for a specific type of media.",
+          "title": "Media Type",
+          "enum": [
+            "image",
+            "meme",
+            "image_and_meme",
+            "video"
+          ],
+          "x-enum-searchable": true
+        },
+        "active_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "inactive",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This filters the search in the ad library by active, inactive or all ads.",
+          "title": "Active Status",
+          "enum": [
+            "inactive",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "all_ads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This will automatically use the continuation_token and scrape all the pages, returning all available ads.",
+          "title": "All Ads"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL where the data will be returned",
+          "title": "Webhook Url"
+        }
+      },
+      "title": "SearchFacebookAdsConfig",
+      "type": "object"
+    },
+    "SearchGoogleAdsConfig": {
+      "additionalProperties": false,
+      "description": "Google Ads.",
+      "properties": {
+        "operation": {
+          "const": "search_google_ads",
+          "default": "search_google_ads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_domain": {
+          "description": "Company website Use a bare domain without www, a protocol or a path.",
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "image",
+                "video"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results based on media type. Possible values: text, image, video.",
+          "title": "Media Type",
+          "enum": [
+            "text",
+            "image",
+            "video"
+          ],
+          "x-enum-searchable": true
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token used to grab the next set of ads",
+          "title": "Continuation Token"
+        },
+        "all_ads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This will automatically use the continuation_token and scrape all the pages, returning all available ads. Works only with a webhook_url as it needs a place to send each page, one by one. Warning: use this cautiously because there is no way of stopping it. If you use this on a domain that runs 10000 ads, it will try to scrape all the ads and it will use the credits (one page = one credit)",
+          "title": "All Ads"
+        },
+        "extract_text": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extract text content from ad creatives",
+          "title": "Extract Text"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL for async delivery",
+          "title": "Webhook Url"
+        },
+        "data_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "rapidapi",
+                "apify"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data provider to use",
+          "title": "Data Provider",
+          "enum": [
+            "rapidapi",
+            "apify"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "company_domain"
+      ],
+      "title": "SearchGoogleAdsConfig",
+      "type": "object"
+    },
+    "SearchLinkedInAdsConfig": {
+      "additionalProperties": false,
+      "description": "LinkedIn Ads.",
+      "properties": {
+        "operation": {
+          "const": "search_linkedin_ads",
+          "default": "search_linkedin_ads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "linkedin_page_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "LinkedIn Page ID",
+          "title": "Linkedin Page Id"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company website Use a bare domain without www, a protocol or a path.",
+          "title": "Company Domain"
+        },
+        "linkedin_page_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Multiple LinkedIn page IDs for batch mode",
+          "title": "Linkedin Page Ids"
+        },
+        "company_domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Multiple company domains for batch mode",
+          "title": "Company Domains"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token used to grab the next set of ads",
+          "title": "Continuation Token"
+        },
+        "extract": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extract specific data. Use 'number_of_ads' to return only the ad count.",
+          "title": "Extract"
+        },
+        "all_ads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This will automatically use the continuation_token and scrape all the pages, returning all available ads. Works only with a webhook_url as it needs a place to send each page, one by one. Warning: use this cautiously because there is no way of stopping it. If you use this on a domain that runs 10000 ads, it will try to scrape all the ads and it will use the credits (one page = one credit)",
+          "title": "All Ads"
+        },
+        "live_ads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return currently active ads",
+          "title": "Live Ads"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL where the data will be returned",
+          "title": "Webhook Url"
+        },
+        "data_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "rapidapi",
+                "apify"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data provider to use",
+          "title": "Data Provider",
+          "enum": [
+            "rapidapi",
+            "apify"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "SearchLinkedInAdsConfig",
+      "type": "object"
+    },
+    "SearchLinkedInKeywordsConfig": {
+      "additionalProperties": false,
+      "description": "LinkedIn Keyword Search.",
+      "properties": {
+        "operation": {
+          "const": "search_linkedin_keywords",
+          "default": "search_linkedin_keywords",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "description": "Company website",
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The 2-digit country code",
+          "title": "Country"
+        },
+        "dateOption": {
+          "anyOf": [
+            {
+              "enum": [
+                "current-month",
+                "current-year",
+                "last-30-days",
+                "last-year",
+                "custom-date-range"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Valid options: current-month, current-year, custom-date-range, last-30-days, last-year or custom-date-range",
+          "title": "Dateoption",
+          "enum": [
+            "current-month",
+            "current-year",
+            "last-30-days",
+            "last-year",
+            "custom-date-range"
+          ],
+          "x-enum-searchable": true
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD format (e.g. 2026-01-15)",
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD format (e.g. 2026-01-15)",
+          "title": "Enddate"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A token that you can use to scrape the next page",
+          "title": "Continuation Token"
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "title": "SearchLinkedInKeywordsConfig",
+      "type": "object"
+    },
+    "SearchMetaKeywordsConfig": {
+      "additionalProperties": false,
+      "description": "Meta Ad Search.",
+      "properties": {
+        "operation": {
+          "const": "search_meta_keywords",
+          "default": "search_meta_keywords",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "description": "The keyword you want to use in your search",
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "To limit results to one specific country",
+          "title": "Country Code"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for paginating through results",
+          "title": "Continuation Token"
+        },
+        "all_ads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return all ads (auto-paginate)",
+          "title": "All Ads"
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "title": "SearchMetaKeywordsConfig",
+      "type": "object"
+    },
+    "SearchTikTokAdsConfig": {
+      "additionalProperties": false,
+      "description": "TikTok Ad Search.",
+      "properties": {
+        "operation": {
+          "const": "search_tiktok_ads",
+          "default": "search_tiktok_ads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "description": "Your search query",
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use if you want to limit the search to only one country",
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "title": "SearchTikTokAdsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_google_shopping_search": "#/$defs/CreateGoogleShoppingSearchConfig",
+          "get_domain_keywords": "#/$defs/GetDomainKeywordsConfig",
+          "get_google_shopping_status": "#/$defs/GetGoogleShoppingStatusConfig",
+          "get_tiktok_ad_details": "#/$defs/GetTikTokAdDetailsConfig",
+          "search_facebook_ads": "#/$defs/SearchFacebookAdsConfig",
+          "search_google_ads": "#/$defs/SearchGoogleAdsConfig",
+          "search_linkedin_ads": "#/$defs/SearchLinkedInAdsConfig",
+          "search_linkedin_keywords": "#/$defs/SearchLinkedInKeywordsConfig",
+          "search_meta_keywords": "#/$defs/SearchMetaKeywordsConfig",
+          "search_tiktok_ads": "#/$defs/SearchTikTokAdsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchFacebookAdsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchGoogleAdsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchLinkedInAdsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchLinkedInKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchMetaKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateGoogleShoppingSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/GetGoogleShoppingStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchTikTokAdsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTikTokAdDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDomainKeywordsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AdyntelAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Adyntel Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,23 @@
+{
+  "search_facebook_ads": {
+    "source": "https://docs.adyntel.com/ad-libraries/meta.md",
+    "body": {
+      "status": "job started",
+      "jobId": "0b0f2b8c-..."
+    }
+  },
+  "search_google_ads": {
+    "source": "https://docs.adyntel.com/ad-libraries/google.md",
+    "body": {
+      "status": "job started",
+      "jobId": "0b0f2b8c-..."
+    }
+  },
+  "search_linkedin_ads": {
+    "source": "https://docs.adyntel.com/ad-libraries/linkedin.md",
+    "body": {
+      "status": "job started",
+      "jobId": "0b0f2b8c-..."
+    }
+  }
+}
