@@ -1,0 +1,202 @@
+[
+  {
+    "config": {
+      "operation": "create_session"
+    },
+    "method": "POST",
+    "path": "/api/session"
+  },
+  {
+    "config": {
+      "operation": "get_session",
+      "session_id": "session-id"
+    },
+    "method": "GET",
+    "path": "/api/session/session-id"
+  },
+  {
+    "config": {
+      "operation": "stop_session",
+      "session_id": "session-id"
+    },
+    "method": "PUT",
+    "path": "/api/session/session-id/stop"
+  },
+  {
+    "config": {
+      "operation": "list_sessions"
+    },
+    "method": "GET",
+    "path": "/api/sessions"
+  },
+  {
+    "config": {
+      "operation": "get_session_recording",
+      "session_id": "session-id"
+    },
+    "method": "GET",
+    "path": "/api/session/session-id/recording-url"
+  },
+  {
+    "config": {
+      "operation": "get_session_video",
+      "session_id": "session-id"
+    },
+    "method": "GET",
+    "path": "/api/session/session-id/video-recording-url"
+  },
+  {
+    "config": {
+      "operation": "get_session_downloads",
+      "session_id": "session-id"
+    },
+    "method": "GET",
+    "path": "/api/session/session-id/downloads-url"
+  },
+  {
+    "config": {
+      "operation": "create_profile"
+    },
+    "method": "POST",
+    "path": "/api/profile"
+  },
+  {
+    "config": {
+      "operation": "get_profile",
+      "profile_id": "profile-id"
+    },
+    "method": "GET",
+    "path": "/api/profile/profile-id"
+  },
+  {
+    "config": {
+      "operation": "delete_profile",
+      "profile_id": "profile-id"
+    },
+    "method": "DELETE",
+    "path": "/api/profile/profile-id"
+  },
+  {
+    "config": {
+      "operation": "list_profiles"
+    },
+    "method": "GET",
+    "path": "/api/profiles"
+  },
+  {
+    "config": {
+      "operation": "start_scrape",
+      "url": "https://example.com"
+    },
+    "method": "POST",
+    "path": "/api/scrape"
+  },
+  {
+    "config": {
+      "operation": "get_scrape",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/api/scrape/123e4567-e89b-12d3-a456-426614174000"
+  },
+  {
+    "config": {
+      "operation": "get_scrape_status",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/api/scrape/123e4567-e89b-12d3-a456-426614174000/status"
+  },
+  {
+    "config": {
+      "operation": "start_batch_scrape",
+      "urls": [
+        "https://example.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/scrape/batch"
+  },
+  {
+    "config": {
+      "operation": "get_batch_scrape",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/api/scrape/batch/123e4567-e89b-12d3-a456-426614174000"
+  },
+  {
+    "config": {
+      "operation": "start_crawl",
+      "url": "https://example.com"
+    },
+    "method": "POST",
+    "path": "/api/crawl"
+  },
+  {
+    "config": {
+      "operation": "get_crawl",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/api/crawl/123e4567-e89b-12d3-a456-426614174000"
+  },
+  {
+    "config": {
+      "operation": "start_extract",
+      "urls": [
+        "https://example.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/extract"
+  },
+  {
+    "config": {
+      "operation": "get_extract",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/api/extract/123e4567-e89b-12d3-a456-426614174000"
+  },
+  {
+    "config": {
+      "operation": "start_hyper_agent",
+      "task": "go to example.com"
+    },
+    "method": "POST",
+    "path": "/api/task/hyper-agent"
+  },
+  {
+    "config": {
+      "operation": "get_hyper_agent",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/api/task/hyper-agent/123e4567-e89b-12d3-a456-426614174000"
+  },
+  {
+    "config": {
+      "operation": "stop_hyper_agent",
+      "job_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "PUT",
+    "path": "/api/task/hyper-agent/123e4567-e89b-12d3-a456-426614174000/stop"
+  },
+  {
+    "config": {
+      "operation": "fetch_page",
+      "url": "https://example.com"
+    },
+    "method": "POST",
+    "path": "/api/web/fetch"
+  },
+  {
+    "config": {
+      "operation": "search_web",
+      "query": "browser automation"
+    },
+    "method": "POST",
+    "path": "/api/web/search"
+  }
+]

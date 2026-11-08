@@ -1,0 +1,1540 @@
+{
+  "$defs": {
+    "CreateProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_profile",
+          "default": "create_profile",
+          "title": "Create Profile",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "CreateProfileConfig",
+      "type": "object"
+    },
+    "CreateSessionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "useStealth": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usestealth"
+        },
+        "useProxy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Useproxy"
+        },
+        "solveCaptchas": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Solvecaptchas"
+        },
+        "adblock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adblock"
+        },
+        "acceptCookies": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acceptcookies"
+        },
+        "enableWebRecording": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enablewebrecording"
+        },
+        "enableVideoWebRecording": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enablevideowebrecording"
+        },
+        "saveDownloads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Savedownloads"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "us-central",
+                "us-west",
+                "us-east",
+                "asia-south",
+                "europe-west"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region",
+          "enum": [
+            "us",
+            "us-central",
+            "us-west",
+            "us-east",
+            "asia-south",
+            "europe-west"
+          ],
+          "x-enum-searchable": true
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Create Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateSessionConfig",
+      "type": "object"
+    },
+    "DeleteProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_profile",
+          "default": "delete_profile",
+          "title": "Delete Profile",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "DeleteProfileConfig",
+      "type": "object"
+    },
+    "FetchPageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "fetch_page",
+          "default": "fetch_page",
+          "title": "Fetch Page",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "stealth": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "auto",
+                "ultra"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stealth",
+          "enum": [
+            "none",
+            "auto",
+            "ultra"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "FetchPageConfig",
+      "type": "object"
+    },
+    "GetBatchScrapeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch_scrape",
+          "default": "get_batch_scrape",
+          "title": "Get Batch Scrape",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetBatchScrapeConfig",
+      "type": "object"
+    },
+    "GetCrawlConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_crawl",
+          "default": "get_crawl",
+          "title": "Get Crawl",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "batchSize": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Batchsize"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetCrawlConfig",
+      "type": "object"
+    },
+    "GetExtractConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_extract",
+          "default": "get_extract",
+          "title": "Get Extract",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetExtractConfig",
+      "type": "object"
+    },
+    "GetHyperAgentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_hyper_agent",
+          "default": "get_hyper_agent",
+          "title": "Get Hyper Agent",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetHyperAgentConfig",
+      "type": "object"
+    },
+    "GetProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "GetProfileConfig",
+      "type": "object"
+    },
+    "GetScrapeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "format": "uuid",
+          "title": "Scrape Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_scrape",
+          "default": "get_scrape",
+          "title": "Get Scrape",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetScrapeConfig",
+      "type": "object"
+    },
+    "GetScrapeStatusConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "format": "uuid",
+          "title": "Scrape Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_scrape_status",
+          "default": "get_scrape_status",
+          "title": "Get Scrape Status",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetScrapeStatusConfig",
+      "type": "object"
+    },
+    "GetSessionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Get Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSessionConfig",
+      "type": "object"
+    },
+    "GetSessionDownloadsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session_downloads",
+          "default": "get_session_downloads",
+          "title": "Get Session Downloads",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSessionDownloadsConfig",
+      "type": "object"
+    },
+    "GetSessionRecordingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session_recording",
+          "default": "get_session_recording",
+          "title": "Get Session Recording",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSessionRecordingConfig",
+      "type": "object"
+    },
+    "GetSessionVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session_video",
+          "default": "get_session_video",
+          "title": "Get Session Video",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSessionVideoConfig",
+      "type": "object"
+    },
+    "HyperbrowserApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hyperbrowser_api_key",
+          "default": "hyperbrowser_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Hyperbrowser API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy an API key from your Hyperbrowser dashboard. NoClick sends it as x-api-key to api.hyperbrowser.ai. Connecting reads your team's sessions.",
+      "x-credential-url": "https://app.hyperbrowser.ai/"
+    },
+    "ListProfilesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Profiles",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListProfilesConfig",
+      "type": "object"
+    },
+    "ListSessionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "List Sessions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "closed",
+                "error",
+                "close-error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "closed",
+            "error",
+            "close-error"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSessionsConfig",
+      "type": "object"
+    },
+    "ScrapeOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "formats": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "html",
+                  "links",
+                  "markdown",
+                  "screenshot"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Formats"
+        },
+        "includeTags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includetags"
+        },
+        "excludeTags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excludetags"
+        },
+        "onlyMainContent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onlymaincontent"
+        },
+        "waitFor": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waitfor"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout"
+        },
+        "waitUntil": {
+          "anyOf": [
+            {
+              "enum": [
+                "load",
+                "domcontentloaded",
+                "networkidle"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waituntil",
+          "enum": [
+            "load",
+            "domcontentloaded",
+            "networkidle"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ScrapeOptions",
+      "type": "object"
+    },
+    "SearchWebConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_web",
+          "default": "search_web",
+          "title": "Search Web",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "maxAgeSeconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxageseconds"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchWebConfig",
+      "type": "object"
+    },
+    "SessionOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "useStealth": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usestealth"
+        },
+        "useProxy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Useproxy"
+        },
+        "solveCaptchas": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Solvecaptchas"
+        },
+        "adblock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adblock"
+        },
+        "acceptCookies": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acceptcookies"
+        },
+        "enableWebRecording": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enablewebrecording"
+        },
+        "enableVideoWebRecording": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enablevideowebrecording"
+        },
+        "saveDownloads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Savedownloads"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "us-central",
+                "us-west",
+                "us-east",
+                "asia-south",
+                "europe-west"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region",
+          "enum": [
+            "us",
+            "us-central",
+            "us-west",
+            "us-east",
+            "asia-south",
+            "europe-west"
+          ],
+          "x-enum-searchable": true
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionProfile"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "SessionOptions",
+      "type": "object"
+    },
+    "SessionProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Profile ID",
+          "type": "string"
+        },
+        "persistChanges": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Persistchanges"
+        },
+        "persistNetworkCache": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Persistnetworkcache"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SessionProfile",
+      "type": "object"
+    },
+    "StartBatchScrapeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_batch_scrape",
+          "default": "start_batch_scrape",
+          "title": "Start Batch Scrape",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Urls",
+          "type": "array"
+        },
+        "sessionOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scrapeOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScrapeOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "StartBatchScrapeConfig",
+      "type": "object"
+    },
+    "StartCrawlConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "minLength": 1,
+          "title": "URL",
+          "type": "string"
+        },
+        "sessionOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scrapeOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScrapeOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "start_crawl",
+          "default": "start_crawl",
+          "title": "Start Crawl",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "maxPages": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxpages"
+        },
+        "followLinks": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Followlinks"
+        },
+        "ignoreSitemap": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ignoresitemap"
+        },
+        "excludePatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excludepatterns"
+        },
+        "includePatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includepatterns"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartCrawlConfig",
+      "type": "object"
+    },
+    "StartExtractConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_extract",
+          "default": "start_extract",
+          "title": "Start Extract",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Urls",
+          "type": "array"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt"
+        },
+        "systemPrompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Systemprompt"
+        },
+        "maxLinks": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxlinks"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction JSON Schema"
+        },
+        "sessionOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "waitFor": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waitfor"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "StartExtractConfig",
+      "type": "object"
+    },
+    "StartHyperAgentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_hyper_agent",
+          "default": "start_hyper_agent",
+          "title": "Start Hyper Agent",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task": {
+          "minLength": 1,
+          "title": "Task",
+          "type": "string"
+        },
+        "maxSteps": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxsteps"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sessionid"
+        },
+        "keepBrowserOpen": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keepbrowseropen"
+        },
+        "sessionOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "version": {
+          "anyOf": [
+            {
+              "enum": [
+                "0.8.0",
+                "1.1.0"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version",
+          "enum": [
+            "0.8.0",
+            "1.1.0"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "title": "StartHyperAgentConfig",
+      "type": "object"
+    },
+    "StartScrapeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "minLength": 1,
+          "title": "URL",
+          "type": "string"
+        },
+        "sessionOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scrapeOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScrapeOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "start_scrape",
+          "default": "start_scrape",
+          "title": "Start Scrape",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartScrapeConfig",
+      "type": "object"
+    },
+    "StopHyperAgentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_hyper_agent",
+          "default": "stop_hyper_agent",
+          "title": "Stop Hyper Agent",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "StopHyperAgentConfig",
+      "type": "object"
+    },
+    "StopSessionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_session",
+          "default": "stop_session",
+          "title": "Stop Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "StopSessionConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_profile": "#/$defs/CreateProfileConfig",
+          "create_session": "#/$defs/CreateSessionConfig",
+          "delete_profile": "#/$defs/DeleteProfileConfig",
+          "fetch_page": "#/$defs/FetchPageConfig",
+          "get_batch_scrape": "#/$defs/GetBatchScrapeConfig",
+          "get_crawl": "#/$defs/GetCrawlConfig",
+          "get_extract": "#/$defs/GetExtractConfig",
+          "get_hyper_agent": "#/$defs/GetHyperAgentConfig",
+          "get_profile": "#/$defs/GetProfileConfig",
+          "get_scrape": "#/$defs/GetScrapeConfig",
+          "get_scrape_status": "#/$defs/GetScrapeStatusConfig",
+          "get_session": "#/$defs/GetSessionConfig",
+          "get_session_downloads": "#/$defs/GetSessionDownloadsConfig",
+          "get_session_recording": "#/$defs/GetSessionRecordingConfig",
+          "get_session_video": "#/$defs/GetSessionVideoConfig",
+          "list_profiles": "#/$defs/ListProfilesConfig",
+          "list_sessions": "#/$defs/ListSessionsConfig",
+          "search_web": "#/$defs/SearchWebConfig",
+          "start_batch_scrape": "#/$defs/StartBatchScrapeConfig",
+          "start_crawl": "#/$defs/StartCrawlConfig",
+          "start_extract": "#/$defs/StartExtractConfig",
+          "start_hyper_agent": "#/$defs/StartHyperAgentConfig",
+          "start_scrape": "#/$defs/StartScrapeConfig",
+          "stop_hyper_agent": "#/$defs/StopHyperAgentConfig",
+          "stop_session": "#/$defs/StopSessionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/StopSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSessionRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSessionVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSessionDownloadsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/GetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/StartScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScrapeStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/StartBatchScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/GetBatchScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/StartCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/StartExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/GetExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/StartHyperAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/GetHyperAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/StopHyperAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/FetchPageConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchWebConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HyperbrowserApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hyperbrowser Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
