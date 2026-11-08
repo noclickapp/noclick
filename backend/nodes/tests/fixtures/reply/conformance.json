@@ -1,0 +1,336 @@
+{
+  "contract": {
+    "file": "openapi.yaml",
+    "sha256": "f9b62c3bbb8609e76c60e6b3f9522f1ddad91b8925acc0f7ac445d4d86fcc0ca",
+    "version": "3.0.0",
+    "source_url": "https://docs.reply.io/api-reference/bundled.yaml",
+    "node_type": "automation-reply",
+    "credential": {
+      "credential_type": "reply_api_key",
+      "api_key": "<token>"
+    }
+  },
+  "verdict": {
+    "provider": "reply",
+    "ready": true,
+    "blocking": [],
+    "advisory": [],
+    "stats": {
+      "operations": 21,
+      "skipped": 0,
+      "request_ok": 21,
+      "authored_parser_ok": 1,
+      "generated_only": 20,
+      "local_ok": 0
+    }
+  },
+  "summary": {
+    "checked": 21,
+    "passed": 21,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 21,
+    "auth_checked": 21,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 21,
+      "total": 450
+    }
+  },
+  "operations": [
+    {
+      "operation": "get_account",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/whoami",
+          "spec_operation": "GET /v3/whoami",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "0d9bc2ae4b821a2d175b8ed4139f0e55c1c2f9a454860cec124e7766dc8e196a"
+        }
+      ]
+    },
+    {
+      "operation": "list_contacts",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/contacts?top=25&skip=0&email=1&linkedIn=1",
+          "spec_operation": "GET /v3/contacts",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "033dc2049b6be29987aa7a275e2210fb5dc2de8a9913fe6bcf49d6da2324eaac"
+        }
+      ]
+    },
+    {
+      "operation": "get_contact",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/contacts/1",
+          "spec_operation": "GET /v3/contacts/{id}",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "a6d882e84f521bd6627358b7a7ae3cf95f0313ffa194d66c76a00bde428c0fdc"
+        }
+      ]
+    },
+    {
+      "operation": "create_contact",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/contacts",
+          "spec_operation": "POST /v3/contacts",
+          "response_status": 201,
+          "response_source": "generated",
+          "response_sha256": "a6d882e84f521bd6627358b7a7ae3cf95f0313ffa194d66c76a00bde428c0fdc"
+        }
+      ]
+    },
+    {
+      "operation": "update_contact",
+      "passed": true,
+      "requests": [
+        {
+          "method": "PATCH",
+          "url": "https://api.reply.io/v3/contacts/1",
+          "spec_operation": "PATCH /v3/contacts/{id}",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "a6d882e84f521bd6627358b7a7ae3cf95f0313ffa194d66c76a00bde428c0fdc"
+        }
+      ]
+    },
+    {
+      "operation": "delete_contact",
+      "passed": true,
+      "requests": [
+        {
+          "method": "DELETE",
+          "url": "https://api.reply.io/v3/contacts/1",
+          "spec_operation": "DELETE /v3/contacts/{id}",
+          "response_status": 204,
+          "response_source": "generated",
+          "response_sha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+        }
+      ]
+    },
+    {
+      "operation": "list_contact_notes",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/contacts/1/notes?top=25&skip=0",
+          "spec_operation": "GET /v3/contacts/{id}/notes",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "ac7e4f270e3aefbec5933df3f844d91a9a0cede430f289080e2b061698e19c55"
+        }
+      ]
+    },
+    {
+      "operation": "add_contact_note",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/contacts/1/notes",
+          "spec_operation": "POST /v3/contacts/{id}/notes",
+          "response_status": 204,
+          "response_source": "generated",
+          "response_sha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+        }
+      ]
+    },
+    {
+      "operation": "list_contact_lists",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/contact-lists?top=25&skip=0&search=1",
+          "spec_operation": "GET /v3/contact-lists",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "b50019992e41eaa5d7c3c1964aac6733893ca34825ba72b0c87dfaf55bb21cb9"
+        }
+      ]
+    },
+    {
+      "operation": "create_contact_list",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/contact-lists",
+          "spec_operation": "POST /v3/contact-lists",
+          "response_status": 201,
+          "response_source": "generated",
+          "response_sha256": "2b9a278cd296d52aa1518a839f4517325e5698f76b3e2cf361ae807b877e5196"
+        }
+      ]
+    },
+    {
+      "operation": "add_contacts_to_list",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/contact-lists/1/add-contacts",
+          "spec_operation": "POST /v3/contact-lists/{id}/add-contacts",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        }
+      ]
+    },
+    {
+      "operation": "list_sequences",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/sequences?top=25&skip=0&name=1&status=active&isArchived=false",
+          "spec_operation": "GET /v3/sequences",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "d0097a37e97244838f6da987452d054c2c1133965e2f039e21164b876a3c7759"
+        }
+      ]
+    },
+    {
+      "operation": "get_sequence",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/sequences/1",
+          "spec_operation": "GET /v3/sequences/{id}",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "00fe10f8d502019555268c0e8d295b55e671cf984a41fe4fe318daaa7e846830"
+        }
+      ]
+    },
+    {
+      "operation": "start_sequence",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/sequences/1/start",
+          "spec_operation": "POST /v3/sequences/{id}/start",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "00fe10f8d502019555268c0e8d295b55e671cf984a41fe4fe318daaa7e846830"
+        }
+      ]
+    },
+    {
+      "operation": "pause_sequence",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/sequences/1/pause",
+          "spec_operation": "POST /v3/sequences/{id}/pause",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "00fe10f8d502019555268c0e8d295b55e671cf984a41fe4fe318daaa7e846830"
+        }
+      ]
+    },
+    {
+      "operation": "list_sequence_contacts",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/sequences/1/contacts?top=25&skip=0",
+          "spec_operation": "GET /v3/sequences/{id}/contacts",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "b147001e842e430d549f9d449afd7677f263e3481416ffac70c1af0e67168bb9"
+        }
+      ]
+    },
+    {
+      "operation": "add_contacts_to_sequence",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/sequences/1/contact-links/bulk",
+          "spec_operation": "POST /v3/sequences/{id}/contact-links/bulk",
+          "response_status": 200,
+          "response_source": "spec_example",
+          "response_sha256": "3b543b5cbf99864106e5ed2f98edc6745452f3496256b5d5d4e9f40972a844d0"
+        }
+      ]
+    },
+    {
+      "operation": "remove_contact_from_sequence",
+      "passed": true,
+      "requests": [
+        {
+          "method": "DELETE",
+          "url": "https://api.reply.io/v3/sequences/1/contact-links/1",
+          "spec_operation": "DELETE /v3/sequences/{id}/contact-links/{contact_id}",
+          "response_status": 204,
+          "response_source": "generated",
+          "response_sha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+        }
+      ]
+    },
+    {
+      "operation": "list_tasks",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/tasks?top=25&skip=0",
+          "spec_operation": "GET /v3/tasks",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "d9ef9e992476ec52ec39a7c77443d5daf656e138a2babc080b14ef65e4c28c37"
+        }
+      ]
+    },
+    {
+      "operation": "get_task",
+      "passed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.reply.io/v3/tasks/1?includeContent=false",
+          "spec_operation": "GET /v3/tasks/{id}",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "c92f3e87056417835f78259f7739cc25ccbe60bea875595203cf4e3ac0784250"
+        }
+      ]
+    },
+    {
+      "operation": "complete_task",
+      "passed": true,
+      "requests": [
+        {
+          "method": "POST",
+          "url": "https://api.reply.io/v3/tasks/1/complete",
+          "spec_operation": "POST /v3/tasks/{id}/complete",
+          "response_status": 200,
+          "response_source": "generated",
+          "response_sha256": "c92f3e87056417835f78259f7739cc25ccbe60bea875595203cf4e3ac0784250"
+        }
+      ]
+    }
+  ]
+}
