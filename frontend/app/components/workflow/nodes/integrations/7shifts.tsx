@@ -11,6 +11,7 @@ const SevenShiftsIcon = ({ className, style }: { className?: string; style?: CSS
 
 export const SevenShiftsNode: NodeDefinition = {
     type: 'automation-7shifts', label: '7shifts',
+    category: 'hr-recruiting',
     description: 'Automate employees, shifts, time punches and time off',
     keywords: ['scheduling', 'employees', 'time clock', 'workforce', 'payroll'],
     Icon: SevenShiftsIcon, iconColor: '',
