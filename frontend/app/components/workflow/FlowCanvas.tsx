@@ -313,6 +313,7 @@ import {
     applyNodeUpdate,
     createWorkflowNode,
     ensureNodePosition,
+    hasOtherEdges,
     hasValidPosition,
     normalizeNodeUpdatePayload,
     patchById,
@@ -2653,12 +2654,7 @@ const FlowCanvasInner = ({
         (edgeId: string, nodeId: string) => {
             setEdges((prev) => removeById(prev, edgeId));
             broadcastEdgeRemoveRef.current?.(edgeId);
-            const hasOtherEdges = edgesRef.current.some(
-                (e) =>
-                    e.id !== edgeId &&
-                    (e.source === nodeId || e.target === nodeId)
-            );
-            if (!hasOtherEdges) {
+            if (!hasOtherEdges(edgesRef.current, nodeId, edgeId)) {
                 setNodes((prev) => removeById(prev, nodeId));
                 broadcastNodeRemoveRef.current?.(nodeId);
                 deletedNodeIdsRef.current.add(nodeId);

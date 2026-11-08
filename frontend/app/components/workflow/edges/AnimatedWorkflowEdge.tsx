@@ -115,8 +115,7 @@ function AnimatedWorkflowEdge({
 
     // Top→bottom edges carry TOOLS into an agent (ToolNode/MCP/alarm/filesystem
     // and integration tool providers), not dataflow — label them so the two
-    // edge kinds are distinguishable at a glance. Hidden while the delete
-    // button occupies the same midpoint anchor. Integration providers show
+    // edge kinds are distinguishable at a glance. Integration providers show
     // their allowlisted-action count ("0 tools" included) and turn amber when
     // the provider node itself is incomplete (missing credentials / empty
     // allowlist) — the wiring exists but the agent gets nothing usable.
@@ -286,14 +285,11 @@ function AnimatedWorkflowEdge({
                 />
             </circle>
 
-            {/* Tool edges keep ONE persistent anchored container that owns its
-                hover state and swaps chip ↔ delete button. The chip must be
-                hoverable itself: with pointer-events none, hover only counted
-                over the edge's invisible 20px hit path BEHIND the chip — on
-                near-vertical tool edges the chip's ends stick out of that
-                corridor, so hovering them never revealed the delete button.
-                Persisting the container across the swap keeps mouseleave
-                firing (an unmounting chip can't deliver one). zIndex 1000:
+            {/* Tool edges keep ONE anchored container that owns its hover
+                state: the chip never moves and the delete button appears
+                BESIDE it, so a click on the label can't delete the link. The
+                chip is hoverable itself: on near-vertical tool edges it sticks
+                out of the edge's 20px hit path. zIndex 1000:
                 EdgeLabelRenderer's container can render UNDER the SVG edges
                 layer, occluding the chip / swallowing clicks. */}
             {isToolEdge && (
@@ -311,21 +307,13 @@ function AnimatedWorkflowEdge({
                             zIndex: 1000,
                         }}
                     >
-                        {/* The chip stays mounted as the container's SIZE-GIVER
-                            (visibility-hidden while delete shows) with the button
-                            absolutely centered over it. Swapping children outright
-                            shrank the container mid-hover, and a fast-moving cursor
-                            could miss the layout-induced mouseleave — leaving the
-                            delete button stuck until the next hover cycle. */}
                         <div
+                            data-testid="tool-edge-label"
                             className={`flex items-center gap-1 px-1.5 py-px rounded-full bg-popover/95 border text-[9px] font-medium select-none ${
                                 providerIncomplete
                                     ? 'border-amber-500/50 text-amber-600 dark:text-amber-400'
                                     : 'border-border dark:border-zinc-700/60 text-muted-foreground'
                             }`}
-                            style={{
-                                visibility: showDelete ? 'hidden' : 'visible',
-                            }}
                             title={
                                 providerIncomplete
                                     ? 'Provider node is incomplete — connect credentials / select actions'
@@ -336,22 +324,21 @@ function AnimatedWorkflowEdge({
                             {toolEdgeLabel}
                         </div>
                         {showDelete && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    deleteElements({ edges: [{ id }] });
-                                }}
-                                className={NODE_DELETE_BTN_CLASSES}
-                                style={{
-                                    position: 'absolute',
-                                    left: '50%',
-                                    top: '50%',
-                                    transform: 'translate(-50%, -50%)',
-                                }}
-                                title="Delete edge"
-                            >
-                                <Trash2 size={12} />
-                            </button>
+                            // Padding, not margin: the gap stays part of the
+                            // container's hover on the way to the button.
+                            <div className="absolute left-full top-1/2 -translate-y-1/2 pl-1.5">
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteElements({ edges: [{ id }] });
+                                    }}
+                                    className={NODE_DELETE_BTN_CLASSES}
+                                    title="Delete edge"
+                                >
+                                    <Trash2 size={12} />
+                                </button>
+                            </div>
                         )}
                     </div>
                 </EdgeLabelRenderer>

@@ -307,6 +307,19 @@ export function removeById<T extends { id: string }>(
     return items.filter((i) => i.id !== id);
 }
 
+/** Whether `nodeId` still connects to anything once `edgeId` is gone: unwiring
+ *  a trigger/tool from an agent drops the node with its edge when it doesn't,
+ *  so no unconnected node is left on the canvas. */
+export function hasOtherEdges(
+    edges: readonly { id: string; source: string; target: string }[],
+    nodeId: string,
+    edgeId: string
+): boolean {
+    return edges.some(
+        (e) => e.id !== edgeId && (e.source === nodeId || e.target === nodeId)
+    );
+}
+
 export function patchById<T extends { id: string }>(
     items: T[],
     id: string,

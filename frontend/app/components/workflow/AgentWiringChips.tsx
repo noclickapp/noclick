@@ -3,12 +3,14 @@
 // Chips are clickable — triggers open the palette's credential step (when the
 // type takes credentials), tools open the in-palette allowlist/mounts config.
 // × deletes the edge via the same deleteElements path as the edge's own
-// delete button (keeps collab sync; the node stays visible on canvas).
+// delete button (keeps collab sync), and the node with it when nothing else
+// connects to it, as the chat sidebar does.
 // "+ Add" buttons open the shared AgentWiringPalette.
 
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
+import { hasOtherEdges } from '~/lib/applyNodeUpdate';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { getNodeCredentialInfo, type AgentTriggerSource, type AgentWiredTool } from '~/utils/nodeSchemas';
@@ -97,7 +99,7 @@ export function AgentWiringChips({
     getWiredNodeData,
     workflowId,
 }: AgentWiringChipsProps) {
-    const { deleteElements } = useReactFlow();
+    const { deleteElements, getEdges } = useReactFlow();
     const [palette, setPalette] = useState<
         { role: 'trigger' | 'tool'; configNode?: PaletteConfigNode } | null
     >(null);
@@ -106,7 +108,12 @@ export function AgentWiringChips({
     if (!triggers.length && !tools.length && !onAdd) return null;
 
     const canConfigure = !!getWiredNodeData;
-    const removeEdge = (edgeId: string) => deleteElements({ edges: [{ id: edgeId }] });
+    // A node left unconnected would sit under the next one added in its place.
+    const remove = (edgeId: string, nodeId: string) =>
+        deleteElements({
+            edges: [{ id: edgeId }],
+            nodes: hasOtherEdges(getEdges(), nodeId, edgeId) ? [] : [{ id: nodeId }],
+        });
 
     return (
         <div className="mt-2 space-y-3">
@@ -134,7 +141,7 @@ export function AgentWiringChips({
                                           })
                                     : undefined
                             }
-                            onRemove={() => removeEdge(t.edgeId)}
+                            onRemove={() => remove(t.edgeId, t.nodeId)}
                             removeTitle="Disconnect this trigger from the agent"
                         />
                     ))}
@@ -187,7 +194,7 @@ export function AgentWiringChips({
                                           })
                                     : undefined
                             }
-                            onRemove={() => removeEdge(t.edgeId)}
+                            onRemove={() => remove(t.edgeId, t.nodeId)}
                             removeTitle="Disconnect this tool from the agent"
                         />
                     ))}
