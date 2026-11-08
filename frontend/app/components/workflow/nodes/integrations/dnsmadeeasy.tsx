@@ -1,0 +1,24 @@
+// DNS Made Easy catalog definition discovered by the integration loader.
+// Keeps this integration independent of shared registries.
+import type { NodeProps } from '@xyflow/react';
+import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import type { NodeDefinition } from '~/components/workflow/nodes/types';
+
+import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://www.vectorlogo.zone/logos/dnsmadeeasy/
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/dnsmadeeasy-brand-vector.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
+const DNSMadeEasyNodeComponent = (props: NodeProps) => (
+    <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />
+);
+export const DNSMadeEasyNode: NodeDefinition = {
+    type: 'automation-dnsmadeeasy', label: 'DNS Made Easy',
+    description: 'Managed domain and record ID, type and TTL metadata without DNS values or configuration',
+    keywords: ['DNS Made Easy', 'DNSME', 'DNS records', 'DNS TTL'],
+    Icon: OfficialBrandIcon, iconColor: '',
+    dimensions: { width: 90, height: 90, iconSize: 48 },
+    component: DNSMadeEasyNodeComponent,
+};
