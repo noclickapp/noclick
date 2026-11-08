@@ -1,0 +1,115 @@
+{
+  "source": {
+    "file": "openapi.json",
+    "sha256": "a79d013f5d78bc32994af54489d97751814176c05d7c87720e94a95636b1a19a",
+    "version": "1.0.0",
+    "source_url": "https://registry.scalar.com/@intelliprint/apis/intelliprint-api-reference?format=json",
+    "node_type": "automation-intelliprint",
+    "credential": {
+      "credential_type": "intelliprint_api_key",
+      "api_key": "<token>"
+    }
+  },
+  "operations": {
+    "create_print": {
+      "method": "POST",
+      "path": "/prints",
+      "operation_id": "prints.create"
+    },
+    "list_prints": {
+      "method": "GET",
+      "path": "/prints",
+      "operation_id": "prints.list"
+    },
+    "get_print": {
+      "method": "GET",
+      "path": "/prints/{id}",
+      "operation_id": "prints.retrieve"
+    },
+    "update_print": {
+      "method": "POST",
+      "path": "/prints/{id}",
+      "operation_id": "prints.update"
+    },
+    "delete_print": {
+      "method": "DELETE",
+      "path": "/prints/{id}",
+      "operation_id": "prints.delete"
+    },
+    "create_background": {
+      "method": "POST",
+      "path": "/backgrounds",
+      "operation_id": "backgrounds.create"
+    },
+    "list_backgrounds": {
+      "method": "GET",
+      "path": "/backgrounds",
+      "operation_id": "backgrounds.list"
+    },
+    "get_background": {
+      "method": "GET",
+      "path": "/backgrounds/{id}",
+      "operation_id": "backgrounds.retrieve"
+    },
+    "update_background": {
+      "method": "POST",
+      "path": "/backgrounds/{id}",
+      "operation_id": "backgrounds.update"
+    },
+    "delete_background": {
+      "method": "DELETE",
+      "path": "/backgrounds/{id}",
+      "operation_id": "backgrounds.delete"
+    },
+    "create_mailing_list": {
+      "method": "POST",
+      "path": "/mailing_lists",
+      "operation_id": "mailing_lists.create"
+    },
+    "list_mailing_lists": {
+      "method": "GET",
+      "path": "/mailing_lists",
+      "operation_id": "mailing_lists.list"
+    },
+    "get_mailing_list": {
+      "method": "GET",
+      "path": "/mailing_lists/{id}",
+      "operation_id": "mailing_lists.retrieve"
+    },
+    "update_mailing_list": {
+      "method": "POST",
+      "path": "/mailing_lists/{id}",
+      "operation_id": "mailing_lists.update"
+    },
+    "delete_mailing_list": {
+      "method": "DELETE",
+      "path": "/mailing_lists/{id}",
+      "operation_id": "mailing_lists.delete"
+    },
+    "create_recipient": {
+      "method": "POST",
+      "path": "/mailing_lists/{mailing_list}/recipients",
+      "operation_id": "mailing_list_recipients.create"
+    },
+    "list_recipients": {
+      "method": "GET",
+      "path": "/mailing_lists/{mailing_list}/recipients",
+      "operation_id": "mailing_list_recipients.list"
+    },
+    "get_recipient": {
+      "method": "GET",
+      "path": "/mailing_lists/{mailing_list}/recipients/{id}",
+      "operation_id": "mailing_list_recipients.retrieve"
+    },
+    "update_recipient": {
+      "method": "POST",
+      "path": "/mailing_lists/{mailing_list}/recipients/{id}",
+      "operation_id": "mailing_list_recipients.update"
+    },
+    "delete_recipient": {
+      "method": "DELETE",
+      "path": "/mailing_lists/{mailing_list}/recipients/{id}",
+      "operation_id": "mailing_list_recipients.delete"
+    }
+  }
+}
