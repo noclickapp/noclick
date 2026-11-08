@@ -133,7 +133,7 @@ class _ActivityID(_Config):
 
 class _ActivityBody(_Config):
     subject: Text = Field(..., title="Subject")
-    start_date: str = Field(..., title="Start Date", description="ISO 8601 date-time.")
+    start_date: str = Field(..., title="Start Date", description="ISO 8601 date-time.", json_schema_extra={"format": "date-time"})
     timezone_id: ID = Field(..., title="Timezone ID", description="Use List Timezones.", json_schema_extra=_resource("timezone_id"))
     status_id: ID = Field(..., title="Status ID", description="Use List Activity Statuses.", json_schema_extra=_resource("activity_status_id"))
     priority: Annotated[Literal["High", "Normal", "Low"], WrapValidator(_pending)] = Field("Normal", title="Priority")
@@ -674,6 +674,9 @@ class NeonCRMNode(WorkflowNode):
             criteria = [{"field": cfg.search_field, "operator": cfg.operator}]
             if cfg.operator not in ("BLANK", "NOT_BLANK"):
                 criteria[0]["value"] = cfg.value
+        # https://developer.neoncrm.com/querying/ specifies using the output-field
+        # catalogue's values. OutputFields.standardFields is string[] in v2.12;
+        # SearchRequest.outputFields incorrectly declares opaque object items.
         body = {"searchFields": criteria, "outputFields": cfg.output_fields, "pagination": {"currentPage": cfg.current_page, "pageSize": cfg.page_size}}
         data, _ = await self._request("POST", "/activities/search", body=body)
         if not isinstance(data, dict) or not isinstance(data.get("searchResults"), list):

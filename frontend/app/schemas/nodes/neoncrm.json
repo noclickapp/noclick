@@ -210,6 +210,7 @@
         },
         "start_date": {
           "description": "ISO 8601 date-time.",
+          "format": "date-time",
           "title": "Start Date",
           "type": "string"
         },
@@ -639,6 +640,7 @@
         },
         "start_date": {
           "description": "ISO 8601 date-time.",
+          "format": "date-time",
           "title": "Start Date",
           "type": "string"
         },

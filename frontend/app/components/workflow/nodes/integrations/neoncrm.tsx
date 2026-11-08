@@ -4,7 +4,7 @@
 import { forwardRef, memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
-import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 
 // Unmodified compact brand asset from https://neonone.com/solutions/neon-crm-overview/
@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
         style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
-export const NeonCRMIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
+export const NeonCRMIcon = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
         <img {...props} ref={ref} src="/icons/neoncrm.svg" alt="" className={className}
             style={{ ...style, objectFit: 'contain' }} />

@@ -175,3 +175,11 @@ async def test_unknown_success_shape_and_reflected_escaped_secret_are_not_eviden
     transport(monkeypatch, lambda r: httpx.Response(200, json={"id": "1", "firstName": escaped}))
     with pytest.raises(ValueError, match="authentication material"):
         await instance.execute({})
+
+
+def test_activity_schema_declares_the_required_date_time_format():
+    schema = native.NeonCRMFullConfig.model_json_schema()
+    for name in ("NeonCRMCreateActivityConfig", "NeonCRMPatchActivityConfig"):
+        assert schema["$defs"][name]["properties"]["start_date"]["format"] == "date-time"
+    with pytest.raises(ValueError, match="ISO 8601"):
+        node("create_activity", {**ACTIVITY, "start_date": "1"})
