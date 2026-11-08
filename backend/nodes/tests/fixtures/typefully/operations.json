@@ -1,0 +1,552 @@
+{
+  "get_current_user": {
+    "config": {
+      "operation": "get_current_user"
+    },
+    "method": "GET",
+    "path": "/v2/me",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "id": 12345,
+      "name": "John Doe",
+      "email": "user@example.com",
+      "signup_date": "2024-01-15T10:30:00Z"
+    }
+  },
+  "list_social_sets": {
+    "config": {
+      "operation": "list_social_sets",
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/v2/social-sets",
+    "query": {
+      "limit": [
+        "2"
+      ],
+      "offset": [
+        "0"
+      ]
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 123,
+          "name": "My account"
+        },
+        {
+          "id": 124,
+          "name": "Team account"
+        }
+      ],
+      "count": 3,
+      "limit": 2,
+      "offset": 0,
+      "next": "https://api.typefully.com/v2/social-sets?limit=2&offset=2",
+      "previous": null
+    }
+  },
+  "get_social_set": {
+    "config": {
+      "operation": "get_social_set",
+      "social_set_id": 123
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "id": 123,
+      "name": "My account"
+    }
+  },
+  "list_drafts": {
+    "config": {
+      "operation": "list_drafts",
+      "social_set_id": 123,
+      "limit": 2,
+      "tag": [
+        "marketing",
+        "product"
+      ],
+      "status": "planned"
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/drafts",
+    "query": {
+      "limit": [
+        "2"
+      ],
+      "offset": [
+        "0"
+      ],
+      "tag": [
+        "marketing",
+        "product"
+      ],
+      "status": [
+        "planned"
+      ],
+      "order_by": [
+        "-updated_at"
+      ]
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 456,
+          "status": "planned"
+        }
+      ],
+      "count": 3,
+      "limit": 2,
+      "offset": 0,
+      "next": "https://api.typefully.com/v2/social-sets?limit=2&offset=2",
+      "previous": null
+    }
+  },
+  "create_draft": {
+    "config": {
+      "operation": "create_draft",
+      "social_set_id": 123,
+      "platforms": {
+        "x": {
+          "enabled": true,
+          "posts": [
+            {
+              "text": "Hello world! This is my first post."
+            }
+          ]
+        }
+      },
+      "publish_at": "now"
+    },
+    "method": "POST",
+    "path": "/v2/social-sets/123/drafts",
+    "query": {},
+    "body": {
+      "platforms": {
+        "x": {
+          "enabled": true,
+          "posts": [
+            {
+              "text": "Hello world! This is my first post."
+            }
+          ]
+        }
+      },
+      "publish_at": "now"
+    },
+    "status": 201,
+    "response": {
+      "id": 456,
+      "status": "draft",
+      "publish_state": "in_progress",
+      "published_at": null
+    }
+  },
+  "get_draft": {
+    "config": {
+      "operation": "get_draft",
+      "social_set_id": 123,
+      "draft_id": 456
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/drafts/456",
+    "query": {
+      "exclude_comment_markers": [
+        "false"
+      ]
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "id": 456,
+      "status": "published",
+      "publish_state": "finished"
+    }
+  },
+  "update_draft": {
+    "config": {
+      "operation": "update_draft",
+      "social_set_id": 123,
+      "draft_id": 456,
+      "publish_at": null,
+      "tags": [],
+      "share": false
+    },
+    "method": "PATCH",
+    "path": "/v2/social-sets/123/drafts/456",
+    "query": {
+      "exclude_comment_markers": [
+        "false"
+      ]
+    },
+    "body": {
+      "publish_at": null,
+      "tags": [],
+      "share": false
+    },
+    "status": 200,
+    "response": {
+      "id": 456,
+      "status": "draft"
+    }
+  },
+  "delete_draft": {
+    "config": {
+      "operation": "delete_draft",
+      "social_set_id": 123,
+      "draft_id": 456
+    },
+    "method": "DELETE",
+    "path": "/v2/social-sets/123/drafts/456",
+    "query": {},
+    "body": null,
+    "status": 204,
+    "response": {}
+  },
+  "create_media_upload": {
+    "config": {
+      "operation": "create_media_upload",
+      "social_set_id": 123,
+      "file_name": "profile-photo.jpg"
+    },
+    "method": "POST",
+    "path": "/v2/social-sets/123/media/upload",
+    "query": {},
+    "body": {
+      "file_name": "profile-photo.jpg"
+    },
+    "status": 201,
+    "response": {
+      "media_id": "550e8400-e29b-41d4-a716-446655440000",
+      "upload_url": "https://s3.amazonaws.com/bucket/path/file.jpg?X-Amz-Algorithm=..."
+    }
+  },
+  "get_media_status": {
+    "config": {
+      "operation": "get_media_status",
+      "social_set_id": 123,
+      "media_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/media/550e8400-e29b-41d4-a716-446655440000",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "media_id": "550e8400-e29b-41d4-a716-446655440000",
+      "file_name": "photo.jpg",
+      "status": "ready"
+    }
+  },
+  "update_media": {
+    "config": {
+      "operation": "update_media",
+      "social_set_id": 123,
+      "media_id": "550e8400-e29b-41d4-a716-446655440000",
+      "alt_text": null
+    },
+    "method": "PATCH",
+    "path": "/v2/social-sets/123/media/550e8400-e29b-41d4-a716-446655440000",
+    "query": {},
+    "body": {
+      "alt_text": null
+    },
+    "status": 200,
+    "response": {
+      "media_id": "550e8400-e29b-41d4-a716-446655440000",
+      "file_name": "photo.jpg",
+      "status": "ready",
+      "alt_text": null
+    }
+  },
+  "list_tags": {
+    "config": {
+      "operation": "list_tags",
+      "social_set_id": 123,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/tags",
+    "query": {
+      "limit": [
+        "2"
+      ],
+      "offset": [
+        "0"
+      ]
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "results": [
+        {
+          "id": 1,
+          "name": "Marketing",
+          "slug": "marketing"
+        }
+      ],
+      "count": 3,
+      "limit": 2,
+      "offset": 0,
+      "next": "https://api.typefully.com/v2/social-sets?limit=2&offset=2",
+      "previous": null
+    }
+  },
+  "create_tag": {
+    "config": {
+      "operation": "create_tag",
+      "social_set_id": 123,
+      "name": "Marketing"
+    },
+    "method": "POST",
+    "path": "/v2/social-sets/123/tags",
+    "query": {},
+    "body": {
+      "name": "Marketing"
+    },
+    "status": 201,
+    "response": {
+      "id": 1,
+      "name": "Marketing",
+      "slug": "marketing"
+    }
+  },
+  "get_queue_schedule": {
+    "config": {
+      "operation": "get_queue_schedule",
+      "social_set_id": 123
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/queue/schedule",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "social_set_id": 123,
+      "timezone": "America/New_York",
+      "rules": [
+        {
+          "h": 12,
+          "m": 0,
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ]
+        },
+        {
+          "h": 17,
+          "m": 0,
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ]
+        }
+      ]
+    }
+  },
+  "replace_queue_schedule": {
+    "config": {
+      "operation": "replace_queue_schedule",
+      "social_set_id": 123,
+      "rules": [
+        {
+          "h": 9,
+          "m": 0,
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ]
+        }
+      ]
+    },
+    "method": "PUT",
+    "path": "/v2/social-sets/123/queue/schedule",
+    "query": {},
+    "body": {
+      "rules": [
+        {
+          "h": 9,
+          "m": 0,
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ]
+        }
+      ]
+    },
+    "status": 200,
+    "response": {
+      "social_set_id": 123,
+      "timezone": "America/New_York",
+      "rules": [
+        {
+          "h": 9,
+          "m": 30,
+          "days": [
+            "mon",
+            "wed",
+            "fri"
+          ]
+        }
+      ]
+    }
+  },
+  "get_queue": {
+    "config": {
+      "operation": "get_queue",
+      "social_set_id": 123,
+      "start_date": "2026-02-01",
+      "end_date": "2026-02-28"
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/queue",
+    "query": {
+      "start_date": [
+        "2026-02-01"
+      ],
+      "end_date": [
+        "2026-02-28"
+      ]
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "social_set_id": 123,
+      "start_date": "2026-02-01",
+      "end_date": "2026-02-29",
+      "days": [
+        {
+          "date": "2026-02-12",
+          "items": [
+            {
+              "at": "2026-02-12T17:00:00Z",
+              "kind": "queue_slot",
+              "draft": null
+            },
+            {
+              "at": "2026-02-12T22:00:00Z",
+              "kind": "queue_slot",
+              "draft": {
+                "id": 98765,
+                "preview": "Hello world",
+                "scheduled_date": "2026-02-12T22:00:00Z",
+                "draft_title": null,
+                "mastodon_post_enabled": false,
+                "social_set_id": 123,
+                "share_url": null,
+                "private_url": "https://typefully.com/?d=98765&a=123",
+                "status": "scheduled",
+                "tags": [],
+                "created_at": "2026-02-12T21:30:00Z",
+                "updated_at": null,
+                "published_at": null,
+                "mastodon_post_published_at": null,
+                "linkedin_post_published_at": null,
+                "threads_post_published_at": null,
+                "bluesky_post_published_at": null,
+                "substack_post_published_at": null,
+                "x_post_published_at": null,
+                "x_post_enabled": true,
+                "linkedin_post_enabled": false,
+                "threads_post_enabled": false,
+                "bluesky_post_enabled": false,
+                "substack_post_enabled": false,
+                "x_published_url": null,
+                "linkedin_published_url": null,
+                "mastodon_published_url": null,
+                "threads_published_url": null,
+                "bluesky_published_url": null,
+                "substack_published_url": null
+              }
+            },
+            {
+              "at": "2026-02-12T22:00:00Z",
+              "kind": "custom_time",
+              "draft": {
+                "id": 99999,
+                "preview": "Hello world",
+                "scheduled_date": "2026-02-12T22:00:00Z",
+                "draft_title": null,
+                "mastodon_post_enabled": false,
+                "social_set_id": 123,
+                "share_url": null,
+                "private_url": "https://typefully.com/?d=98765&a=123",
+                "status": "scheduled",
+                "tags": [],
+                "created_at": "2026-02-12T21:30:00Z",
+                "updated_at": null,
+                "published_at": null,
+                "mastodon_post_published_at": null,
+                "linkedin_post_published_at": null,
+                "threads_post_published_at": null,
+                "bluesky_post_published_at": null,
+                "substack_post_published_at": null,
+                "x_post_published_at": null,
+                "x_post_enabled": true,
+                "linkedin_post_enabled": false,
+                "threads_post_enabled": false,
+                "bluesky_post_enabled": false,
+                "substack_post_enabled": false,
+                "x_published_url": null,
+                "linkedin_published_url": null,
+                "mastodon_published_url": null,
+                "threads_published_url": null,
+                "bluesky_published_url": null,
+                "substack_published_url": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "resolve_linkedin_organization": {
+    "config": {
+      "operation": "resolve_linkedin_organization",
+      "social_set_id": 123,
+      "organization_url": "https://www.linkedin.com/company/typefullycom"
+    },
+    "method": "GET",
+    "path": "/v2/social-sets/123/linkedin/organizations/resolve",
+    "query": {
+      "organization_url": [
+        "https://www.linkedin.com/company/typefullycom"
+      ]
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "id": "86779668",
+      "urn": "urn:li:organization:86779668",
+      "mention_text": "@[Typefully](urn:li:organization:86779668)",
+      "name": "Typefully",
+      "vanity_name": "typefullycom",
+      "description": "Social media scheduling platform",
+      "website": "https://typefully.com",
+      "logo_url": "https://media.licdn.com/dms/image/....png",
+      "url": "https://www.linkedin.com/company/typefullycom"
+    }
+  }
+}
