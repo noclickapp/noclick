@@ -1,0 +1,1237 @@
+{
+  "$defs": {
+    "DataboxAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "databox_api_key",
+          "default": "databox_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Databox API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Account Management > Profile > Password & Security (admin access required), then paste it here. NoClick sends it in the x-api-key header to api.databox.com and verifies it by reading your profile. Use a key with access to the resources your workflow needs.",
+      "x-credential-url": "https://developers.databox.com/docs/api/authentication"
+    },
+    "DataboxCreateDataset": {
+      "description": "Create dataset.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "data_source_id": {
+          "title": "Data Source Id",
+          "type": "integer"
+        },
+        "columns": {
+          "description": "Column definitions for the dataset schema.",
+          "items": {
+            "$ref": "#/$defs/DatasetColumn"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "primary_key": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Key"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[ -~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "name",
+        "data_source_id",
+        "columns"
+      ],
+      "title": "DataboxCreateDataset",
+      "type": "object"
+    },
+    "DataboxGetDashboardMetrics": {
+      "description": "Get dashboard metrics.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_dashboard_metrics",
+          "default": "get_dashboard_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dashboard_id": {
+          "title": "Dashboard Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "DataboxGetDashboardMetrics",
+      "type": "object"
+    },
+    "DataboxGetDataSource": {
+      "description": "Get data source.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_data_source",
+          "default": "get_data_source",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data_source_id": {
+          "title": "Data Source Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "data_source_id"
+      ],
+      "title": "DataboxGetDataSource",
+      "type": "object"
+    },
+    "DataboxGetDataset": {
+      "description": "Get dataset.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "DataboxGetDataset",
+      "type": "object"
+    },
+    "DataboxGetDatasetData": {
+      "description": "Get dataset data.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_dataset_data",
+          "default": "get_dataset_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 200,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "DataboxGetDatasetData",
+      "type": "object"
+    },
+    "DataboxGetDatasetIngestion": {
+      "description": "Get dataset ingestion.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_dataset_ingestion",
+          "default": "get_dataset_ingestion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        },
+        "ingestion_id": {
+          "format": "uuid",
+          "title": "Ingestion Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "ingestion_id"
+      ],
+      "title": "DataboxGetDatasetIngestion",
+      "type": "object"
+    },
+    "DataboxGetDatasetSchema": {
+      "description": "Get dataset schema.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_dataset_schema",
+          "default": "get_dataset_schema",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "DataboxGetDatasetSchema",
+      "type": "object"
+    },
+    "DataboxGetMetric": {
+      "description": "Get metric.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_metric",
+          "default": "get_metric",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metric_id": {
+          "minLength": 1,
+          "title": "Metric Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "metric_id"
+      ],
+      "title": "DataboxGetMetric",
+      "type": "object"
+    },
+    "DataboxGetMetricData": {
+      "description": "Get metric data.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_metric_data",
+          "default": "get_metric_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metric_id": {
+          "minLength": 1,
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "date_range": {
+          "$ref": "#/$defs/DateRange"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "dimension_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimension Ids"
+        }
+      },
+      "required": [
+        "metric_id",
+        "date_range"
+      ],
+      "title": "DataboxGetMetricData",
+      "type": "object"
+    },
+    "DataboxGetOrganization": {
+      "description": "Get organization.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DataboxGetOrganization",
+      "type": "object"
+    },
+    "DataboxGetProfile": {
+      "description": "Get profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DataboxGetProfile",
+      "type": "object"
+    },
+    "DataboxIngestDatasetData": {
+      "description": "Ingest dataset data.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "ingest_dataset_data",
+          "default": "ingest_dataset_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        },
+        "records": {
+          "description": "Records keyed by dataset column ID. Submission is asynchronous.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[ -~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "records"
+      ],
+      "title": "DataboxIngestDatasetData",
+      "type": "object"
+    },
+    "DataboxListAccounts": {
+      "description": "List accounts.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run returns one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DataboxListAccounts",
+      "type": "object"
+    },
+    "DataboxListDashboards": {
+      "description": "List dashboards.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run returns one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_dashboards",
+          "default": "list_dashboards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DataboxListDashboards",
+      "type": "object"
+    },
+    "DataboxListDataSources": {
+      "description": "List data sources.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run returns one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_data_sources",
+          "default": "list_data_sources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DataboxListDataSources",
+      "type": "object"
+    },
+    "DataboxListDatasetIngestions": {
+      "description": "List dataset ingestions.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "list_dataset_ingestions",
+          "default": "list_dataset_ingestions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "DataboxListDatasetIngestions",
+      "type": "object"
+    },
+    "DataboxListDatasets": {
+      "description": "List datasets.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run returns one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data_source_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Source Id"
+        }
+      },
+      "title": "DataboxListDatasets",
+      "type": "object"
+    },
+    "DataboxListMetrics": {
+      "description": "List metrics.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run returns one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_metrics",
+          "default": "list_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "title": "DataboxListMetrics",
+      "type": "object"
+    },
+    "DataboxRenameDashboard": {
+      "description": "Rename dashboard.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "rename_dashboard",
+          "default": "rename_dashboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dashboard_id": {
+          "title": "Dashboard Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 65,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dashboard_id",
+        "name"
+      ],
+      "title": "DataboxRenameDashboard",
+      "type": "object"
+    },
+    "DataboxRenameDataSource": {
+      "description": "Rename data source.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "rename_data_source",
+          "default": "rename_data_source",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data_source_id": {
+          "title": "Data Source Id",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data_source_id",
+        "name"
+      ],
+      "title": "DataboxRenameDataSource",
+      "type": "object"
+    },
+    "DataboxRenameDataset": {
+      "description": "Rename dataset.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "rename_dataset",
+          "default": "rename_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name"
+      ],
+      "title": "DataboxRenameDataset",
+      "type": "object"
+    },
+    "DataboxRenameMetric": {
+      "description": "Rename metric.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed account to act on; omit to use the API key's organization.",
+          "title": "Account ID"
+        },
+        "operation": {
+          "const": "rename_metric",
+          "default": "rename_metric",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metric_id": {
+          "minLength": 1,
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "metric_id",
+        "name"
+      ],
+      "title": "DataboxRenameMetric",
+      "type": "object"
+    },
+    "DatasetColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "dataType": {
+          "enum": [
+            "datetime",
+            "number",
+            "string"
+          ],
+          "title": "Datatype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "dataType"
+      ],
+      "title": "DatasetColumn",
+      "type": "object"
+    },
+    "DateRange": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "format": "date",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "format": "date",
+          "title": "To",
+          "type": "string"
+        },
+        "granularity": {
+          "default": "daily",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly",
+            "quarterly",
+            "yearly",
+            "allTime"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "title": "DateRange",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_dataset": "#/$defs/DataboxCreateDataset",
+          "get_dashboard_metrics": "#/$defs/DataboxGetDashboardMetrics",
+          "get_data_source": "#/$defs/DataboxGetDataSource",
+          "get_dataset": "#/$defs/DataboxGetDataset",
+          "get_dataset_data": "#/$defs/DataboxGetDatasetData",
+          "get_dataset_ingestion": "#/$defs/DataboxGetDatasetIngestion",
+          "get_dataset_schema": "#/$defs/DataboxGetDatasetSchema",
+          "get_metric": "#/$defs/DataboxGetMetric",
+          "get_metric_data": "#/$defs/DataboxGetMetricData",
+          "get_organization": "#/$defs/DataboxGetOrganization",
+          "get_profile": "#/$defs/DataboxGetProfile",
+          "ingest_dataset_data": "#/$defs/DataboxIngestDatasetData",
+          "list_accounts": "#/$defs/DataboxListAccounts",
+          "list_dashboards": "#/$defs/DataboxListDashboards",
+          "list_data_sources": "#/$defs/DataboxListDataSources",
+          "list_dataset_ingestions": "#/$defs/DataboxListDatasetIngestions",
+          "list_datasets": "#/$defs/DataboxListDatasets",
+          "list_metrics": "#/$defs/DataboxListMetrics",
+          "rename_dashboard": "#/$defs/DataboxRenameDashboard",
+          "rename_data_source": "#/$defs/DataboxRenameDataSource",
+          "rename_dataset": "#/$defs/DataboxRenameDataset",
+          "rename_metric": "#/$defs/DataboxRenameMetric"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DataboxGetProfile"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetOrganization"
+        },
+        {
+          "$ref": "#/$defs/DataboxListAccounts"
+        },
+        {
+          "$ref": "#/$defs/DataboxListDashboards"
+        },
+        {
+          "$ref": "#/$defs/DataboxRenameDashboard"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetDashboardMetrics"
+        },
+        {
+          "$ref": "#/$defs/DataboxListDataSources"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetDataSource"
+        },
+        {
+          "$ref": "#/$defs/DataboxRenameDataSource"
+        },
+        {
+          "$ref": "#/$defs/DataboxListDatasets"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetDataset"
+        },
+        {
+          "$ref": "#/$defs/DataboxCreateDataset"
+        },
+        {
+          "$ref": "#/$defs/DataboxRenameDataset"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetDatasetData"
+        },
+        {
+          "$ref": "#/$defs/DataboxIngestDatasetData"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetDatasetSchema"
+        },
+        {
+          "$ref": "#/$defs/DataboxListDatasetIngestions"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetDatasetIngestion"
+        },
+        {
+          "$ref": "#/$defs/DataboxListMetrics"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetMetric"
+        },
+        {
+          "$ref": "#/$defs/DataboxRenameMetric"
+        },
+        {
+          "$ref": "#/$defs/DataboxGetMetricData"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DataboxAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Databox Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
