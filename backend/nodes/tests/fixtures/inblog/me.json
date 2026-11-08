@@ -1,0 +1,12 @@
+{
+  "jsonapi": {"version": "1.0"},
+  "data": {
+    "type": "api_keys",
+    "id": "synthetic-key-id",
+    "attributes": {
+      "subdomain": "myblog",
+      "blog_id": 123,
+      "scopes": ["posts:read", "posts:write", "tags:read"]
+    }
+  }
+}
