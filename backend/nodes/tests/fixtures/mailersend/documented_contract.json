@@ -1,0 +1,948 @@
+{
+  "inputs": {
+    "send_email": {
+      "config": {
+        "operation": "send_email",
+        "message": {
+          "from": {
+            "email": "hello@mailersend.com",
+            "name": "MailerSend"
+          },
+          "to": [
+            {
+              "email": "john@mailersend.com",
+              "name": "John Mailer"
+            }
+          ],
+          "subject": "Hello from {{company}}!",
+          "text": "This is just a friendly hello from your friends at {{company}}.",
+          "html": "<b>This is just a friendly hello from your friends at {{company}}.</b>"
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email"
+    },
+    "send_bulk_email": {
+      "config": {
+        "operation": "send_bulk_email",
+        "messages": [
+          {
+            "from": {
+              "email": "hello@mailersend.com",
+              "name": "MailerSend"
+            },
+            "to": [
+              {
+                "email": "john@mailersend.com",
+                "name": "John Mailer"
+              }
+            ],
+            "subject": "Hello from {{company}}!",
+            "text": "This is just a friendly hello from your friends at {{company}}.",
+            "html": "<b>This is just a friendly hello from your friends at {{company}}.</b>"
+          },
+          {
+            "from": {
+              "email": "hello@mailersend.com",
+              "name": "MailerSend"
+            },
+            "to": [
+              {
+                "email": "jane@mailersend.com",
+                "name": "Jane Mailer"
+              }
+            ],
+            "subject": "Welcome to {{company}}!",
+            "text": "This is a welcoming message from your friends at {{company}}.",
+            "html": "<b>This is a welcoming message from your friends at {{company}}.</b>"
+          }
+        ]
+      },
+      "source": "https://developers.mailersend.com/api/v1/email"
+    },
+    "get_bulk_email_status": {
+      "config": {
+        "operation": "get_bulk_email_status",
+        "bulk_email_id": "614470d1588b866d0454f3e2"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email"
+    },
+    "list_domains": {
+      "config": {
+        "operation": "list_domains"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/domains"
+    },
+    "get_domain": {
+      "config": {
+        "operation": "get_domain",
+        "domain_id": "yjm4ej"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/domains"
+    },
+    "get_domain_dns_records": {
+      "config": {
+        "operation": "get_domain_dns_records",
+        "domain_id": "yjm4ej"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/domains"
+    },
+    "list_templates": {
+      "config": {
+        "operation": "list_templates"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/templates"
+    },
+    "list_messages": {
+      "config": {
+        "operation": "list_messages"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/messages"
+    },
+    "get_message": {
+      "config": {
+        "operation": "get_message",
+        "message_id": "5ee0b183b251345e407c936a"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/messages"
+    },
+    "list_scheduled_messages": {
+      "config": {
+        "operation": "list_scheduled_messages"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+    },
+    "get_scheduled_message": {
+      "config": {
+        "operation": "get_scheduled_message",
+        "message_id": "61e01f471053b349a5478a52"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+    },
+    "delete_scheduled_message": {
+      "config": {
+        "operation": "delete_scheduled_message",
+        "message_id": "61e01f471053b349a5478a52"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+    },
+    "list_recipients": {
+      "config": {
+        "operation": "list_recipients"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "get_recipient": {
+      "config": {
+        "operation": "get_recipient",
+        "recipient_id": "5ee0b185b251345e407c938e"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "delete_recipient": {
+      "config": {
+        "operation": "delete_recipient",
+        "recipient_id": "5ee0b185b251345e407c938e"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "list_blocklist": {
+      "config": {
+        "operation": "list_blocklist"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "add_blocklist_recipients": {
+      "config": {
+        "operation": "add_blocklist_recipients",
+        "domain_id": "83gwk2j7zqz1nxyd",
+        "recipients": [
+          "test@example.com"
+        ]
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "list_hard_bounces": {
+      "config": {
+        "operation": "list_hard_bounces"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "list_unsubscribes": {
+      "config": {
+        "operation": "list_unsubscribes"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "add_unsubscribe_recipients": {
+      "config": {
+        "operation": "add_unsubscribe_recipients",
+        "domain_id": "83gwk2j7zqz1nxyd",
+        "recipients": [
+          "test@example.com"
+        ]
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    }
+  },
+  "witnesses": {
+    "POST /bulk-email": {
+      "body": {
+        "message": "The bulk email is being processed.",
+        "bulk_email_id": "614470d1588b866d0454f3e2"
+      },
+      "source": "https://developers.mailersend.com/api/v1/email"
+    },
+    "GET /bulk-email/{bulk_email_id}": {
+      "body": {
+        "data": {
+          "id": "614470d1588b866d0454f3e2",
+          "state": "completed",
+          "total_recipients_count": 1,
+          "suppressed_recipients_count": 0,
+          "suppressed_recipients": null,
+          "validation_errors_count": 0,
+          "validation_errors": null,
+          "messages_id": [
+            "61487a14608b1d0b4d506633"
+          ],
+          "created_at": "2021-09-17T10:41:21.892000Z",
+          "updated_at": "2021-09-17T10:41:23.684000Z"
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email"
+    },
+    "GET /domains": {
+      "body": {
+        "data": [
+          {
+            "id": "1jreeo",
+            "name": "example.org",
+            "dkim": true,
+            "spf": true,
+            "tracking": false,
+            "is_verified": true,
+            "is_cname_verified": false,
+            "is_dns_active": true,
+            "is_cname_active": false,
+            "is_tracking_allowed": false,
+            "domain_stats": {
+              "total": 1200,
+              "queued": 0,
+              "sent": 1200,
+              "rejected": 0,
+              "delivered": 1180
+            },
+            "has_not_queued_messages": false,
+            "not_queued_messages_count": 0,
+            "domain_settings": {
+              "send_paused": false,
+              "track_clicks": true,
+              "track_opens": true,
+              "track_opens_pixel_on_top": false,
+              "track_unsubscribe": true,
+              "track_unsubscribe_html": "<p>Click here to <a href=\"{{unsubscribe}}\">unsubscribe</a></p>",
+              "track_unsubscribe_html_enabled": false,
+              "track_unsubscribe_plain": "Click here to unsubscribe: {{unsubscribe}}",
+              "track_unsubscribe_plain_enabled": false,
+              "track_content": true,
+              "custom_tracking_enabled": false,
+              "custom_tracking_subdomain": "email",
+              "return_path_subdomain": "mta",
+              "inbound_routing_enabled": false,
+              "inbound_routing_subdomain": "inbound",
+              "precedence_bulk": false,
+              "ignore_duplicated_recipients": false
+            },
+            "is_sending_paused": false,
+            "created_at": "2020-06-10 10:09:48",
+            "updated_at": "2020-06-10 10:09:48",
+            "totals": []
+          }
+        ],
+        "links": {
+          "first": "http://www.mailersend.io/api/v1/domains?page=1",
+          "last": "http://www.mailersend.io/api/v1/domains?page=1",
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "from": 1,
+          "last_page": 1,
+          "path": "http://www.mailersend.io/api/v1/domains",
+          "per_page": 25,
+          "to": 1,
+          "total": 1
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/domains"
+    },
+    "GET /domains/{domain_id}": {
+      "body": {
+        "data": {
+          "id": "yjm4ej",
+          "name": "example.org",
+          "dkim": true,
+          "spf": true,
+          "tracking": false,
+          "is_verified": true,
+          "is_cname_verified": false,
+          "is_dns_active": true,
+          "is_cname_active": false,
+          "is_tracking_allowed": false,
+          "domain_stats": {
+            "total": 1200,
+            "queued": 0,
+            "sent": 1200,
+            "rejected": 0,
+            "delivered": 1180
+          },
+          "has_not_queued_messages": false,
+          "not_queued_messages_count": 0,
+          "domain_settings": {
+            "send_paused": false,
+            "track_clicks": true,
+            "track_opens": true,
+            "track_opens_pixel_on_top": false,
+            "track_unsubscribe": true,
+            "track_unsubscribe_html": "<p>Click here to <a href=\"{{unsubscribe}}\">unsubscribe</a></p>",
+            "track_unsubscribe_html_enabled": false,
+            "track_unsubscribe_plain": "Click here to unsubscribe: {{unsubscribe}}",
+            "track_unsubscribe_plain_enabled": false,
+            "track_content": true,
+            "custom_tracking_enabled": false,
+            "custom_tracking_subdomain": "email",
+            "return_path_subdomain": "mta",
+            "inbound_routing_enabled": false,
+            "inbound_routing_subdomain": "inbound",
+            "precedence_bulk": false,
+            "ignore_duplicated_recipients": false
+          },
+          "is_sending_paused": false,
+          "created_at": "2020-06-10 10:09:50",
+          "updated_at": "2020-06-10 10:09:50",
+          "totals": {
+            "sent": 1200,
+            "delivered": 1180,
+            "soft_bounced": 12,
+            "hard_bounced": 8
+          }
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/domains"
+    },
+    "GET /domains/{domain_id}/dns-records": {
+      "body": {
+        "data": {
+          "id": "dle1krod2jvn8gwm",
+          "spf": {
+            "hostname": "testname.com",
+            "type": "TXT",
+            "value": "v=spf1 include:_spf.mailersend.net ip6:fd43:c0d1:c090::/48 -all"
+          },
+          "dkim_ms1": {
+            "hostname": "ms1._domainkey.testname.com",
+            "type": "CNAME",
+            "value": "ms1._domainkey.mailersend.net"
+          },
+          "dkim_ms2": {
+            "hostname": "ms2._domainkey.testname.com",
+            "type": "CNAME",
+            "value": "ms2._domainkey.mailersend.net"
+          },
+          "dkim": {
+            "hostname": null,
+            "type": null,
+            "value": null
+          },
+          "return_path": {
+            "hostname": "mta.testname.com",
+            "type": "CNAME",
+            "value": "mailersend.net"
+          },
+          "custom_tracking": {
+            "hostname": "email.testname.com",
+            "type": "CNAME",
+            "value": "links.mailersend.net"
+          },
+          "inbound_routing": {
+            "hostname": "inbound.testname.com",
+            "type": "MX",
+            "value": "inbound.mailersend.net",
+            "priority": "10"
+          }
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/domains"
+    },
+    "GET /templates": {
+      "body": {
+        "data": [
+          {
+            "id": "x8emy5o5world01w",
+            "name": "Signup email",
+            "description": null,
+            "type": "html",
+            "image_path": "https://link.com/images/image.jpg",
+            "variables": {
+              "variables": {},
+              "personalization": {
+                "name": "",
+                "company": ""
+              }
+            },
+            "created_at": "2020-06-10 10:09:56",
+            "updated_at": "2020-06-10 10:09:56",
+            "category": {
+              "id": "5genxmqlgozlyvk7",
+              "name": "Newsletters"
+            },
+            "categories": [
+              {
+                "id": "5genxmqlgozlyvk7",
+                "name": "Newsletters"
+              }
+            ],
+            "translations": [
+              {
+                "language": "es",
+                "language_name": "Spanish",
+                "status": "published",
+                "total_email_sent": 25,
+                "last_email_sent_at": "2021-06-22T16:00:00.000000Z",
+                "translated_at": "2021-06-22T15:45:00.000000Z",
+                "created_at": "2021-06-22T15:40:00.000000Z",
+                "updated_at": "2021-06-22T15:45:00.000000Z"
+              }
+            ]
+          },
+          {
+            "id": "x8emy5o5world01x",
+            "name": "Premium subscription",
+            "description": null,
+            "type": "html",
+            "image_path": "https://link.com/images/image.jpg",
+            "variables": {
+              "variables": {},
+              "personalization": {
+                "name": "",
+                "company": ""
+              }
+            },
+            "created_at": "2020-06-10 10:09:56",
+            "updated_at": "2020-06-10 10:09:56",
+            "category": {
+              "id": "5genxmqlgozlyvk7",
+              "name": "Newsletters"
+            },
+            "categories": [
+              {
+                "id": "5genxmqlgozlyvk7",
+                "name": "Newsletters"
+              }
+            ],
+            "translations": [
+              {
+                "language": "es",
+                "language_name": "Spanish",
+                "status": "published",
+                "total_email_sent": 25,
+                "last_email_sent_at": "2021-06-22T16:00:00.000000Z",
+                "translated_at": "2021-06-22T15:45:00.000000Z",
+                "created_at": "2021-06-22T15:40:00.000000Z",
+                "updated_at": "2021-06-22T15:45:00.000000Z"
+              }
+            ]
+          },
+          {
+            "id": "x8emy5o5world01y",
+            "name": "Newsletter",
+            "description": null,
+            "type": "html",
+            "image_path": "https://link.com/images/image.jpg",
+            "variables": {
+              "variables": {},
+              "personalization": {
+                "name": "",
+                "company": ""
+              }
+            },
+            "created_at": "2020-06-10 10:09:56",
+            "updated_at": "2020-06-10 10:09:56",
+            "category": {
+              "id": "5genxmqlgozlyvk7",
+              "name": "Newsletters"
+            },
+            "categories": [
+              {
+                "id": "5genxmqlgozlyvk7",
+                "name": "Newsletters"
+              }
+            ],
+            "translations": [
+              {
+                "language": "es",
+                "language_name": "Spanish",
+                "status": "published",
+                "total_email_sent": 25,
+                "last_email_sent_at": "2021-06-22T16:00:00.000000Z",
+                "translated_at": "2021-06-22T15:45:00.000000Z",
+                "created_at": "2021-06-22T15:40:00.000000Z",
+                "updated_at": "2021-06-22T15:45:00.000000Z"
+              }
+            ]
+          }
+        ],
+        "links": {
+          "first": "https://www.mailersend.io/api/v1/templates?page=1",
+          "last": null,
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "current_page_url": "https://www.mailersend.io/api/v1/templates?page=1",
+          "from": 1,
+          "path": "https://www.mailersend.io/api/v1/templates",
+          "per_page": 25,
+          "to": 3
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/templates"
+    },
+    "GET /messages": {
+      "body": {
+        "data": [
+          {
+            "id": "5ee0b182b251345e407c935a",
+            "created_at": "2020-06-10T10:10:10.377000Z",
+            "updated_at": "2020-06-10T10:10:10.377000Z"
+          },
+          {
+            "id": "5ee0b182b251345e407c935c",
+            "created_at": "2020-06-10T10:10:10.385000Z",
+            "updated_at": "2020-06-10T10:10:10.385000Z"
+          },
+          {
+            "id": "5ee0b182b251345e407c935d",
+            "created_at": "2020-06-10T10:10:10.386000Z",
+            "updated_at": "2020-06-10T10:10:10.386000Z"
+          },
+          {
+            "id": "5ee0b182b251345e407c935e",
+            "created_at": "2020-06-10T10:10:10.388000Z",
+            "updated_at": "2020-06-10T10:10:10.388000Z"
+          }
+        ],
+        "links": {
+          "first": "https://www.mailersend.io/api/v1/messages?page=1",
+          "last": null,
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "current_page_url": "https://www.mailersend.io/api/v1/messages?page=1",
+          "from": 1,
+          "path": "https://www.mailersend.io/api/v1/messages",
+          "per_page": 25,
+          "to": 4
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/messages"
+    },
+    "GET /messages/{message_id}": {
+      "body": {
+        "data": {
+          "id": "5ee0b183b251345e407c936a",
+          "created_at": "2020-06-10T10:10:11.231000Z",
+          "updated_at": "2020-06-10T10:10:11.231000Z",
+          "emails": [
+            {
+              "id": "5ee0b166b251345e407c9201",
+              "from": "colleen.wiza@example.net",
+              "to": "tyra.cummerata@example.org",
+              "subject": "Magni aperiam sunt nam omnis.",
+              "text": "Lorem ipsum dolor sit amet, consectetuer adipiscin",
+              "html": "<html><body><a href='https://www.mailersend.com' t",
+              "template_id": "3z0vklorxjy7qrne",
+              "domain_id": "7nxe3yGpqQmv",
+              "message_id": "5ee0b182b251345e407c935a",
+              "status": "delivered",
+              "tags": [
+                "receipt",
+                "order"
+              ],
+              "interaction": [
+                "opened",
+                "clicked"
+              ],
+              "suppression_reason": null,
+              "created_at": "2020-06-04T12:00:00.000000Z",
+              "updated_at": "2020-06-04T12:01:13.000000Z",
+              "headers": []
+            }
+          ],
+          "domain": {
+            "id": "zo8zdo",
+            "name": "example.net",
+            "dkim": true,
+            "spf": true,
+            "tracking": false,
+            "is_verified": true,
+            "is_cname_verified": false,
+            "is_dns_active": true,
+            "is_cname_active": false,
+            "is_tracking_allowed": false,
+            "has_not_queued_messages": true,
+            "not_queued_messages_count": 1,
+            "domain_settings": {
+              "send_paused": false,
+              "track_clicks": true,
+              "track_opens": true,
+              "track_opens_pixel_on_top": false,
+              "track_unsubscribe": true,
+              "track_unsubscribe_html": "<p>Click here to <a href=\"{{unsubscribe}}\">unsubscribe</a></p>",
+              "track_unsubscribe_html_enabled": false,
+              "track_unsubscribe_plain": "Click here to unsubscribe: {{unsubscribe}}",
+              "track_unsubscribe_plain_enabled": false,
+              "track_content": true,
+              "custom_tracking_enabled": false,
+              "custom_tracking_subdomain": "email",
+              "return_path_subdomain": "mta",
+              "inbound_routing_enabled": false,
+              "inbound_routing_subdomain": "inbound",
+              "precedence_bulk": false,
+              "ignore_duplicated_recipients": false
+            },
+            "is_sending_paused": false,
+            "created_at": "2020-06-10 10:10:11",
+            "updated_at": "2020-06-10 10:10:11",
+            "totals": []
+          }
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/messages"
+    },
+    "GET /message-schedules": {
+      "body": {
+        "data": [
+          {
+            "message_id": "61e01c6a7f97913a17075262",
+            "subject": "Hello from Company",
+            "send_at": "2022-01-01T12:00:00.000000Z",
+            "status": "scheduled",
+            "status_message": null,
+            "created_at": "2022-01-01T17:00:00.000000Z"
+          }
+        ],
+        "links": {
+          "first": "https://api.mailersend.com/v1/message-schedules?page=1",
+          "last": "https://api.mailersend.com/v1/message-schedules?page=1",
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "from": 1,
+          "last_page": 1,
+          "links": [
+            {
+              "url": null,
+              "label": "&laquo; Previous",
+              "page": null,
+              "active": false
+            },
+            {
+              "url": "https://api.mailersend.com/v1/message-schedules?page=1",
+              "label": "1",
+              "page": 1,
+              "active": true
+            },
+            {
+              "url": null,
+              "label": "Next &raquo;",
+              "page": null,
+              "active": false
+            }
+          ],
+          "path": "https://api.mailersend.com/v1/message-schedules",
+          "per_page": 25,
+          "to": 1,
+          "total": 1
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+    },
+    "GET /message-schedules/{message_id}": {
+      "body": {
+        "data": {
+          "message_id": "61e01f471053b349a5478a52",
+          "subject": "Hello from Company",
+          "send_at": "2022-01-01T12:00:00.000000Z",
+          "status": "scheduled",
+          "status_message": null,
+          "created_at": "2022-01-01T17:00:00.000000Z",
+          "domain": {
+            "id": "7z3m5jgrogdpyo6n",
+            "name": "mailersend.com",
+            "created_at": "2022-01-01T12:00:00.000000Z",
+            "updated_at": "2022-01-01T12:00:00.000000Z"
+          },
+          "message": {
+            "id": "61e01f471053b349a5478a52",
+            "created_at": "2022-01-01T12:00:00.000000Z",
+            "updated_at": "2022-01-01T12:00:00.000000Z"
+          }
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+    },
+    "GET /recipients": {
+      "body": {
+        "data": [
+          {
+            "id": "5ee0b174b251345e407c92dc",
+            "email": "dsanford@example.net",
+            "created_at": "2020-06-10 10:09:56",
+            "updated_at": "2020-06-10 10:09:56",
+            "deleted_at": ""
+          },
+          {
+            "id": "5ee0b174b251345e407c92dd",
+            "email": "konopelski.nina@example.com",
+            "created_at": "2020-06-10 10:09:56",
+            "updated_at": "2020-06-10 10:09:56",
+            "deleted_at": ""
+          },
+          {
+            "id": "5ee0b174b251345e407c92de",
+            "email": "hester.howe@example.net",
+            "created_at": "2020-06-10 10:09:56",
+            "updated_at": "2020-06-10 10:09:56",
+            "deleted_at": ""
+          }
+        ],
+        "links": {
+          "first": "https://api.mailersend.com/v1/recipients?page=1",
+          "last": null,
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "current_page_url": "https://api.mailersend.com/v1/recipients?page=1",
+          "from": 1,
+          "path": "https://api.mailersend.com/v1/recipients",
+          "per_page": 25,
+          "to": 3
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "GET /recipients/{recipient_id}": {
+      "body": {
+        "data": {
+          "id": "5ee0b185b251345e407c938e",
+          "email": "hauck.sincere@example.net",
+          "created_at": "2020-06-10 10:10:13",
+          "updated_at": "2020-06-10 10:10:13",
+          "deleted_at": "",
+          "emails": [
+            {
+              "id": "5ee0b166b251345e407c9201",
+              "from": "colleen.wiza@example.net",
+              "to": "tyra.cummerata@example.org",
+              "subject": "Magni aperiam sunt nam omnis.",
+              "text": "Lorem ipsum dolor sit amet, consectetuer adipiscin",
+              "html": "<html><body><a href='https://www.mailersend.com' t",
+              "template_id": "3z0vklorxjy7qrne",
+              "domain_id": "7nxe3yGpqQmv",
+              "message_id": "5ee0b182b251345e407c935a",
+              "status": "delivered",
+              "tags": [
+                "receipt",
+                "order"
+              ],
+              "interaction": [
+                "opened",
+                "clicked"
+              ],
+              "suppression_reason": null,
+              "created_at": "2020-06-04T12:00:00.000000Z",
+              "updated_at": "2020-06-04T12:01:13.000000Z",
+              "headers": []
+            }
+          ],
+          "domain": {
+            "id": "2j6xej",
+            "name": "example.org",
+            "created_at": "2020-06-10 10:10:13",
+            "updated_at": "2020-06-10 10:10:13"
+          }
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "GET /suppressions/blocklist": {
+      "body": {
+        "data": [
+          {
+            "id": "60f0176881bf3d1fe618daae",
+            "type": "pattern",
+            "pattern": ".*@example.net",
+            "domain": {
+              "id": "7nxe3yjmeq28vp0k",
+              "name": "mailersend.com",
+              "created_at": "2021-07-15T11:04:44.000000Z",
+              "updated_at": "2021-07-15T11:04:45.000000Z"
+            },
+            "created_at": "2021-07-14T07:04:01.298000Z",
+            "updated_at": "2021-07-14T07:04:01.298000Z"
+          }
+        ],
+        "links": {
+          "first": "https://api.mailersend.com/v1/suppressions/blocklist?page=1",
+          "last": null,
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "current_page_url": "https://api.mailersend.com/v1/suppressions/blocklist?page=1",
+          "from": 1,
+          "path": "https://api.mailersend.com/v1/suppressions/blocklist",
+          "per_page": 10,
+          "to": 1
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "POST /suppressions/blocklist": {
+      "body": {
+        "data": [
+          {
+            "id": "60f198790542d97fb66dfe52",
+            "type": "exact",
+            "pattern": "test@example.com",
+            "created_at": "2021-07-16T14:32:25.457000Z",
+            "updated_at": "2021-07-16T14:32:25.457000Z"
+          },
+          {
+            "id": "60f198790542d97fb66dfe53",
+            "type": "pattern",
+            "pattern": ".*@example.com",
+            "created_at": "2021-07-16T14:32:25.476000Z",
+            "updated_at": "2021-07-16T14:32:25.476000Z"
+          }
+        ]
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "GET /suppressions/hard-bounces": {
+      "body": {
+        "data": [
+          {
+            "id": "60f0176881bf3d1fe618dab0",
+            "reason": "Unknown reason",
+            "created_at": "2021-06-29T07:04:01.298000Z",
+            "recipient": {
+              "id": "60f0176881bf3d1fe618daaf",
+              "email": "test@example.com",
+              "created_at": "2021-06-29T07:04:01.298000Z",
+              "updated_at": "2021-06-29T07:04:01.298000Z",
+              "deleted_at": "",
+              "domain": {
+                "id": "7nxe3yjmeq28vp0k",
+                "name": "mailersend.com",
+                "created_at": "2021-07-15T11:04:44.000000Z",
+                "updated_at": "2021-07-15T11:04:45.000000Z"
+              }
+            }
+          }
+        ],
+        "links": {
+          "first": "https://api.mailersend.com/v1/suppressions/hard-bounces?page=1",
+          "last": null,
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "current_page_url": "https://api.mailersend.com/v1/suppressions/hard-bounces?page=1",
+          "from": 1,
+          "path": "https://api.mailersend.com/v1/suppressions/hard-bounces",
+          "per_page": 10,
+          "to": 1
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "GET /suppressions/unsubscribes": {
+      "body": {
+        "data": [
+          {
+            "id": "60f0176881bf3d1fe618dab2",
+            "reason": "NEVER_SIGNED",
+            "readable_reason": "I never signed up for this mailing list",
+            "recipient": {
+              "id": "60f0176881bf3d1fe618dab1",
+              "email": "taya86@example.com",
+              "created_at": "2021-06-29T07:04:01.298000Z",
+              "updated_at": "2021-06-29T07:04:01.298000Z",
+              "deleted_at": "",
+              "domain": {
+                "id": "7nxe3yjmeq28vp0k",
+                "name": "mailersend.com",
+                "created_at": "2021-07-15T11:04:44.000000Z",
+                "updated_at": "2021-07-15T11:04:45.000000Z"
+              }
+            },
+            "created_at": "2021-06-29T07:04:01.298000Z"
+          }
+        ],
+        "links": {
+          "first": "https://api.mailersend.com/v1/suppressions/unsubscribes?page=1",
+          "last": null,
+          "prev": null,
+          "next": null
+        },
+        "meta": {
+          "current_page": 1,
+          "current_page_url": "https://api.mailersend.com/v1/suppressions/unsubscribes?page=1",
+          "from": 1,
+          "path": "https://api.mailersend.com/v1/suppressions/unsubscribes",
+          "per_page": 10,
+          "to": 1
+        }
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    },
+    "POST /suppressions/unsubscribes": {
+      "body": {
+        "data": [
+          {
+            "id": "60f53a20506faf239d471ff2",
+            "reason": null,
+            "readable_reason": null,
+            "recipient": {
+              "id": "60f1a0195c14080bbc606292",
+              "email": "test@example.com",
+              "created_at": "2021-07-16T15:04:57.888000Z",
+              "updated_at": "2021-07-19T08:38:56.243000Z",
+              "deleted_at": "",
+              "domain": {
+                "id": "7nxe3yjmeq28vp0k",
+                "name": "mailersend.com",
+                "created_at": "2021-07-15T11:04:44.000000Z",
+                "updated_at": "2021-07-15T11:04:45.000000Z"
+              }
+            },
+            "created_at": "2021-07-19T08:38:56.283000Z"
+          }
+        ]
+      },
+      "source": "https://developers.mailersend.com/api/v1/email/recipients"
+    }
+  }
+}

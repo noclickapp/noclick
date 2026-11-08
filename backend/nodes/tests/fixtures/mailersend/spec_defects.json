@@ -1,0 +1,95 @@
+[
+  {
+    "operation": "get_bulk_email_status",
+    "contract_operation": "GET /bulk-email/{bulk_email_id}",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email"
+  },
+  {
+    "operation": "list_domains",
+    "contract_operation": "GET /domains",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/domains"
+  },
+  {
+    "operation": "get_domain",
+    "contract_operation": "GET /domains/{domain_id}",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/domains"
+  },
+  {
+    "operation": "get_domain_dns_records",
+    "contract_operation": "GET /domains/{domain_id}/dns-records",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/domains"
+  },
+  {
+    "operation": "list_templates",
+    "contract_operation": "GET /templates",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/templates"
+  },
+  {
+    "operation": "list_messages",
+    "contract_operation": "GET /messages",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/messages"
+  },
+  {
+    "operation": "get_message",
+    "contract_operation": "GET /messages/{message_id}",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/messages"
+  },
+  {
+    "operation": "list_scheduled_messages",
+    "contract_operation": "GET /message-schedules",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+  },
+  {
+    "operation": "get_scheduled_message",
+    "contract_operation": "GET /message-schedules/{message_id}",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/message-schedules"
+  },
+  {
+    "operation": "list_recipients",
+    "contract_operation": "GET /recipients",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/recipients"
+  },
+  {
+    "operation": "get_recipient",
+    "contract_operation": "GET /recipients/{recipient_id}",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/recipients"
+  },
+  {
+    "operation": "list_blocklist",
+    "contract_operation": "GET /suppressions/blocklist",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/recipients"
+  },
+  {
+    "operation": "list_hard_bounces",
+    "contract_operation": "GET /suppressions/hard-bounces",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/recipients"
+  },
+  {
+    "operation": "list_unsubscribes",
+    "contract_operation": "GET /suppressions/unsubscribes",
+    "defect": "Pinned OpenAPI declares only HTTP 200 with no response content or schema; current provider documentation returns a JSON data envelope. Harness ignores the documented witness when the contract has no content, so its empty generated response is correctly rejected by the parser. The whole published response is independently tested in test_mailersend_node_mock.py.",
+    "source": "https://developers.mailersend.com/api/v1/email/recipients"
+  },
+  {
+    "contract_operation": "POST /email; POST /bulk-email; DELETE /message-schedules/{message_id}; DELETE /recipients/{recipient_id}",
+    "defect": "Pinned contract lists only 200; current docs specify asynchronous 202 submissions and empty 204 deletion acknowledgements. Node accepts successful 2xx and marks email delivery unverified.",
+    "sources": [
+      "https://developers.mailersend.com/api/v1/email",
+      "https://developers.mailersend.com/api/v1/email/message-schedules",
+      "https://developers.mailersend.com/api/v1/email/recipients"
+    ]
+  }
+]

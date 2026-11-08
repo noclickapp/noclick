@@ -1,0 +1,37 @@
+{
+  "contract": {
+    "source_url": "https://api.swaggerhub.com/apis/MailerSend/mailersend-api/1.0.0-oas3.1",
+    "version": "1.0.0-oas3.1",
+    "sha256": "77361770e1283f8ca670c6a55adf890916b57d4c1fd52940d8c7e1fcb953cad2"
+  },
+  "verdict": {
+    "provider": "mailersend",
+    "ready": true,
+    "blocking": [],
+    "advisory": [
+      "get_bulk_email_status: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_domains: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "get_domain: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "get_domain_dns_records: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_templates: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_messages: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "get_message: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_scheduled_messages: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "get_scheduled_message: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_recipients: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "get_recipient: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_blocklist: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_hard_bounces: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope",
+      "list_unsubscribes: parser on generated response: execution: ValueError: MailerSend response is missing its data envelope"
+    ],
+    "stats": {
+      "operations": 20,
+      "skipped": 0,
+      "request_ok": 20,
+      "authored_parser_ok": 0,
+      "generated_only": 20,
+      "local_ok": 0
+    }
+  },
+  "note": "All 20 requests conform. The pinned contract has no response content, so the harness ignores curated JSON witnesses and 14 generated empty read responses are rejected. Published responses are exercised separately in test_mailersend_node_mock.py; see spec_defects.json for provider URLs."
+}
