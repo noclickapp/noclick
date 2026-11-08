@@ -1,0 +1,942 @@
+{
+  "$defs": {
+    "BolnaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bolna_api_key",
+          "default": "bolna_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Bolna API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Bolna dashboard and paste it here. NoClick verifies it by reading your Bolna account.",
+      "x-credential-url": "https://platform.bolna.ai/"
+    },
+    "BolnaCreateAgentConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new agent",
+      "properties": {
+        "operation": {
+          "const": "create_agent",
+          "default": "create_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_config": {
+          "additionalProperties": true,
+          "description": "Configuration from the Bolna agent API",
+          "title": "Agent Config",
+          "type": "object"
+        },
+        "agent_prompts": {
+          "additionalProperties": true,
+          "description": "Configuration from the Bolna agent API",
+          "title": "Agent Prompts",
+          "type": "object"
+        }
+      },
+      "required": [
+        "agent_config",
+        "agent_prompts"
+      ],
+      "title": "BolnaCreateAgentConfig",
+      "type": "object"
+    },
+    "BolnaDeleteAgentConfig": {
+      "additionalProperties": false,
+      "description": "Delete an agent",
+      "properties": {
+        "operation": {
+          "const": "delete_agent",
+          "default": "delete_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "BolnaDeleteAgentConfig",
+      "type": "object"
+    },
+    "BolnaDeleteBatchConfig": {
+      "additionalProperties": false,
+      "description": "Delete a batch",
+      "properties": {
+        "operation": {
+          "const": "delete_batch",
+          "default": "delete_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "description": "Bolna batch id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "BolnaDeleteBatchConfig",
+      "type": "object"
+    },
+    "BolnaDeleteKnowledgeBaseConfig": {
+      "additionalProperties": false,
+      "description": "Delete a knowledge base",
+      "properties": {
+        "operation": {
+          "const": "delete_knowledge_base",
+          "default": "delete_knowledge_base",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rag_id": {
+          "description": "Bolna rag id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Rag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rag_id"
+      ],
+      "title": "BolnaDeleteKnowledgeBaseConfig",
+      "type": "object"
+    },
+    "BolnaGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get user information",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BolnaGetAccountConfig",
+      "type": "object"
+    },
+    "BolnaGetAgentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an agent",
+      "properties": {
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "BolnaGetAgentConfig",
+      "type": "object"
+    },
+    "BolnaGetBatchConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a batch",
+      "properties": {
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "description": "Bolna batch id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "BolnaGetBatchConfig",
+      "type": "object"
+    },
+    "BolnaGetExecutionConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve specific execution by `execution_id`",
+      "properties": {
+        "operation": {
+          "const": "get_execution",
+          "default": "get_execution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "execution_id": {
+          "description": "Bolna execution id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Execution Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "BolnaGetExecutionConfig",
+      "type": "object"
+    },
+    "BolnaGetExecutionLogConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve raw logs of specific `execution_id`",
+      "properties": {
+        "operation": {
+          "const": "get_execution_log",
+          "default": "get_execution_log",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "execution_id": {
+          "description": "Bolna execution id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Execution Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "BolnaGetExecutionLogConfig",
+      "type": "object"
+    },
+    "BolnaGetKnowledgeBaseConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a knowledge base",
+      "properties": {
+        "operation": {
+          "const": "get_knowledge_base",
+          "default": "get_knowledge_base",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rag_id": {
+          "description": "Bolna rag id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Rag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rag_id"
+      ],
+      "title": "BolnaGetKnowledgeBaseConfig",
+      "type": "object"
+    },
+    "BolnaListAgentVersionsConfig": {
+      "additionalProperties": false,
+      "description": "List an agent's versions, newest first: every version saved with Save as new version, plus the live one. Each version appears once, as its latest save.",
+      "properties": {
+        "operation": {
+          "const": "list_agent_versions",
+          "default": "list_agent_versions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "page_number",
+          "title": "Page Number"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "page_size",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "BolnaListAgentVersionsConfig",
+      "type": "object"
+    },
+    "BolnaListAgentsConfig": {
+      "additionalProperties": false,
+      "description": "List all agents",
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BolnaListAgentsConfig",
+      "type": "object"
+    },
+    "BolnaListBatchesConfig": {
+      "additionalProperties": false,
+      "description": "List all batches for agent",
+      "properties": {
+        "operation": {
+          "const": "list_batches",
+          "default": "list_batches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "BolnaListBatchesConfig",
+      "type": "object"
+    },
+    "BolnaListExecutionsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve all executions by an agent",
+      "properties": {
+        "operation": {
+          "const": "list_executions",
+          "default": "list_executions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The page number to retrieve (starts from `1`)",
+          "title": "Page Number"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results per page. Maximum allowed is `50`.",
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "scheduled",
+                "queued",
+                "rescheduled",
+                "ringing",
+                "initiated",
+                "in-progress",
+                "call-disconnected",
+                "completed",
+                "balance-low",
+                "busy",
+                "no-answer",
+                "canceled",
+                "failed",
+                "stopped",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "status",
+          "title": "Status",
+          "enum": [
+            "scheduled",
+            "queued",
+            "rescheduled",
+            "ringing",
+            "initiated",
+            "in-progress",
+            "call-disconnected",
+            "completed",
+            "balance-low",
+            "busy",
+            "no-answer",
+            "canceled",
+            "failed",
+            "stopped",
+            "error"
+          ],
+          "x-enum-searchable": true
+        },
+        "call_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "inbound",
+                "outbound"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "call_type",
+          "title": "Call Type",
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "x-enum-searchable": true
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "twilio",
+                "plivo",
+                "exotel",
+                "vobiz",
+                "trunk",
+                "sip-trunk",
+                "web-call",
+                "websocket"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "provider",
+          "title": "Provider",
+          "enum": [
+            "twilio",
+            "plivo",
+            "exotel",
+            "vobiz",
+            "trunk",
+            "sip-trunk",
+            "web-call",
+            "websocket"
+          ],
+          "x-enum-searchable": true
+        },
+        "answered_by_voice_mail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "answered_by_voice_mail",
+          "title": "Answered By Voice Mail"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "batch_id",
+          "title": "Batch Id"
+        },
+        "from_time": {
+          "description": "from",
+          "title": "From Time",
+          "type": "string"
+        },
+        "to_time": {
+          "description": "to",
+          "title": "To Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id",
+        "from_time",
+        "to_time"
+      ],
+      "title": "BolnaListExecutionsConfig",
+      "type": "object"
+    },
+    "BolnaListKnowledgeBasesConfig": {
+      "additionalProperties": false,
+      "description": "List all knowledge bases for your account",
+      "properties": {
+        "operation": {
+          "const": "list_knowledge_bases",
+          "default": "list_knowledge_bases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BolnaListKnowledgeBasesConfig",
+      "type": "object"
+    },
+    "BolnaListPhoneNumbersConfig": {
+      "additionalProperties": false,
+      "description": "List all phone numbers for your account",
+      "properties": {
+        "operation": {
+          "const": "list_phone_numbers",
+          "default": "list_phone_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BolnaListPhoneNumbersConfig",
+      "type": "object"
+    },
+    "BolnaMakeCallConfig": {
+      "additionalProperties": false,
+      "description": "Initiate calls",
+      "properties": {
+        "operation": {
+          "const": "make_call",
+          "default": "make_call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "recipient_phone_number": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Recipient Phone Number",
+          "type": "string"
+        },
+        "from_phone_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Phone Number"
+        },
+        "scheduled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled At"
+        },
+        "user_data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Data"
+        },
+        "agent_data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Data"
+        },
+        "retry_config": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry Config"
+        },
+        "agent_version_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Version Id"
+        }
+      },
+      "required": [
+        "agent_id",
+        "recipient_phone_number"
+      ],
+      "title": "BolnaMakeCallConfig",
+      "type": "object"
+    },
+    "BolnaPatchAgentConfig": {
+      "additionalProperties": false,
+      "description": "Patch update an agent",
+      "properties": {
+        "operation": {
+          "const": "patch_agent",
+          "default": "patch_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "agent_config": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Config"
+        },
+        "agent_prompts": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Prompts"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "BolnaPatchAgentConfig",
+      "type": "object"
+    },
+    "BolnaStopAgentConfig": {
+      "additionalProperties": false,
+      "description": "Stop all queued calls for a given agent_id",
+      "properties": {
+        "operation": {
+          "const": "stop_agent",
+          "default": "stop_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "description": "Bolna agent id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "BolnaStopAgentConfig",
+      "type": "object"
+    },
+    "BolnaStopBatchConfig": {
+      "additionalProperties": false,
+      "description": "Stop a running batch",
+      "properties": {
+        "operation": {
+          "const": "stop_batch",
+          "default": "stop_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "description": "Bolna batch id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "BolnaStopBatchConfig",
+      "type": "object"
+    },
+    "BolnaStopCallConfig": {
+      "additionalProperties": false,
+      "description": "Stop a queued or scheduled call",
+      "properties": {
+        "operation": {
+          "const": "stop_call",
+          "default": "stop_call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "execution_id": {
+          "description": "Bolna execution id",
+          "format": "uuid",
+          "minLength": 1,
+          "title": "Execution Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "execution_id"
+      ],
+      "title": "BolnaStopCallConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_agent": "#/$defs/BolnaCreateAgentConfig",
+          "delete_agent": "#/$defs/BolnaDeleteAgentConfig",
+          "delete_batch": "#/$defs/BolnaDeleteBatchConfig",
+          "delete_knowledge_base": "#/$defs/BolnaDeleteKnowledgeBaseConfig",
+          "get_account": "#/$defs/BolnaGetAccountConfig",
+          "get_agent": "#/$defs/BolnaGetAgentConfig",
+          "get_batch": "#/$defs/BolnaGetBatchConfig",
+          "get_execution": "#/$defs/BolnaGetExecutionConfig",
+          "get_execution_log": "#/$defs/BolnaGetExecutionLogConfig",
+          "get_knowledge_base": "#/$defs/BolnaGetKnowledgeBaseConfig",
+          "list_agent_versions": "#/$defs/BolnaListAgentVersionsConfig",
+          "list_agents": "#/$defs/BolnaListAgentsConfig",
+          "list_batches": "#/$defs/BolnaListBatchesConfig",
+          "list_executions": "#/$defs/BolnaListExecutionsConfig",
+          "list_knowledge_bases": "#/$defs/BolnaListKnowledgeBasesConfig",
+          "list_phone_numbers": "#/$defs/BolnaListPhoneNumbersConfig",
+          "make_call": "#/$defs/BolnaMakeCallConfig",
+          "patch_agent": "#/$defs/BolnaPatchAgentConfig",
+          "stop_agent": "#/$defs/BolnaStopAgentConfig",
+          "stop_batch": "#/$defs/BolnaStopBatchConfig",
+          "stop_call": "#/$defs/BolnaStopCallConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BolnaGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaCreateAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaGetAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaPatchAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaDeleteAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaStopAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaListAgentVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaListExecutionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaGetExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaGetExecutionLogConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaMakeCallConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaStopCallConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaListBatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaGetBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaDeleteBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaStopBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaListKnowledgeBasesConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaGetKnowledgeBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaDeleteKnowledgeBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/BolnaListPhoneNumbersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BolnaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bolna Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
