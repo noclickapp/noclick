@@ -1,0 +1,643 @@
+{
+  "create_brand": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "consent": true,
+          "live": false,
+          "logoURL": "https://example.com/logo.png",
+          "metadata": {
+            "customKey1": "customValue1",
+            "customKey2": "customValue2"
+          },
+          "name": "Brand Z",
+          "websiteURL": "https://example.com",
+          "updated": "2021-03-03T15:05:30.623Z",
+          "created": "2021-03-03T15:05:30.623Z",
+          "id": "eb710ff7-a388-4e1e-8e3a-f28c28893587"
+        }
+      ],
+      "resource": "/v1/brands",
+      "status": 201,
+      "execution": 22.660028
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-brand"
+  },
+  "list_brands": {
+    "status_code": 200,
+    "body": {
+      "count": 1,
+      "items": [
+        {
+          "updated": "2017-06-01T10:53:07.707Z",
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "created": "2017-06-01T10:53:07.707Z",
+          "id": "762f6bed-afed-4905-8429-6ea3dd2b862d",
+          "metadata": {
+            "customKey1": "customValue1",
+            "customKey2": "customValue2"
+          },
+          "name": "Brand B",
+          "logoUrl": "https://brandlogo.png",
+          "live": false,
+          "consent": true,
+          "websiteURL": "https://brandb.com"
+        }
+      ],
+      "resource": "/v1/brands",
+      "status": 200,
+      "execution": 137.208629
+    },
+    "source": "https://fidel-oaas.readme.io/reference/list-brands"
+  },
+  "get_brand": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "updated": "2017-06-01T10:53:07.707Z",
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "created": "2017-06-01T10:53:07.707Z",
+          "id": "762f6bed-afed-4905-8429-6ea3dd2b862d",
+          "metadata": {
+            "customKey1": "customValue1",
+            "customKey2": "customValue2"
+          },
+          "name": "Brand B",
+          "logoUrl": "https://brandlogo.png",
+          "live": false,
+          "consent": true,
+          "websiteURL": "https://brandb.com"
+        }
+      ],
+      "resource": "/v1/brands/762f6bed-afed-4905-8429-6ea3dd2b862d",
+      "status": 200,
+      "execution": 90.379702
+    },
+    "source": "https://fidel-oaas.readme.io/reference/get-brand"
+  },
+  "update_brand": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "metadata": {},
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "created": "2021-03-03T14:40:55.845Z",
+          "logoURL": "https://example.com/brandlogo.png",
+          "live": false,
+          "name": "Avo Brand",
+          "consent": true,
+          "updated": "2021-03-03T15:06:42.369Z",
+          "websiteURL": "https://example.com",
+          "id": "1bd3d878-afe7-4331-8539-d39c08505ab7"
+        }
+      ],
+      "resource": "/v1/brands/1bd3d878-afe7-4331-8539-d39c08505ab7",
+      "execution": 25.316787
+    },
+    "source": "https://fidel-oaas.readme.io/reference/update-brand"
+  },
+  "delete_brand": {
+    "status_code": 204,
+    "body": {},
+    "source": "https://fidel-oaas.readme.io/reference/delete-brand"
+  },
+  "create_program": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "icon": ":avocado:",
+          "iconBackground": "#BADA55",
+          "live": false,
+          "metadata": {
+            "customKey1": "customValue1",
+            "customKey2": "customValue2"
+          },
+          "name": "Program X",
+          "syncStats": {
+            "status": "completed"
+          },
+          "updated": "2020-08-20T13:19:37.650Z",
+          "created": "2020-08-20T13:19:37.650Z",
+          "id": "0228b979-6f7c-4238-a309-40f9d6efd3ea",
+          "active": true,
+          "activeDate": "2020-08-20T13:19:37.650Z",
+          "sync": false
+        }
+      ],
+      "resource": "/v1/programs",
+      "status": 201,
+      "execution": 29.160558
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-program"
+  },
+  "list_programs": {
+    "status_code": 200,
+    "body": {
+      "count": 1,
+      "items": [
+        {
+          "metadata": {
+            "customKey2": "customValue2",
+            "customKey1": "customValue1"
+          },
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "activeDate": "2020-08-20T13:19:37.650Z",
+          "icon": ":avocado:",
+          "created": "2020-08-20T13:19:37.650Z",
+          "name": "Program X",
+          "live": false,
+          "active": true,
+          "updated": "2020-08-20T13:19:37.650Z",
+          "syncStats": {
+            "status": "completed"
+          },
+          "iconBackground": "#BADA55",
+          "id": "0228b979-6f7c-4238-a309-40f9d6efd3ea",
+          "sync": false
+        }
+      ],
+      "last": {
+        "created": "2020-03-12T18:58:28.622Z",
+        "id": "57e07137-36cb-4f1d-a661-1d49f296048c",
+        "accountIdLiveDel": "3693ac7e-3e2b-432c-8c60-2b786453ca9b00"
+      },
+      "resource": "/v1/programs",
+      "status": 200,
+      "execution": 47.615489
+    },
+    "source": "https://fidel-oaas.readme.io/reference/list-programs"
+  },
+  "get_program": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "metadata": {
+            "customKey2": "customValue2",
+            "customKey1": "customValue1"
+          },
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "activeDate": "2020-08-20T13:19:37.650Z",
+          "icon": ":avocado:",
+          "created": "2020-08-20T13:19:37.650Z",
+          "name": "Program X",
+          "live": false,
+          "active": true,
+          "updated": "2020-08-20T13:19:37.650Z",
+          "syncStats": {
+            "status": "completed"
+          },
+          "id": "0228b979-6f7c-4238-a309-40f9d6efd3ea",
+          "iconBackground": "#BADA55",
+          "sync": false
+        }
+      ],
+      "resource": "/v1/programs/0228b979-6f7c-4238-a309-40f9d6efd3ea",
+      "status": 200,
+      "execution": 17.658376
+    },
+    "source": "https://fidel-oaas.readme.io/reference/get-program"
+  },
+  "update_program": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "metadata": {
+            "customKey2": "customValue2",
+            "customKey1": "customValue1"
+          },
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "activeDate": "2020-08-20T13:19:37.650Z",
+          "icon": ":avocado:",
+          "created": "2020-08-20T13:19:37.650Z",
+          "live": false,
+          "name": "Program X",
+          "active": true,
+          "updated": "2020-08-20T13:37:54.767Z",
+          "syncStats": {
+            "status": "completed"
+          },
+          "iconBackground": "#BADA55",
+          "id": "0228b979-6f7c-4238-a309-40f9d6efd3ea",
+          "sync": false
+        }
+      ],
+      "resource": "/v1/programs/0228b979-6f7c-4238-a309-40f9d6efd3ea",
+      "status": 200,
+      "execution": 29.692476
+    },
+    "source": "https://fidel-oaas.readme.io/reference/update-program"
+  },
+  "delete_webhook": {
+    "status_code": 204,
+    "body": {},
+    "source": "https://fidel-oaas.readme.io/reference/delete-webhook"
+  },
+  "update_webhook": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "event": "marketplace.offer.updated",
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "created": "2020-05-05T13:10:14.045Z",
+          "url": "https://realtime.com/listener",
+          "live": false,
+          "updated": "2020-05-05T13:51:03.021Z",
+          "programId": "06471dbe-a3c7-429e-8a18-16dc97e5cf35",
+          "secretKey": "wh_taq_3a941c4d-152d-449d-98a7-9af35427da6f",
+          "id": "3b4be60b-6596-4b40-ae3d-89b9fdaf132a",
+          "headers": {
+            "Custom-Header": "my-custom-header"
+          }
+        }
+      ],
+      "resource": "/v1/hooks/3b4be60b-6596-4b40-ae3d-89b9fdaf132a",
+      "status": 200,
+      "execution": 675.19654
+    },
+    "source": "https://fidel-oaas.readme.io/reference/update-webhook"
+  },
+  "get_webhook": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "event": "marketplace.offer.live",
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "created": "2020-05-05T13:10:14.045Z",
+          "url": "https://realtime.com/listener",
+          "live": false,
+          "updated": "2020-05-05T14:16:14.020Z",
+          "programId": "06471dbe-a3c7-429e-8a18-16dc97e5cf35",
+          "secretKey": "wh_taq_3a941c4d-152d-449d-98a7-9af35427da6f",
+          "id": "3b4be60b-6596-4b40-ae3d-89b9fdaf132a",
+          "headers": {
+            "Custom-Header": "my-custom-header"
+          }
+        }
+      ],
+      "resource": "/v1/hooks/3b4be60b-6596-4b40-ae3d-89b9fdaf132a",
+      "status": 200,
+      "execution": 244.043208
+    },
+    "source": "https://fidel-oaas.readme.io/reference/get-webhook"
+  },
+  "list_webhooks": {
+    "status_code": 200,
+    "body": {
+      "count": 1,
+      "items": [
+        {
+          "event": "marketplace.offer.live",
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "created": "2020-05-05T13:10:14.045Z",
+          "url": "https://realtime.com/listener",
+          "live": false,
+          "updated": "2020-05-05T13:51:03.021Z",
+          "programId": "06471dbe-a3c7-429e-8a18-16dc97e5cf35",
+          "secretKey": "wh_taq_3a941c4d-152d-449d-98a7-9af35427da6f",
+          "id": "3b4be60b-6596-4b40-ae3d-89b9fdaf132a",
+          "headers": {
+            "Custom-Header": "my-custom-token"
+          }
+        }
+      ],
+      "resource": "/v1/programs/06471dbe-a3c7-429e-8a18-16dc97e5cf35/hooks",
+      "status": 200,
+      "execution": 188.683581
+    },
+    "source": "https://fidel-oaas.readme.io/reference/list-webhooks"
+  },
+  "create_webhook_program": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "event": "marketplace.offer.live",
+          "live": false,
+          "programId": "06471dbe-a3c7-429e-8a18-16dc97e5cf35",
+          "url": "https://my-webhook.com/listener",
+          "updated": "2020-05-05T13:10:14.045Z",
+          "created": "2020-05-05T13:10:14.045Z",
+          "id": "3b4be60b-6596-4b40-ae3d-89b9fdaf132a",
+          "secretKey": "wh_taq_3a941c4d-152d-449d-98a7-9af35427da6f",
+          "headers": {
+            "Custom-Header": "my-custom-header"
+          }
+        }
+      ],
+      "resource": "/v1/programs/06471dbe-a3c7-429e-8a18-16dc97e5cf35/hooks",
+      "status": 201,
+      "execution": 105.28959
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-webhook-program"
+  },
+  "create_webhook_brand": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "accountId": "3693ac7e-3e2b-432c-8c60-2b786453ca9b",
+          "event": "brand.consent",
+          "live": false,
+          "url": "https://realtime.com",
+          "updated": "2020-05-05T14:01:29.723Z",
+          "created": "2020-05-05T14:01:29.723Z",
+          "id": "afdef5f9-0705-498a-9a4e-fe229cf19651",
+          "secretKey": "wh_bc_2468d4d7-924a-41a9-b986-8c74b5bae37b",
+          "headers": {
+            "Custom-Header": "my-custom-header"
+          }
+        }
+      ],
+      "resource": "/v1/hooks",
+      "status": 201,
+      "execution": 259.732512
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-webhook-brand"
+  },
+  "create_offer": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "accepted": true,
+          "activation": {
+            "enabled": false
+          },
+          "additionalTerms": "Offer is available only through online purchase direct with the retailer.",
+          "brandId": "78b0cbf8-3f5b-4314-82d9-5917e5ce2a7f",
+          "brandLogoURL": "https://resources.fidel.uk/accounts/41f47f81-77ba-4c46-8b42-08ba48adf988/cpap-com.png",
+          "brandName": "cpap.com",
+          "channels": [
+            "online"
+          ],
+          "countryCode": "USA",
+          "currency": "USD",
+          "daysOfWeek": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "endDate": "2027-04-22T16:37:32",
+          "feeSplit": null,
+          "fees": {
+            "fidelFee": 0.01,
+            "publisherFee": 1.33
+          },
+          "funded": {
+            "id": "41f47f81-77ba-4c46-8b42-08ba48adf988",
+            "type": "card-linking"
+          },
+          "live": 1,
+          "locationsTotal": -1,
+          "longDescription": "The #1 CPAP retailer with 25 years of expertise and 100K+ reviews. Better sleep starts here.",
+          "maxRedemptions": {
+            "period": 1,
+            "transactionsLimit": 1,
+            "unit": "month"
+          },
+          "maxTransactionAmount": 0,
+          "metadata": {},
+          "minTransactionAmount": 0,
+          "name": "cpap.com US - Online",
+          "origin": {
+            "id": "41f47f81-77ba-4c46-8b42-08ba48adf988",
+            "type": "card-linking"
+          },
+          "performanceFee": 0,
+          "priority": 1,
+          "programId": "28819789-5f77-463f-87f2-9f480d80216a",
+          "programName": "Lux OaaS CP Program",
+          "publisherId": "41f47f81-77ba-4c46-8b42-08ba48adf988",
+          "requiresApproval": true,
+          "returnPeriod": null,
+          "schemes": [
+            "visa",
+            "mastercard",
+            "amex"
+          ],
+          "shortDescription": "cpap.com US - Online - 4% Cashback",
+          "startDate": "2026-04-22T00:00:00",
+          "supplier": null,
+          "transactionSource": "oaas",
+          "type": {
+            "name": "discount",
+            "value": 4
+          }
+        }
+      ]
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-offer"
+  },
+  "update_offer": {
+    "status_code": 200,
+    "body": {},
+    "source": "https://fidel-oaas.readme.io/reference/update-offer"
+  },
+  "delete_offer": {
+    "status_code": 204,
+    "body": {},
+    "source": "https://fidel-oaas.readme.io/reference/delete-offer"
+  },
+  "list_offers": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "accepted": true,
+          "activation": {
+            "enabled": false
+          },
+          "additionalTerms": "Offer is available only through online purchase direct with the retailer.",
+          "brandId": "78b0cbf8-3f5b-4314-82d9-5917e5ce2a7f",
+          "brandLogoURL": "https://resources.fidel.uk/accounts/41f47f81-77ba-4c46-8b42-08ba48adf988/cpap-com.png",
+          "brandName": "cpap.com",
+          "channels": [
+            "online"
+          ],
+          "countryCode": "USA",
+          "currency": "USD",
+          "daysOfWeek": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "endDate": "2027-04-22T16:37:32",
+          "feeSplit": null,
+          "fees": {
+            "fidelFee": 0.01,
+            "publisherFee": 1.33
+          },
+          "funded": {
+            "id": "41f47f81-77ba-4c46-8b42-08ba48adf988",
+            "type": "card-linking"
+          },
+          "live": 1,
+          "locationsTotal": -1,
+          "longDescription": "The #1 CPAP retailer with 25 years of expertise and 100K+ reviews. Better sleep starts here.",
+          "maxRedemptions": {
+            "period": 1,
+            "transactionsLimit": 1,
+            "unit": "month"
+          },
+          "maxTransactionAmount": 0,
+          "metadata": {},
+          "minTransactionAmount": 0,
+          "name": "cpap.com US - Online",
+          "origin": {
+            "id": "41f47f81-77ba-4c46-8b42-08ba48adf988",
+            "type": "card-linking"
+          },
+          "performanceFee": 0,
+          "priority": 1,
+          "programId": "28819789-5f77-463f-87f2-9f480d80216a",
+          "programName": "Lux OaaS CP Program",
+          "publisherId": "41f47f81-77ba-4c46-8b42-08ba48adf988",
+          "requiresApproval": true,
+          "returnPeriod": null,
+          "schemes": [
+            "visa",
+            "mastercard",
+            "amex"
+          ],
+          "shortDescription": "cpap.com US - Online - 4% Cashback",
+          "startDate": "2026-04-22T00:00:00",
+          "supplier": null,
+          "transactionSource": "oaas",
+          "type": {
+            "name": "discount",
+            "value": 4
+          }
+        }
+      ],
+      "count": 1
+    },
+    "source": "https://fidel-oaas.readme.io/reference/list-offers"
+  },
+  "create_offer_descriptor": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "accountId": "a59a1c51-6571-4042-8da3-845a1e1c8b88",
+          "created": "2026-04-23T10:13:33.093Z",
+          "id": "24938432-d79e-42e7-890a-841d53cda27a",
+          "name": "Test Descriptor",
+          "offerId": "f225ee43-407c-46c1-a333-522998a8304c",
+          "updated": "2026-04-23T10:13:33.093Z"
+        }
+      ]
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-offer-descriptor"
+  },
+  "list_offer_descriptors": {
+    "status_code": 200,
+    "body": {
+      "items": [
+        {
+          "accountId": "a59a1c51-6571-4042-8da3-845a1e1c8b88",
+          "created": "2026-04-23T10:13:33.093Z",
+          "id": "24938432-d79e-42e7-890a-841d53cda27a",
+          "name": "Test Descriptor",
+          "offerId": "f225ee43-407c-46c1-a333-522998a8304c",
+          "updated": "2026-04-23T10:13:33.093Z"
+        }
+      ],
+      "count": 1
+    },
+    "source": "https://fidel-oaas.readme.io/reference/list-offer-descriptors"
+  },
+  "delete_offer_descriptor": {
+    "status_code": 204,
+    "body": {},
+    "source": "https://fidel-oaas.readme.io/reference/delete-offer-descriptor"
+  },
+  "list_offer_locations": {
+    "status_code": 200,
+    "body": {},
+    "source": "https://fidel-oaas.readme.io/reference/list-offer-locations"
+  },
+  "create_offer_location": {
+    "status_code": 201,
+    "body": {
+      "items": [
+        {
+          "address": "Rua dos Campe\u00f5es Europeus",
+          "city": "Porto",
+          "country": "Portugal",
+          "created": "2026-04-23T10:09:32.278Z",
+          "id": "4d25aef7-4594-449b-8e86-20e850495234",
+          "updated": "2026-04-23T10:09:32.278Z",
+          "zipCode": "4350-415"
+        }
+      ],
+      "count": 1
+    },
+    "source": "https://fidel-oaas.readme.io/reference/create-offer-location"
+  },
+  "list_transactions_by_program": {
+    "status_code": 200,
+    "body": {
+      "count": 1,
+      "items": [
+        {
+          "id": "847179df24c740272a32619e9921faf5873f5818",
+          "accountId": "a5aec32a-38a9-4ae3-8e8b-04c860d2030e",
+          "address": "732-9351200",
+          "amount": 100,
+          "brandId": "99b5ba3d-6c9e-4fe6-b85f-a344627ee1c2",
+          "brandName": "some brand",
+          "countryCode": "USA",
+          "created": "2025-04-08T04:09:03.559Z",
+          "currency": "USD",
+          "date": "2024-04-28T12:00:00.000Z",
+          "externalId": "615182399",
+          "lastNumbers": "1111",
+          "merchantId": "N/A",
+          "metadataV2": {
+            "filename": "e2e-test/a5aec32a-38a9-4ae3-8e8b-04c860d2030e/transactions/test_data.csv",
+            "publisherName": "PNC mock account"
+          },
+          "offer": {
+            "id": "offerE2EPncTest",
+            "cashback": 20,
+            "fees": {
+              "fidelFee": 6.66,
+              "publisherFee": 6.66
+            },
+            "name": "Beauty Plus Salon_CLO",
+            "performanceFee": 13.32,
+            "qualificationDate": "2025-04-08T04:09:02.864Z",
+            "qualified": true,
+            "supplier": null
+          },
+          "programId": "3b7ec790-6422-4674-a3cc-129a9290d3c1",
+          "programType": "transaction-distro-only",
+          "scheme": "mastercard",
+          "time": "2024-04-28T12:00:00.000Z",
+          "type": "CLEARING",
+          "updated": "2025-04-08T04:09:03.559Z"
+        }
+      ]
+    },
+    "source": "https://fidel-oaas.readme.io/reference/list-transactions-by-program"
+  }
+}
