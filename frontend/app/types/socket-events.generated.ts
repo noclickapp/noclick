@@ -4226,6 +4226,33 @@ export interface NotionOAuthValidateRequest {
   [k: string]: unknown;
 }
 /**
+ * Poll the opaque, server-bound device authorization.
+ */
+export interface OAuthDevicePollRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  provider: string;
+  authorization_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Begin device authorization for a declared provider.
+ */
+export interface OAuthDeviceStartRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  provider: string;
+  scopes?: string[];
+  context?: {
+    [k: string]: string;
+  };
+  [k: string]: unknown;
+}
+/**
  * Exchange a standard OAuth provider's authorization code.
  */
 export interface OAuthExchangeRequest {
@@ -4233,6 +4260,12 @@ export interface OAuthExchangeRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  /**
+   * Declared non-secret OAuth context
+   */
+  context?: {
+    [k: string]: string;
+  };
   /**
    * Declared OAuth provider id
    */
@@ -11197,6 +11230,31 @@ export interface NotionOAuthValidateResponse {
   message?: string | null;
 }
 /**
+ * Response for oauth:device:poll request
+ */
+export interface OAuthDevicePollResponse {
+  success: boolean;
+  status: string;
+  interval?: number | null;
+  credential_id?: string | null;
+  credential_name?: string | null;
+  name?: string | null;
+  message?: string | null;
+}
+/**
+ * Response for oauth:device:start request
+ */
+export interface OAuthDeviceStartResponse {
+  success: boolean;
+  status: string;
+  authorization_id?: string | null;
+  user_code?: string | null;
+  verification_uri?: string | null;
+  interval?: number | null;
+  expires_in?: number | null;
+  message?: string | null;
+}
+/**
  * Response for oauth:exchange request
  */
 export interface OAuthExchangeResponse {
@@ -14634,6 +14692,8 @@ export interface ClientToServerEvents {
   'notion:oauth:exchange': (data: NotionOAuthExchangeRequest) => void;
   'notion:oauth:refresh': (data: NotionOAuthRefreshRequest) => void;
   'notion:oauth:validate': (data: NotionOAuthValidateRequest) => void;
+  'oauth:device:poll': (data: OAuthDevicePollRequest) => void;
+  'oauth:device:start': (data: OAuthDeviceStartRequest) => void;
   'oauth:exchange': (data: OAuthExchangeRequest) => void;
   'oauth:refresh': (data: OAuthRefreshRequest) => void;
   'oauth:validate': (data: OAuthValidateRequest) => void;
@@ -15004,6 +15064,8 @@ export const ClientEventNames = {
   NotionOAuthExchangeRequest: 'notion:oauth:exchange',
   NotionOAuthRefreshRequest: 'notion:oauth:refresh',
   NotionOAuthValidateRequest: 'notion:oauth:validate',
+  OAuthDevicePollRequest: 'oauth:device:poll',
+  OAuthDeviceStartRequest: 'oauth:device:start',
   OAuthExchangeRequest: 'oauth:exchange',
   OAuthRefreshRequest: 'oauth:refresh',
   OAuthValidateRequest: 'oauth:validate',
@@ -15370,6 +15432,8 @@ interface ClientEventMap {
   NotionOAuthExchangeRequest: NotionOAuthExchangeRequest
   NotionOAuthRefreshRequest: NotionOAuthRefreshRequest
   NotionOAuthValidateRequest: NotionOAuthValidateRequest
+  OAuthDevicePollRequest: OAuthDevicePollRequest
+  OAuthDeviceStartRequest: OAuthDeviceStartRequest
   OAuthExchangeRequest: OAuthExchangeRequest
   OAuthRefreshRequest: OAuthRefreshRequest
   OAuthValidateRequest: OAuthValidateRequest
@@ -15673,6 +15737,8 @@ export interface RequestResponseMap {
   NotionOAuthExchangeRequest: NotionOAuthExchangeResponse;
   NotionOAuthRefreshRequest: NotionOAuthRefreshResponse;
   NotionOAuthValidateRequest: NotionOAuthValidateResponse;
+  OAuthDevicePollRequest: OAuthDevicePollResponse;
+  OAuthDeviceStartRequest: OAuthDeviceStartResponse;
   OAuthExchangeRequest: OAuthExchangeResponse;
   OAuthRefreshRequest: OAuthRefreshResponse;
   OAuthValidateRequest: OAuthValidateResponse;
@@ -16478,6 +16544,14 @@ export const NotionOAuthRefreshRequest = {
 export const NotionOAuthValidateRequest = {
   event_name: 'notion:oauth:validate' as const,
   create: (data: NotionOAuthValidateRequest) => ({ event_name: 'notion:oauth:validate' as const, ...data })
+};
+export const OAuthDevicePollRequest = {
+  event_name: 'oauth:device:poll' as const,
+  create: (data: OAuthDevicePollRequest) => ({ event_name: 'oauth:device:poll' as const, ...data })
+};
+export const OAuthDeviceStartRequest = {
+  event_name: 'oauth:device:start' as const,
+  create: (data: OAuthDeviceStartRequest) => ({ event_name: 'oauth:device:start' as const, ...data })
 };
 export const OAuthExchangeRequest = {
   event_name: 'oauth:exchange' as const,
@@ -17388,6 +17462,8 @@ export const EventRouting = {
   'notion:oauth:exchange': 'API',
   'notion:oauth:refresh': 'API',
   'notion:oauth:validate': 'API',
+  'oauth:device:poll': 'API',
+  'oauth:device:start': 'API',
   'oauth:exchange': 'API',
   'oauth:refresh': 'API',
   'oauth:validate': 'API',

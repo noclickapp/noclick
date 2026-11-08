@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from wss.sender.oauth_responses import (
     OAuthExchangeResponse, OAuthRefreshResponse, OAuthValidateResponse,
+    OAuthDeviceStartResponse, OAuthDevicePollResponse,
 )
 
 

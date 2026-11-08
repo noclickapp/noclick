@@ -16,6 +16,8 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
     """
     return SocketIORateLimitConfig(
         per_event_rate_limits={
+            "oauth:device:start": SocketIORateLimit(second=1, minute=5),
+            "oauth:device:poll": SocketIORateLimit(second=1, minute=30),
             "oauth:exchange": SocketIORateLimit(second=1, minute=10),
             "oauth:refresh": SocketIORateLimit(second=1, minute=10),
             "oauth:validate": SocketIORateLimit(second=2, minute=20),

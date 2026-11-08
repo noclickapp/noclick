@@ -113,3 +113,24 @@ async def sign_in(provider: str, inputs: Dict[str, Any], *, user_id: str, tier: 
     if answer.get("error") or not data.get("success") or not data.get("credential_id"):
         raise SignInFailed(answer.get("error") or data.get("message") or "The sign-in didn't finish.")
     return str(data["credential_id"]), data
+
+
+async def device_sign_in(provider, inputs, *, operation, user_id, tier, store, binding):
+    """The same generic device handler and repository seam as a signed-in connect."""
+    from wss.handlers.oauth.generic_oauth_handler import GenericOAuthHandler
+    from wss.receiver.client_events import OAuthDeviceStartRequest, OAuthDevicePollRequest
+    model = OAuthDeviceStartRequest if operation == "start" else OAuthDevicePollRequest
+    request = model.model_validate({**inputs, "provider": provider, "request_id": _SID})
+    socket = _Socket(user_id, tier)
+    socket._session["oauth_device_binding"] = binding
+    token = SIGN_IN_STORE.set(store)
+    try:
+        handler = GenericOAuthHandler(socket)
+        await handler.get_events()[model.event_name](_SID, request)
+    finally:
+        SIGN_IN_STORE.reset(token)
+    answer = socket.answer or {}
+    data = answer.get("data") or {}
+    if answer.get("error") or not data.get("success"):
+        raise SignInFailed(answer.get("error") or data.get("message") or "Device sign-in failed")
+    return data

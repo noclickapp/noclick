@@ -7,6 +7,7 @@
  * in-app UI (socket transport) and the public credential-provide page (HTTP transport).
  */
 
+import { useGenericDeviceOAuth } from './oauth/useGenericDeviceOAuth';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import { createOAuthHook } from './oauth/createOAuthHook';
@@ -285,6 +286,10 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         onSuccess: result => { if (result.provider) void createSuccessHandler(result.provider)(result); },
         onError: message => createErrorHandler(connectingProvider ?? '')(message),
     });
+    const deviceOAuth = useGenericDeviceOAuth({
+        onSuccess: result => { if (result.provider) void createSuccessHandler(result.provider)(result); },
+        onError: message => createErrorHandler(connectingProvider ?? '')(message),
+    });
     const signInStandIn = useOAuthSignInStandIn();
     const connect = useCallback((
         provider: string,
@@ -294,6 +299,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         atlassianSite?: string,
         userScopes?: string[],
         customClientCredentials?: { client_id: string; client_secret: string },
+        context?: Record<string, string>,
     ) => {
         const hook = Object.hasOwn(oauthHookMap, provider) ? oauthHookMap[provider] : undefined;
         const providers = INTEGRATION_METADATA.oauthProviders;
@@ -318,9 +324,11 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         }
 
         if (!hook) {
-            if (spec) {
+            if (spec?.deviceFlow) {
+                void deviceOAuth.connect(provider, scopes?.length ? scopes : spec.scopes, context ?? {});
+            } else if (spec) {
                 genericOAuth.connectWithConfig({
-                    provider, generic: true, defaultScopes: spec.scopes, scopeDelimiter: ' ',
+                    provider, generic: true, context, defaultScopes: spec.scopes, scopeDelimiter: ' ',
                     authorizePath: `/api/auth/oauth/${provider}/authorize`,
                 }, name, scopes);
             }
@@ -354,7 +362,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         } else {
             hook.connect(name, scopes || []);
         }
-    }, [oauthHookMap, genericOAuth, onError, signInStandIn, createSuccessHandler, createErrorHandler]);
+    }, [oauthHookMap, genericOAuth, deviceOAuth, onError, signInStandIn, createSuccessHandler, createErrorHandler]);
 
     // Tenant-wide admin consent (Microsoft's "Need admin approval" wall): the same popup
     // engine, provider-gated. Only factory hooks take the options arg, and only they carry
@@ -379,7 +387,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
     // Auto-clear a stale connectingProvider when the active hook stops connecting
     // (popup closed) without firing our success/error handlers.
     const activeHookConnecting = connectingProvider
-        ? Boolean(oauthHookMap[connectingProvider]?.isConnecting ?? genericOAuth.isConnecting)
+        ? Boolean(oauthHookMap[connectingProvider]?.isConnecting ?? (genericOAuth.isConnecting || deviceOAuth.isConnecting))
         : false;
     useEffect(() => {
         if (!connectingProvider) return;
@@ -388,10 +396,11 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
     }, [connectingProvider, pendingSelection, activeHookConnecting]);
 
     const cancelConnect = useCallback(() => {
+        deviceOAuth.cancel();
         setConnectingProvider(null);
         setPendingSelection(null);
         pendingSelectionResolverRef.current = null;
-    }, []);
+    }, [deviceOAuth.cancel]);
 
     const clearError = useCallback(() => {
         setError(null);
@@ -409,6 +418,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
     return {
         connect,
         connectOrgConsent,
+        deviceAuthorization: deviceOAuth.authorization,
         isConnecting,
         connectingProvider,
         error,

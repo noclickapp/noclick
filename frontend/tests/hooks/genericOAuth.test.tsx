@@ -31,6 +31,7 @@ it('connects a declared provider through the generic event with its PKCE verifie
             {
                 provider: 'example',
                 generic: true,
+                context: { tenant: 'company' },
                 authorizePath: '/api/auth/oauth/example/authorize',
                 defaultScopes: ['read'],
                 scopeDelimiter: ' ',
@@ -51,6 +52,7 @@ it('connects a declared provider through the generic event with its PKCE verifie
                     code: 'code',
                     redirectUri: 'https://app.example/callback',
                     codeVerifier: 'verifier',
+                    context: { tenant: 'company', merchant_id: 'ABC123' },
                     scopes: ['read'],
                 },
             })
@@ -63,6 +65,7 @@ it('connects a declared provider through the generic event with its PKCE verifie
             provider: 'example',
             code: 'code',
             code_verifier: 'verifier',
+            context: { tenant: 'company', merchant_id: 'ABC123' },
         })
     );
     expect(result.current.isConnecting).toBe(false);

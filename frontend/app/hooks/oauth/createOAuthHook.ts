@@ -36,6 +36,7 @@ export interface OAuthHookConfig {
     provider: string;
     /** Declared providers use the shared exchange event. */
     generic?: boolean;
+    context?: Record<string, string>;
     /** Authorize route (default `/api/auth/{provider}/authorize`). */
     authorizePath?: string;
     /** Scopes requested when the caller passes none. */
@@ -65,6 +66,7 @@ interface OAuthCallbackData {
     // PKCE providers (Airtable, Canva, PostHog, Klaviyo, …) round-trip the code
     // verifier through the callback; the exchange must forward it to the backend.
     codeVerifier?: string;
+    context?: Record<string, string>;
     error?: string;
 }
 
@@ -93,6 +95,7 @@ export function buildAuthorizeUrl(
     const params = new URLSearchParams({ name: credentialName });
     if (sendScopes) params.set('scopes', effectiveScopes.join(scopeDelimiter));
     if (options.orgConsent) params.set('admin_consent', '1');
+    for (const [key, value] of Object.entries(config.context ?? {})) params.set(key, value);
     const qs = params.toString();
     return qs ? `${authorizePath}?${qs}` : authorizePath;
 }
@@ -183,6 +186,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
                                 : defaultScopes,
                         // Forwarded only for PKCE providers; ignored by others
                         // (ClientEventBase is extra='allow').
+                        ...(activeConfig.generic && data.context ? { context: data.context } : {}),
                         ...(data.codeVerifier
                             ? { code_verifier: data.codeVerifier }
                             : {}),

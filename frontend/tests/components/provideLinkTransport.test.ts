@@ -33,3 +33,17 @@ describe('provideLinkTransport redirect OAuth', () => {
         });
     });
 });
+
+it('maps declared device start and poll to link-bound endpoints without exposing a device code', async () => {
+    const fetch = vi.fn(async (_url: string, _init?: RequestInit) => new Response(JSON.stringify({ success: true, status: 'pending', authorization_id: 'opaque' })));
+    vi.stubGlobal('fetch', fetch);
+    try {
+        const transport = provideLinkTransport('https://api.test', 'request', 'example_oauth');
+        await transport({ event_name: 'oauth:device:start', provider: 'example', scopes: ['read'], context: { region: 'eu' } });
+        expect(fetch.mock.calls[0][0]).toBe('https://api.test/api/credential-request/request/oauth-device/start');
+        expect(JSON.parse((fetch.mock.calls[0] as any)[1].body)).toEqual({ credential_type: 'example_oauth', scopes: ['read'], context: { region: 'eu' } });
+        await transport({ event_name: 'oauth:device:poll', provider: 'example', authorization_id: 'opaque' });
+        expect(fetch.mock.calls[1][0]).toBe('https://api.test/api/credential-request/request/oauth-device/poll');
+        expect(JSON.parse((fetch.mock.calls[1] as any)[1].body)).toEqual({ credential_type: 'example_oauth', authorization_id: 'opaque' });
+    } finally { vi.unstubAllGlobals(); }
+});

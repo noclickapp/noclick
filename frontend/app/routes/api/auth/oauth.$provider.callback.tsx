@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLoaderData, type LoaderFunctionArgs } from 'react-router';
 import { declaredOAuthProvider } from '~/lib/genericOAuth.server';
+import { validateOAuthContext } from '~/lib/oauthContext';
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -23,13 +24,22 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         throw new Response('OAuth provider does not match state', {
             status: 400,
         });
+    let context: Record<string, string> | undefined;
+    if (spec.contextFields) {
+        try {
+            context = validateOAuthContext(spec, {
+                ...state.context,
+                ...Object.fromEntries(Object.entries(spec.contextFields).filter(([, field]) => field.source === 'callback')
+                    .map(([key, field]) => [key, url.searchParams.get(field.callbackName ?? key) ?? ''])),
+            }, ['input', 'callback']);
+        } catch { throw new Response('Invalid OAuth callback context', { status: 400 }); }
+    }
     return {
-        provider: spec.provider,
-        success: true,
-        code,
+        provider: spec.provider, success: true, code,
         redirectUri: state.redirectUri as string,
         scopes: state.scopes as string[],
         codeVerifier: state.codeVerifier as string | undefined,
+        ...(context ? { context } : {}),
     };
 }
 

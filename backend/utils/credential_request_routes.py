@@ -796,12 +796,12 @@ async def _fulfilled(pool, row, credential_id: str, credential_type: str) -> dic
 
 
 async def _sign_in_for_request(pool, row, credential_type: str, provider: str,
-                               body: ProvideCredentialBody) -> dict[str, str]:
+                               body: ProvideCredentialBody, *, device_operation=None, device_inputs=None) -> dict:
     """Run the app's own sign-in for ``provider`` (``utils.link_sign_in``) with the link's inputs; its credential
     is stored as ``_store_and_fulfill`` stores one, so the link's credential is the one the app makes."""
     from utils.link_sign_in import SignInFailed, client_fields, sign_in
 
-    if not body.oauth_code or not body.redirect_uri:
+    if not device_operation and (not body.oauth_code or not body.redirect_uri):
         raise HTTPException(status_code=400, detail="OAuth credentials require oauth_code and redirect_uri")
     inputs = {**(body.oauth_inputs or {}), 'code': body.oauth_code, 'redirect_uri': body.redirect_uri,
               'code_verifier': body.code_verifier}
@@ -813,6 +813,8 @@ async def _sign_in_for_request(pool, row, credential_type: str, provider: str,
                       or f'{provider.title()} Account')
     client = await _oauth_app(pool, row, provider)
     if client is not None:
+        if device_operation:
+            raise HTTPException(400, "Device sign-in uses the instance's configured OAuth client")
         named = client_fields(provider, client)
         if named is None:
             raise OAuthAppUnavailable(f"{provider} can't sign in with an OAuth app of your own here.")
@@ -833,7 +835,16 @@ async def _sign_in_for_request(pool, row, credential_type: str, provider: str,
         return {'id': stored['id'], 'name': name}, None
 
     try:
-        credential_id, _ = await sign_in(provider, inputs, user_id=owner_id,
+        if device_operation:
+            from utils.link_sign_in import device_sign_in
+            data = await device_sign_in(provider, device_inputs, operation=device_operation, user_id=owner_id,
+                                       tier=await _requester_effective_tier(pool, owner_id), store=store,
+                                       binding="credential-request:" + str(row['id']))
+            if data['status'] != 'completed':
+                return data
+            credential_id = data['credential_id']
+        else:
+            credential_id, _ = await sign_in(provider, inputs, user_id=owner_id,
                                          tier=await _requester_effective_tier(pool, owner_id), store=store)
     except SignInFailed as exc:
         if 'ended' in stored:
@@ -1246,3 +1257,57 @@ async def qr_status(token: str, body: QRStatusBody) -> dict[str, Any]:
             await _rollback_qr_credential(pool, result["credential_id"])
             raise HTTPException(status_code=410, detail="This credential request has already been fulfilled")
     return result
+
+
+class DeclaredDeviceBody(BaseModel):
+    credential_type: str
+    scopes: list[str] = []
+    context: dict[str, str] = {}
+    authorization_id: str | None = None
+
+
+async def _declared_device(token, body, operation):
+    from nodes.core.oauth_registry import get_oauth_provider
+    from utils.redis_client import get_shared_redis
+    pool = get_native_pool()
+    row = await _load_active_request(token, pool)
+    allowed = {row['credential_type']} | {m['credential_type'] for m in _get_sibling_methods(row['credential_type'])}
+    if body.credential_type not in allowed:
+        raise HTTPException(400, "This OAuth method is not valid for this request")
+    provider = _get_oauth_provider(body.credential_type)
+    try:
+        spec = get_oauth_provider(provider)
+    except (ValueError, KeyError):
+        raise HTTPException(400, "Not a declared device provider") from None
+    if not spec.device or spec.credential_type != body.credential_type:
+        raise HTTPException(400, "Not a declared device provider")
+    if operation == "start":
+        redis = get_shared_redis()
+        if redis is None:
+            raise HTTPException(503, "Device sign-in is not configured")
+        key = "credreq:oauth-device-start:" + str(row['id'])
+        from redis.exceptions import RedisError
+        try:
+            await redis.set(key, 0, ex=3600, nx=True)
+            attempts = await redis.incr(key)
+        except RedisError:
+            raise HTTPException(503, "Device sign-in temporarily unavailable") from None
+        if attempts > 20:
+            raise HTTPException(429, "Too many device sign-in attempts; try later")
+    elif not body.authorization_id:
+        raise HTTPException(400, "Missing device authorization")
+    result = await _sign_in_for_request(pool, row, body.credential_type, provider, ProvideCredentialBody(),
+                                       device_operation=operation, device_inputs=body.model_dump())
+    if result['status'] == 'success':
+        return {**result, "success": True, "status": "completed"}
+    return result
+
+
+@router.post("/{token}/oauth-device/start")
+async def declared_device_start(token: str, body: DeclaredDeviceBody):
+    return await _declared_device(token, body, "start")
+
+
+@router.post("/{token}/oauth-device/poll")
+async def declared_device_poll(token: str, body: DeclaredDeviceBody):
+    return await _declared_device(token, body, "poll")

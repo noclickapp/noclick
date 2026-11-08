@@ -43,7 +43,7 @@ function ConnectForm({
 }: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'oauthApp' | 'onRequestEnded'>) {
     const {
         connect, connectOrgConsent, isConnecting, connectingProvider, error, planLimitError,
-        clearError, pendingSelection, resolvePendingSelection, cancelConnect,
+        clearError, pendingSelection, resolvePendingSelection, cancelConnect, deviceAuthorization,
     } = useOAuthConnect({ onCredentialCreated: () => onProvided() });
 
     return (
@@ -58,6 +58,7 @@ function ConnectForm({
             requiresCustomClient={requiresCustomClient}
             redirectUri={redirectUri}
             connect={connect}
+            deviceAuthorization={deviceAuthorization}
             connectOrgConsent={connectOrgConsent}
             connectingProvider={connectingProvider}
             isConnecting={isConnecting}

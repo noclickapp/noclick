@@ -3572,6 +3572,7 @@ class PhoneNumberResubmitRequest(ClientEventBase):
 
 class OAuthExchangeRequest(ClientEventBase):
     """Exchange a standard OAuth provider's authorization code."""
+    context: Dict[str, str] = Field(default_factory=dict, description="Declared non-secret OAuth context")
     event_name: ClassVar[str] = "oauth:exchange"
     provider: str = Field(..., description="Declared OAuth provider id")
     code: str = Field(..., description="Authorization code")
@@ -3592,3 +3593,18 @@ class OAuthValidateRequest(ClientEventBase):
     event_name: ClassVar[str] = "oauth:validate"
     provider: str = Field(..., description="Declared OAuth provider id")
     credential_id: str = Field(..., description="Credential UUID")
+
+
+class OAuthDeviceStartRequest(ClientEventBase):
+    """Begin device authorization for a declared provider."""
+    event_name: ClassVar[str] = "oauth:device:start"
+    provider: str
+    scopes: List[str] = Field(default_factory=list)
+    context: Dict[str, str] = Field(default_factory=dict)
+
+
+class OAuthDevicePollRequest(ClientEventBase):
+    """Poll the opaque, server-bound device authorization."""
+    event_name: ClassVar[str] = "oauth:device:poll"
+    provider: str
+    authorization_id: str

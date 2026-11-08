@@ -9,7 +9,10 @@ export interface NodeMetaEntry {
 
 export interface PublicOAuthProvider {
     provider: string;
-    authorizeUrl: string;
+    authorizeUrl: string | null;
+    scopeSeparator?: string;
+    deviceFlow?: boolean;
+    contextFields?: Record<string, { source: "input" | "callback" | "token"; pattern: string | null; choices: string[]; kind: "value" | "host" | "origin"; label: string | null; callbackName: string | null }>;
     scopes: string[];
     pkce: boolean;
     clientIdEnv: string;

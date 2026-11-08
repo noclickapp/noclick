@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { validateOAuthContext, oauthEndpoint } from './oauthContext';
 import type { PublicOAuthProvider } from '~/utils/integrationMetadata';
 import { INTEGRATION_METADATA } from '~/utils/integrationMetadata';
 
@@ -16,8 +17,13 @@ export function buildGenericAuthorization(
     spec: PublicOAuthProvider,
     scopes: string[],
     clientId: string,
-    redirectUri: string
+    redirectUri: string,
+    inputContext?: Record<string, string>
 ) {
+    if (!spec.authorizeUrl || spec.deviceFlow) throw new Response("Provider uses device authorization", { status: 404 });
+    let context: Record<string, string>;
+    try { context = validateOAuthContext(spec, inputContext ?? {}, ['input']); }
+    catch { throw new Response('Invalid OAuth connection input', { status: 400 }); }
     if (scopes.some((scope) => !spec.scopes.includes(scope)))
         throw new Response('Unknown OAuth scope', { status: 400 });
     const verifier = spec.pkce
@@ -26,6 +32,7 @@ export function buildGenericAuthorization(
     const state = Buffer.from(
         JSON.stringify({
             provider: spec.provider,
+            ...(spec.contextFields ? { context } : {}),
             scopes,
             codeVerifier: verifier,
             redirectUri,
@@ -33,14 +40,14 @@ export function buildGenericAuthorization(
             timestamp: Date.now(),
         })
     ).toString('base64url');
-    const url = new URL(spec.authorizeUrl);
+    const url = new URL(oauthEndpoint(spec.authorizeUrl, spec, context));
     for (const [key, value] of Object.entries(spec.authorizeParams))
         url.searchParams.set(key, value);
     for (const [key, value] of Object.entries({
         client_id: clientId,
         redirect_uri: redirectUri,
         response_type: 'code',
-        scope: scopes.join(' '),
+        scope: scopes.join(spec.scopeSeparator ?? ' '),
         state,
     }))
         url.searchParams.set(key, value);

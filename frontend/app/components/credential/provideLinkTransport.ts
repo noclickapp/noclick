@@ -51,6 +51,16 @@ export function provideLinkTransport(
             return await res.json();
         }
 
+        if (name === 'oauth:device:start' || name === 'oauth:device:poll') {
+            const res = await fetch(`${base}/oauth-device/${name.endsWith(':start') ? 'start' : 'poll'}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential_type: credentialType, scopes: event.scopes,
+                    context: event.context, authorization_id: event.authorization_id }),
+            });
+            const data = await res.json();
+            return res.ok ? data : { success: false, status: 'error', message: data.detail || 'Device sign-in failed' };
+        }
+
         // --- Agent CLI OAuth (device-code / PKCE) ---
         if (/:auth:(start|poll|exchange)$/.test(name)) {
             if (name.endsWith(':start')) {

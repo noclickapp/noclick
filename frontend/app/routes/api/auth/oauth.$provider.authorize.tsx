@@ -8,6 +8,7 @@ import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const spec = declaredOAuthProvider(params.provider);
+    if (spec.deviceFlow) throw new Response("Provider uses device authorization", { status: 404 });
     const clientId = process.env[spec.clientIdEnv];
     const redirectUri = process.env[spec.redirectUriEnv];
     if (!clientId || !redirectUri)
@@ -25,6 +26,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         : spec.scopes;
     return oauthRedirect(
         request,
-        buildGenericAuthorization(spec, scopes, clientId, redirectUri)
+        buildGenericAuthorization(spec, scopes, clientId, redirectUri, Object.fromEntries(
+            Object.entries(spec.contextFields ?? {}).filter(([, field]) => field.source === "input")
+                .map(([key]) => [key, new URL(request.url).searchParams.get(key) ?? ""])
+        ))
     );
 }

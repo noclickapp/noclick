@@ -10,6 +10,10 @@
 // in (from the node schema in-app, from the backend method on the provide link). Added so a
 // provider that needs an extra input can't work in one surface and silently break the other.
 
+import { INTEGRATION_METADATA } from '~/utils/integrationMetadata';
+import { validateOAuthContext } from '~/lib/oauthContext';
+import { DeviceCodePanel } from '~/components/workflow/DeviceCodePanel';
+import type { DeviceAuthorization } from '~/hooks/oauth/useGenericDeviceOAuth';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import { SecretInput } from '~/components/workflow/SecretInput';
@@ -33,7 +37,8 @@ export type OAuthConnectFn = (
     shopName?: string,
     atlassianSite?: string,
     userScopes?: string[],
-    customClientCredentials?: { client_id: string; client_secret: string }
+    customClientCredentials?: { client_id: string; client_secret: string },
+    context?: Record<string, string>
 ) => void;
 
 /** Tenant-wide admin consent (providers with `supportsOrgConsent`) — see useOAuthConnect. */
@@ -54,6 +59,7 @@ export interface OAuthConnectFormProps {
     redirectUri?: string;
     // --- injected engine (shared between surfaces) ---
     connect: OAuthConnectFn;
+    deviceAuthorization?: DeviceAuthorization | null;
     /** Offered only when the provider supports org-wide consent; omitted = no offer. */
     connectOrgConsent?: OAuthOrgConsentFn;
     connectingProvider: string | null;
@@ -126,6 +132,7 @@ export function OAuthConnectForm({
     requiresCustomClient,
     redirectUri,
     connect,
+    deviceAuthorization,
     connectOrgConsent,
     connectingProvider,
     isConnecting,
@@ -141,9 +148,18 @@ export function OAuthConnectForm({
     note,
     busyLabel,
 }: OAuthConnectFormProps) {
+    const providers = INTEGRATION_METADATA.oauthProviders;
+    const spec = Object.hasOwn(providers, provider) ? providers[provider] : undefined;
+    const contextInputs = Object.entries(spec?.contextFields ?? {}).filter(([, field]) => field.source === 'input');
+    const [contextValues, setContextValues] = useState<Record<string, string>>({});
+    const [contextError, setContextError] = useState<string | null>(null);
+    useEffect(() => {
+        setContextValues({});
+        setContextError(null);
+    }, [provider]);
     const connectInput = getOAuthConnectInput(provider, credentialType);
     // No-op on hosted: the hook reports configured without a request.
-    const instanceApp = useInstanceOAuthApp(canConfigureInstanceApp ? provider : undefined);
+    const instanceApp = useInstanceOAuthApp(canConfigureInstanceApp && !spec?.deviceFlow ? provider : undefined);
     const [inputValue, setInputValue] = useState('');
     const [showCustomFields, setShowCustomFields] = useState(false);
     const [clientId, setClientId] = useState('');
@@ -194,6 +210,16 @@ export function OAuthConnectForm({
     // same flow. No-op when a gate (plan limit) or a required input isn't satisfied.
     const triggerConnect = () => {
         if (canConnect && !canConnect()) return;
+        let context: Record<string, string> | undefined;
+        if (spec?.contextFields) {
+            try {
+                context = validateOAuthContext(spec, contextValues, ['input']);
+                setContextError(null);
+            } catch (error) {
+                setContextError(error instanceof Error ? error.message : 'Invalid connection input');
+                return;
+            }
+        }
         const name = newCredentialName();
         let shopArg: string | undefined;
         let siteArg: string | undefined;
@@ -225,7 +251,8 @@ export function OAuthConnectForm({
             shopArg,
             siteArg,
             userScopes && userScopes.length ? userScopes : undefined,
-            customClient
+            customClient,
+            ...(spec?.contextFields ? [context] as const : []),
         );
     };
 
@@ -241,7 +268,7 @@ export function OAuthConnectForm({
     // Self-hosted with no OAuth app for this provider: Connect would open a
     // popup onto an explainer page. Ask for the app here instead — this panel is
     // where nearly everyone meets the problem, and it is two fields.
-    if (canConfigureInstanceApp && !instanceApp.loading && !instanceApp.configured) {
+    if (canConfigureInstanceApp && !spec?.deviceFlow && !instanceApp.loading && !instanceApp.configured) {
         return (
             <div className="max-w-md">
                 <InstanceSetupCard
@@ -277,8 +304,25 @@ export function OAuthConnectForm({
             </div>
         </>
     );
+    if (deviceAuthorization?.provider === provider) return (
+        <DeviceCodePanel provider={displayName} userCode={deviceAuthorization.userCode}
+            verificationUrl={deviceAuthorization.verificationUrl} polling={deviceAuthorization.polling}
+            onApproved={deviceAuthorization.check} onCancel={() => onCancel?.()} />
+    );
     return (
         <div className="space-y-4">
+            {contextInputs.map(([key, field]) => (
+                <label key={key} className={FIELD_LABEL}>
+                    {field.label || key}
+                    {field.choices.length ? <select className={FIELD} value={contextValues[key] ?? ''}
+                        onChange={event => setContextValues(values => ({ ...values, [key]: event.target.value }))}>
+                        <option value="">Choose…</option>
+                        {field.choices.map(choice => <option key={choice} value={choice}>{choice}</option>)}
+                    </select> : <input className={FIELD} value={contextValues[key] ?? ''} autoComplete="off"
+                        onChange={event => setContextValues(values => ({ ...values, [key]: event.target.value }))} />}
+                </label>
+            ))}
+            {contextError && <p role="alert">{contextError}</p>}
             {error && (
                 <div role="alert" className="text-[13px] leading-relaxed">
                     <p className="font-medium text-red-600 dark:text-red-400">{error.includes("didn't grant") ? 'Permissions missing' : `Couldn’t connect ${displayName}`}</p>

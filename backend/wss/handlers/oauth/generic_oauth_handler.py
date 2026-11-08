@@ -12,6 +12,8 @@ from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
 from wss.receiver.client_events import (
     OAuthExchangeRequest,
+    OAuthDeviceStartRequest,
+    OAuthDevicePollRequest,
     OAuthRefreshRequest,
     OAuthValidateRequest,
 )
@@ -20,12 +22,18 @@ from wss.schema import SocketIOHandler
 from wss.sender import ResponseEvent, send_event
 from wss.sender.responses import (
     OAuthExchangeResponse,
+    OAuthDeviceStartResponse,
+    OAuthDevicePollResponse,
     OAuthRefreshResponse,
     OAuthValidateResponse,
 )
 
 
 logger = logging.getLogger(__name__)
+
+
+class _StoreError(ValueError):
+    pass
 
 
 class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
@@ -39,6 +47,8 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
     def get_events(self):
         return {
             "oauth:exchange": self.exchange_oauth_code,
+            "oauth:device:start": self.start_device_authorization,
+            "oauth:device:poll": self.poll_device_authorization,
             "oauth:refresh": self.refresh_oauth_token,
             "oauth:validate": self.validate_oauth_token,
         }
@@ -77,41 +87,21 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
         try:
             session, spec, pool = await self._context(sid, request.provider)
             tokens, name = await spec.exchange(
-                request.code, request.redirect_uri, request.code_verifier
+                request.code,
+                request.redirect_uri,
+                request.code_verifier,
+                **({"context": request.context} if spec.context_fields else {}),
             )
-            requested = request.scopes or spec.scopes
-            granted = tokens.scope.split() if tokens.scope is not None else requested
-            if set(requested) - set(granted):
-                raise ValueError("OAuth provider did not grant all requested scopes")
-            credential = tokens.model_dump()
-            credential["scope"] = " ".join(granted)
-            credential["name"] = name
-            encrypted = self.encryption.encrypt_credential(credential)
-            from repositories.credentials import create_credential_with_limit_check
-
-            async with pool.acquire() as conn:
-                row, error = await create_credential_with_limit_check(
-                    conn,
-                    session["user_id"],
-                    session.get("user_data", {}).get("subscription_tier", "free"),
-                    spec.credential_type,
-                    name,
-                    encrypted,
-                    {"provider": spec.provider, "name": name, "scopes": granted},
-                )
-            if error:
-                await send_event(
-                    self.sio,
-                    sid,
-                    ResponseEvent(request_id=request.request_id, data={}, error=error),
-                )
-                return
-            response = OAuthExchangeResponse(
-                success=True,
-                credential_id=str(row["id"]),
-                credential_name=row["name"],
-                name=name,
+            response = await self._store(
+                session, spec, pool, tokens, name, request.scopes
             )
+        except _StoreError as exc:
+            await send_event(
+                self.sio,
+                sid,
+                ResponseEvent(request_id=request.request_id, data={}, error=str(exc)),
+            )
+            return
         except (ValueError, KeyError, httpx.HTTPError) as exc:
             logger.warning(
                 "[generic_oauth] %s exchange failed: %s", request.provider, exc
@@ -127,14 +117,105 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             response = OAuthExchangeResponse(success=False, message="Internal error")
         await self._reply(sid, request, response)
 
+    async def _store(self, session, spec, pool, tokens, name, scopes):
+        granted = spec.granted_scopes(tokens, scopes or spec.scopes)
+        credential = tokens.model_dump()
+        credential["scope"] = " ".join(granted)
+        credential["name"] = name
+        encrypted = self.encryption.encrypt_credential(credential)
+        from repositories.credentials import create_credential_with_limit_check
+
+        async with pool.acquire() as conn:
+            row, error = await create_credential_with_limit_check(
+                conn,
+                session["user_id"],
+                session.get("user_data", {}).get("subscription_tier", "free"),
+                spec.credential_type,
+                name,
+                encrypted,
+                {"provider": spec.provider, "name": name, "scopes": granted},
+            )
+        if error:
+            raise _StoreError(error)
+        return OAuthExchangeResponse(
+            success=True,
+            credential_id=str(row["id"]),
+            credential_name=row["name"],
+            name=name,
+        )
+
+    async def _device(self, sid, request, *, start):
+        from nodes.core.oauth_device import start_device, poll_device
+
+        model = OAuthDeviceStartResponse if start else OAuthDevicePollResponse
+        try:
+            session, spec, pool = await self._context(sid, request.provider)
+            binding = session.get("oauth_device_binding") or (
+                "user:" + session["user_id"]
+            )
+            if start:
+                data = await start_device(
+                    spec,
+                    binding=binding,
+                    scopes=request.scopes or spec.scopes,
+                    context=request.context,
+                )
+            else:
+
+                async def complete(tokens, name, scopes):
+                    return (
+                        await self._store(session, spec, pool, tokens, name, scopes)
+                    ).model_dump()
+
+                data = await poll_device(
+                    spec,
+                    binding=binding,
+                    authorization_id=request.authorization_id,
+                    complete=complete,
+                )
+            response = model(
+                success=True, **{k: v for k, v in data.items() if k != "success"}
+            )
+        except _StoreError as exc:
+            response = model(success=False, status="error", message=str(exc))
+        except (ValueError, KeyError, httpx.HTTPError):
+            logger.warning("[generic_oauth] %s device sign-in failed", request.provider)
+            response = model(
+                success=False,
+                status="error",
+                message="Device sign-in failed; check configuration and try again",
+            )
+        except Exception:
+            logger.warning(
+                "[generic_oauth] %s device sign-in failed",
+                request.provider,
+                exc_info=True,
+            )
+            response = model(success=False, status="error", message="Internal error")
+        await self._reply(sid, request, response)
+
+    async def start_device_authorization(
+        self, sid: str, request: OAuthDeviceStartRequest
+    ) -> None:
+        await self._device(sid, request, start=True)
+
+    async def poll_device_authorization(
+        self, sid: str, request: OAuthDevicePollRequest
+    ) -> None:
+        await self._device(sid, request, start=False)
+
     async def _freshen(self, session, spec, pool, credential_id):
         return await manual_refresh_credential(
             pool,
             user_id=session["user_id"],
             credential_id=credential_id,
             provider=spec.provider,
-            refresh=spec.refresh,
-            additional_token_fields=spec.token_fields,
+            **(
+                {"make_refresh": spec.bind_refresh}
+                if spec.context_fields
+                else {"refresh": spec.refresh}
+            ),
+            additional_token_fields=spec.credential_fields,
             expected_credential_type=spec.credential_type,
         )
 
@@ -183,7 +264,20 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 raise ValueError("Credential has no access token")
             expired = is_token_expired(credential.get("expires_at"), buffer_minutes=0)
             if not expired:
-                await spec.account_name(credential["access_token"])
+                await spec.account_name(
+                    credential["access_token"],
+                    **(
+                        {
+                            "context": {
+                                k: credential[k]
+                                for k in spec.context_fields
+                                if k in credential
+                            }
+                        }
+                        if spec.context_fields
+                        else {}
+                    ),
+                )
             response = OAuthValidateResponse(valid=not expired, expired=expired)
         except (ValueError, KeyError, httpx.HTTPError) as exc:
             logger.warning(

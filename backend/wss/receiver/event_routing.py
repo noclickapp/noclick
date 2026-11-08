@@ -306,6 +306,8 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
 
         # Standard declared OAuth providers
         "oauth:exchange": Handler.GENERIC_OAUTH,
+        "oauth:device:start": Handler.GENERIC_OAUTH,
+        "oauth:device:poll": Handler.GENERIC_OAUTH,
         "oauth:refresh": Handler.GENERIC_OAUTH,
         "oauth:validate": Handler.GENERIC_OAUTH,
 

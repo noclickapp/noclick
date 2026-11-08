@@ -214,6 +214,7 @@ function AppConnectForm({
                     note={ctx.note}
                     busyLabel={checking === method.credential_type ? `Checking with ${displayName}…` : null}
                     connect={engine.connect}
+                    deviceAuthorization={engine.deviceAuthorization}
                     connectOrgConsent={engine.connectOrgConsent}
                     connectingProvider={engine.connectingProvider}
                     isConnecting={engine.isConnecting}
