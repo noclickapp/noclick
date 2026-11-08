@@ -1,0 +1,1458 @@
+{
+  "$defs": {
+    "GiteaCreateBranchConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_branch",
+          "default": "create_branch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "Create Branch",
+          "x-is-trigger": false
+        },
+        "new_branch_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "New Branch Name",
+          "type": "string"
+        },
+        "old_branch_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the repository default branch.",
+          "title": "Source Branch"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "new_branch_name"
+      ],
+      "title": "GiteaCreateBranchConfig",
+      "type": "object"
+    },
+    "GiteaCreateIssueCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "index": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue or Pull Request Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_issue_comment",
+          "default": "create_issue_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Create Issue Comment",
+          "x-is-trigger": false
+        },
+        "body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Markdown Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "index",
+        "body"
+      ],
+      "title": "GiteaCreateIssueCommentConfig",
+      "type": "object"
+    },
+    "GiteaCreateIssueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Body"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an empty list to clear assignees when updating.",
+          "title": "Assignee Usernames"
+        },
+        "milestone": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Milestone ID"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_issue",
+          "default": "create_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Create Issue",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label IDs"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "title"
+      ],
+      "title": "GiteaCreateIssueConfig",
+      "type": "object"
+    },
+    "GiteaCreatePullRequestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Body"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an empty list to clear assignees when updating.",
+          "title": "Assignee Usernames"
+        },
+        "milestone": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Milestone ID"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_pull_request",
+          "default": "create_pull_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pull Requests",
+          "x-display-name": "Create Pull Request",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "head": {
+          "description": "Branch or username:branch for a fork.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Source Branch",
+          "type": "string"
+        },
+        "base": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Target Branch",
+          "type": "string"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label IDs"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "title",
+        "head",
+        "base"
+      ],
+      "title": "GiteaCreatePullRequestConfig",
+      "type": "object"
+    },
+    "GiteaCreateReleaseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Notes"
+        },
+        "target_commitish": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Branch or Commit"
+        },
+        "draft": {
+          "default": true,
+          "description": "Set to false to publish this release.",
+          "title": "Draft",
+          "type": "boolean"
+        },
+        "prerelease": {
+          "default": false,
+          "title": "Prerelease",
+          "type": "boolean"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_release",
+          "default": "create_release",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Create Release",
+          "x-is-trigger": false
+        },
+        "tag_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "tag_name"
+      ],
+      "title": "GiteaCreateReleaseConfig",
+      "type": "object"
+    },
+    "GiteaCreateRepositoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_repository",
+          "default": "create_repository",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Create Repository",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private": {
+          "default": true,
+          "title": "Private Repository",
+          "type": "boolean"
+        },
+        "auto_init": {
+          "default": false,
+          "title": "Initialize Repository",
+          "type": "boolean"
+        },
+        "default_branch": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Branch"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GiteaCreateRepositoryConfig",
+      "type": "object"
+    },
+    "GiteaCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GiteaCurrentUserConfig",
+      "type": "object"
+    },
+    "GiteaGetIssueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "index": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue or Pull Request Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Get Issue",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "index"
+      ],
+      "title": "GiteaGetIssueConfig",
+      "type": "object"
+    },
+    "GiteaGetPullRequestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "index": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue or Pull Request Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_pull_request",
+          "default": "get_pull_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pull Requests",
+          "x-display-name": "Get Pull Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "index"
+      ],
+      "title": "GiteaGetPullRequestConfig",
+      "type": "object"
+    },
+    "GiteaGetReleaseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "release_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Release ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_release",
+          "default": "get_release",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Get Release",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "release_id"
+      ],
+      "title": "GiteaGetReleaseConfig",
+      "type": "object"
+    },
+    "GiteaGetRepositoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_repository",
+          "default": "get_repository",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Get Repository",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ],
+      "title": "GiteaGetRepositoryConfig",
+      "type": "object"
+    },
+    "GiteaListBranchesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One API page per execution; use next_page to continue.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "The instance may apply a lower server-side maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items per Page",
+          "type": "integer"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "List Branches",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ],
+      "title": "GiteaListBranchesConfig",
+      "type": "object"
+    },
+    "GiteaListIssueCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "index": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue or Pull Request Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_issue_comments",
+          "default": "list_issue_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Issue Comments",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "index"
+      ],
+      "title": "GiteaListIssueCommentsConfig",
+      "type": "object"
+    },
+    "GiteaListIssuesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One API page per execution; use next_page to continue.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "The instance may apply a lower server-side maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items per Page",
+          "type": "integer"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Issues",
+          "x-is-trigger": false
+        },
+        "state": {
+          "default": "open",
+          "enum": [
+            "open",
+            "closed",
+            "all"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Text"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated label names.",
+          "title": "Label Names"
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ],
+      "title": "GiteaListIssuesConfig",
+      "type": "object"
+    },
+    "GiteaListLabelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One API page per execution; use next_page to continue.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "The instance may apply a lower server-side maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items per Page",
+          "type": "integer"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Repository Labels",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ],
+      "title": "GiteaListLabelsConfig",
+      "type": "object"
+    },
+    "GiteaListPullRequestsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One API page per execution; use next_page to continue.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "The instance may apply a lower server-side maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items per Page",
+          "type": "integer"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_pull_requests",
+          "default": "list_pull_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pull Requests",
+          "x-display-name": "List Pull Requests",
+          "x-is-trigger": false
+        },
+        "state": {
+          "default": "open",
+          "enum": [
+            "open",
+            "closed",
+            "all"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ],
+      "title": "GiteaListPullRequestsConfig",
+      "type": "object"
+    },
+    "GiteaListReleasesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One API page per execution; use next_page to continue.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "The instance may apply a lower server-side maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items per Page",
+          "type": "integer"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_releases",
+          "default": "list_releases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "List Releases",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ],
+      "title": "GiteaListReleasesConfig",
+      "type": "object"
+    },
+    "GiteaListRepositoriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One API page per execution; use next_page to continue.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "The instance may apply a lower server-side maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_repositories",
+          "default": "list_repositories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "List My Repositories",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GiteaListRepositoriesConfig",
+      "type": "object"
+    },
+    "GiteaTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "gitea_token",
+          "default": "gitea_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_url": {
+          "description": "Public HTTPS origin, for example https://gitea.example.com. No API path, query or fragment.",
+          "title": "Gitea Instance URL",
+          "type": "string"
+        },
+        "access_token": {
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "instance_url",
+        "access_token"
+      ],
+      "title": "Gitea Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In your Gitea instance, open Settings \u2192 Applications \u2192 Manage Access Tokens. Paste an existing token and the public HTTPS instance origin. Use read:user for connection verification, read:repository and read:issue for reads, and write:repository and write:issue for writes you use. Tokens are sent as Authorization: token, never in URLs. Instances hosted under a URL subpath are not supported.",
+      "x-credential-url": "https://docs.gitea.com/development/api-usage/"
+    },
+    "GiteaUpdateIssueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Body"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an empty list to clear assignees when updating.",
+          "title": "Assignee Usernames"
+        },
+        "milestone": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Milestone ID"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "index": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue or Pull Request Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_issue",
+          "default": "update_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Update Issue",
+          "x-is-trigger": false
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "index"
+      ],
+      "title": "GiteaUpdateIssueConfig",
+      "type": "object"
+    },
+    "GiteaUpdatePullRequestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Body"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an empty list to clear assignees when updating.",
+          "title": "Assignee Usernames"
+        },
+        "milestone": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Milestone ID"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "index": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue or Pull Request Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_pull_request",
+          "default": "update_pull_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pull Requests",
+          "x-display-name": "Update Pull Request",
+          "x-is-trigger": false
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "base": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Branch"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "index"
+      ],
+      "title": "GiteaUpdatePullRequestConfig",
+      "type": "object"
+    },
+    "GiteaUpdateReleaseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Notes"
+        },
+        "target_commitish": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Branch or Commit"
+        },
+        "draft": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Draft"
+        },
+        "prerelease": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prerelease"
+        },
+        "owner": {
+          "title": "Repository Owner",
+          "type": "string"
+        },
+        "repo": {
+          "title": "Repository Name",
+          "type": "string"
+        },
+        "release_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Release ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_release",
+          "default": "update_release",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Update Release",
+          "x-is-trigger": false
+        },
+        "tag_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Name"
+        }
+      },
+      "required": [
+        "owner",
+        "repo",
+        "release_id"
+      ],
+      "title": "GiteaUpdateReleaseConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_branch": "#/$defs/GiteaCreateBranchConfig",
+          "create_issue": "#/$defs/GiteaCreateIssueConfig",
+          "create_issue_comment": "#/$defs/GiteaCreateIssueCommentConfig",
+          "create_pull_request": "#/$defs/GiteaCreatePullRequestConfig",
+          "create_release": "#/$defs/GiteaCreateReleaseConfig",
+          "create_repository": "#/$defs/GiteaCreateRepositoryConfig",
+          "get_current_user": "#/$defs/GiteaCurrentUserConfig",
+          "get_issue": "#/$defs/GiteaGetIssueConfig",
+          "get_pull_request": "#/$defs/GiteaGetPullRequestConfig",
+          "get_release": "#/$defs/GiteaGetReleaseConfig",
+          "get_repository": "#/$defs/GiteaGetRepositoryConfig",
+          "list_branches": "#/$defs/GiteaListBranchesConfig",
+          "list_issue_comments": "#/$defs/GiteaListIssueCommentsConfig",
+          "list_issues": "#/$defs/GiteaListIssuesConfig",
+          "list_labels": "#/$defs/GiteaListLabelsConfig",
+          "list_pull_requests": "#/$defs/GiteaListPullRequestsConfig",
+          "list_releases": "#/$defs/GiteaListReleasesConfig",
+          "list_repositories": "#/$defs/GiteaListRepositoriesConfig",
+          "update_issue": "#/$defs/GiteaUpdateIssueConfig",
+          "update_pull_request": "#/$defs/GiteaUpdatePullRequestConfig",
+          "update_release": "#/$defs/GiteaUpdateReleaseConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GiteaCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListRepositoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaGetRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaCreateRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListIssuesConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaGetIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaCreateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaUpdateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListIssueCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaCreateIssueCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListPullRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaGetPullRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaCreatePullRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaUpdatePullRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaCreateBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListReleasesConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaGetReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaCreateReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaUpdateReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GiteaListLabelsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GiteaTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gitea Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Gitea issue and comment on it",
+    "List open Gitea pull requests",
+    "Create a draft Gitea release"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
