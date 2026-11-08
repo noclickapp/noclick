@@ -1,0 +1,3069 @@
+{
+  "$defs": {
+    "FinancialDatasetsAIAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "financial_datasets_ai_api_key",
+          "default": "financial_datasets_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Financial Datasets AI API Key",
+      "type": "object",
+      "x-credential-instructions": "Generate an API key in your Financial Datasets dashboard and paste it here. Paid datasets require sufficient account credits. The news probe checks key acceptance, not account identity.",
+      "x-credential-url": "https://www.financialdatasets.ai/"
+    },
+    "FinancialFilter": {
+      "properties": {
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "gt",
+            "lt",
+            "gte",
+            "lte",
+            "eq",
+            "in"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "field",
+        "operator",
+        "value"
+      ],
+      "title": "FinancialFilter",
+      "type": "object"
+    },
+    "FinancialSort": {
+      "properties": {
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "title": "FinancialSort",
+      "type": "object"
+    },
+    "GetAllFinancialsConfig": {
+      "description": "Get all financial statements.",
+      "properties": {
+        "operation": {
+          "const": "get_all_financials",
+          "default": "get_all_financials",
+          "title": "Get all financial statements",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol. Required if cik or isin is not provided.",
+          "title": "Ticker"
+        },
+        "period": {
+          "description": "The time period of the financial statements.",
+          "enum": [
+            "annual",
+            "quarterly",
+            "ttm"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of financial statements to return. This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "title": "Limit"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company.",
+          "title": "Cik"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "enum": [
+                "US",
+                "UK",
+                "FR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The market the company is listed in: `US` (the default), `UK` or `FR`. Any ticker of the company, including a second share class, returns the company's statements.",
+          "title": "Market",
+          "enum": [
+            "US",
+            "UK",
+            "FR"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated alias of `market`: `LSE` means `market=UK`. Existing requests keep working. France has no alias: name it with `market=FR`.",
+          "title": "Exchange"
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ISIN (International Securities Identification Number) of a non-US listing. An alternative to `ticker` and `market`.",
+          "title": "Isin"
+        },
+        "report_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact report period date in YYYY-MM-DD format.",
+          "title": "Report Period"
+        },
+        "report_period_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Gte"
+        },
+        "report_period_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Lte"
+        },
+        "report_period_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than date in YYYY-MM-DD format.",
+          "title": "Report Period Gt"
+        },
+        "report_period_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than date in YYYY-MM-DD format.",
+          "title": "Report Period Lt"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact SEC filing date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than or equal to date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than or equal to date in YYYY-MM-DD format. Useful for point-in-time queries: returns only data that was publicly filed by the given date. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "period"
+      ],
+      "title": "GetAllFinancialsConfig",
+      "type": "object"
+    },
+    "GetBalanceSheetsConfig": {
+      "description": "Get balance sheets.",
+      "properties": {
+        "operation": {
+          "const": "get_balance_sheets",
+          "default": "get_balance_sheets",
+          "title": "Get balance sheets",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol. Required if cik or isin is not provided.",
+          "title": "Ticker"
+        },
+        "period": {
+          "description": "The time period of the balance sheets.",
+          "enum": [
+            "annual",
+            "quarterly",
+            "ttm"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of balance sheets to return This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "title": "Limit"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company.",
+          "title": "Cik"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "enum": [
+                "US",
+                "UK",
+                "FR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The market the company is listed in: `US` (the default), `UK` or `FR`. Any ticker of the company, including a second share class, returns the company's statements.",
+          "title": "Market",
+          "enum": [
+            "US",
+            "UK",
+            "FR"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated alias of `market`: `LSE` means `market=UK`. Existing requests keep working. France has no alias: name it with `market=FR`.",
+          "title": "Exchange"
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ISIN (International Securities Identification Number) of a non-US listing. An alternative to `ticker` and `market`.",
+          "title": "Isin"
+        },
+        "report_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact report period date in YYYY-MM-DD format.",
+          "title": "Report Period"
+        },
+        "report_period_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Gte"
+        },
+        "report_period_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Lte"
+        },
+        "report_period_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than date in YYYY-MM-DD format.",
+          "title": "Report Period Gt"
+        },
+        "report_period_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than date in YYYY-MM-DD format.",
+          "title": "Report Period Lt"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact SEC filing date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than or equal to date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than or equal to date in YYYY-MM-DD format. Useful for point-in-time queries: returns only data that was publicly filed by the given date. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "period"
+      ],
+      "title": "GetBalanceSheetsConfig",
+      "type": "object"
+    },
+    "GetCashFlowStatementsConfig": {
+      "description": "Get cash flow statements.",
+      "properties": {
+        "operation": {
+          "const": "get_cash_flow_statements",
+          "default": "get_cash_flow_statements",
+          "title": "Get cash flow statements",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol. Required if cik or isin is not provided.",
+          "title": "Ticker"
+        },
+        "period": {
+          "description": "The time period of the cash flow statements.",
+          "enum": [
+            "annual",
+            "quarterly",
+            "ttm"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of cash flow statements to return. This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "title": "Limit"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company.",
+          "title": "Cik"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "enum": [
+                "US",
+                "UK",
+                "FR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The market the company is listed in: `US` (the default), `UK` or `FR`. Any ticker of the company, including a second share class, returns the company's statements.",
+          "title": "Market",
+          "enum": [
+            "US",
+            "UK",
+            "FR"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated alias of `market`: `LSE` means `market=UK`. Existing requests keep working. France has no alias: name it with `market=FR`.",
+          "title": "Exchange"
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ISIN (International Securities Identification Number) of a non-US listing. An alternative to `ticker` and `market`.",
+          "title": "Isin"
+        },
+        "report_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact report period date in YYYY-MM-DD format.",
+          "title": "Report Period"
+        },
+        "report_period_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Gte"
+        },
+        "report_period_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Lte"
+        },
+        "report_period_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than date in YYYY-MM-DD format.",
+          "title": "Report Period Gt"
+        },
+        "report_period_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than date in YYYY-MM-DD format.",
+          "title": "Report Period Lt"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact SEC filing date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than or equal to date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than or equal to date in YYYY-MM-DD format. Useful for point-in-time queries: returns only data that was publicly filed by the given date. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "period"
+      ],
+      "title": "GetCashFlowStatementsConfig",
+      "type": "object"
+    },
+    "GetCompanyFactsConfig": {
+      "description": "Get company facts.",
+      "properties": {
+        "operation": {
+          "const": "get_company_facts",
+          "default": "get_company_facts",
+          "title": "Get company facts",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol.",
+          "title": "Ticker"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The CIK of the company.",
+          "title": "Cik"
+        }
+      },
+      "title": "GetCompanyFactsConfig",
+      "type": "object"
+    },
+    "GetEarningsConfig": {
+      "description": "Get earnings snapshot.",
+      "properties": {
+        "operation": {
+          "const": "get_earnings",
+          "default": "get_earnings",
+          "title": "Get earnings snapshot",
+          "type": "string"
+        },
+        "ticker": {
+          "description": "The ticker symbol (e.g. `AAPL`).",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "limit": {
+          "default": 1,
+          "description": "Number of most-recent **report periods** worth of filings to return, sorted by `(report_period DESC, filing_date ASC)`. The number of entries returned may exceed `limit` when a recent period has both an 8-K and a 10-Q / 10-K. Values above 40 are clamped to 40. Non-positive or non-integer values return 400. This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "GetEarningsConfig",
+      "type": "object"
+    },
+    "GetFinancialMetricsConfig": {
+      "description": "Get financial metrics.",
+      "properties": {
+        "operation": {
+          "const": "get_financial_metrics",
+          "default": "get_financial_metrics",
+          "title": "Get financial metrics",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol of the company. Required if cik is not provided.",
+          "title": "Ticker"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company. Can be used instead of ticker.",
+          "title": "Cik"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "enum": [
+                "US",
+                "UK",
+                "FR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The market the company is listed in: `US` (the default), `UK` or `FR`. Any ticker of the company, including a second share class, returns the company's metrics. Price-based values (market cap, enterprise value, valuation ratios, dividend yield) are not yet available for UK tickers.",
+          "title": "Market",
+          "enum": [
+            "US",
+            "UK",
+            "FR"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated alias of `market`: `LSE` means `market=UK`. Existing requests keep working. France has no alias: name it with `market=FR`.",
+          "title": "Exchange"
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ISIN (International Securities Identification Number) of a non-US listing. An alternative to `ticker` and `market`.",
+          "title": "Isin"
+        },
+        "period": {
+          "description": "The time period for the financial data.",
+          "enum": [
+            "annual",
+            "quarterly",
+            "ttm"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of results to return. This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "title": "Limit"
+        },
+        "report_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact report period date in YYYY-MM-DD format.",
+          "title": "Report Period"
+        },
+        "report_period_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Gte"
+        },
+        "report_period_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Lte"
+        },
+        "report_period_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than date in YYYY-MM-DD format.",
+          "title": "Report Period Gt"
+        },
+        "report_period_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than date in YYYY-MM-DD format.",
+          "title": "Report Period Lt"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact SEC filing date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than or equal to date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than or equal to date in YYYY-MM-DD format. Useful for point-in-time queries: returns only data that was publicly filed by the given date. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "period"
+      ],
+      "title": "GetFinancialMetricsConfig",
+      "type": "object"
+    },
+    "GetIncomeStatementsConfig": {
+      "description": "Get income statements.",
+      "properties": {
+        "operation": {
+          "const": "get_income_statements",
+          "default": "get_income_statements",
+          "title": "Get income statements",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol. Required if cik or isin is not provided.",
+          "title": "Ticker"
+        },
+        "period": {
+          "description": "The time period of the income statements.",
+          "enum": [
+            "annual",
+            "quarterly",
+            "ttm"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of income statements to return. This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "title": "Limit"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company.",
+          "title": "Cik"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "enum": [
+                "US",
+                "UK",
+                "FR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The market the company is listed in: `US` (the default), `UK` or `FR`. Any ticker of the company, including a second share class, returns the company's statements.",
+          "title": "Market",
+          "enum": [
+            "US",
+            "UK",
+            "FR"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated alias of `market`: `LSE` means `market=UK`. Existing requests keep working. France has no alias: name it with `market=FR`.",
+          "title": "Exchange"
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ISIN (International Securities Identification Number) of a non-US listing. An alternative to `ticker` and `market`.",
+          "title": "Isin"
+        },
+        "report_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact report period date in YYYY-MM-DD format.",
+          "title": "Report Period"
+        },
+        "report_period_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Gte"
+        },
+        "report_period_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Lte"
+        },
+        "report_period_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than date in YYYY-MM-DD format.",
+          "title": "Report Period Gt"
+        },
+        "report_period_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than date in YYYY-MM-DD format.",
+          "title": "Report Period Lt"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact SEC filing date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than or equal to date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than or equal to date in YYYY-MM-DD format. Useful for point-in-time queries: returns only data that was publicly filed by the given date. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "period"
+      ],
+      "title": "GetIncomeStatementsConfig",
+      "type": "object"
+    },
+    "GetInflationSnapshotConfig": {
+      "description": "Inflation (Snapshot).",
+      "properties": {
+        "operation": {
+          "const": "get_inflation_snapshot",
+          "default": "get_inflation_snapshot",
+          "title": "Inflation (Snapshot)",
+          "type": "string"
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional series id to return one row instead of all fourteen, e.g. cpi_core_sa or pce_core_sa.",
+          "title": "Series"
+        }
+      },
+      "title": "GetInflationSnapshotConfig",
+      "type": "object"
+    },
+    "GetInterestRatesSnapshotConfig": {
+      "description": "Interest Rates (Snapshot).",
+      "properties": {
+        "operation": {
+          "const": "get_interest_rates_snapshot",
+          "default": "get_interest_rates_snapshot",
+          "title": "Interest Rates (Snapshot)",
+          "type": "string"
+        },
+        "bank": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional central bank code (e.g., FED, ECB, BOJ) to return one bank only. Use the /macro/interest-rates/banks endpoint to get a list of available banks.",
+          "title": "Bank"
+        }
+      },
+      "title": "GetInterestRatesSnapshotConfig",
+      "type": "object"
+    },
+    "GetLaborSnapshotConfig": {
+      "description": "Labor Market (Snapshot).",
+      "properties": {
+        "operation": {
+          "const": "get_labor_snapshot",
+          "default": "get_labor_snapshot",
+          "title": "Labor Market (Snapshot)",
+          "type": "string"
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional series id to return one row instead of all 24, e.g. unemployment_rate_sa.",
+          "title": "Series"
+        }
+      },
+      "title": "GetLaborSnapshotConfig",
+      "type": "object"
+    },
+    "GetMetricsSnapshotConfig": {
+      "description": "Financial Metrics Snapshot (Real-Time).",
+      "properties": {
+        "operation": {
+          "const": "get_metrics_snapshot",
+          "default": "get_metrics_snapshot",
+          "title": "Financial Metrics Snapshot (Real-Time)",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol of the company.",
+          "title": "Ticker"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company. Can be used instead of ticker.",
+          "title": "Cik"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "enum": [
+                "US",
+                "UK",
+                "FR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The market the company is listed in: `US` (the default), `UK` or `FR`. Any ticker of the company, including a second share class, returns the company's metrics. Price-based values (market cap, enterprise value, valuation ratios, dividend yield) are not yet available for UK tickers.",
+          "title": "Market",
+          "enum": [
+            "US",
+            "UK",
+            "FR"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated alias of `market`: `LSE` means `market=UK`. Existing requests keep working. France has no alias: name it with `market=FR`.",
+          "title": "Exchange"
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ISIN (International Securities Identification Number) of a non-US listing. An alternative to `ticker` and `market`.",
+          "title": "Isin"
+        }
+      },
+      "title": "GetMetricsSnapshotConfig",
+      "type": "object"
+    },
+    "GetPriceSnapshotConfig": {
+      "description": "Price Snapshot (Real-Time).",
+      "properties": {
+        "operation": {
+          "const": "get_price_snapshot",
+          "default": "get_price_snapshot",
+          "title": "Price Snapshot (Real-Time)",
+          "type": "string"
+        },
+        "ticker": {
+          "description": "The stock ticker symbol (e.g. AAPL, MSFT).",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "GetPriceSnapshotConfig",
+      "type": "object"
+    },
+    "GetPricesConfig": {
+      "description": "Get historical stock price data.",
+      "properties": {
+        "operation": {
+          "const": "get_prices",
+          "default": "get_prices",
+          "title": "Get historical stock price data",
+          "type": "string"
+        },
+        "ticker": {
+          "description": "The stock ticker symbol (e.g. AAPL, MSFT).",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "interval": {
+          "description": "The time interval for the price data.",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "title": "Interval",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "The start date for the price data (format: YYYY-MM-DD).",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "The end date for the price data (format: YYYY-MM-DD).",
+          "title": "End Date",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "ticker",
+        "interval",
+        "start_date",
+        "end_date"
+      ],
+      "title": "GetPricesConfig",
+      "type": "object"
+    },
+    "GetYieldCurveSnapshotConfig": {
+      "description": "Treasury Yields (Snapshot).",
+      "properties": {
+        "operation": {
+          "const": "get_yield_curve_snapshot",
+          "default": "get_yield_curve_snapshot",
+          "title": "Treasury Yields (Snapshot)",
+          "type": "string"
+        }
+      },
+      "title": "GetYieldCurveSnapshotConfig",
+      "type": "object"
+    },
+    "ListActivistOwnershipConfig": {
+      "description": "Get activist stakes.",
+      "properties": {
+        "operation": {
+          "const": "list_activist_ownership",
+          "default": "list_activist_ownership",
+          "title": "Get activist stakes",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol of the subject company. Provide ticker or filer_cik, not both.",
+          "title": "Ticker"
+        },
+        "filer_cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The SEC CIK of the filer (the beneficial owner). Provide ticker or filer_cik, not both. Use the /activist-ownership/filers endpoint to look up CIKs by owner name.",
+          "title": "Filer Cik"
+        },
+        "history": {
+          "default": false,
+          "description": "When true, returns the full amendment history of each stake instead of only its current state.",
+          "title": "History",
+          "type": "boolean"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact filing date in YYYY-MM-DD format.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than this date (YYYY-MM-DD).",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than this date (YYYY-MM-DD).",
+          "title": "Filing Date Lt"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The total number of rows to return (default: 10; no maximum). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListActivistOwnershipConfig",
+      "type": "object"
+    },
+    "ListBeneficialOwnershipConfig": {
+      "description": "Get beneficial ownership.",
+      "properties": {
+        "operation": {
+          "const": "list_beneficial_ownership",
+          "default": "list_beneficial_ownership",
+          "title": "Get beneficial ownership",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol of the subject company. Provide ticker or filer_cik, not both.",
+          "title": "Ticker"
+        },
+        "filer_cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The SEC CIK of the filer (the beneficial owner). Provide ticker or filer_cik, not both. Use the /beneficial-ownership/filers endpoint to look up CIKs by owner name.",
+          "title": "Filer Cik"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "activist",
+                "passive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by stake type: activist (Schedule 13D) or passive (Schedule 13G).",
+          "title": "Type",
+          "enum": [
+            "activist",
+            "passive"
+          ],
+          "x-enum-searchable": true
+        },
+        "history": {
+          "default": false,
+          "description": "When true, returns the full amendment history of each stake instead of only its current state.",
+          "title": "History",
+          "type": "boolean"
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact filing date in YYYY-MM-DD format.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than this date (YYYY-MM-DD).",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than this date (YYYY-MM-DD).",
+          "title": "Filing Date Lt"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The total number of rows to return (default: 10; no maximum). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListBeneficialOwnershipConfig",
+      "type": "object"
+    },
+    "ListFilingsConfig": {
+      "description": "Get SEC filings.",
+      "properties": {
+        "operation": {
+          "const": "list_filings",
+          "default": "list_filings",
+          "title": "Get SEC filings",
+          "type": "string"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Central Index Key (CIK) of the company.",
+          "title": "Cik"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol.",
+          "title": "Ticker"
+        },
+        "filing_type": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "10-K",
+                  "10-Q",
+                  "8-K",
+                  "20-F",
+                  "6-K"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by one or more filing types. Repeat the query parameter to pass multiple values (e.g. filing_type=10-Q&filing_type=10-K).",
+          "title": "Filing Type"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The maximum number of filings to return (default: 10). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListFilingsConfig",
+      "type": "object"
+    },
+    "ListIndexFundsConfig": {
+      "description": "Get ETF / index-fund holdings.",
+      "properties": {
+        "operation": {
+          "const": "list_index_funds",
+          "default": "list_index_funds",
+          "title": "Get ETF / index-fund holdings",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The fund's ticker symbol (e.g., `SPY`). Returns that fund's holdings. Mutually exclusive with `holding`.",
+          "title": "Ticker"
+        },
+        "holding": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A held security's ticker symbol (e.g., `AAPL`). Returns the funds whose latest filing holds it. Mutually exclusive with `ticker`.",
+          "title": "Holding"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only valid with `ticker`. Returns the fund composition in effect on or before this date (YYYY-MM-DD). Without it, the fund's latest filing is returned.",
+          "title": "As Of"
+        },
+        "asset_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "equity",
+                "bond"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only valid with `ticker`. Filter constituents by instrument type: `equity` or `bond`. Omit for all holdings.",
+          "title": "Asset Class",
+          "enum": [
+            "equity",
+            "bond"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "The total number of rows to return (default: 50; no maximum). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "The number of rows to skip, for pagination (default: 0).",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListIndexFundsConfig",
+      "type": "object"
+    },
+    "ListInsiderOwnershipConfig": {
+      "description": "Get insider ownership.",
+      "properties": {
+        "operation": {
+          "const": "list_insider_ownership",
+          "default": "list_insider_ownership",
+          "title": "Get insider ownership",
+          "type": "string"
+        },
+        "ticker": {
+          "description": "The ticker symbol of the company.",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by insider name (case-insensitive contains). Use the /insider-ownership/names endpoint to get available names for a ticker.",
+          "title": "Name"
+        },
+        "form_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "3",
+                "3/A",
+                "5",
+                "5/A"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC form type: 3 for initial ownership statements, 5 for annual statements (or their amendments 3/A, 5/A).",
+          "title": "Form Type",
+          "enum": [
+            "3",
+            "3/A",
+            "5",
+            "5/A"
+          ],
+          "x-enum-searchable": true
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact filing date in YYYY-MM-DD format.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than this date (YYYY-MM-DD).",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than this date (YYYY-MM-DD).",
+          "title": "Filing Date Lt"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The total number of rows to return (default: 10; no maximum). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "ListInsiderOwnershipConfig",
+      "type": "object"
+    },
+    "ListInsiderTradesConfig": {
+      "description": "Get insider trades.",
+      "properties": {
+        "operation": {
+          "const": "list_insider_trades",
+          "default": "list_insider_trades",
+          "title": "Get insider trades",
+          "type": "string"
+        },
+        "ticker": {
+          "description": "The ticker symbol of the company.",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The maximum number of transactions to return (default: 10). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by insider name (e.g., 'Jen Hsun Huang'). Use the /insider-trades/names endpoint to get available names for a ticker.",
+          "title": "Name"
+        },
+        "transaction_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by transaction type (e.g., 'Open market sale', 'Gift'). Use the /insider-trades/transaction-types endpoint to get available types.",
+          "title": "Transaction Type"
+        },
+        "form_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "4",
+                "4/A",
+                "5",
+                "5/A"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC form type: 4 for trades, 5 for annual statements (or their amendments 4/A, 5/A).",
+          "title": "Form Type",
+          "enum": [
+            "4",
+            "4/A",
+            "5",
+            "5/A"
+          ],
+          "x-enum-searchable": true
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact filing date in YYYY-MM-DD format.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than or equal to this date (YYYY-MM-DD).",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date greater than this date (YYYY-MM-DD).",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing date less than this date (YYYY-MM-DD).",
+          "title": "Filing Date Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "ListInsiderTradesConfig",
+      "type": "object"
+    },
+    "ListInstitutionalHoldingsConfig": {
+      "description": "Get 13F institutional holdings.",
+      "properties": {
+        "operation": {
+          "const": "list_institutional_holdings",
+          "default": "list_institutional_holdings",
+          "title": "Get 13F institutional holdings",
+          "type": "string"
+        },
+        "filer_cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The 10-digit zero-padded SEC CIK of the institutional filer. Mutually exclusive with `ticker`.",
+          "title": "Filer Cik"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The held security's ticker symbol. Mutually exclusive with `filer_cik`. Without a `report_period` filter, returns one position per institutional filer whose most recent 13F currently includes this ticker.",
+          "title": "Ticker"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The total number of rows to return (default: 10; no maximum). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "report_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact report period date in YYYY-MM-DD format.",
+          "title": "Report Period"
+        },
+        "report_period_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Gte"
+        },
+        "report_period_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than or equal to date in YYYY-MM-DD format.",
+          "title": "Report Period Lte"
+        },
+        "report_period_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period greater than date in YYYY-MM-DD format.",
+          "title": "Report Period Gt"
+        },
+        "report_period_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report period less than date in YYYY-MM-DD format.",
+          "title": "Report Period Lt"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListInstitutionalHoldingsConfig",
+      "type": "object"
+    },
+    "ListIposConfig": {
+      "description": "Get IPO filings.",
+      "properties": {
+        "operation": {
+          "const": "list_ipos",
+          "default": "list_ipos",
+          "title": "Get IPO filings",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the proposed ticker symbol from the filing's cover page.",
+          "title": "Ticker"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the SEC Central Index Key of the filer, with or without leading zeros.",
+          "title": "Cik"
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "enum": [
+                "ipo",
+                "shell_company",
+                "spac",
+                "resale",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filing classification: ipo (a real operating company registering to list on an exchange), shell_company, spac, resale, or other.",
+          "title": "Classification",
+          "enum": [
+            "ipo",
+            "shell_company",
+            "spac",
+            "resale",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "filing_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact SEC filing date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date"
+        },
+        "filing_date_gte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than or equal to date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gte"
+        },
+        "filing_date_lte": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than or equal to date in YYYY-MM-DD format. Useful for point-in-time queries: returns only data that was publicly filed by the given date. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lte"
+        },
+        "filing_date_gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date greater than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Gt"
+        },
+        "filing_date_lt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by SEC filing date less than date in YYYY-MM-DD format. Rows without a known filing date are excluded.",
+          "title": "Filing Date Lt"
+        },
+        "limit": {
+          "default": 10,
+          "description": "The total number of rows to return (default: 10; no maximum). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListIposConfig",
+      "type": "object"
+    },
+    "ListNewsConfig": {
+      "description": "Get news articles.",
+      "properties": {
+        "operation": {
+          "const": "list_news",
+          "default": "list_news",
+          "title": "Get news articles",
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticker symbol of the company. Omit for broad market news.",
+          "title": "Ticker"
+        },
+        "limit": {
+          "default": 5,
+          "description": "The maximum number of news articles to return (default: 5, max: 10). This is the total across all pages, not a page size: each page holds up to 10 records, linked by `next_page_url`.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor from a previous response's next_page_url. When provided, all other query parameters are ignored: the cursor carries the original request's filters. Treat it as opaque; do not construct or modify it.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListNewsConfig",
+      "type": "object"
+    },
+    "SearchFinancialsConfig": {
+      "description": "Search financial statements.",
+      "properties": {
+        "operation": {
+          "const": "search_financials",
+          "default": "search_financials",
+          "title": "Search financial statements",
+          "type": "string"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/$defs/FinancialFilter"
+          },
+          "minItems": 1,
+          "title": "Filters",
+          "type": "array"
+        },
+        "limit": {
+          "default": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "currency": {
+          "default": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FinancialSort"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point-in-time screen date, YYYY-MM-DD",
+          "title": "As Of"
+        }
+      },
+      "required": [
+        "filters"
+      ],
+      "title": "SearchFinancialsConfig",
+      "type": "object"
+    },
+    "SearchLineItemsConfig": {
+      "description": "Search specific financial metrics.",
+      "properties": {
+        "operation": {
+          "const": "search_line_items",
+          "default": "search_line_items",
+          "title": "Search specific financial metrics",
+          "type": "string"
+        },
+        "line_items": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Line Items",
+          "type": "array"
+        },
+        "tickers": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tickers",
+          "type": "array"
+        },
+        "period": {
+          "default": "ttm",
+          "enum": [
+            "annual",
+            "quarterly",
+            "ttm"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "limit": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "line_items",
+        "tickers"
+      ],
+      "title": "SearchLineItemsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_all_financials": "#/$defs/GetAllFinancialsConfig",
+          "get_balance_sheets": "#/$defs/GetBalanceSheetsConfig",
+          "get_cash_flow_statements": "#/$defs/GetCashFlowStatementsConfig",
+          "get_company_facts": "#/$defs/GetCompanyFactsConfig",
+          "get_earnings": "#/$defs/GetEarningsConfig",
+          "get_financial_metrics": "#/$defs/GetFinancialMetricsConfig",
+          "get_income_statements": "#/$defs/GetIncomeStatementsConfig",
+          "get_inflation_snapshot": "#/$defs/GetInflationSnapshotConfig",
+          "get_interest_rates_snapshot": "#/$defs/GetInterestRatesSnapshotConfig",
+          "get_labor_snapshot": "#/$defs/GetLaborSnapshotConfig",
+          "get_metrics_snapshot": "#/$defs/GetMetricsSnapshotConfig",
+          "get_price_snapshot": "#/$defs/GetPriceSnapshotConfig",
+          "get_prices": "#/$defs/GetPricesConfig",
+          "get_yield_curve_snapshot": "#/$defs/GetYieldCurveSnapshotConfig",
+          "list_activist_ownership": "#/$defs/ListActivistOwnershipConfig",
+          "list_beneficial_ownership": "#/$defs/ListBeneficialOwnershipConfig",
+          "list_filings": "#/$defs/ListFilingsConfig",
+          "list_index_funds": "#/$defs/ListIndexFundsConfig",
+          "list_insider_ownership": "#/$defs/ListInsiderOwnershipConfig",
+          "list_insider_trades": "#/$defs/ListInsiderTradesConfig",
+          "list_institutional_holdings": "#/$defs/ListInstitutionalHoldingsConfig",
+          "list_ipos": "#/$defs/ListIposConfig",
+          "list_news": "#/$defs/ListNewsConfig",
+          "search_financials": "#/$defs/SearchFinancialsConfig",
+          "search_line_items": "#/$defs/SearchLineItemsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCompanyFactsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetIncomeStatementsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetBalanceSheetsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCashFlowStatementsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAllFinancialsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFinancialMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMetricsSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPricesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPriceSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEarningsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFilingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInsiderTradesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInsiderOwnershipConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInstitutionalHoldingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListBeneficialOwnershipConfig"
+        },
+        {
+          "$ref": "#/$defs/ListActivistOwnershipConfig"
+        },
+        {
+          "$ref": "#/$defs/ListIndexFundsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListIposConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInterestRatesSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/GetYieldCurveSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInflationSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLaborSnapshotConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchFinancialsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchLineItemsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FinancialDatasetsAIAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Financial-datasets-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,60 @@
+{
+  "source": "https://docs.financialdatasets.ai/api/financials/search-line-items.md",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "search_results": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "ticker": {
+              "type": "string",
+              "description": "The ticker symbol of the company."
+            },
+            "report_period": {
+              "type": "string",
+              "format": "date",
+              "description": "The reporting period of the financial data."
+            },
+            "period": {
+              "type": "string",
+              "enum": [
+                "annual",
+                "quarterly",
+                "ttm"
+              ],
+              "description": "The time period of the financial data."
+            },
+            "currency": {
+              "type": "string",
+              "description": "The currency of the financial data."
+            }
+          },
+          "additionalProperties": {
+            "type": "string",
+            "description": "Additional financial metrics based on the search criteria."
+          }
+        }
+      }
+    }
+  },
+  "documented_response": {
+    "search_results": [
+      {
+        "ticker": "NVDA",
+        "report_period": "2024-07-28",
+        "period": "ttm",
+        "net_income": 53008000000,
+        "total_debt": 9765000000
+      },
+      {
+        "ticker": "AAPL",
+        "report_period": "2024-06-29",
+        "period": "ttm",
+        "net_income": 101956000000,
+        "total_debt": 101304000000
+      }
+    ]
+  }
+}
