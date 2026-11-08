@@ -1,0 +1,2051 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "ZohoProjectsCreateProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_zpuid": {
+          "description": "V3 requires owner.zpuid. The picker shows the portal owner; paste another user's ZPUID if needed.",
+          "title": "Project Owner",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste user ZPUID",
+            "depends_on": "portal_id",
+            "field_name": "owner_zpuid",
+            "placeholder": "Select portal owner...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_owner_zpuid"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "project_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "template"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Type",
+          "enum": [
+            "active",
+            "template"
+          ],
+          "x-enum-searchable": true
+        },
+        "is_public_project": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Project"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "portal_id",
+        "name",
+        "owner_zpuid"
+      ],
+      "title": "ZohoProjectsCreateProjectConfig",
+      "type": "object"
+    },
+    "ZohoProjectsCreateTaskConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "tasklist_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional; uses the general task list when omitted.",
+          "title": "Task List ID"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "name"
+      ],
+      "title": "ZohoProjectsCreateTaskConfig",
+      "type": "object"
+    },
+    "ZohoProjectsCreateTasklistConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_tasklist",
+          "default": "create_tasklist",
+          "title": "Create Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Lists",
+          "x-display-name": "Create Task List",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "flag": {
+          "anyOf": [
+            {
+              "enum": [
+                "internal",
+                "external"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility",
+          "enum": [
+            "internal",
+            "external"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "name"
+      ],
+      "title": "ZohoProjectsCreateTasklistConfig",
+      "type": "object"
+    },
+    "ZohoProjectsDeleteProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Permanently Delete Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Permanently Delete Project",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsDeleteProjectConfig",
+      "type": "object"
+    },
+    "ZohoProjectsDeleteTaskConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "task_id": {
+          "title": "Task",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste task ID",
+            "depends_on": "project_id",
+            "field_name": "task_id",
+            "placeholder": "Select task...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_task_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "task_id"
+      ],
+      "title": "ZohoProjectsDeleteTaskConfig",
+      "type": "object"
+    },
+    "ZohoProjectsDeleteTasklistConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_tasklist",
+          "default": "delete_tasklist",
+          "title": "Delete Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Lists",
+          "x-display-name": "Delete Task List",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "tasklist_id": {
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste task list ID",
+            "depends_on": "project_id",
+            "field_name": "tasklist_id",
+            "placeholder": "Select task list...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_tasklist_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "tasklist_id"
+      ],
+      "title": "ZohoProjectsDeleteTasklistConfig",
+      "type": "object"
+    },
+    "ZohoProjectsGetPortalConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_portal",
+          "default": "get_portal",
+          "title": "Get Portal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portals",
+          "x-display-name": "Get Portal",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        }
+      },
+      "required": [
+        "portal_id"
+      ],
+      "title": "ZohoProjectsGetPortalConfig",
+      "type": "object"
+    },
+    "ZohoProjectsGetProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsGetProjectConfig",
+      "type": "object"
+    },
+    "ZohoProjectsGetTaskConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "task_id": {
+          "title": "Task",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste task ID",
+            "depends_on": "project_id",
+            "field_name": "task_id",
+            "placeholder": "Select task...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_task_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "task_id"
+      ],
+      "title": "ZohoProjectsGetTaskConfig",
+      "type": "object"
+    },
+    "ZohoProjectsGetTasklistConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_tasklist",
+          "default": "get_tasklist",
+          "title": "Get Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Lists",
+          "x-display-name": "Get Task List",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "tasklist_id": {
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste task list ID",
+            "depends_on": "project_id",
+            "field_name": "tasklist_id",
+            "placeholder": "Select task list...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_tasklist_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "tasklist_id"
+      ],
+      "title": "ZohoProjectsGetTasklistConfig",
+      "type": "object"
+    },
+    "ZohoProjectsListAllTasklistsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_all_tasklists",
+          "default": "list_all_tasklists",
+          "title": "List All Task Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Lists",
+          "x-display-name": "List All Task Lists",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "portal_id"
+      ],
+      "title": "ZohoProjectsListAllTasklistsConfig",
+      "type": "object"
+    },
+    "ZohoProjectsListAllTasksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_all_tasks",
+          "default": "list_all_tasks",
+          "title": "List All Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List All Tasks",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "portal_id"
+      ],
+      "title": "ZohoProjectsListAllTasksConfig",
+      "type": "object"
+    },
+    "ZohoProjectsListPortalsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_portals",
+          "default": "list_portals",
+          "title": "List Portals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portals",
+          "x-display-name": "List Portals",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZohoProjectsListPortalsConfig",
+      "type": "object"
+    },
+    "ZohoProjectsListProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "portal_id"
+      ],
+      "title": "ZohoProjectsListProjectsConfig",
+      "type": "object"
+    },
+    "ZohoProjectsListTasklistsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tasklists",
+          "default": "list_tasklists",
+          "title": "List Task Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Lists",
+          "x-display-name": "List Task Lists",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsListTasklistsConfig",
+      "type": "object"
+    },
+    "ZohoProjectsListTasksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsListTasksConfig",
+      "type": "object"
+    },
+    "ZohoProjectsOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zoho_projects_oauth",
+          "default": "zoho_projects_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "title": "Expires At",
+          "type": "string"
+        },
+        "location": {
+          "title": "Location",
+          "type": "string"
+        },
+        "accounts": {
+          "title": "Accounts",
+          "type": "string"
+        },
+        "accounts_server": {
+          "title": "Accounts Server",
+          "type": "string"
+        },
+        "portal_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Id"
+        },
+        "portal_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Name"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "location",
+        "accounts",
+        "accounts_server"
+      ],
+      "title": "Zoho Projects OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://api-console.zoho.com/",
+      "x-oauth-provider": "zoho_projects",
+      "x-oauth-scopes": [
+        "ZohoProjects.portals.READ",
+        "ZohoProjects.projects.CREATE",
+        "ZohoProjects.projects.DELETE",
+        "ZohoProjects.projects.READ",
+        "ZohoProjects.projects.UPDATE",
+        "ZohoProjects.tasklists.CREATE",
+        "ZohoProjects.tasklists.DELETE",
+        "ZohoProjects.tasklists.READ",
+        "ZohoProjects.tasks.CREATE",
+        "ZohoProjects.tasks.DELETE",
+        "ZohoProjects.tasks.READ",
+        "ZohoProjects.tasks.UPDATE",
+        "aaaserver.profile.READ"
+      ]
+    },
+    "ZohoProjectsOnNewTaskConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_task",
+          "default": "on_new_task",
+          "title": "On New Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Task",
+          "x-is-trigger": true
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsOnNewTaskConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ZohoProjectsRestoreProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "restore_project",
+          "default": "restore_project",
+          "title": "Restore Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Restore Project",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsRestoreProjectConfig",
+      "type": "object"
+    },
+    "ZohoProjectsTrashProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "trash_project",
+          "default": "trash_project",
+          "title": "Trash Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Trash Project",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsTrashProjectConfig",
+      "type": "object"
+    },
+    "ZohoProjectsUpdateProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id"
+      ],
+      "title": "ZohoProjectsUpdateProjectConfig",
+      "type": "object"
+    },
+    "ZohoProjectsUpdateTaskConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "task_id": {
+          "title": "Task",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste task ID",
+            "depends_on": "project_id",
+            "field_name": "task_id",
+            "placeholder": "Select task...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_task_id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status ID"
+        },
+        "completion_percentage": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completion Percentage"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "task_id"
+      ],
+      "title": "ZohoProjectsUpdateTaskConfig",
+      "type": "object"
+    },
+    "ZohoProjectsUpdateTasklistConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_tasklist",
+          "default": "update_tasklist",
+          "title": "Update Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Lists",
+          "x-display-name": "Update Task List",
+          "x-is-trigger": false
+        },
+        "portal_id": {
+          "title": "Portal",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste portal ID",
+            "field_name": "portal_id",
+            "placeholder": "Select portal...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "zoho_projects_portal_id"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "depends_on": "portal_id",
+            "field_name": "project_id",
+            "placeholder": "Select project...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_project_id"
+        },
+        "tasklist_id": {
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste task list ID",
+            "depends_on": "project_id",
+            "field_name": "tasklist_id",
+            "placeholder": "Select task list...",
+            "searchable": true
+          },
+          "x-resource-type": "zoho_projects_tasklist_id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "flag": {
+          "anyOf": [
+            {
+              "enum": [
+                "internal",
+                "external"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility",
+          "enum": [
+            "internal",
+            "external"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "portal_id",
+        "project_id",
+        "tasklist_id"
+      ],
+      "title": "ZohoProjectsUpdateTasklistConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_project": "#/$defs/ZohoProjectsCreateProjectConfig",
+          "create_task": "#/$defs/ZohoProjectsCreateTaskConfig",
+          "create_tasklist": "#/$defs/ZohoProjectsCreateTasklistConfig",
+          "delete_project": "#/$defs/ZohoProjectsDeleteProjectConfig",
+          "delete_task": "#/$defs/ZohoProjectsDeleteTaskConfig",
+          "delete_tasklist": "#/$defs/ZohoProjectsDeleteTasklistConfig",
+          "get_portal": "#/$defs/ZohoProjectsGetPortalConfig",
+          "get_project": "#/$defs/ZohoProjectsGetProjectConfig",
+          "get_task": "#/$defs/ZohoProjectsGetTaskConfig",
+          "get_tasklist": "#/$defs/ZohoProjectsGetTasklistConfig",
+          "list_all_tasklists": "#/$defs/ZohoProjectsListAllTasklistsConfig",
+          "list_all_tasks": "#/$defs/ZohoProjectsListAllTasksConfig",
+          "list_portals": "#/$defs/ZohoProjectsListPortalsConfig",
+          "list_projects": "#/$defs/ZohoProjectsListProjectsConfig",
+          "list_tasklists": "#/$defs/ZohoProjectsListTasklistsConfig",
+          "list_tasks": "#/$defs/ZohoProjectsListTasksConfig",
+          "on_new_task": "#/$defs/ZohoProjectsOnNewTaskConfig",
+          "restore_project": "#/$defs/ZohoProjectsRestoreProjectConfig",
+          "trash_project": "#/$defs/ZohoProjectsTrashProjectConfig",
+          "update_project": "#/$defs/ZohoProjectsUpdateProjectConfig",
+          "update_task": "#/$defs/ZohoProjectsUpdateTaskConfig",
+          "update_tasklist": "#/$defs/ZohoProjectsUpdateTasklistConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZohoProjectsListPortalsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsGetPortalConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsTrashProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsRestoreProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsListTasklistsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsListAllTasklistsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsGetTasklistConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsCreateTasklistConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsUpdateTasklistConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsDeleteTasklistConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsListAllTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoProjectsOnNewTaskConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZohoProjectsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zoho-projects Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Zoho Projects task when a form is submitted",
+    "List tasks in a Zoho project",
+    "Update a Zoho Projects task's priority"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
