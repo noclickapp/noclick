@@ -13,6 +13,7 @@ const GenderapiIoIcon = ({ className, style }: { className?: string; style?: CSS
 
 export const GenderapiIoNode: NodeDefinition = {
     type: 'automation-genderapi-io', label: 'GenderAPI.io',
+    category: 'crm-sales',
     description: 'Predict from names, emails and usernames, validate phones and read credit usage',
     Icon: GenderapiIoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
