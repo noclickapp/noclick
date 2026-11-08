@@ -1,0 +1,1873 @@
+{
+  "$defs": {
+    "AddLayerConfig": {
+      "additionalProperties": false,
+      "description": "Add a layer.",
+      "properties": {
+        "operation": {
+          "const": "add_layer",
+          "default": "add_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        },
+        "type": {
+          "description": "The kind of layer to add.",
+          "enum": [
+            "text",
+            "image",
+            "ai_image",
+            "rectangle",
+            "circle"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "pageIndex": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The page of a multipage design. Defaults to the first page.",
+          "title": "Pageindex"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The text of a text layer.",
+          "title": "Text"
+        },
+        "imageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The image of an image layer.",
+          "title": "Imageurl"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The prompt of an AI Image layer.",
+          "title": "Prompt"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The text color.",
+          "title": "Color"
+        },
+        "backgroundColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The background color.",
+          "title": "Backgroundcolor"
+        },
+        "fontSize": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The font size in pixels.",
+          "title": "Fontsize"
+        },
+        "textAlign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The text alignment.",
+          "title": "Textalign"
+        },
+        "fontFamily": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The font family.",
+          "title": "Fontfamily"
+        },
+        "fontWeight": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The font weight.",
+          "title": "Fontweight"
+        },
+        "aiModel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The model of an AI Image layer.",
+          "title": "Aimodel"
+        },
+        "aiAspectRatio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The aspect ratio of an AI Image layer.",
+          "title": "Aiaspectratio"
+        },
+        "x": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Left position in pixels.",
+          "title": "X"
+        },
+        "y": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Top position in pixels.",
+          "title": "Y"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width in pixels.",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height in pixels.",
+          "title": "Height"
+        },
+        "zIndex": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The stacking order.",
+          "title": "Zindex"
+        }
+      },
+      "required": [
+        "uid",
+        "type"
+      ],
+      "title": "AddLayerConfig",
+      "type": "object"
+    },
+    "CreateDesignConfig": {
+      "additionalProperties": false,
+      "description": "Create an empty design.",
+      "properties": {
+        "operation": {
+          "const": "create_design",
+          "default": "create_design",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUid": {
+          "description": "The workspace to create the design in.",
+          "title": "Workspaceuid",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the design.",
+          "title": "Name",
+          "type": "string"
+        },
+        "width": {
+          "default": 650,
+          "description": "Canvas width in pixels.",
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 500,
+          "description": "Canvas height in pixels.",
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspaceUid",
+        "name"
+      ],
+      "title": "CreateDesignConfig",
+      "type": "object"
+    },
+    "CreateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Create a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "The name of the workspace.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateWorkspaceConfig",
+      "type": "object"
+    },
+    "DeleteGeneratedImageConfig": {
+      "additionalProperties": false,
+      "description": "Delete a generated image.",
+      "properties": {
+        "operation": {
+          "const": "delete_generated_image",
+          "default": "delete_generated_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamUid": {
+          "description": "The first path segment of the image URL.",
+          "title": "Teamuid",
+          "type": "string"
+        },
+        "filename": {
+          "description": "The file name in the image URL.",
+          "title": "Filename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamUid",
+        "filename"
+      ],
+      "title": "DeleteGeneratedImageConfig",
+      "type": "object"
+    },
+    "DeleteLayerConfig": {
+      "additionalProperties": false,
+      "description": "Delete a layer.",
+      "properties": {
+        "operation": {
+          "const": "delete_layer",
+          "default": "delete_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        },
+        "layerId": {
+          "description": "The ID of the layer.",
+          "title": "Layerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid",
+        "layerId"
+      ],
+      "title": "DeleteLayerConfig",
+      "type": "object"
+    },
+    "DeleteMediaAssetConfig": {
+      "additionalProperties": false,
+      "description": "Delete a media asset.",
+      "properties": {
+        "operation": {
+          "const": "delete_media_asset",
+          "default": "delete_media_asset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "description": "The ID of the workspace.",
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "assetId": {
+          "description": "The ID of the asset.",
+          "title": "Assetid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "assetId"
+      ],
+      "title": "DeleteMediaAssetConfig",
+      "type": "object"
+    },
+    "DeleteWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Delete a workspace.",
+      "properties": {
+        "operation": {
+          "const": "delete_workspace",
+          "default": "delete_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "description": "The ID of the workspace.",
+          "title": "Workspaceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId"
+      ],
+      "title": "DeleteWorkspaceConfig",
+      "type": "object"
+    },
+    "DynapicturesAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dynapictures_api_key",
+          "default": "dynapictures_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Dynapictures API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the DynaPictures account page. It grants your user's full access. Paste only the key; NoClick adds the Bearer header. Connecting reads your workspaces.",
+      "x-credential-url": "https://dynapictures.com/app/account"
+    },
+    "GenerateImageConfig": {
+      "additionalProperties": false,
+      "description": "Generate an image from a template.",
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp",
+                "avif",
+                "pdf",
+                "pptx"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output format. `pdf` is for multipage templates and produces one file with every page.",
+          "title": "Format",
+          "enum": [
+            "png",
+            "jpeg",
+            "webp",
+            "avif",
+            "pdf",
+            "pptx"
+          ],
+          "x-enum-searchable": true
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom data stored on the generated image and returned in responses and webhooks.",
+          "title": "Metadata"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LayerOverride"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New values for the layers of a single-page template.",
+          "title": "Params"
+        },
+        "pages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PageOverride"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New values for the pages of a multipage template, instead of `params`.",
+          "title": "Pages"
+        },
+        "responseFormat": {
+          "const": "json",
+          "default": "json",
+          "description": "Return JSON containing generated image or PDF URLs.",
+          "title": "Responseformat",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "GenerateImageConfig",
+      "type": "object"
+    },
+    "GetAiGenerationConfig": {
+      "additionalProperties": false,
+      "description": "Get an AI generation job.",
+      "properties": {
+        "operation": {
+          "const": "get_ai_generation",
+          "default": "get_ai_generation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobUid": {
+          "description": "The `jobUid` from the start request.",
+          "title": "Jobuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobUid"
+      ],
+      "title": "GetAiGenerationConfig",
+      "type": "object"
+    },
+    "GetMediaAssetConfig": {
+      "additionalProperties": false,
+      "description": "Get a media asset.",
+      "properties": {
+        "operation": {
+          "const": "get_media_asset",
+          "default": "get_media_asset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "description": "The ID of the workspace.",
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "assetId": {
+          "description": "The ID of the asset.",
+          "title": "Assetid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "assetId"
+      ],
+      "title": "GetMediaAssetConfig",
+      "type": "object"
+    },
+    "GetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get a template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "GetTemplateConfig",
+      "type": "object"
+    },
+    "LayerOverride": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name of the layer to customize, shown in the settings panel when the layer is selected. `canvas` is the background.",
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The text to render in a text layer. Basic HTML is supported and sanitized.",
+          "title": "Text"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The text color. E.g. `#000000`, `rgb(0,0,0)` or `rgba(0,0,0,0.5)`.",
+          "title": "Color"
+        },
+        "fontSize": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Font size of a text layer, e.g. `48px`.",
+          "title": "Fontsize"
+        },
+        "backgroundColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The background color of the layer. E.g. `#000000`, `rgb(0,0,0)` or `rgba(0,0,0,0.5)`.",
+          "title": "Backgroundcolor"
+        },
+        "borderColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The border color of the layer. Set `borderWidth` as well. E.g. `#000000`, `rgb(0,0,0)` or `rgba(0,0,0,0.5)`.",
+          "title": "Bordercolor"
+        },
+        "borderWidth": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The border width of the layer, e.g. `1px`.",
+          "title": "Borderwidth"
+        },
+        "borderRadius": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The border radius of the layer, e.g. `5px` or `50%`.",
+          "title": "Borderradius"
+        },
+        "opacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Layer opacity from `0` (hidden) to `1` (as designed).",
+          "title": "Opacity"
+        },
+        "imageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The image to render in an image layer.",
+          "title": "Imageurl"
+        },
+        "imagePosition": {
+          "anyOf": [
+            {
+              "enum": [
+                "cro",
+                "cov",
+                "ai_face",
+                "align"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the image fits its container. Empty centers it. `cro` crops to fill, `cov` scales to cover, `ai_face` detects faces and keeps them visible, and `align` uses `imageAlignH` and `imageAlignV`.",
+          "title": "Imageposition",
+          "enum": [
+            "cro",
+            "cov",
+            "ai_face",
+            "align"
+          ],
+          "x-enum-searchable": true
+        },
+        "imageAlignH": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right",
+                "full"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Horizontal image alignment when `imagePosition` is `align`.",
+          "title": "Imagealignh",
+          "enum": [
+            "left",
+            "center",
+            "right",
+            "full"
+          ],
+          "x-enum-searchable": true
+        },
+        "imageAlignV": {
+          "anyOf": [
+            {
+              "enum": [
+                "top",
+                "center",
+                "bottom",
+                "full"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vertical image alignment when `imagePosition` is `align`.",
+          "title": "Imagealignv",
+          "enum": [
+            "top",
+            "center",
+            "bottom",
+            "full"
+          ],
+          "x-enum-searchable": true
+        },
+        "imageEffect": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A CSS filter applied to the image, e.g. `grayscale(100%)` or `blur(4px)`.",
+          "title": "Imageeffect"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prompt for an AI Image layer in \"Per request\" mode. Supports `[name]` tokens that refer to `referenceImages`.",
+          "title": "Prompt"
+        },
+        "sourceImage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL of a photo for an AI Image layer to edit. Omit it for text-to-image.",
+          "title": "Sourceimage"
+        },
+        "referenceImages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ReferenceImage"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named reference images for an AI Image layer.",
+          "title": "Referenceimages"
+        },
+        "chartColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The color of the chart. E.g. `#000000`, `rgb(0,0,0)` or `rgba(0,0,0,0.5)`.",
+          "title": "Chartcolor"
+        },
+        "chartLabelColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The color of the chart axis labels. E.g. `#000000`, `rgb(0,0,0)` or `rgba(0,0,0,0.5)`.",
+          "title": "Chartlabelcolor"
+        },
+        "chartDataLabels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Labels shown on the X axis.",
+          "title": "Chartdatalabels"
+        },
+        "chartDataValues": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The data series of the chart.",
+          "title": "Chartdatavalues"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Progress value for gauge and line progress bar layers, usually `0` to `100`.",
+          "title": "Value"
+        },
+        "maxValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total number of ticks of a radial tick gauge, e.g. `24`, `60` or `100`.",
+          "title": "Maxvalue"
+        },
+        "activeColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color of the filled ticks of a radial tick gauge.",
+          "title": "Activecolor"
+        },
+        "inactiveColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color of the empty ticks of a radial tick gauge.",
+          "title": "Inactivecolor"
+        },
+        "circleColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color of the background ring of a simple gauge.",
+          "title": "Circlecolor"
+        },
+        "progressColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color of the progress arc or of the filled part of a line progress bar.",
+          "title": "Progresscolor"
+        },
+        "textColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color of the value label inside a simple gauge.",
+          "title": "Textcolor"
+        },
+        "remainingColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color of the unfilled track of a line progress bar.",
+          "title": "Remainingcolor"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Overrides the label text of a line progress bar.",
+          "title": "Label"
+        },
+        "labelAlign": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Horizontal alignment of the line progress bar label.",
+          "title": "Labelalign",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LayerOverride",
+      "type": "object"
+    },
+    "ListMediaAssetsConfig": {
+      "additionalProperties": false,
+      "description": "List media assets.",
+      "properties": {
+        "operation": {
+          "const": "list_media_assets",
+          "default": "list_media_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "description": "The ID of the workspace.",
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "p": {
+          "default": 1,
+          "description": "The page, starting at 1.",
+          "minimum": 1,
+          "title": "P",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspaceId"
+      ],
+      "title": "ListMediaAssetsConfig",
+      "type": "object"
+    },
+    "ListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this workspace.",
+          "title": "Workspace Id"
+        }
+      },
+      "title": "ListTemplatesConfig",
+      "type": "object"
+    },
+    "ListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWorkspacesConfig",
+      "type": "object"
+    },
+    "PageOverride": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "description": "The page of the template this applies to, starting at 0.",
+          "title": "Index",
+          "type": "integer"
+        },
+        "layers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LayerOverride"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New values for the layers of this page.",
+          "title": "Layers"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PageOverride",
+      "type": "object"
+    },
+    "ReferenceImage": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Short name used in the prompt as `[name]`, e.g. `logo`.",
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "description": "Public URL of the reference image.",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "title": "ReferenceImage",
+      "type": "object"
+    },
+    "ReorderLayerConfig": {
+      "additionalProperties": false,
+      "description": "Change a layer's stacking order.",
+      "properties": {
+        "operation": {
+          "const": "reorder_layer",
+          "default": "reorder_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        },
+        "layerId": {
+          "description": "The ID of the layer.",
+          "title": "Layerid",
+          "type": "string"
+        },
+        "op": {
+          "anyOf": [
+            {
+              "enum": [
+                "toFront",
+                "toBack",
+                "up",
+                "down"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move the layer relative to the others. Takes precedence over `zIndex`.",
+          "title": "Op",
+          "enum": [
+            "toFront",
+            "toBack",
+            "up",
+            "down"
+          ],
+          "x-enum-searchable": true
+        },
+        "zIndex": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An absolute stacking position.",
+          "title": "Zindex"
+        }
+      },
+      "required": [
+        "uid",
+        "layerId"
+      ],
+      "title": "ReorderLayerConfig",
+      "type": "object"
+    },
+    "ResizeCanvasConfig": {
+      "additionalProperties": false,
+      "description": "Resize the canvas.",
+      "properties": {
+        "operation": {
+          "const": "resize_canvas",
+          "default": "resize_canvas",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        },
+        "width": {
+          "description": "The new width in pixels.",
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "description": "The new height in pixels.",
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "uid",
+        "width",
+        "height"
+      ],
+      "title": "ResizeCanvasConfig",
+      "type": "object"
+    },
+    "SearchGeneratedImagesConfig": {
+      "additionalProperties": false,
+      "description": "Search generated images.",
+      "properties": {
+        "operation": {
+          "const": "search_generated_images",
+          "default": "search_generated_images",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search in metadata and parameters.",
+          "title": "Keyword"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact match on the metadata.",
+          "title": "Metadata"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Generated at or after this time, in ISO 8601.",
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Generated before this time, in ISO 8601.",
+          "title": "Enddate"
+        }
+      },
+      "title": "SearchGeneratedImagesConfig",
+      "type": "object"
+    },
+    "StartAiGenerationConfig": {
+      "additionalProperties": false,
+      "description": "Start an AI image generation.",
+      "properties": {
+        "operation": {
+          "const": "start_ai_generation",
+          "default": "start_ai_generation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "modelId": {
+          "description": "The AI model. The API reference lists every model with its credit cost, e.g. `flux-2-pro`, `gemini-3.1-flash-image` or `gpt-image-2-med`.",
+          "title": "Modelid",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "What to generate. May contain `[name]` tokens that refer to `referenceImages`.",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "ratio": {
+          "default": "1:1",
+          "description": "The aspect ratio. Supported ratios vary by model.",
+          "enum": [
+            "1:1",
+            "3:2",
+            "2:3",
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4"
+          ],
+          "title": "Ratio",
+          "type": "string"
+        },
+        "sourceImage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL of a photo to edit. Leave it out for text-to-image.",
+          "title": "Sourceimage"
+        },
+        "referenceImages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ReferenceImage"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named reference images. At most 6 input images in total, counting `sourceImage`.",
+          "title": "Referenceimages"
+        }
+      },
+      "required": [
+        "modelId",
+        "prompt"
+      ],
+      "title": "StartAiGenerationConfig",
+      "type": "object"
+    },
+    "SubscribeWebhookConfig": {
+      "additionalProperties": false,
+      "description": "Subscribe a webhook.",
+      "properties": {
+        "operation": {
+          "const": "subscribe_webhook",
+          "default": "subscribe_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "targetUrl": {
+          "description": "The URL that receives the notifications.",
+          "title": "Targeturl",
+          "type": "string"
+        },
+        "eventType": {
+          "const": "NEW_IMAGE",
+          "default": "NEW_IMAGE",
+          "description": "The event to subscribe to.",
+          "title": "Eventtype",
+          "type": "string"
+        },
+        "templateId": {
+          "description": "The template to watch.",
+          "title": "Templateid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "targetUrl",
+        "templateId"
+      ],
+      "title": "SubscribeWebhookConfig",
+      "type": "object"
+    },
+    "UnsubscribeWebhookConfig": {
+      "additionalProperties": false,
+      "description": "Unsubscribe a webhook.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_webhook",
+          "default": "unsubscribe_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "targetUrl": {
+          "description": "The URL that receives the notifications.",
+          "title": "Targeturl",
+          "type": "string"
+        },
+        "eventType": {
+          "const": "NEW_IMAGE",
+          "default": "NEW_IMAGE",
+          "description": "The event to subscribe to.",
+          "title": "Eventtype",
+          "type": "string"
+        },
+        "templateId": {
+          "description": "The template to watch.",
+          "title": "Templateid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "targetUrl",
+        "templateId"
+      ],
+      "title": "UnsubscribeWebhookConfig",
+      "type": "object"
+    },
+    "UpdateLayerConfig": {
+      "additionalProperties": false,
+      "description": "Update a layer.",
+      "properties": {
+        "operation": {
+          "const": "update_layer",
+          "default": "update_layer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The ID of the template, shown in the editor and returned by `GET /templates`.",
+          "title": "Uid",
+          "type": "string"
+        },
+        "layerId": {
+          "description": "The ID of the layer.",
+          "title": "Layerid",
+          "type": "string"
+        },
+        "x": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Left position in pixels.",
+          "title": "X"
+        },
+        "y": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Top position in pixels.",
+          "title": "Y"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width in pixels.",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height in pixels.",
+          "title": "Height"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new text.",
+          "title": "Text"
+        },
+        "styles": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS-like style properties to merge into the layer.",
+          "title": "Styles"
+        }
+      },
+      "required": [
+        "uid",
+        "layerId"
+      ],
+      "title": "UpdateLayerConfig",
+      "type": "object"
+    },
+    "UpdateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Rename a workspace.",
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "description": "The ID of the workspace.",
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the workspace.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "name"
+      ],
+      "title": "UpdateWorkspaceConfig",
+      "type": "object"
+    },
+    "UploadMediaAssetFromUrlConfig": {
+      "additionalProperties": false,
+      "description": "Upload an image from a URL.",
+      "properties": {
+        "operation": {
+          "const": "upload_media_asset_from_url",
+          "default": "upload_media_asset_from_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "description": "The ID of the workspace.",
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "url": {
+          "description": "Public URL of the image to import into the media library.",
+          "title": "Url",
+          "type": "string"
+        },
+        "mimeType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The MIME type of the image.",
+          "title": "Mimetype"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A display name.",
+          "title": "Name"
+        },
+        "folderUid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The folder to put it in.",
+          "title": "Folderuid"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "url"
+      ],
+      "title": "UploadMediaAssetFromUrlConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_layer": "#/$defs/AddLayerConfig",
+          "create_design": "#/$defs/CreateDesignConfig",
+          "create_workspace": "#/$defs/CreateWorkspaceConfig",
+          "delete_generated_image": "#/$defs/DeleteGeneratedImageConfig",
+          "delete_layer": "#/$defs/DeleteLayerConfig",
+          "delete_media_asset": "#/$defs/DeleteMediaAssetConfig",
+          "delete_workspace": "#/$defs/DeleteWorkspaceConfig",
+          "generate_image": "#/$defs/GenerateImageConfig",
+          "get_ai_generation": "#/$defs/GetAiGenerationConfig",
+          "get_media_asset": "#/$defs/GetMediaAssetConfig",
+          "get_template": "#/$defs/GetTemplateConfig",
+          "list_media_assets": "#/$defs/ListMediaAssetsConfig",
+          "list_templates": "#/$defs/ListTemplatesConfig",
+          "list_workspaces": "#/$defs/ListWorkspacesConfig",
+          "reorder_layer": "#/$defs/ReorderLayerConfig",
+          "resize_canvas": "#/$defs/ResizeCanvasConfig",
+          "search_generated_images": "#/$defs/SearchGeneratedImagesConfig",
+          "start_ai_generation": "#/$defs/StartAiGenerationConfig",
+          "subscribe_webhook": "#/$defs/SubscribeWebhookConfig",
+          "unsubscribe_webhook": "#/$defs/UnsubscribeWebhookConfig",
+          "update_layer": "#/$defs/UpdateLayerConfig",
+          "update_workspace": "#/$defs/UpdateWorkspaceConfig",
+          "upload_media_asset_from_url": "#/$defs/UploadMediaAssetFromUrlConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GenerateImageConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchGeneratedImagesConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteGeneratedImageConfig"
+        },
+        {
+          "$ref": "#/$defs/StartAiGenerationConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAiGenerationConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateDesignConfig"
+        },
+        {
+          "$ref": "#/$defs/AddLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/ReorderLayerConfig"
+        },
+        {
+          "$ref": "#/$defs/ResizeCanvasConfig"
+        },
+        {
+          "$ref": "#/$defs/ListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMediaAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/UploadMediaAssetFromUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMediaAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteMediaAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/SubscribeWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribeWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DynapicturesAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dynapictures Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
