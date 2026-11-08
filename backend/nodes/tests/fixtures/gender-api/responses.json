@@ -1,0 +1,248 @@
+{
+  "source": "https://gender-api.com/openapi/openapi.yml",
+  "statistics_source": "https://gender-api.com/en/api-docs/v2#statistic",
+  "examples": {
+    "FirstNameResultModelMultiple": [
+      {
+        "input": {
+          "first_name": "sandra",
+          "country": "US",
+          "id": "1"
+        },
+        "details": {
+          "credits_used": 1,
+          "duration": "72ms",
+          "samples": 70,
+          "country": "US",
+          "first_name_sanitized": "sandra"
+        },
+        "result_found": true,
+        "first_name": "Sandra",
+        "probability": 0.61,
+        "gender": "female"
+      },
+      {
+        "input": {
+          "first_name": "mike",
+          "country": "CA",
+          "id": "2"
+        },
+        "details": {
+          "credits_used": 1,
+          "duration": "77ms",
+          "samples": 1180,
+          "country": null,
+          "first_name_sanitized": "mike"
+        },
+        "result_found": true,
+        "first_name": "Mike",
+        "probability": 0.98,
+        "gender": "male"
+      }
+    ],
+    "FullNameResultModelMultiple": [
+      {
+        "input": {
+          "first_name": "sandra miller",
+          "country": "US",
+          "id": "1"
+        },
+        "details": {
+          "credits_used": 1,
+          "duration": "43ms",
+          "samples": 70,
+          "country": "US",
+          "first_name_sanitized": "sandra"
+        },
+        "result_found": true,
+        "first_name": "Sandra",
+        "probability": 0.61,
+        "gender": "female"
+      },
+      {
+        "input": {
+          "first_name": "mike meyers",
+          "id": "2"
+        },
+        "details": {
+          "credits_used": 1,
+          "duration": "75ms",
+          "samples": 1180,
+          "country": null,
+          "first_name_sanitized": "mike"
+        },
+        "result_found": true,
+        "first_name": "Mike",
+        "probability": 0.98,
+        "gender": "male"
+      }
+    ],
+    "EmailResultModelMultiple": [
+      {
+        "input": {
+          "email": "sandra.miller14@gmail.com",
+          "country": "US",
+          "id": "1"
+        },
+        "details": {
+          "credits_used": 1,
+          "duration": "82ms",
+          "samples": 70,
+          "country": "US",
+          "first_name_sanitized": "sandra"
+        },
+        "result_found": true,
+        "last_name": "Miller",
+        "first_name": "Sandra",
+        "probability": 0.61,
+        "gender": "female"
+      },
+      {
+        "input": {
+          "email": "mark.meyer@gmail.com",
+          "id": "2"
+        },
+        "details": {
+          "credits_used": 1,
+          "duration": "94ms",
+          "samples": 10,
+          "country": null,
+          "first_name_sanitized": "meyer"
+        },
+        "result_found": true,
+        "last_name": "Mark",
+        "first_name": "Meyer",
+        "probability": 1,
+        "gender": "male"
+      }
+    ],
+    "CountryOfOriginResultModel": {
+      "input": {
+        "first_name": "Johann",
+        "id": 12
+      },
+      "details": {
+        "credits_used": 2,
+        "duration": "414ms",
+        "samples": 890,
+        "country": null,
+        "first_name_sanitized": "johann"
+      },
+      "result_found": true,
+      "country_of_origin": [
+        {
+          "country_name": "Germany",
+          "country": "DE",
+          "probability": 0.52,
+          "continental_region": "Europe",
+          "statistical_region": "Western Europe"
+        },
+        {
+          "country_name": "Austria",
+          "country": "AT",
+          "probability": 0.48,
+          "continental_region": "Europe",
+          "statistical_region": "Western Europe"
+        }
+      ],
+      "first_name": "Johann",
+      "probability": 0.9,
+      "gender": "male",
+      "language_of_origin": "Germanic",
+      "meaning": "Johann is the German variation of the name John, which means 'God is gracious'. It was frequently used in the Middle Ages across Europe, particularly as a name for religious figures.",
+      "ethnicity": {
+        "id": "GERMANIC",
+        "name": "Germanic (German, Austrian, Swiss)",
+        "distribution": [
+          {
+            "id": "GERMANIC",
+            "name": "Germanic (German, Austrian, Swiss)",
+            "percentage": 90
+          },
+          {
+            "id": "DUTCH",
+            "name": "Dutch",
+            "percentage": 5
+          },
+          {
+            "id": "FRENCH",
+            "name": "French",
+            "percentage": 5
+          }
+        ]
+      }
+    },
+    "StatisticResultModel": {
+      "is_limit_reached": false,
+      "remaining_credits": 24999,
+      "details": {
+        "credits_used": 0,
+        "duration": "83ms"
+      },
+      "usage_last_month": {
+        "date": "2018-03",
+        "credits_used": 25
+      }
+    },
+    "FirstNameResultModel": {
+      "input": {
+        "first_name": "Sandra"
+      },
+      "details": {
+        "credits_used": 1,
+        "samples": 464,
+        "country": null,
+        "first_name_sanitized": "sandra",
+        "duration": "436ms"
+      },
+      "result_found": true,
+      "first_name": "Sandra",
+      "probability": 0.85,
+      "gender": "female"
+    },
+    "FullNameResultModel": {
+      "input": {
+        "full_name": "Theresa Miller"
+      },
+      "details": {
+        "credits_used": 1,
+        "duration": "33ms",
+        "samples": 8961,
+        "country": null,
+        "first_name_sanitized": "theresa"
+      },
+      "result_found": true,
+      "last_name": "Miller",
+      "first_name": "Theresa",
+      "probability": 0.98,
+      "gender": "female"
+    },
+    "EmailResultModel": {
+      "input": {
+        "email": "theresa.miller14@gmail.com"
+      },
+      "details": {
+        "credits_used": 1,
+        "duration": "12ms",
+        "samples": 8961,
+        "country": null,
+        "first_name_sanitized": "theresa"
+      },
+      "result_found": true,
+      "last_name": "Miller",
+      "first_name": "Theresa",
+      "probability": 0.98,
+      "gender": "female"
+    }
+  },
+  "response_sources": {
+    "POST /gender/by-first-name": "https://gender-api.com/en/api-docs/v2",
+    "POST /gender/by-full-name": "https://gender-api.com/en/api-docs/v2",
+    "POST /gender/by-email-address": "https://gender-api.com/en/api-docs/v2",
+    "POST /country-of-origin": "https://gender-api.com/en/api-docs/v2",
+    "GET /statistic": "https://gender-api.com/en/api-docs/v2",
+    "POST /gender/by-first-name-multiple": "https://gender-api.com/openapi/openapi.yml",
+    "POST /gender/by-full-name-multiple": "https://gender-api.com/openapi/openapi.yml",
+    "POST /gender/by-email-address-multiple": "https://gender-api.com/openapi/openapi.yml"
+  }
+}
