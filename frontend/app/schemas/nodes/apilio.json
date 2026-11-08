@@ -1,0 +1,508 @@
+{
+  "$defs": {
+    "ApilioAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "apilio_api_token",
+          "default": "apilio_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Apilio API Token",
+      "type": "object",
+      "x-credential-instructions": "Copy the preformatted API authorization token from your Apilio profile. Paste only the encoded token after Basic, without the Basic prefix. These API credentials differ from your web login. Connecting reads your boolean variables.",
+      "x-credential-url": "https://apilio.herokuapp.com/user",
+      "x-help-url": "https://documenter.getpostman.com/view/13480928/TzCHAVD2"
+    },
+    "EvaluateLogicblock": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "evaluate_logicblock",
+          "default": "evaluate_logicblock",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "EvaluateLogicblock",
+      "type": "object"
+    },
+    "GetBooleanVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_boolean_variable",
+          "default": "get_boolean_variable",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetBooleanVariable",
+      "type": "object"
+    },
+    "GetNumericVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_numeric_variable",
+          "default": "get_numeric_variable",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetNumericVariable",
+      "type": "object"
+    },
+    "GetStringVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_string_variable",
+          "default": "get_string_variable",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetStringVariable",
+      "type": "object"
+    },
+    "GetTimeCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_time_condition",
+          "default": "get_time_condition",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetTimeCondition",
+      "type": "object"
+    },
+    "GetTuyaCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_tuya_condition",
+          "default": "get_tuya_condition",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetTuyaCondition",
+      "type": "object"
+    },
+    "GetVariableCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_variable_condition",
+          "default": "get_variable_condition",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetVariableCondition",
+      "type": "object"
+    },
+    "ListBooleanVariables": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_boolean_variables",
+          "default": "list_boolean_variables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListBooleanVariables",
+      "type": "object"
+    },
+    "ListConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conditions",
+          "default": "list_conditions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListConditions",
+      "type": "object"
+    },
+    "ListLogicblocks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_logicblocks",
+          "default": "list_logicblocks",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLogicblocks",
+      "type": "object"
+    },
+    "ListNumericVariables": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_numeric_variables",
+          "default": "list_numeric_variables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListNumericVariables",
+      "type": "object"
+    },
+    "ListStringVariables": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_string_variables",
+          "default": "list_string_variables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListStringVariables",
+      "type": "object"
+    },
+    "ListTimeConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_time_conditions",
+          "default": "list_time_conditions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTimeConditions",
+      "type": "object"
+    },
+    "ListTuyaConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tuya_conditions",
+          "default": "list_tuya_conditions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTuyaConditions",
+      "type": "object"
+    },
+    "ListVariableConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_variable_conditions",
+          "default": "list_variable_conditions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListVariableConditions",
+      "type": "object"
+    },
+    "SetLogicblockActive": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_logicblock_active",
+          "default": "set_logicblock_active",
+          "title": "Operation",
+          "type": "string"
+        },
+        "active": {
+          "description": "Whether the Logicblock is active.",
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "resource_id",
+        "active"
+      ],
+      "title": "SetLogicblockActive",
+      "type": "object"
+    },
+    "UpdateBooleanVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_boolean_variable",
+          "default": "update_boolean_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "boolean_value": {
+          "description": "New boolean value.",
+          "title": "Boolean Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "resource_id",
+        "boolean_value"
+      ],
+      "title": "UpdateBooleanVariable",
+      "type": "object"
+    },
+    "UpdateNumericVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_numeric_variable",
+          "default": "update_numeric_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "numeric_value": {
+          "description": "New numeric value.",
+          "title": "Numeric Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "resource_id",
+        "numeric_value"
+      ],
+      "title": "UpdateNumericVariable",
+      "type": "object"
+    },
+    "UpdateStringVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "UUID from the corresponding list operation or the object's Apilio detail page.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_string_variable",
+          "default": "update_string_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "string_value": {
+          "description": "New string value.",
+          "title": "String Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id",
+        "string_value"
+      ],
+      "title": "UpdateStringVariable",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "evaluate_logicblock": "#/$defs/EvaluateLogicblock",
+          "get_boolean_variable": "#/$defs/GetBooleanVariable",
+          "get_numeric_variable": "#/$defs/GetNumericVariable",
+          "get_string_variable": "#/$defs/GetStringVariable",
+          "get_time_condition": "#/$defs/GetTimeCondition",
+          "get_tuya_condition": "#/$defs/GetTuyaCondition",
+          "get_variable_condition": "#/$defs/GetVariableCondition",
+          "list_boolean_variables": "#/$defs/ListBooleanVariables",
+          "list_conditions": "#/$defs/ListConditions",
+          "list_logicblocks": "#/$defs/ListLogicblocks",
+          "list_numeric_variables": "#/$defs/ListNumericVariables",
+          "list_string_variables": "#/$defs/ListStringVariables",
+          "list_time_conditions": "#/$defs/ListTimeConditions",
+          "list_tuya_conditions": "#/$defs/ListTuyaConditions",
+          "list_variable_conditions": "#/$defs/ListVariableConditions",
+          "set_logicblock_active": "#/$defs/SetLogicblockActive",
+          "update_boolean_variable": "#/$defs/UpdateBooleanVariable",
+          "update_numeric_variable": "#/$defs/UpdateNumericVariable",
+          "update_string_variable": "#/$defs/UpdateStringVariable"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBooleanVariables"
+        },
+        {
+          "$ref": "#/$defs/GetBooleanVariable"
+        },
+        {
+          "$ref": "#/$defs/UpdateBooleanVariable"
+        },
+        {
+          "$ref": "#/$defs/ListNumericVariables"
+        },
+        {
+          "$ref": "#/$defs/GetNumericVariable"
+        },
+        {
+          "$ref": "#/$defs/UpdateNumericVariable"
+        },
+        {
+          "$ref": "#/$defs/ListStringVariables"
+        },
+        {
+          "$ref": "#/$defs/GetStringVariable"
+        },
+        {
+          "$ref": "#/$defs/UpdateStringVariable"
+        },
+        {
+          "$ref": "#/$defs/ListConditions"
+        },
+        {
+          "$ref": "#/$defs/ListVariableConditions"
+        },
+        {
+          "$ref": "#/$defs/GetVariableCondition"
+        },
+        {
+          "$ref": "#/$defs/ListTuyaConditions"
+        },
+        {
+          "$ref": "#/$defs/GetTuyaCondition"
+        },
+        {
+          "$ref": "#/$defs/ListTimeConditions"
+        },
+        {
+          "$ref": "#/$defs/GetTimeCondition"
+        },
+        {
+          "$ref": "#/$defs/ListLogicblocks"
+        },
+        {
+          "$ref": "#/$defs/EvaluateLogicblock"
+        },
+        {
+          "$ref": "#/$defs/SetLogicblockActive"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApilioAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apilio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

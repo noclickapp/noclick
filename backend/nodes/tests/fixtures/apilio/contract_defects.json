@@ -1,0 +1,33 @@
+{
+  "contract_sha256": "655f998c461108bac37c2188283827e64fff1a911276215c5eb7d77e70f682ed",
+  "defects": [
+    {
+      "id": "published-localhost-origin",
+      "classification": "d",
+      "source": "https://documenter.getpostman.com/view/13480928/TzCHAVD2#endpoints",
+      "collection_source": "https://documenter.getpostman.com/api/collections/13480928/TzCHAVD2?segregateAuth=true&versionTag=latest",
+      "description": "All 19 collection request URLs and urlObject.host values target localhost:3000, but the same collection info.description Endpoints section explicitly says to use https://api.apilio.com. The node uses the published production origin. The strict Postman matcher rejects every request before selecting saved responses; the resulting no checked Postman request evidence errors have the same cause. Local tests independently replay every verbatim saved response (20 total, including both time-condition examples), asserting the exact published method, path, request body, required headers and Basic auth placement.",
+      "affected_operations": [
+        "list_boolean_variables",
+        "get_boolean_variable",
+        "update_boolean_variable",
+        "list_numeric_variables",
+        "get_numeric_variable",
+        "update_numeric_variable",
+        "list_string_variables",
+        "get_string_variable",
+        "update_string_variable",
+        "list_conditions",
+        "list_variable_conditions",
+        "get_variable_condition",
+        "list_tuya_conditions",
+        "get_tuya_condition",
+        "list_time_conditions",
+        "get_time_condition",
+        "list_logicblocks",
+        "evaluate_logicblock",
+        "set_logicblock_active"
+      ]
+    }
+  ]
+}

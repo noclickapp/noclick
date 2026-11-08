@@ -1,0 +1,393 @@
+{
+  "source": "https://documenter.getpostman.com/api/collections/13480928/TzCHAVD2?segregateAuth=true&versionTag=latest",
+  "contract_sha256": "655f998c461108bac37c2188283827e64fff1a911276215c5eb7d77e70f682ed",
+  "operations": [
+    {
+      "operation": "list_boolean_variables",
+      "cls": "ListBooleanVariables",
+      "method": "GET",
+      "path": "/api/v1/boolean_variables",
+      "config": {
+        "operation": "list_boolean_variables"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"connected_to_home_wifi\",\n        \"value\": true,\n        \"updated_at\": \"2021-03-17T10:20:12.959Z\",\n        \"uuid\": \"a40f21df-7707-4898-9688-69bf1f8dd184\"\n    },\n    {\n        \"name\": \"location_is_home\",\n        \"value\": true,\n        \"updated_at\": \"2021-03-17T10:20:28.649Z\",\n        \"uuid\": \"e25239ee-b4e5-495e-8e23-28856fbb68f9\"\n    },\n    {\n        \"name\": \"low_carbon_or_price\",\n        \"value\": true,\n        \"updated_at\": \"2021-03-17T10:20:34.386Z\",\n        \"uuid\": \"e8017866-3aea-42a9-9a5d-a04c9af2e0d8\"\n    },\n    {\n        \"name\": \"visitor_detected\",\n        \"value\": true,\n        \"updated_at\": \"2021-03-17T10:20:21.281Z\",\n        \"uuid\": \"46ceebd2-11e2-49cf-b032-177ad348dcd0\"\n    }\n]"
+        }
+      ],
+      "resource": "boolean_variables",
+      "headers": {}
+    },
+    {
+      "operation": "get_boolean_variable",
+      "cls": "GetBooleanVariable",
+      "method": "GET",
+      "path": "/api/v1/boolean_variables/{resource_id}",
+      "config": {
+        "operation": "get_boolean_variable",
+        "resource_id": "a3f4cfdf-8ba2-4f8a-aaf9-22f2e22cfeb4"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"connected_to_home_wifi\",\n    \"value\": true,\n    \"updated_at\": \"2021-03-17T10:20:12.959Z\",\n    \"uuid\": \"a40f21df-7707-4898-9688-69bf1f8dd184\"\n}"
+        }
+      ],
+      "resource": "boolean_variables",
+      "headers": {}
+    },
+    {
+      "operation": "update_boolean_variable",
+      "cls": "UpdateBooleanVariable",
+      "method": "PUT",
+      "path": "/api/v1/boolean_variables/{resource_id}",
+      "config": {
+        "operation": "update_boolean_variable",
+        "resource_id": "2b7574f0-94a8-426d-9797-9a61c89a2272",
+        "boolean_value": true
+      },
+      "body": {
+        "boolean_variable": {
+          "value": true
+        }
+      },
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"value\": false,\n    \"updated_at\": \"2021-03-18T12:23:06.639Z\",\n    \"name\": \"connected_to_home_wifi\",\n    \"uuid\": \"a40f21df-7707-4898-9688-69bf1f8dd184\"\n}"
+        }
+      ],
+      "resource": "boolean_variables",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    {
+      "operation": "list_numeric_variables",
+      "cls": "ListNumericVariables",
+      "method": "GET",
+      "path": "/api/v1/numeric_variables",
+      "config": {
+        "operation": "list_numeric_variables"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"total_open_doors\",\n        \"value\": \"1.0\",\n        \"updated_at\": \"2021-03-18T12:24:04.955Z\",\n        \"uuid\": \"5e4b1171-9d52-4361-a927-1dc3bed5aa93\"\n    },\n    {\n        \"name\": \"total_open_windows\",\n        \"value\": \"0.0\",\n        \"updated_at\": \"2021-03-18T12:23:50.367Z\",\n        \"uuid\": \"57b6e115-1c4b-4d73-8a82-54b327944ff7\"\n    }\n]"
+        }
+      ],
+      "resource": "numeric_variables",
+      "headers": {}
+    },
+    {
+      "operation": "get_numeric_variable",
+      "cls": "GetNumericVariable",
+      "method": "GET",
+      "path": "/api/v1/numeric_variables/{resource_id}",
+      "config": {
+        "operation": "get_numeric_variable",
+        "resource_id": "f3e92e90-239a-4880-b30f-656dd9835dbd"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"total_open_doors\",\n    \"value\": \"1.0\",\n    \"updated_at\": \"2021-03-18T12:24:04.955Z\",\n    \"uuid\": \"5e4b1171-9d52-4361-a927-1dc3bed5aa93\"\n}"
+        }
+      ],
+      "resource": "numeric_variables",
+      "headers": {}
+    },
+    {
+      "operation": "update_numeric_variable",
+      "cls": "UpdateNumericVariable",
+      "method": "PUT",
+      "path": "/api/v1/numeric_variables/{resource_id}",
+      "config": {
+        "operation": "update_numeric_variable",
+        "resource_id": "f3e92e90-239a-4880-b30f-656dd9835dbd",
+        "numeric_value": 5
+      },
+      "body": {
+        "numeric_variable": {
+          "value": 5
+        }
+      },
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"value\": \"5.0\",\n    \"updated_at\": \"2021-03-18T12:25:45.712Z\",\n    \"name\": \"total_open_doors\",\n    \"uuid\": \"5e4b1171-9d52-4361-a927-1dc3bed5aa93\"\n}"
+        }
+      ],
+      "resource": "numeric_variables",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    {
+      "operation": "list_string_variables",
+      "cls": "ListStringVariables",
+      "method": "GET",
+      "path": "/api/v1/string_variables",
+      "config": {
+        "operation": "list_string_variables"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"current_wheater\",\n        \"value\": \"snow\",\n        \"updated_at\": \"2021-03-18T12:30:23.269Z\",\n        \"uuid\": \"e5c303e6-6183-4e92-910b-4aea9d8b82ed\"\n    },\n    {\n        \"name\": \"garden_lights_color\",\n        \"value\": \"#1C313A\",\n        \"updated_at\": \"2021-03-18T12:31:21.669Z\",\n        \"uuid\": \"1d34de48-2353-4032-a17a-20e0cd649459\"\n    }\n]"
+        }
+      ],
+      "resource": "string_variables",
+      "headers": {}
+    },
+    {
+      "operation": "get_string_variable",
+      "cls": "GetStringVariable",
+      "method": "GET",
+      "path": "/api/v1/string_variables/{resource_id}",
+      "config": {
+        "operation": "get_string_variable",
+        "resource_id": "a443e54c-81f3-4ec9-89c4-602193c43ddb"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"string_var\",\n    \"value\": \"sunny\",\n    \"updated_at\": \"2021-03-24T14:52:00.403Z\",\n    \"uuid\": \"a443e54c-81f3-4ec9-89c4-602193c43ddb\"\n}"
+        }
+      ],
+      "resource": "string_variables",
+      "headers": {}
+    },
+    {
+      "operation": "update_string_variable",
+      "cls": "UpdateStringVariable",
+      "method": "PUT",
+      "path": "/api/v1/string_variables/{resource_id}",
+      "config": {
+        "operation": "update_string_variable",
+        "resource_id": "a443e54c-81f3-4ec9-89c4-602193c43ddb",
+        "string_value": "sun"
+      },
+      "body": {
+        "string_variable": {
+          "value": "sun"
+        }
+      },
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"value\": \"sun\",\n    \"updated_at\": \"2021-03-18T12:32:08.530Z\",\n    \"name\": \"current_wheater\",\n    \"uuid\": \"e5c303e6-6183-4e92-910b-4aea9d8b82ed\"\n}"
+        }
+      ],
+      "resource": "string_variables",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    {
+      "operation": "list_conditions",
+      "cls": "ListConditions",
+      "method": "GET",
+      "path": "/api/v1/conditions/",
+      "config": {
+        "operation": "list_conditions"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"am_i_connected_at_home\",\n        \"updated_at\": \"2021-03-17T10:20:18.368Z\",\n        \"uuid\": \"b1545c01-54de-46c9-8c99-b4ec061c2a77\"\n    },\n    {\n        \"name\": \"am_i_home\",\n        \"updated_at\": \"2021-03-17T10:20:28.651Z\",\n        \"uuid\": \"d33cc251-179b-45fa-95d3-a175699629ee\"\n    },\n    {\n        \"name\": \"at_10am_weekdays\",\n        \"uuid\": \"5eb3eec7-e354-4e01-8f63-67c5e3347566\",\n        \"updated_at\": \"2021-03-17T10:20:18.349Z\"\n    },\n    {\n        \"name\": \"been_disconnected_for_10mins\",\n        \"updated_at\": \"2021-03-17T10:20:12.961Z\",\n        \"uuid\": \"16131452-2724-4f06-9050-3c285d990cce\"\n    },\n    {\n        \"name\": \"comfort_timeframe\",\n        \"uuid\": \"259285e2-2a40-4798-a566-561670da53d2\",\n        \"updated_at\": \"2021-03-17T10:20:34.401Z\"\n    },\n    {\n        \"name\": \"dark_outside\",\n        \"uuid\": \"11d3472d-9ce2-469c-b246-c7cc3bb653b3\",\n        \"updated_at\": \"2021-03-17T10:20:21.300Z\"\n    },\n    {\n        \"name\": \"everyday_between_sunset_and_22h00\",\n        \"uuid\": \"5218eb6e-ee27-4cb3-a168-bb9c3faeaca4\",\n        \"updated_at\": \"2021-03-17T10:20:00.482Z\"\n    },\n    {\n        \"name\": \"favourable_time_to_use_energy\",\n        \"updated_at\": \"2021-03-17T10:20:34.388Z\",\n        \"uuid\": \"46d8dfb5-2e22-4036-9535-42ddc0f12c7b\"\n    },\n    {\n        \"name\": \"from_sunset_to_sunrise\",\n        \"uuid\": \"7e62fd09-521c-4708-a92b-fed1f5dff2f4\",\n        \"updated_at\": \"2021-03-17T10:20:28.660Z\"\n    },\n    {\n        \"name\": \"i_am_home\",\n        \"updated_at\": \"2021-03-17T10:20:34.370Z\",\n        \"uuid\": \"ca680c73-7cdd-4f52-99a2-10a99a1c8adb\"\n    },\n    {\n        \"name\": \"someone_at_the_door\",\n        \"updated_at\": \"2021-03-17T10:20:21.285Z\",\n        \"uuid\": \"7abb0033-5574-41fe-8013-0ccfd8963e04\"\n    }\n]"
+        }
+      ],
+      "resource": "conditions",
+      "headers": {}
+    },
+    {
+      "operation": "list_variable_conditions",
+      "cls": "ListVariableConditions",
+      "method": "GET",
+      "path": "/api/v1/variableconditions",
+      "config": {
+        "operation": "list_variable_conditions"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"am_i_connected_at_home\",\n        \"updated_at\": \"2021-03-17T10:20:18.368Z\",\n        \"uuid\": \"b1545c01-54de-46c9-8c99-b4ec061c2a77\"\n    },\n    {\n        \"name\": \"someone_at_the_door\",\n        \"updated_at\": \"2021-03-17T10:20:21.285Z\",\n        \"uuid\": \"7abb0033-5574-41fe-8013-0ccfd8963e04\"\n    },\n    {\n        \"name\": \"am_i_home\",\n        \"updated_at\": \"2021-03-17T10:20:28.651Z\",\n        \"uuid\": \"d33cc251-179b-45fa-95d3-a175699629ee\"\n    },\n    {\n        \"name\": \"i_am_home\",\n        \"updated_at\": \"2021-03-17T10:20:34.370Z\",\n        \"uuid\": \"ca680c73-7cdd-4f52-99a2-10a99a1c8adb\"\n    },\n    {\n        \"name\": \"favourable_time_to_use_energy\",\n        \"updated_at\": \"2021-03-17T10:20:34.388Z\",\n        \"uuid\": \"46d8dfb5-2e22-4036-9535-42ddc0f12c7b\"\n    },\n    {\n        \"name\": \"been_disconnected_for_10mins\",\n        \"updated_at\": \"2021-03-18T12:33:07.435Z\",\n        \"uuid\": \"16131452-2724-4f06-9050-3c285d990cce\"\n    }\n]"
+        }
+      ],
+      "resource": "variableconditions",
+      "headers": {}
+    },
+    {
+      "operation": "get_variable_condition",
+      "cls": "GetVariableCondition",
+      "method": "GET",
+      "path": "/api/v1/variableconditions/{resource_id}",
+      "config": {
+        "operation": "get_variable_condition",
+        "resource_id": "16131452-2724-4f06-9050-3c285d990cce"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"been_disconnected_for_10mins\",\n    \"updated_at\": \"2021-03-18T12:33:07.435Z\",\n    \"uuid\": \"16131452-2724-4f06-9050-3c285d990cce\",\n    \"evaluate\": true\n}"
+        }
+      ],
+      "resource": "variableconditions",
+      "headers": {}
+    },
+    {
+      "operation": "list_tuya_conditions",
+      "cls": "ListTuyaConditions",
+      "method": "GET",
+      "path": "/api/v1/tuyaconditions",
+      "config": {
+        "operation": "list_tuya_conditions"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"bulb-is-on\",\n        \"uuid\": \"da57cc2d-9596-4764-8364-7daacbce2ed0\",\n        \"updated_at\": \"2021-03-24T14:59:33.163Z\"\n    },\n    {\n        \"name\": \"motion-detected\",\n        \"uuid\": \"77ec0a64-1b69-491e-b91c-39a90854992e\",\n        \"updated_at\": \"2021-03-24T15:00:02.718Z\"\n    }\n]"
+        }
+      ],
+      "resource": "tuyaconditions",
+      "headers": {}
+    },
+    {
+      "operation": "get_tuya_condition",
+      "cls": "GetTuyaCondition",
+      "method": "GET",
+      "path": "/api/v1/tuyaconditions/{resource_id}",
+      "config": {
+        "operation": "get_tuya_condition",
+        "resource_id": "77ec0a64-1b69-491e-b91c-39a90854992e"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"motion-detected\",\n    \"uuid\": \"77ec0a64-1b69-491e-b91c-39a90854992e\",\n    \"updated_at\": \"2021-03-24T15:00:02.718Z\",\n    \"evaluate\": false\n}"
+        }
+      ],
+      "resource": "tuyaconditions",
+      "headers": {}
+    },
+    {
+      "operation": "list_time_conditions",
+      "cls": "ListTimeConditions",
+      "method": "GET",
+      "path": "/api/v1/timeconditions",
+      "config": {
+        "operation": "list_time_conditions"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"name\": \"everyday_between_sunset_and_22h00\",\n        \"uuid\": \"5218eb6e-ee27-4cb3-a168-bb9c3faeaca4\",\n        \"updated_at\": \"2021-03-17T10:20:00.482Z\"\n    },\n    {\n        \"name\": \"at_10am_weekdays\",\n        \"uuid\": \"5eb3eec7-e354-4e01-8f63-67c5e3347566\",\n        \"updated_at\": \"2021-03-17T10:20:18.349Z\"\n    },\n    {\n        \"name\": \"dark_outside\",\n        \"uuid\": \"11d3472d-9ce2-469c-b246-c7cc3bb653b3\",\n        \"updated_at\": \"2021-03-17T10:20:21.300Z\"\n    },\n    {\n        \"name\": \"from_sunset_to_sunrise\",\n        \"uuid\": \"7e62fd09-521c-4708-a92b-fed1f5dff2f4\",\n        \"updated_at\": \"2021-03-17T10:20:28.660Z\"\n    },\n    {\n        \"name\": \"comfort_timeframe\",\n        \"uuid\": \"259285e2-2a40-4798-a566-561670da53d2\",\n        \"updated_at\": \"2021-03-17T10:20:34.401Z\"\n    }\n]"
+        }
+      ],
+      "resource": "timeconditions",
+      "headers": {}
+    },
+    {
+      "operation": "get_time_condition",
+      "cls": "GetTimeCondition",
+      "method": "GET",
+      "path": "/api/v1/timeconditions/{resource_id}",
+      "config": {
+        "operation": "get_time_condition",
+        "resource_id": "9705e345-20e1-4a64-8c9c-f02bd5e2a98c"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"everyday_between_sunset_and_22h00\",\n    \"uuid\": \"5218eb6e-ee27-4cb3-a168-bb9c3faeaca4\",\n    \"updated_at\": \"2021-03-17T10:20:00.482Z\",\n    \"evaluate\": false\n}"
+        },
+        {
+          "status": 200,
+          "body": "{\n    \"name\": \"one-hour\",\n    \"uuid\": \"9705e345-20e1-4a64-8c9c-f02bd5e2a98c\",\n    \"updated_at\": \"2021-03-24T14:54:17.423Z\",\n    \"evaluate\": true\n}"
+        }
+      ],
+      "resource": "timeconditions",
+      "headers": {}
+    },
+    {
+      "operation": "list_logicblocks",
+      "cls": "ListLogicblocks",
+      "method": "GET",
+      "path": "/api/v1/logicblocks/",
+      "config": {
+        "operation": "list_logicblocks"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "[\n    {\n        \"updated_at\": \"2021-03-24T14:56:16.314Z\",\n        \"name\": \"logicblock-for-demo\",\n        \"last_evaluation_result\": true,\n        \"uuid\": \"17aa6495-ba01-4505-89f7-bd0cc0259748\",\n        \"active\": true\n    },\n    {\n        \"updated_at\": \"2021-03-24T14:56:48.116Z\",\n        \"name\": \"second-logicblock\",\n        \"last_evaluation_result\": null,\n        \"uuid\": \"ed5f6d45-37de-491f-b64c-8e0ea90d97df\",\n        \"active\": true\n    }\n]"
+        }
+      ],
+      "resource": "logicblocks",
+      "headers": {}
+    },
+    {
+      "operation": "evaluate_logicblock",
+      "cls": "EvaluateLogicblock",
+      "method": "POST",
+      "path": "/api/v1/logicblocks/{resource_id}/evaluate",
+      "config": {
+        "operation": "evaluate_logicblock",
+        "resource_id": "17aa6495-ba01-4505-89f7-bd0cc0259748"
+      },
+      "body": null,
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"uuid\": \"17aa6495-ba01-4505-89f7-bd0cc0259748\",\n    \"name\": \"logicblock-for-demo\",\n    \"active\": true,\n    \"evaluate\": true,\n    \"updated_at\": \"2021-03-24T14:56:16.314Z\"\n}"
+        }
+      ],
+      "resource": "logicblocks",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    {
+      "operation": "set_logicblock_active",
+      "cls": "SetLogicblockActive",
+      "method": "PATCH",
+      "path": "/api/v1/logicblocks/{resource_id}",
+      "config": {
+        "operation": "set_logicblock_active",
+        "resource_id": "17aa6495-ba01-4505-89f7-bd0cc0259748",
+        "active": true
+      },
+      "body": {
+        "logicblock": {
+          "active": true
+        }
+      },
+      "responses": [
+        {
+          "status": 200,
+          "body": "{\n    \"active\": true,\n    \"name\": \"logicblock-for-demo\",\n    \"updated_at\": \"2021-03-24T14:56:16.314Z\",\n    \"uuid\": \"17aa6495-ba01-4505-89f7-bd0cc0259748\"\n}"
+        }
+      ],
+      "resource": "logicblocks",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  ]
+}
