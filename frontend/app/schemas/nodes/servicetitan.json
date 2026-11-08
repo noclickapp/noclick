@@ -1,0 +1,724 @@
+{
+  "$defs": {
+    "CreateCustomerNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer_note",
+          "default": "create_customer_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "pin_to_top": {
+          "default": false,
+          "title": "Pin To Top",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "CreateCustomerNoteConfig",
+      "type": "object"
+    },
+    "CreateLeadFollowUpConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_lead_follow_up",
+          "default": "create_lead_follow_up",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "follow_up_date": {
+          "format": "date-time",
+          "title": "Follow Up Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "follow_up_date"
+      ],
+      "title": "CreateLeadFollowUpConfig",
+      "type": "object"
+    },
+    "CreateLeadNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_lead_note",
+          "default": "create_lead_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "pin_to_top": {
+          "default": false,
+          "title": "Pin To Top",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "CreateLeadNoteConfig",
+      "type": "object"
+    },
+    "CreateLocationNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_location_note",
+          "default": "create_location_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "pin_to_top": {
+          "default": false,
+          "title": "Pin To Top",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "CreateLocationNoteConfig",
+      "type": "object"
+    },
+    "DismissLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "dismiss_lead",
+          "default": "dismiss_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "dismissing_reason_id": {
+          "minimum": 1,
+          "title": "Dismissing Reason Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "dismissing_reason_id"
+      ],
+      "title": "DismissLeadConfig",
+      "type": "object"
+    },
+    "GetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCustomerConfig",
+      "type": "object"
+    },
+    "GetLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetLeadConfig",
+      "type": "object"
+    },
+    "GetLocationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetLocationConfig",
+      "type": "object"
+    },
+    "ListCustomerContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customer_contacts",
+          "default": "list_customer_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListCustomerContactsConfig",
+      "type": "object"
+    },
+    "ListCustomerNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customer_notes",
+          "default": "list_customer_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListCustomerNotesConfig",
+      "type": "object"
+    },
+    "ListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ListCustomersConfig",
+      "type": "object"
+    },
+    "ListLeadNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_lead_notes",
+          "default": "list_lead_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListLeadNotesConfig",
+      "type": "object"
+    },
+    "ListLeadsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ListLeadsConfig",
+      "type": "object"
+    },
+    "ListLocationContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_location_contacts",
+          "default": "list_location_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListLocationContactsConfig",
+      "type": "object"
+    },
+    "ListLocationNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_location_notes",
+          "default": "list_location_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListLocationNotesConfig",
+      "type": "object"
+    },
+    "ListLocationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ListLocationsConfig",
+      "type": "object"
+    },
+    "ServiceTitanTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "servicetitan_token",
+          "default": "servicetitan_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "app_key": {
+          "title": "App key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "tenant_id": {
+          "pattern": "^[0-9]{1,19}$",
+          "title": "Tenant ID",
+          "type": "string"
+        },
+        "environment": {
+          "default": "production",
+          "enum": [
+            "production",
+            "integration"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "app_key",
+        "tenant_id"
+      ],
+      "title": "ServiceTitan Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a ServiceTitan client-credentials access token, app key and tenant ID from your API administrator. Access tokens are short-lived: replace an expired token before the next run; NoClick does not renew it. Grant CRM Customers, Locations and Leads read/write access for the operations you use. Choose the matching production or integration environment.",
+      "x-credential-url": "https://developer.servicetitan.io/api/docs/apis/tenant-crm"
+    },
+    "UpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "UpdateCustomerConfig",
+      "type": "object"
+    },
+    "UpdateLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "summary": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "summary"
+      ],
+      "title": "UpdateLeadConfig",
+      "type": "object"
+    },
+    "UpdateLocationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_location",
+          "default": "update_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "UpdateLocationConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer_note": "#/$defs/CreateCustomerNoteConfig",
+          "create_lead_follow_up": "#/$defs/CreateLeadFollowUpConfig",
+          "create_lead_note": "#/$defs/CreateLeadNoteConfig",
+          "create_location_note": "#/$defs/CreateLocationNoteConfig",
+          "dismiss_lead": "#/$defs/DismissLeadConfig",
+          "get_customer": "#/$defs/GetCustomerConfig",
+          "get_lead": "#/$defs/GetLeadConfig",
+          "get_location": "#/$defs/GetLocationConfig",
+          "list_customer_contacts": "#/$defs/ListCustomerContactsConfig",
+          "list_customer_notes": "#/$defs/ListCustomerNotesConfig",
+          "list_customers": "#/$defs/ListCustomersConfig",
+          "list_lead_notes": "#/$defs/ListLeadNotesConfig",
+          "list_leads": "#/$defs/ListLeadsConfig",
+          "list_location_contacts": "#/$defs/ListLocationContactsConfig",
+          "list_location_notes": "#/$defs/ListLocationNotesConfig",
+          "list_locations": "#/$defs/ListLocationsConfig",
+          "update_customer": "#/$defs/UpdateCustomerConfig",
+          "update_lead": "#/$defs/UpdateLeadConfig",
+          "update_location": "#/$defs/UpdateLocationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomerNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLocationNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLocationNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLocationContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadFollowUpConfig"
+        },
+        {
+          "$ref": "#/$defs/DismissLeadConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ServiceTitanTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Servicetitan Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
