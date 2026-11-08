@@ -11,6 +11,7 @@ const AirwallexIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const AirwallexNode: NodeDefinition = {
     type: 'automation-airwallex', label: 'Airwallex',
+    category: 'finance-accounting',
     description: 'Manage balances, transactions, beneficiaries, transfers and global accounts',
     Icon: AirwallexIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
