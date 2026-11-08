@@ -1,0 +1,657 @@
+{
+  "$defs": {
+    "YouCanBookMeAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "youcanbookme_api_key",
+          "default": "youcanbookme_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_id": {
+          "description": "Exact account ID paired with this issued key. Team account access requires the organization owner's matching account/key; entitlement is not assumed.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "auth_username": {
+          "description": "HTTP Basic username: this account ID or its account email. Do not enter a login password here.",
+          "maxLength": 320,
+          "title": "Auth Username",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Already issued account API key, used as the HTTP Basic password. This is not your account login password, OAuth token or a key-issuance action.",
+          "title": "Api Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_id",
+        "auth_username",
+        "api_key"
+      ],
+      "title": "YouCanBookMe Account API Key",
+      "type": "object",
+      "x-credential-url": "https://support.youcanbook.me/hc/en-us/articles/17321549364375-Accessing-your-account-API-key"
+    },
+    "YouCanBookMeAccountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account_scope",
+          "default": "get_account_scope",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Inspect Account Scope from Protected Profiles",
+          "x-is-trigger": false
+        }
+      },
+      "title": "YouCanBookMeAccountConfig",
+      "type": "object"
+    },
+    "YouCanBookMeAppointmentTypeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "description": "An existing profile returned by this account's protected profile list.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "operation": {
+          "const": "get_appointment_type",
+          "default": "get_appointment_type",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Profile Appointment Type Metadata",
+          "x-is-trigger": false
+        },
+        "appointment_type_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Appointment Type Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "profile_id"
+            ],
+            "field_name": "appointment_type_id",
+            "searchable": true
+          },
+          "x-resource-type": "youcanbookme_appointment_type"
+        }
+      },
+      "required": [
+        "profile_id",
+        "appointment_type_id"
+      ],
+      "title": "YouCanBookMeAppointmentTypeConfig",
+      "type": "object"
+    },
+    "YouCanBookMeAppointmentTypesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Native page of the bounded profile or embedded-item collection, not an invented provider limit parameter.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to the current account, credential, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Bounded native label filter.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "profile_id": {
+          "description": "An existing profile returned by this account's protected profile list.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "operation": {
+          "const": "list_appointment_types",
+          "default": "list_appointment_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Profile Appointment Types",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "YouCanBookMeAppointmentTypesConfig",
+      "type": "object"
+    },
+    "YouCanBookMeBookingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "description": "An existing profile returned by this account's protected profile list.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Read Booking Metadata with Protected Ancestry",
+          "x-is-trigger": false
+        },
+        "booking_id": {
+          "description": "Existing booking ID, not an arbitrary URL or an intent. Public booking access alone is not credential proof.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Booking Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id",
+        "booking_id"
+      ],
+      "title": "YouCanBookMeBookingConfig",
+      "type": "object"
+    },
+    "YouCanBookMeProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "description": "An existing profile returned by this account's protected profile list.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Profile Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "YouCanBookMeProfileConfig",
+      "type": "object"
+    },
+    "YouCanBookMeProfilesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Native page of the bounded profile or embedded-item collection, not an invented provider limit parameter.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to the current account, credential, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Bounded native label filter.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Account Profiles",
+          "x-is-trigger": false
+        }
+      },
+      "title": "YouCanBookMeProfilesConfig",
+      "type": "object"
+    },
+    "YouCanBookMeQueryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "query_bookings",
+          "default": "query_bookings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Query Bounded Account Bookings",
+          "x-is-trigger": false
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional existing protected profile filter; otherwise this account's profiles only.",
+          "title": "Profile Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "from_time": {
+          "description": "Required ISO datetime with offset, transmitted as from. StartsAt and createdAt sorting are documented by vendor staff.",
+          "maxLength": 64,
+          "title": "From Time",
+          "type": "string"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO datetime with offset, transmitted as to.",
+          "title": "To Time"
+        },
+        "direction": {
+          "default": "forwards",
+          "enum": [
+            "forwards",
+            "backwards"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "time_criteria": {
+          "default": "startsAt",
+          "enum": [
+            "startsAt",
+            "createdAt"
+          ],
+          "title": "Time Criteria",
+          "type": "string"
+        },
+        "sort_by": {
+          "default": "startsAt",
+          "enum": [
+            "startsAt",
+            "createdAt"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 10,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "tentative",
+                "rejected",
+                "cancelled",
+                "upcoming",
+                "inProgress",
+                "finished",
+                "noShow"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One documented status filter. Returned status text is preserved: vendor has also documented later snake_case responses.",
+          "title": "Status",
+          "enum": [
+            "tentative",
+            "rejected",
+            "cancelled",
+            "upcoming",
+            "inProgress",
+            "finished",
+            "noShow"
+          ],
+          "x-enum-searchable": true
+        },
+        "search_text": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Text"
+        },
+        "search_criteria": {
+          "default": "title",
+          "description": "One documented searchTextCriteria filter; no guessed array encoding.",
+          "enum": [
+            "title",
+            "form",
+            "ref"
+          ],
+          "title": "Search Criteria",
+          "type": "string"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "from_time"
+      ],
+      "title": "YouCanBookMeQueryConfig",
+      "type": "object"
+    },
+    "YouCanBookMeTeamMemberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "description": "An existing profile returned by this account's protected profile list.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "operation": {
+          "const": "get_team_member",
+          "default": "get_team_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Profile Team Member Metadata",
+          "x-is-trigger": false
+        },
+        "team_member_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Team Member Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "profile_id"
+            ],
+            "field_name": "team_member_id",
+            "searchable": true
+          },
+          "x-resource-type": "youcanbookme_team_member"
+        }
+      },
+      "required": [
+        "profile_id",
+        "team_member_id"
+      ],
+      "title": "YouCanBookMeTeamMemberConfig",
+      "type": "object"
+    },
+    "YouCanBookMeTeamMembersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Native page of the bounded profile or embedded-item collection, not an invented provider limit parameter.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to the current account, credential, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Bounded native label filter.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "profile_id": {
+          "description": "An existing profile returned by this account's protected profile list.",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "youcanbookme_profile"
+        },
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Profile Team Members",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "YouCanBookMeTeamMembersConfig",
+      "type": "object"
+    },
+    "YouCanBookMeTestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Test Protected Account Profiles",
+          "x-is-trigger": false
+        }
+      },
+      "title": "YouCanBookMeTestConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_account_scope": "#/$defs/YouCanBookMeAccountConfig",
+          "get_appointment_type": "#/$defs/YouCanBookMeAppointmentTypeConfig",
+          "get_booking": "#/$defs/YouCanBookMeBookingConfig",
+          "get_profile": "#/$defs/YouCanBookMeProfileConfig",
+          "get_team_member": "#/$defs/YouCanBookMeTeamMemberConfig",
+          "list_appointment_types": "#/$defs/YouCanBookMeAppointmentTypesConfig",
+          "list_profiles": "#/$defs/YouCanBookMeProfilesConfig",
+          "list_team_members": "#/$defs/YouCanBookMeTeamMembersConfig",
+          "query_bookings": "#/$defs/YouCanBookMeQueryConfig",
+          "test_connection": "#/$defs/YouCanBookMeTestConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/YouCanBookMeTestConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeTeamMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeTeamMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeAppointmentTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeAppointmentTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/YouCanBookMeQueryConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YouCanBookMeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Youcanbookme Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my protected booking profiles",
+    "Read team-member metadata on a selected profile",
+    "Query bookings in a bounded time window",
+    "Inspect appointment types without creating a booking"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
