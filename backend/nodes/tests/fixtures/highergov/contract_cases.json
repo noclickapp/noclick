@@ -1,0 +1,474 @@
+[
+  {
+    "operation": "list_agencies",
+    "path": "/api-external/agency/",
+    "config": {
+      "operation": "list_agencies",
+      "page_number": 2,
+      "page_size": 25,
+      "agency_key": 1008
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "agency_key": "1008"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_awardees",
+    "path": "/api-external/awardee/",
+    "config": {
+      "operation": "list_awardees",
+      "page_number": 2,
+      "page_size": 25,
+      "awardee_key_parent": 10000002,
+      "cage_code": "34ZB1",
+      "ordering": "-last_update_date",
+      "primary_naics": "541519",
+      "registration_last_update_date": "2023-05-01",
+      "uei": "L61FBMJQ36A3"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "awardee_key_parent": "10000002",
+      "cage_code": "34ZB1",
+      "ordering": "-last_update_date",
+      "primary_naics": "541519",
+      "registration_last_update_date": "2023-05-01",
+      "uei": "L61FBMJQ36A3"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_mentor_protege_relationships",
+    "path": "/api-external/awardee-mp/",
+    "config": {
+      "operation": "list_mentor_protege_relationships",
+      "page_number": 2,
+      "page_size": 25,
+      "awardee_key_mentor": 10117613,
+      "awardee_key_mentor_parent": 10000006,
+      "awardee_key_protege": 10286130,
+      "awardee_key_protege_parent": 10286130
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "awardee_key_mentor": "10117613",
+      "awardee_key_mentor_parent": "10000006",
+      "awardee_key_protege": "10286130",
+      "awardee_key_protege_parent": "10286130"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_prime_sub_partnerships",
+    "path": "/api-external/awardee-partnership/",
+    "config": {
+      "operation": "list_prime_sub_partnerships",
+      "page_number": 2,
+      "page_size": 25,
+      "awardee_key_prime": 10115071,
+      "awardee_key_prime_parent": 10115071,
+      "awardee_key_sub": 10115071,
+      "awardee_key_sub_parent": 10115071
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "awardee_key_prime": "10115071",
+      "awardee_key_prime_parent": "10115071",
+      "awardee_key_sub": "10115071",
+      "awardee_key_sub_parent": "10115071"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_contracts",
+    "path": "/api-external/contract/",
+    "config": {
+      "operation": "list_contracts",
+      "page_number": 2,
+      "page_size": 25,
+      "award_id": "140A0323C0009",
+      "awardee_key": 10115071,
+      "awardee_key_parent": 10000002,
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": 463,
+      "captured_date": "2023-05-01",
+      "funding_agency_key": 463,
+      "last_modified_date": "2023-05-01",
+      "naics_code": "541330",
+      "ordering": "-action_date",
+      "parent_award_id": "70RDAD21D00000002",
+      "psc_code": "8440",
+      "search_id": "WCZLN4aL1ZPSl8myr5vr8",
+      "vehicle_key": 1008
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "award_id": "140A0323C0009",
+      "awardee_key": "10115071",
+      "awardee_key_parent": "10000002",
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": "463",
+      "captured_date": "2023-05-01",
+      "funding_agency_key": "463",
+      "last_modified_date": "2023-05-01",
+      "naics_code": "541330",
+      "ordering": "-action_date",
+      "parent_award_id": "70RDAD21D00000002",
+      "psc_code": "8440",
+      "search_id": "WCZLN4aL1ZPSl8myr5vr8",
+      "vehicle_key": "1008"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_documents",
+    "path": "/api-external/document/",
+    "config": {
+      "operation": "list_documents",
+      "page_number": 2,
+      "page_size": 25,
+      "ordering": "documented-filter",
+      "related_key": "66cab3907c5b4cfcafbf102c5bb17eb6"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "ordering": "documented-filter",
+      "related_key": "66cab3907c5b4cfcafbf102c5bb17eb6"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_grants",
+    "path": "/api-external/grant/",
+    "config": {
+      "operation": "list_grants",
+      "page_number": 2,
+      "page_size": 25,
+      "award_id": "DEAR0002024",
+      "awardee_key": 10115071,
+      "awardee_key_parent": 10000002,
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": 463,
+      "cfda_program_number": "93.778",
+      "funding_agency_key": 463,
+      "last_modified_date": "2023-05-01",
+      "ordering": "-action_date",
+      "search_id": "goLCRhe9oxTk2nH4ByYo0"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "award_id": "DEAR0002024",
+      "awardee_key": "10115071",
+      "awardee_key_parent": "10000002",
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": "463",
+      "cfda_program_number": "93.778",
+      "funding_agency_key": "463",
+      "last_modified_date": "2023-05-01",
+      "ordering": "-action_date",
+      "search_id": "goLCRhe9oxTk2nH4ByYo0"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_grant_programs",
+    "path": "/api-external/grant-program/",
+    "config": {
+      "operation": "list_grant_programs",
+      "page_number": 2,
+      "page_size": 25,
+      "agency_key": 1008,
+      "cfda_program_number": "10.854"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "agency_key": "1008",
+      "cfda_program_number": "10.854"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_indefinite_delivery_vehicles",
+    "path": "/api-external/idv/",
+    "config": {
+      "operation": "list_indefinite_delivery_vehicles",
+      "page_number": 2,
+      "page_size": 25,
+      "award_id": "GS00F098CA-75R60223A00019",
+      "awardee_key": 10115071,
+      "awardee_key_parent": 10000002,
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": 463,
+      "funding_agency_key": 463,
+      "last_modified_date": "2023-05-01",
+      "naics_code": "541330",
+      "ordering": "-action_date",
+      "parent_award_id": "GS00F098CA",
+      "psc_code": "8440",
+      "vehicle_key": 1008
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "award_id": "GS00F098CA-75R60223A00019",
+      "awardee_key": "10115071",
+      "awardee_key_parent": "10000002",
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": "463",
+      "funding_agency_key": "463",
+      "last_modified_date": "2023-05-01",
+      "naics_code": "541330",
+      "ordering": "-action_date",
+      "parent_award_id": "GS00F098CA",
+      "psc_code": "8440",
+      "vehicle_key": "1008"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_naics_codes",
+    "path": "/api-external/naics/",
+    "config": {
+      "operation": "list_naics_codes",
+      "page_number": 2,
+      "page_size": 25,
+      "naics_code": "541330",
+      "ordering": "-naics_code"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "naics_code": "541330",
+      "ordering": "-naics_code"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_national_stock_numbers",
+    "path": "/api-external/nsn/",
+    "config": {
+      "operation": "list_national_stock_numbers",
+      "page_number": 2,
+      "page_size": 25,
+      "cage_code": "95403",
+      "nsn": "6505013306269",
+      "ordering": "-last_price",
+      "part_number": "10669396-001"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "cage_code": "95403",
+      "nsn": "6505013306269",
+      "ordering": "-last_price",
+      "part_number": "10669396-001"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_opportunities",
+    "path": "/api-external/opportunity/",
+    "config": {
+      "operation": "list_opportunities",
+      "page_number": 2,
+      "page_size": 25,
+      "agency_key": 463,
+      "captured_date": "2023-05-01",
+      "opp_key": "7ae9d947f71358afb372cd5f355fb447",
+      "ordering": "-captured_date",
+      "posted_date": "2023-05-01",
+      "search_id": "n3K_MPmMi6Z1TzSEXlUhp",
+      "source_id": "47PG1024R1000",
+      "source_type": "sam",
+      "version_key": "c68426d1aba54dd381dc5b1487b002c0"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "agency_key": "463",
+      "captured_date": "2023-05-01",
+      "opp_key": "7ae9d947f71358afb372cd5f355fb447",
+      "ordering": "-captured_date",
+      "posted_date": "2023-05-01",
+      "search_id": "n3K_MPmMi6Z1TzSEXlUhp",
+      "source_id": "47PG1024R1000",
+      "source_type": "sam",
+      "version_key": "c68426d1aba54dd381dc5b1487b002c0"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_people",
+    "path": "/api-external/people/",
+    "config": {
+      "operation": "list_people",
+      "page_number": 2,
+      "page_size": 25,
+      "contact_email": "allenks@state.gov",
+      "ordering": "-last_seen"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "contact_email": "allenks@state.gov",
+      "ordering": "-last_seen"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_product_service_codes",
+    "path": "/api-external/psc/",
+    "config": {
+      "operation": "list_product_service_codes",
+      "page_number": 2,
+      "page_size": 25,
+      "psc_code": "8440"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "psc_code": "8440"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_pursuits",
+    "path": "/api-external/pursuit/",
+    "config": {
+      "operation": "list_pursuits",
+      "page_number": 2,
+      "page_size": 25,
+      "reference_id": 1000,
+      "search_id": "WCZLN4aL1ZPSl8myr5vr8",
+      "unique_key": "43cf585d9c4f4519ab263edfeebfc7e1"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "reference_id": "1000",
+      "search_id": "WCZLN4aL1ZPSl8myr5vr8",
+      "unique_key": "43cf585d9c4f4519ab263edfeebfc7e1"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_state_local_contracts",
+    "path": "/api-external/sl-contract/",
+    "config": {
+      "operation": "list_state_local_contracts",
+      "page_number": 2,
+      "page_size": 25,
+      "captured_date": "2023-05-01",
+      "end_date": "2025-01-31",
+      "keyword": "documented-filter",
+      "ordering": "-award_amount",
+      "search_id": "WCZLN4aL1ZPSl8myr5vr8",
+      "start_date": "2023-01-01"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "captured_date": "2023-05-01",
+      "end_date": "2025-01-31",
+      "keyword": "documented-filter",
+      "ordering": "-award_amount",
+      "search_id": "WCZLN4aL1ZPSl8myr5vr8",
+      "start_date": "2023-01-01"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_subcontracts",
+    "path": "/api-external/subcontract/",
+    "config": {
+      "operation": "list_subcontracts",
+      "page_number": 2,
+      "page_size": 25,
+      "awardee_key": 10115071,
+      "awardee_key_parent": 10000002,
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": 463,
+      "funding_agency_key": 463,
+      "last_modified_date": "2023-05-01",
+      "ordering": "-last_modified_date"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "awardee_key": "10115071",
+      "awardee_key_parent": "10000002",
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": "463",
+      "funding_agency_key": "463",
+      "last_modified_date": "2023-05-01",
+      "ordering": "-last_modified_date"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_subgrants",
+    "path": "/api-external/subgrant/",
+    "config": {
+      "operation": "list_subgrants",
+      "page_number": 2,
+      "page_size": 25,
+      "awardee_key": 10115071,
+      "awardee_key_parent": 10000002,
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": 463,
+      "funding_agency_key": 463,
+      "last_modified_date": "2023-05-01",
+      "ordering": "-last_modified_date"
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "awardee_key": "10115071",
+      "awardee_key_parent": "10000002",
+      "awardee_uei": "SMNWM6HN79X5",
+      "awardee_uei_parent": "VF58HFRNGEL8",
+      "awarding_agency_key": "463",
+      "funding_agency_key": "463",
+      "last_modified_date": "2023-05-01",
+      "ordering": "-last_modified_date"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  },
+  {
+    "operation": "list_contract_vehicles",
+    "path": "/api-external/vehicle/",
+    "config": {
+      "operation": "list_contract_vehicles",
+      "page_number": 2,
+      "page_size": 25,
+      "ordering": "-award_date",
+      "vehicle_key": 1008
+    },
+    "query": {
+      "page_number": "2",
+      "page_size": "25",
+      "ordering": "-award_date",
+      "vehicle_key": "1008"
+    },
+    "source": "https://www.highergov.com/api-external/schema/"
+  }
+]

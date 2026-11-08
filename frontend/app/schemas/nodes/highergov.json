@@ -1,0 +1,2339 @@
+{
+  "$defs": {
+    "HigherGovAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "highergov_api_key",
+          "default": "highergov_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "HigherGov API Key",
+      "type": "object",
+      "x-credential-instructions": "An account administrator can create an API key in HigherGov: open the gear menu, then API. Paste only the key. HigherGov requires it as an api_key query parameter over HTTPS. Connecting reads your internal pursuits; reads consume your API record allowance.",
+      "x-credential-url": "https://www.highergov.com/api-external/schema/"
+    },
+    "ListAgencies": {
+      "additionalProperties": false,
+      "description": "Description:Federal and State and Local Agencies and hierarchies.    Update Frequency: Ad Hoc as new agencies are created or become relevant.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_agencies",
+          "default": "list_agencies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Agency key",
+          "title": "Agency Key"
+        }
+      },
+      "title": "ListAgencies",
+      "type": "object"
+    },
+    "ListAwardees": {
+      "additionalProperties": false,
+      "description": "Description: Federal Awardees registered in SAM and DSBS.    Update Frequency: Updated Monthly.    Update Check Field: registration_last_update_date",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_awardees",
+          "default": "list_awardees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "awardee_key_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key (Parent Level)",
+          "title": "Awardee Key Parent"
+        },
+        "cage_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CAGE Code",
+          "title": "Cage Code"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-last_update_date",
+                "last_update_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-last_update_date",
+            "last_update_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "primary_naics": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary registered NAICS Code",
+          "title": "Primary Naics"
+        },
+        "registration_last_update_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date the awardee last updated their registration in SAM",
+          "title": "Registration Last Update Date"
+        },
+        "uei": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UEI",
+          "title": "Uei"
+        }
+      },
+      "title": "ListAwardees",
+      "type": "object"
+    },
+    "ListContractVehicles": {
+      "additionalProperties": false,
+      "description": "Description: Federal multi-award contract vehicles.    Update Frequency: Updated ad hoc as new awards are made.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contract_vehicles",
+          "default": "list_contract_vehicles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-award_date",
+                "award_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-award_date",
+            "award_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "vehicle_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Vehicle key",
+          "title": "Vehicle Key"
+        }
+      },
+      "title": "ListContractVehicles",
+      "type": "object"
+    },
+    "ListContracts": {
+      "additionalProperties": false,
+      "description": "Description: Federal prime contract awards.    Update Frequency: Daily by 2am (for two days prior)   Update Check Field: last_modified_date.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contracts",
+          "default": "list_contracts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "award_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The government Award ID",
+          "title": "Award Id"
+        },
+        "awardee_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key",
+          "title": "Awardee Key"
+        },
+        "awardee_key_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key (Parent Level)",
+          "title": "Awardee Key Parent"
+        },
+        "awardee_uei": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI",
+          "title": "Awardee Uei"
+        },
+        "awardee_uei_parent": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI Parent",
+          "title": "Awardee Uei Parent"
+        },
+        "awarding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awarding Agency key",
+          "title": "Awarding Agency Key"
+        },
+        "captured_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date HigherGov captured the last amendment. Due to legally defined delays in government reporting, this may differ from last_modified_date by up to 1-90 days.",
+          "title": "Captured Date"
+        },
+        "funding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Funding Agency key",
+          "title": "Funding Agency Key"
+        },
+        "last_modified_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last modified date filter (format: YYYY-MM-DD)",
+          "title": "Last Modified Date"
+        },
+        "naics_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awards NAICS code",
+          "title": "Naics Code"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-action_date",
+                "-current_total_value_of_award",
+                "-last_modified_date",
+                "-period_of_performance_potential_end_date",
+                "-period_of_performance_start_date",
+                "-potential_total_value_of_award",
+                "-total_dollars_obligated",
+                "action_date",
+                "current_total_value_of_award",
+                "last_modified_date",
+                "period_of_performance_potential_end_date",
+                "period_of_performance_start_date",
+                "potential_total_value_of_award",
+                "total_dollars_obligated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-action_date",
+            "-current_total_value_of_award",
+            "-last_modified_date",
+            "-period_of_performance_potential_end_date",
+            "-period_of_performance_start_date",
+            "-potential_total_value_of_award",
+            "-total_dollars_obligated",
+            "action_date",
+            "current_total_value_of_award",
+            "last_modified_date",
+            "period_of_performance_potential_end_date",
+            "period_of_performance_start_date",
+            "potential_total_value_of_award",
+            "total_dollars_obligated"
+          ],
+          "x-enum-searchable": true
+        },
+        "parent_award_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The government Award ID of the parent Award",
+          "title": "Parent Award Id"
+        },
+        "psc_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PSC code",
+          "title": "Psc Code"
+        },
+        "search_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov SearchID",
+          "title": "Search Id"
+        },
+        "vehicle_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Vehicle key",
+          "title": "Vehicle Key"
+        }
+      },
+      "title": "ListContracts",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "additionalProperties": false,
+      "description": "Description: Returns paths for downloading the documents associated with the opportunity. The related_key is required and is found in the document_path field in the Opportunity endpoint.   Update Frequency: Real time.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering"
+        },
+        "related_key": {
+          "description": "Document Key",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Related Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "related_key"
+      ],
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListGrantPrograms": {
+      "additionalProperties": false,
+      "description": "Description:Government Assistance Programs (Grant Programs or CFDAs).    Update Frequency: Ad hoc as new programs are released, typically monthly.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_grant_programs",
+          "default": "list_grant_programs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Agency key",
+          "title": "Agency Key"
+        },
+        "cfda_program_number": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CFDA Program Number for the grant program",
+          "title": "Cfda Program Number"
+        }
+      },
+      "title": "ListGrantPrograms",
+      "type": "object"
+    },
+    "ListGrants": {
+      "additionalProperties": false,
+      "description": "Description: Federal prime grant awards.    Update Frequency: Daily by 2am (for two days prior)   Update Check Field: last_modified_date.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_grants",
+          "default": "list_grants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "award_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The government Award ID",
+          "title": "Award Id"
+        },
+        "awardee_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key",
+          "title": "Awardee Key"
+        },
+        "awardee_key_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key (Parent Level)",
+          "title": "Awardee Key Parent"
+        },
+        "awardee_uei": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI",
+          "title": "Awardee Uei"
+        },
+        "awardee_uei_parent": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI Parent",
+          "title": "Awardee Uei Parent"
+        },
+        "awarding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awarding Agency key",
+          "title": "Awarding Agency Key"
+        },
+        "cfda_program_number": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Grant Program Number (CFDA)",
+          "title": "Cfda Program Number"
+        },
+        "funding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Funding Agency key",
+          "title": "Funding Agency Key"
+        },
+        "last_modified_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last modified date filter (format: YYYY-MM-DD)",
+          "title": "Last Modified Date"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-action_date",
+                "-last_modified_date",
+                "-total_obligated_amount",
+                "action_date",
+                "last_modified_date",
+                "total_obligated_amount"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-action_date",
+            "-last_modified_date",
+            "-total_obligated_amount",
+            "action_date",
+            "last_modified_date",
+            "total_obligated_amount"
+          ],
+          "x-enum-searchable": true
+        },
+        "search_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov SearchID",
+          "title": "Search Id"
+        }
+      },
+      "title": "ListGrants",
+      "type": "object"
+    },
+    "ListIndefiniteDeliveryVehicles": {
+      "additionalProperties": false,
+      "description": "Description: Federal prime IDV awards.    Update Frequency: Daily by 2am (for two days prior)   Update Check Field: last_modified_date.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_indefinite_delivery_vehicles",
+          "default": "list_indefinite_delivery_vehicles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "award_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The government Award ID",
+          "title": "Award Id"
+        },
+        "awardee_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key",
+          "title": "Awardee Key"
+        },
+        "awardee_key_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key (Parent Level)",
+          "title": "Awardee Key Parent"
+        },
+        "awardee_uei": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI",
+          "title": "Awardee Uei"
+        },
+        "awardee_uei_parent": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI Parent",
+          "title": "Awardee Uei Parent"
+        },
+        "awarding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awarding Agency key",
+          "title": "Awarding Agency Key"
+        },
+        "funding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Funding Agency key",
+          "title": "Funding Agency Key"
+        },
+        "last_modified_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last modified date filter (format: YYYY-MM-DD)",
+          "title": "Last Modified Date"
+        },
+        "naics_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awards NAICS code",
+          "title": "Naics Code"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-action_date",
+                "-last_modified_date_ordering",
+                "-ordering_period_end_date",
+                "-period_of_performance_start_date",
+                "-potential_total_value_of_award",
+                "action_date",
+                "last_modified_date_ordering",
+                "ordering_period_end_date",
+                "period_of_performance_start_date",
+                "potential_total_value_of_award"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-action_date",
+            "-last_modified_date_ordering",
+            "-ordering_period_end_date",
+            "-period_of_performance_start_date",
+            "-potential_total_value_of_award",
+            "action_date",
+            "last_modified_date_ordering",
+            "ordering_period_end_date",
+            "period_of_performance_start_date",
+            "potential_total_value_of_award"
+          ],
+          "x-enum-searchable": true
+        },
+        "parent_award_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The government Award ID of the parent Award",
+          "title": "Parent Award Id"
+        },
+        "psc_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PSC code",
+          "title": "Psc Code"
+        },
+        "vehicle_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Vehicle key",
+          "title": "Vehicle Key"
+        }
+      },
+      "title": "ListIndefiniteDeliveryVehicles",
+      "type": "object"
+    },
+    "ListMentorProtegeRelationships": {
+      "additionalProperties": false,
+      "description": "Read the published HigherGov mentor_protege_relationships endpoint.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_mentor_protege_relationships",
+          "default": "list_mentor_protege_relationships",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "awardee_key_mentor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the Mentor",
+          "title": "Awardee Key Mentor"
+        },
+        "awardee_key_mentor_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the Mentor Parent",
+          "title": "Awardee Key Mentor Parent"
+        },
+        "awardee_key_protege": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the Protege",
+          "title": "Awardee Key Protege"
+        },
+        "awardee_key_protege_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the Protege parent",
+          "title": "Awardee Key Protege Parent"
+        }
+      },
+      "title": "ListMentorProtegeRelationships",
+      "type": "object"
+    },
+    "ListNaicsCodes": {
+      "additionalProperties": false,
+      "description": "Description: North American Industry Classification System (NAICS) codes.    Update Frequency: Updated Ad Hoc when codes added or removed by the Census Bureau or the SBA changes size standards",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_naics_codes",
+          "default": "list_naics_codes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "naics_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awards NAICS code",
+          "title": "Naics Code"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-naics_code",
+                "naics_code"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-naics_code",
+            "naics_code"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListNaicsCodes",
+      "type": "object"
+    },
+    "ListNationalStockNumbers": {
+      "additionalProperties": false,
+      "description": "Description: NATO Stock Number Lookup.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_national_stock_numbers",
+          "default": "list_national_stock_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cage_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier CAGE",
+          "title": "Cage Code"
+        },
+        "nsn": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "National Stock Number (NSN)",
+          "title": "Nsn"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-last_price",
+                "-opp_count",
+                "-unit_price",
+                "last_price",
+                "opp_count",
+                "unit_price"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-last_price",
+            "-opp_count",
+            "-unit_price",
+            "last_price",
+            "opp_count",
+            "unit_price"
+          ],
+          "x-enum-searchable": true
+        },
+        "part_number": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part Number",
+          "title": "Part Number"
+        }
+      },
+      "title": "ListNationalStockNumbers",
+      "type": "object"
+    },
+    "ListOpportunities": {
+      "additionalProperties": false,
+      "description": "Description: Includes federal Contract, DIBBS, Grants, and State and Local Opportunities.    Update Frequency: Updated every 30 minutes   Update Check Field: captured_date.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_opportunities",
+          "default": "list_opportunities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Agency key",
+          "title": "Agency Key"
+        },
+        "captured_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the opportunity was added to HigherGov",
+          "title": "Captured Date"
+        },
+        "opp_key": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The HigherGov opportunity key",
+          "title": "Opp Key"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-captured_date",
+                "-due_date",
+                "-posted_date",
+                "captured_date",
+                "due_date",
+                "posted_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-captured_date",
+            "-due_date",
+            "-posted_date",
+            "captured_date",
+            "due_date",
+            "posted_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "posted_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the opportunity was posted by the agency in YYYY-MM-DD format",
+          "title": "Posted Date"
+        },
+        "search_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov SearchID.  The following search search fields are currently supported: Active, Applicant Type (Grant Only), Agency, CAGE Code, Date Due, Date Posted, Exclude Sole Source, Funding Category (Grant Only), Funding Instrument (Grant Only), Grant Program, Keywords, NAICS, NSN, Place of Performance (Federal Contracts Only), PSC, Set Aside, State (State and Local Only), and Value Range",
+          "title": "Search Id"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source opportunity ID",
+          "title": "Source Id"
+        },
+        "source_type": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opportunity source type (sam, dibbs, sbir, grant, sled)",
+          "title": "Source Type"
+        },
+        "version_key": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The HigherGov opportunity version key",
+          "title": "Version Key"
+        }
+      },
+      "title": "ListOpportunities",
+      "type": "object"
+    },
+    "ListPeople": {
+      "additionalProperties": false,
+      "description": "Description: Federal and State and Local People.    Update Frequency: Updated in real time.   Update Check Field: as_of_date.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_people",
+          "default": "list_people",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address",
+          "title": "Contact Email"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-last_seen",
+                "last_seen"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-last_seen",
+            "last_seen"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListPeople",
+      "type": "object"
+    },
+    "ListPrimeSubPartnerships": {
+      "additionalProperties": false,
+      "description": "Description: Teaming partnerships between different Awardees.    Update Frequency: Updated Weekly with new subaward data.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_prime_sub_partnerships",
+          "default": "list_prime_sub_partnerships",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "awardee_key_prime": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the prime recipient",
+          "title": "Awardee Key Prime"
+        },
+        "awardee_key_prime_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the prime recipient parent",
+          "title": "Awardee Key Prime Parent"
+        },
+        "awardee_key_sub": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the subawardee",
+          "title": "Awardee Key Sub"
+        },
+        "awardee_key_sub_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key of the subawardee parent",
+          "title": "Awardee Key Sub Parent"
+        }
+      },
+      "title": "ListPrimeSubPartnerships",
+      "type": "object"
+    },
+    "ListProductServiceCodes": {
+      "additionalProperties": false,
+      "description": "Description: Product Service Codes (PSC) Codes.    Update Frequency: Updated Ad Hoc when codes added or removed",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_product_service_codes",
+          "default": "list_product_service_codes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "psc_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PSC code",
+          "title": "Psc Code"
+        }
+      },
+      "title": "ListProductServiceCodes",
+      "type": "object"
+    },
+    "ListPursuits": {
+      "additionalProperties": false,
+      "description": "Description: Returns the authenticated client's HigherGov pursuits tied to their account and managed in https://www.highergov.com/pursuit/. This endpoint is for a user's internal pursuit records, not for searching government opportunities. If you want to look up federal contract, grant, or other opportunities or forecasts, use the Opportunity endpoint instead.   Update Frequency: Real time.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_pursuits",
+          "default": "list_pursuits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference ID for the pursuit (maps to pursuit_key_external).",
+          "title": "Reference Id"
+        },
+        "search_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov SearchID",
+          "title": "Search Id"
+        },
+        "unique_key": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique internal pursuit key (maps to pursuit_key_internal).",
+          "title": "Unique Key"
+        }
+      },
+      "title": "ListPursuits",
+      "type": "object"
+    },
+    "ListStateLocalContracts": {
+      "additionalProperties": false,
+      "description": "State and Local Government contract awards.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_state_local_contracts",
+          "default": "list_state_local_contracts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "captured_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the opportunity was added to HigherGov",
+          "title": "Captured Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest end date for the award. Format: YYYY-MM-DD.",
+          "title": "End Date"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text search across state/local contract awards.",
+          "title": "Keyword"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-award_amount",
+                "-captured_date",
+                "-end_date",
+                "-start_date",
+                "award_amount",
+                "captured_date",
+                "end_date",
+                "start_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order results by a particular field. Prefix with '-' for descending order.",
+          "title": "Ordering",
+          "enum": [
+            "-award_amount",
+            "-captured_date",
+            "-end_date",
+            "-start_date",
+            "award_amount",
+            "captured_date",
+            "end_date",
+            "start_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "search_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov SearchID",
+          "title": "Search Id"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Earliest start date for the award. Format: YYYY-MM-DD.",
+          "title": "Start Date"
+        }
+      },
+      "title": "ListStateLocalContracts",
+      "type": "object"
+    },
+    "ListSubcontracts": {
+      "additionalProperties": false,
+      "description": "Description: Federal prime subcontract award data.    Update Frequency: Updated weekly.    Update Check Field: last_modified_date (note that data is often reported late by prime awardees and we recommend periodically looking back over the prior year to fully sync new records).",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_subcontracts",
+          "default": "list_subcontracts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "awardee_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key",
+          "title": "Awardee Key"
+        },
+        "awardee_key_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key (Parent Level)",
+          "title": "Awardee Key Parent"
+        },
+        "awardee_uei": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI",
+          "title": "Awardee Uei"
+        },
+        "awardee_uei_parent": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI Parent",
+          "title": "Awardee Uei Parent"
+        },
+        "awarding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awarding Agency key",
+          "title": "Awarding Agency Key"
+        },
+        "funding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Funding Agency key",
+          "title": "Funding Agency Key"
+        },
+        "last_modified_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last modified date filter (format: YYYY-MM-DD)",
+          "title": "Last Modified Date"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-last_modified_date",
+                "-subaward_action_date",
+                "-subaward_amount_total",
+                "last_modified_date",
+                "subaward_action_date",
+                "subaward_amount_total"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-last_modified_date",
+            "-subaward_action_date",
+            "-subaward_amount_total",
+            "last_modified_date",
+            "subaward_action_date",
+            "subaward_amount_total"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSubcontracts",
+      "type": "object"
+    },
+    "ListSubgrants": {
+      "additionalProperties": false,
+      "description": "Description: Federal prime subgrant award data.    Update Frequency: Updated weekly.    Update Check Field: last_modified_date (note that data is often reported late by prime awardees and we recommend periodically looking back over the prior year to fully sync new records).",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Use next_page_number from the previous result.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Records per page, up to the documented maximum of 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_subgrants",
+          "default": "list_subgrants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "awardee_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key",
+          "title": "Awardee Key"
+        },
+        "awardee_key_parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awardee Key (Parent Level)",
+          "title": "Awardee Key Parent"
+        },
+        "awardee_uei": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI",
+          "title": "Awardee Uei"
+        },
+        "awardee_uei_parent": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Awardee UEI Parent",
+          "title": "Awardee Uei Parent"
+        },
+        "awarding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Awarding Agency key",
+          "title": "Awarding Agency Key"
+        },
+        "funding_agency_key": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HigherGov Funding Agency key",
+          "title": "Funding Agency Key"
+        },
+        "last_modified_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last modified date filter (format: YYYY-MM-DD)",
+          "title": "Last Modified Date"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "-last_modified_date",
+                "-subaward_action_date",
+                "-subaward_amount_total",
+                "last_modified_date",
+                "subaward_action_date",
+                "subaward_amount_total"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which field to use when ordering the results.",
+          "title": "Ordering",
+          "enum": [
+            "-last_modified_date",
+            "-subaward_action_date",
+            "-subaward_amount_total",
+            "last_modified_date",
+            "subaward_action_date",
+            "subaward_amount_total"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSubgrants",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "list_agencies": "#/$defs/ListAgencies",
+          "list_awardees": "#/$defs/ListAwardees",
+          "list_contract_vehicles": "#/$defs/ListContractVehicles",
+          "list_contracts": "#/$defs/ListContracts",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_grant_programs": "#/$defs/ListGrantPrograms",
+          "list_grants": "#/$defs/ListGrants",
+          "list_indefinite_delivery_vehicles": "#/$defs/ListIndefiniteDeliveryVehicles",
+          "list_mentor_protege_relationships": "#/$defs/ListMentorProtegeRelationships",
+          "list_naics_codes": "#/$defs/ListNaicsCodes",
+          "list_national_stock_numbers": "#/$defs/ListNationalStockNumbers",
+          "list_opportunities": "#/$defs/ListOpportunities",
+          "list_people": "#/$defs/ListPeople",
+          "list_prime_sub_partnerships": "#/$defs/ListPrimeSubPartnerships",
+          "list_product_service_codes": "#/$defs/ListProductServiceCodes",
+          "list_pursuits": "#/$defs/ListPursuits",
+          "list_state_local_contracts": "#/$defs/ListStateLocalContracts",
+          "list_subcontracts": "#/$defs/ListSubcontracts",
+          "list_subgrants": "#/$defs/ListSubgrants"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAgencies"
+        },
+        {
+          "$ref": "#/$defs/ListAwardees"
+        },
+        {
+          "$ref": "#/$defs/ListMentorProtegeRelationships"
+        },
+        {
+          "$ref": "#/$defs/ListPrimeSubPartnerships"
+        },
+        {
+          "$ref": "#/$defs/ListContracts"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/ListGrants"
+        },
+        {
+          "$ref": "#/$defs/ListGrantPrograms"
+        },
+        {
+          "$ref": "#/$defs/ListIndefiniteDeliveryVehicles"
+        },
+        {
+          "$ref": "#/$defs/ListNaicsCodes"
+        },
+        {
+          "$ref": "#/$defs/ListNationalStockNumbers"
+        },
+        {
+          "$ref": "#/$defs/ListOpportunities"
+        },
+        {
+          "$ref": "#/$defs/ListPeople"
+        },
+        {
+          "$ref": "#/$defs/ListProductServiceCodes"
+        },
+        {
+          "$ref": "#/$defs/ListPursuits"
+        },
+        {
+          "$ref": "#/$defs/ListStateLocalContracts"
+        },
+        {
+          "$ref": "#/$defs/ListSubcontracts"
+        },
+        {
+          "$ref": "#/$defs/ListSubgrants"
+        },
+        {
+          "$ref": "#/$defs/ListContractVehicles"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HigherGovAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Highergov Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
