@@ -182,7 +182,8 @@ async def test_static_status_taxonomy_never_reflects_wire(world, status, error):
 async def test_malformed_or_unknown_metadata_is_inconclusive(world, raw, route):
     world.override = raw
     world.override_route = route
-    with pytest.raises(RuntimeError): await R.records(AUTH, args("list_folder"))
+    with pytest.raises(RuntimeError):
+        await R.records(AUTH, args("get_file_info" if route == "stat" else "list_folder"))
 
 
 @pytest.mark.asyncio
@@ -206,3 +207,14 @@ async def test_actual_picker_parent_pagination_and_generic_labels(world):
         await R.SirvNode.load_field_options("file_path", AUTH, {"root_folder": "/other", "folder_path": FOLDER})
     with pytest.raises(ValueError):
         await R.SirvNode.load_field_options("file_path", AUTH, {"root_folder": ROOT, "folder_path": ROOT}, page_token=R.seal_page(AUTH, FOLDER, "opaque"))
+
+
+@pytest.mark.asyncio
+async def test_folder_witness_uses_documented_directory_reads_not_file_stat(world):
+    await R.folder_witness(AUTH, FOLDER)
+    assert world.calls
+    assert all(req.url.path == "/v2/files/readdir" for req in world.calls)
+    world.override_route = "readdir"
+    world.override = b'{"isDirectory":true,"mtime":"2026-10-07T00:00:00Z"}'
+    with pytest.raises(RuntimeError):
+        await R.folder_witness(AUTH, ROOT)

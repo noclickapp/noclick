@@ -345,9 +345,9 @@ async def find_child(data, folder, selected, *, directory):
 async def folder_witness(data, folder):
     root = (await current_credential(data))["root_folder"]
     within(root, folder)
-    root_stat = stat(await request(data, "stat", root))
-    if root_stat["is_directory"] is not True:
-        raise _Refused("Sirv saved root is not a current folder")
+    # The documented folder API supplies typed entries and pagination; stat is
+    # documented for files. Prove folder reads using their own response shape.
+    root_page = directory_page(await request(data, "readdir", root), root)
     remainder = folder[len(root):].strip("/") if root != "/" else folder[1:]
     pieces = remainder.split("/") if remainder else []
     if len(pieces) > 8:
@@ -358,10 +358,8 @@ async def folder_witness(data, folder):
         witness = await find_child(data, current, selected, directory=True)
         chain.append((selected, witness))
         current = selected
-    selected_stat = root_stat if folder == root else stat(await request(data, "stat", folder))
-    if selected_stat["is_directory"] is not True:
-        raise _Refused("Sirv selected folder is no longer a directory")
-    return root_stat, chain, selected_stat
+    selected_page = root_page if folder == root else directory_page(await request(data, "readdir", folder), folder)
+    return root_page, chain, selected_page
 
 
 def _page_binding(data, folder):
