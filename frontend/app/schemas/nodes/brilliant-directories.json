@@ -1,0 +1,1763 @@
+{
+  "$defs": {
+    "BrilliantDirectoriesApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "brilliant_directories_api_key",
+          "default": "brilliant_directories_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_url": {
+          "description": "Your canonical HTTPS directory origin, for example https://www.your-site.com. HTTPS is required to protect the API key.",
+          "title": "Directory URL",
+          "type": "string"
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "site_url",
+        "api_key"
+      ],
+      "title": "Brilliant Directories API Key",
+      "type": "object",
+      "x-credential-instructions": "In your directory Admin, open Developer Hub and generate an API key. Paste it with your canonical HTTPS directory URL, including www if used. Enable only the Advanced Endpoint permissions needed for leads, reviews, posts, categories and membership plans. NoClick checks access by listing members; this does not prove write permissions.",
+      "x-credential-url": "https://support.brilliantdirectories.com/support/solutions/articles/12000088768"
+    },
+    "CreateLead": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Create Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Lead Name",
+          "type": "string"
+        },
+        "lead_email": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Lead Email",
+          "type": "string"
+        },
+        "lead_phone": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Lead Phone",
+          "type": "string"
+        },
+        "lead_message": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Lead Message",
+          "type": "string"
+        },
+        "lead_location": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Lead Location",
+          "type": "string"
+        },
+        "top_id": {
+          "minimum": 1,
+          "title": "Top Id",
+          "type": "integer"
+        },
+        "send_lead_email_notification": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Lead Email Notification"
+        },
+        "auto_match": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Match"
+        }
+      },
+      "required": [
+        "lead_name",
+        "lead_email",
+        "lead_phone",
+        "lead_message",
+        "lead_location",
+        "top_id"
+      ],
+      "title": "CreateLead",
+      "type": "object"
+    },
+    "CreateMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_member",
+          "default": "create_member",
+          "title": "Create Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ],
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "x-enum-searchable": true
+        },
+        "listing_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "Individual",
+                "Company"
+              ],
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listing Type",
+          "enum": [
+            "Individual",
+            "Company"
+          ],
+          "x-enum-searchable": true
+        },
+        "profession_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profession Id"
+        },
+        "about_me": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "About Me"
+        }
+      },
+      "required": [
+        "email",
+        "password",
+        "subscription_id"
+      ],
+      "title": "CreateMember",
+      "type": "object"
+    },
+    "CreatePost": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Create Post",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "data_id": {
+          "minimum": 1,
+          "title": "Data Id",
+          "type": "integer"
+        },
+        "data_type": {
+          "description": "Use the data_type value from the selected post type; this operation supports single-image post types.",
+          "title": "Data Type",
+          "type": "integer"
+        },
+        "post_title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Title"
+        },
+        "post_content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Content"
+        },
+        "post_status": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Status"
+        },
+        "post_tags": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Tags"
+        },
+        "post_category": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Category"
+        }
+      },
+      "required": [
+        "user_id",
+        "data_id",
+        "data_type"
+      ],
+      "title": "CreatePost",
+      "type": "object"
+    },
+    "CreateReview": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_review",
+          "default": "create_review",
+          "title": "Create Review",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "review_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Name"
+        },
+        "review_email": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Review Email",
+          "type": "string"
+        },
+        "review_title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Title"
+        },
+        "review_description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Description"
+        },
+        "rating_overall": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rating Overall"
+        },
+        "recommend": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommend"
+        },
+        "review_status": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Status"
+        }
+      },
+      "required": [
+        "user_id",
+        "review_email"
+      ],
+      "title": "CreateReview",
+      "type": "object"
+    },
+    "GetLead": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "minimum": 1,
+          "title": "Lead Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLead",
+      "type": "object"
+    },
+    "GetMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Get Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetMember",
+      "type": "object"
+    },
+    "GetMembershipPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_membership_plan",
+          "default": "get_membership_plan",
+          "title": "Get Membership Plan",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "GetMembershipPlan",
+      "type": "object"
+    },
+    "GetPost": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Post",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "minimum": 1,
+          "title": "Post Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "GetPost",
+      "type": "object"
+    },
+    "GetReview": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_review",
+          "default": "get_review",
+          "title": "Get Review",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "review_id": {
+          "minimum": 1,
+          "title": "Review Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "review_id"
+      ],
+      "title": "GetReview",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "List Categories",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListLeads": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "property_value": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Value"
+        }
+      },
+      "title": "ListLeads",
+      "type": "object"
+    },
+    "ListMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "property_value": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Value"
+        }
+      },
+      "title": "ListMembers",
+      "type": "object"
+    },
+    "ListMembershipPlans": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_membership_plans",
+          "default": "list_membership_plans",
+          "title": "List Membership Plans",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListMembershipPlans",
+      "type": "object"
+    },
+    "ListPostTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_post_types",
+          "default": "list_post_types",
+          "title": "List Post Types",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "property_value": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Value"
+        }
+      },
+      "title": "ListPostTypes",
+      "type": "object"
+    },
+    "ListPosts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "List Posts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "property_value": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Value"
+        }
+      },
+      "title": "ListPosts",
+      "type": "object"
+    },
+    "ListReviews": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_page from the preceding response. One page is returned per execution.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_reviews",
+          "default": "list_reviews",
+          "title": "List Reviews",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "property_value": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Value"
+        }
+      },
+      "title": "ListReviews",
+      "type": "object"
+    },
+    "UpdateLead": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "minimum": 1,
+          "title": "Lead Id",
+          "type": "integer"
+        },
+        "lead_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Name"
+        },
+        "lead_email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Email"
+        },
+        "lead_phone": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Phone"
+        },
+        "lead_message": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Message"
+        },
+        "lead_location": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Location"
+        },
+        "lead_notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Notes"
+        },
+        "lead_status": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Status"
+        },
+        "lead_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Price"
+        },
+        "top_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top Id"
+        },
+        "sub_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Id"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "UpdateLead",
+      "type": "object"
+    },
+    "UpdateMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "subscription_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subscription Id"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ],
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "x-enum-searchable": true
+        },
+        "listing_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "Individual",
+                "Company"
+              ],
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listing Type",
+          "enum": [
+            "Individual",
+            "Company"
+          ],
+          "x-enum-searchable": true
+        },
+        "profession_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profession Id"
+        },
+        "about_me": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "About Me"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "UpdateMember",
+      "type": "object"
+    },
+    "UpdatePost": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_post",
+          "default": "update_post",
+          "title": "Update Post",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "minimum": 1,
+          "title": "Post Id",
+          "type": "integer"
+        },
+        "post_title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Title"
+        },
+        "post_content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Content"
+        },
+        "post_status": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Status"
+        },
+        "post_tags": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Tags"
+        },
+        "post_category": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Category"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "UpdatePost",
+      "type": "object"
+    },
+    "UpdateReview": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_review",
+          "default": "update_review",
+          "title": "Update Review",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "review_id": {
+          "minimum": 1,
+          "title": "Review Id",
+          "type": "integer"
+        },
+        "review_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Name"
+        },
+        "review_title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Title"
+        },
+        "review_description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Description"
+        },
+        "rating_overall": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rating Overall"
+        },
+        "recommend": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommend"
+        },
+        "review_status": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Status"
+        }
+      },
+      "required": [
+        "review_id"
+      ],
+      "title": "UpdateReview",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_lead": "#/$defs/CreateLead",
+          "create_member": "#/$defs/CreateMember",
+          "create_post": "#/$defs/CreatePost",
+          "create_review": "#/$defs/CreateReview",
+          "get_lead": "#/$defs/GetLead",
+          "get_member": "#/$defs/GetMember",
+          "get_membership_plan": "#/$defs/GetMembershipPlan",
+          "get_post": "#/$defs/GetPost",
+          "get_review": "#/$defs/GetReview",
+          "list_categories": "#/$defs/ListCategories",
+          "list_leads": "#/$defs/ListLeads",
+          "list_members": "#/$defs/ListMembers",
+          "list_membership_plans": "#/$defs/ListMembershipPlans",
+          "list_post_types": "#/$defs/ListPostTypes",
+          "list_posts": "#/$defs/ListPosts",
+          "list_reviews": "#/$defs/ListReviews",
+          "update_lead": "#/$defs/UpdateLead",
+          "update_member": "#/$defs/UpdateMember",
+          "update_post": "#/$defs/UpdatePost",
+          "update_review": "#/$defs/UpdateReview"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListMembers"
+        },
+        {
+          "$ref": "#/$defs/GetMember"
+        },
+        {
+          "$ref": "#/$defs/CreateMember"
+        },
+        {
+          "$ref": "#/$defs/UpdateMember"
+        },
+        {
+          "$ref": "#/$defs/ListReviews"
+        },
+        {
+          "$ref": "#/$defs/GetReview"
+        },
+        {
+          "$ref": "#/$defs/CreateReview"
+        },
+        {
+          "$ref": "#/$defs/UpdateReview"
+        },
+        {
+          "$ref": "#/$defs/ListLeads"
+        },
+        {
+          "$ref": "#/$defs/GetLead"
+        },
+        {
+          "$ref": "#/$defs/CreateLead"
+        },
+        {
+          "$ref": "#/$defs/UpdateLead"
+        },
+        {
+          "$ref": "#/$defs/ListPosts"
+        },
+        {
+          "$ref": "#/$defs/GetPost"
+        },
+        {
+          "$ref": "#/$defs/CreatePost"
+        },
+        {
+          "$ref": "#/$defs/UpdatePost"
+        },
+        {
+          "$ref": "#/$defs/ListPostTypes"
+        },
+        {
+          "$ref": "#/$defs/ListMembershipPlans"
+        },
+        {
+          "$ref": "#/$defs/GetMembershipPlan"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrilliantDirectoriesApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Brilliant-directories Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
