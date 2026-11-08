@@ -1,0 +1,610 @@
+{
+  "source": "https://cdn.prod.website-files.com/5fdbc6d50f9d578cd82afbbf/6abfc598afbafe1f1d70895d_openapi.json.txt",
+  "version": "2026-10-02",
+  "cases": [
+    {
+      "operation": "get_account",
+      "method": "GET",
+      "path": "/users/me",
+      "config": {
+        "operation": "get_account"
+      },
+      "status": 200,
+      "response": {
+        "name": "Uplisting",
+        "uid": "example-user-uid"
+      }
+    },
+    {
+      "operation": "list_properties",
+      "method": "GET",
+      "path": "/properties",
+      "config": {
+        "operation": "list_properties"
+      },
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "1024",
+            "type": "properties",
+            "attributes": {
+              "name": "Riverside Loft",
+              "nickname": "Riverside",
+              "currency": "GBP",
+              "time_zone": "Europe/London",
+              "check_in_time": "15:00",
+              "check_out_time": "11:00",
+              "type": "apartment",
+              "maximum_capacity": 4,
+              "bedrooms": 2,
+              "beds": 3,
+              "bathrooms": 1,
+              "bed_types": [
+                "double",
+                "single"
+              ],
+              "description": "A bright riverside loft with skyline views, moments from the city centre.",
+              "created_at": "2025-03-12T09:24:31Z",
+              "uplisting_domain": "https://riverside.uplisting.io",
+              "property_slug": "riverside-loft"
+            },
+            "relationships": {
+              "address": {
+                "data": {
+                  "type": "addresses",
+                  "id": "3201"
+                }
+              },
+              "photos": {
+                "data": [
+                  {
+                    "type": "photos",
+                    "id": "58011"
+                  },
+                  {
+                    "type": "photos",
+                    "id": "58012"
+                  }
+                ]
+              },
+              "amenities": {
+                "data": [
+                  {
+                    "type": "amenities",
+                    "id": "7"
+                  },
+                  {
+                    "type": "amenities",
+                    "id": "42"
+                  }
+                ]
+              },
+              "channels": {
+                "data": [
+                  {
+                    "type": "channels",
+                    "id": "airbnb_982371"
+                  },
+                  {
+                    "type": "channels",
+                    "id": "booking_com_774512"
+                  },
+                  {
+                    "type": "channels",
+                    "id": "vrbo_55123480"
+                  },
+                  {
+                    "type": "channels",
+                    "id": "direct_riverside-loft"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "included": [
+          {
+            "id": "3201",
+            "type": "addresses",
+            "attributes": {
+              "street": "12 Wharf Road",
+              "suite": "Flat 4",
+              "city": "London",
+              "state": "England",
+              "zip_code": "N1 7GR",
+              "country": "GB",
+              "latitude": 51.531,
+              "longitude": -0.0912
+            }
+          },
+          {
+            "id": "58011",
+            "type": "photos",
+            "attributes": {
+              "order": 0,
+              "url": "https://d1234uplisting.cloudfront.net/photos/58011.jpg"
+            }
+          },
+          {
+            "id": "7",
+            "type": "amenities",
+            "attributes": {
+              "name": "Wifi",
+              "group": "Internet & Office"
+            }
+          },
+          {
+            "id": "airbnb_982371",
+            "type": "channels",
+            "attributes": {
+              "channel": "airbnb",
+              "external_id": "982371",
+              "listing_url": "https://www.airbnb.com/rooms/982371"
+            }
+          },
+          {
+            "id": "booking_com_774512",
+            "type": "channels",
+            "attributes": {
+              "channel": "booking_com",
+              "external_id": "774512",
+              "listing_url": "https://www.booking.com/hotel/gb/riverside-loft-london.html"
+            }
+          },
+          {
+            "id": "vrbo_55123480",
+            "type": "channels",
+            "attributes": {
+              "channel": "vrbo",
+              "external_id": "55123480",
+              "listing_url": "https://www.vrbo.com/en-gb/p9284471?dateless=true"
+            }
+          },
+          {
+            "id": "direct_riverside-loft",
+            "type": "channels",
+            "attributes": {
+              "channel": "direct",
+              "external_id": "riverside-loft",
+              "listing_url": "https://riverside.uplisting.io/london/riverside-loft/riverside-loft"
+            }
+          }
+        ],
+        "meta": {
+          "cursor": "eyJjcmVhdGVkX2F0IjoiMjAyNS0wNS0wMVQxNDoxMDowMFoiLCJpZCI6MTAyNX0=",
+          "has_more": true,
+          "total_count": 2
+        }
+      }
+    },
+    {
+      "operation": "get_property",
+      "method": "GET",
+      "path": "/properties/11780",
+      "config": {
+        "operation": "get_property",
+        "property_id": "11780"
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "1024",
+          "type": "properties",
+          "attributes": {
+            "name": "Riverside Loft",
+            "nickname": "Riverside",
+            "currency": "GBP",
+            "time_zone": "Europe/London",
+            "check_in_time": "15:00",
+            "check_out_time": "11:00",
+            "type": "apartment",
+            "maximum_capacity": 4,
+            "bedrooms": 2,
+            "beds": 3,
+            "bathrooms": 1,
+            "bed_types": [
+              "double",
+              "single"
+            ],
+            "description": "A bright riverside loft with skyline views, moments from the city centre.",
+            "created_at": "2025-03-12T09:24:31Z",
+            "uplisting_domain": "https://riverside.uplisting.io",
+            "property_slug": "riverside-loft"
+          },
+          "relationships": {
+            "address": {
+              "data": {
+                "type": "addresses",
+                "id": "3201"
+              }
+            },
+            "photos": {
+              "data": [
+                {
+                  "type": "photos",
+                  "id": "58011"
+                }
+              ]
+            },
+            "amenities": {
+              "data": [
+                {
+                  "type": "amenities",
+                  "id": "42"
+                }
+              ]
+            }
+          }
+        },
+        "included": [
+          {
+            "id": "3201",
+            "type": "addresses",
+            "attributes": {
+              "street": "12 Wharf Road",
+              "suite": "Flat 4",
+              "city": "London",
+              "state": "England",
+              "zip_code": "N1 7GR",
+              "country": "GB",
+              "latitude": 51.531,
+              "longitude": -0.0912
+            }
+          },
+          {
+            "id": "42",
+            "type": "amenities",
+            "attributes": {
+              "name": "Tennis",
+              "group": "Outdoor Features"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "search_availability",
+      "method": "GET",
+      "path": "/availability",
+      "config": {
+        "operation": "search_availability",
+        "city": "Philadelphia",
+        "number_of_guests": 3
+      },
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "1024",
+            "type": "properties",
+            "attributes": {
+              "name": "Riverside Loft",
+              "nickname": "Riverside",
+              "currency": "GBP",
+              "time_zone": "Europe/London",
+              "check_in_time": "15:00",
+              "check_out_time": "11:00",
+              "type": "apartment",
+              "maximum_capacity": 4,
+              "bedrooms": 2,
+              "beds": 3,
+              "bathrooms": 1,
+              "bed_types": [
+                "double",
+                "single"
+              ],
+              "description": "A bright riverside loft with skyline views, moments from the city centre.",
+              "created_at": "2025-03-12T09:24:31Z",
+              "uplisting_domain": "https://riverside.uplisting.io",
+              "property_slug": "riverside-loft"
+            },
+            "relationships": {
+              "address": {
+                "data": {
+                  "type": "addresses",
+                  "id": "3201"
+                }
+              },
+              "photos": {
+                "data": [
+                  {
+                    "type": "photos",
+                    "id": "58011"
+                  }
+                ]
+              },
+              "amenities": {
+                "data": [
+                  {
+                    "type": "amenities",
+                    "id": "7"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "included": [
+          {
+            "id": "3201",
+            "type": "addresses",
+            "attributes": {
+              "street": "12 Wharf Road",
+              "suite": "Flat 4",
+              "city": "London",
+              "state": "England",
+              "zip_code": "N1 7GR",
+              "country": "GB",
+              "latitude": 51.531,
+              "longitude": -0.0912
+            }
+          },
+          {
+            "id": "58011",
+            "type": "photos",
+            "attributes": {
+              "order": 0,
+              "url": "https://d1234uplisting.cloudfront.net/photos/58011.jpg"
+            }
+          },
+          {
+            "id": "7",
+            "type": "amenities",
+            "attributes": {
+              "name": "Wifi",
+              "group": "Internet & Office"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_calendar",
+      "method": "GET",
+      "path": "/calendar/11780",
+      "config": {
+        "operation": "get_calendar",
+        "property_id": "11780",
+        "from_date": "2020-02-01",
+        "to_date": "2021-02-01"
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "1024",
+          "type": "calendars",
+          "attributes": {
+            "from": "2026-06-15",
+            "to": "2026-06-17"
+          },
+          "relationships": {
+            "days": {
+              "data": [
+                {
+                  "type": "calendar_days",
+                  "id": "2026-06-15"
+                },
+                {
+                  "type": "calendar_days",
+                  "id": "2026-06-16"
+                }
+              ]
+            }
+          }
+        },
+        "included": [
+          {
+            "id": "2026-06-15",
+            "type": "calendar_days",
+            "attributes": {
+              "date": "2026-06-15",
+              "available": true,
+              "available_count": 1,
+              "day_rate": 100.0,
+              "minimum_length_of_stay": 1,
+              "maximum_available_nights": 365,
+              "closed_for_arrival": false,
+              "closed_for_departure": false
+            }
+          },
+          {
+            "id": "2026-06-16",
+            "type": "calendar_days",
+            "attributes": {
+              "date": "2026-06-16",
+              "available": false,
+              "available_count": 0,
+              "day_rate": 100.0,
+              "minimum_length_of_stay": 2,
+              "maximum_available_nights": 0,
+              "closed_for_arrival": false,
+              "closed_for_departure": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "update_calendar",
+      "method": "POST",
+      "path": "/calendar/11780",
+      "config": {
+        "operation": "update_calendar",
+        "property_id": "11780",
+        "days": [
+          {
+            "date": "2020-12-13",
+            "available": true,
+            "day_rate": 170.0,
+            "minimum_length_of_stay": 2,
+            "closed_for_arrival": false,
+            "closed_for_departure": true
+          }
+        ]
+      },
+      "status": 202,
+      "response": {
+        "request_id": "6a20706e-cd4e-4fe2-a40a-caae48b474a5"
+      }
+    },
+    {
+      "operation": "list_hooks",
+      "method": "GET",
+      "path": "/hooks",
+      "config": {
+        "operation": "list_hooks"
+      },
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "305",
+            "type": "webhooks",
+            "attributes": {
+              "target_url": "https://example.com/hook/booking_created_2",
+              "event": "booking_created",
+              "created_at": "2020-12-16T11:35:58Z",
+              "updated_at": "2020-12-16T11:35:58Z"
+            }
+          },
+          {
+            "id": "319",
+            "type": "webhooks",
+            "attributes": {
+              "target_url": "https://example.com/hook/booking_created_4",
+              "event": "booking_created",
+              "created_at": "2020-12-16T14:40:12Z",
+              "updated_at": "2020-12-16T14:40:12Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "create_hook",
+      "method": "POST",
+      "path": "/hooks",
+      "config": {
+        "operation": "create_hook",
+        "target_url": "https://example.com/uplisting/booking-created",
+        "event": "booking_created"
+      },
+      "status": 201,
+      "response": {
+        "id": 1269
+      }
+    },
+    {
+      "operation": "delete_hook",
+      "method": "DELETE",
+      "path": "/hooks/123",
+      "config": {
+        "operation": "delete_hook",
+        "hook_id": "123"
+      },
+      "status": 200,
+      "response": {
+        "status": "destroyed"
+      }
+    },
+    {
+      "operation": "rotate_hook_secret",
+      "method": "POST",
+      "path": "/hooks/123/rotate_secret",
+      "config": {
+        "operation": "rotate_hook_secret",
+        "hook_id": "123"
+      },
+      "status": 201,
+      "response": {}
+    },
+    {
+      "operation": "list_custom_booking_attributes",
+      "method": "GET",
+      "path": "/v2/custom_booking_attributes",
+      "config": {
+        "operation": "list_custom_booking_attributes"
+      },
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "1",
+            "type": "custom_booking_attributes",
+            "attributes": {
+              "name": "lock_code",
+              "description": "A customisable lock code",
+              "created_at": "2022-05-30T14:31:23Z",
+              "updated_at": "2022-05-30T14:31:23Z"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "create_custom_booking_attribute",
+      "method": "POST",
+      "path": "/v2/custom_booking_attributes",
+      "config": {
+        "operation": "create_custom_booking_attribute",
+        "name": "partner_custom_attribute_name",
+        "description": "Describe the custom attribute here"
+      },
+      "status": 201,
+      "response": {}
+    },
+    {
+      "operation": "update_booking_attributes",
+      "method": "PATCH",
+      "path": "/v2/bookings/48210",
+      "config": {
+        "operation": "update_booking_attributes",
+        "booking_id": "48210",
+        "attributes": {
+          "lock_code": "1234567"
+        }
+      },
+      "status": 200,
+      "response": {}
+    },
+    {
+      "operation": "create_booking",
+      "method": "POST",
+      "path": "/v2/bookings",
+      "config": {
+        "operation": "create_booking",
+        "property_id": "11780",
+        "check_in": "2022-06-30",
+        "check_out": "2022-07-06",
+        "guest_name": "Jon Snow",
+        "guest_email": "jon@example.com",
+        "guest_phone": "+001122334455",
+        "number_of_guests": 3
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "165003",
+          "type": "bookings",
+          "attributes": {
+            "check_in": "2022-06-30",
+            "check_out": "2022-07-06",
+            "guest_name": "Jon Snow",
+            "guest_email": "jon@example.com",
+            "guest_phone": "+001122334455",
+            "number_of_guests": 3
+          },
+          "relationships": {
+            "property": {
+              "data": {
+                "id": "11780",
+                "type": "properties"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
