@@ -329,7 +329,10 @@ def shape_credential(
         return data, errors, resolved
 
     try:
-        model = cls.model_validate(data)
+        # A class that requires its tag (to tell its union's members apart) takes the type being connected.
+        tag = cls.model_fields.get("credential_type")
+        model = cls.model_validate({"credential_type": credential_type_of(cls), **data}
+                                   if tag is not None and tag.is_required() else data)
     except ValidationError as e:
         for err in e.errors():
             loc = err.get("loc") or ()
