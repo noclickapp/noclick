@@ -1,0 +1,81 @@
+{
+  "body": {
+    "combinedVideo": false,
+    "dynamicBackground": false,
+    "status": "pending",
+    "creator": "okn4ra9qjlpzhs2zpuni426jizysbdcp",
+    "folder": "ibdls2hjvaebvg0k4mz0zgvndbai9th7",
+    "workspace": "3vwdfm4jmhfyzt1yqp0r8v3qgaocrczb",
+    "createdAt": "2021-03-01T00:00:00.000Z",
+    "name": "My Dynamic Campaign",
+    "videoProperties": {
+      "sharePage": {
+        "title": "Hello there!",
+        "message": "welcome to my dynamic campaign",
+        "buttons": [
+          {
+            "position": 123,
+            "label": "<string>",
+            "link": "http://www.sendspark.com/"
+          }
+        ],
+        "calendar": {
+          "provider": "<string>",
+          "link": "<string>"
+        },
+        "layout": "layout-default",
+        "transcriptionsViewEnabled": false
+      }
+    },
+    "metadata": {
+      "version": 1,
+      "migrated": "2021-03-01T00:00:00.000Z"
+    },
+    "videosAssets": [
+      "<string>"
+    ],
+    "_id": "63f6a4145a5e755e2e8fe19d",
+    "deletedAt": null,
+    "prospectList": [
+      {
+        "status": "saved",
+        "_id": "63f6a4145a5e755e2e8fe19d",
+        "campaign": "okn4ra9qjl3fs2zpuni426jizysbdcp",
+        "contactName": "John Doe",
+        "contactEmail": "johndoe@example.com",
+        "company": "Example Company",
+        "jobTitle": "Example jobTitle",
+        "backgroundUrl": "https://example.com",
+        "originalBackgroundUrl": "https://example.com",
+        "screenshotUrl": "https://sendspark.com",
+        "webhookUrl": "https://sendspark.com",
+        "trimMuxId": "<string>",
+        "webhookEvents": [
+          "video_generated_dv",
+          "video_watched",
+          "video_played",
+          "video_cta_clicked",
+          "video_viewed",
+          "video_liked"
+        ],
+        "webhookPaused": false,
+        "audioUrl": "https://sendspark.com",
+        "videoLipSyncUrl": "https://sendspark.com",
+        "valid": false,
+        "bulkId": "63f6a4145a5e755e2e8fe19d",
+        "createdAt": "2023-06-02T00:57:45.447Z",
+        "updatedAt": "2023-06-02T00:57:45.447Z",
+        "deletedAt": null,
+        "validationDetails": "<string>",
+        "resourcesStatus": {},
+        "isNotified": false,
+        "fallback": false,
+        "regenerationCount": 0,
+        "fallbackDataUsed": false,
+        "fields": {},
+        "hash": "63f6a4145a5e755e2e8fe19d"
+      }
+    ]
+  },
+  "source": "https://help.sendspark.com/api-reference/dynamics-campaign/add-prospect-to-dynamics-campaign-and-process-video"
+}
