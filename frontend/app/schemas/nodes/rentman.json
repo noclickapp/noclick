@@ -1,0 +1,1203 @@
+{
+  "$defs": {
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surname"
+        },
+        "email_1": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email 1"
+        },
+        "phone_1": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone 1"
+        },
+        "accounting_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Code"
+        },
+        "visit_city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visit City"
+        },
+        "visit_street": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visit Street"
+        },
+        "visit_postalcode": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visit Postalcode"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "default": "company",
+          "enum": [
+            "private",
+            "company"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "Required by Rentman for both create and update.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Color",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "no_priority",
+                "low_priority",
+                "medium_priority",
+                "high_priority"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "no_priority",
+            "low_priority",
+            "medium_priority",
+            "high_priority"
+          ],
+          "x-enum-searchable": true
+        },
+        "deadline": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deadline"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed At"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "color",
+        "name"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DeleteTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "description": "Permanently delete the selected task.",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "DeleteTask",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetContactPerson": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact_person",
+          "default": "get_contact_person",
+          "title": "Get Contact Person",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_person_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Person ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_person_id"
+      ],
+      "title": "GetContactPerson",
+      "type": "object"
+    },
+    "GetCrewMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_crew_member",
+          "default": "get_crew_member",
+          "title": "Get Crew Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "crew_member_id": {
+          "exclusiveMinimum": 0,
+          "title": "Crew Member ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "crew_member_id"
+      ],
+      "title": "GetCrewMember",
+      "type": "object"
+    },
+    "GetEquipment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_equipment",
+          "default": "get_equipment",
+          "title": "Get Equipment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "equipment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Equipment ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "equipment_id"
+      ],
+      "title": "GetEquipment",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "exclusiveMinimum": 0,
+          "title": "Invoice ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetQuote": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Get Quote",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "quote_id": {
+          "exclusiveMinimum": 0,
+          "title": "Quote ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "quote_id"
+      ],
+      "title": "GetQuote",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "ListContactpersons": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_contactpersons",
+          "default": "list_contactpersons",
+          "title": "List Contact Persons",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContactpersons",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListCrew": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_crew",
+          "default": "list_crew",
+          "title": "List Crew",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCrew",
+      "type": "object"
+    },
+    "ListEquipment": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_equipment",
+          "default": "list_equipment",
+          "title": "List Equipment",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEquipment",
+      "type": "object"
+    },
+    "ListInvoices": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListInvoices",
+      "type": "object"
+    },
+    "ListProjectEquipment": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_project_equipment",
+          "default": "list_project_equipment",
+          "title": "List Project Equipment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListProjectEquipment",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListQuotes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_quotes",
+          "default": "list_quotes",
+          "title": "List Quotes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListQuotes",
+      "type": "object"
+    },
+    "ListTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1500,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from the previous result to read the next page with its original parameters.",
+          "title": "Next page URL"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "RentmanAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "rentman_api_token",
+          "default": "rentman_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Rentman API Token",
+      "type": "object",
+      "x-credential-instructions": "In Rentman, open Configuration \u2192 Integrations and generate a personal API JWT. Paste the token without Bearer. Only the most recently generated token works; generating another invalidates the previous one. NoClick sends it only to api.rentman.net.",
+      "x-credential-url": "https://api.rentman.net/"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surname"
+        },
+        "email_1": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email 1"
+        },
+        "phone_1": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone 1"
+        },
+        "accounting_code": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Code"
+        },
+        "visit_city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visit City"
+        },
+        "visit_street": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visit Street"
+        },
+        "visit_postalcode": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visit Postalcode"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "Required by Rentman for both create and update.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Color",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "no_priority",
+                "low_priority",
+                "medium_priority",
+                "high_priority"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "no_priority",
+            "low_priority",
+            "medium_priority",
+            "high_priority"
+          ],
+          "x-enum-searchable": true
+        },
+        "deadline": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deadline"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed At"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "color",
+        "task_id"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_project": "#/$defs/CreateProject",
+          "create_task": "#/$defs/CreateTask",
+          "delete_task": "#/$defs/DeleteTask",
+          "get_contact": "#/$defs/GetContact",
+          "get_contact_person": "#/$defs/GetContactPerson",
+          "get_crew_member": "#/$defs/GetCrewMember",
+          "get_equipment": "#/$defs/GetEquipment",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_project": "#/$defs/GetProject",
+          "get_quote": "#/$defs/GetQuote",
+          "get_task": "#/$defs/GetTask",
+          "list_contactpersons": "#/$defs/ListContactpersons",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_crew": "#/$defs/ListCrew",
+          "list_equipment": "#/$defs/ListEquipment",
+          "list_invoices": "#/$defs/ListInvoices",
+          "list_project_equipment": "#/$defs/ListProjectEquipment",
+          "list_projects": "#/$defs/ListProjects",
+          "list_quotes": "#/$defs/ListQuotes",
+          "list_tasks": "#/$defs/ListTasks",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/ListContactpersons"
+        },
+        {
+          "$ref": "#/$defs/GetContactPerson"
+        },
+        {
+          "$ref": "#/$defs/ListCrew"
+        },
+        {
+          "$ref": "#/$defs/GetCrewMember"
+        },
+        {
+          "$ref": "#/$defs/ListEquipment"
+        },
+        {
+          "$ref": "#/$defs/GetEquipment"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/ListInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        },
+        {
+          "$ref": "#/$defs/ListQuotes"
+        },
+        {
+          "$ref": "#/$defs/GetQuote"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/DeleteTask"
+        },
+        {
+          "$ref": "#/$defs/ListProjectEquipment"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RentmanAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rentman Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
