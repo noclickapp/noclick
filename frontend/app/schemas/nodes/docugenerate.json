@@ -1,0 +1,657 @@
+{
+  "$defs": {
+    "CreateTemplate": {
+      "properties": {
+        "file_base64": {
+          "contentEncoding": "base64",
+          "contentMediaType": "text/plain",
+          "description": "Base64-encoded DOCX, DOC, ODT, RTF, TXT or SQL template, up to 20 MB.",
+          "title": "Template File (Base64)",
+          "type": "string"
+        },
+        "file_name": {
+          "default": "template.txt",
+          "description": "Original filename including its extension.",
+          "title": "File Name",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name of the template.",
+          "title": "Name"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "eu",
+                "uk",
+                "au"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Storage region. Omit to retain the provider default or existing region.",
+          "title": "Region",
+          "enum": [
+            "us",
+            "eu",
+            "uk",
+            "au"
+          ],
+          "x-enum-searchable": true
+        },
+        "enhanced_syntax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable nested properties and logical or mathematical operators.",
+          "title": "Enhanced Syntax"
+        },
+        "versioning_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Preserve previous file versions; requires a Premium or Business plan.",
+          "title": "Versioning Enabled"
+        },
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Template"
+        }
+      },
+      "required": [
+        "file_base64"
+      ],
+      "title": "CreateTemplate",
+      "type": "object"
+    },
+    "DeleteDocument": {
+      "properties": {
+        "document_id": {
+          "description": "DocuGenerate document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Document"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "DeleteDocument",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "properties": {
+        "template_id": {
+          "description": "DocuGenerate template ID.",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Template"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "DocugenerateAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "docugenerate_api_key",
+          "default": "docugenerate_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Docugenerate API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Settings \u2192 Developers in DocuGenerate. Paste the key alone; NoClick sends it in the Authorization header.",
+      "x-credential-url": "https://app.docugenerate.com/settings/developers"
+    },
+    "GenerateDocument": {
+      "properties": {
+        "template_id": {
+          "description": "DocuGenerate template ID.",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_document",
+          "default": "generate_document",
+          "title": "Generate Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Generate Document"
+        },
+        "data": {
+          "default": "{}",
+          "description": "One JSON object or an array of objects. Keys match the template's merge tags.",
+          "title": "Data JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document display name.",
+          "title": "Name"
+        },
+        "output_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output filename without extension.",
+          "title": "Output Name"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                ".docx",
+                ".doc",
+                ".odt",
+                ".txt",
+                ".html",
+                ".png",
+                ".pdf",
+                ".pdf/a-1b",
+                ".pdf/a-2b",
+                ".pdf/a-3b"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            ".docx",
+            ".doc",
+            ".odt",
+            ".txt",
+            ".html",
+            ".png",
+            ".pdf",
+            ".pdf/a-1b",
+            ".pdf/a-2b",
+            ".pdf/a-3b"
+          ],
+          "x-enum-searchable": true
+        },
+        "output_quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Quality"
+        },
+        "single_file": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Combine multiple data records into one file; false creates a ZIP archive.",
+          "title": "Single File"
+        },
+        "page_break": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add page breaks between records when combining documents.",
+          "title": "Page Break"
+        },
+        "merge_with": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uri",
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PDF URL(s) or data URI(s) to append to PDF output.",
+          "title": "Merge With",
+          "ui:widget": "list"
+        },
+        "attach": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uri",
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File URL(s) or data URI(s) to attach to PDF output.",
+          "title": "Attach",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GenerateDocument",
+      "type": "object"
+    },
+    "GetDocument": {
+      "properties": {
+        "document_id": {
+          "description": "DocuGenerate document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Get Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Document"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocument",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "properties": {
+        "template_id": {
+          "description": "DocuGenerate template ID.",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Template"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "properties": {
+        "template_id": {
+          "description": "DocuGenerate template ID.",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Documents"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Templates"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ordered folder names, from root to leaf. Omit to list all templates.",
+          "title": "Folder",
+          "ui:widget": "list"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "UpdateDocument": {
+      "properties": {
+        "document_id": {
+          "description": "DocuGenerate document ID.",
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Rename Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Rename Document"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "name"
+      ],
+      "title": "UpdateDocument",
+      "type": "object"
+    },
+    "UpdateTemplate": {
+      "properties": {
+        "template_id": {
+          "description": "DocuGenerate template ID.",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "file_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentEncoding": "base64",
+          "contentMediaType": "text/plain",
+          "default": null,
+          "description": "Base64-encoded DOCX, DOC, ODT, RTF, TXT or SQL template, up to 20 MB.",
+          "title": "Template File (Base64)"
+        },
+        "file_name": {
+          "default": "template.txt",
+          "description": "Original filename including its extension.",
+          "title": "File Name",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name of the template.",
+          "title": "Name"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "eu",
+                "uk",
+                "au"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Storage region. Omit to retain the provider default or existing region.",
+          "title": "Region",
+          "enum": [
+            "us",
+            "eu",
+            "uk",
+            "au"
+          ],
+          "x-enum-searchable": true
+        },
+        "enhanced_syntax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable nested properties and logical or mathematical operators.",
+          "title": "Enhanced Syntax"
+        },
+        "versioning_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Preserve previous file versions; requires a Premium or Business plan.",
+          "title": "Versioning Enabled"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Update Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Template"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_template": "#/$defs/CreateTemplate",
+          "delete_document": "#/$defs/DeleteDocument",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "generate_document": "#/$defs/GenerateDocument",
+          "get_document": "#/$defs/GetDocument",
+          "get_template": "#/$defs/GetTemplate",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_templates": "#/$defs/ListTemplates",
+          "update_document": "#/$defs/UpdateDocument",
+          "update_template": "#/$defs/UpdateTemplate"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/GenerateDocument"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocument"
+        },
+        {
+          "$ref": "#/$defs/UpdateDocument"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocument"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DocugenerateAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Docugenerate Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Generate a PDF invoice from a template",
+    "List my document templates",
+    "Rename a generated document"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
