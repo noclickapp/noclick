@@ -1,0 +1,29 @@
+{
+  "ip": "8.8.8.8",
+  "hostname": "dns.google",
+  "geo": {
+    "city": "Mountain View",
+    "region": "California",
+    "region_code": "CA",
+    "country": "United States",
+    "country_code": "US",
+    "continent": "North America",
+    "continent_code": "NA",
+    "latitude": 37.4056,
+    "longitude": -122.0775,
+    "timezone": "America/Los_Angeles",
+    "postal_code": "94043"
+  },
+  "as": {
+    "asn": "AS15169",
+    "name": "Google LLC",
+    "domain": "google.com",
+    "type": "hosting"
+  },
+  "is_place": false,
+  "is_anonymous": false,
+  "is_anycast": true,
+  "is_hosting": true,
+  "is_mobile": false,
+  "is_satellite": false
+}
