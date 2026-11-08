@@ -1,0 +1,956 @@
+{
+  "$defs": {
+    "AmazingMarvinAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "amazing_marvin_api_token",
+          "default": "amazing_marvin_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Amazing Marvin API Token",
+      "type": "object",
+      "x-credential-instructions": "Open Amazing Marvin's API strategy settings and paste API_TOKEN (the limited-access token). NoClick sends it as X-API-Token to serv.amazingmarvin.com. Full-access tokens are not needed. Schedule requests at least one minute apart; Marvin limits queries to 1,440 per day and bursts to one every three seconds.",
+      "x-credential-url": "https://app.amazingmarvin.com/pre?api"
+    },
+    "CreateEvent": {
+      "additionalProperties": false,
+      "description": "Create an event. Calendar sync happens in the Marvin client.",
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "start": {
+          "description": "ISO 8601 start timestamp with a timezone, e.g. 2021-08-21T14:30:00.000Z.",
+          "title": "Start",
+          "type": "string"
+        },
+        "length": {
+          "description": "Event duration in milliseconds.",
+          "exclusiveMinimum": 0,
+          "title": "Length",
+          "type": "number"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "title",
+        "start",
+        "length"
+      ],
+      "title": "CreateEvent",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "description": "Create a project in the master list.",
+      "properties": {
+        "title": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent category or project ID; use list_categories or list_children to find IDs.",
+          "title": "Parent Id"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label IDs from list_labels.",
+          "title": "Label Ids"
+        },
+        "day": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Schedule date, YYYY-MM-DD.",
+          "title": "Day"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date, YYYY-MM-DD.",
+          "title": "Due Date"
+        },
+        "planned_week": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monday of the planned week, YYYY-MM-DD.",
+          "title": "Planned Week"
+        },
+        "planned_month": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Planned month, YYYY-MM.",
+          "title": "Planned Month"
+        },
+        "time_estimate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated duration in milliseconds.",
+          "title": "Time Estimate"
+        },
+        "time_zone_offset": {
+          "anyOf": [
+            {
+              "maximum": 1440,
+              "minimum": -1440,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Local time minus UTC, in minutes (Pacific standard time is -480).",
+          "title": "Time Zone Offset"
+        },
+        "backburner": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backburner"
+        },
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "mid",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "low",
+            "mid",
+            "high"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "description": "Create a task, optionally resolving title shortcuts like +today and @label.",
+      "properties": {
+        "title": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent category or project ID; use list_categories or list_children to find IDs.",
+          "title": "Parent Id"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label IDs from list_labels.",
+          "title": "Label Ids"
+        },
+        "day": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Schedule date, YYYY-MM-DD.",
+          "title": "Day"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date, YYYY-MM-DD.",
+          "title": "Due Date"
+        },
+        "planned_week": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monday of the planned week, YYYY-MM-DD.",
+          "title": "Planned Week"
+        },
+        "planned_month": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Planned month, YYYY-MM.",
+          "title": "Planned Month"
+        },
+        "time_estimate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated duration in milliseconds.",
+          "title": "Time Estimate"
+        },
+        "time_zone_offset": {
+          "anyOf": [
+            {
+              "maximum": 1440,
+              "minimum": -1440,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Local time minus UTC, in minutes (Pacific standard time is -480).",
+          "title": "Time Zone Offset"
+        },
+        "backburner": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backburner"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "auto_complete": {
+          "default": true,
+          "description": "Allow Marvin to expand title shortcuts; false sends X-Auto-Complete: false.",
+          "title": "Auto Complete",
+          "type": "boolean"
+        },
+        "is_starred": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Priority: 3 red, 2 orange, 1 yellow, 0 none.",
+          "title": "Is Starred"
+        },
+        "daily_section": {
+          "anyOf": [
+            {
+              "enum": [
+                "Morning",
+                "Afternoon",
+                "Evening"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Daily Section",
+          "enum": [
+            "Morning",
+            "Afternoon",
+            "Evening"
+          ],
+          "x-enum-searchable": true
+        },
+        "bonus_section": {
+          "anyOf": [
+            {
+              "enum": [
+                "Essential",
+                "Bonus"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bonus Section",
+          "enum": [
+            "Essential",
+            "Bonus"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "GetHabit": {
+      "additionalProperties": false,
+      "description": "Read a habit including its history (experimental).",
+      "properties": {
+        "operation": {
+          "const": "get_habit",
+          "default": "get_habit",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Habit ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetHabit",
+      "type": "object"
+    },
+    "GetKudos": {
+      "additionalProperties": false,
+      "description": "Read Kudos level and remaining points.",
+      "properties": {
+        "operation": {
+          "const": "get_kudos",
+          "default": "get_kudos",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetKudos",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "description": "Read account information.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetTimeTracks": {
+      "additionalProperties": false,
+      "description": "Read authoritative time-track data for up to 100 tasks.",
+      "properties": {
+        "operation": {
+          "const": "get_time_tracks",
+          "default": "get_time_tracks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "task_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Task Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_ids"
+      ],
+      "title": "GetTimeTracks",
+      "type": "object"
+    },
+    "GetTrackedTask": {
+      "additionalProperties": false,
+      "description": "Read the task currently being tracked.",
+      "properties": {
+        "operation": {
+          "const": "get_tracked_task",
+          "default": "get_tracked_task",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetTrackedTask",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "description": "Read the account's categories.",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListChildren": {
+      "additionalProperties": false,
+      "description": "Read direct open child tasks/projects; descendants require separate calls.",
+      "properties": {
+        "operation": {
+          "const": "list_children",
+          "default": "list_children",
+          "title": "Operation",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "Parent ID, or unassigned for inbox items.",
+          "minLength": 1,
+          "title": "Parent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "parent_id"
+      ],
+      "title": "ListChildren",
+      "type": "object"
+    },
+    "ListDueItems": {
+      "additionalProperties": false,
+      "description": "Read open tasks/projects due on or before a date.",
+      "properties": {
+        "operation": {
+          "const": "list_due_items",
+          "default": "list_due_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD; defaults to the server's current date.",
+          "title": "By"
+        }
+      },
+      "title": "ListDueItems",
+      "type": "object"
+    },
+    "ListGoals": {
+      "additionalProperties": false,
+      "description": "Read all goals.",
+      "properties": {
+        "operation": {
+          "const": "list_goals",
+          "default": "list_goals",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListGoals",
+      "type": "object"
+    },
+    "ListHabits": {
+      "additionalProperties": false,
+      "description": "Read habits with history; raw full-access mode is not requested (experimental).",
+      "properties": {
+        "operation": {
+          "const": "list_habits",
+          "default": "list_habits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListHabits",
+      "type": "object"
+    },
+    "ListLabels": {
+      "additionalProperties": false,
+      "description": "Read the account's labels in their sort order.",
+      "properties": {
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLabels",
+      "type": "object"
+    },
+    "ListTodayItems": {
+      "additionalProperties": false,
+      "description": "Read tasks/projects scheduled for a date, including enabled rollover rules.",
+      "properties": {
+        "operation": {
+          "const": "list_today_items",
+          "default": "list_today_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD; defaults to the server's current date (UTC).",
+          "title": "Date"
+        }
+      },
+      "title": "ListTodayItems",
+      "type": "object"
+    },
+    "ListTodayTimeBlocks": {
+      "additionalProperties": false,
+      "description": "Read time blocks for a date.",
+      "properties": {
+        "operation": {
+          "const": "list_today_time_blocks",
+          "default": "list_today_time_blocks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD; defaults to today.",
+          "title": "Date"
+        }
+      },
+      "title": "ListTodayTimeBlocks",
+      "type": "object"
+    },
+    "MarkTaskDone": {
+      "additionalProperties": false,
+      "description": "Mark a task done. Some client-side completion effects are not implemented by the API.",
+      "properties": {
+        "operation": {
+          "const": "mark_task_done",
+          "default": "mark_task_done",
+          "title": "Operation",
+          "type": "string"
+        },
+        "item_id": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "time_zone_offset": {
+          "description": "Local time minus UTC, in minutes.",
+          "maximum": 1440,
+          "minimum": -1440,
+          "title": "Time Zone Offset",
+          "type": "number"
+        }
+      },
+      "required": [
+        "item_id",
+        "time_zone_offset"
+      ],
+      "title": "MarkTaskDone",
+      "type": "object"
+    },
+    "RecordHabit": {
+      "additionalProperties": false,
+      "description": "Record a habit value and update its synced document (experimental).",
+      "properties": {
+        "operation": {
+          "const": "record_habit",
+          "default": "record_habit",
+          "title": "Operation",
+          "type": "string"
+        },
+        "habit_id": {
+          "minLength": 1,
+          "title": "Habit Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recording time as Unix milliseconds; defaults to now on the server.",
+          "title": "Time"
+        },
+        "update_db": {
+          "default": true,
+          "description": "Update the synced Habit document as well as the source-of-truth history.",
+          "title": "Update Db",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "habit_id",
+        "value"
+      ],
+      "title": "RecordHabit",
+      "type": "object"
+    },
+    "TrackTime": {
+      "additionalProperties": false,
+      "description": "Start or stop a task's timer. The API does not update cached task duration/times; reconcile those separately in Marvin.",
+      "properties": {
+        "operation": {
+          "const": "track_time",
+          "default": "track_time",
+          "title": "Operation",
+          "type": "string"
+        },
+        "task_id": {
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "action": {
+          "description": "Start or stop tracking the task.",
+          "enum": [
+            "START",
+            "STOP"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "action"
+      ],
+      "title": "TrackTime",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event": "#/$defs/CreateEvent",
+          "create_project": "#/$defs/CreateProject",
+          "create_task": "#/$defs/CreateTask",
+          "get_habit": "#/$defs/GetHabit",
+          "get_kudos": "#/$defs/GetKudos",
+          "get_profile": "#/$defs/GetProfile",
+          "get_time_tracks": "#/$defs/GetTimeTracks",
+          "get_tracked_task": "#/$defs/GetTrackedTask",
+          "list_categories": "#/$defs/ListCategories",
+          "list_children": "#/$defs/ListChildren",
+          "list_due_items": "#/$defs/ListDueItems",
+          "list_goals": "#/$defs/ListGoals",
+          "list_habits": "#/$defs/ListHabits",
+          "list_labels": "#/$defs/ListLabels",
+          "list_today_items": "#/$defs/ListTodayItems",
+          "list_today_time_blocks": "#/$defs/ListTodayTimeBlocks",
+          "mark_task_done": "#/$defs/MarkTaskDone",
+          "record_habit": "#/$defs/RecordHabit",
+          "track_time": "#/$defs/TrackTime"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/MarkTaskDone"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/CreateEvent"
+        },
+        {
+          "$ref": "#/$defs/GetTrackedTask"
+        },
+        {
+          "$ref": "#/$defs/ListChildren"
+        },
+        {
+          "$ref": "#/$defs/ListTodayItems"
+        },
+        {
+          "$ref": "#/$defs/ListDueItems"
+        },
+        {
+          "$ref": "#/$defs/ListTodayTimeBlocks"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/ListLabels"
+        },
+        {
+          "$ref": "#/$defs/TrackTime"
+        },
+        {
+          "$ref": "#/$defs/GetTimeTracks"
+        },
+        {
+          "$ref": "#/$defs/GetKudos"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/ListGoals"
+        },
+        {
+          "$ref": "#/$defs/RecordHabit"
+        },
+        {
+          "$ref": "#/$defs/GetHabit"
+        },
+        {
+          "$ref": "#/$defs/ListHabits"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AmazingMarvinAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Amazing-marvin Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
