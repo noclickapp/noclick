@@ -21,11 +21,13 @@ Documentation: https://docs.luma.com/reference/getting-started-with-your-api
 """
 
 import hashlib
+from datetime import datetime
+from urllib.parse import urlsplit
 import hmac
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
-from pydantic import BaseModel, Field, ConfigDict, Discriminator
+from pydantic import BaseModel, Field, ConfigDict, Discriminator, AfterValidator, WithJsonSchema
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
@@ -34,6 +36,37 @@ from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 logger = logging.getLogger(__name__)
 
 LUMA_API_BASE = "https://public-api.luma.com"
+
+
+def _validate_event_time(value: str) -> str:
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        raise ValueError("Use an ISO 8601 date-time with a timezone") from None
+    if parsed.tzinfo is None:
+        raise ValueError("Use an ISO 8601 date-time with a timezone")
+    return value
+
+
+def _validate_webhook_url(value: str) -> str:
+    try:
+        parsed = urlsplit(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            raise ValueError
+        parsed.port
+    except ValueError:
+        raise ValueError("Use an absolute HTTP or HTTPS webhook URL") from None
+    return value
+
+
+LumaEventTime = Annotated[
+    str, AfterValidator(_validate_event_time),
+    WithJsonSchema({"type": "string", "format": "date-time"}),
+]
+LumaWebhookUrl = Annotated[
+    str, AfterValidator(_validate_webhook_url),
+    WithJsonSchema({"type": "string", "format": "uri"}),
+]
 
 # Event types the trigger subscribes to (Luma webhook event-type enum).
 LUMA_TRIGGER_EVENT_TYPES = [
@@ -174,13 +207,13 @@ class LumaCreateEventConfig(BaseModel):
         title="Create Event",
     )
     name: str = Field(..., title="Name", description="Name / title of the event")
-    start_at: str = Field(
+    start_at: LumaEventTime = Field(
         ..., title="Start Time", description="Event start time in ISO 8601 (e.g. 2026-07-01T18:00:00Z)"
     )
     timezone: str = Field(
         ..., title="Timezone", description="IANA timezone for the event (e.g. America/New_York)"
     )
-    end_at: Optional[str] = Field(
+    end_at: Optional[LumaEventTime] = Field(
         None, title="End Time", description="Event end time in ISO 8601 (optional)"
     )
     require_rsvp_approval: Optional[str] = Field(
@@ -224,10 +257,10 @@ class LumaUpdateEventConfig(BaseModel):
         },
     )
     name: Optional[str] = Field(None, title="Name", description="New event name (optional)")
-    start_at: Optional[str] = Field(
+    start_at: Optional[LumaEventTime] = Field(
         None, title="Start Time", description="New start time in ISO 8601 (optional)"
     )
-    end_at: Optional[str] = Field(
+    end_at: Optional[LumaEventTime] = Field(
         None, title="End Time", description="New end time in ISO 8601 (optional)"
     )
     timezone: Optional[str] = Field(
@@ -1015,7 +1048,7 @@ class LumaCreateWebhookConfig(BaseModel):
         },
         title="Create Webhook",
     )
-    url: str = Field(..., title="URL", description="The endpoint URL Luma will POST events to")
+    url: LumaWebhookUrl = Field(..., title="URL", description="The absolute HTTP or HTTPS endpoint URL Luma will POST events to")
     event_types: str = Field(
         "*",
         title="Event Types",

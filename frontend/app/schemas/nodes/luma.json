@@ -252,6 +252,7 @@
         },
         "start_at": {
           "description": "Event start time in ISO 8601 (e.g. 2026-07-01T18:00:00Z)",
+          "format": "date-time",
           "title": "Start Time",
           "type": "string"
         },
@@ -263,6 +264,7 @@
         "end_at": {
           "anyOf": [
             {
+              "format": "date-time",
               "type": "string"
             },
             {
@@ -500,7 +502,8 @@
           "x-is-trigger": false
         },
         "url": {
-          "description": "The endpoint URL Luma will POST events to",
+          "description": "The absolute HTTP or HTTPS endpoint URL Luma will POST events to",
+          "format": "uri",
           "title": "URL",
           "type": "string"
         },
@@ -1203,6 +1206,7 @@
         "start_at": {
           "anyOf": [
             {
+              "format": "date-time",
               "type": "string"
             },
             {
@@ -1216,6 +1220,7 @@
         "end_at": {
           "anyOf": [
             {
+              "format": "date-time",
               "type": "string"
             },
             {

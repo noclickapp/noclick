@@ -712,3 +712,29 @@ async def test_current_api_request_fields(config, method, path, location, expect
     payload = request.call_args.kwargs[location]
     assert expected.items() <= payload.items()
     assert not {"event_api_id", "guest_api_id", "ticket_type_api_id", "discount_value", "require_rsvp_approval"} & payload.keys()
+
+
+@pytest.mark.parametrize("field", ["start_at", "end_at"])
+@pytest.mark.parametrize("value", ["1", "2026-02-30T18:00:00Z", "2026-07-01T18:00:00"])
+def test_event_updates_reject_invalid_datetime(field, value):
+    with pytest.raises(ValueError, match="date-time with a timezone"):
+        LumaUpdateEventConfig(event_api_id="evt-123", **{field: value})
+
+
+def test_event_times_keep_the_supplied_timezone_and_precision():
+    stamp = "2022-10-19T03:27:13.673Z"
+    config = LumaCreateEventConfig(name="Standard", start_at=stamp, end_at=stamp,
+                                  timezone="America/New_York")
+    assert config.start_at == stamp
+    assert config.end_at == stamp
+
+
+@pytest.mark.parametrize("value", ["1", "/relative", "ftp://example.com/hook", "https://"])
+def test_webhook_creation_requires_absolute_http_url(value):
+    with pytest.raises(ValueError, match="absolute HTTP or HTTPS"):
+        LumaCreateWebhookConfig(url=value)
+
+
+def test_webhook_url_keeps_callback_path_and_query():
+    url = "https://example.com/hooks/luma?target=events"
+    assert LumaCreateWebhookConfig(url=url).url == url
