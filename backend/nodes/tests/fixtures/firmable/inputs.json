@@ -1,0 +1,105 @@
+{
+  "enrich_company_by_id": {
+    "config": {
+      "operation": "enrich_company_by_id",
+      "company_id": "f000000117274"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/company-get"
+  },
+  "enrich_company_by_domain": {
+    "config": {
+      "operation": "enrich_company_by_domain",
+      "domain": "smec.com"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/company-get"
+  },
+  "enrich_company_by_linkedin_slug": {
+    "config": {
+      "operation": "enrich_company_by_linkedin_slug",
+      "linkedin_slug": "smec"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/company-get"
+  },
+  "enrich_company_by_linkedin_url": {
+    "config": {
+      "operation": "enrich_company_by_linkedin_url",
+      "linkedin_url": "https://www.linkedin.com/company/smec/"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/company-get"
+  },
+  "enrich_company_by_abn": {
+    "config": {
+      "operation": "enrich_company_by_abn",
+      "abn": "47065475149"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/company-get"
+  },
+  "enrich_company_by_website": {
+    "config": {
+      "operation": "enrich_company_by_website",
+      "website": "https://www.smec.com"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/company-get"
+  },
+  "enrich_person_by_id": {
+    "config": {
+      "operation": "enrich_person_by_id",
+      "person_id": "fp000000067890"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/people-get"
+  },
+  "enrich_person_by_linkedin_slug": {
+    "config": {
+      "operation": "enrich_person_by_linkedin_slug",
+      "linkedin_slug": "chathchw"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/people-get"
+  },
+  "enrich_person_by_linkedin_url": {
+    "config": {
+      "operation": "enrich_person_by_linkedin_url",
+      "linkedin_url": "https://www.linkedin.com/in/chathchw/"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/people-get"
+  },
+  "enrich_person_by_work_email": {
+    "config": {
+      "operation": "enrich_person_by_work_email",
+      "work_email": "******@firmable.com"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/people-get"
+  },
+  "enrich_person_by_personal_email": {
+    "config": {
+      "operation": "enrich_person_by_personal_email",
+      "personal_email": "******@gmail.com"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/people-get"
+  },
+  "search_people": {
+    "config": {
+      "operation": "search_people",
+      "company_id": "f000000117274",
+      "position": "Software Engineer",
+      "seniority": "Senior",
+      "department": "Engineering",
+      "country": "AU",
+      "offset": 0,
+      "size": 10
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/people-search"
+  },
+  "get_tech_intelligence": {
+    "config": {
+      "operation": "get_tech_intelligence",
+      "company_id": "f000000740279"
+    },
+    "source": "https://docs.firmable.com/api-reference/endpoint/tech-intel-get"
+  },
+  "list_filter_options": {
+    "config": {
+      "operation": "list_filter_options"
+    },
+    "source": "https://docs.firmable.com/api-reference/openapi.json"
+  }
+}
