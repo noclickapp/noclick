@@ -11,6 +11,7 @@ const WizaIcon = ({ className, style }: { className?: string; style?: CSSPropert
 
 export const WizaNode: NodeDefinition = {
     type: 'automation-wiza', label: 'Wiza',
+    category: 'crm-sales',
     description: 'Enrich contacts and companies, manage enrichment lists, search prospects and check credits',
     keywords: ['email finder', 'phone numbers', 'sales prospecting', 'lead enrichment'],
     Icon: WizaIcon, iconColor: '',
