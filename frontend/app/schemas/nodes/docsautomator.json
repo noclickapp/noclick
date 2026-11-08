@@ -1,0 +1,989 @@
+{
+  "$defs": {
+    "CancelSigningSession": {
+      "additionalProperties": false,
+      "description": "Cancel the signing session.",
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Signing session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_signing_session",
+          "default": "cancel_signing_session",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "CancelSigningSession",
+      "type": "object"
+    },
+    "CreateAutomation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_automation",
+          "default": "create_automation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "data_source_name": {
+          "enum": [
+            "Airtable",
+            "API",
+            "ClickUp",
+            "Glide",
+            "Google Sheets",
+            "Make",
+            "n8n",
+            "Noloco",
+            "SmartSuite",
+            "Zapier"
+          ],
+          "title": "Data source",
+          "type": "string"
+        },
+        "doc_template_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Doc Template Link"
+        }
+      },
+      "required": [
+        "title",
+        "data_source_name"
+      ],
+      "title": "CreateAutomation",
+      "type": "object"
+    },
+    "CreateDocument": {
+      "additionalProperties": false,
+      "description": "Generate a document using saved automation settings, including signing and delivery.",
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Template placeholder values; line_items_1 and children hold line items.",
+          "title": "Data"
+        },
+        "document_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Name"
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Queue generation and return jobId; poll Get Job Status separately.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "webhook_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Params"
+        },
+        "existing_pdfs": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing Pdfs"
+        },
+        "doc_template_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Doc Template Link"
+        },
+        "word_template_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Word Template Link"
+        },
+        "word_template_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded .docx, at most 25 MB before encoding.",
+          "title": "Word Template Base64"
+        },
+        "pdf_template_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Pdf Template Link"
+        },
+        "pdf_template_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded PDF, at most 25 MB before encoding.",
+          "title": "Pdf Template Base64"
+        },
+        "recipients": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Recipient"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Per-document signer overrides; does not add signers to the automation.",
+          "title": "Recipients"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "CreateDocument",
+      "type": "object"
+    },
+    "DeleteAutomation": {
+      "additionalProperties": false,
+      "description": "Delete the selected automation.",
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_automation",
+          "default": "delete_automation",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "DeleteAutomation",
+      "type": "object"
+    },
+    "DocsautomatorAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "docsautomator_api_key",
+          "default": "docsautomator_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "DocsAutomator API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from DocsAutomator workspace settings and paste it without the Bearer prefix. NoClick reads your automations to verify the connection.",
+      "x-credential-url": "https://app.docsautomator.co/settings/workspace/api"
+    },
+    "DuplicateAutomation": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "duplicate_automation",
+          "default": "duplicate_automation",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "DuplicateAutomation",
+      "type": "object"
+    },
+    "DuplicateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "duplicate_template",
+          "default": "duplicate_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "new_template_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Template Name"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "DuplicateTemplate",
+      "type": "object"
+    },
+    "GetAutomation": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_automation",
+          "default": "get_automation",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "GetAutomation",
+      "type": "object"
+    },
+    "GetJobStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_job_status",
+          "default": "get_job_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobStatus",
+      "type": "object"
+    },
+    "GetQueueStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_queue_stats",
+          "default": "get_queue_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetQueueStats",
+      "type": "object"
+    },
+    "GetSigningAudit": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Signing session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_signing_audit",
+          "default": "get_signing_audit",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSigningAudit",
+      "type": "object"
+    },
+    "GetSigningLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Signing session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_signing_links",
+          "default": "get_signing_links",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSigningLinks",
+      "type": "object"
+    },
+    "GetSigningSession": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Signing session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_signing_session",
+          "default": "get_signing_session",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSigningSession",
+      "type": "object"
+    },
+    "ImageOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "max_width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Width"
+        }
+      },
+      "title": "ImageOptions",
+      "type": "object"
+    },
+    "ListAutomations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_automations",
+          "default": "list_automations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAutomations",
+      "type": "object"
+    },
+    "ListPlaceholders": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_placeholders",
+          "default": "list_placeholders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "ListPlaceholders",
+      "type": "object"
+    },
+    "ListSigningSessions": {
+      "additionalProperties": false,
+      "description": "Return one page; advance page using the returned pagination object.",
+      "properties": {
+        "operation": {
+          "const": "list_signing_sessions",
+          "default": "list_signing_sessions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "in_progress",
+                "completed",
+                "declined",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "pending",
+            "in_progress",
+            "completed",
+            "declined",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Partial signer email filter, case insensitive.",
+          "title": "Email"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListSigningSessions",
+      "type": "object"
+    },
+    "Recipient": {
+      "additionalProperties": false,
+      "properties": {
+        "signer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signer number; required for an automation with multiple signers.",
+          "title": "Signer"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Recipient",
+      "type": "object"
+    },
+    "ResendSigningInvite": {
+      "additionalProperties": false,
+      "description": "Send another invitation email to the selected existing signer.",
+      "properties": {
+        "session_id": {
+          "minLength": 1,
+          "title": "Signing session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resend_signing_invite",
+          "default": "resend_signing_invite",
+          "title": "Operation",
+          "type": "string"
+        },
+        "signer_index": {
+          "description": "One-based signer number.",
+          "minimum": 1,
+          "title": "Signer Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_id",
+        "signer_index"
+      ],
+      "title": "ResendSigningInvite",
+      "type": "object"
+    },
+    "SendTestEmail": {
+      "additionalProperties": false,
+      "description": "Send a real test email to the specified recipient (provider rate limits apply).",
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_test_email",
+          "default": "send_test_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recipient": {
+          "format": "email",
+          "title": "Recipient",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id",
+        "recipient"
+      ],
+      "title": "SendTestEmail",
+      "type": "object"
+    },
+    "UpdateAutomation": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_id": {
+          "minLength": 1,
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_automation",
+          "default": "update_automation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "doc_template_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Doc Template Link"
+        },
+        "new_document_name_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Document Name Field"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_preview": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "False goes live; requires a confirmed account email. New automations start in preview mode.",
+          "title": "Is Preview"
+        },
+        "save_google_doc": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save Google Doc"
+        },
+        "google_doc_destination_folder_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Google Doc Destination Folder Url"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "format_numbers_with_locale": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format Numbers With Locale"
+        },
+        "pdf_expiration": {
+          "anyOf": [
+            {
+              "enum": [
+                "never",
+                "immediate",
+                "oneday",
+                "threedays",
+                "oneweek",
+                "twoweeks",
+                "onemonth",
+                "threemonths",
+                "sixmonths",
+                "oneyear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PDF retention window; never retains PDFs until deleted.",
+          "title": "Pdf Expiration",
+          "enum": [
+            "never",
+            "immediate",
+            "oneday",
+            "threedays",
+            "oneweek",
+            "twoweeks",
+            "onemonth",
+            "threemonths",
+            "sixmonths",
+            "oneyear"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ImageOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "UpdateAutomation",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_signing_session": "#/$defs/CancelSigningSession",
+          "create_automation": "#/$defs/CreateAutomation",
+          "create_document": "#/$defs/CreateDocument",
+          "delete_automation": "#/$defs/DeleteAutomation",
+          "duplicate_automation": "#/$defs/DuplicateAutomation",
+          "duplicate_template": "#/$defs/DuplicateTemplate",
+          "get_automation": "#/$defs/GetAutomation",
+          "get_job_status": "#/$defs/GetJobStatus",
+          "get_queue_stats": "#/$defs/GetQueueStats",
+          "get_signing_audit": "#/$defs/GetSigningAudit",
+          "get_signing_links": "#/$defs/GetSigningLinks",
+          "get_signing_session": "#/$defs/GetSigningSession",
+          "list_automations": "#/$defs/ListAutomations",
+          "list_placeholders": "#/$defs/ListPlaceholders",
+          "list_signing_sessions": "#/$defs/ListSigningSessions",
+          "resend_signing_invite": "#/$defs/ResendSigningInvite",
+          "send_test_email": "#/$defs/SendTestEmail",
+          "update_automation": "#/$defs/UpdateAutomation"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateDocument"
+        },
+        {
+          "$ref": "#/$defs/GetJobStatus"
+        },
+        {
+          "$ref": "#/$defs/GetQueueStats"
+        },
+        {
+          "$ref": "#/$defs/ListAutomations"
+        },
+        {
+          "$ref": "#/$defs/GetAutomation"
+        },
+        {
+          "$ref": "#/$defs/CreateAutomation"
+        },
+        {
+          "$ref": "#/$defs/UpdateAutomation"
+        },
+        {
+          "$ref": "#/$defs/DeleteAutomation"
+        },
+        {
+          "$ref": "#/$defs/DuplicateAutomation"
+        },
+        {
+          "$ref": "#/$defs/ListPlaceholders"
+        },
+        {
+          "$ref": "#/$defs/DuplicateTemplate"
+        },
+        {
+          "$ref": "#/$defs/SendTestEmail"
+        },
+        {
+          "$ref": "#/$defs/ListSigningSessions"
+        },
+        {
+          "$ref": "#/$defs/GetSigningSession"
+        },
+        {
+          "$ref": "#/$defs/GetSigningLinks"
+        },
+        {
+          "$ref": "#/$defs/GetSigningAudit"
+        },
+        {
+          "$ref": "#/$defs/CancelSigningSession"
+        },
+        {
+          "$ref": "#/$defs/ResendSigningInvite"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DocsautomatorAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Docsautomator Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
