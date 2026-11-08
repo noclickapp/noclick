@@ -1,0 +1,357 @@
+{
+  "source": "https://developer.fleetio.com/schemas/2025-05-05.yaml",
+  "version": "2025-05-05",
+  "note": "Synthetic input values; expected methods, paths and body fields from the pinned publisher contract.",
+  "cases": [
+    {
+      "config": {
+        "operation": "list_vehicles",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/vehicles",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_vehicle",
+        "vehicle_id": "42"
+      },
+      "method": "GET",
+      "path": "/api/vehicles/42",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_contacts",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/contacts",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_contact",
+        "contact_id": "42"
+      },
+      "method": "GET",
+      "path": "/api/contacts/42",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_vendors",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/vendors",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_vendor",
+        "vendor_id": "42"
+      },
+      "method": "GET",
+      "path": "/api/vendors/42",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_issues",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/issues",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_issue",
+        "issue_id": "42"
+      },
+      "method": "GET",
+      "path": "/api/issues/42",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_fuel_entries",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/fuel_entries",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_fuel_entry",
+        "fuel_entry_id": "42"
+      },
+      "method": "GET",
+      "path": "/api/fuel_entries/42",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_service_entries",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/service_entries",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_service_entry",
+        "service_entry_id": "42"
+      },
+      "method": "GET",
+      "path": "/api/service_entries/42",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_vehicle_statuses",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/vehicle_statuses",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_vehicle_types",
+        "per_page": 25,
+        "start_cursor": "opaque+cursor/=="
+      },
+      "method": "GET",
+      "path": "/api/vehicle_types",
+      "query": {
+        "per_page": "25",
+        "start_cursor": "opaque+cursor/=="
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "create_vehicle",
+        "name": "Truck 12",
+        "primary_meter_unit": "mi",
+        "vehicle_status_id": 1,
+        "vehicle_type_id": 2,
+        "year": 2025,
+        "license_plate": "FLEET12"
+      },
+      "method": "POST",
+      "path": "/api/vehicles",
+      "query": {},
+      "body": {
+        "name": "Truck 12",
+        "primary_meter_unit": "mi",
+        "vehicle_status_id": 1,
+        "vehicle_type_id": 2,
+        "year": 2025,
+        "license_plate": "FLEET12"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_vehicle",
+        "vehicle_id": "42",
+        "meter_unit": "km",
+        "vehicle_status_id": 3
+      },
+      "method": "PATCH",
+      "path": "/api/vehicles/42",
+      "query": {},
+      "body": {
+        "meter_unit": "km",
+        "vehicle_status_id": 3
+      }
+    },
+    {
+      "config": {
+        "operation": "create_contact",
+        "first_name": "Alex",
+        "last_name": "Driver",
+        "vehicle_operator": true,
+        "technician": false
+      },
+      "method": "POST",
+      "path": "/api/contacts",
+      "query": {},
+      "body": {
+        "first_name": "Alex",
+        "last_name": "Driver",
+        "vehicle_operator": true,
+        "technician": false
+      }
+    },
+    {
+      "config": {
+        "operation": "update_contact",
+        "contact_id": "42",
+        "technician": false,
+        "job_title": "Driver"
+      },
+      "method": "PATCH",
+      "path": "/api/contacts/42",
+      "query": {},
+      "body": {
+        "technician": false,
+        "job_title": "Driver"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_vendor",
+        "name": "Repair Shop",
+        "service": true,
+        "fuel": false
+      },
+      "method": "POST",
+      "path": "/api/vendors",
+      "query": {},
+      "body": {
+        "name": "Repair Shop",
+        "service": true,
+        "fuel": false
+      }
+    },
+    {
+      "config": {
+        "operation": "update_vendor",
+        "vendor_id": "42",
+        "service": false,
+        "notes": "Updated by workflow"
+      },
+      "method": "PATCH",
+      "path": "/api/vendors/42",
+      "query": {},
+      "body": {
+        "service": false,
+        "notes": "Updated by workflow"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_issue",
+        "asset_id": 42,
+        "asset_type": "Vehicle",
+        "summary": "Brake light out",
+        "reported_at": "2026-11-09T08:00:00Z",
+        "description": "Rear left lamp",
+        "assigned_contact_ids": [
+          7
+        ]
+      },
+      "method": "POST",
+      "path": "/api/issues",
+      "query": {},
+      "body": {
+        "asset_id": 42,
+        "asset_type": "Vehicle",
+        "summary": "Brake light out",
+        "reported_at": "2026-11-09T08:00:00Z",
+        "description": "Rear left lamp",
+        "assigned_contact_ids": [
+          7
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "update_issue",
+        "issue_id": "42",
+        "description": "Assigned for repair",
+        "assigned_contact_ids": []
+      },
+      "method": "PATCH",
+      "path": "/api/issues/42",
+      "query": {},
+      "body": {
+        "description": "Assigned for repair",
+        "assigned_contact_ids": []
+      }
+    },
+    {
+      "config": {
+        "operation": "close_issue",
+        "issue_id": "42",
+        "note": "Checked and completed"
+      },
+      "method": "PUT",
+      "path": "/api/issues/42/close",
+      "query": {},
+      "body": {
+        "note": "Checked and completed"
+      }
+    },
+    {
+      "config": {
+        "operation": "resolve_issue",
+        "issue_id": "42",
+        "note": "Checked and completed"
+      },
+      "method": "PUT",
+      "path": "/api/issues/42/resolve",
+      "query": {},
+      "body": {
+        "note": "Checked and completed"
+      }
+    },
+    {
+      "config": {
+        "operation": "reopen_issue",
+        "issue_id": "42"
+      },
+      "method": "PUT",
+      "path": "/api/issues/42/reopen",
+      "query": {},
+      "body": null
+    }
+  ]
+}
