@@ -3,10 +3,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 
-// Unmodified compact brand asset from https://leanix.net
+// Unmodified SAP LeanIX wordmark from the official vendor website.
 import type { CSSProperties as BrandCSSProperties } from 'react';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/leanix-brand.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/leanix.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
