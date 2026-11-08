@@ -11,6 +11,7 @@ const TwoChatIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const TwoChatNode: NodeDefinition = {
     type: 'automation-2chat', label: '2Chat',
+    category: 'communication',
     description: 'Automate WhatsApp messages, contacts, tags, SMS and account reads',
     Icon: TwoChatIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
