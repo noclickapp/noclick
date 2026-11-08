@@ -11,6 +11,7 @@ const FullstoryIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const FullstoryNode: NodeDefinition = {
     type: 'automation-fullstory', label: 'Fullstory',
+    category: 'analytics-bi',
     description: 'Manage users, send events and track batch imports',
     Icon: FullstoryIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
