@@ -1,0 +1,553 @@
+{
+  "GET /OCR/Model/{model_id}": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/UploadUrls": {
+    "Meta": {
+      "ModelID": "00000000-0000-0000-0000-000000000000",
+      "ModelType": "ocr",
+      "State": 0,
+      "Categories": [
+        {
+          "name": "category1",
+          "count": 0
+        },
+        {
+          "name": "category2",
+          "count": 0
+        }
+      ],
+      "Accuracy": 0,
+      "Status": "Current Status"
+    },
+    "Data": [
+      {
+        "filename": "example.jpeg",
+        "size": {
+          "width": 1024,
+          "height": 1024
+        },
+        "object": [
+          {
+            "name": "category1",
+            "ocr_text": "text inside the bounding box",
+            "bndbox": {
+              "xmin": 1,
+              "ymin": 1,
+              "xmax": 100,
+              "ymax": 100
+            }
+          }
+        ],
+        "id": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/UploadFile": {
+    "Meta": {
+      "ModelID": "00000000-0000-0000-0000-000000000000",
+      "ModelType": "ocr",
+      "State": 0,
+      "Categories": [
+        {
+          "name": "category1",
+          "count": 0
+        },
+        {
+          "name": "category2",
+          "count": 0
+        }
+      ],
+      "Accuracy": 0,
+      "Status": "Current Status"
+    },
+    "Data": [
+      {
+        "filename": "example.jpeg",
+        "size": {
+          "width": 1024,
+          "height": 1024
+        },
+        "object": [
+          {
+            "name": "category1",
+            "ocr_text": "text inside the bounding box",
+            "bndbox": {
+              "xmin": 1,
+              "ymin": 1,
+              "xmax": 100,
+              "ymax": 100
+            }
+          }
+        ],
+        "id": "00000000-0000-0000-0000-000000000000"
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/Train": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "GET /Inferences/Model/{model_id}/ImageLevelInferences": {
+    "moderated_images_count": 55,
+    "unmoderated_images_count": 156,
+    "moderated_images": [
+      {
+        "model_id": "category1",
+        "day_since_epoch": 18564,
+        "is_moderated": true,
+        "hour_of_day": 15,
+        "id": "00000000-0000-0000-0000-000000000000",
+        "url": "uploadedfiles/00000000-0000-0000-0000-000000000000/PredictionImages/0000000001.jpeg",
+        "predicted_boxes": [
+          {
+            "label": "invoice_id",
+            "xmin": 616,
+            "ymin": 321,
+            "xmax": 984,
+            "ymax": 357,
+            "ocr_text": "877541"
+          }
+        ]
+      }
+    ],
+    "unmoderated_images": [
+      {
+        "model_id": "00000000-0000-0000-0000-000000000000",
+        "day_since_epoch": 18565,
+        "is_moderated": false,
+        "hour_of_day": 23,
+        "id": "00000000-0000-0000-0000-000000000000",
+        "url": "uploadedfiles/00000000-0000-0000-0000-000000000000/PredictionImages/0000000002.jpeg",
+        "predicted_boxes": [
+          {
+            "label": "seller_name",
+            "xmin": 616,
+            "ymin": 321,
+            "xmax": 984,
+            "ymax": 357,
+            "ocr_text": "Apple"
+          }
+        ]
+      }
+    ]
+  },
+  "GET /Inferences/Model/{model_id}/ImageLevelInferences/{id}": {
+    "message": "Success",
+    "result": [
+      {
+        "message": "Success",
+        "input": "string",
+        "prediction": [
+          {
+            "label": "category1",
+            "xmin": 0,
+            "ymin": 0,
+            "xmax": 100,
+            "ymax": 100,
+            "score": 0.9,
+            "ocr_text": "string"
+          },
+          {
+            "label": "",
+            "ocr_text": "table 1",
+            "type": "table",
+            "score": 99.99,
+            "xmin": 159,
+            "xmax": 380,
+            "ymin": 1258,
+            "ymax": 1439,
+            "cells": [
+              {
+                "row": 1,
+                "col": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 1",
+                "xmin": 159,
+                "ymin": 1258,
+                "xmax": 258,
+                "ymax": 1357,
+                "score": 99.99,
+                "text": "ocr text 1"
+              },
+              {
+                "row": 1,
+                "col": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 2",
+                "xmin": 258,
+                "ymin": 1258,
+                "xmax": 380,
+                "ymax": 1357,
+                "score": 99.99,
+                "text": "ocr text 2"
+              },
+              {
+                "row": 2,
+                "col": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 1",
+                "xmin": 159,
+                "ymin": 1357,
+                "xmax": 258,
+                "ymax": 1439,
+                "score": 99.99,
+                "text": "ocr text 3"
+              },
+              {
+                "row": 2,
+                "col": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 2",
+                "xmin": 258,
+                "ymin": 1357,
+                "xmax": 380,
+                "ymax": 1439,
+                "score": 99.99902,
+                "text": "ocr text 4"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/LabelUrls": {
+    "message": "Success",
+    "result": [
+      {
+        "message": "Success",
+        "input": "string",
+        "prediction": [
+          {
+            "label": "category1",
+            "xmin": 0,
+            "ymin": 0,
+            "xmax": 100,
+            "ymax": 100,
+            "score": 0.9,
+            "ocr_text": "string"
+          },
+          {
+            "label": "",
+            "ocr_text": "table 1",
+            "type": "table",
+            "score": 99.99,
+            "xmin": 159,
+            "xmax": 380,
+            "ymin": 1258,
+            "ymax": 1439,
+            "cells": [
+              {
+                "row": 1,
+                "col": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 1",
+                "xmin": 159,
+                "ymin": 1258,
+                "xmax": 258,
+                "ymax": 1357,
+                "score": 99.99,
+                "text": "ocr text 1"
+              },
+              {
+                "row": 1,
+                "col": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 2",
+                "xmin": 258,
+                "ymin": 1258,
+                "xmax": 380,
+                "ymax": 1357,
+                "score": 99.99,
+                "text": "ocr text 2"
+              },
+              {
+                "row": 2,
+                "col": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 1",
+                "xmin": 159,
+                "ymin": 1357,
+                "xmax": 258,
+                "ymax": 1439,
+                "score": 99.99,
+                "text": "ocr text 3"
+              },
+              {
+                "row": 2,
+                "col": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 2",
+                "xmin": 258,
+                "ymin": 1357,
+                "xmax": 380,
+                "ymax": 1439,
+                "score": 99.99902,
+                "text": "ocr text 4"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/LabelUrls/": {
+    "message": "Success",
+    "result": [
+      {
+        "message": "Success",
+        "result": [
+          {
+            "message": "Success",
+            "input": "filename.jpg",
+            "prediction": [],
+            "page": 55,
+            "request_file_id": "00000000-0000-0000-0000-000000000000",
+            "filepath": "uploadedfiles/00000000-0000-0000-0000-000000000000/PredictionImages/filename.jpeg",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/LabelFile": {
+    "message": "Success",
+    "result": [
+      {
+        "message": "Success",
+        "input": "string",
+        "prediction": [
+          {
+            "label": "category1",
+            "xmin": 0,
+            "ymin": 0,
+            "xmax": 100,
+            "ymax": 100,
+            "score": 0.9,
+            "ocr_text": "string"
+          },
+          {
+            "label": "",
+            "ocr_text": "table 1",
+            "type": "table",
+            "score": 99.99,
+            "xmin": 159,
+            "xmax": 380,
+            "ymin": 1258,
+            "ymax": 1439,
+            "cells": [
+              {
+                "row": 1,
+                "col": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 1",
+                "xmin": 159,
+                "ymin": 1258,
+                "xmax": 258,
+                "ymax": 1357,
+                "score": 99.99,
+                "text": "ocr text 1"
+              },
+              {
+                "row": 1,
+                "col": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 2",
+                "xmin": 258,
+                "ymin": 1258,
+                "xmax": 380,
+                "ymax": 1357,
+                "score": 99.99,
+                "text": "ocr text 2"
+              },
+              {
+                "row": 2,
+                "col": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 1",
+                "xmin": 159,
+                "ymin": 1357,
+                "xmax": 258,
+                "ymax": 1439,
+                "score": 99.99,
+                "text": "ocr text 3"
+              },
+              {
+                "row": 2,
+                "col": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "label": "col 2",
+                "xmin": 258,
+                "ymin": 1357,
+                "xmax": 380,
+                "ymax": 1439,
+                "score": 99.99902,
+                "text": "ocr text 4"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "POST /OCR/Model/{model_id}/LabelFile/": {
+    "message": "Success",
+    "result": [
+      {
+        "message": "Success",
+        "result": [
+          {
+            "message": "Success",
+            "input": "filename.jpg",
+            "prediction": [],
+            "page": 55,
+            "request_file_id": "00000000-0000-0000-0000-000000000000",
+            "filepath": "uploadedfiles/00000000-0000-0000-0000-000000000000/PredictionImages/filename.jpeg",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+      }
+    ]
+  },
+  "GET /ImageCategorization/Models": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "GET /ImageCategorization/Model": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "POST /ImageCategorization/UploadUrls": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "POST /ImageCategorization/UploadFile": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "POST /ImageCategorization/Train": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "POST /ImageCategorization/LabelUrls": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  },
+  "POST /ImageCategorization/LabelFile": {
+    "model_id": "00000000-0000-0000-0000-000000000000",
+    "model_type": "ocr",
+    "state": 0,
+    "categories": [
+      {
+        "name": "category1",
+        "count": 0
+      },
+      {
+        "name": "category2",
+        "count": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "classification": "d",
+    "operation": "upload_training_file",
+    "request": "POST /OCR/Model/{model_id}/UploadFile",
+    "source": "https://raw.githubusercontent.com/NanoNets/api-docs/HEAD/nanonets_openapi_3.1.0.yaml",
+    "details": "The published OpenAPI 3.1.0 contract retains the OpenAPI 3.0 file declaration type:string/format:binary. The validator consequently rejects multipart file bytes as not a string. In the same current official contract, the Python x-codeSamples for this operation uses open(..., rb) and requests.post(..., files=data), and its multipart encoding explicitly permits image/png, image/jpeg and application/pdf. The node sends exactly that raw multipart file, with documented form fields; converting file contents to text/base64 to satisfy the legacy schema would contradict the provider example. Published source bytes match the pinned SHA-256.",
+    "openapi_migration_reference": "https://learn.openapis.org/upgrading/v3.0-to-v3.1.html#update-file-upload-descriptions"
+  },
+  {
+    "classification": "d",
+    "operation": "predict_file",
+    "request": "POST /OCR/Model/{model_id}/LabelFile",
+    "source": "https://raw.githubusercontent.com/NanoNets/api-docs/HEAD/nanonets_openapi_3.1.0.yaml",
+    "details": "The published OpenAPI 3.1.0 contract retains the OpenAPI 3.0 file declaration type:string/format:binary. The validator consequently rejects multipart file bytes as not a string. In the same current official contract, the Python x-codeSamples for this operation uses open(..., rb) and requests.post(..., files=data), and its multipart encoding explicitly permits image/png, image/jpeg and application/pdf. The node sends exactly that raw multipart file, with documented form fields; converting file contents to text/base64 to satisfy the legacy schema would contradict the provider example. Published source bytes match the pinned SHA-256.",
+    "openapi_migration_reference": "https://learn.openapis.org/upgrading/v3.0-to-v3.1.html#update-file-upload-descriptions"
+  },
+  {
+    "classification": "d",
+    "operation": "predict_file_async",
+    "request": "POST /OCR/Model/{model_id}/LabelFile/",
+    "source": "https://raw.githubusercontent.com/NanoNets/api-docs/HEAD/nanonets_openapi_3.1.0.yaml",
+    "details": "The published OpenAPI 3.1.0 contract retains the OpenAPI 3.0 file declaration type:string/format:binary. The validator consequently rejects multipart file bytes as not a string. In the same current official contract, the Python x-codeSamples for this operation uses open(..., rb) and requests.post(..., files=data), and its multipart encoding explicitly permits image/png, image/jpeg and application/pdf. The node sends exactly that raw multipart file, with documented form fields; converting file contents to text/base64 to satisfy the legacy schema would contradict the provider example. Published source bytes match the pinned SHA-256.",
+    "openapi_migration_reference": "https://learn.openapis.org/upgrading/v3.0-to-v3.1.html#update-file-upload-descriptions"
+  },
+  {
+    "classification": "d",
+    "operation": "upload_classification_training_file",
+    "request": "POST /ImageCategorization/UploadFile",
+    "source": "https://raw.githubusercontent.com/NanoNets/api-docs/HEAD/nanonets_openapi_3.1.0.yaml",
+    "details": "The published OpenAPI 3.1.0 contract retains the OpenAPI 3.0 file declaration type:string/format:binary. The validator consequently rejects multipart file bytes as not a string. In the same current official contract, the Python x-codeSamples for this operation uses open(..., rb) and requests.post(..., files=data), and its multipart encoding explicitly permits image/png, image/jpeg and application/pdf. The node sends exactly that raw multipart file, with documented form fields; converting file contents to text/base64 to satisfy the legacy schema would contradict the provider example. Published source bytes match the pinned SHA-256.",
+    "openapi_migration_reference": "https://learn.openapis.org/upgrading/v3.0-to-v3.1.html#update-file-upload-descriptions"
+  },
+  {
+    "classification": "d",
+    "operation": "classify_file",
+    "request": "POST /ImageCategorization/LabelFile",
+    "source": "https://raw.githubusercontent.com/NanoNets/api-docs/HEAD/nanonets_openapi_3.1.0.yaml",
+    "details": "The published OpenAPI 3.1.0 contract retains the OpenAPI 3.0 file declaration type:string/format:binary. The validator consequently rejects multipart file bytes as not a string. In the same current official contract, the Python x-codeSamples for this operation uses open(..., rb) and requests.post(..., files=data), and its multipart encoding explicitly permits image/png, image/jpeg and application/pdf. The node sends exactly that raw multipart file, with documented form fields; converting file contents to text/base64 to satisfy the legacy schema would contradict the provider example. Published source bytes match the pinned SHA-256.",
+    "openapi_migration_reference": "https://learn.openapis.org/upgrading/v3.0-to-v3.1.html#update-file-upload-descriptions"
+  }
+]

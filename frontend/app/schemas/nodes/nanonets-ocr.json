@@ -1,0 +1,835 @@
+{
+  "$defs": {
+    "ClassifyFile": {
+      "additionalProperties": false,
+      "description": "Classify one uploaded image with a trained classification model.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "file_reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A PNG, JPEG or PDF workflow file reference, public URL or data URI. Supply this or inline base64 bytes.",
+          "title": "File Reference"
+        },
+        "file_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternatively, provide base64 file bytes instead of an upload or file reference.",
+          "format": "byte",
+          "title": "Inline File Base64"
+        },
+        "mime_type": {
+          "default": "application/pdf",
+          "enum": [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+          ],
+          "title": "Inline File Type",
+          "type": "string"
+        },
+        "filename": {
+          "default": "document.pdf",
+          "maxLength": 255,
+          "title": "Inline Filename",
+          "type": "string"
+        },
+        "operation": {
+          "const": "classify_file",
+          "default": "classify_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "ClassifyFile",
+      "type": "object"
+    },
+    "ClassifyUrls": {
+      "additionalProperties": false,
+      "description": "Classify public image URLs with a trained classification model.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "urls": {
+          "description": "Public PNG, JPEG or PDF URLs. Each URL is sent as a repeated urls form field.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Image URLs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "classify_urls",
+          "default": "classify_urls",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "urls"
+      ],
+      "title": "ClassifyUrls",
+      "type": "object"
+    },
+    "GetClassificationModel": {
+      "additionalProperties": false,
+      "description": "Read classification model details by ID.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_classification_model",
+          "default": "get_classification_model",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "GetClassificationModel",
+      "type": "object"
+    },
+    "GetModel": {
+      "additionalProperties": false,
+      "description": "Read OCR model categories and training state.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_model",
+          "default": "get_model",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "GetModel",
+      "type": "object"
+    },
+    "GetPredictionFile": {
+      "additionalProperties": false,
+      "description": "Get extracted fields and tables for a prediction file ID.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_prediction_file",
+          "default": "get_prediction_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Prediction File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "file_id"
+      ],
+      "title": "GetPredictionFile",
+      "type": "object"
+    },
+    "ListClassificationModels": {
+      "additionalProperties": false,
+      "description": "Read the connected account's classification models.",
+      "properties": {
+        "operation": {
+          "const": "list_classification_models",
+          "default": "list_classification_models",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListClassificationModels",
+      "type": "object"
+    },
+    "ListPredictionFiles": {
+      "additionalProperties": false,
+      "description": "Read one documented day batch of moderated and unmoderated predictions.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_prediction_files",
+          "default": "list_prediction_files",
+          "title": "Operation",
+          "type": "string"
+        },
+        "start_day_interval": {
+          "description": "Number of days of prediction history to request.",
+          "title": "Start Day Interval",
+          "type": "integer"
+        },
+        "current_batch_day": {
+          "description": "The batch day index, as required by the API. Adjust explicitly to read another batch.",
+          "title": "Current Batch Day",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id",
+        "start_day_interval",
+        "current_batch_day"
+      ],
+      "title": "ListPredictionFiles",
+      "type": "object"
+    },
+    "NanonetsOcrAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nanonets_ocr_api_key",
+          "default": "nanonets_ocr_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Nanonets OCR API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Nanonets \u2192 API Keys. Paste the key alone. It grants full account access; NoClick sends it as the Basic username with an empty password. Connection verification reads your classification models without changing them.",
+      "x-credential-url": "https://app.nanonets.com/#/keys"
+    },
+    "PredictFile": {
+      "additionalProperties": false,
+      "description": "Extract text, fields and tables from one uploaded file.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "file_reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A PNG, JPEG or PDF workflow file reference, public URL or data URI. Supply this or inline base64 bytes.",
+          "title": "File Reference"
+        },
+        "file_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternatively, provide base64 file bytes instead of an upload or file reference.",
+          "format": "byte",
+          "title": "Inline File Base64"
+        },
+        "mime_type": {
+          "default": "application/pdf",
+          "enum": [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+          ],
+          "title": "Inline File Type",
+          "type": "string"
+        },
+        "filename": {
+          "default": "document.pdf",
+          "maxLength": 255,
+          "title": "Inline Filename",
+          "type": "string"
+        },
+        "operation": {
+          "const": "predict_file",
+          "default": "predict_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "PredictFile",
+      "type": "object"
+    },
+    "PredictFileAsync": {
+      "additionalProperties": false,
+      "description": "Queue an uploaded file prediction; retrieve results by returned file ID.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "file_reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A PNG, JPEG or PDF workflow file reference, public URL or data URI. Supply this or inline base64 bytes.",
+          "title": "File Reference"
+        },
+        "file_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternatively, provide base64 file bytes instead of an upload or file reference.",
+          "format": "byte",
+          "title": "Inline File Base64"
+        },
+        "mime_type": {
+          "default": "application/pdf",
+          "enum": [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+          ],
+          "title": "Inline File Type",
+          "type": "string"
+        },
+        "filename": {
+          "default": "document.pdf",
+          "maxLength": 255,
+          "title": "Inline Filename",
+          "type": "string"
+        },
+        "operation": {
+          "const": "predict_file_async",
+          "default": "predict_file_async",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "PredictFileAsync",
+      "type": "object"
+    },
+    "PredictUrls": {
+      "additionalProperties": false,
+      "description": "Extract text, fields and tables from public image URLs.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "urls": {
+          "description": "Public PNG, JPEG or PDF URLs. Each URL is sent as a repeated urls form field.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Image URLs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "predict_urls",
+          "default": "predict_urls",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "urls"
+      ],
+      "title": "PredictUrls",
+      "type": "object"
+    },
+    "PredictUrlsAsync": {
+      "additionalProperties": false,
+      "description": "Queue URL predictions and return file IDs for later retrieval.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "urls": {
+          "description": "Public PNG, JPEG or PDF URLs. Each URL is sent as a repeated urls form field.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Image URLs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "predict_urls_async",
+          "default": "predict_urls_async",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "urls"
+      ],
+      "title": "PredictUrlsAsync",
+      "type": "object"
+    },
+    "TrainClassificationModel": {
+      "additionalProperties": false,
+      "description": "Start classification model training.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "train_classification_model",
+          "default": "train_classification_model",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "TrainClassificationModel",
+      "type": "object"
+    },
+    "TrainModel": {
+      "additionalProperties": false,
+      "description": "Start OCR model training; completion is checked with Get Model.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "train_model",
+          "default": "train_model",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "TrainModel",
+      "type": "object"
+    },
+    "UploadClassificationTrainingFile": {
+      "additionalProperties": false,
+      "description": "Add one labelled file to a classification model's training set.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "file_reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A PNG, JPEG or PDF workflow file reference, public URL or data URI. Supply this or inline base64 bytes.",
+          "title": "File Reference"
+        },
+        "file_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternatively, provide base64 file bytes instead of an upload or file reference.",
+          "format": "byte",
+          "title": "Inline File Base64"
+        },
+        "mime_type": {
+          "default": "application/pdf",
+          "enum": [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+          ],
+          "title": "Inline File Type",
+          "type": "string"
+        },
+        "filename": {
+          "default": "document.pdf",
+          "maxLength": 255,
+          "title": "Inline Filename",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upload_classification_training_file",
+          "default": "upload_classification_training_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "category": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "category"
+      ],
+      "title": "UploadClassificationTrainingFile",
+      "type": "object"
+    },
+    "UploadClassificationTrainingUrls": {
+      "additionalProperties": false,
+      "description": "Add labelled URLs to a classification model's training set.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "urls": {
+          "description": "Public PNG, JPEG or PDF URLs. Each URL is sent as a repeated urls form field.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Image URLs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "upload_classification_training_urls",
+          "default": "upload_classification_training_urls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "category": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "urls",
+        "category"
+      ],
+      "title": "UploadClassificationTrainingUrls",
+      "type": "object"
+    },
+    "UploadTrainingFile": {
+      "additionalProperties": false,
+      "description": "Upload one OCR training image with matching filename metadata.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "file_reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A PNG, JPEG or PDF workflow file reference, public URL or data URI. Supply this or inline base64 bytes.",
+          "title": "File Reference"
+        },
+        "file_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternatively, provide base64 file bytes instead of an upload or file reference.",
+          "format": "byte",
+          "title": "Inline File Base64"
+        },
+        "mime_type": {
+          "default": "application/pdf",
+          "enum": [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+          ],
+          "title": "Inline File Type",
+          "type": "string"
+        },
+        "filename": {
+          "default": "document.pdf",
+          "maxLength": 255,
+          "title": "Inline Filename",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upload_training_file",
+          "default": "upload_training_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "UploadTrainingFile",
+      "type": "object"
+    },
+    "UploadTrainingUrls": {
+      "additionalProperties": false,
+      "description": "Add image URLs to an OCR model's training set.",
+      "properties": {
+        "model_id": {
+          "description": "Copy the model ID from Nanonets model settings.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "urls": {
+          "description": "Public PNG, JPEG or PDF URLs. Each URL is sent as a repeated urls form field.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Image URLs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "upload_training_urls",
+          "default": "upload_training_urls",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "urls"
+      ],
+      "title": "UploadTrainingUrls",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "classify_file": "#/$defs/ClassifyFile",
+          "classify_urls": "#/$defs/ClassifyUrls",
+          "get_classification_model": "#/$defs/GetClassificationModel",
+          "get_model": "#/$defs/GetModel",
+          "get_prediction_file": "#/$defs/GetPredictionFile",
+          "list_classification_models": "#/$defs/ListClassificationModels",
+          "list_prediction_files": "#/$defs/ListPredictionFiles",
+          "predict_file": "#/$defs/PredictFile",
+          "predict_file_async": "#/$defs/PredictFileAsync",
+          "predict_urls": "#/$defs/PredictUrls",
+          "predict_urls_async": "#/$defs/PredictUrlsAsync",
+          "train_classification_model": "#/$defs/TrainClassificationModel",
+          "train_model": "#/$defs/TrainModel",
+          "upload_classification_training_file": "#/$defs/UploadClassificationTrainingFile",
+          "upload_classification_training_urls": "#/$defs/UploadClassificationTrainingUrls",
+          "upload_training_file": "#/$defs/UploadTrainingFile",
+          "upload_training_urls": "#/$defs/UploadTrainingUrls"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetModel"
+        },
+        {
+          "$ref": "#/$defs/UploadTrainingUrls"
+        },
+        {
+          "$ref": "#/$defs/UploadTrainingFile"
+        },
+        {
+          "$ref": "#/$defs/TrainModel"
+        },
+        {
+          "$ref": "#/$defs/ListPredictionFiles"
+        },
+        {
+          "$ref": "#/$defs/GetPredictionFile"
+        },
+        {
+          "$ref": "#/$defs/PredictUrls"
+        },
+        {
+          "$ref": "#/$defs/PredictUrlsAsync"
+        },
+        {
+          "$ref": "#/$defs/PredictFile"
+        },
+        {
+          "$ref": "#/$defs/PredictFileAsync"
+        },
+        {
+          "$ref": "#/$defs/ListClassificationModels"
+        },
+        {
+          "$ref": "#/$defs/GetClassificationModel"
+        },
+        {
+          "$ref": "#/$defs/UploadClassificationTrainingUrls"
+        },
+        {
+          "$ref": "#/$defs/UploadClassificationTrainingFile"
+        },
+        {
+          "$ref": "#/$defs/TrainClassificationModel"
+        },
+        {
+          "$ref": "#/$defs/ClassifyUrls"
+        },
+        {
+          "$ref": "#/$defs/ClassifyFile"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NanonetsOcrAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Nanonets-ocr Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
