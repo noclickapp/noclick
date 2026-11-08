@@ -1,0 +1,802 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "description": "Check connection: GET /ping.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CoinGeckoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "coingecko_api_key",
+          "default": "coingecko_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "CoinGecko API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste a CoinGecko Demo API key from your Developer Dashboard. Use a Demo key, not a paid Pro key. NoClick sends it in the x-cg-demo-api-key header to api.coingecko.com. The connection check reads public API status and proves reachability, not account identity.",
+      "x-credential-url": "https://www.coingecko.com/en/developers/dashboard"
+    },
+    "GetCoin": {
+      "additionalProperties": false,
+      "description": "Get coin: GET /coins/{id}.",
+      "properties": {
+        "id": {
+          "description": "CoinGecko coin ID, for example bitcoin; use List coins or Search to find it.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_coin",
+          "default": "get_coin",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "localization": {
+          "default": false,
+          "title": "Localization",
+          "type": "boolean"
+        },
+        "tickers": {
+          "default": false,
+          "title": "Tickers",
+          "type": "boolean"
+        },
+        "market_data": {
+          "default": true,
+          "title": "Market Data",
+          "type": "boolean"
+        },
+        "community_data": {
+          "default": false,
+          "title": "Community Data",
+          "type": "boolean"
+        },
+        "developer_data": {
+          "default": false,
+          "title": "Developer Data",
+          "type": "boolean"
+        },
+        "sparkline": {
+          "default": false,
+          "title": "Sparkline",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCoin",
+      "type": "object"
+    },
+    "GetCoinHistory": {
+      "additionalProperties": false,
+      "description": "Get coin history: GET /coins/{id}/history.",
+      "properties": {
+        "id": {
+          "description": "CoinGecko coin ID, for example bitcoin; use List coins or Search to find it.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_coin_history",
+          "default": "get_coin_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "description": "Historical date as dd-mm-yyyy; Demo history is limited to the past 365 days.",
+          "title": "Date",
+          "type": "string"
+        },
+        "localization": {
+          "default": false,
+          "title": "Localization",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "date"
+      ],
+      "title": "GetCoinHistory",
+      "type": "object"
+    },
+    "GetDefiGlobal": {
+      "additionalProperties": false,
+      "description": "Get defi global: GET /global/decentralized_finance_defi.",
+      "properties": {
+        "operation": {
+          "const": "get_defi_global",
+          "default": "get_defi_global",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetDefiGlobal",
+      "type": "object"
+    },
+    "GetExchange": {
+      "additionalProperties": false,
+      "description": "Get exchange: GET /exchanges/{id}.",
+      "properties": {
+        "id": {
+          "description": "Exchange ID, for example binance; use List exchanges to find it.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_exchange",
+          "default": "get_exchange",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetExchange",
+      "type": "object"
+    },
+    "GetExchangeRates": {
+      "additionalProperties": false,
+      "description": "Get exchange rates: GET /exchange_rates.",
+      "properties": {
+        "operation": {
+          "const": "get_exchange_rates",
+          "default": "get_exchange_rates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetExchangeRates",
+      "type": "object"
+    },
+    "GetGlobal": {
+      "additionalProperties": false,
+      "description": "Get global: GET /global.",
+      "properties": {
+        "operation": {
+          "const": "get_global",
+          "default": "get_global",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetGlobal",
+      "type": "object"
+    },
+    "GetMarketChart": {
+      "additionalProperties": false,
+      "description": "Get market chart: GET /coins/{id}/market_chart.",
+      "properties": {
+        "id": {
+          "description": "CoinGecko coin ID, for example bitcoin; use List coins or Search to find it.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_market_chart",
+          "default": "get_market_chart",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vs_currency": {
+          "default": "usd",
+          "maxLength": 50,
+          "title": "Vs Currency",
+          "type": "string"
+        },
+        "days": {
+          "default": "1",
+          "description": "Days of history, 1\u2013365 on the Demo plan.",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-5])$",
+          "title": "Days",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "hourly",
+                "daily"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval",
+          "enum": [
+            "hourly",
+            "daily"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetMarketChart",
+      "type": "object"
+    },
+    "GetOHLC": {
+      "additionalProperties": false,
+      "description": "Get ohlc: GET /coins/{id}/ohlc.",
+      "properties": {
+        "id": {
+          "description": "CoinGecko coin ID, for example bitcoin; use List coins or Search to find it.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ohlc",
+          "default": "get_ohlc",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vs_currency": {
+          "default": "usd",
+          "maxLength": 50,
+          "title": "Vs Currency",
+          "type": "string"
+        },
+        "days": {
+          "default": "1",
+          "enum": [
+            "1",
+            "7",
+            "14",
+            "30",
+            "90",
+            "180",
+            "365"
+          ],
+          "title": "Days",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetOHLC",
+      "type": "object"
+    },
+    "GetPrices": {
+      "additionalProperties": false,
+      "description": "Get prices: GET /simple/price.",
+      "properties": {
+        "operation": {
+          "const": "get_prices",
+          "default": "get_prices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "description": "Comma-separated CoinGecko IDs, for example bitcoin,ethereum.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Ids",
+          "type": "string"
+        },
+        "vs_currencies": {
+          "default": "usd",
+          "maxLength": 500,
+          "title": "Vs Currencies",
+          "type": "string"
+        },
+        "include_market_cap": {
+          "default": false,
+          "title": "Include Market Cap",
+          "type": "boolean"
+        },
+        "include_24hr_vol": {
+          "default": false,
+          "title": "Include 24Hr Vol",
+          "type": "boolean"
+        },
+        "include_24hr_change": {
+          "default": false,
+          "title": "Include 24Hr Change",
+          "type": "boolean"
+        },
+        "include_last_updated_at": {
+          "default": false,
+          "title": "Include Last Updated At",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "GetPrices",
+      "type": "object"
+    },
+    "GetTokenPrices": {
+      "additionalProperties": false,
+      "description": "Get token prices: GET /simple/token_price/{id}.",
+      "properties": {
+        "id": {
+          "description": "Asset platform ID, for example ethereum; use List asset platforms to find it.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_token_prices",
+          "default": "get_token_prices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contract_addresses": {
+          "description": "Comma-separated token contract addresses.",
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Contract Addresses",
+          "type": "string"
+        },
+        "vs_currencies": {
+          "default": "usd",
+          "maxLength": 500,
+          "title": "Vs Currencies",
+          "type": "string"
+        },
+        "include_market_cap": {
+          "default": false,
+          "title": "Include Market Cap",
+          "type": "boolean"
+        },
+        "include_24hr_vol": {
+          "default": false,
+          "title": "Include 24Hr Vol",
+          "type": "boolean"
+        },
+        "include_24hr_change": {
+          "default": false,
+          "title": "Include 24Hr Change",
+          "type": "boolean"
+        },
+        "include_last_updated_at": {
+          "default": false,
+          "title": "Include Last Updated At",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "contract_addresses"
+      ],
+      "title": "GetTokenPrices",
+      "type": "object"
+    },
+    "GetTrending": {
+      "additionalProperties": false,
+      "description": "Get trending: GET /search/trending.",
+      "properties": {
+        "operation": {
+          "const": "get_trending",
+          "default": "get_trending",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetTrending",
+      "type": "object"
+    },
+    "ListAssetPlatforms": {
+      "additionalProperties": false,
+      "description": "List asset platforms: GET /asset_platforms.",
+      "properties": {
+        "operation": {
+          "const": "list_asset_platforms",
+          "default": "list_asset_platforms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "const": "nft",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "title": "ListAssetPlatforms",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "description": "List categories: GET /coins/categories/list.",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListCategoryMarkets": {
+      "additionalProperties": false,
+      "description": "List category markets: GET /coins/categories.",
+      "properties": {
+        "operation": {
+          "const": "list_category_markets",
+          "default": "list_category_markets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order": {
+          "default": "market_cap_desc",
+          "enum": [
+            "market_cap_desc",
+            "market_cap_asc",
+            "name_desc",
+            "name_asc",
+            "market_cap_change_24h_desc",
+            "market_cap_change_24h_asc"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "title": "ListCategoryMarkets",
+      "type": "object"
+    },
+    "ListCoinMarkets": {
+      "additionalProperties": false,
+      "description": "List coin markets: GET /coins/markets.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Fetch one page; increment explicitly to read another page.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_coin_markets",
+          "default": "list_coin_markets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vs_currency": {
+          "default": "usd",
+          "maxLength": 50,
+          "title": "Vs Currency",
+          "type": "string"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ids"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "order": {
+          "default": "market_cap_desc",
+          "enum": [
+            "market_cap_asc",
+            "market_cap_desc",
+            "volume_asc",
+            "volume_desc",
+            "id_asc",
+            "id_desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "sparkline": {
+          "default": false,
+          "title": "Sparkline",
+          "type": "boolean"
+        },
+        "price_change_percentage": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Change Percentage"
+        }
+      },
+      "title": "ListCoinMarkets",
+      "type": "object"
+    },
+    "ListCoins": {
+      "additionalProperties": false,
+      "description": "List coins: GET /coins/list.",
+      "properties": {
+        "operation": {
+          "const": "list_coins",
+          "default": "list_coins",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_platform": {
+          "default": false,
+          "title": "Include Platform",
+          "type": "boolean"
+        }
+      },
+      "title": "ListCoins",
+      "type": "object"
+    },
+    "ListExchanges": {
+      "additionalProperties": false,
+      "description": "List exchanges: GET /exchanges.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Fetch one page; increment explicitly to read another page.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_exchanges",
+          "default": "list_exchanges",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListExchanges",
+      "type": "object"
+    },
+    "ListSupportedCurrencies": {
+      "additionalProperties": false,
+      "description": "List supported currencies: GET /simple/supported_vs_currencies.",
+      "properties": {
+        "operation": {
+          "const": "list_supported_currencies",
+          "default": "list_supported_currencies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSupportedCurrencies",
+      "type": "object"
+    },
+    "Search": {
+      "additionalProperties": false,
+      "description": "Search: GET /search.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Search coins, categories, exchanges and NFTs by name or symbol.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_coin": "#/$defs/GetCoin",
+          "get_coin_history": "#/$defs/GetCoinHistory",
+          "get_defi_global": "#/$defs/GetDefiGlobal",
+          "get_exchange": "#/$defs/GetExchange",
+          "get_exchange_rates": "#/$defs/GetExchangeRates",
+          "get_global": "#/$defs/GetGlobal",
+          "get_market_chart": "#/$defs/GetMarketChart",
+          "get_ohlc": "#/$defs/GetOHLC",
+          "get_prices": "#/$defs/GetPrices",
+          "get_token_prices": "#/$defs/GetTokenPrices",
+          "get_trending": "#/$defs/GetTrending",
+          "list_asset_platforms": "#/$defs/ListAssetPlatforms",
+          "list_categories": "#/$defs/ListCategories",
+          "list_category_markets": "#/$defs/ListCategoryMarkets",
+          "list_coin_markets": "#/$defs/ListCoinMarkets",
+          "list_coins": "#/$defs/ListCoins",
+          "list_exchanges": "#/$defs/ListExchanges",
+          "list_supported_currencies": "#/$defs/ListSupportedCurrencies",
+          "search": "#/$defs/Search"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/GetPrices"
+        },
+        {
+          "$ref": "#/$defs/GetTokenPrices"
+        },
+        {
+          "$ref": "#/$defs/ListSupportedCurrencies"
+        },
+        {
+          "$ref": "#/$defs/ListCoins"
+        },
+        {
+          "$ref": "#/$defs/ListCoinMarkets"
+        },
+        {
+          "$ref": "#/$defs/GetCoin"
+        },
+        {
+          "$ref": "#/$defs/GetCoinHistory"
+        },
+        {
+          "$ref": "#/$defs/GetMarketChart"
+        },
+        {
+          "$ref": "#/$defs/GetOHLC"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/ListCategoryMarkets"
+        },
+        {
+          "$ref": "#/$defs/ListExchanges"
+        },
+        {
+          "$ref": "#/$defs/GetExchange"
+        },
+        {
+          "$ref": "#/$defs/Search"
+        },
+        {
+          "$ref": "#/$defs/GetTrending"
+        },
+        {
+          "$ref": "#/$defs/GetGlobal"
+        },
+        {
+          "$ref": "#/$defs/GetDefiGlobal"
+        },
+        {
+          "$ref": "#/$defs/GetExchangeRates"
+        },
+        {
+          "$ref": "#/$defs/ListAssetPlatforms"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoinGeckoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Coingecko Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
