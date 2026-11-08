@@ -11,6 +11,7 @@ const EnforcedflowIcon = ({ className, style }: { className?: string; style?: CS
 
 export const EnforcedflowNode: NodeDefinition = {
     type: 'automation-enforcedflow', label: 'Enforcedflow',
+    category: 'crm-sales',
     description: 'Route leads to agents, manage availability and queue agent emails',
     Icon: EnforcedflowIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
