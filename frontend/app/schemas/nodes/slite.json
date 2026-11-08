@@ -1,0 +1,1002 @@
+{
+  "$defs": {
+    "CreateNote": {
+      "additionalProperties": false,
+      "description": "Create a note, optionally under a parent or from a template.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "parentNoteId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parentnoteid"
+        },
+        "templateId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Templateid"
+        },
+        "markdown": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "sliteml": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sliteml"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "listPosition": {
+          "anyOf": [
+            {
+              "enum": [
+                "top",
+                "bottom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listposition"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "DeleteNote": {
+      "additionalProperties": false,
+      "description": "Delete a note and all its children. This cannot be undone by NoClick.",
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "DeleteNote",
+      "type": "object"
+    },
+    "FlagOutdated": {
+      "additionalProperties": false,
+      "description": "Mark a note outdated and include the reason.",
+      "properties": {
+        "operation": {
+          "const": "flag_outdated",
+          "default": "flag_outdated",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "noteId",
+        "reason"
+      ],
+      "title": "FlagOutdated",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "description": "Read one group by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "groupId": {
+          "minLength": 1,
+          "title": "Groupid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetMe": {
+      "additionalProperties": false,
+      "description": "Read the authenticated user's name, email and organization.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetNote": {
+      "additionalProperties": false,
+      "description": "Read a note and its content in the selected format.",
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "format": {
+          "default": "md",
+          "enum": [
+            "md",
+            "html",
+            "sliteml"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "css": {
+          "anyOf": [
+            {
+              "enum": [
+                "inline",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Css",
+          "enum": [
+            "inline",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "compact": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compact"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "GetNote",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Read one user by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "userId": {
+          "minLength": 1,
+          "title": "Userid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListChildren": {
+      "additionalProperties": false,
+      "description": "List a page of direct children or a flattened subtree.",
+      "properties": {
+        "operation": {
+          "const": "list_children",
+          "default": "list_children",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "title",
+                "listPosition",
+                "lastEditedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderby",
+          "enum": [
+            "title",
+            "listPosition",
+            "lastEditedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "orderDirection": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderdirection",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "includeDescendants": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includedescendants"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "ListChildren",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "description": "List one cursor page of notes; pass nextCursor to continue.",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ownerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ownerid"
+        },
+        "parentNoteId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parentnoteid"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "lastEditedAt_DESC",
+                "lastEditedAt_ASC",
+                "listPosition_DESC",
+                "listPosition_ASC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderby",
+          "enum": [
+            "lastEditedAt_DESC",
+            "lastEditedAt_ASC",
+            "listPosition_DESC",
+            "listPosition_ASC"
+          ],
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "SearchGroups": {
+      "additionalProperties": false,
+      "description": "Search groups by name, one cursor page at a time.",
+      "properties": {
+        "operation": {
+          "const": "search_groups",
+          "default": "search_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchGroups",
+      "type": "object"
+    },
+    "SearchNotes": {
+      "additionalProperties": false,
+      "description": "Search a numbered page of note results.",
+      "properties": {
+        "operation": {
+          "const": "search_notes",
+          "default": "search_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "default": "",
+          "title": "Query",
+          "type": "string"
+        },
+        "parentNoteId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parentnoteid"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Depth"
+        },
+        "reviewState": {
+          "anyOf": [
+            {
+              "enum": [
+                "Verified",
+                "Outdated",
+                "VerificationRequested",
+                "VerificationExpired"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewstate",
+          "enum": [
+            "Verified",
+            "Outdated",
+            "VerificationRequested",
+            "VerificationExpired"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "hitsPerPage": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Hitsperpage",
+          "type": "integer"
+        },
+        "includeArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includearchived"
+        },
+        "lastEditedAfter": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lasteditedafter"
+        },
+        "lastUpdatedAfter": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastupdatedafter"
+        }
+      },
+      "title": "SearchNotes",
+      "type": "object"
+    },
+    "SearchUsers": {
+      "additionalProperties": false,
+      "description": "Search users by email or display name, one cursor page at a time.",
+      "properties": {
+        "operation": {
+          "const": "search_users",
+          "default": "search_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "includeArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includearchived"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchUsers",
+      "type": "object"
+    },
+    "SetArchived": {
+      "additionalProperties": false,
+      "description": "Archive or unarchive a note.",
+      "properties": {
+        "operation": {
+          "const": "set_archived",
+          "default": "set_archived",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "archived": {
+          "title": "Archived",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "noteId",
+        "archived"
+      ],
+      "title": "SetArchived",
+      "type": "object"
+    },
+    "SetOwner": {
+      "additionalProperties": false,
+      "description": "Set a user or group as the note's review owner.",
+      "properties": {
+        "operation": {
+          "const": "set_owner",
+          "default": "set_owner",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "groupId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groupid"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "SetOwner",
+      "type": "object"
+    },
+    "SliteAPICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "slite_api_key",
+          "default": "slite_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Slite API Key",
+      "type": "object",
+      "x-credential-instructions": "In Slite, open Settings > API and create an API key. Paste the key here. Read operations require read permission; changes require write permission. NoClick checks your signed-in user with /me.",
+      "x-credential-url": "https://api.slite.com/"
+    },
+    "UpdateNote": {
+      "additionalProperties": false,
+      "description": "Replace supplied note fields; omitted fields remain unchanged.",
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "markdown": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "sliteml": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sliteml"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "listPosition": {
+          "anyOf": [
+            {
+              "enum": [
+                "top",
+                "bottom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listposition"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "VerifyNote": {
+      "additionalProperties": false,
+      "description": "Verify a note until an ISO date, or indefinitely with no expiration.",
+      "properties": {
+        "operation": {
+          "const": "verify_note",
+          "default": "verify_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "minLength": 1,
+          "title": "Noteid",
+          "type": "string"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Until"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "VerifyNote",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_note": "#/$defs/CreateNote",
+          "delete_note": "#/$defs/DeleteNote",
+          "flag_outdated": "#/$defs/FlagOutdated",
+          "get_group": "#/$defs/GetGroup",
+          "get_me": "#/$defs/GetMe",
+          "get_note": "#/$defs/GetNote",
+          "get_user": "#/$defs/GetUser",
+          "list_children": "#/$defs/ListChildren",
+          "list_notes": "#/$defs/ListNotes",
+          "search_groups": "#/$defs/SearchGroups",
+          "search_notes": "#/$defs/SearchNotes",
+          "search_users": "#/$defs/SearchUsers",
+          "set_archived": "#/$defs/SetArchived",
+          "set_owner": "#/$defs/SetOwner",
+          "update_note": "#/$defs/UpdateNote",
+          "verify_note": "#/$defs/VerifyNote"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/GetNote"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteNote"
+        },
+        {
+          "$ref": "#/$defs/ListChildren"
+        },
+        {
+          "$ref": "#/$defs/VerifyNote"
+        },
+        {
+          "$ref": "#/$defs/FlagOutdated"
+        },
+        {
+          "$ref": "#/$defs/SetArchived"
+        },
+        {
+          "$ref": "#/$defs/SetOwner"
+        },
+        {
+          "$ref": "#/$defs/SearchNotes"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/SearchUsers"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/SearchGroups"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SliteAPICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Slite Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

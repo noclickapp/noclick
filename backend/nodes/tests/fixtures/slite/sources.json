@@ -1,0 +1,70 @@
+{
+  "source": "https://api.slite.com/openapi.json",
+  "version": "1",
+  "operations": {
+    "get_me": [
+      "get",
+      "/me"
+    ],
+    "list_notes": [
+      "get",
+      "/notes"
+    ],
+    "get_note": [
+      "get",
+      "/notes/{noteId}"
+    ],
+    "create_note": [
+      "post",
+      "/notes"
+    ],
+    "update_note": [
+      "put",
+      "/notes/{noteId}"
+    ],
+    "delete_note": [
+      "delete",
+      "/notes/{noteId}"
+    ],
+    "list_children": [
+      "get",
+      "/notes/{noteId}/children"
+    ],
+    "verify_note": [
+      "put",
+      "/notes/{noteId}/verify"
+    ],
+    "flag_outdated": [
+      "put",
+      "/notes/{noteId}/flag-as-outdated"
+    ],
+    "set_archived": [
+      "put",
+      "/notes/{noteId}/archived"
+    ],
+    "set_owner": [
+      "put",
+      "/notes/{noteId}/owner"
+    ],
+    "search_notes": [
+      "get",
+      "/search-notes"
+    ],
+    "get_user": [
+      "get",
+      "/users/{userId}"
+    ],
+    "search_users": [
+      "get",
+      "/users"
+    ],
+    "get_group": [
+      "get",
+      "/groups/{groupId}"
+    ],
+    "search_groups": [
+      "get",
+      "/groups"
+    ]
+  }
+}
