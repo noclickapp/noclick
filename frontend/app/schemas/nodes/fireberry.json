@@ -1,0 +1,1658 @@
+{
+  "$defs": {
+    "CreateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create an Account",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accountname": {
+          "description": "Name of the account (Primary).",
+          "minLength": 1,
+          "title": "Accountname",
+          "type": "string"
+        },
+        "accountnumber": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for identification, unique values are recommended.",
+          "title": "Accountnumber"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name",
+          "title": "Firstname"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Lastname"
+        },
+        "emailaddress1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address, must be in email format.",
+          "title": "Emailaddress1"
+        },
+        "telephone1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number, contains exclusively numbers.",
+          "title": "Telephone1"
+        },
+        "websiteurl": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Website of the account in URL format.",
+          "title": "Websiteurl"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        },
+        "statuscode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status of the account (Picklist).",
+          "title": "Statuscode"
+        },
+        "statecode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sets the state of the account as active or inactive (Picklist).",
+          "title": "Statecode"
+        },
+        "revenue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Account revenue",
+          "title": "Revenue"
+        }
+      },
+      "required": [
+        "accountname"
+      ],
+      "title": "CreateAccount",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create a Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstname": {
+          "description": "First name of the contact.",
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Lastname"
+        },
+        "accountid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The related account's GUID.",
+          "title": "Accountid"
+        },
+        "companyname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name",
+          "title": "Companyname"
+        },
+        "emailaddress1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address, must be in email format.",
+          "title": "Emailaddress1"
+        },
+        "mobilephone1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary mobile phone number.",
+          "title": "Mobilephone1"
+        },
+        "telephone1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number, contains exclusively numbers.",
+          "title": "Telephone1"
+        },
+        "jobtitle": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job title",
+          "title": "Jobtitle"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        }
+      },
+      "required": [
+        "firstname"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_opportunity",
+          "default": "create_opportunity",
+          "title": "Create an Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accountid": {
+          "description": "The related account's GUID.",
+          "minLength": 1,
+          "title": "Accountid",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the opportunity (Primary).",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "contacttid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The related contact's GUID.",
+          "title": "Contacttid"
+        },
+        "closeprobability": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Probability the opportunity will close successfully.",
+          "title": "Closeprobability"
+        },
+        "estimatedvalue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated total value of the deal.",
+          "title": "Estimatedvalue"
+        },
+        "estimatedclosedate": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated date and time the deal will be closed by.",
+          "title": "Estimatedclosedate"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        },
+        "statuscode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status (Picklist)",
+          "title": "Statuscode"
+        }
+      },
+      "required": [
+        "accountid",
+        "name"
+      ],
+      "title": "CreateOpportunity",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create a Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subject": {
+          "description": "Subject of the task (Primary).",
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "objectid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The related record's GUID. Can belong to any editable system object type.",
+          "title": "Objectid"
+        },
+        "objecttypecode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Object number of the object the related record belongs to. If you set the objectid field, you MUST set this field as well.",
+          "title": "Objecttypecode"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        },
+        "prioritycode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Priority (Picklist)",
+          "title": "Prioritycode"
+        },
+        "reminderdate": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date and time the owner will be reminded of the task.",
+          "title": "Reminderdate"
+        },
+        "scheduledend": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date and time the task is scheduled to be completed by.",
+          "title": "Scheduledend"
+        },
+        "statuscode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status (Picklist)",
+          "title": "Statuscode"
+        },
+        "tasktypecode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type (Picklist)",
+          "title": "Tasktypecode"
+        }
+      },
+      "required": [
+        "subject"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DeleteAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_account",
+          "default": "delete_account",
+          "title": "Delete an Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "DeleteAccount",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete a Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_opportunity",
+          "default": "delete_opportunity",
+          "title": "Delete an Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "DeleteOpportunity",
+      "type": "object"
+    },
+    "DeleteTask": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Delete a Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "DeleteTask",
+      "type": "object"
+    },
+    "FireberryAPIToken": {
+      "properties": {
+        "credential_type": {
+          "const": "fireberry_api_token",
+          "default": "fireberry_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Fireberry API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Fireberry API token. NoClick sends it in the tokenid header to api.fireberry.com. Your token's user must have permission for the records you automate.",
+      "x-credential-url": "https://developers.fireberry.com/reference/get-all-accounts"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get an Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get a Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_opportunity",
+          "default": "get_opportunity",
+          "title": "Get an Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetOpportunity",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get a Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "pagesize": {
+          "default": 50,
+          "description": "Records per page; Fireberry allows at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "pagenumber": {
+          "default": 1,
+          "description": "Page to read; Fireberry allows pages 1 through 10.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Get all Accounts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "pagesize": {
+          "default": 50,
+          "description": "Records per page; Fireberry allows at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "pagenumber": {
+          "default": 1,
+          "description": "Page to read; Fireberry allows pages 1 through 10.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Get all Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListOpportunitys": {
+      "additionalProperties": false,
+      "properties": {
+        "pagesize": {
+          "default": 50,
+          "description": "Records per page; Fireberry allows at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "pagenumber": {
+          "default": 1,
+          "description": "Page to read; Fireberry allows pages 1 through 10.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_opportunities",
+          "default": "list_opportunities",
+          "title": "Get all Opportunities",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOpportunitys",
+      "type": "object"
+    },
+    "ListTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "pagesize": {
+          "default": 50,
+          "description": "Records per page; Fireberry allows at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "pagenumber": {
+          "default": 1,
+          "description": "Page to read; Fireberry allows pages 1 through 10.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Get all Tasks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "UpdateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Update an Account",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accountname": {
+          "description": "Name of the account (Primary).",
+          "minLength": 1,
+          "title": "Accountname",
+          "type": "string"
+        },
+        "accountnumber": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for identification, unique values are recommended.",
+          "title": "Accountnumber"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name",
+          "title": "Firstname"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Lastname"
+        },
+        "emailaddress1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address, must be in email format.",
+          "title": "Emailaddress1"
+        },
+        "telephone1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number, contains exclusively numbers.",
+          "title": "Telephone1"
+        },
+        "websiteurl": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Website of the account in URL format.",
+          "title": "Websiteurl"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        },
+        "statuscode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status of the account (Picklist).",
+          "title": "Statuscode"
+        },
+        "statecode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sets the state of the account as active or inactive (Picklist).",
+          "title": "Statecode"
+        },
+        "revenue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Account revenue",
+          "title": "Revenue"
+        }
+      },
+      "required": [
+        "record_id",
+        "accountname"
+      ],
+      "title": "UpdateAccount",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update a Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstname": {
+          "description": "First name of the contact.",
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Lastname"
+        },
+        "accountid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The related account's GUID.",
+          "title": "Accountid"
+        },
+        "companyname": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name",
+          "title": "Companyname"
+        },
+        "emailaddress1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address, must be in email format.",
+          "title": "Emailaddress1"
+        },
+        "mobilephone1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary mobile phone number.",
+          "title": "Mobilephone1"
+        },
+        "telephone1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number, contains exclusively numbers.",
+          "title": "Telephone1"
+        },
+        "jobtitle": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job title",
+          "title": "Jobtitle"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        }
+      },
+      "required": [
+        "record_id",
+        "firstname"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_opportunity",
+          "default": "update_opportunity",
+          "title": "Update an Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accountid": {
+          "description": "The related account's GUID.",
+          "minLength": 1,
+          "title": "Accountid",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the opportunity (Primary).",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "contacttid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The related contact's GUID.",
+          "title": "Contacttid"
+        },
+        "closeprobability": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Probability the opportunity will close successfully.",
+          "title": "Closeprobability"
+        },
+        "estimatedvalue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated total value of the deal.",
+          "title": "Estimatedvalue"
+        },
+        "estimatedclosedate": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated date and time the deal will be closed by.",
+          "title": "Estimatedclosedate"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        },
+        "statuscode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status (Picklist)",
+          "title": "Statuscode"
+        }
+      },
+      "required": [
+        "record_id",
+        "accountid",
+        "name"
+      ],
+      "title": "UpdateOpportunity",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "The Fireberry record's GUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update a Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subject": {
+          "description": "Subject of the task (Primary).",
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of up to 4,000 characters.",
+          "title": "Description"
+        },
+        "objectid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The related record's GUID. Can belong to any editable system object type.",
+          "title": "Objectid"
+        },
+        "objecttypecode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Object number of the object the related record belongs to. If you set the objectid field, you MUST set this field as well.",
+          "title": "Objecttypecode"
+        },
+        "ownerid": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The GUID of the system user who created the record, can also be set manually. Will be used for permissions.",
+          "title": "Ownerid"
+        },
+        "prioritycode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Priority (Picklist)",
+          "title": "Prioritycode"
+        },
+        "reminderdate": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date and time the owner will be reminded of the task.",
+          "title": "Reminderdate"
+        },
+        "scheduledend": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date and time the task is scheduled to be completed by.",
+          "title": "Scheduledend"
+        },
+        "statuscode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status (Picklist)",
+          "title": "Statuscode"
+        },
+        "tasktypecode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type (Picklist)",
+          "title": "Tasktypecode"
+        }
+      },
+      "required": [
+        "record_id",
+        "subject"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_account": "#/$defs/CreateAccount",
+          "create_contact": "#/$defs/CreateContact",
+          "create_opportunity": "#/$defs/CreateOpportunity",
+          "create_task": "#/$defs/CreateTask",
+          "delete_account": "#/$defs/DeleteAccount",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_opportunity": "#/$defs/DeleteOpportunity",
+          "delete_task": "#/$defs/DeleteTask",
+          "get_account": "#/$defs/GetAccount",
+          "get_contact": "#/$defs/GetContact",
+          "get_opportunity": "#/$defs/GetOpportunity",
+          "get_task": "#/$defs/GetTask",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_opportunities": "#/$defs/ListOpportunitys",
+          "list_tasks": "#/$defs/ListTasks",
+          "update_account": "#/$defs/UpdateAccount",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_opportunity": "#/$defs/UpdateOpportunity",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/CreateAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateAccount"
+        },
+        {
+          "$ref": "#/$defs/DeleteAccount"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListOpportunitys"
+        },
+        {
+          "$ref": "#/$defs/GetOpportunity"
+        },
+        {
+          "$ref": "#/$defs/CreateOpportunity"
+        },
+        {
+          "$ref": "#/$defs/UpdateOpportunity"
+        },
+        {
+          "$ref": "#/$defs/DeleteOpportunity"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/DeleteTask"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FireberryAPIToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fireberry Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

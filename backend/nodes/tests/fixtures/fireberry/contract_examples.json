@@ -1,0 +1,170 @@
+{
+  "contract": {
+    "file": "fireberry-raw-registry.json",
+    "sha256": "b55fd4bd3be3e01255820ac1bd07295c563367575f16d7b9447f5f4f717978f8",
+    "version": "unknown",
+    "source_url": "https://dash.readme.com/api/v1/api-registry/2izau10h8m8ppk7i6"
+  },
+  "defects": [
+    {
+      "operation": "list_accounts",
+      "contract_operation": "GET /api/record/account",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-all-accounts.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"PrimaryKey\": \"accountid\",\n        \"PrimaryField\": \"accountname\",\n        \"Total_Records\": 1,\n        \"Page_Size\": 50,\n        \"Page_Number\": 1,\n        \"Records\": [Data about all of the accounts including all their fields and values]\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting value: line 9 column 21 (char 210)",
+      "current_docs_sha256": "96c9546a5c2fb03115155692d88156328a8a10c45a992f5d3950621368d8d390"
+    },
+    {
+      "operation": "get_account",
+      "contract_operation": "GET /api/record/account/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-an-account.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the specific account including all fields and their values}\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "ef753e893c2fdd145525cef28b78eacf94010839da44be669bc2cd0b5b2e0fa5"
+    },
+    {
+      "operation": "create_account",
+      "contract_operation": "POST /api/record/account",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/create-an-account.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created account including all its fields and values}\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "b70605881afd5de75de353830bae78150200b9943a9e262924f9df38a44c875a"
+    },
+    {
+      "operation": "update_account",
+      "contract_operation": "PUT /api/record/account/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/update-an-account.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created account including all its fields and values}\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "aca5eca23664f1eb00469c849f24735586dc738913d7e382e318b4e0854798d1"
+    },
+    {
+      "operation": "list_contacts",
+      "contract_operation": "GET /api/record/contact",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-all-contacts.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"PrimaryKey\": \"activityid\",\n        \"PrimaryField\": \"subject\",\n        \"Total_Records\": 0,\n        \"Page_Size\": 50,\n        \"Page_Number\": 1,\n        \"Records\": [Data about all of the contacts including all their fields and values]\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting value: line 9 column 21 (char 207)",
+      "current_docs_sha256": "4211d5bfd3e2ad1ea94c6436a2345c8d6289b3ca9d17617f4e1252c626b40aab"
+    },
+    {
+      "operation": "get_contact",
+      "contract_operation": "GET /api/record/contact/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-a-contact.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {\n        Data about the specific Contact including all its fields and values\n        }\n    },\n    \"message\": \"\"\n}\n",
+      "json_error": "Expecting property name enclosed in double quotes: line 5 column 9 (char 65)",
+      "current_docs_sha256": "4ad8b3fb9d87df3a8a076b84090039de78360353d31b8d7803ff7a9efa97751d"
+    },
+    {
+      "operation": "create_contact",
+      "contract_operation": "POST /api/record/contact",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/create-a-contact.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created Contact including all its fields and values}},\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "713ff7ba7f9ac11def280a97d40d0183787d23d8f474d6432a88a564db0bbfef"
+    },
+    {
+      "operation": "update_contact",
+      "contract_operation": "PUT /api/record/contact/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/update-a-contact.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created Contact including all its fields and values}},\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "082f1e0b9622eca542b261272368622e1207cc3c7df2def5aa3293e4afcd7a8a"
+    },
+    {
+      "operation": "list_opportunities",
+      "contract_operation": "GET /api/record/opportunity",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-all-opportunity.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"PrimaryKey\": \"activityid\",\n        \"PrimaryField\": \"subject\",\n        \"Total_Records\": 0,\n        \"Page_Size\": 50,\n        \"Page_Number\": 1,\n        \"Records\": [Data about all of the Opportunities including all their fields and values]\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting value: line 9 column 21 (char 207)",
+      "current_docs_sha256": "3f92b339d05edbb64aff274c2b00d331f372d73b392633010e8f63ce66b907f7"
+    },
+    {
+      "operation": "get_opportunity",
+      "contract_operation": "GET /api/record/opportunity/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-an-opportunity.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {\n        Data about the specific Opportunity including all its fields and values\n        }\n    },\n    \"message\": \"\"\n}\n",
+      "json_error": "Expecting property name enclosed in double quotes: line 5 column 9 (char 65)",
+      "current_docs_sha256": "509fc5e38821fe4260f3c28ec55a4be7cdc0804c4b370d279881e03a4d762050"
+    },
+    {
+      "operation": "create_opportunity",
+      "contract_operation": "POST /api/record/opportunity",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/create-an-opportunity.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created Opportunity including all its fields and values}},\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "ceb5b1eff3ea717ab5ed54674147eb408e10ad2b42e314260c9eb96b34d51066"
+    },
+    {
+      "operation": "update_opportunity",
+      "contract_operation": "PUT /api/record/opportunity/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/update-an-opportunity.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created Opportunity including all its fields and values}},\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "e576103e2eb3d226fde51923a716a990f72dd815355484b9a3a021d154139fa9"
+    },
+    {
+      "operation": "list_tasks",
+      "contract_operation": "GET /api/record/task",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-all-tasks.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"PrimaryKey\": \"activityid\",\n        \"PrimaryField\": \"subject\",\n        \"Total_Records\": 0,\n        \"Page_Size\": 50,\n        \"Page_Number\": 1,\n        \"Records\": [Data about all of the Tasks including all their fields and values]\n    },\n    \"message\": \"\"\n}",
+      "json_error": "Expecting value: line 9 column 21 (char 207)",
+      "current_docs_sha256": "f8380273c1ed90b0511486046700a2e25e468dde46535759772a908af23af762"
+    },
+    {
+      "operation": "get_task",
+      "contract_operation": "GET /api/record/task/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/get-a-task.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {\n        Data about the specific Task including all its fields and values\n        }\n    },\n    \"message\": \"\"\n}\n",
+      "json_error": "Expecting property name enclosed in double quotes: line 5 column 9 (char 65)",
+      "current_docs_sha256": "2998a763e019488158fc29aeb0aa53c262fefdf094fa94cfea8737f1d330b350"
+    },
+    {
+      "operation": "create_task",
+      "contract_operation": "POST /api/record/task",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/create-a-task.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created Task including all its fields and values}},\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "2ee9b99d42c3abdbc6422598078840c9aa63b81147b013a76ae621217d4280a7"
+    },
+    {
+      "operation": "update_task",
+      "contract_operation": "PUT /api/record/task/{id}",
+      "kind": "d",
+      "source": "https://developers.fireberry.com/reference/update-a-task.md",
+      "defect": "Published application/json success example is a string containing invalid JSON with unquoted explanatory placeholders. Harness JSON-encodes that string as the response; the node correctly expects the documented success object.",
+      "invalid_example": "{\n    \"success\": true,\n    \"data\": {\n        \"Record\": {Data about the created Task including all its fields and values}},\n    \"message\": \"\"\n}",
+      "json_error": "Expecting property name enclosed in double quotes: line 4 column 20 (char 56)",
+      "current_docs_sha256": "e6baa81a91954dd179d36c67b750b61cb7365e2886ca99c368d729dcfab1bce2"
+    }
+  ]
+}
