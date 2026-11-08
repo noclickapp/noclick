@@ -1,0 +1,304 @@
+{
+  "list_notes": {
+    "method": "GET",
+    "path": "/v2/notes",
+    "body": {
+      "next_page": "eyJpZCI6IjAxOGY4ZDBkLTVhM2MtN2FmYy04MzIxLTJmNmY2ZTBmZWZhYiIsIm9yZGVyX2J5IjoidXBkYXRlZF9hdCIsInJlcXVlc3RfZmluZ2VycHJpbnQiOiJkZjk4MDI5YjhhZGI0M2Q4NmI5YTRkYjQ3ZTZhYWE4NjkyZjUzZGFiZDQ4ZDg0MjYxZWI2YjY2MDVhODI2N2Q4IiwidmFsdWUiOiIyMDI1LTA1LTA0VDE0OjIwOjExWiJ9",
+      "request_id": "api-request-018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+      "results": [
+        {
+          "audio_recording_ids": [
+            "78ff64bc-09e3-4fd7-a4b9-53c258f35619"
+          ],
+          "collection_ids": [
+            "59508b41-8770-4855-aa37-302b1e09aee7",
+            "026b426c-14fb-4f22-8d98-7a9121bfaec8"
+          ],
+          "content": "# Weekly Planning\n\n## Priorities\n- Customer interviews\n- Ship timeline view\n",
+          "created_at": "2025-05-01T10:05:45Z",
+          "id": "018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+          "snippet": "Quarterly kickoff prep",
+          "title": "Weekly Planning",
+          "updated_at": "2025-05-04T14:20:11Z"
+        }
+      ],
+      "total": 12
+    }
+  },
+  "create_note": {
+    "method": "POST",
+    "path": "/v2/notes",
+    "body": {
+      "collection_ids": [
+        "59508b41-8770-4855-aa37-302b1e09aee7",
+        "026b426c-14fb-4f22-8d98-7a9121bfaec8"
+      ],
+      "content": "# Sales Call with Acme Corp\n\nContact: John Smith (john@acme.com)\n\nInterested in enterprise plan. Follow up next week.\n\n## Action Items\n- Schedule follow-up call next week\n- Send enterprise pricing information\n\n## Key Points\n- Interested in enterprise plan\n- Contact: John Smith (john@acme.com)",
+      "created_at": "2025-04-11T04:47:14.457Z",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Sales Call with Acme Corp",
+      "updated_at": "2025-04-11T04:47:19.702Z",
+      "version": 2
+    }
+  },
+  "get_note": {
+    "method": "GET",
+    "path": "/v2/notes/{note_id}",
+    "body": {
+      "attachment_metadata": [
+        {
+          "attachment_id": "2511691e-cfd2-47bc-a4b6-0104234ee1af",
+          "attachment_kind": "pdf",
+          "image_type": null,
+          "ocr_text": null,
+          "page_count": 7,
+          "suggested_search": "product launch requirements",
+          "summary": "Product requirements and launch milestones.",
+          "visual_description": null
+        }
+      ],
+      "audio_recording_ids": [
+        "78ff64bc-09e3-4fd7-a4b9-53c258f35619"
+      ],
+      "collection_ids": [
+        "59508b41-8770-4855-aa37-302b1e09aee7",
+        "026b426c-14fb-4f22-8d98-7a9121bfaec8"
+      ],
+      "content": "# Sales Call with Acme Corp\n\nContact: John Smith (john@acme.com)\n\nInterested in enterprise plan. Follow up next week.\n\n## Action Items\n- Schedule follow-up call next week\n- Send enterprise pricing information\n\n## Key Points\n- Interested in enterprise plan\n- Contact: John Smith (john@acme.com)",
+      "created_at": "2025-04-11T04:47:14.457Z",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Sales Call with Acme Corp",
+      "trashed_at": null,
+      "updated_at": "2025-04-11T04:47:19.702Z",
+      "version": 4
+    }
+  },
+  "update_note": {
+    "method": "PATCH",
+    "path": "/v2/notes/{note_id}",
+    "body": {
+      "collection_ids": [
+        "59508b41-8770-4855-aa37-302b1e09aee7",
+        "026b426c-14fb-4f22-8d98-7a9121bfaec8"
+      ],
+      "content": "# Sales Call with Acme Corp\n\nUpdated summary and next steps.",
+      "created_at": "2025-04-11T04:47:14.457Z",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Sales Call with Acme Corp",
+      "trashed_at": null,
+      "updated_at": "2025-04-12T10:15:00.000Z",
+      "version": 5
+    }
+  },
+  "delete_note": {
+    "method": "DELETE",
+    "path": "/v2/notes/{note_id}",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "trash_note": {
+    "method": "POST",
+    "path": "/v2/notes/{note_id}/trash",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "restore_note": {
+    "method": "POST",
+    "path": "/v2/notes/{note_id}/restore",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "set_note_created_at": {
+    "method": "PATCH",
+    "path": "/v2/notes/{note_id}/created-at",
+    "body": {
+      "collection_ids": [
+        "59508b41-8770-4855-aa37-302b1e09aee7"
+      ],
+      "content": "# Meeting with Bill\n\nJan 7, 2020",
+      "created_at": "2020-01-07T00:00:00.000Z",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Meeting with Bill",
+      "trashed_at": null,
+      "updated_at": "2026-05-15T10:15:00.000Z",
+      "version": 5
+    }
+  },
+  "find_related_notes": {
+    "method": "GET",
+    "path": "/v2/notes/{note_id}/related-notes",
+    "body": {
+      "request_id": "api-request-018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+      "results": [
+        {
+          "collection_ids": [
+            "59508b41-8770-4855-aa37-302b1e09aee7"
+          ],
+          "collections": [
+            {
+              "created_at": "2025-03-18T11:00:00Z",
+              "description": "Planning documents and project notes.",
+              "id": "59508b41-8770-4855-aa37-302b1e09aee7",
+              "is_shared": false,
+              "note_count": 8,
+              "title": "Work Projects",
+              "updated_at": "2025-04-22T16:12:34Z"
+            }
+          ],
+          "created_at": "2025-03-18T11:00:00Z",
+          "id": "018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+          "preview": "# Project Phoenix Planning\n\nLaunch goals and milestones.",
+          "score": 0.91,
+          "snippet": "Launch goals and milestones.",
+          "title": "Project Phoenix Planning",
+          "updated_at": "2025-04-22T16:12:34Z"
+        }
+      ],
+      "total": 1
+    }
+  },
+  "search_notes": {
+    "method": "POST",
+    "path": "/v2/notes/search",
+    "body": {
+      "has_next_page": true,
+      "limit": 1,
+      "offset": 0,
+      "request_id": "api-request-018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+      "results": [
+        {
+          "audio_recording_ids": [
+            "78ff64bc-09e3-4fd7-a4b9-53c258f35619"
+          ],
+          "collection_ids": [
+            "59508b41-8770-4855-aa37-302b1e09aee7"
+          ],
+          "content": "# Recipe Notes\n\n- Lemon pasta\n- Chili oil dumplings\n",
+          "created_at": "2025-03-18T11:00:00Z",
+          "id": "018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+          "snippet": "Dinner ideas",
+          "title": "Recipe Notes",
+          "updated_at": "2025-04-22T16:12:34Z"
+        }
+      ],
+      "snapshot_id": "fd233b1f-25ac-4c0d-94db-4fa0843084ff",
+      "total": 12
+    }
+  },
+  "list_collections": {
+    "method": "GET",
+    "path": "/v2/collections",
+    "body": {
+      "next_page": "eyJvcmRlcl9ieSI6InVwZGF0ZWRfYXQiLCJ2YWx1ZSI6IjIwMjUtMDUtMDRUMTQ6MjA6MTFaIiwiaWQiOiIwMThmOGQwZC01YTNjLTdhZmMtODMyMS0yZjZmNmUwZmVmYWIifQ",
+      "request_id": "api-request-018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+      "results": [
+        {
+          "created_at": "2025-05-01T10:05:45Z",
+          "description": "Initiatives and plans for Q1",
+          "id": "018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+          "note_count": 12,
+          "title": "Project Phoenix",
+          "updated_at": "2025-05-04T14:20:11Z"
+        }
+      ],
+      "total": 24
+    }
+  },
+  "create_collection": {
+    "method": "POST",
+    "path": "/v2/collections",
+    "body": {
+      "created_at": "2025-04-11T04:47:14.457Z",
+      "description": "Anything related to Acme Corp; a software company that provides a suite of tools for managing customer relationships.",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Acme Corp",
+      "updated_at": "2025-04-11T04:47:19.702Z"
+    }
+  },
+  "get_collection": {
+    "method": "GET",
+    "path": "/v2/collections/{collection_id}",
+    "body": {
+      "created_at": "2025-04-11T04:47:14.457Z",
+      "description": "Anything related to Acme Corp; a software company that provides a suite of tools for managing customer relationships.",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "note_count": 12,
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Acme Corp",
+      "updated_at": "2025-04-11T04:47:19.702Z"
+    }
+  },
+  "update_collection": {
+    "method": "PATCH",
+    "path": "/v2/collections/{collection_id}",
+    "body": {
+      "created_at": "2025-04-11T04:47:14.457Z",
+      "description": "Collection for 2026 Acme planning and execution notes.",
+      "id": "5e29c8a2-c73b-476b-9311-e2579712d4b1",
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522",
+      "title": "Acme Corp - 2026",
+      "updated_at": "2025-04-12T10:15:00.000Z"
+    }
+  },
+  "delete_collection": {
+    "method": "DELETE",
+    "path": "/v2/collections/{collection_id}",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "add_note_to_collection": {
+    "method": "PUT",
+    "path": "/v2/collections/{collection_id}/notes/{note_id}",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "remove_note_from_collection": {
+    "method": "DELETE",
+    "path": "/v2/collections/{collection_id}/notes/{note_id}",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "move_note": {
+    "method": "POST",
+    "path": "/v2/collections/{source_collection_id}/notes/{note_id}/move",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  },
+  "search_collections": {
+    "method": "POST",
+    "path": "/v2/collections/search",
+    "body": {
+      "request_id": "api-request-018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+      "results": [
+        {
+          "created_at": "2025-03-18T11:00:00Z",
+          "description": "Saved recipes from around the web",
+          "id": "018f8d0d-5a3c-7afc-8321-2f6f6e0fefab",
+          "note_count": 10,
+          "title": "Recipe Notes",
+          "updated_at": "2025-04-22T16:12:34Z"
+        }
+      ],
+      "total": 1
+    }
+  },
+  "mem_it": {
+    "method": "POST",
+    "path": "/v2/mem-it",
+    "body": {
+      "request_id": "api-request-036ed6c7-de00-459f-a89b-43d26aafe522"
+    }
+  }
+}

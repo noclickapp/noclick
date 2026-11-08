@@ -1,0 +1,1304 @@
+{
+  "$defs": {
+    "MemAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mem_api_key",
+          "default": "mem_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Mem API Key",
+      "type": "object",
+      "x-credential-instructions": "In Mem settings, open the API section and copy your API key. Paste the key alone; NoClick sends it using Bearer authentication to api.mem.ai.",
+      "x-credential-url": "https://mem.ai/settings",
+      "x-help-url": "https://docs.mem.ai/api-reference/overview/authentication"
+    },
+    "MemAddNoteToCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Add an existing note to an existing collection.\nThis operation only creates the membership link and does not modify note or collection content.\nUse create endpoints to create notes or collections.",
+      "properties": {
+        "operation": {
+          "const": "add_note_to_collection",
+          "default": "add_note_to_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_id": {
+          "description": "UUID of the collection that will receive the note. Use an ID returned by create/list/search. The caller must be able to contribute to this collection.",
+          "format": "uuid",
+          "title": "Collection Id",
+          "type": "string"
+        },
+        "note_id": {
+          "description": "UUID of the note to add. Use an ID returned by create/list/search. The caller must be able to access this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "note_id"
+      ],
+      "title": "MemAddNoteToCollectionConfig",
+      "type": "object"
+    },
+    "MemCreateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Create a collection with optional caller-provided ID and timestamps.\nIf `id` already exists, this request returns a conflict.\nUse collection membership endpoints to add, remove, or move notes between collections.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional creation timestamp (ISO 8601).\nIf provided, it must include a timezone offset and cannot be in the future.\nIf omitted, Mem uses `updated_at` when provided; otherwise current server time.",
+          "title": "Created At"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional longer description of collection scope or intent.\nMaximum: 10,000 characters (and no more than 10,000 UTF-8 bytes).",
+          "title": "Description"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional caller-provided UUID for the collection.\nIf omitted, Mem generates a new UUID.\nIf the provided ID already exists, this request returns a conflict.",
+          "title": "Id"
+        },
+        "title": {
+          "description": "Title for the collection.\nUse a short, stable label suitable for navigation and search.\nMaximum: 1,000 characters (and no more than 1,000 UTF-8 bytes).",
+          "maxLength": 1000,
+          "title": "Title",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional \"last updated\" timestamp for this write (ISO 8601).\nIf provided, it must include a timezone offset and cannot be in the future.\nIf omitted, Mem uses `created_at` for the initial collection write.",
+          "title": "Updated At"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "MemCreateCollectionConfig",
+      "type": "object"
+    },
+    "MemCreateNoteConfig": {
+      "additionalProperties": false,
+      "description": "Create a note with an optional note ID, timestamps, and collection links.\nIf omitted, Mem generates the note ID.\nThe first line of `content` becomes the note title.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional collection IDs to associate with the note.\nIDs that do not map to accessible collections are ignored.",
+          "title": "Collection Ids"
+        },
+        "collection_titles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional collection titles to associate with the note.\nMatching is case-insensitive exact match; titles with no match are ignored.\nMaximum per title: 1,000 characters (and no more than 1,000 UTF-8 bytes).",
+          "title": "Collection Titles"
+        },
+        "content": {
+          "description": "Full markdown body for the note.\nSend the full desired note body (partial patch semantics are not supported here).\nIMPORTANT: The first line is interpreted as the note title.\nMaximum: 200,000 characters (and no more than 200,000 UTF-8 bytes on create).",
+          "maxLength": 200000,
+          "title": "Content",
+          "type": "string"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional creation timestamp (ISO 8601).\nIf provided, it must include a timezone offset and cannot be in the future.\nIf omitted, Mem uses `updated_at` when provided; otherwise current server time.",
+          "title": "Created At"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID for the note.\nIf omitted, Mem generates a new UUID.",
+          "title": "Id"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional \"last updated\" timestamp for this write (ISO 8601).\nIf provided, it must include a timezone offset and cannot be in the future.\nIf omitted, Mem uses the current server time for the initial content write.",
+          "title": "Updated At"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "MemCreateNoteConfig",
+      "type": "object"
+    },
+    "MemDeleteCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete a collection.\nHard-deleting removes the collection resource itself.\nFor membership-only changes, use note add, remove, or move collection endpoints.",
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_id": {
+          "description": "UUID of the collection to permanently delete. Use an ID returned by create/list/search. The caller must be able to access this collection.",
+          "format": "uuid",
+          "title": "Collection Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "MemDeleteCollectionConfig",
+      "type": "object"
+    },
+    "MemDeleteNoteConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete a note.\nHard-deleted notes cannot be restored.\nFor recoverable removal, use `POST /v2/notes/{note_id}/trash`.",
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "UUID of the note to permanently delete. Use an ID returned by create/list/search. The caller must be able to edit this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "MemDeleteNoteConfig",
+      "type": "object"
+    },
+    "MemFindRelatedNotesConfig": {
+      "additionalProperties": false,
+      "description": "Find notes semantically related to the current persisted content of a note.\nThe source note is embedded at request time, so newly created or recently\nupdated notes can be used before asynchronous indexing catches up.\nCandidate related notes still come from the note search index.",
+      "properties": {
+        "operation": {
+          "const": "find_related_notes",
+          "default": "find_related_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of related notes to return.\nDefault is 10; valid range is 1 to 20.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "note_id": {
+          "description": "UUID of the source note. The caller must be able to access this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "MemFindRelatedNotesConfig",
+      "type": "object"
+    },
+    "MemGetCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Fetch metadata for a single collection by ID.\nThis endpoint returns collection metadata only, not a note list for that collection.\nFor discovery flows, use `GET /v2/collections` or `POST /v2/collections/search`.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_id": {
+          "description": "UUID of the collection to read. Use an ID returned by create/list/search. The caller must be able to access this collection.",
+          "format": "uuid",
+          "title": "Collection Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "MemGetCollectionConfig",
+      "type": "object"
+    },
+    "MemGetNoteConfig": {
+      "additionalProperties": false,
+      "description": "Fetch the full current state of a single note by ID.\nIf the note is in trash, the response still returns the note and includes `trashed_at`.\nFor discovery flows, use `GET /v2/notes` or `POST /v2/notes/search`.",
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "UUID of the note to read. Use an ID returned by create/list/search. The caller must be able to access this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "MemGetNoteConfig",
+      "type": "object"
+    },
+    "MemListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List collections visible to the authenticated caller with cursor pagination.\nResults are ordered by `order_by` and return `next_page` when additional rows are available.\nFor relevance-ranked retrieval by query, use `POST /v2/collections/search`.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of collections in this page.\nUse smaller values for lower latency.\nDefault is 50; valid range is 1 to 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous list response.\nOmit for the first page.\nIMPORTANT: Reuse with the same filters and `order_by` settings.",
+          "title": "Page"
+        },
+        "order_by": {
+          "default": "updated_at",
+          "description": "Sort key for pagination boundaries.\nUse `updated_at` (default) for recency feeds.\nUse `created_at` for creation-order views.",
+          "enum": [
+            "created_at",
+            "updated_at"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "filter_by_created_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for collection creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created After"
+        },
+        "filter_by_created_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for collection creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created Before"
+        },
+        "filter_by_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for collection update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated After"
+        },
+        "filter_by_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for collection update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated Before"
+        }
+      },
+      "title": "MemListCollectionsConfig",
+      "type": "object"
+    },
+    "MemListNotesConfig": {
+      "additionalProperties": false,
+      "description": "List notes visible to the authenticated caller with cursor pagination.\nWhen multiple `contains_*` fields are true, a note may match any of them.\nResults are ordered by `order_by` and return `next_page` when additional rows are available.\nFor relevance-ranked retrieval by query, use `POST /v2/notes/search`.",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of notes in this page.\nUse smaller values for lower latency.\nDefault is 50; valid range is 1 to 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous list response.\nOmit for the first page.\nIMPORTANT: Reuse with the same filters and `order_by` settings.",
+          "title": "Page"
+        },
+        "order_by": {
+          "default": "updated_at",
+          "description": "Sort key for pagination boundaries.\nUse `updated_at` (default) for recency feeds.\nUse `created_at` for creation-order views.",
+          "enum": [
+            "created_at",
+            "updated_at"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "collection_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional collection filter by UUID.\nWhen set, only notes linked to this collection are returned.",
+          "title": "Collection Id"
+        },
+        "filter_by_created_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for note creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created After"
+        },
+        "filter_by_created_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for note creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created Before"
+        },
+        "filter_by_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for note update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated After"
+        },
+        "filter_by_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for note update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated Before"
+        },
+        "contains_open_tasks": {
+          "default": false,
+          "description": "When true, include notes that contain at least one open task item.\nWhen multiple `contains_*` fields are true, notes matching any selected\nfilter may be returned.",
+          "title": "Contains Open Tasks",
+          "type": "boolean"
+        },
+        "contains_tasks": {
+          "default": false,
+          "description": "When true, include notes that contain at least one task item\n(open or closed).\nWhen multiple `contains_*` fields are true, notes matching any selected\nfilter may be returned.",
+          "title": "Contains Tasks",
+          "type": "boolean"
+        },
+        "contains_images": {
+          "default": false,
+          "description": "When true, include notes that contain image media\n(including image and GIF kinds).\nWhen multiple `contains_*` fields are true, notes matching any selected\nfilter may be returned.",
+          "title": "Contains Images",
+          "type": "boolean"
+        },
+        "contains_files": {
+          "default": false,
+          "description": "When true, include notes that contain file-like attachments\n(including file and PDF kinds).\nWhen multiple `contains_*` fields are true, notes matching any selected\nfilter may be returned.",
+          "title": "Contains Files",
+          "type": "boolean"
+        },
+        "include_note_content": {
+          "default": false,
+          "description": "When true, include full markdown content for each returned note.\nIMPORTANT: This increases payload size and can increase latency.",
+          "title": "Include Note Content",
+          "type": "boolean"
+        }
+      },
+      "title": "MemListNotesConfig",
+      "type": "object"
+    },
+    "MemMemItConfig": {
+      "additionalProperties": false,
+      "description": "Mem It",
+      "properties": {
+        "operation": {
+          "const": "mem_it",
+          "default": "mem_it",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional background information that helps Mem understand how this input relates to your existing knowledge.\n\nExamples:\n\u2022 \"This is related to my Project Alpha research\"\n\u2022 \"This is from the quarterly planning meeting\"\n\u2022 \"This is a follow-up to our discussion yesterday\"\n\nMaximum of ~10k characters.",
+          "title": "Context"
+        },
+        "input": {
+          "description": "Any raw content you want to remember - web pages, emails, transcripts, articles, or simple text.\n\nCommon Use Cases:\n\u2022 HTML from a webpage\n\u2022 Email text (including headers)\n\u2022 Meeting transcript\n\u2022 Text from a document\n\u2022 Simple notes or thoughts\n\nExamples:\n\u2022 \"<!DOCTYPE html><html><head><title>AI Trends 2025</title>...</html>\"\n\u2022 \"[08:47:19] Kevin: Hello...[09:15:22] Meeting ended.\"\n\u2022 \"Check out Atomic Habits by James Clear - recommended by Sarah\"\n\nMaximum of ~1M characters (~1 MB).",
+          "maxLength": 1000000,
+          "title": "Input",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional guidance on how you want this information processed or remembered.\n\nExamples:\n\u2022 \"Extract the key findings and save as a research note\"\n\u2022 \"Create a summary with action items and decisions\"\n\u2022 \"Add to my reading list\"\n\nMaximum size: approximately 10 KB.",
+          "title": "Instructions"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When this information was encountered or created (ISO 8601 datetime string). Defaults to the current date and time.\n\nExample:\n\u2022 \"2025-04-01T14:30:45Z\"\n\u2022 \"2023-12-15T09:45:30+01:00\"\n\nMaximum of ~10k characters.",
+          "title": "Timestamp"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "MemMemItConfig",
+      "type": "object"
+    },
+    "MemMoveNoteConfig": {
+      "additionalProperties": false,
+      "description": "Move a note from one collection to another collection.\nThis operation adds the note to the target collection, then removes it from the source collection.\nIt does not modify note or collection content.",
+      "properties": {
+        "operation": {
+          "const": "move_note",
+          "default": "move_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source_collection_id": {
+          "description": "UUID of the collection that currently contains the note. Caller must be able to remove the note from this collection.",
+          "format": "uuid",
+          "title": "Source Collection Id",
+          "type": "string"
+        },
+        "note_id": {
+          "description": "UUID of the note to move. Use an ID returned by create/list/search.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "target_collection_id": {
+          "description": "UUID of the collection that should receive the note.\nThe caller must be able to add the note to this collection.",
+          "format": "uuid",
+          "title": "Target Collection Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_collection_id",
+        "note_id",
+        "target_collection_id"
+      ],
+      "title": "MemMoveNoteConfig",
+      "type": "object"
+    },
+    "MemRemoveNoteFromCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Remove a note from a collection while keeping both resources.\nThis operation only removes the membership link between IDs.\nUse note/collection deletion endpoints to remove resources.",
+      "properties": {
+        "operation": {
+          "const": "remove_note_from_collection",
+          "default": "remove_note_from_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_id": {
+          "description": "UUID of the collection to unlink. Use an ID returned by create/list/search. Caller must be able to edit the note or contribute to the collection.",
+          "format": "uuid",
+          "title": "Collection Id",
+          "type": "string"
+        },
+        "note_id": {
+          "description": "UUID of the note to unlink. Use an ID returned by create/list/search. Caller must be able to edit the note or contribute to the collection.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "note_id"
+      ],
+      "title": "MemRemoveNoteFromCollectionConfig",
+      "type": "object"
+    },
+    "MemRestoreNoteConfig": {
+      "additionalProperties": false,
+      "description": "Restore a previously trashed note to the active note set.\nThis only reverses soft-delete lifecycle state.\nNotes permanently deleted via `DELETE /v2/notes/{note_id}` cannot be restored.",
+      "properties": {
+        "operation": {
+          "const": "restore_note",
+          "default": "restore_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "UUID of the note to restore from trash. Use an ID returned by create/list/search. The caller must be able to edit this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "MemRestoreNoteConfig",
+      "type": "object"
+    },
+    "MemSearchCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "Search collections using free-text relevance matching.\nReturns a bounded relevance-ranked result set and does not return `next_page`.\nFor deterministic chronological pagination, use `GET /v2/collections`.",
+      "properties": {
+        "operation": {
+          "const": "search_collections",
+          "default": "search_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_by_created_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for collection creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created After"
+        },
+        "filter_by_created_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for collection creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created Before"
+        },
+        "filter_by_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for collection update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated After"
+        },
+        "filter_by_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for collection update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated Before"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional text query for relevance matching across collections.\nIf omitted, search can still return a bounded general set.",
+          "title": "Query"
+        }
+      },
+      "title": "MemSearchCollectionsConfig",
+      "type": "object"
+    },
+    "MemSearchNotesConfig": {
+      "additionalProperties": false,
+      "description": "Search notes using a required free-text query and structured filters.\nWhen multiple `filter_by_contains_*` fields are true, a note may match any of them.\nReturns note results from a bounded search snapshot with deterministic offset pagination.\nQuery-based searches are relevance-ranked within the bounded search snapshot window.\nReuse the returned `snapshot_id` when requesting later pages.\nThe returned `total` reflects the bounded search snapshot, capped by the 100-result search window.\nFor deterministic chronological pagination across all accessible notes, use `GET /v2/notes`.",
+      "properties": {
+        "operation": {
+          "const": "search_notes",
+          "default": "search_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum number of notes in this search page.\nUse smaller values for lower latency.\nDefault is 20; valid range is 1 to 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of matching notes to skip before returning results.\nThis value is zero-based.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque search snapshot identifier returned by a previous search page.\nRequired when requesting later pages with `offset > 0`.",
+          "title": "Snapshot Id"
+        },
+        "filter_by_collection_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional collection UUID filters.\nWhen provided, results are limited to notes in any listed collection.",
+          "title": "Filter By Collection Ids"
+        },
+        "filter_by_contains_files": {
+          "default": false,
+          "description": "When true, include notes that contain file-like attachments\n(including file and PDF kinds).",
+          "title": "Filter By Contains Files",
+          "type": "boolean"
+        },
+        "filter_by_contains_images": {
+          "default": false,
+          "description": "When true, include notes that contain image media\n(including image and GIF kinds).",
+          "title": "Filter By Contains Images",
+          "type": "boolean"
+        },
+        "filter_by_contains_open_tasks": {
+          "default": false,
+          "description": "When true, include notes that contain at least one open task item.",
+          "title": "Filter By Contains Open Tasks",
+          "type": "boolean"
+        },
+        "filter_by_contains_tasks": {
+          "default": false,
+          "description": "When true, include notes that contain at least one task item\n(open or closed).",
+          "title": "Filter By Contains Tasks",
+          "type": "boolean"
+        },
+        "filter_by_created_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for note creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created After"
+        },
+        "filter_by_created_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for note creation time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Created Before"
+        },
+        "filter_by_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for note update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated After"
+        },
+        "filter_by_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive upper bound for note update time (ISO 8601).\nThe timestamp must include a timezone offset such as `Z` or `+01:00`.",
+          "title": "Filter By Updated Before"
+        },
+        "query": {
+          "description": "Required text query for relevance matching.\nThe query must contain at least one non-whitespace character.\nThis endpoint does not provide exhaustive chronological pagination; for that, use\n`GET /v2/notes`.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "MemSearchNotesConfig",
+      "type": "object"
+    },
+    "MemSetNoteCreatedAtConfig": {
+      "additionalProperties": false,
+      "description": "Set a note's visible creation timestamp without changing its content.\nThe supplied `created_at` must include a timezone offset and cannot be in the future.\nIt can only backdate the note: the timestamp cannot be later than\nwhen the note was originally created.\nThis operation changes note metadata only.\nTrashed notes must be restored before their creation date can be changed.",
+      "properties": {
+        "operation": {
+          "const": "set_note_created_at",
+          "default": "set_note_created_at",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "UUID of the note whose visible creation timestamp should change. The caller must own this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "New visible creation timestamp for the note (ISO 8601).\nIt must include a timezone offset and cannot be in the future.\nIt can only backdate the note: the timestamp cannot be later than\nwhen the note was originally created.\nThis changes note metadata only; it does not update note content.",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "created_at"
+      ],
+      "title": "MemSetNoteCreatedAtConfig",
+      "type": "object"
+    },
+    "MemTrashNoteConfig": {
+      "additionalProperties": false,
+      "description": "Soft-delete a note by moving it to trash.\nTrashed notes can be restored via `POST /v2/notes/{note_id}/restore`.\nFor irreversible deletion, use `DELETE /v2/notes/{note_id}`.",
+      "properties": {
+        "operation": {
+          "const": "trash_note",
+          "default": "trash_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "UUID of the note to move to trash. Use an ID returned by create/list/search. The caller must be able to edit this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "MemTrashNoteConfig",
+      "type": "object"
+    },
+    "MemUpdateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Update metadata for a collection by ID.\nUse this endpoint to rename a collection by setting `title`.\nThis endpoint updates only provided fields (`title`, `description`) and leaves omitted fields unchanged.\nFor read-only retrieval, use `GET /v2/collections/{collection_id}`.",
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "clear_description": {
+          "default": false,
+          "description": "Clear the collection description. Sends an empty description to Mem.",
+          "title": "Clear Description",
+          "type": "boolean"
+        },
+        "collection_id": {
+          "description": "UUID of the collection to update. Use an ID returned by create/list/search. The caller must be able to edit this collection.",
+          "format": "uuid",
+          "title": "Collection Id",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional replacement description for the collection.\nOmit to keep the current description unchanged.\nSet to an empty string to clear the description.\nMaximum: 10,000 characters (and no more than 10,000 UTF-8 bytes).",
+          "title": "Description"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional replacement title for the collection.\nUse this field to rename a collection.\nOmit to keep the current title unchanged.\nMaximum: 1,000 characters (and no more than 1,000 UTF-8 bytes).",
+          "title": "Title"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional \"last updated\" timestamp for this write (ISO 8601).\nIf provided, it must include a timezone offset and cannot be in the future.\nIf omitted, the current server time is used.",
+          "title": "Updated At"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "MemUpdateCollectionConfig",
+      "type": "object"
+    },
+    "MemUpdateNoteConfig": {
+      "additionalProperties": false,
+      "description": "Submit a complete markdown body for a note and the exact `version` being updated.\nSend the full desired body in `content` (not a partial markdown patch).\nThe first line of `content` becomes the updated title.\nTrashed notes must be restored before they can be updated.",
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "UUID of the note to update. Use an ID returned by create/list/search. The caller must be able to edit this note.",
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "content": {
+          "description": "Complete markdown body to submit for this write.\nSend the full desired note body (partial patch semantics are not supported\nin this request payload).\nThe first line is interpreted as the title.",
+          "maxLength": 200000,
+          "title": "Content",
+          "type": "string"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional \"last updated\" timestamp for this write (ISO 8601).\nIf omitted, the current server time is used.",
+          "title": "Updated At"
+        },
+        "version": {
+          "description": "Exact note content document version this update is based on.\nUse the `version` returned by `GET /v2/notes/{note_id}` or by the most\nrecent note write response.",
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "note_id",
+        "content",
+        "version"
+      ],
+      "title": "MemUpdateNoteConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_note_to_collection": "#/$defs/MemAddNoteToCollectionConfig",
+          "create_collection": "#/$defs/MemCreateCollectionConfig",
+          "create_note": "#/$defs/MemCreateNoteConfig",
+          "delete_collection": "#/$defs/MemDeleteCollectionConfig",
+          "delete_note": "#/$defs/MemDeleteNoteConfig",
+          "find_related_notes": "#/$defs/MemFindRelatedNotesConfig",
+          "get_collection": "#/$defs/MemGetCollectionConfig",
+          "get_note": "#/$defs/MemGetNoteConfig",
+          "list_collections": "#/$defs/MemListCollectionsConfig",
+          "list_notes": "#/$defs/MemListNotesConfig",
+          "mem_it": "#/$defs/MemMemItConfig",
+          "move_note": "#/$defs/MemMoveNoteConfig",
+          "remove_note_from_collection": "#/$defs/MemRemoveNoteFromCollectionConfig",
+          "restore_note": "#/$defs/MemRestoreNoteConfig",
+          "search_collections": "#/$defs/MemSearchCollectionsConfig",
+          "search_notes": "#/$defs/MemSearchNotesConfig",
+          "set_note_created_at": "#/$defs/MemSetNoteCreatedAtConfig",
+          "trash_note": "#/$defs/MemTrashNoteConfig",
+          "update_collection": "#/$defs/MemUpdateCollectionConfig",
+          "update_note": "#/$defs/MemUpdateNoteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MemListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/MemCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemTrashNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemRestoreNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemSetNoteCreatedAtConfig"
+        },
+        {
+          "$ref": "#/$defs/MemFindRelatedNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/MemSearchNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/MemListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/MemCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MemGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MemUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MemDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MemAddNoteToCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MemRemoveNoteFromCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MemMoveNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MemSearchCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/MemMemItConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MemAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mem Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Save meeting notes to Mem",
+    "Search my Mem notes",
+    "Organize notes into a collection"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
