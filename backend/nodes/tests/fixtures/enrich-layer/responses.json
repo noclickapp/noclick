@@ -1,0 +1,1910 @@
+{
+  "get_person": {
+    "path": "/api/v2/profile",
+    "config": {
+      "operation": "get_person",
+      "profile_url": "https://linkedin.com/in/satyanadella/",
+      "twitter_profile_url": "https://x.com/satyanadella/",
+      "facebook_profile_url": "https://facebook.com/satyanadella/",
+      "extra": "include",
+      "github_profile_id": "include",
+      "facebook_profile_id": "include",
+      "twitter_profile_id": "include",
+      "personal_contact_number": "include",
+      "personal_email": "include",
+      "inferred_salary": "include",
+      "skills": "include",
+      "use_cache": "if-present",
+      "fallback_to_cache": "on-error",
+      "live_fetch": "force"
+    },
+    "response": {
+      "public_identifier": "satyanadella",
+      "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/7d369850c9fe8c35e78a6a50c75334f5",
+      "background_cover_image_url": "https://assets.enrichlayer.com/pp/profilepic/fe878f911fecd238e169a23b12103b0e",
+      "first_name": "Satya",
+      "last_name": "Nadella",
+      "full_name": "Satya Nadella",
+      "follower_count": 11888127,
+      "occupation": "Chairman and CEO at Microsoft",
+      "headline": "Chairman and CEO at Microsoft",
+      "summary": "As chairman and CEO of Microsoft, I define my mission and that of my company as empowering every person and every organization on the planet to achieve more.",
+      "location_str": "Redmond, Washington, United States",
+      "country": "US",
+      "country_full_name": "United States of America",
+      "city": "Redmond",
+      "state": "Washington",
+      "experiences": [
+        {
+          "starts_at": {
+            "day": 1,
+            "month": 2,
+            "year": 2014
+          },
+          "ends_at": null,
+          "company": "Microsoft",
+          "company_linkedin_profile_url": "https://www.linkedin.com/company/microsoft",
+          "company_facebook_profile_url": null,
+          "title": "Chairman and CEO",
+          "description": null,
+          "location": "Greater Seattle Area",
+          "logo_url": "https://assets.enrichlayer.com/ll/D560BAQH32RJQCl3dDQ/company-logo_100_100/B56ZYQ0mrGGoAU-/0/1744038948046/microsoft_logo?e=2147483647&v=beta&t=rr_7_bFRKp6umQxIHErPOZHtR8dMPIYeTjlKFdotJBY"
+        },
+        {
+          "starts_at": {
+            "day": 1,
+            "month": 1,
+            "year": 2018
+          },
+          "ends_at": null,
+          "company": "University of Chicago",
+          "company_linkedin_profile_url": "https://www.linkedin.com/company/uchicago",
+          "company_facebook_profile_url": null,
+          "title": "Member Board Of Trustees",
+          "description": null,
+          "location": null,
+          "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f40c5f31ef246aeb1000ffb4e40f2991"
+        },
+        {
+          "starts_at": {
+            "day": 1,
+            "month": 1,
+            "year": 2017
+          },
+          "ends_at": {
+            "day": 31,
+            "month": 12,
+            "year": 2024
+          },
+          "company": "Starbucks",
+          "company_linkedin_profile_url": "https://www.linkedin.com/company/starbucks",
+          "company_facebook_profile_url": null,
+          "title": "Board Member",
+          "description": null,
+          "location": null,
+          "logo_url": "https://assets.enrichlayer.com/ll/C4D0BAQEQxk9y2rk7Hw/company-logo_100_100/company-logo_100_100/0/1631316692276?e=2147483647&v=beta&t=itdoVXP3gnqtQ7Grar4B3YoPyw-Ors9bKMZlZpb0QcY"
+        }
+      ],
+      "education": [
+        {
+          "starts_at": {
+            "day": 1,
+            "month": 1,
+            "year": 1994
+          },
+          "ends_at": {
+            "day": 31,
+            "month": 12,
+            "year": 1996
+          },
+          "field_of_study": null,
+          "degree_name": null,
+          "school": "The University of Chicago Booth School of Business",
+          "school_linkedin_profile_url": "https://www.linkedin.com/company/universityofchicagoboothschoolofbusiness",
+          "school_facebook_profile_url": null,
+          "description": null,
+          "logo_url": "https://assets.enrichlayer.com/pp/profilepic/88fa467a62fbfc5325394253f14e8700",
+          "grade": null,
+          "activities_and_societies": null
+        },
+        {
+          "starts_at": {
+            "day": null,
+            "month": null,
+            "year": null
+          },
+          "ends_at": null,
+          "field_of_study": "Electrical Engineering",
+          "degree_name": "Bachelor\u2019s Degree",
+          "school": "Manipal Institute of Technology, Manipal",
+          "school_linkedin_profile_url": "https://www.linkedin.com/company/manipal-institute-of-technology",
+          "school_facebook_profile_url": null,
+          "description": null,
+          "logo_url": "https://assets.enrichlayer.com/pp/profilepic/2aef6f72c73e3b40dbd56163897bdc04",
+          "grade": null,
+          "activities_and_societies": null
+        },
+        {
+          "starts_at": {
+            "day": null,
+            "month": null,
+            "year": null
+          },
+          "ends_at": null,
+          "field_of_study": "Computer Science",
+          "degree_name": "Master\u2019s Degree",
+          "school": "University of Wisconsin-Milwaukee",
+          "school_linkedin_profile_url": "https://www.linkedin.com/company/uwmilwaukee",
+          "school_facebook_profile_url": null,
+          "description": null,
+          "logo_url": "https://assets.enrichlayer.com/pp/profilepic/7916094135030c5846f34230e03dbaa2",
+          "grade": null,
+          "activities_and_societies": null
+        }
+      ],
+      "accomplishment_organisations": [],
+      "accomplishment_publications": [],
+      "accomplishment_honors_awards": [],
+      "accomplishment_patents": [],
+      "accomplishment_courses": [],
+      "accomplishment_projects": [],
+      "accomplishment_test_scores": [],
+      "volunteer_work": [],
+      "certifications": [],
+      "connections": 500,
+      "people_also_viewed": [
+        {
+          "link": "https://www.linkedin.com/in/kevinolearytv",
+          "name": "Kevin O'Leary",
+          "summary": "Chairman, O\u2019Leary Ventures and Beanstox",
+          "location": "West Palm Beach"
+        },
+        {
+          "link": "https://www.linkedin.com/in/aaronmartinfc",
+          "name": "Aaron Martin",
+          "summary": "Vice President Healthcare at Amazon",
+          "location": "Seattle"
+        },
+        {
+          "link": "https://www.linkedin.com/in/guthriescott",
+          "name": "Scott Guthrie",
+          "summary": "Executive Vice President at Microsoft",
+          "location": "Bellevue"
+        },
+        {
+          "link": "https://www.linkedin.com/in/toufisaliba",
+          "name": "Toufi Saliba",
+          "summary": "Author TODA/IP  .  | . CEO HyperCycle.AI  .  | . Chair - International Protocols for AI Security IEEE",
+          "location": "San Francisco"
+        },
+        {
+          "link": "https://www.linkedin.com/in/rajeshgopinathan",
+          "name": "Rajesh Gopinathan",
+          "summary": null,
+          "location": "Mumbai"
+        }
+      ],
+      "recommendations": [],
+      "activities": [
+        {
+          "title": "Microsoft has been positioned as a Leader for the fourteenth consecutive year in the Gartner 2021 Magic Quadrant for Analytics and Business\u2026",
+          "link": null,
+          "activity_status": null
+        },
+        {
+          "title": "On March 17, we\u2019re trying something we\u2019ve never done before: Microsoft will host #Include2021, a free, global, digital event focused on diversity &\u2026",
+          "link": null,
+          "activity_status": null
+        },
+        {
+          "title": "I talked to Bill Gates about his important new book, which provides a framework to reduce our world\u2019s greenhouse gas emissions to zero, including\u2026",
+          "link": null,
+          "activity_status": null
+        }
+      ],
+      "similarly_named_profiles": [],
+      "articles": [],
+      "groups": [],
+      "meta": {
+        "thin_profile": false,
+        "last_updated": "2025-03-15T08:22:00Z"
+      }
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_company": {
+    "path": "/api/v2/company",
+    "config": {
+      "operation": "get_company",
+      "url": "https://www.linkedin.com/company/google/",
+      "categories": "include",
+      "funding_data": "include",
+      "exit_data": "include",
+      "acquisitions": "include",
+      "extra": "include",
+      "use_cache": "if-present",
+      "fallback_to_cache": "on-error",
+      "live_fetch": "force"
+    },
+    "response": {
+      "linkedin_internal_id": "1441",
+      "description": "A problem isn't truly solved until it's solved for all. Googlers build products that help create opportunities for everyone, whether down the street or across the globe. Bring your insight, imagination and a healthy disregard for the impossible. Bring everything that makes you unique. Together, we can build for everyone.\nCheck out our career opportunities at careers.google.com.",
+      "website": "https://goo.gle/3m1IN7m",
+      "industry": "Software Development",
+      "company_size": [
+        10001,
+        null
+      ],
+      "company_size_on_linkedin": 319856,
+      "hq": {
+        "country": "US",
+        "city": "Mountain View",
+        "postal_code": "94043",
+        "line_1": "1600 Amphitheatre Parkway",
+        "is_hq": true,
+        "state": "CA"
+      },
+      "company_type": "PUBLIC_COMPANY",
+      "founded_year": null,
+      "specialities": [
+        "search",
+        "ads"
+      ],
+      "locations": [
+        {
+          "country": "US",
+          "city": "Mountain View",
+          "postal_code": "94043",
+          "line_1": "1600 Amphitheatre Parkway",
+          "is_hq": true,
+          "state": "CA"
+        },
+        {
+          "country": "US",
+          "city": "New York",
+          "postal_code": "10011",
+          "line_1": "111 8th Ave",
+          "is_hq": false,
+          "state": "NY"
+        }
+      ],
+      "name": "Google",
+      "tagline": null,
+      "universal_name_id": "google",
+      "profile_pic_url": "https://assets.enrichlayer.com/pp/...",
+      "background_cover_image_url": "https://assets.enrichlayer.com/pp/...",
+      "search_id": "1441",
+      "similar_companies": [
+        {
+          "name": "Amazon",
+          "link": "https://www.linkedin.com/company/amazon",
+          "industry": "Software Development",
+          "location": "Seattle, WA"
+        },
+        {
+          "name": "Microsoft",
+          "link": "https://www.linkedin.com/company/microsoft",
+          "industry": "Software Development",
+          "location": "Redmond, Washington"
+        }
+      ],
+      "affiliated_companies": [
+        {
+          "name": "YouTube",
+          "link": "https://www.linkedin.com/company/youtube",
+          "industry": "Software Development",
+          "location": "San Bruno, CA"
+        },
+        {
+          "name": "Google Cloud",
+          "link": "https://www.linkedin.com/showcase/google-cloud",
+          "industry": "Software Development",
+          "location": "Mountain View, California"
+        }
+      ],
+      "updates": [
+        {
+          "article_link": null,
+          "image": "https://assets.enrichlayer.com/pp/profilepic/57ef9922f8484ada3bd6001d1c68afa1",
+          "posted_on": {
+            "day": 13,
+            "month": 9,
+            "year": 2022
+          },
+          "text": "Want to kick start your #LifeAtGoogle but not sure where to begin? Explore our Build Your Future site, where you can learn about developmental programs, learn tips for future interviews, sign up for informational events, and even hear real stories from Googlers who\u2019ve been where you are now. Get started \u2192 https://bit.ly/3SKPzQB",
+          "total_likes": 4267
+        },
+        {
+          "article_link": null,
+          "image": "https://assets.enrichlayer.com/pp/profilepic/57ef9922f8484ada3bd6001d1c68afa1",
+          "posted_on": null,
+          "text": "Ariana, welcome to Google. Here\u2019s to a year full of growth, learning, and experiences at #LifeAtGoogle! \ud83c\udf89",
+          "total_likes": 397
+        }
+      ],
+      "follower_count": 27472792,
+      "meta": {
+        "thin_profile": false,
+        "last_updated": "2023-10-26T11:34:30Z"
+      }
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_school": {
+    "path": "/api/v2/school",
+    "config": {
+      "operation": "get_school",
+      "url": "https://www.linkedin.com/school/mit",
+      "use_cache": "if-present",
+      "live_fetch": "force"
+    },
+    "response": {
+      "linkedin_internal_id": "1503",
+      "description": "The Massachusetts Institute of Technology (MIT) is a private research university located in Cambridge, Massachusetts. MIT is devoted to the advancement of knowledge and education of students in areas that contribute to or prosper in an environment of science and technology.",
+      "website": "http://web.mit.edu/",
+      "industry": "Higher Education",
+      "company_size": [
+        5001,
+        10000
+      ],
+      "company_size_on_linkedin": 23329,
+      "hq": {
+        "country": "US",
+        "city": "Cambridge, MA",
+        "postal_code": "02139-4307",
+        "line_1": "77 Massachusetts Avenue",
+        "is_hq": true,
+        "state": "Massachusetts"
+      },
+      "company_type": "EDUCATIONAL_INSTITUTION",
+      "founded_year": 1861,
+      "specialities": [
+        "education",
+        "science",
+        "research",
+        "engineering"
+      ],
+      "locations": [
+        {
+          "country": "US",
+          "city": "Cambridge",
+          "postal_code": "02139",
+          "line_1": "Massachusetts Ave",
+          "is_hq": true,
+          "state": "Massachusetts"
+        }
+      ],
+      "name": "Massachusetts Institute of Technology",
+      "tagline": null,
+      "universal_name_id": "mit",
+      "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/35d64df1cce08965de8b857ecc88d2ff",
+      "background_cover_image_url": null,
+      "search_id": "1503",
+      "similar_companies": [
+        {
+          "name": "MIT Sloan School of Management",
+          "link": "https://www.linkedin.com/school/mitsloan/",
+          "industry": "Higher Education",
+          "location": null
+        },
+        {
+          "name": "MIT School of Engineering",
+          "link": "https://www.linkedin.com/school/mit-school-of-engineering/",
+          "industry": "Higher Education",
+          "location": null
+        }
+      ],
+      "affiliated_companies": [],
+      "updates": [],
+      "follower_count": 539321,
+      "meta": {
+        "thin_profile": false,
+        "last_updated": "2023-10-26T11:34:30Z"
+      }
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "list_employees": {
+    "path": "/api/v2/company/employees/",
+    "config": {
+      "operation": "list_employees",
+      "url": "https://www.linkedin.com/company/microsoft",
+      "coy_name_match": "include",
+      "use_cache": "if-present",
+      "country": "us",
+      "enrich_profiles": "enrich",
+      "boolean_role_search": "\"founder\" OR \"co-founder\" OR \"cofounder\"",
+      "role_search": "(co)?-?founder",
+      "page_size": "10",
+      "employment_status": "current",
+      "sort_by": "recently-joined",
+      "resolve_numeric_id": "false"
+    },
+    "response": {
+      "employees": [
+        {
+          "profile_url": "https://www.linkedin.com/in/williamhgates",
+          "profile": {
+            "public_identifier": "williamhgates",
+            "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/a41217d5753de1f3f4906f9da43dbad6",
+            "background_cover_image_url": null,
+            "first_name": "Bill",
+            "last_name": "Gates",
+            "full_name": "Bill Gates",
+            "occupation": "Co-chair at Bill & Melinda Gates Foundation",
+            "headline": "Co-chair, Bill & Melinda Gates Foundation",
+            "summary": "Co-chair of the Bill & Melinda Gates Foundation. Founder of Breakthrough Energy. Co-founder of Microsoft. Voracious reader. Avid traveler. Active blogger.",
+            "country": "US",
+            "country_full_name": "United States of America",
+            "city": "Seattle",
+            "state": "Washington",
+            "experiences": [
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 2015
+                },
+                "ends_at": null,
+                "company": "Breakthrough Energy ",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/breakthrough-energy/",
+                "title": "Founder",
+                "description": null,
+                "location": null,
+                "logo_url": "https://assets.enrichlayer.com/ll/D560BAQFRMYiQN7-2kA/company-logo_100_100/B56ZoI4SGPI0AQ-/0/1761085563539/breakthrough_energy_logo?e=2147483647&v=beta&t=J6RbEvs17fl1uiEaXQm0hmXy4imx36mV_Hu80JcR1DE"
+              },
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 2000
+                },
+                "ends_at": null,
+                "company": "Bill & Melinda Gates Foundation",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/bill-&-melinda-gates-foundation/",
+                "title": "Co-chair",
+                "description": null,
+                "location": null,
+                "logo_url": "https://assets.enrichlayer.com/ll/D560BAQEgMqqFTd40Tg/company-logo_100_100/company-logo_100_100/0/1736784969376/bill__melinda_gates_foundation_logo?e=2147483647&v=beta&t=2JH2cMcZms60vPAMbvVZyMeYXosQ1Jjy5axDlyeQ1Ww"
+              }
+            ],
+            "education": [
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 1973
+                },
+                "ends_at": {
+                  "day": 31,
+                  "month": 12,
+                  "year": 1975
+                },
+                "field_of_study": null,
+                "degree_name": null,
+                "school": "Harvard University",
+                "school_linkedin_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/518005a5a755bd1d2fde90f216039bbc"
+              },
+              {
+                "starts_at": null,
+                "ends_at": null,
+                "field_of_study": null,
+                "degree_name": null,
+                "school": "Lakeside School",
+                "school_linkedin_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f0d32d5de696536e8b46133cb042250a"
+              }
+            ],
+            "languages": [],
+            "accomplishment_organisations": [],
+            "accomplishment_publications": [],
+            "accomplishment_honors_awards": [],
+            "accomplishment_patents": [],
+            "accomplishment_courses": [],
+            "accomplishment_projects": [],
+            "accomplishment_test_scores": [],
+            "volunteer_work": [],
+            "certifications": [],
+            "connections": null,
+            "people_also_viewed": [],
+            "recommendations": [],
+            "activities": [],
+            "similarly_named_profiles": [],
+            "articles": [],
+            "groups": []
+          },
+          "last_updated": "2023-10-26T11:34:30Z"
+        }
+      ],
+      "next_page": null
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_employee_count": {
+    "path": "/api/v2/company/employees/count",
+    "config": {
+      "operation": "get_employee_count",
+      "url": "https://www.linkedin.com/company/apple/",
+      "coy_name_match": "include",
+      "at_date": "2023-12-31",
+      "use_cache": "if-present",
+      "estimated_employee_count": "include",
+      "employment_status": "current"
+    },
+    "response": {
+      "estimated_employee_count": 529274,
+      "verified_employee_count": 3
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "lookup_person": {
+    "path": "/api/v2/profile/resolve",
+    "config": {
+      "operation": "lookup_person",
+      "company_domain": "gatesfoundation.org",
+      "first_name": "Bill",
+      "similarity_checks": "include",
+      "enrich_profile": "enrich",
+      "location": "Seattle",
+      "title": "Co-chair",
+      "last_name": "Gates"
+    },
+    "response": {
+      "url": "https://www.linkedin.com/in/kevinolearytv",
+      "profile": {
+        "public_identifier": "satyanadella",
+        "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/7d369850c9fe8c35e78a6a50c75334f5",
+        "background_cover_image_url": "https://assets.enrichlayer.com/pp/profilepic/fe878f911fecd238e169a23b12103b0e",
+        "first_name": "Satya",
+        "last_name": "Nadella",
+        "full_name": "Satya Nadella",
+        "follower_count": 11888127,
+        "occupation": "Chairman and CEO at Microsoft",
+        "headline": "Chairman and CEO at Microsoft",
+        "summary": "As chairman and CEO of Microsoft, I define my mission and that of my company as empowering every person and every organization on the planet to achieve more.",
+        "country": "US",
+        "country_full_name": "United States of America",
+        "city": "Redmond",
+        "state": "Washington",
+        "experiences": [
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 2,
+              "year": 2014
+            },
+            "ends_at": null,
+            "company": "Microsoft",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/microsoft",
+            "company_facebook_profile_url": null,
+            "title": "Chairman and CEO",
+            "description": null,
+            "location": "Greater Seattle Area",
+            "logo_url": "https://assets.enrichlayer.com/ll/D560BAQH32RJQCl3dDQ/company-logo_100_100/B56ZYQ0mrGGoAU-/0/1744038948046/microsoft_logo?e=2147483647&v=beta&t=rr_7_bFRKp6umQxIHErPOZHtR8dMPIYeTjlKFdotJBY"
+          },
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 2018
+            },
+            "ends_at": null,
+            "company": "University of Chicago",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/uchicago",
+            "company_facebook_profile_url": null,
+            "title": "Member Board Of Trustees",
+            "description": null,
+            "location": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f40c5f31ef246aeb1000ffb4e40f2991"
+          },
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 2017
+            },
+            "ends_at": {
+              "day": 31,
+              "month": 12,
+              "year": 2024
+            },
+            "company": "Starbucks",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/starbucks",
+            "company_facebook_profile_url": null,
+            "title": "Board Member",
+            "description": null,
+            "location": null,
+            "logo_url": "https://assets.enrichlayer.com/ll/C4D0BAQEQxk9y2rk7Hw/company-logo_100_100/company-logo_100_100/0/1631316692276?e=2147483647&v=beta&t=itdoVXP3gnqtQ7Grar4B3YoPyw-Ors9bKMZlZpb0QcY"
+          }
+        ],
+        "education": [
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 1994
+            },
+            "ends_at": {
+              "day": 31,
+              "month": 12,
+              "year": 1996
+            },
+            "field_of_study": null,
+            "degree_name": null,
+            "school": "The University of Chicago Booth School of Business",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/universityofchicagoboothschoolofbusiness",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/88fa467a62fbfc5325394253f14e8700",
+            "grade": null,
+            "activities_and_societies": null
+          },
+          {
+            "starts_at": {
+              "day": null,
+              "month": null,
+              "year": null
+            },
+            "ends_at": null,
+            "field_of_study": "Electrical Engineering",
+            "degree_name": "Bachelor\u2019s Degree",
+            "school": "Manipal Institute of Technology, Manipal",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/manipal-institute-of-technology",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/2aef6f72c73e3b40dbd56163897bdc04",
+            "grade": null,
+            "activities_and_societies": null
+          },
+          {
+            "starts_at": {
+              "day": null,
+              "month": null,
+              "year": null
+            },
+            "ends_at": null,
+            "field_of_study": "Computer Science",
+            "degree_name": "Master\u2019s Degree",
+            "school": "University of Wisconsin-Milwaukee",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/uwmilwaukee",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/7916094135030c5846f34230e03dbaa2",
+            "grade": null,
+            "activities_and_societies": null
+          }
+        ],
+        "accomplishment_organisations": [],
+        "accomplishment_publications": [],
+        "accomplishment_honors_awards": [],
+        "accomplishment_patents": [],
+        "accomplishment_courses": [],
+        "accomplishment_projects": [],
+        "accomplishment_test_scores": [],
+        "volunteer_work": [],
+        "certifications": [],
+        "connections": 500,
+        "people_also_viewed": [
+          {
+            "link": "https://www.linkedin.com/in/kevinolearytv",
+            "name": "Kevin O'Leary",
+            "summary": "Chairman, O\u2019Leary Ventures and Beanstox",
+            "location": "West Palm Beach"
+          },
+          {
+            "link": "https://www.linkedin.com/in/aaronmartinfc",
+            "name": "Aaron Martin",
+            "summary": "Vice President Healthcare at Amazon",
+            "location": "Seattle"
+          },
+          {
+            "link": "https://www.linkedin.com/in/guthriescott",
+            "name": "Scott Guthrie",
+            "summary": "Executive Vice President at Microsoft",
+            "location": "Bellevue"
+          },
+          {
+            "link": "https://www.linkedin.com/in/toufisaliba",
+            "name": "Toufi Saliba",
+            "summary": "Author TODA/IP  .  | . CEO HyperCycle.AI  .  | . Chair - International Protocols for AI Security IEEE",
+            "location": "San Francisco"
+          },
+          {
+            "link": "https://www.linkedin.com/in/rajeshgopinathan",
+            "name": "Rajesh Gopinathan",
+            "summary": null,
+            "location": "Mumbai"
+          }
+        ],
+        "recommendations": [],
+        "activities": [
+          {
+            "title": "Microsoft has been positioned as a Leader for the fourteenth consecutive year in the Gartner 2021 Magic Quadrant for Analytics and Business\u2026",
+            "link": null,
+            "activity_status": null
+          },
+          {
+            "title": "On March 17, we\u2019re trying something we\u2019ve never done before: Microsoft will host #Include2021, a free, global, digital event focused on diversity &\u2026",
+            "link": null,
+            "activity_status": null
+          },
+          {
+            "title": "I talked to Bill Gates about his important new book, which provides a framework to reduce our world\u2019s greenhouse gas emissions to zero, including\u2026",
+            "link": null,
+            "activity_status": null
+          }
+        ],
+        "similarly_named_profiles": [],
+        "articles": [],
+        "groups": [],
+        "meta": {
+          "thin_profile": false,
+          "last_updated": "2025-03-15T08:22:00Z"
+        }
+      },
+      "last_updated": "2023-10-26T11:34:30Z"
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "lookup_company": {
+    "path": "/api/v2/company/resolve",
+    "config": {
+      "operation": "lookup_company",
+      "company_location": "sg",
+      "company_domain": "accenture.com",
+      "company_name": "Accenture",
+      "enrich_profile": "enrich"
+    },
+    "response": {
+      "url": "https://www.linkedin.com/company/accenture",
+      "profile": {
+        "linkedin_internal_id": "1033",
+        "description": "Accenture is a global professional services company with leading capabilities in digital, cloud, and security. Combining unmatched experience and specialized skills across more than 40 industries, we offer Strategy and Consulting, Technology and Operations Services, and Accenture Song\u2014all powered by the world\u2019s largest network of Advanced Technology and Intelligent Operations centers. \nOur people deliver on the promise of technology and human ingenuity every day, serving clients in more than 120 countries. We embrace the power of change to create value and shared success for our clients, people, shareholders, partners, and communities. \nVisit us at accenture.com.",
+        "website": "http://www.accenture.com",
+        "industry": "Business Consulting and Services",
+        "company_size": [
+          10001,
+          null
+        ],
+        "company_size_on_linkedin": 541251,
+        "hq": {
+          "country": "IE",
+          "city": "Dublin 2",
+          "postal_code": null,
+          "line_1": "Grand Canal Harbour",
+          "is_hq": true,
+          "state": null
+        },
+        "company_type": "PUBLIC_COMPANY",
+        "founded_year": null,
+        "specialities": [
+          "Management Consulting",
+          "Systems Integration and Technology"
+        ],
+        "locations": [
+          {
+            "country": "IE",
+            "city": "Dublin 2",
+            "postal_code": null,
+            "line_1": "Grand Canal Harbour",
+            "is_hq": true,
+            "state": null
+          },
+          {
+            "country": "US",
+            "city": "San Francisco",
+            "postal_code": "94105",
+            "line_1": "415 Mission Street Floor 31-34",
+            "is_hq": false,
+            "state": "California"
+          }
+        ],
+        "name": "Accenture",
+        "tagline": null,
+        "universal_name_id": "accenture",
+        "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/ba497886e02c992d8fe1a74bf0bbe675",
+        "background_cover_image_url": "https://assets.enrichlayer.com/pp/profilepic/b09e74d93f184f16c3249b63bdf60317",
+        "search_id": "1033",
+        "similar_companies": [
+          {
+            "name": "Deloitte",
+            "link": "https://www.linkedin.com/company/deloitte",
+            "industry": "Business Consulting and Services",
+            "location": null
+          },
+          {
+            "name": "Tata Consultancy Services",
+            "link": "https://in.linkedin.com/company/tata-consultancy-services",
+            "industry": "IT Services and IT Consulting",
+            "location": "Mumbai, Maharashtra"
+          }
+        ],
+        "affiliated_companies": [
+          {
+            "name": "Accenture in India",
+            "link": "https://in.linkedin.com/company/accentureindia",
+            "industry": "IT Services and IT Consulting",
+            "location": "Bengaluru, Karnatka"
+          },
+          {
+            "name": "Accenture Brasil",
+            "link": "https://br.linkedin.com/company/accenturebrasil",
+            "industry": "IT Services and IT Consulting",
+            "location": "S\u00e3o Paulo, S\u00e3o Paulo"
+          }
+        ],
+        "updates": [
+          {
+            "article_link": null,
+            "image": null,
+            "posted_on": {
+              "day": 25,
+              "month": 10,
+              "year": 2023
+            },
+            "text": "Explore #AccentureLifeTrends 2024 to learn more: https://accntu.re/3MfdMg4",
+            "total_likes": 325
+          },
+          {
+            "article_link": null,
+            "image": "https://assets.enrichlayer.com/pp/profilepic/ba497886e02c992d8fe1a74bf0bbe675",
+            "posted_on": {
+              "day": 25,
+              "month": 10,
+              "year": 2023
+            },
+            "text": "The ability to learn new things, without forgetting those that came before, is a huge differentiator between the #AI we're familiar with, and the #GenerativeAI powered by foundation models that we're seeing now.\n \nDiscover the trends shaping the next decade: https://accntu.re/474YxOH\n \n#TechVision2023",
+            "total_likes": 541
+          }
+        ],
+        "follower_count": 11125167,
+        "acquisitions": null,
+        "exit_data": null,
+        "extra": null,
+        "funding_data": null,
+        "categories": null,
+        "meta": {
+          "thin_profile": false,
+          "last_updated": "2023-10-26T11:34:30Z"
+        }
+      },
+      "last_updated": "2023-10-26T11:33:24Z"
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "lookup_role": {
+    "path": "/api/v2/find/company/role/",
+    "config": {
+      "operation": "lookup_role",
+      "role": "ceo",
+      "company_name": "microsoft",
+      "enrich_profile": "enrich"
+    },
+    "response": {
+      "linkedin_profile_url": "https://www.linkedin.com/in/kevinolearytv",
+      "profile": {
+        "public_identifier": "satyanadella",
+        "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/7d369850c9fe8c35e78a6a50c75334f5",
+        "background_cover_image_url": "https://assets.enrichlayer.com/pp/profilepic/fe878f911fecd238e169a23b12103b0e",
+        "first_name": "Satya",
+        "last_name": "Nadella",
+        "full_name": "Satya Nadella",
+        "follower_count": 11888127,
+        "occupation": "Chairman and CEO at Microsoft",
+        "headline": "Chairman and CEO at Microsoft",
+        "summary": "As chairman and CEO of Microsoft, I define my mission and that of my company as empowering every person and every organization on the planet to achieve more.",
+        "country": "US",
+        "country_full_name": "United States of America",
+        "city": "Redmond",
+        "state": "Washington",
+        "experiences": [
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 2,
+              "year": 2014
+            },
+            "ends_at": null,
+            "company": "Microsoft",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/microsoft",
+            "company_facebook_profile_url": null,
+            "title": "Chairman and CEO",
+            "description": null,
+            "location": "Greater Seattle Area",
+            "logo_url": "https://assets.enrichlayer.com/ll/D560BAQH32RJQCl3dDQ/company-logo_100_100/B56ZYQ0mrGGoAU-/0/1744038948046/microsoft_logo?e=2147483647&v=beta&t=rr_7_bFRKp6umQxIHErPOZHtR8dMPIYeTjlKFdotJBY"
+          },
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 2018
+            },
+            "ends_at": null,
+            "company": "University of Chicago",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/uchicago",
+            "company_facebook_profile_url": null,
+            "title": "Member Board Of Trustees",
+            "description": null,
+            "location": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f40c5f31ef246aeb1000ffb4e40f2991"
+          },
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 2017
+            },
+            "ends_at": {
+              "day": 31,
+              "month": 12,
+              "year": 2024
+            },
+            "company": "Starbucks",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/starbucks",
+            "company_facebook_profile_url": null,
+            "title": "Board Member",
+            "description": null,
+            "location": null,
+            "logo_url": "https://assets.enrichlayer.com/ll/C4D0BAQEQxk9y2rk7Hw/company-logo_100_100/company-logo_100_100/0/1631316692276?e=2147483647&v=beta&t=itdoVXP3gnqtQ7Grar4B3YoPyw-Ors9bKMZlZpb0QcY"
+          }
+        ],
+        "education": [
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 1994
+            },
+            "ends_at": {
+              "day": 31,
+              "month": 12,
+              "year": 1996
+            },
+            "field_of_study": null,
+            "degree_name": null,
+            "school": "The University of Chicago Booth School of Business",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/universityofchicagoboothschoolofbusiness",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/88fa467a62fbfc5325394253f14e8700",
+            "grade": null,
+            "activities_and_societies": null
+          },
+          {
+            "starts_at": {
+              "day": null,
+              "month": null,
+              "year": null
+            },
+            "ends_at": null,
+            "field_of_study": "Electrical Engineering",
+            "degree_name": "Bachelor\u2019s Degree",
+            "school": "Manipal Institute of Technology, Manipal",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/manipal-institute-of-technology",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/2aef6f72c73e3b40dbd56163897bdc04",
+            "grade": null,
+            "activities_and_societies": null
+          },
+          {
+            "starts_at": {
+              "day": null,
+              "month": null,
+              "year": null
+            },
+            "ends_at": null,
+            "field_of_study": "Computer Science",
+            "degree_name": "Master\u2019s Degree",
+            "school": "University of Wisconsin-Milwaukee",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/uwmilwaukee",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/7916094135030c5846f34230e03dbaa2",
+            "grade": null,
+            "activities_and_societies": null
+          }
+        ],
+        "accomplishment_organisations": [],
+        "accomplishment_publications": [],
+        "accomplishment_honors_awards": [],
+        "accomplishment_patents": [],
+        "accomplishment_courses": [],
+        "accomplishment_projects": [],
+        "accomplishment_test_scores": [],
+        "volunteer_work": [],
+        "certifications": [],
+        "connections": 500,
+        "people_also_viewed": [
+          {
+            "link": "https://www.linkedin.com/in/kevinolearytv",
+            "name": "Kevin O'Leary",
+            "summary": "Chairman, O\u2019Leary Ventures and Beanstox",
+            "location": "West Palm Beach"
+          },
+          {
+            "link": "https://www.linkedin.com/in/aaronmartinfc",
+            "name": "Aaron Martin",
+            "summary": "Vice President Healthcare at Amazon",
+            "location": "Seattle"
+          },
+          {
+            "link": "https://www.linkedin.com/in/guthriescott",
+            "name": "Scott Guthrie",
+            "summary": "Executive Vice President at Microsoft",
+            "location": "Bellevue"
+          },
+          {
+            "link": "https://www.linkedin.com/in/toufisaliba",
+            "name": "Toufi Saliba",
+            "summary": "Author TODA/IP  .  | . CEO HyperCycle.AI  .  | . Chair - International Protocols for AI Security IEEE",
+            "location": "San Francisco"
+          },
+          {
+            "link": "https://www.linkedin.com/in/rajeshgopinathan",
+            "name": "Rajesh Gopinathan",
+            "summary": null,
+            "location": "Mumbai"
+          }
+        ],
+        "recommendations": [],
+        "activities": [
+          {
+            "title": "Microsoft has been positioned as a Leader for the fourteenth consecutive year in the Gartner 2021 Magic Quadrant for Analytics and Business\u2026",
+            "link": null,
+            "activity_status": null
+          },
+          {
+            "title": "On March 17, we\u2019re trying something we\u2019ve never done before: Microsoft will host #Include2021, a free, global, digital event focused on diversity &\u2026",
+            "link": null,
+            "activity_status": null
+          },
+          {
+            "title": "I talked to Bill Gates about his important new book, which provides a framework to reduce our world\u2019s greenhouse gas emissions to zero, including\u2026",
+            "link": null,
+            "activity_status": null
+          }
+        ],
+        "similarly_named_profiles": [],
+        "articles": [],
+        "groups": [],
+        "meta": {
+          "thin_profile": false,
+          "last_updated": "2025-03-15T08:22:00Z"
+        }
+      },
+      "last_updated": "2023-10-26T11:34:30Z"
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "lookup_company_id": {
+    "path": "/api/v2/company/resolve-id",
+    "config": {
+      "operation": "lookup_company_id",
+      "id": "1441"
+    },
+    "response": {
+      "vanity_id": "google"
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "search_employees": {
+    "path": "/api/v2/company/employee/search/",
+    "config": {
+      "operation": "search_employees",
+      "company_profile_url": "https://www.linkedin.com/company/microsoft/",
+      "keyword_boolean": "ceo OR cto",
+      "keyword_regex": "ceo|cto",
+      "page_size": "10",
+      "country": "us",
+      "enrich_profiles": "enrich",
+      "resolve_numeric_id": "false"
+    },
+    "response": {
+      "employees": [
+        {
+          "profile_url": "https://www.linkedin.com/in/satyanadella",
+          "profile": {
+            "public_identifier": "williamhgates",
+            "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/a41217d5753de1f3f4906f9da43dbad6",
+            "background_cover_image_url": null,
+            "first_name": "Bill",
+            "last_name": "Gates",
+            "full_name": "Bill Gates",
+            "occupation": "Co-chair at Bill & Melinda Gates Foundation",
+            "headline": "Co-chair, Bill & Melinda Gates Foundation",
+            "summary": "Co-chair of the Bill & Melinda Gates Foundation. Founder of Breakthrough Energy. Co-founder of Microsoft. Voracious reader. Avid traveler. Active blogger.",
+            "country": "US",
+            "country_full_name": "United States of America",
+            "city": "Seattle",
+            "state": "Washington",
+            "experiences": [
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 2015
+                },
+                "ends_at": null,
+                "company": "Breakthrough Energy ",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/breakthrough-energy/",
+                "title": "Founder",
+                "description": null,
+                "location": null,
+                "logo_url": "https://assets.enrichlayer.com/ll/D560BAQFRMYiQN7-2kA/company-logo_100_100/B56ZoI4SGPI0AQ-/0/1761085563539/breakthrough_energy_logo?e=2147483647&v=beta&t=J6RbEvs17fl1uiEaXQm0hmXy4imx36mV_Hu80JcR1DE"
+              },
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 2000
+                },
+                "ends_at": null,
+                "company": "Bill & Melinda Gates Foundation",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/bill-&-melinda-gates-foundation/",
+                "title": "Co-chair",
+                "description": null,
+                "location": null,
+                "logo_url": "https://assets.enrichlayer.com/ll/D560BAQEgMqqFTd40Tg/company-logo_100_100/company-logo_100_100/0/1736784969376/bill__melinda_gates_foundation_logo?e=2147483647&v=beta&t=2JH2cMcZms60vPAMbvVZyMeYXosQ1Jjy5axDlyeQ1Ww"
+              }
+            ],
+            "education": [
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 1973
+                },
+                "ends_at": {
+                  "day": 31,
+                  "month": 12,
+                  "year": 1975
+                },
+                "field_of_study": null,
+                "degree_name": null,
+                "school": "Harvard University",
+                "school_linkedin_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/518005a5a755bd1d2fde90f216039bbc"
+              },
+              {
+                "starts_at": null,
+                "ends_at": null,
+                "field_of_study": null,
+                "degree_name": null,
+                "school": "Lakeside School",
+                "school_linkedin_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f0d32d5de696536e8b46133cb042250a"
+              }
+            ],
+            "languages": [],
+            "accomplishment_organisations": [],
+            "accomplishment_publications": [],
+            "accomplishment_honors_awards": [],
+            "accomplishment_patents": [],
+            "accomplishment_courses": [],
+            "accomplishment_projects": [],
+            "accomplishment_test_scores": [],
+            "volunteer_work": [],
+            "certifications": [],
+            "connections": null,
+            "people_also_viewed": [],
+            "recommendations": [],
+            "activities": [],
+            "similarly_named_profiles": [],
+            "articles": [],
+            "groups": []
+          },
+          "last_updated": "2023-10-26T11:34:30Z"
+        }
+      ],
+      "next_page": null
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "lookup_email": {
+    "path": "/api/v2/profile/resolve/email",
+    "config": {
+      "operation": "lookup_email",
+      "email": "satya@microsoft.com",
+      "lookup_depth": "deep",
+      "enrich_profile": "enrich"
+    },
+    "response": {
+      "profile": {
+        "public_identifier": "satyanadella",
+        "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/7d369850c9fe8c35e78a6a50c75334f5",
+        "background_cover_image_url": "https://assets.enrichlayer.com/pp/profilepic/fe878f911fecd238e169a23b12103b0e",
+        "first_name": "Satya",
+        "last_name": "Nadella",
+        "full_name": "Satya Nadella",
+        "follower_count": 11888127,
+        "occupation": "Chairman and CEO at Microsoft",
+        "headline": "Chairman and CEO at Microsoft",
+        "summary": "As chairman and CEO of Microsoft, I define my mission and that of my company as empowering every person and every organization on the planet to achieve more.",
+        "country": "US",
+        "country_full_name": "United States of America",
+        "city": "Redmond",
+        "state": "Washington",
+        "experiences": [
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 2,
+              "year": 2014
+            },
+            "ends_at": null,
+            "company": "Microsoft",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/microsoft",
+            "company_facebook_profile_url": null,
+            "title": "Chairman and CEO",
+            "description": null,
+            "location": "Greater Seattle Area",
+            "logo_url": "https://assets.enrichlayer.com/ll/D560BAQH32RJQCl3dDQ/company-logo_100_100/B56ZYQ0mrGGoAU-/0/1744038948046/microsoft_logo?e=2147483647&v=beta&t=rr_7_bFRKp6umQxIHErPOZHtR8dMPIYeTjlKFdotJBY"
+          },
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 2018
+            },
+            "ends_at": null,
+            "company": "University of Chicago",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/uchicago",
+            "company_facebook_profile_url": null,
+            "title": "Member Board Of Trustees",
+            "description": null,
+            "location": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f40c5f31ef246aeb1000ffb4e40f2991"
+          },
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 2017
+            },
+            "ends_at": {
+              "day": 31,
+              "month": 12,
+              "year": 2024
+            },
+            "company": "Starbucks",
+            "company_linkedin_profile_url": "https://www.linkedin.com/company/starbucks",
+            "company_facebook_profile_url": null,
+            "title": "Board Member",
+            "description": null,
+            "location": null,
+            "logo_url": "https://assets.enrichlayer.com/ll/C4D0BAQEQxk9y2rk7Hw/company-logo_100_100/company-logo_100_100/0/1631316692276?e=2147483647&v=beta&t=itdoVXP3gnqtQ7Grar4B3YoPyw-Ors9bKMZlZpb0QcY"
+          }
+        ],
+        "education": [
+          {
+            "starts_at": {
+              "day": 1,
+              "month": 1,
+              "year": 1994
+            },
+            "ends_at": {
+              "day": 31,
+              "month": 12,
+              "year": 1996
+            },
+            "field_of_study": null,
+            "degree_name": null,
+            "school": "The University of Chicago Booth School of Business",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/universityofchicagoboothschoolofbusiness",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/88fa467a62fbfc5325394253f14e8700",
+            "grade": null,
+            "activities_and_societies": null
+          },
+          {
+            "starts_at": {
+              "day": null,
+              "month": null,
+              "year": null
+            },
+            "ends_at": null,
+            "field_of_study": "Electrical Engineering",
+            "degree_name": "Bachelor\u2019s Degree",
+            "school": "Manipal Institute of Technology, Manipal",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/manipal-institute-of-technology",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/2aef6f72c73e3b40dbd56163897bdc04",
+            "grade": null,
+            "activities_and_societies": null
+          },
+          {
+            "starts_at": {
+              "day": null,
+              "month": null,
+              "year": null
+            },
+            "ends_at": null,
+            "field_of_study": "Computer Science",
+            "degree_name": "Master\u2019s Degree",
+            "school": "University of Wisconsin-Milwaukee",
+            "school_linkedin_profile_url": "https://www.linkedin.com/company/uwmilwaukee",
+            "school_facebook_profile_url": null,
+            "description": null,
+            "logo_url": "https://assets.enrichlayer.com/pp/profilepic/7916094135030c5846f34230e03dbaa2",
+            "grade": null,
+            "activities_and_societies": null
+          }
+        ],
+        "accomplishment_organisations": [],
+        "accomplishment_publications": [],
+        "accomplishment_honors_awards": [],
+        "accomplishment_patents": [],
+        "accomplishment_courses": [],
+        "accomplishment_projects": [],
+        "accomplishment_test_scores": [],
+        "volunteer_work": [],
+        "certifications": [],
+        "connections": 500,
+        "people_also_viewed": [
+          {
+            "link": "https://www.linkedin.com/in/kevinolearytv",
+            "name": "Kevin O'Leary",
+            "summary": "Chairman, O\u2019Leary Ventures and Beanstox",
+            "location": "West Palm Beach"
+          },
+          {
+            "link": "https://www.linkedin.com/in/aaronmartinfc",
+            "name": "Aaron Martin",
+            "summary": "Vice President Healthcare at Amazon",
+            "location": "Seattle"
+          },
+          {
+            "link": "https://www.linkedin.com/in/guthriescott",
+            "name": "Scott Guthrie",
+            "summary": "Executive Vice President at Microsoft",
+            "location": "Bellevue"
+          },
+          {
+            "link": "https://www.linkedin.com/in/toufisaliba",
+            "name": "Toufi Saliba",
+            "summary": "Author TODA/IP  .  | . CEO HyperCycle.AI  .  | . Chair - International Protocols for AI Security IEEE",
+            "location": "San Francisco"
+          },
+          {
+            "link": "https://www.linkedin.com/in/rajeshgopinathan",
+            "name": "Rajesh Gopinathan",
+            "summary": null,
+            "location": "Mumbai"
+          }
+        ],
+        "recommendations": [],
+        "activities": [
+          {
+            "title": "Microsoft has been positioned as a Leader for the fourteenth consecutive year in the Gartner 2021 Magic Quadrant for Analytics and Business\u2026",
+            "link": null,
+            "activity_status": null
+          },
+          {
+            "title": "On March 17, we\u2019re trying something we\u2019ve never done before: Microsoft will host #Include2021, a free, global, digital event focused on diversity &\u2026",
+            "link": null,
+            "activity_status": null
+          },
+          {
+            "title": "I talked to Bill Gates about his important new book, which provides a framework to reduce our world\u2019s greenhouse gas emissions to zero, including\u2026",
+            "link": null,
+            "activity_status": null
+          }
+        ],
+        "similarly_named_profiles": [],
+        "articles": [],
+        "groups": [],
+        "meta": {
+          "thin_profile": false,
+          "last_updated": "2025-03-15T08:22:00Z"
+        }
+      },
+      "last_updated": "2023-10-26T11:34:30Z"
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "lookup_phone": {
+    "path": "/api/v2/resolve/phone",
+    "config": {
+      "operation": "lookup_phone",
+      "phone_number": "+14155552671"
+    },
+    "response": {
+      "linkedin_profile_url": "https://www.linkedin.com/in/kevinolearytv",
+      "twitter_profile_url": "https://www.twitter.com/enrichlayer",
+      "facebook_profile_url": "https://www.facebook.com/zuck"
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_job": {
+    "path": "/api/v2/job",
+    "config": {
+      "operation": "get_job",
+      "url": "https://www.linkedin.com/jobs/view/4222036951/"
+    },
+    "response": {
+      "linkedin_internal_id": "content-strategist-at-microsoft-3257696537",
+      "job_description": "The Global Demand Center (GDC) within the Cloud Marketing group is leading the marketing transformation of Microsoft\u2019s largest and fastest growing commercial businesses. Our always-on integrated marketing programs work to nurture and acquire new customers across segments, targeting business and technical audiences across our commercial cloud portfolio, with programs available in 42 markets and 30 languages. The GDC team is modernizing and integrating these channels through advanced analytics, marketing automation, and digital marketing. We are on a mission to drive market share, consumption, and consistent double-digit+ revenue growth. Content is the fuel that drives the digitally connected customer journeys at the core of the GDC engine, and we\u2019re looking for a skilled, self-motivated, data-driven content strategist to build the content that motivates customers to take action. The Content Strategist will develop and execute content strategies for the ever-critical security space. You will be accountable for understanding the business priorities, getting close to our target audiences, defining the content journeys that attract, nurture, inspire, and retain customers, and manage quality execution and delivery of the content. You will work closely with your counterparts, the integrated marketing strategists, to drive business outcomes. Your network will include product marketers, integrated marketers, relationship marketers, sales, engineering, and agency partners to develop and execute on your plan. Our team: The Lifecycle Programs team is a fast-paced digital marketing organization. We put a focus on getting things done, simplifying anything and everything, and having fun while doing it. We all believe in connecting with customers at scale, supporting them at each stage of the customer journey, from early awareness and consideration, through onboarding and post purchase engagement. You will be in the middle of it all helping to identify the right content that delivers what customers want\u2014where they want it, when they want it, and how they want it.   \n  \n**_Responsibilities  \n_**\n  * Define content journeys for Security and IT professionals across industries.\n  * Build the resulting content strategies designed to accelerate the customer through the lifecycle.\n  * Create a content plan to address the insights in the customer journey and strategy, ensuring the content is aligned to what the customer needs at each stage.\n  * Deliver the content through our internal Studio or with select agency partners.\n  * Be a customer advocate. Relentlessly champion the customer and the experiences they have with the content you create\u2014how they find it, how they consume it, how they use it to make decisions.\n  * Leverage data and market insights for decision making including content optimization and new concept development.  \n\n\n**_Qualifications  \n  \n_** **Required/Minimum Qualifications  \n**\n  * Bachelor's Degree in Business, Marketing, Communications, Economics, Public Relations, or related field AND 1+ year(s) integrated marketing (e.g., digital, relationship, social media, campaign), event management, marketing strategy, business planning, marketing operations, or related work experience\n  * OR equivalent experience.  \n\n\n**_Additional Or Preferred Qualifications  \n_**\n  * Bachelor's Degree in Business, Marketing, Communications, Economics, Public Relations, or related field AND 3+ years integrated marketing (e.g., digital, relationship, social media, campaign), event management, marketing strategy, business planning, marketing operations, or related work experience\n  * OR equivalent experience.\n  * Strong customer centric mindset and demonstrated ability to put the customer first.\n  * Clear and persuasive communication skills, both written and verbal.\n  * Experience with program performance tracking and communications.\n  * Recognized as a self-starter with a bias for action.\n  * Creative problem-solving skills, and a growth mindset approach\n  * Experience managing across highly matrixed organizations, often with competing priorities.\n  * A demonstrated track record of business impact through content\n  * Well-versed in digital marketing best practices, including journey mapping.\n  * Understanding of content disciplines, including SEO, content strategy, and execution.\n  * Preferred, but not required: experience with commercial technology sales process  \n\n\nNarrative   \n  \nIntegrated Marketing IC3 - The typical base pay range for this role across the U.S. is USD $80,900 - $162,200 per year. There is a different range applicable to specific work locations, within the San Francisco Bay area and New York City metropolitan area, and the base pay range for this role in those locations is USD $105,300 - $176,900 per year.   \n  \nMicrosoft has different base pay ranges for different work locations within the United States, which allows us to pay employees competitively and consistently in different geographic markets (see below). The range above reflects the potential base pay across the U.S. for this role (except as noted below); the applicable base pay range will depend on what ultimately is determined to be the candidate\u2019s primary work location. Individual base pay depends on various factors, in addition to primary work location, such as complexity and responsibility of role, job duties/requirements, and relevant experience and skills. Base pay ranges are reviewed and typically updated each year. Offers are made within the base pay range applicable at the time.   \n  \nAt Microsoft certain roles are eligible for additional rewards, including merit increases, annual bonus and stock. These awards are allocated based on individual performance. In addition, certain roles also have the opportunity to earn sales incentives based on revenue or utilization, depending on the terms of the plan and the employee\u2019s role. Benefits/perks listed here may vary depending on the nature of employment with Microsoft and the country work location. U.S.-based employees have access to healthcare benefits, a 401(k) plan and company match, short-term and long-term disability coverage, basic life insurance, wellbeing benefits, paid vacation time, paid sick and mental health time, and several paid holidays, among others.   \n  \nOur commitment to pay equity   \n  \nWe are committed to the principle of pay equity \u2013 paying employees equitably for substantially similar work. To learn more about pay equity and our other commitments to increase representation and strengthen our culture of inclusion, check out our annual Diversity & Inclusion Report. ( https://www.microsoft.com/en-us/diversity/inside-microsoft/annual-report )   \n  \nUnderstanding roles at Microsoft   \n  \nThe top of this page displays the role for which the base pay ranges apply \u2013 Integrated Marketing IC3. The way we define roles includes two things: discipline (the type of work) and career stage (scope and complexity). The career stage has two parts \u2013 the first identifies whether the role is a manager (M), an individual contributor (IC), an admin-technician-retail (ATR) job, or an intern. The second part identifies the relative seniority of the role \u2013 a higher number (or later letter alphabetically in the case of ATR) indicates greater scope and complexity.   \n  \nMicrosoft is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to age, ancestry, color, family or medical care leave, gender identity or expression, genetic information, marital status, medical condition, national origin, physical or mental disability, political affiliation, protected veteran status, race, religion, sex (including pregnancy), sexual orientation, or any other characteristic protected by applicable laws, regulations and ordinances. We also consider qualified applicants regardless of criminal histories, consistent with legal requirements. If you need assistance and/or a reasonable accommodation due to a disability during the application or the recruiting process, please send a request via the Accommodation request form.   \n  \nThe salary for this role in the state of Colorado is between $108,200 and $162,200.   \n  \nAt Microsoft, certain roles are eligible for additional rewards, including annual bonus and stock. These awards are allocated based on individual performance. In addition, certain roles also have the opportunity to earn sales incentives based on revenue or utilization, depending on the terms of the plan and the employee\u2019s role. Benefits/perks listed below may vary depending on the nature of your employment with Microsoft and the country where you work. \n",
+      "apply_url": "https://www.linkedin.com/jobs/view/externalApply/3257696537?url=https%3A%2F%2Fcareers%2Emicrosoft%2Ecom%2Fus%2Fen%2Fjob%2F1451110%2FContent-Strategist%3Fjobsource%3Dlinkedin%26utm_source%3Dlinkedin%26utm_medium%3Dlinkedin%26utm_campaign%3Dlinkedin-feed&urlHash=I9BQ&trk=public_jobs_apply-link-offsite",
+      "title": "Content Strategist",
+      "location": {
+        "country": "United States",
+        "region": "Hawaii",
+        "city": null,
+        "postal_code": null,
+        "latitude": null,
+        "longitude": null,
+        "street": null
+      },
+      "company": {
+        "name": "Microsoft",
+        "url": "https://www.linkedin.com/company/microsoft",
+        "logo": "https://assets.enrichlayer.com/pp/profilepic/4a59d4a33444509d96ad84be4aef3593"
+      },
+      "seniority_level": "Mid-Senior level",
+      "industry": [
+        "IT Services and IT Consulting, Computer Hardware Manufacturing, and Software Development"
+      ],
+      "employment_type": "Full-time",
+      "job_functions": [
+        "Marketing"
+      ],
+      "total_applicants": 200
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "search_jobs": {
+    "path": "/api/v2/company/job",
+    "config": {
+      "operation": "search_jobs",
+      "job_type": "full-time",
+      "experience_level": "mid_senior_level",
+      "when": "past-month",
+      "flexibility": "remote",
+      "geo_id": "92000000",
+      "keyword": "engineer",
+      "search_id": "1035"
+    },
+    "response": {
+      "job": [
+        {
+          "company": "Microsoft",
+          "company_url": "https://www.linkedin.com/company/microsoft",
+          "job_title": "Product Management: Intern Opportunities for University Students",
+          "job_url": "https://www.linkedin.com/jobs/view/product-management-intern-opportunities-for-university-students-at-microsoft-3203330682",
+          "list_date": "2022-10-09",
+          "location": "New York, NY"
+        },
+        {
+          "company": "Microsoft",
+          "company_url": "https://www.linkedin.com/company/microsoft",
+          "job_title": "Content Strategist",
+          "job_url": "https://www.linkedin.com/jobs/view/content-strategist-at-microsoft-3257692764",
+          "list_date": "2022-10-21",
+          "location": "United States"
+        }
+      ],
+      "next_page_no": 1,
+      "next_page_api_url": "http://enrichlayer.com/api/pc/company/job?pagination=eyJwYWdlIjogMSwgImpvYnNfb2Zmc2V0IjogMjV9&search_id=1035",
+      "previous_page_no": null,
+      "previous_page_api_url": null
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_job_count": {
+    "path": "/api/v2/company/job/count",
+    "config": {
+      "operation": "get_job_count",
+      "job_type": "full-time",
+      "experience_level": "mid_senior_level",
+      "when": "past-month",
+      "flexibility": "remote",
+      "geo_id": "92000000",
+      "keyword": "engineer",
+      "search_id": "1035"
+    },
+    "response": {
+      "count": 887622
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "search_companies": {
+    "path": "/api/v2/search/company",
+    "config": {
+      "operation": "search_companies",
+      "country": "US",
+      "region": "Maryland OR \"New York\"",
+      "city": "\"Los Angeles\"",
+      "name": "circle || amelex",
+      "industry": "technology || manufacturing",
+      "employee_count_max": "1000",
+      "employee_count_min": "100",
+      "domain_name": "pfizer.com",
+      "page_size": "10",
+      "enrich_profiles": "enrich",
+      "use_cache": "if-present"
+    },
+    "response": {
+      "results": [
+        {
+          "linkedin_profile_url": "https://www.linkedin.com/company/apple/",
+          "profile": {
+            "linkedin_internal_id": "1441",
+            "description": "A problem isn't truly solved until it's solved for all. Googlers build products that help create opportunities for everyone, whether down the street or across the globe. Bring your insight, imagination and a healthy disregard for the impossible. Bring everything that makes you unique. Together, we can build for everyone.\nCheck out our career opportunities at careers.google.com.",
+            "website": "https://goo.gle/3m1IN7m",
+            "industry": "Software Development",
+            "company_size": [
+              10001,
+              null
+            ],
+            "company_size_on_linkedin": 319856,
+            "hq": {
+              "country": "US",
+              "city": "Mountain View",
+              "postal_code": "94043",
+              "line_1": "1600 Amphitheatre Parkway",
+              "is_hq": true,
+              "state": "CA"
+            },
+            "company_type": "PUBLIC_COMPANY",
+            "founded_year": null,
+            "specialities": [
+              "search",
+              "ads"
+            ],
+            "locations": [
+              {
+                "country": "US",
+                "city": "Mountain View",
+                "postal_code": "94043",
+                "line_1": "1600 Amphitheatre Parkway",
+                "is_hq": true,
+                "state": "CA"
+              },
+              {
+                "country": "US",
+                "city": "New York",
+                "postal_code": "10011",
+                "line_1": "111 8th Ave",
+                "is_hq": false,
+                "state": "NY"
+              }
+            ],
+            "name": "Google",
+            "tagline": null,
+            "universal_name_id": "google",
+            "profile_pic_url": "https://assets.enrichlayer.com/pp/...",
+            "background_cover_image_url": "https://assets.enrichlayer.com/pp/...",
+            "search_id": "1441",
+            "similar_companies": [
+              {
+                "name": "Amazon",
+                "link": "https://www.linkedin.com/company/amazon",
+                "industry": "Software Development",
+                "location": "Seattle, WA"
+              },
+              {
+                "name": "Microsoft",
+                "link": "https://www.linkedin.com/company/microsoft",
+                "industry": "Software Development",
+                "location": "Redmond, Washington"
+              }
+            ],
+            "affiliated_companies": [
+              {
+                "name": "YouTube",
+                "link": "https://www.linkedin.com/company/youtube",
+                "industry": "Software Development",
+                "location": "San Bruno, CA"
+              },
+              {
+                "name": "Google Cloud",
+                "link": "https://www.linkedin.com/showcase/google-cloud",
+                "industry": "Software Development",
+                "location": "Mountain View, California"
+              }
+            ],
+            "updates": [
+              {
+                "article_link": null,
+                "image": "https://assets.enrichlayer.com/pp/profilepic/57ef9922f8484ada3bd6001d1c68afa1",
+                "posted_on": {
+                  "day": 13,
+                  "month": 9,
+                  "year": 2022
+                },
+                "text": "Want to kick start your #LifeAtGoogle but not sure where to begin? Explore our Build Your Future site, where you can learn about developmental programs, learn tips for future interviews, sign up for informational events, and even hear real stories from Googlers who\u2019ve been where you are now. Get started \u2192 https://bit.ly/3SKPzQB",
+                "total_likes": 4267
+              },
+              {
+                "article_link": null,
+                "image": "https://assets.enrichlayer.com/pp/profilepic/57ef9922f8484ada3bd6001d1c68afa1",
+                "posted_on": null,
+                "text": "Ariana, welcome to Google. Here\u2019s to a year full of growth, learning, and experiences at #LifeAtGoogle! \ud83c\udf89",
+                "total_likes": 397
+              }
+            ],
+            "follower_count": 27472792,
+            "meta": {
+              "thin_profile": false,
+              "last_updated": "2023-10-26T11:34:30Z"
+            }
+          },
+          "last_updated": "2023-10-26T11:34:30Z"
+        }
+      ],
+      "next_page": null,
+      "total_result_count": 1
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "search_people": {
+    "path": "/api/v2/search/person",
+    "config": {
+      "operation": "search_people",
+      "country": "US",
+      "first_name": "Bill OR Mark",
+      "last_name": "Gates or Zuckerberg",
+      "current_role_title": "CEO || Founder",
+      "current_company_profile_url": "https://www.linkedin.com/company/apple",
+      "current_company_name": "Stripe OR Apple",
+      "region": "California or Washington",
+      "city": "Seattle OR \"Palo Alto\"",
+      "skills": "accounting",
+      "page_size": "10",
+      "enrich_profiles": "enrich",
+      "use_cache": "if-present"
+    },
+    "response": {
+      "results": [
+        {
+          "linkedin_profile_url": "https://www.linkedin.com/in/satyanadella",
+          "profile": {
+            "public_identifier": "satyanadella",
+            "profile_pic_url": "https://assets.enrichlayer.com/pp/profilepic/7d369850c9fe8c35e78a6a50c75334f5",
+            "background_cover_image_url": "https://assets.enrichlayer.com/pp/profilepic/fe878f911fecd238e169a23b12103b0e",
+            "first_name": "Satya",
+            "last_name": "Nadella",
+            "full_name": "Satya Nadella",
+            "follower_count": 11888127,
+            "occupation": "Chairman and CEO at Microsoft",
+            "headline": "Chairman and CEO at Microsoft",
+            "summary": "As chairman and CEO of Microsoft, I define my mission and that of my company as empowering every person and every organization on the planet to achieve more.",
+            "country": "US",
+            "country_full_name": "United States of America",
+            "city": "Redmond",
+            "state": "Washington",
+            "experiences": [
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 2,
+                  "year": 2014
+                },
+                "ends_at": null,
+                "company": "Microsoft",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/microsoft",
+                "company_facebook_profile_url": null,
+                "title": "Chairman and CEO",
+                "description": null,
+                "location": "Greater Seattle Area",
+                "logo_url": "https://assets.enrichlayer.com/ll/D560BAQH32RJQCl3dDQ/company-logo_100_100/B56ZYQ0mrGGoAU-/0/1744038948046/microsoft_logo?e=2147483647&v=beta&t=rr_7_bFRKp6umQxIHErPOZHtR8dMPIYeTjlKFdotJBY"
+              },
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 2018
+                },
+                "ends_at": null,
+                "company": "University of Chicago",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/uchicago",
+                "company_facebook_profile_url": null,
+                "title": "Member Board Of Trustees",
+                "description": null,
+                "location": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/f40c5f31ef246aeb1000ffb4e40f2991"
+              },
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 2017
+                },
+                "ends_at": {
+                  "day": 31,
+                  "month": 12,
+                  "year": 2024
+                },
+                "company": "Starbucks",
+                "company_linkedin_profile_url": "https://www.linkedin.com/company/starbucks",
+                "company_facebook_profile_url": null,
+                "title": "Board Member",
+                "description": null,
+                "location": null,
+                "logo_url": "https://assets.enrichlayer.com/ll/C4D0BAQEQxk9y2rk7Hw/company-logo_100_100/company-logo_100_100/0/1631316692276?e=2147483647&v=beta&t=itdoVXP3gnqtQ7Grar4B3YoPyw-Ors9bKMZlZpb0QcY"
+              }
+            ],
+            "education": [
+              {
+                "starts_at": {
+                  "day": 1,
+                  "month": 1,
+                  "year": 1994
+                },
+                "ends_at": {
+                  "day": 31,
+                  "month": 12,
+                  "year": 1996
+                },
+                "field_of_study": null,
+                "degree_name": null,
+                "school": "The University of Chicago Booth School of Business",
+                "school_linkedin_profile_url": "https://www.linkedin.com/company/universityofchicagoboothschoolofbusiness",
+                "school_facebook_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/88fa467a62fbfc5325394253f14e8700",
+                "grade": null,
+                "activities_and_societies": null
+              },
+              {
+                "starts_at": {
+                  "day": null,
+                  "month": null,
+                  "year": null
+                },
+                "ends_at": null,
+                "field_of_study": "Electrical Engineering",
+                "degree_name": "Bachelor\u2019s Degree",
+                "school": "Manipal Institute of Technology, Manipal",
+                "school_linkedin_profile_url": "https://www.linkedin.com/company/manipal-institute-of-technology",
+                "school_facebook_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/2aef6f72c73e3b40dbd56163897bdc04",
+                "grade": null,
+                "activities_and_societies": null
+              },
+              {
+                "starts_at": {
+                  "day": null,
+                  "month": null,
+                  "year": null
+                },
+                "ends_at": null,
+                "field_of_study": "Computer Science",
+                "degree_name": "Master\u2019s Degree",
+                "school": "University of Wisconsin-Milwaukee",
+                "school_linkedin_profile_url": "https://www.linkedin.com/company/uwmilwaukee",
+                "school_facebook_profile_url": null,
+                "description": null,
+                "logo_url": "https://assets.enrichlayer.com/pp/profilepic/7916094135030c5846f34230e03dbaa2",
+                "grade": null,
+                "activities_and_societies": null
+              }
+            ],
+            "accomplishment_organisations": [],
+            "accomplishment_publications": [],
+            "accomplishment_honors_awards": [],
+            "accomplishment_patents": [],
+            "accomplishment_courses": [],
+            "accomplishment_projects": [],
+            "accomplishment_test_scores": [],
+            "volunteer_work": [],
+            "certifications": [],
+            "connections": 500,
+            "people_also_viewed": [
+              {
+                "link": "https://www.linkedin.com/in/kevinolearytv",
+                "name": "Kevin O'Leary",
+                "summary": "Chairman, O\u2019Leary Ventures and Beanstox",
+                "location": "West Palm Beach"
+              },
+              {
+                "link": "https://www.linkedin.com/in/aaronmartinfc",
+                "name": "Aaron Martin",
+                "summary": "Vice President Healthcare at Amazon",
+                "location": "Seattle"
+              },
+              {
+                "link": "https://www.linkedin.com/in/guthriescott",
+                "name": "Scott Guthrie",
+                "summary": "Executive Vice President at Microsoft",
+                "location": "Bellevue"
+              },
+              {
+                "link": "https://www.linkedin.com/in/toufisaliba",
+                "name": "Toufi Saliba",
+                "summary": "Author TODA/IP  .  | . CEO HyperCycle.AI  .  | . Chair - International Protocols for AI Security IEEE",
+                "location": "San Francisco"
+              },
+              {
+                "link": "https://www.linkedin.com/in/rajeshgopinathan",
+                "name": "Rajesh Gopinathan",
+                "summary": null,
+                "location": "Mumbai"
+              }
+            ],
+            "recommendations": [],
+            "activities": [
+              {
+                "title": "Microsoft has been positioned as a Leader for the fourteenth consecutive year in the Gartner 2021 Magic Quadrant for Analytics and Business\u2026",
+                "link": null,
+                "activity_status": null
+              },
+              {
+                "title": "On March 17, we\u2019re trying something we\u2019ve never done before: Microsoft will host #Include2021, a free, global, digital event focused on diversity &\u2026",
+                "link": null,
+                "activity_status": null
+              },
+              {
+                "title": "I talked to Bill Gates about his important new book, which provides a framework to reduce our world\u2019s greenhouse gas emissions to zero, including\u2026",
+                "link": null,
+                "activity_status": null
+              }
+            ],
+            "similarly_named_profiles": [],
+            "articles": [],
+            "groups": [],
+            "meta": {
+              "thin_profile": false,
+              "last_updated": "2025-03-15T08:22:00Z"
+            }
+          },
+          "last_updated": "2023-10-26T11:34:30Z"
+        }
+      ],
+      "next_page": null,
+      "total_result_count": 1
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_credit_balance": {
+    "path": "/api/v2/credit-balance",
+    "config": {
+      "operation": "get_credit_balance"
+    },
+    "response": {
+      "credit_balance": 100000
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "check_disposable_email": {
+    "path": "/api/v2/disposable-email",
+    "config": {
+      "operation": "check_disposable_email",
+      "email": "satya@microsoft.com"
+    },
+    "response": {
+      "is_disposable_email": false,
+      "is_free_email": false
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  },
+  "get_personal_email": {
+    "path": "/api/v2/contact-api/personal-email",
+    "config": {
+      "operation": "get_personal_email",
+      "profile_url": "https://www.linkedin.com/in/williamhgates",
+      "twitter_profile_url": "https://x.com/enrichlayer",
+      "facebook_profile_url": "https://www.facebook.com/zuck",
+      "email_validation": "include",
+      "page_size": "0"
+    },
+    "response": {
+      "emails": [
+        "bill.gates@gatesfoundation.org",
+        "billg@microsoft.com",
+        "billgates@hotmail.com"
+      ],
+      "invalid_emails": []
+    },
+    "source": "https://enrichlayer.com/docs/api/v2/openapi.json"
+  }
+}
