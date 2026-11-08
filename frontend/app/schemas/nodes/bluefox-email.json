@@ -1,0 +1,1103 @@
+{
+  "$defs": {
+    "BluefoxEmailAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bluefox_email_api_key",
+          "default": "bluefox_email_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "project_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "project_id"
+      ],
+      "title": "Bluefox Email API Key",
+      "type": "object",
+      "x-credential-instructions": "In Bluefox Email, open Project Settings > API Keys and paste your project API key. Copy the project ID from Project Settings. NoClick checks the key by reading that project's settings.",
+      "x-credential-url": "https://bluefox.email/docs/api/"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom contact fields, sent as top-level properties. Discover field names in Bluefox Email.",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateSubscriberList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_subscriber_list",
+          "default": "create_subscriber_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "description": "Subscriber-facing list description.",
+          "title": "Description",
+          "type": "string"
+        },
+        "private": {
+          "default": false,
+          "title": "Private",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "title": "CreateSubscriberList",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete a contact and remove it from all subscriber lists.",
+      "properties": {
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteSubscriberList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_subscriber_list",
+          "default": "delete_subscriber_list",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteSubscriberList",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaign_id",
+            "placeholder": "Choose campaign",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignStats": {
+      "additionalProperties": false,
+      "description": "Read aggregate campaign delivery and engagement totals.",
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaign_id",
+            "placeholder": "Choose campaign",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_campaign_stats",
+          "default": "get_campaign_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaignStats",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "description": "Read this API key's project settings and connection evidence.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetSubscriber": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_subscriber",
+          "default": "get_subscriber",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "email"
+      ],
+      "title": "GetSubscriber",
+      "type": "object"
+    },
+    "GetSubscriberList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_subscriber_list",
+          "default": "get_subscriber_list",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetSubscriberList",
+      "type": "object"
+    },
+    "GetTransactionalEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "transactional_id": {
+          "minLength": 1,
+          "title": "Transactional Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "transactional_id",
+            "placeholder": "Choose transactional email",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_transactional_email",
+          "default": "get_transactional_email",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transactional_id"
+      ],
+      "title": "GetTransactionalEmail",
+      "type": "object"
+    },
+    "GetTriggeredEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "triggered_id": {
+          "minLength": 1,
+          "title": "Triggered Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "triggered_id",
+            "placeholder": "Choose triggered email",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_triggered_email",
+          "default": "get_triggered_email",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "triggered_id"
+      ],
+      "title": "GetTriggeredEmail",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Items per page (maximum 30).",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Items to skip; use next_skip from the preceding result.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Items per page (maximum 30).",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Items to skip; use next_skip from the preceding result.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListSubscriberLists": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Items per page (maximum 30).",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Items to skip; use next_skip from the preceding result.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_subscriber_lists",
+          "default": "list_subscriber_lists",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSubscriberLists",
+      "type": "object"
+    },
+    "ListSubscribers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Items per page (maximum 30).",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Items to skip; use next_skip from the preceding result.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ListSubscribers",
+      "type": "object"
+    },
+    "ListTransactionalEmails": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Items per page (maximum 30).",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Items to skip; use next_skip from the preceding result.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_transactional_emails",
+          "default": "list_transactional_emails",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTransactionalEmails",
+      "type": "object"
+    },
+    "ListTriggeredEmails": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Items per page (maximum 30).",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Items to skip; use next_skip from the preceding result.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_triggered_emails",
+          "default": "list_triggered_emails",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTriggeredEmails",
+      "type": "object"
+    },
+    "SendTransactionalEmail": {
+      "additionalProperties": false,
+      "description": "Queue one transactional email. Queue acceptance does not prove delivery.",
+      "properties": {
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "transactional_id": {
+          "minLength": 1,
+          "title": "Transactional Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "transactional_id",
+            "placeholder": "Choose transactional email",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "send_transactional_email",
+          "default": "send_transactional_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Template variables merged at the top level of the template context.",
+          "title": "Data"
+        }
+      },
+      "required": [
+        "email",
+        "transactional_id"
+      ],
+      "title": "SendTransactionalEmail",
+      "type": "object"
+    },
+    "SendTriggeredEmail": {
+      "additionalProperties": false,
+      "description": "Queue a triggered email for explicit recipients, or all active list subscribers if emails is omitted.",
+      "properties": {
+        "triggered_id": {
+          "minLength": 1,
+          "title": "Triggered Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "triggered_id",
+            "placeholder": "Choose triggered email",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "send_triggered_email",
+          "default": "send_triggered_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "email",
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicit recipients. Omit to send to every active subscriber on the email's list.",
+          "title": "Emails"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        }
+      },
+      "required": [
+        "triggered_id"
+      ],
+      "title": "SendTriggeredEmail",
+      "type": "object"
+    },
+    "SubscribeContact": {
+      "additionalProperties": false,
+      "description": "Subscribe a contact. The list's double opt-in may send a verification email.",
+      "properties": {
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "subscribe_contact",
+          "default": "subscribe_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom contact fields, sent as top-level properties. Discover field names in Bluefox Email.",
+          "title": "Custom Fields"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "unverified",
+                "active"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Double opt-in still applies when active is requested; inspect the actual response.",
+          "title": "Status",
+          "enum": [
+            "unverified",
+            "active"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_id",
+        "email"
+      ],
+      "title": "SubscribeContact",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom contact fields, sent as top-level properties. Discover field names in Bluefox Email.",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateSubscriber": {
+      "additionalProperties": false,
+      "description": "Pause, unsubscribe or reactivate; double opt-in may defer reactivation.",
+      "properties": {
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Contact email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_subscriber",
+          "default": "update_subscriber",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "paused",
+            "unsubscribed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "paused_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Future ISO 8601 date-time with timezone; required when pausing.",
+          "title": "Paused Until"
+        }
+      },
+      "required": [
+        "list_id",
+        "email",
+        "status"
+      ],
+      "title": "UpdateSubscriber",
+      "type": "object"
+    },
+    "UpdateSubscriberList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Choose subscriber list",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_subscriber_list",
+          "default": "update_subscriber_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "UpdateSubscriberList",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_subscriber_list": "#/$defs/CreateSubscriberList",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_subscriber_list": "#/$defs/DeleteSubscriberList",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_stats": "#/$defs/GetCampaignStats",
+          "get_contact": "#/$defs/GetContact",
+          "get_project": "#/$defs/GetProject",
+          "get_subscriber": "#/$defs/GetSubscriber",
+          "get_subscriber_list": "#/$defs/GetSubscriberList",
+          "get_transactional_email": "#/$defs/GetTransactionalEmail",
+          "get_triggered_email": "#/$defs/GetTriggeredEmail",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_subscriber_lists": "#/$defs/ListSubscriberLists",
+          "list_subscribers": "#/$defs/ListSubscribers",
+          "list_transactional_emails": "#/$defs/ListTransactionalEmails",
+          "list_triggered_emails": "#/$defs/ListTriggeredEmails",
+          "send_transactional_email": "#/$defs/SendTransactionalEmail",
+          "send_triggered_email": "#/$defs/SendTriggeredEmail",
+          "subscribe_contact": "#/$defs/SubscribeContact",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_subscriber": "#/$defs/UpdateSubscriber",
+          "update_subscriber_list": "#/$defs/UpdateSubscriberList"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriberLists"
+        },
+        {
+          "$ref": "#/$defs/GetSubscriberList"
+        },
+        {
+          "$ref": "#/$defs/CreateSubscriberList"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubscriberList"
+        },
+        {
+          "$ref": "#/$defs/DeleteSubscriberList"
+        },
+        {
+          "$ref": "#/$defs/ListSubscribers"
+        },
+        {
+          "$ref": "#/$defs/SubscribeContact"
+        },
+        {
+          "$ref": "#/$defs/GetSubscriber"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubscriber"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignStats"
+        },
+        {
+          "$ref": "#/$defs/ListTransactionalEmails"
+        },
+        {
+          "$ref": "#/$defs/GetTransactionalEmail"
+        },
+        {
+          "$ref": "#/$defs/SendTransactionalEmail"
+        },
+        {
+          "$ref": "#/$defs/ListTriggeredEmails"
+        },
+        {
+          "$ref": "#/$defs/GetTriggeredEmail"
+        },
+        {
+          "$ref": "#/$defs/SendTriggeredEmail"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BluefoxEmailAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bluefox-email Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
