@@ -15,6 +15,7 @@ BotsonicIcon.displayName = 'BotsonicIcon';
 export const BotsonicNode: NodeDefinition = {
     type: 'automation-botsonic',
     label: 'Botsonic',
+    category: 'ai',
     description: 'Bot FAQs, training data, conversations and starter questions',
     Icon: BotsonicIcon,
     iconColor: '',
