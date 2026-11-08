@@ -1,0 +1,753 @@
+{
+  "$defs": {
+    "DatagmaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "datagma_api_key",
+          "default": "datagma_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Datagma API Key",
+      "type": "object",
+      "x-credential-instructions": "Open Datagma \u2192 API, copy your API key, and paste it here. Enrichment requests can consume Datagma credits.",
+      "x-credential-url": "https://app.datagma.com/user-api"
+    },
+    "DetectJobChange": {
+      "additionalProperties": false,
+      "description": "Check whether a person still works at their last known company.",
+      "properties": {
+        "operation": {
+          "const": "detect_job_change",
+          "default": "detect_job_change",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "fullName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full name"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last known company"
+        },
+        "jobTitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last known job title"
+        }
+      },
+      "title": "DetectJobChange",
+      "type": "object"
+    },
+    "Enrich": {
+      "additionalProperties": false,
+      "description": "Enrich a person or company; optional enrichments can cost additional credits.",
+      "properties": {
+        "operation": {
+          "const": "enrich",
+          "default": "enrich",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email, LinkedIn URL, name with company, company name, website or French SIREN.",
+          "title": "Data"
+        },
+        "companyKeyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company keyword"
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country code"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "fullName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full name"
+        },
+        "companyPremium": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company LinkedIn information"
+        },
+        "companyFull": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company financial information"
+        },
+        "companyFrench": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "French company information"
+        },
+        "personFull": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full person profile"
+        },
+        "phoneFull": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use phone search instead when an email or social profile is available.",
+          "title": "Find cell phone"
+        },
+        "deepTraffic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website traffic information"
+        },
+        "debug": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include results normally filtered by Datagma.",
+          "title": "Debug"
+        }
+      },
+      "title": "Enrich",
+      "type": "object"
+    },
+    "FindPeople": {
+      "additionalProperties": false,
+      "description": "Find up to ten people by job title and company; successful searches cost ten credits.",
+      "properties": {
+        "operation": {
+          "const": "find_people",
+          "default": "find_people",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "currentJobTitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Join alternatives with OR, e.g. head of OR chief OR CEO.",
+          "title": "Job titles"
+        },
+        "linkedinId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company LinkedIn ID"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domain, e.g. algolia.com.",
+          "title": "Domain"
+        },
+        "currentCompanies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company name"
+        },
+        "countries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lowercase country names, e.g. france.",
+          "title": "Countries"
+        },
+        "fuzzy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allow approximate matches.",
+          "title": "Fuzzy"
+        },
+        "debug": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Disable non-relevant job-title filtering.",
+          "title": "Debug"
+        }
+      },
+      "title": "FindPeople",
+      "type": "object"
+    },
+    "FindWorkEmail": {
+      "additionalProperties": false,
+      "description": "Find a verified work email from a name and company name, domain or company LinkedIn URL.",
+      "properties": {
+        "operation": {
+          "const": "find_work_email",
+          "default": "find_work_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "fullName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instead of first and last name.",
+          "title": "Full name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name or domain.",
+          "title": "Company"
+        },
+        "linkedInSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company URL, e.g. https://www.linkedin.com/company/livestorm/. Datagma extracts the company domain.",
+          "title": "Company LinkedIn URL"
+        }
+      },
+      "title": "FindWorkEmail",
+      "type": "object"
+    },
+    "GetCredit": {
+      "additionalProperties": false,
+      "description": "Get the connected account's credit balance.",
+      "properties": {
+        "operation": {
+          "const": "get_credit",
+          "default": "get_credit",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional account email.",
+          "title": "Email"
+        }
+      },
+      "title": "GetCredit",
+      "type": "object"
+    },
+    "GetTwitterByEmail": {
+      "additionalProperties": false,
+      "description": "Get a Twitter profile from an email address.",
+      "properties": {
+        "operation": {
+          "const": "get_twitter_by_email",
+          "default": "get_twitter_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetTwitterByEmail",
+      "type": "object"
+    },
+    "GetTwitterByUsername": {
+      "additionalProperties": false,
+      "description": "Get a Twitter profile from a case-sensitive username or LinkedIn URL.",
+      "properties": {
+        "operation": {
+          "const": "get_twitter_by_username",
+          "default": "get_twitter_by_username",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-sensitive Twitter username.",
+          "title": "Username"
+        },
+        "linkedin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Without https, e.g. linkedin.com/in/raphaelazot.",
+          "title": "LinkedIn profile"
+        }
+      },
+      "title": "GetTwitterByUsername",
+      "type": "object"
+    },
+    "ReverseEmailLookup": {
+      "additionalProperties": false,
+      "description": "Look up a personal email outside the EU; use enrich for work emails.",
+      "properties": {
+        "operation": {
+          "const": "reverse_email_lookup",
+          "default": "reverse_email_lookup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ReverseEmailLookup",
+      "type": "object"
+    },
+    "ReversePhoneLookup": {
+      "additionalProperties": false,
+      "description": "Look up a person from a phone number.",
+      "properties": {
+        "operation": {
+          "const": "reverse_phone_lookup",
+          "default": "reverse_phone_lookup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Phone number",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country code including plus, e.g. +33.",
+          "title": "Code"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "ReversePhoneLookup",
+      "type": "object"
+    },
+    "SearchPhoneNumbers": {
+      "additionalProperties": false,
+      "description": "Find mobile phone numbers using an email and/or social profile.",
+      "properties": {
+        "operation": {
+          "const": "search_phone_numbers",
+          "default": "search_phone_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Social profile URL; Sales Navigator URLs are unsupported.",
+          "title": "Username"
+        },
+        "minimumMatch": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Datagma recommends 1 for accuracy.",
+          "title": "Minimum match"
+        },
+        "whatsapp_check": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Check if the mobile number has a WhatsApp account.",
+          "title": "Check WhatsApp"
+        }
+      },
+      "title": "SearchPhoneNumbers",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "detect_job_change": "#/$defs/DetectJobChange",
+          "enrich": "#/$defs/Enrich",
+          "find_people": "#/$defs/FindPeople",
+          "find_work_email": "#/$defs/FindWorkEmail",
+          "get_credit": "#/$defs/GetCredit",
+          "get_twitter_by_email": "#/$defs/GetTwitterByEmail",
+          "get_twitter_by_username": "#/$defs/GetTwitterByUsername",
+          "reverse_email_lookup": "#/$defs/ReverseEmailLookup",
+          "reverse_phone_lookup": "#/$defs/ReversePhoneLookup",
+          "search_phone_numbers": "#/$defs/SearchPhoneNumbers"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCredit"
+        },
+        {
+          "$ref": "#/$defs/FindWorkEmail"
+        },
+        {
+          "$ref": "#/$defs/Enrich"
+        },
+        {
+          "$ref": "#/$defs/DetectJobChange"
+        },
+        {
+          "$ref": "#/$defs/FindPeople"
+        },
+        {
+          "$ref": "#/$defs/SearchPhoneNumbers"
+        },
+        {
+          "$ref": "#/$defs/ReversePhoneLookup"
+        },
+        {
+          "$ref": "#/$defs/ReverseEmailLookup"
+        },
+        {
+          "$ref": "#/$defs/GetTwitterByUsername"
+        },
+        {
+          "$ref": "#/$defs/GetTwitterByEmail"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DatagmaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Datagma Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find work emails for these leads",
+    "Enrich a company domain",
+    "Check whether a contact changed jobs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
