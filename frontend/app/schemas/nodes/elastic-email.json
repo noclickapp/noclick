@@ -1,0 +1,1109 @@
+{
+  "$defs": {
+    "AddContacts": {
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_contacts",
+          "default": "add_contacts",
+          "title": "Add Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "custom_fields_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with string values, for example {\"city\":\"New York\",\"age\":\"34\"}. Only existing custom fields are saved.",
+          "title": "Custom Fields JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "listnames": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 512,
+                "minLength": 1,
+                "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add to Lists",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "AddContacts",
+      "type": "object"
+    },
+    "AddListContacts": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "List Name",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "maxLength": 254,
+            "minLength": 3,
+            "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Contact Emails",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "operation": {
+          "const": "add_list_contacts",
+          "default": "add_list_contacts",
+          "title": "Add Contacts to List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "emails"
+      ],
+      "title": "AddListContacts",
+      "type": "object"
+    },
+    "CreateList": {
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "New List Name",
+          "type": "string"
+        },
+        "emails": {
+          "description": "Explicit existing contacts to add. Elastic Email treats empty or omitted Emails as all contacts.",
+          "items": {
+            "maxLength": 254,
+            "minLength": 3,
+            "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Existing Contact Emails",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "allow_unsubscribe": {
+          "default": true,
+          "title": "Allow Unsubscribe",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_name",
+        "emails"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "CreateTemplate": {
+      "properties": {
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 1000000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "PlainText",
+            "AMP",
+            "CSS"
+          ],
+          "title": "Content Type",
+          "type": "string"
+        },
+        "template_scope": {
+          "default": "Personal",
+          "enum": [
+            "Personal",
+            "Global"
+          ],
+          "title": "Template Scope",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "subject",
+        "body",
+        "name"
+      ],
+      "title": "CreateTemplate",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteList": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "List Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "description": "Deletes the list and its memberships; contacts remain.",
+          "title": "Delete List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DeleteList",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "ElasticEmailAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "elastic_email_api_key",
+          "default": "elastic_email_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Elastic Email API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an Elastic Email v4 API key. Enable ViewContacts and ViewAccount for connection evidence and account details; ModifyContacts for contact and list writes; ViewTemplates and ModifyTemplates for templates; SendHttp for sending; ViewReports for delivery status. NoClick sends the key only to api.elasticemail.com.",
+      "x-credential-url": "https://app.elasticemail.com/marketing/settings/new/manage-api"
+    },
+    "GetAccount": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetContact": {
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetEmailStatus": {
+      "properties": {
+        "operation": {
+          "const": "get_email_status",
+          "default": "get_email_status",
+          "title": "Get Email Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "transaction_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "Transaction ID",
+          "type": "string"
+        },
+        "show_failed": {
+          "default": false,
+          "title": "Include Failed",
+          "type": "boolean"
+        },
+        "show_sent": {
+          "default": false,
+          "title": "Include Sent",
+          "type": "boolean"
+        },
+        "show_delivered": {
+          "default": false,
+          "title": "Include Delivered",
+          "type": "boolean"
+        },
+        "show_pending": {
+          "default": false,
+          "title": "Include Pending",
+          "type": "boolean"
+        },
+        "show_opened": {
+          "default": false,
+          "title": "Include Opened",
+          "type": "boolean"
+        },
+        "show_clicked": {
+          "default": false,
+          "title": "Include Clicked",
+          "type": "boolean"
+        },
+        "show_abuse": {
+          "default": false,
+          "title": "Include Abuse Reports",
+          "type": "boolean"
+        },
+        "show_unsubscribed": {
+          "default": false,
+          "title": "Include Unsubscribed",
+          "type": "boolean"
+        },
+        "show_errors": {
+          "default": false,
+          "title": "Include Errors",
+          "type": "boolean"
+        },
+        "show_message_ids": {
+          "default": false,
+          "title": "Include Message IDs",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "GetEmailStatus",
+      "type": "object"
+    },
+    "GetList": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "List Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "ListContacts": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Fetch one page. Continue with next_offset until has_more is false.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListListContacts": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Fetch one page. Continue with next_offset until has_more is false.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "List Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_list_contacts",
+          "default": "list_list_contacts",
+          "title": "List Contacts in List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ListListContacts",
+      "type": "object"
+    },
+    "ListLists": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Fetch one page. Continue with next_offset until has_more is false.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Fetch one page. Continue with next_offset until has_more is false.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scope_type": {
+          "default": "Personal",
+          "enum": [
+            "Personal",
+            "Global"
+          ],
+          "title": "Template Scope",
+          "type": "string"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "RemoveListContacts": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "List Name",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "maxLength": 254,
+            "minLength": 3,
+            "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Contact Emails",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "operation": {
+          "const": "remove_list_contacts",
+          "default": "remove_list_contacts",
+          "title": "Remove Contacts from List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "emails"
+      ],
+      "title": "RemoveListContacts",
+      "type": "object"
+    },
+    "SendTransactionalEmail": {
+      "properties": {
+        "operation": {
+          "const": "send_transactional_email",
+          "default": "send_transactional_email",
+          "description": "To and CC recipients are visible to each other. Success means accepted, not delivered.",
+          "title": "Send Transactional Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_email": {
+          "description": "Verified sender address, optionally with a display name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "items": {
+            "maxLength": 254,
+            "minLength": 3,
+            "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "To",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 254,
+                "minLength": 3,
+                "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "CC",
+          "ui:widget": "list"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 254,
+                "minLength": 3,
+                "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "BCC",
+          "ui:widget": "list"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 1000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "PlainText"
+          ],
+          "title": "Content Type",
+          "type": "string"
+        },
+        "template_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Name"
+        },
+        "merge_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with string values.",
+          "title": "Merge Fields JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[\\x20-\\x7E]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key and identical content only when retrying this send; retained by Elastic Email for 24 hours.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "from_email",
+        "to"
+      ],
+      "title": "SendTransactionalEmail",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$",
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "custom_fields_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with string values.",
+          "title": "Custom Fields JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateList": {
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "List Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "new_list_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New List Name"
+        },
+        "allow_unsubscribe": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Unsubscribe"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "UpdateList",
+      "type": "object"
+    },
+    "UpdateTemplate": {
+      "properties": {
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 1000000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "PlainText",
+            "AMP",
+            "CSS"
+          ],
+          "title": "Content Type",
+          "type": "string"
+        },
+        "template_scope": {
+          "default": "Personal",
+          "enum": [
+            "Personal",
+            "Global"
+          ],
+          "title": "Template Scope",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "description": "Overwrites existing template data with the supplied subject, body and scope.",
+          "title": "Replace Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "subject",
+        "body",
+        "name"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contacts": "#/$defs/AddContacts",
+          "add_list_contacts": "#/$defs/AddListContacts",
+          "create_list": "#/$defs/CreateList",
+          "create_template": "#/$defs/CreateTemplate",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_list": "#/$defs/DeleteList",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "get_account": "#/$defs/GetAccount",
+          "get_contact": "#/$defs/GetContact",
+          "get_email_status": "#/$defs/GetEmailStatus",
+          "get_list": "#/$defs/GetList",
+          "get_template": "#/$defs/GetTemplate",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_list_contacts": "#/$defs/ListListContacts",
+          "list_lists": "#/$defs/ListLists",
+          "list_templates": "#/$defs/ListTemplates",
+          "remove_list_contacts": "#/$defs/RemoveListContacts",
+          "send_transactional_email": "#/$defs/SendTransactionalEmail",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_list": "#/$defs/UpdateList",
+          "update_template": "#/$defs/UpdateTemplate"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/AddContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/UpdateList"
+        },
+        {
+          "$ref": "#/$defs/DeleteList"
+        },
+        {
+          "$ref": "#/$defs/ListListContacts"
+        },
+        {
+          "$ref": "#/$defs/AddListContacts"
+        },
+        {
+          "$ref": "#/$defs/RemoveListContacts"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/SendTransactionalEmail"
+        },
+        {
+          "$ref": "#/$defs/GetEmailStatus"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ElasticEmailAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Elastic-email Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
