@@ -1,0 +1,543 @@
+{
+  "get_account_status": {
+    "status": 200,
+    "body": {
+      "bank_account_status": "completed",
+      "verification": {
+        "overall_status": "completed",
+        "owner_verification": "not_required",
+        "business_verification": "completed"
+      },
+      "payment_providers": {
+        "airwallex_sg": {
+          "setup_status": "completed"
+        },
+        "atome_sg": {
+          "setup_status": "completed"
+        },
+        "dbs_sg": {
+          "setup_status": "pending"
+        },
+        "fave_sg": {
+          "setup_status": "completed"
+        },
+        "shopback_sg": {
+          "setup_status": "completed"
+        },
+        "shopee_pay": {
+          "setup_status": "completed"
+        },
+        "stripe_sg": {
+          "setup_status": "completed",
+          "payment_enabled": true,
+          "payout_enabled": true
+        }
+      }
+    },
+    "source": "https://docs.hitpayapp.com/apis/accounts/account-status"
+  },
+  "create_payment_request": {
+    "status": 200,
+    "body": {
+      "id": "9ef68e2e-3569-4f69-9f68-04c7e4bb007c",
+      "name": "Harvey Friesen",
+      "email": "test@gmail.com",
+      "phone": "+65489505050",
+      "amount": "10.00",
+      "currency": "sgd",
+      "is_currency_editable": false,
+      "status": "pending",
+      "purpose": "Purpose_1747817845",
+      "reference_number": "1747817845",
+      "payment_methods": [
+        "card"
+      ],
+      "url": "https://securecheckout.sandbox.hit-pay.com/payment-request/@qasg/9ef68e2e-3569-4f69-9f68-04c7e4bb007c/checkout",
+      "redirect_url": "https://google.com",
+      "webhook": "https://webhook.site/8cbdef58-cd15-441a-986d-9446235223ea",
+      "send_sms": true,
+      "send_email": true,
+      "sms_status": "pending",
+      "email_status": "pending",
+      "allow_repeated_payments": false,
+      "expiry_date": "2025-05-26T15:10:00",
+      "address": {
+        "line1": "177 River Valley Road",
+        "line2": "177 River Valley Road",
+        "city": "Singapore",
+        "state": "Central",
+        "country": "SG",
+        "postal_code": "10015"
+      },
+      "line_items": null,
+      "executor_id": 1363,
+      "created_at": "2025-05-21T16:57:25",
+      "updated_at": "2025-05-21T16:57:25",
+      "staff_id": "98888a69-2d7a-4695-811d-6df8cee30264",
+      "business_location_id": "9e42e6be-2ff8-4b37-ac14-07970d2e79ca",
+      "metadata": {
+        "key1": "value1",
+        "key2": "value2"
+      }
+    },
+    "source": "https://docs.hitpayapp.com/apis/payment-request/create-request"
+  },
+  "get_payment_request": {
+    "status": 200,
+    "body": {
+      "id": "9ef68e2e-3569-4f69-9f68-04c7e4bb007c",
+      "name": "Harvey Friesen",
+      "email": "test@gmail.com",
+      "phone": "+65489505050",
+      "amount": "10.00",
+      "currency": "sgd",
+      "is_currency_editable": false,
+      "status": "pending",
+      "purpose": "Purpose_1747817845",
+      "reference_number": "1747817845",
+      "payment_methods": [
+        "card"
+      ],
+      "url": "https://securecheckout.sandbox.hit-pay.com/payment-request/@qasg/9ef68e2e-3569-4f69-9f68-04c7e4bb007c/checkout",
+      "redirect_url": "https://google.com",
+      "webhook": "https://webhook.site/8cbdef58-cd15-441a-986d-9446235223ea",
+      "send_sms": true,
+      "send_email": true,
+      "sms_status": "pending",
+      "email_status": "pending",
+      "allow_repeated_payments": false,
+      "expiry_date": "2025-05-26T15:10:00",
+      "address": {
+        "city": "Singapore",
+        "line1": "177 River Valley Road",
+        "line2": "177 River Valley Road",
+        "state": "Central",
+        "country": "SG",
+        "postal_code": "10015"
+      },
+      "line_items": null,
+      "executor_id": "1363",
+      "created_at": "2025-05-21T16:57:25",
+      "updated_at": "2025-05-21T16:57:25",
+      "staff_id": "98888a69-2d7a-4695-811d-6df8cee30264",
+      "business_location_id": "9e42e6be-2ff8-4b37-ac14-07970d2e79ca",
+      "location": {
+        "id": "9e42e6be-2ff8-4b37-ac14-07970d2e79ca",
+        "name": "API_Location_1740101762910",
+        "street": "58 Izpod Parkway",
+        "postal_code": "079903",
+        "city": "Singapore",
+        "state": "Singapore",
+        "country": "sg",
+        "created_at": "2025-02-21T01:36:02.000000Z",
+        "updated_at": "2025-02-21T01:36:02.000000Z",
+        "active": true,
+        "business_id": "98567029-f559-49f9-916b-042a4255b32a",
+        "pickups": []
+      }
+    },
+    "source": "https://docs.hitpayapp.com/apis/payment-request/get-payment-status"
+  },
+  "delete_payment_request": {
+    "status": 200,
+    "body": {
+      "success": true
+    },
+    "source": "https://docs.hitpayapp.com/apis/payment-request/delete-request"
+  },
+  "create_customer": {
+    "status": 201,
+    "body": {
+      "id": "9b2ada28-be3c-47ab-883f-ba72e5d8305d",
+      "name": "John Doe",
+      "birth_date": "<string>",
+      "email": "<string>",
+      "phone_number": "<string>",
+      "address": {
+        "city": "<string>",
+        "state": "<string>",
+        "street": "<string>",
+        "postal_code": "<string>",
+        "country": "<string>"
+      },
+      "gender": "<string>",
+      "remark": "<string>",
+      "phone_number_country_code": "<string>",
+      "created_at": "2024-01-24T16:05:10+08:00",
+      "updated_at": "2024-01-24T16:05:10+08:00"
+    },
+    "source": "https://docs.hitpayapp.com/apis/customers/create-customer"
+  },
+  "get_customer": {
+    "status": 201,
+    "body": {
+      "id": "9b2ada28-be3c-47ab-883f-ba72e5d8305d",
+      "name": "John Doe",
+      "birth_date": "<string>",
+      "email": "<string>",
+      "phone_number": "<string>",
+      "address": {
+        "city": "<string>",
+        "state": "<string>",
+        "street": "<string>",
+        "postal_code": "<string>",
+        "country": "<string>"
+      },
+      "gender": "<string>",
+      "remark": "<string>",
+      "phone_number_country_code": "<string>",
+      "created_at": "2024-01-24T16:05:10+08:00",
+      "updated_at": "2024-01-24T16:05:10+08:00"
+    },
+    "source": "https://docs.hitpayapp.com/apis/customers/get-customer-details"
+  },
+  "update_customer": {
+    "status": 200,
+    "body": {
+      "id": "9b2ada28-be3c-47ab-883f-ba72e5d8305d",
+      "name": "John Doe",
+      "birth_date": "<string>",
+      "email": "<string>",
+      "phone_number": "<string>",
+      "address": {
+        "city": "<string>",
+        "state": "<string>",
+        "street": "<string>",
+        "postal_code": "<string>",
+        "country": "<string>"
+      },
+      "gender": "<string>",
+      "remark": "<string>",
+      "phone_number_country_code": "<string>",
+      "created_at": "2024-01-24T16:05:10+08:00",
+      "updated_at": "2024-01-24T16:05:10+08:00"
+    },
+    "source": "https://docs.hitpayapp.com/apis/customers/update-customer"
+  },
+  "delete_customer": {
+    "status": 204,
+    "body": 1,
+    "source": "https://docs.hitpayapp.com/apis/customers/delete-customer"
+  },
+  "list_charges": {
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "9ced76ac-1638-44df-b702-3f43f6592e2a",
+          "currency": "sgd",
+          "home_currency": "sgd",
+          "exchange_rate": "1.00000",
+          "amount": 70.56,
+          "fixed_fee": 0.6,
+          "discount_fee": 2.57,
+          "discount_fee_rate": 3.65,
+          "remark": "Order #9ced76aa-580f-4664-866d-a0d6df1cfc57",
+          "status": "succeeded",
+          "payment_method": {
+            "name": "card",
+            "display_logo": {
+              "sm": "https://api.hitpayapp.test/icons/methods/sm/visa.png",
+              "md": "https://api.hitpayapp.test/icons/methods/md/visa.png",
+              "lg": "https://api.hitpayapp.test/icons/methods/lg/visa.png",
+              "svg": "https://api.hitpayapp.test/icons/methods/svg/visa.svg",
+              "svg_square": "https://api.hitpayapp.test/icons/methods/svg_square/visa.svg",
+              "png_square": "https://api.hitpayapp.test/icons/methods/png_square/visa.png"
+            },
+            "method_logo": {
+              "sm": "https://api.hitpayapp.test/icons/methods/sm/card.png",
+              "md": "https://api.hitpayapp.test/icons/methods/md/card.png",
+              "lg": "https://api.hitpayapp.test/icons/methods/lg/card.png",
+              "svg": "https://api.hitpayapp.test/icons/methods/svg/card.svg",
+              "svg_square": "https://api.hitpayapp.test/icons/methods/svg_square/card.svg",
+              "png_square": "https://api.hitpayapp.test/icons/methods/png_square/card.png"
+            },
+            "data": {
+              "brand": "Visa",
+              "last4": "4242",
+              "country_code": "US",
+              "country": "United States of America"
+            }
+          },
+          "customer_id": "9ce1111d-e6c9-4511-95f9-6277d06299c1",
+          "customer": {
+            "name": "Ari",
+            "email": "hiaribahtiar@gmail.com",
+            "phone_number": "6285787995896"
+          },
+          "payment_request_id": "9ced76aa-ea65-46a1-a13a-16e9ae39620f",
+          "webhook_status": false,
+          "order_reference_number": "1007",
+          "executor": null,
+          "location": {
+            "id": "96e21521-3c8a-4c21-b76d-558d2cb8b846",
+            "name": "location 1",
+            "address": "jl ampera, west java, sg, 14023"
+          },
+          "channel": "api_store",
+          "admin_fee": false,
+          "closed_at": "2024-09-04T16:05:37+08:00",
+          "created_at": "2024-09-04T16:05:21+08:00",
+          "updated_at": "2024-09-04T16:35:40+08:00"
+        }
+      ],
+      "links": {
+        "first": null,
+        "last": null,
+        "prev": null,
+        "next": "https://api.sandbox.hit-pay.com/v1/charges?apiKey%5Bincrementing%5D=1&apiKey%5BpreventsLazyLoading%5D=0&apiKey%5Bexists%5D=1&apiKey%5BwasRecentlyCreated%5D=0&apiKey%5Btimestamps%5D=1&apiKey%5BusesUniqueIds%5D=0&statuses%5B0%5D=succeeded&statuses%5B1%5D=succeeded_manually&statuses%5B2%5D=refunded&statuses%5B3%5D=void&cursor=eyJidXNpbmVzc19jaGFyZ2VzLmlkIjoiOWQyZjJiYTYtZWQ2Yi00NGVjLWFmMGQtODg2NDk3YTEyMDJlIiwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ"
+      },
+      "meta": {
+        "path": "https://api.sandbox.hit-pay.com/v1/charges",
+        "per_page": 25,
+        "next_cursor": "eyJidXNpbmVzc19jaGFyZ2VzLmlkIjoiOWQyZjJiYTYtZWQ2Yi00NGVjLWFmMGQtODg2NDk3YTEyMDJlIiwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ",
+        "prev_cursor": null
+      }
+    },
+    "source": "https://docs.hitpayapp.com/apis/charges/get-charges"
+  },
+  "get_charge": {
+    "status": 200,
+    "body": {
+      "id": "9cecc92d-9d93-49d6-bd3f-2bb74dcbb283",
+      "currency": "sgd",
+      "home_currency": "sgd",
+      "exchange_rate": null,
+      "amount": 100,
+      "amount_without_fees": 95.85,
+      "refunded_amount": 0,
+      "fixed_fee": 0.5,
+      "discount_fee": 3.65,
+      "discount_fee_rate": 3.65,
+      "remark": "NEWUI from 2024-08-31 To 2024-08-31",
+      "status": "succeeded",
+      "payment_method": {
+        "code": "stripe_sg",
+        "display_logo": {
+          "sm": "https://api.sandbox.hit-pay.com/icons/methods/sm/visa.png",
+          "md": "https://api.sandbox.hit-pay.com/icons/methods/md/visa.png",
+          "lg": "https://api.sandbox.hit-pay.com/icons/methods/lg/visa.png",
+          "svg": "https://api.sandbox.hit-pay.com/icons/methods/svg/visa.svg",
+          "svg_square": "https://api.sandbox.hit-pay.com/icons/methods/svg_square/visa.svg",
+          "png_square": "https://api.sandbox.hit-pay.com/icons/methods/png_square/visa.png",
+          "method": "visa",
+          "iconName": "visa",
+          "displayName": "Visa"
+        },
+        "provider_reference": "ch_3Pv6duAMHowMCIhZ2P9NCA6j",
+        "type": "charge",
+        "name": "card",
+        "method_logo": {
+          "sm": "https://api.sandbox.hit-pay.com/icons/methods/sm/card.png",
+          "md": "https://api.sandbox.hit-pay.com/icons/methods/md/card.png",
+          "lg": "https://api.sandbox.hit-pay.com/icons/methods/lg/card.png",
+          "svg": "https://api.sandbox.hit-pay.com/icons/methods/svg/card.svg",
+          "svg_square": "https://api.sandbox.hit-pay.com/icons/methods/svg_square/card.svg",
+          "png_square": "https://api.sandbox.hit-pay.com/icons/methods/png_square/card.png",
+          "method": "card",
+          "iconName": "card",
+          "displayName": "Cards"
+        },
+        "data": {
+          "brand": "Visa",
+          "last4": "4242",
+          "country_code": "US",
+          "country": "United States of America"
+        }
+      },
+      "customer_id": "9a659602-eafd-4731-972d-424aef24fb2f",
+      "customer": {
+        "name": "KimC",
+        "email": "cherykim@yopmail.com",
+        "phone_number": "993348342"
+      },
+      "payment_request_id": null,
+      "webhook_status": false,
+      "order_reference_number": null,
+      "target_id": "9c0fd92e-1cc8-478f-8b2e-71ee8a218ec5",
+      "target_type": "business_recurring_plan",
+      "executor": null,
+      "location": null,
+      "channel": "api_recurring_dashboard",
+      "admin_fee": false,
+      "refunds": [],
+      "webhook_logs": [],
+      "terminal_id": null,
+      "closed_at": "2024-09-04T08:00:16+08:00",
+      "created_at": "2024-09-04T08:00:17+08:00",
+      "updated_at": "2024-09-04T08:01:19+08:00"
+    },
+    "source": "https://docs.hitpayapp.com/apis/charges/get-charge-detail"
+  },
+  "create_refund": {
+    "status": 200,
+    "body": {
+      "id": "9ef6957e-6b1b-4e08-8cde-d5f5c908418d",
+      "refunded_by": "QA SG",
+      "payment_id": "9a934d94-a41f-46c7-a934-c1ebf2436008",
+      "amount_refunded": 1,
+      "total_amount": 96.49,
+      "currency": "sgd",
+      "status": "succeeded",
+      "payment_method": "card",
+      "provider_fee": null,
+      "provider_fee_currency": null,
+      "refunded_at": "2025-05-21T09:17:52.000000Z",
+      "created_at": "2025-05-21T17:17:52"
+    },
+    "source": "https://docs.hitpayapp.com/apis/refund/refund"
+  },
+  "get_refund": {
+    "status": 200,
+    "body": {
+      "id": "a1feb98d-f31d-4378-9382-1a373853f7eb",
+      "refunded_by": null,
+      "payment_id": "a1feb5cb-fff3-4cd7-a5a1-a4e91307353d",
+      "amount_refunded": 10,
+      "total_amount": 110,
+      "currency": "sgd",
+      "status": "succeeded",
+      "payment_method": "card",
+      "provider_fee": null,
+      "provider_fee_currency": null,
+      "refunded_at": "2026-06-11T05:01:08.000000Z",
+      "created_at": "2026-06-11T05:01:08.000000Z"
+    },
+    "source": "https://docs.hitpayapp.com/apis/refund/refund-details"
+  },
+  "get_balances": {
+    "status": 200,
+    "body": [
+      {
+        "currency": "sgd",
+        "wallets": {
+          "available": 2036.25,
+          "deposit": 0,
+          "pending": 94.1,
+          "reserve": 5913.65
+        }
+      },
+      {
+        "currency": "usd",
+        "wallets": {
+          "available": 600,
+          "reserve": 0
+        }
+      }
+    ],
+    "source": "https://docs.hitpayapp.com/apis/balance/get-balances"
+  },
+  "list_payouts": {
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "9e10fcd2-f657-489b-947e-1383790b53bf",
+          "status": "paid",
+          "currency": "sgd",
+          "amount": 150.25,
+          "source_currency": "sgd",
+          "source_amount": 150.25,
+          "bank_name": "DBS Bank",
+          "bank_account": "\u2022\u2022\u20221234",
+          "remark": null,
+          "reference": "HITPAY-PAYOUT-001",
+          "arrival_date": "2026-09-18",
+          "created_at": "2026-09-17T14:18:42+08:00",
+          "updated_at": "2026-09-17T16:02:11+08:00"
+        }
+      ],
+      "meta": {
+        "per_page": 25,
+        "next_cursor": null,
+        "prev_cursor": null
+      }
+    },
+    "source": "https://docs.hitpayapp.com/apis/payouts/get-payouts"
+  },
+  "list_subscription_plans": {
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "975b1909-38f6-44f3-a0b1-c198b7478978",
+          "name": "subscription-plan_new_1664175178",
+          "description": "New_Description_1664175178",
+          "cycle": "custom",
+          "cycle_repeat": 1,
+          "cycle_frequency": "day",
+          "currency": "sgd",
+          "price": 123.45,
+          "amount": 123.45,
+          "reference": null,
+          "created_at": "2022-09-26T14:52:58",
+          "updated_at": "2022-09-26T14:52:58"
+        },
+        {
+          "id": "97533e84-4f48-4625-83de-1d2b3e3ae17b",
+          "name": "subscription-plan_new_1663837869",
+          "description": "New_Description_1663837869",
+          "cycle": "custom",
+          "cycle_repeat": 1,
+          "cycle_frequency": "day",
+          "currency": "sgd",
+          "price": 9999999.99,
+          "amount": 9999999.99,
+          "reference": null,
+          "created_at": "2022-09-22T17:11:09",
+          "updated_at": "2022-09-22T17:11:09"
+        }
+      ],
+      "links": {
+        "first": "https://api.sandbox.hit-pay.com/v1/subscription-plan?page=1",
+        "last": "https://api.sandbox.hit-pay.com/v1/subscription-plan?page=1",
+        "prev": null,
+        "next": null
+      },
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+          {
+            "url": null,
+            "label": "&laquo; Previous",
+            "active": false
+          },
+          {
+            "url": "https://api.sandbox.hit-pay.com/v1/subscription-plan?page=1",
+            "label": "1",
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next &raquo;",
+            "active": false
+          }
+        ],
+        "path": "https://api.sandbox.hit-pay.com/v1/subscription-plan",
+        "per_page": 25,
+        "to": 2,
+        "total": 2
+      }
+    },
+    "source": "https://docs.hitpayapp.com/apis/recurring-billing/get-all-plans"
+  },
+  "get_subscription_plan": {
+    "status": 200,
+    "body": {
+      "id": "973ee344-6737-4897-9929-edbc9d7bf433",
+      "name": "Spotify Premium",
+      "description": "Spotify Monthly Subscription",
+      "cycle": "monthly",
+      "cycle_repeat": null,
+      "cycle_frequency": null,
+      "currency": "sgd",
+      "amount": 9.9,
+      "reference": "spotify_premium_2022",
+      "created_at": "2022-09-12T14:22:26",
+      "updated_at": "2022-09-12T14:22:26"
+    },
+    "source": "https://docs.hitpayapp.com/apis/recurring-billing/get-plan-details"
+  }
+}
