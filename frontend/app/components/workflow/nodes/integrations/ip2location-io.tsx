@@ -1,0 +1,18 @@
+import { memo } from 'react';
+import type { CSSProperties } from 'react';
+import type { NodeProps } from '@xyflow/react';
+import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import type { NodeDefinition } from '~/components/workflow/nodes/types';
+
+const Ip2LocationIoIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+    <img src="/icons/ip2location-io.png" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+);
+
+export const Ip2LocationIoNode: NodeDefinition = {
+    type: 'automation-ip2location-io', label: 'IP2Location.io',
+    description: 'Look up IPv4 and IPv6 geolocation and proxy data',
+    Icon: Ip2LocationIoIcon, iconColor: '',
+    dimensions: { width: 90, height: 90, iconSize: 48 },
+    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={Ip2LocationIoIcon} iconColor="" />),
+};
