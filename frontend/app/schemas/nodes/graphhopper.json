@@ -1,0 +1,3738 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "curbside": {
+          "anyOf": [
+            {
+              "enum": [
+                "right",
+                "left",
+                "any"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. Specifies on which side a point should be relative to the driver when she leaves/arrives at a start/target/via point. Only supported for motor vehicles and OpenStreetMap.",
+          "title": "Curbside",
+          "enum": [
+            "right",
+            "left",
+            "any"
+          ],
+          "x-enum-searchable": true
+        },
+        "lat": {
+          "description": "Latitude of location.",
+          "title": "Lat",
+          "type": "number"
+        },
+        "location_id": {
+          "description": "Specifies the id of the location.",
+          "title": "Location Id",
+          "type": "string"
+        },
+        "lon": {
+          "description": "Longitude of location.",
+          "title": "Lon",
+          "type": "number"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of location.",
+          "title": "Name"
+        },
+        "street_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. Specifies a hint for each address to better snap the coordinates (lon,lat) to road network. E.g. if there is an address or house with two or more neighboring streets you can control for which street the closest location is looked up.",
+          "title": "Street Hint"
+        }
+      },
+      "required": [
+        "lat",
+        "location_id",
+        "lon"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "Algorithm": {
+      "additionalProperties": false,
+      "properties": {
+        "objective": {
+          "anyOf": [
+            {
+              "enum": [
+                "transport_time",
+                "completion_time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Objective",
+          "enum": [
+            "transport_time",
+            "completion_time"
+          ],
+          "x-enum-searchable": true
+        },
+        "problem_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "min",
+                "min-max"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Problem Type",
+          "enum": [
+            "min",
+            "min-max"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "Algorithm",
+      "type": "object"
+    },
+    "CalculateMatrixConfig": {
+      "additionalProperties": false,
+      "description": "POST Matrix Endpoint.",
+      "properties": {
+        "fail_fast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies whether or not the matrix calculation should return with an error as soon as possible in case some points cannot be found or some points are not connected. If set to `false` the time/weight/distance matrix will be calculated for all valid points and contain the `null` value for all entries that could not be calculated. The `hint` field of the response will also contain additional information about what went wrong (see its documentation).",
+          "title": "Fail Fast"
+        },
+        "from_curbsides": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `curbsides`of symmetrical matrix",
+          "title": "From Curbsides"
+        },
+        "from_point_hints": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `point_hints`of symmetrical matrix",
+          "title": "From Point Hints"
+        },
+        "from_points": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The starting points for the routes in an array of `[longitude,latitude]`. For instance, if you want to calculate three routes from point A such as A->1, A->2, A->3 then you have one `from_point` parameter and three `to_point` parameters.",
+          "title": "From Points"
+        },
+        "out_arrays": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which matrices should be included in the response. Specify one or more of the following options `weights`, `times`, `distances`. The units of the entries of `distances` are meters, of `times` are seconds and of `weights` is arbitrary and it can differ for different vehicles or versions of this API.",
+          "title": "Out Arrays"
+        },
+        "snap_preventions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `snap_preventions` of symmetrical matrix",
+          "title": "Snap Preventions"
+        },
+        "to_curbsides": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `curbsides`of symmetrical matrix",
+          "title": "To Curbsides"
+        },
+        "to_point_hints": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `point_hints`of symmetrical matrix",
+          "title": "To Point Hints"
+        },
+        "to_points": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The destination points for the routes in an array of `[longitude,latitude]`.",
+          "title": "To Points"
+        },
+        "turn_costs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies if turn restrictions should be considered. Enabling this option increases the matrix computation time. Only supported for motor vehicles and OpenStreetMap.",
+          "title": "Turn Costs"
+        },
+        "vehicle": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vehicle",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "calculate_matrix",
+          "default": "calculate_matrix",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CalculateMatrixConfig",
+      "type": "object"
+    },
+    "CalculateRouteConfig": {
+      "additionalProperties": false,
+      "description": "POST Route Endpoint.",
+      "properties": {
+        "algorithm": {
+          "anyOf": [
+            {
+              "enum": [
+                "round_trip",
+                "alternative_route"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rather than looking for the shortest or fastest path, this lets you solve two different problems related to routing:\nWith `round_trip`, the route will get you back to where you started. This is meant for fun (think of\na bike trip), so we will add some randomness. This requires `ch.disable=true`.\nWith `alternative_route`, we give you not one but several routes that are close to optimal, but\nnot too similar to each other. You can control both of these features with additional parameters, see below.\n",
+          "title": "Algorithm",
+          "enum": [
+            "round_trip",
+            "alternative_route"
+          ],
+          "x-enum-searchable": true
+        },
+        "alternative_route.max_paths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=alternative_route`, this parameter sets the number of maximum paths which should be calculated. Increasing can lead to worse alternatives.\n",
+          "title": "Alternative Route.Max Paths"
+        },
+        "alternative_route.max_share_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=alternative_route`, this parameter specifies how similar an alternative route can be to the optimal route. Increasing can lead to worse alternatives.\n",
+          "title": "Alternative Route.Max Share Factor"
+        },
+        "alternative_route.max_weight_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=alternative_route`, this parameter sets the factor by which the alternatives routes can be longer than the optimal route. Increasing can lead to worse alternatives.\n",
+          "title": "Alternative Route.Max Weight Factor"
+        },
+        "avoid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify which road classes and environments you would like to avoid.\nPossible values are `motorway`, `steps`, `track`, `toll`, `ferry`, `tunnel` and `bridge`.\nSeparate several values with `;`. Obviously not all the values make sense for all vehicle profiles e.g. `bike` is already forbidden on a `motorway`. Requires `ch.disable=true`.\n",
+          "title": "Avoid"
+        },
+        "block_area": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Block road access via a point with the format `latitude,longitude`\nor an area defined by a circle `lat,lon,radius` or a rectangle `lat1,lon1,lat2,lon2`.\nSeparate several values with `;`. Requires `ch.disable=true`.\n",
+          "title": "Block Area"
+        },
+        "calc_points": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If the points for the route should be calculated at all.\n",
+          "title": "Calc Points"
+        },
+        "ch.disable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this parameter in combination with one or more parameters from below.\n",
+          "title": "Ch.Disable"
+        },
+        "curbsides": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "any",
+                  "right",
+                  "left"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. It specifies on which side a point should be relative to the driver when she leaves/arrives at a start/target/via point. You need to specify this parameter for either none or all points. Only supported for motor vehicles and OpenStreetMap.",
+          "title": "Curbsides"
+        },
+        "debug": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, the output will be formatted.\n",
+          "title": "Debug"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to retrieve path details. You can request additional details for the route: `street_name`,\n`time`, `distance`, `max_speed`, `toll`, `road_class`, `road_class_link`, `road_access`, `road_environment`, `lanes`, and `surface`. Read more about the usage of path details [here](https://discuss.graphhopper.com/t/2539).\n",
+          "title": "Details"
+        },
+        "elevation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, a third coordinate, the altitude, is included with all positions in the response.\nThis changes the format of the `points` and `snapped_waypoints` fields of the response, in both their\nencodings. Unless you switch off the `points_encoded` parameter, you need special code on the\nclient side that can handle three-dimensional coordinates.\nA request can fail if the vehicle profile does not support elevation. See the features object for every vehicle profile.\n",
+          "title": "Elevation"
+        },
+        "heading_penalty": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time penalty in seconds for not obeying a specified heading. Requires `ch.disable=true`.\n",
+          "title": "Heading Penalty"
+        },
+        "headings": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Favour a heading direction for a certain point. Specify either one heading for the start point or as many as there are points.\nIn this case headings are associated by their order to the specific points. Headings are given as north based clockwise angle between 0 and 360 degree.\nThis parameter also influences the tour generated with `algorithm=round_trip` and forces the initial direction.  Requires `ch.disable=true`.\n",
+          "title": "Headings"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If instructions should be calculated and returned\n",
+          "title": "Instructions"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The locale of the resulting turn instructions. E.g. `pt_PT` for Portuguese or `de` for German.\n",
+          "title": "Locale"
+        },
+        "optimize": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Normally, the calculated route will visit the points in the order you specified them.\nIf you have more than two points, you can set this parameter to `\"true\"` and the points may be re-ordered to minimize the total travel time.\nKeep in mind that the limits on the number of locations of the Route Optimization API applies, and the request costs more credits.\n",
+          "title": "Optimize"
+        },
+        "pass_through": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, u-turns are avoided at via-points with regard to the `heading_penalty`. Requires `ch.disable=true`.\n",
+          "title": "Pass Through"
+        },
+        "point_hints": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. Specifies a hint for each point in the `points` array to prefer a certain street for the closest location lookup. E.g. if there is an address or house with two or more neighboring streets you can control for which street the closest location is looked up.",
+          "title": "Point Hints"
+        },
+        "points": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The points for the route in an array of `[longitude,latitude]`. For instance, if you want to calculate a route from point A to B to C\nthen you specify `points: [ [A_longitude, A_latitude], [B_longitude, B_latitude], [C_longitude, C_latitude]]\n",
+          "title": "Points"
+        },
+        "points_encoded": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allows changing the encoding of location data in the response. The default is polyline encoding, which is compact\nbut requires special client code to unpack. (We provide it in our JavaScript client library!)\nSet this parameter to `false` to switch the encoding to simple coordinate pairs like `[lon,lat]`, or `[lon,lat,elevation]`.\nSee the description of the response format for more information.\n",
+          "title": "Points Encoded"
+        },
+        "round_trip.distance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=round_trip`, this parameter configures approximative length of the resulting round trip. Requires `ch.disable=true`.\n",
+          "title": "Round Trip.Distance"
+        },
+        "round_trip.seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=round_trip`, this sets the random seed. Change this to get a different tour for each value.\n",
+          "title": "Round Trip.Seed"
+        },
+        "snap_preventions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to avoid snapping to a certain road class or road environment. Current supported values `motorway`, `trunk`, `ferry`, `tunnel`, `bridge` and `ford`",
+          "title": "Snap Preventions"
+        },
+        "vehicle": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vehicle",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "weighting": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines the way the ''best'' route is calculated. Default is `fastest`. Other options are `shortest` (e.g. for `vehicle=foot` or `bike`) and `short_fastest` which finds a reasonable balance between `shortest` and `fastest`. Requires `ch.disable=true`.\n",
+          "title": "Weighting"
+        },
+        "operation": {
+          "const": "calculate_route",
+          "default": "calculate_route",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CalculateRouteConfig",
+      "type": "object"
+    },
+    "ClusterConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "clustering": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClusterConfigurationClustering"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "response_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the response format. You can either choose `geojson` or `json`.",
+          "title": "Response Type"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClusterConfigurationRouting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "ClusterConfiguration",
+      "type": "object"
+    },
+    "ClusterConfigurationClustering": {
+      "additionalProperties": false,
+      "properties": {
+        "max_quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies max. quantity in a cluster",
+          "title": "Max Quantity"
+        },
+        "min_quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies min. quantity in a cluster",
+          "title": "Min Quantity"
+        },
+        "num_clusters": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the number of clusters",
+          "title": "Num Clusters"
+        }
+      },
+      "title": "ClusterConfigurationClustering",
+      "type": "object"
+    },
+    "ClusterConfigurationRouting": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_per_meter": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cost per meter (travel distance)",
+          "title": "Cost Per Meter"
+        },
+        "cost_per_second": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cost per second (travel time)",
+          "title": "Cost Per Second"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The routing profile for which the travel times and distances should be calculated. Other profiles are listed [here](#section/Map-Data-and-Routing-Profiles/OpenStreetMap)",
+          "title": "Profile"
+        }
+      },
+      "title": "ClusterConfigurationRouting",
+      "type": "object"
+    },
+    "ClusterCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClusterCustomerAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "id of customer",
+          "title": "Id"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "demand of customer",
+          "title": "Quantity"
+        }
+      },
+      "title": "ClusterCustomer",
+      "type": "object"
+    },
+    "ClusterCustomerAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude",
+          "title": "Lon"
+        },
+        "street_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. Specifies a hint for each address to better snap the coordinates (lon,lat) to road network. E.g. if there is an address or house with two or more neighboring streets you can control for which street the closest location is looked up.",
+          "title": "Street Hint"
+        }
+      },
+      "title": "ClusterCustomerAddress",
+      "type": "object"
+    },
+    "Configuration": {
+      "additionalProperties": false,
+      "properties": {
+        "routing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Routing"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Configuration",
+      "type": "object"
+    },
+    "CostMatrix": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON data of matrix response",
+          "title": "Data"
+        },
+        "location_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Ids"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "vehicle profile or empty if catch all fallback",
+          "title": "Profile"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "default",
+                "google"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "type of cost matrix, currently default or google are supported",
+          "title": "Type",
+          "enum": [
+            "default",
+            "google"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "CostMatrix",
+      "type": "object"
+    },
+    "GeocodeConfig": {
+      "additionalProperties": false,
+      "description": "Geocoding Endpoint.",
+      "properties": {
+        "operation": {
+          "const": "geocode",
+          "default": "geocode",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you do forward geocoding, this is `required` and is a textual description of the address you are looking for.",
+          "title": "Q"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display the search results for the specified locale. Currently French (fr), English (en), German (de) and Italian (it) are supported. If the locale wasn't found the default (en) is used.",
+          "title": "Locale"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the maximum number of results to return",
+          "title": "Limit"
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "It is `required` to be `true` if you want to do a reverse geocoding request. If it is `true`, `point` must be defined as well, and `q` must not be used.",
+          "title": "Reverse"
+        },
+        "debug": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, the output will be formatted.",
+          "title": "Debug"
+        },
+        "point": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "_Forward geocoding_: The location bias in the format 'latitude,longitude' e.g. point=45.93272,11.58803. _Reverse geocoding_: The location to find amenities, cities.",
+          "title": "Point"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The provider parameter is currently under development and can fall back to `default` at any time.\nThe intend is to provide alternatives to our default geocoder. Each provider has its own strenghts and might fit better for certain scenarios, so it's worth to compare the different providers.\nTo try it append the `provider`parameter to the URL like `&provider=nominatim`,\nthe result structure should be identical in all cases - if not, please report this back to us.\nKeep in mind that some providers do not support certain parameters or don't return some fields, for example `osm_id` and `osm_type` are not supported by every geocoding provider.\nIf you would like to use additional parameters of one of the providers, but it's not available for the GraphHopper Geocoding API, yet? Please contact us.\n\nThe credit costs can be different for all providers - see [here](https://support.graphhopper.com/support/solutions/articles/44000718211-what-is-one-credit-) for more information about it.\n\nCurrently, only the default provider and gisgraphy supports autocompletion of partial search strings.\n\nAll providers support normal \"forward\" geocoding and reverse geocoding via `reverse=true`.\n\n#### Default (`provider=default`)\n\nThis provider returns results of our internal geocoding engine, as described above.\nIn addition to the above documented parameters the following parameters are possible:\n* `bbox` - the expected format is `minLon,minLat,maxLon,maxLat`\n* `osm_tag` - you can filter `key:value` or exclude places with certain OpenStreetMap tags `!key:value`. E.g. `osm_tag=tourism:museum` or just the key `osm_tag=tourism`. To exclude multiple tags you add multiple `osm_tag` parameters.\n\n#### Nominatim (`provider=nominatim`)\n\nThe GraphHopper Directions API uses a commercially hosted Nominatim geocoder. You can try this provider [here](https://nominatim.openstreetmap.org/). The provider does **not** fall under the [restrictions](https://operations.osmfoundation.org/policies/nominatim/) of the Nominatim instance hosted by OpenStreetMap.\n\nIn addition to the above documented parameters Nominatim allows to use the following parameters, which can be used as documented [here](https://github.com/openstreetmap/Nominatim/blob/master/docs/api/Search.md#parameters):\n\n* `viewbox` - the expected format is `minLon,minLat,maxLon,maxLat`\n* `bounded` - If 1 and a viewbox is given, restrict the result to items contained within that viewbox. Default is 0.\n\n#### Gisgraphy (`provider=gisgraphy`)\n\nThis provider returns results from the Gisgraphy geocoder which you can try [here](https://services.gisgraphy.com/static/leaflet/index.html).\n\n**Limitations:** The `locale` parameter is not supported. Gisgraphy does not return OSM tags or an extent.\n\nGisgraphy has a special autocomplete API, which you can use by adding `autocomplete=true` (does not work with `reverse=true`). The autocomplete API is optimized on predicting text input, but returns less information.\n\nIn addition to the above documented parameters Gisgraphy allows to use the following parameters, which can be used as documented [here](https://www.gisgraphy.com/documentation/user-guide.php#geocodingservice):\n\n* `radius` - radius in meters\n* `country` - restrict search for the specified country. The value must be the ISO 3166 Alpha 2 code of the country.\n\n#### NetToolKit (`provider=nettoolkit`)\n\nThis provider returns results from the NetToolKit provider which is specialized for US addresses and provides a wrapper around Nominatim for other addresses. You can try it [here](https://www.nettoolkit.com/geo/demo).\n\nThe following additional NetToolKit parameters are supported (read [here](https://www.nettoolkit.com/docs/geo/geocoding) for more details):\n- `source`: User can choose which source provider to geocode the address, this value is \"NetToolKit\" by default\n- `country_code`: an iso-3166-2 country code (e.g : US) filter the results to the specify country code\n\n**Limitations:** NetToolKit does not support the `locale` parameter. NetToolKit does not return OSM tags (e.g. osm_id, osm_type, osm_value).\n\n#### OpenCage Data (`provider=opencagedata`)\n\nThis provider returns results from the OpenCageData geocoder which you can try [here](https://geocoder.opencagedata.com/demo).\n\nIn addition to the above documented parameters OpenCage Data allows to use the following parameters, which can be used as documented [here](https://geocoder.opencagedata.com/api#forward-opt):\n\n* countrycode - The country code is a two letter code as defined by the ISO 3166-1 Alpha 2 standard. E.g. gb for the United Kingdom, fr for France, us for United States. \n* bounds - the expected format is `minLon,minLat,maxLon,maxLat`\n",
+          "title": "Provider"
+        }
+      },
+      "title": "GeocodeConfig",
+      "type": "object"
+    },
+    "GetClusteringSolutionConfig": {
+      "additionalProperties": false,
+      "description": "GET Batch Solution Endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_clustering_solution",
+          "default": "get_clustering_solution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job ID returned by the corresponding submission operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetClusteringSolutionConfig",
+      "type": "object"
+    },
+    "GetCoverageConfig": {
+      "additionalProperties": false,
+      "description": "Coverage information.",
+      "properties": {
+        "operation": {
+          "const": "get_coverage",
+          "default": "get_coverage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCoverageConfig",
+      "type": "object"
+    },
+    "GetIsochroneConfig": {
+      "additionalProperties": false,
+      "description": "Isochrone Endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_isochrone",
+          "default": "get_isochrone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "point": {
+          "description": "Specify the start coordinate",
+          "title": "Point",
+          "type": "string"
+        },
+        "time_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify which time the vehicle should travel. In seconds.",
+          "title": "Time Limit"
+        },
+        "distance_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify which distance the vehicle should travel. In meters.",
+          "title": "Distance Limit"
+        },
+        "vehicle": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The vehicle profile for which the route should be calculated.\n",
+          "title": "Vehicle",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "buckets": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number by which to divide the given `time_limit` to create `buckets` nested isochrones of time intervals `time_limit-n*time_limit/buckets`. Applies analogously to `distance_limit`.",
+          "title": "Buckets"
+        },
+        "reverse_flow": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `false` the flow goes from point to the polygon, if `true` the flow goes from the polygon \"inside\" to the point.\nExample use case for `false`&#58; *How many potential customer can be reached within 30min travel time from your store* vs. `true`&#58; *How many customers can reach your store within 30min travel time.*\n",
+          "title": "Reverse Flow"
+        },
+        "weighting": {
+          "anyOf": [
+            {
+              "enum": [
+                "fastest",
+                "shortest"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use `\"shortest\"` to get an isodistance line instead of an isochrone.",
+          "title": "Weighting",
+          "enum": [
+            "fastest",
+            "shortest"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "point"
+      ],
+      "title": "GetIsochroneConfig",
+      "type": "object"
+    },
+    "GetMatrixConfig": {
+      "additionalProperties": false,
+      "description": "GET Matrix Endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_matrix",
+          "default": "get_matrix",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "point": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify multiple points in `latitude,longitude` for which the weight-, route-, time- or distance-matrix should be calculated. In this case the starts are identical to the destinations. If there are N points, then NxN entries will be calculated. The order of the point parameter is important. Specify at least three points. Cannot be used together with from_point or to_point.",
+          "title": "Point"
+        },
+        "from_point": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The starting points for the routes in `latitude,longitude`. E.g. if you want to calculate the three routes A-&gt;1, A-&gt;2, A-&gt;3 then you have one from_point parameter and three to_point parameters.",
+          "title": "From Point"
+        },
+        "to_point": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The destination points for the routes in `latitude,longitude`.",
+          "title": "To Point"
+        },
+        "point_hint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. Specifies a hint for each `point` parameter to prefer a certain street for the closest location lookup. E.g. if there is an address or house with two or more neighboring streets you can control for which street the closest location is looked up.",
+          "title": "Point Hint"
+        },
+        "from_point_hint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For the from_point parameter. See point_hint",
+          "title": "From Point Hint"
+        },
+        "to_point_hint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For the to_point parameter. See point_hint",
+          "title": "To Point Hint"
+        },
+        "snap_prevention": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to avoid snapping to a certain road class or road environment. Current supported values `motorway`, `trunk`, `ferry`, `tunnel`, `bridge` and `ford`. Multiple values are specified like `snap_prevention=ferry&snap_prevention=motorway`\n",
+          "title": "Snap Prevention"
+        },
+        "curbside": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "any",
+                  "right",
+                  "left"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. It specifies on which side a point should be relative to the driver when she leaves/arrives at a start/target/via point. You need to specify this parameter for either none or all points. Only supported for motor vehicles and OpenStreetMap.",
+          "title": "Curbside"
+        },
+        "from_curbside": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "any",
+                  "right",
+                  "left"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Curbside setting for the from_point parameter. See curbside.",
+          "title": "From Curbside"
+        },
+        "to_curbside": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "any",
+                  "right",
+                  "left"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Curbside setting for the to_point parameter. See curbside.",
+          "title": "To Curbside"
+        },
+        "out_array": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which arrays should be included in the response. Specify one or more of the following options 'weights', 'times', 'distances'. To specify more than one array use e.g. out_array=times&out_array=distances. The units of the entries of distances are meters, of times are seconds and of weights is arbitrary and it can differ for different vehicles or versions of this API.",
+          "title": "Out Array"
+        },
+        "vehicle": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The vehicle profile for which the matrix should be calculated.",
+          "title": "Vehicle",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "fail_fast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies whether or not the matrix calculation should return with an error as soon as possible in case some points cannot be found or some points are not connected. If set to `false` the time/weight/distance matrix will be calculated for all valid points and contain the `null` value for all entries that could not be calculated. The `hint` field of the response will also contain additional information about what went wrong (see its documentation).",
+          "title": "Fail Fast"
+        },
+        "turn_costs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies if turn restrictions should be considered. Enabling this option increases the matrix computation time. Only supported for motor vehicles and OpenStreetMap.",
+          "title": "Turn Costs"
+        }
+      },
+      "title": "GetMatrixConfig",
+      "type": "object"
+    },
+    "GetMatrixSolutionConfig": {
+      "additionalProperties": false,
+      "description": "GET Batch Matrix Endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_matrix_solution",
+          "default": "get_matrix_solution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job ID returned by the corresponding submission operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetMatrixSolutionConfig",
+      "type": "object"
+    },
+    "GetOptimizationSolutionConfig": {
+      "additionalProperties": false,
+      "description": "GET the solution (batch mode).",
+      "properties": {
+        "operation": {
+          "const": "get_optimization_solution",
+          "default": "get_optimization_solution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job ID returned by the corresponding submission operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetOptimizationSolutionConfig",
+      "type": "object"
+    },
+    "GetRouteConfig": {
+      "additionalProperties": false,
+      "description": "GET Route Endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_route",
+          "default": "get_route",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "point": {
+          "description": "The points for which the route should be calculated. Format: `[latitude,longitude]`. Specify at least an origin and a destination. Via points are possible.\nThe maximum number depends on your plan.\n",
+          "items": {
+            "type": "string"
+          },
+          "title": "Point",
+          "type": "array"
+        },
+        "point_hint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `point_hint` is typically a road name to which the associated `point` parameter should be snapped to. Specify no `point_hint` parameter or the same number as you have `point` parameters.\n",
+          "title": "Point Hint"
+        },
+        "snap_prevention": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to avoid snapping to a certain road class or road environment. Currently supported values are `motorway`, `trunk`, `ferry`, `tunnel`, `bridge` and `ford`. Multiple values are specified like `snap_prevention=ferry&snap_prevention=motorway`.\n",
+          "title": "Snap Prevention"
+        },
+        "vehicle": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The vehicle profile for which the route should be calculated.\n",
+          "title": "Vehicle",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "curbside": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "any",
+                  "right",
+                  "left"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter. It specifies on which side a point should be relative to the driver when she leaves/arrives at a start/target/via point. You need to specify this parameter for either none or all points. Only supported for motor vehicles and OpenStreetMap.\n",
+          "title": "Curbside"
+        },
+        "turn_costs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies if turn restrictions should be considered. Enabling this option increases the route computation time. Only supported for motor vehicles and OpenStreetMap.\n",
+          "title": "Turn Costs"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The locale of the resulting turn instructions. E.g. `pt_PT` for Portuguese or `de` for German.\n",
+          "title": "Locale"
+        },
+        "elevation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, a third coordinate, the altitude, is included with all positions in the response.\nThis changes the format of the `points` and `snapped_waypoints` fields of the response, in both their\nencodings. Unless you switch off the `points_encoded` parameter, you need special code on the\nclient side that can handle three-dimensional coordinates.\nA request can fail if the vehicle profile does not support elevation. See the features object for every vehicle profile.\n",
+          "title": "Elevation"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to retrieve path details. You can request additional details for the route: `street_name`, \n`time`, `distance`, `max_speed`, `toll`, `road_class`, `road_class_link`, `road_access`, `road_environment`, `lanes`, and `surface`. Read more about the usage of path details [here](https://discuss.graphhopper.com/t/2539).\n",
+          "title": "Details"
+        },
+        "optimize": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Normally, the calculated route will visit the points in the order you specified them.\nIf you have more than two points, you can set this parameter to `\"true\"` and the points may be re-ordered to minimize the total travel time.\nKeep in mind that the limits on the number of locations of the Route Optimization API applies, and the request costs more credits.\n",
+          "title": "Optimize"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If instructions should be calculated and returned\n",
+          "title": "Instructions"
+        },
+        "calc_points": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If the points for the route should be calculated at all.\n",
+          "title": "Calc Points"
+        },
+        "debug": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, the output will be formatted.\n",
+          "title": "Debug"
+        },
+        "points_encoded": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allows changing the encoding of location data in the response. The default is polyline encoding, which is compact\nbut requires special client code to unpack. (We provide it in our JavaScript client library!)\nSet this parameter to `false` to switch the encoding to simple coordinate pairs like `[lon,lat]`, or `[lon,lat,elevation]`.\nSee the description of the response format for more information.\n",
+          "title": "Points Encoded"
+        },
+        "ch.disable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this parameter in combination with one or more parameters from below.\n",
+          "title": "Ch.Disable"
+        },
+        "weighting": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines the way the \"best\" route is calculated. Besides `fastest` you can use `short_fastest` which finds a reasonable balance between the distance influence (`shortest`) and the time (`fastest`). You could also use `shortest` but is deprecated and not recommended for motor vehicles. All except `fastest` require `ch.disable=true`.\n",
+          "title": "Weighting"
+        },
+        "heading": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Favour a heading direction for a certain point. Specify either one heading for the start point or as many as there are points.\nIn this case headings are associated by their order to the specific points. Headings are given as north based clockwise angle between 0 and 360 degree.\nThis parameter also influences the tour generated with `algorithm=round_trip` and forces the initial direction.  Requires `ch.disable=true`.\n",
+          "title": "Heading"
+        },
+        "heading_penalty": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time penalty in seconds for not obeying a specified heading. Requires `ch.disable=true`.\n",
+          "title": "Heading Penalty"
+        },
+        "pass_through": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, u-turns are avoided at via-points with regard to the `heading_penalty`. Requires `ch.disable=true`.\n",
+          "title": "Pass Through"
+        },
+        "block_area": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Block road access by specifying a point close to the road segment to be blocked, with the format `lat,lon`.\nYou can also block all road segments crossing a geometric shape. Specify a circle using the format `lat,lon,radius`, or a polygon using the format `lat1,lon1,lat2,lon2,...,latN,lonN`.\nYou can specify several shapes, separating them with `;`. Requires `ch.disable=true`.\n",
+          "title": "Block Area"
+        },
+        "avoid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify which road classes and environments you would like to avoid. \nPossible values are `motorway`, `steps`, `track`, `toll`, `ferry`, `tunnel` and `bridge`.\nSeparate several values with `;`. Obviously not all the values make sense for all vehicle profiles e.g. `bike` is already forbidden on a `motorway`. Requires `ch.disable=true`.\n",
+          "title": "Avoid"
+        },
+        "algorithm": {
+          "anyOf": [
+            {
+              "enum": [
+                "round_trip",
+                "alternative_route"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rather than looking for the shortest or fastest path, this parameter lets you solve two different problems related to routing:\nWith `alternative_route`, we give you not one but several routes that are close to optimal, but\nnot too similar to each other. \nWith `round_trip`, the route will get you back to where you started. This is meant for fun (think of\na bike trip), so we will add some randomness. The `round_trip` option requires `ch.disable=true`.\nYou can control both of these features with additional parameters, see below. \n",
+          "title": "Algorithm",
+          "enum": [
+            "round_trip",
+            "alternative_route"
+          ],
+          "x-enum-searchable": true
+        },
+        "round_trip.distance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=round_trip`, this parameter configures approximative length of the resulting round trip. Requires `ch.disable=true`.\n",
+          "title": "Round Trip.Distance"
+        },
+        "round_trip.seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=round_trip`, this sets the random seed. Change this to get a different tour for each value.\n",
+          "title": "Round Trip.Seed"
+        },
+        "alternative_route.max_paths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=alternative_route`, this parameter sets the number of maximum paths which should be calculated. Increasing can lead to worse alternatives.\n",
+          "title": "Alternative Route.Max Paths"
+        },
+        "alternative_route.max_weight_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=alternative_route`, this parameter sets the factor by which the alternatives routes can be longer than the optimal route. Increasing can lead to worse alternatives.\n",
+          "title": "Alternative Route.Max Weight Factor"
+        },
+        "alternative_route.max_share_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `algorithm=alternative_route`, this parameter specifies how similar an alternative route can be to the optimal route. Increasing can lead to worse alternatives.\n",
+          "title": "Alternative Route.Max Share Factor"
+        }
+      },
+      "required": [
+        "point"
+      ],
+      "title": "GetRouteConfig",
+      "type": "object"
+    },
+    "GraphhopperAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "graphhopper_api_key",
+          "default": "graphhopper_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "GraphHopper API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the GraphHopper dashboard and paste it here. Your plan controls available profiles and API limits. NoClick sends the key only to graphhopper.com. Connection testing reads coverage information and proves reachability, not account identity.",
+      "x-credential-url": "https://graphhopper.com/dashboard/"
+    },
+    "Objective": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Type of objective function, i.e. `min` or `min-max`.\n\n * `min`: Minimizes the objective value.\n * `min-max`: Minimizes the maximum objective value.\n\nFor instance, `min` -> `vehicles` minimizes the number of employed vehicles.\n`min` -> `completion_time` minimizes the sum of your vehicle routes' completion time.\n\nIf you use, for example, `min-max` -> `completion_time`, it minimizes the maximum of your vehicle routes' completion time, i.e. it minimizes the overall makespan.\nThis only makes sense if you have more than one vehicle. In case of one vehicle, switching from `min` to `min-max` should not have any impact.\nIf you have more than one vehicle, then the algorithm tries to constantly move stops from one vehicle to another such that\nthe completion time of longest vehicle route can be further reduced. For example, if you have one vehicle that takes 8 hours\nto serve all customers, adding another vehicle (and using `min-max`) might halve the time to serve all customers to 4 hours. However,\nthis usually comes with higher transport costs.\n\nIf you want to minimize `vehicles` first and, second, `completion_time`, you can also combine different objectives like this:\n\n```json\n\"objectives\" : [\n   {\n      \"type\": \"min\",\n      \"value\": \"vehicles\"\n   },\n   {\n      \"type\": \"min\",\n      \"value\": \"completion_time\"\n   }\n]\n```\n\nIf you want to balance activities or the number of stops among all employed drivers, you need to specify it as follows:\n\n```json\n\"objectives\" : [\n   {\n      \"type\": \"min-max\",\n      \"value\": \"completion_time\"\n   },\n   {\n      \"type\": \"min-max\",\n      \"value\": \"activities\"\n   }\n]\n```\n",
+          "enum": [
+            "min",
+            "min-max"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value of the objective function.\nThe objective value `transport_time` solely considers the time\nyour drivers spend on the road, i.e. transport time. In contrary to `transport_time`, `completion_time` also takes waiting times at customer sites into account.\nThe `completion_time` of a route is defined as the time from starting to ending the route,\ni.e. the route's transport time, the sum of waiting times plus the sum of activity durations.\nNote that choosing `transport_time` or `completion_time` only makes a difference if you specified time windows for your services/shipments since only in\nscenarios with time windows waiting times can occur.\nThe objective value `vehicles` can only be used along with `min` and minimizes vehicles.\n",
+          "enum": [
+            "completion_time",
+            "transport_time",
+            "vehicles",
+            "activities"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "Objective",
+      "type": "object"
+    },
+    "Routing": {
+      "additionalProperties": false,
+      "properties": {
+        "calc_points": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "It lets you specify whether the API should provide you with route geometries for vehicle routes or not. Thus, you do not need to do extra routing to get the polyline for each route.",
+          "title": "Calc Points"
+        },
+        "consider_traffic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "indicates whether historical traffic information should be considered",
+          "title": "Consider Traffic"
+        },
+        "curbside_strictness": {
+          "anyOf": [
+            {
+              "enum": [
+                "ignore",
+                "soft",
+                "strict"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In some cases curbside constraints cannot be fulfilled. For example in one-way streets you cannot arrive at a building that is on the left side of the street such that the building is to the right of you (unless you drove the one-way street the wrong/illegal way). You can set the `curbside_strictness` to `soft` to ignore the curbside constraint in such cases or set it to `strict` to get an error response instead. You can also set it to `ignore` to ignore all curbside constraints (this is useful to compare the results with and without constraints without modifying every single address).",
+          "title": "Curbside Strictness",
+          "enum": [
+            "ignore",
+            "soft",
+            "strict"
+          ],
+          "x-enum-searchable": true
+        },
+        "fail_fast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "indicates whether matrix calculation should fail fast when points cannot be connected",
+          "title": "Fail Fast"
+        },
+        "network_data_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "openstreetmap",
+                "tomtom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "specifies the data provider, read more about it [here](#section/Map-Data-and-Routing-Profiles).",
+          "title": "Network Data Provider",
+          "enum": [
+            "openstreetmap",
+            "tomtom"
+          ],
+          "x-enum-searchable": true
+        },
+        "return_snapped_waypoints": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether a solution includes snapped waypoints. In contrary to the address coordinate a snapped waypoint is the access point to the (road) network.",
+          "title": "Return Snapped Waypoints"
+        },
+        "snap_preventions": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "motorway",
+                  "trunk",
+                  "bridge",
+                  "ford",
+                  "tunnel",
+                  "ferry"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prevents snapping locations to road links of specified road types, e.g. to motorway.",
+          "title": "Snap Preventions"
+        }
+      },
+      "title": "Routing",
+      "type": "object"
+    },
+    "Service": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "allowed_vehicles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of allowed vehicles, i.e. array of vehicle ids. For example, if this service can only be conducted EITHER by `technician_peter` OR `technician_stefan` specify this as follows: `[\"technician_peter\",\"technician_stefan\"]`.",
+          "title": "Allowed Vehicles"
+        },
+        "disallowed_vehicles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of disallowed vehicles, i.e. array of vehicle ids.",
+          "title": "Disallowed Vehicles"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the duration of the service in seconds, i.e. how long it takes at the customer site.",
+          "title": "Duration"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group this service belongs to. See the group relation and [this post](https://discuss.graphhopper.com/t/4040) on how to utilize this.",
+          "title": "Group"
+        },
+        "id": {
+          "description": "Specifies the id of the service. Ids need to be unique so there must not be two services/shipments with the same id.",
+          "title": "Id",
+          "type": "string"
+        },
+        "max_time_in_vehicle": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum time in seconds a delivery can stay in the vehicle. Currently, it only works with services of \"type\":\"delivery\".",
+          "title": "Max Time In Vehicle"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Meaningful name for service, e.g. `\"deliver pizza\"`.",
+          "title": "Name"
+        },
+        "preparation_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the preparation time in seconds. It can be used to model parking lot search time since if you have 3 identical locations in a row, it only falls due once.",
+          "title": "Preparation Time"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the priority. Can be 1 = high priority to 10 = low priority. Often there are more services/shipments than the available vehicle fleet can handle. Then you can set priorities to differentiate high priority tasks from those that could be left unassigned. I.e. the lower the priority the earlier these tasks are omitted in the solution.",
+          "title": "Priority"
+        },
+        "required_skills": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of required skills, i.e. array of string (not case sensitive). For example, if this service needs to be conducted by a technician having a `drilling_machine` and a `screw_driver` then specify the array as follows: `[\"drilling_machine\",\"screw_driver\"]`. This means that the service can only be done by a vehicle (technician) that has the skills `drilling_machine` AND `screw_driver` in its skill array. Otherwise it remains unassigned.",
+          "title": "Required Skills"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size can have multiple dimensions and should be in line with the capacity dimension array of the vehicle type. For example, if the item that needs to be delivered has two size dimension, volume and weight, then specify it as follow [ 20, 5 ] assuming a volume of 20 and a weight of 5.",
+          "title": "Size"
+        },
+        "time_windows": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TimeWindow"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of time window objects (see time_window object below). Specify the time either with the recommended Unix time stamp (the number of seconds since 1970-01-01) or you can also count the seconds relative to Monday morning 00:00 and define the whole week in seconds. For example, Monday 9am is then represented by 9hour * 3600sec/hour = 32400. In turn, Wednesday 1pm corresponds to 2day * 24hour/day * 3600sec/hour + 1day * 13hour/day * 3600sec/hour = 219600. See this tutorial for more information.",
+          "title": "Time Windows"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "service",
+                "pickup",
+                "delivery"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies type of service. This makes a difference if items are loaded or unloaded, i.e. if one of the size dimensions > 0. If it is specified as `service` or `pickup`, items are loaded and will stay in the vehicle for the rest of the route (and thus consumes capacity for the rest of the route). If it is a `delivery`, items are implicitly loaded at the beginning of the route and will stay in the route until delivery (and thus releases capacity for the rest of the route).",
+          "title": "Type",
+          "enum": [
+            "service",
+            "pickup",
+            "delivery"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Service",
+      "type": "object"
+    },
+    "Shipment": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_vehicles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of allowed vehicles, i.e. array of vehicle ids. For example, if this shipment can only be conducted EITHER by \"technician_peter\" OR \"technician_stefan\" specify this as follows: [\"technician_peter\",\"technician_stefan\"].",
+          "title": "Allowed Vehicles"
+        },
+        "delivery": {
+          "$ref": "#/$defs/Stop"
+        },
+        "disallowed_vehicles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of disallowed vehicles, i.e. array of vehicle ids.",
+          "title": "Disallowed Vehicles"
+        },
+        "id": {
+          "description": "Specifies the id of the shipment. Ids need to be unique so there must not be two services/shipments with the same id.",
+          "title": "Id",
+          "type": "string"
+        },
+        "max_time_in_vehicle": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum time in seconds a shipment can stay in the vehicle.",
+          "title": "Max Time In Vehicle"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Meaningful name for shipment, e.g. \"pickup and deliver pizza to Peter\".",
+          "title": "Name"
+        },
+        "pickup": {
+          "$ref": "#/$defs/Stop"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the priority. Can be 1 = high priority to 10 = low priority. Often there are more services/shipments than the available vehicle fleet can handle. Then you can set priorities to differentiate high priority tasks from those that could be left unassigned. I.e. the lower the priority the earlier these tasks are omitted in the solution.",
+          "title": "Priority"
+        },
+        "required_skills": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of required skills, i.e. array of string (not case sensitive). For example, if this shipment needs to be conducted by a technician having a `drilling_machine` and a `screw_driver` then specify the array as follows: `[\"drilling_machine\",\"screw_driver\"]`. This means that the service can only be done by a vehicle (technician) that has the skills `drilling_machine` AND `screw_driver` in its skill array. Otherwise it remains unassigned.",
+          "title": "Required Skills"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size can have multiple dimensions and should be in line with the capacity dimension array of the vehicle type. For example, if the item that needs to be delivered has two size dimension, volume and weight, then specify it as follow [ 20, 5 ] assuming a volume of 20 and a weight of 5.",
+          "title": "Size"
+        }
+      },
+      "required": [
+        "delivery",
+        "id",
+        "pickup"
+      ],
+      "title": "Shipment",
+      "type": "object"
+    },
+    "SolveClusteringConfig": {
+      "additionalProperties": false,
+      "description": "POST Cluster Endpoint.",
+      "properties": {
+        "configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClusterConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "customers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ClusterCustomer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customers"
+        },
+        "operation": {
+          "const": "solve_clustering",
+          "default": "solve_clustering",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SolveClusteringConfig",
+      "type": "object"
+    },
+    "SolveOptimizationConfig": {
+      "additionalProperties": false,
+      "description": "POST route optimization problem.",
+      "properties": {
+        "algorithm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Algorithm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Configuration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies general configurations."
+        },
+        "cost_matrices": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CostMatrix"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies your own tranport time and distance matrices.",
+          "title": "Cost Matrices"
+        },
+        "objectives": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Objective"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an objective function. The vehicle routing problem is solved in such a way that this objective function is minimized.",
+          "title": "Objectives"
+        },
+        "relations": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines additional relationships between orders.",
+          "title": "Relations"
+        },
+        "services": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Service"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the orders of the type \"service\". These are, for example, pick-ups, deliveries or other stops that are to be approached by the specified vehicles. Each of these orders contains only one location.",
+          "title": "Services"
+        },
+        "shipments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Shipment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the available shipments. Each shipment contains a pickup and a delivery stop, which must be processed one after the other.",
+          "title": "Shipments"
+        },
+        "vehicle_types": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VehicleType"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the available vehicle types. These types can be assigned to vehicles.",
+          "title": "Vehicle Types"
+        },
+        "vehicles": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Vehicle"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the available vehicles.",
+          "title": "Vehicles"
+        },
+        "operation": {
+          "const": "solve_optimization",
+          "default": "solve_optimization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SolveOptimizationConfig",
+      "type": "object"
+    },
+    "Stop": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies pickup or delivery address."
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the duration of the pickup or delivery in seconds, e.g. how long it takes unload items at the customer site.",
+          "title": "Duration"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group this stop belongs to. See the group relation and [this post](https://discuss.graphhopper.com/t/4040) on how to utilize this.",
+          "title": "Group"
+        },
+        "preparation_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the preparation time in seconds. It can be used to model parking lot search time since if you have 3 identical locations in a row, it only falls due once.",
+          "title": "Preparation Time"
+        },
+        "time_windows": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TimeWindow"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of time window objects (see time window object below). For example, if an item needs to be delivered between 7am and 10am then specify the array as follows: [ { \"earliest\": 25200, \"latest\" : 32400 } ] (starting the day from 0 in seconds).",
+          "title": "Time Windows"
+        }
+      },
+      "title": "Stop",
+      "type": "object"
+    },
+    "SubmitClusteringConfig": {
+      "additionalProperties": false,
+      "description": "Batch Cluster Endpoint.",
+      "properties": {
+        "configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClusterConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "customers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ClusterCustomer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customers"
+        },
+        "operation": {
+          "const": "submit_clustering",
+          "default": "submit_clustering",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SubmitClusteringConfig",
+      "type": "object"
+    },
+    "SubmitMatrixConfig": {
+      "additionalProperties": false,
+      "description": "Batch Matrix Endpoint.",
+      "properties": {
+        "fail_fast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies whether or not the matrix calculation should return with an error as soon as possible in case some points cannot be found or some points are not connected. If set to `false` the time/weight/distance matrix will be calculated for all valid points and contain the `null` value for all entries that could not be calculated. The `hint` field of the response will also contain additional information about what went wrong (see its documentation).",
+          "title": "Fail Fast"
+        },
+        "from_curbsides": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `curbsides`of symmetrical matrix",
+          "title": "From Curbsides"
+        },
+        "from_point_hints": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `point_hints`of symmetrical matrix",
+          "title": "From Point Hints"
+        },
+        "from_points": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The starting points for the routes in an array of `[longitude,latitude]`. For instance, if you want to calculate three routes from point A such as A->1, A->2, A->3 then you have one `from_point` parameter and three `to_point` parameters.",
+          "title": "From Points"
+        },
+        "out_arrays": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which matrices should be included in the response. Specify one or more of the following options `weights`, `times`, `distances`. The units of the entries of `distances` are meters, of `times` are seconds and of `weights` is arbitrary and it can differ for different vehicles or versions of this API.",
+          "title": "Out Arrays"
+        },
+        "snap_preventions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `snap_preventions` of symmetrical matrix",
+          "title": "Snap Preventions"
+        },
+        "to_curbsides": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `curbsides`of symmetrical matrix",
+          "title": "To Curbsides"
+        },
+        "to_point_hints": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "See `point_hints`of symmetrical matrix",
+          "title": "To Point Hints"
+        },
+        "to_points": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The destination points for the routes in an array of `[longitude,latitude]`.",
+          "title": "To Points"
+        },
+        "turn_costs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies if turn restrictions should be considered. Enabling this option increases the matrix computation time. Only supported for motor vehicles and OpenStreetMap.",
+          "title": "Turn Costs"
+        },
+        "vehicle": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vehicle",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "submit_matrix",
+          "default": "submit_matrix",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SubmitMatrixConfig",
+      "type": "object"
+    },
+    "SubmitOptimizationConfig": {
+      "additionalProperties": false,
+      "description": "POST route optimization problem (batch mode).",
+      "properties": {
+        "algorithm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Algorithm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Configuration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies general configurations."
+        },
+        "cost_matrices": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CostMatrix"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies your own tranport time and distance matrices.",
+          "title": "Cost Matrices"
+        },
+        "objectives": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Objective"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an objective function. The vehicle routing problem is solved in such a way that this objective function is minimized.",
+          "title": "Objectives"
+        },
+        "relations": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines additional relationships between orders.",
+          "title": "Relations"
+        },
+        "services": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Service"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the orders of the type \"service\". These are, for example, pick-ups, deliveries or other stops that are to be approached by the specified vehicles. Each of these orders contains only one location.",
+          "title": "Services"
+        },
+        "shipments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Shipment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the available shipments. Each shipment contains a pickup and a delivery stop, which must be processed one after the other.",
+          "title": "Shipments"
+        },
+        "vehicle_types": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VehicleType"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the available vehicle types. These types can be assigned to vehicles.",
+          "title": "Vehicle Types"
+        },
+        "vehicles": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Vehicle"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the available vehicles.",
+          "title": "Vehicles"
+        },
+        "operation": {
+          "const": "submit_optimization",
+          "default": "submit_optimization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SubmitOptimizationConfig",
+      "type": "object"
+    },
+    "TimeWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "earliest": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the opening time of the time window in seconds, i.e. the earliest time the service can start.",
+          "title": "Earliest"
+        },
+        "latest": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the closing time of the time window in seconds, i.e. the latest time the service can start.",
+          "title": "Latest"
+        }
+      },
+      "title": "TimeWindow",
+      "type": "object"
+    },
+    "Vehicle": {
+      "additionalProperties": false,
+      "properties": {
+        "break": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Break"
+        },
+        "earliest_start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Earliest start of vehicle in seconds. It is recommended to use the unix timestamp.",
+          "title": "Earliest Start"
+        },
+        "end_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this is omitted AND return_to_depot is true then the vehicle needs to return to its start_address."
+        },
+        "latest_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest end of vehicle in seconds, i.e. the time the vehicle needs to be at its end location at latest.",
+          "title": "Latest End"
+        },
+        "max_activities": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum number of activities a vehicle can conduct.",
+          "title": "Max Activities"
+        },
+        "max_distance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum distance (in meters) a vehicle can go.",
+          "title": "Max Distance"
+        },
+        "max_driving_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum drive time (in seconds) a vehicle/driver can go, i.e. the maximum time on the road (service and waiting times are not included here)",
+          "title": "Max Driving Time"
+        },
+        "max_jobs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum number of jobs a vehicle can load.",
+          "title": "Max Jobs"
+        },
+        "min_jobs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the minimum number of jobs a vehicle should load. This is a soft constraint, i.e. if it is not possible to fulfill \u201cmin_jobs\u201d, we will still try to get as close as possible to this constraint.",
+          "title": "Min Jobs"
+        },
+        "move_to_end_address": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether a vehicle should be moved even though it has not been assigned any jobs.",
+          "title": "Move To End Address"
+        },
+        "return_to_depot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If it is false, the algorithm decides where to end the vehicle route. It ends in one of your customers' locations. The end is chosen such that it contributes to the overall objective function, e.g. min transport_time. If it is true, you can either specify a specific end location (which is then regarded as end depot) or you can leave it and the driver returns to its start location.",
+          "title": "Return To Depot"
+        },
+        "skills": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of skills, i.e. array of string (not case sensitive).",
+          "title": "Skills"
+        },
+        "start_address": {
+          "$ref": "#/$defs/Address"
+        },
+        "type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type ID assigns a vehicle type to this vehicle. You can specify types in the array of vehicle types. If you omit the type ID, the default type is used. The default type is a `car` with a capacity of 0.",
+          "title": "Type Id"
+        },
+        "vehicle_id": {
+          "description": "Specifies the ID of the vehicle. Ids must be unique, i.e. if there are two vehicles with the same ID, an error is returned.",
+          "title": "Vehicle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_address",
+        "vehicle_id"
+      ],
+      "title": "Vehicle",
+      "type": "object"
+    },
+    "VehicleType": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies an array of capacity dimension values which need to be int values. For example, if there are two dimensions such as volume and weight then it needs to be defined as [ 1000, 300 ] assuming a maximum volume of 1000 and a maximum weight of 300.",
+          "title": "Capacity"
+        },
+        "consider_traffic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies whether traffic should be considered. if \"tomtom\" is used and this is false, free flow travel times from \"tomtom\" are calculated. If this is true, historical traffic info are used. We do not yet have traffic data for \"openstreetmap\", thus, setting this true has no effect at all.",
+          "title": "Consider Traffic"
+        },
+        "cost_per_activation": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "**_BETA feature_**! Cost parameter vehicle activation, i.e. fixed costs per vehicle",
+          "title": "Cost Per Activation"
+        },
+        "cost_per_meter": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "**_BETA feature_**! Cost parameter per distance unit, here meter is used",
+          "title": "Cost Per Meter"
+        },
+        "cost_per_second": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "**_BETA feature_**! Cost parameter per time unit, here second is used",
+          "title": "Cost Per Second"
+        },
+        "network_data_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "openstreetmap",
+                "tomtom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the network data provider. Either use [`openstreetmap`](#section/Map-Data-and-Routing-Profiles/OpenStreetMap) (default) or [`tomtom`](#section/Map-Data-and-Routing-Profiles/TomTom) (add-on required).",
+          "title": "Network Data Provider",
+          "enum": [
+            "openstreetmap",
+            "tomtom"
+          ],
+          "x-enum-searchable": true
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "enum": [
+                "car",
+                "bike",
+                "foot",
+                "hike",
+                "mtb",
+                "racingbike",
+                "scooter",
+                "truck",
+                "small_truck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile",
+          "enum": [
+            "car",
+            "bike",
+            "foot",
+            "hike",
+            "mtb",
+            "racingbike",
+            "scooter",
+            "truck",
+            "small_truck"
+          ],
+          "x-enum-searchable": true
+        },
+        "service_time_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies a service time factor for this vehicle type. If the vehicle/driver that uses this type is able to conduct the service as double as fast as it is determined in the corresponding service or shipment then set it to 0.5.",
+          "title": "Service Time Factor"
+        },
+        "speed_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies a speed factor for this vehicle type. If the vehicle that uses this type needs to be only half as fast as what is actually calculated with our routing engine then set the speed factor to 0.5.",
+          "title": "Speed Factor"
+        },
+        "type_id": {
+          "description": "Specifies the id of the vehicle type. If a vehicle needs to be of this type, it should refer to this with its type_id attribute.",
+          "title": "Type Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type_id"
+      ],
+      "title": "VehicleType",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "calculate_matrix": "#/$defs/CalculateMatrixConfig",
+          "calculate_route": "#/$defs/CalculateRouteConfig",
+          "geocode": "#/$defs/GeocodeConfig",
+          "get_clustering_solution": "#/$defs/GetClusteringSolutionConfig",
+          "get_coverage": "#/$defs/GetCoverageConfig",
+          "get_isochrone": "#/$defs/GetIsochroneConfig",
+          "get_matrix": "#/$defs/GetMatrixConfig",
+          "get_matrix_solution": "#/$defs/GetMatrixSolutionConfig",
+          "get_optimization_solution": "#/$defs/GetOptimizationSolutionConfig",
+          "get_route": "#/$defs/GetRouteConfig",
+          "solve_clustering": "#/$defs/SolveClusteringConfig",
+          "solve_optimization": "#/$defs/SolveOptimizationConfig",
+          "submit_clustering": "#/$defs/SubmitClusteringConfig",
+          "submit_matrix": "#/$defs/SubmitMatrixConfig",
+          "submit_optimization": "#/$defs/SubmitOptimizationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GeocodeConfig"
+        },
+        {
+          "$ref": "#/$defs/GetIsochroneConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMatrixConfig"
+        },
+        {
+          "$ref": "#/$defs/CalculateMatrixConfig"
+        },
+        {
+          "$ref": "#/$defs/SubmitMatrixConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMatrixSolutionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetRouteConfig"
+        },
+        {
+          "$ref": "#/$defs/CalculateRouteConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCoverageConfig"
+        },
+        {
+          "$ref": "#/$defs/SolveClusteringConfig"
+        },
+        {
+          "$ref": "#/$defs/SubmitClusteringConfig"
+        },
+        {
+          "$ref": "#/$defs/GetClusteringSolutionConfig"
+        },
+        {
+          "$ref": "#/$defs/SolveOptimizationConfig"
+        },
+        {
+          "$ref": "#/$defs/SubmitOptimizationConfig"
+        },
+        {
+          "$ref": "#/$defs/GetOptimizationSolutionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GraphhopperAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Graphhopper Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
