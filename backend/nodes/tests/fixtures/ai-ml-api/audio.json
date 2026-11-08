@@ -1,0 +1,19 @@
+{
+  "GET /v2/generate/audio": {
+    "body": {
+      "id": "60ac7c34-3224-4b14-8e7d-0aa0db708325:elevenlabs/eleven_music",
+      "status": "completed",
+      "audio_file": {
+        "url": "https://cdn.aimlapi.com/generations/hippopotamus/1757963033314-8ca7729d-b78c-4d4c-9ef9-89b2fb3d07e8.mp3"
+      }
+    },
+    "source": "https://docs.aimlapi.com/api-references/music-models/elevenlabs/eleven_music.md"
+  },
+  "POST /v2/generate/audio": {
+    "body": {
+      "status": "queued",
+      "id": "60ac7c34-3224-4b14-8e7d-0aa0db708325:elevenlabs/eleven_music"
+    },
+    "source": "https://docs.aimlapi.com/api-references/music-models/elevenlabs/eleven_music.md"
+  }
+}

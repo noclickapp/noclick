@@ -1,0 +1,715 @@
+{
+  "$defs": {
+    "AiMlApiCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ai_ml_api_key",
+          "default": "ai_ml_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "AI/ML API Key",
+      "type": "object",
+      "x-credential-instructions": "Create or copy a regular API key from your AI/ML API dashboard. Paste the key without the Bearer prefix. NoClick reads your billing account to verify the connection. Generations use your provider balance.",
+      "x-credential-url": "https://aimlapi.com/app/keys"
+    },
+    "CreateChatCompletion": {
+      "additionalProperties": false,
+      "description": "Generate a chat completion from conversation messages.",
+      "properties": {
+        "operation": {
+          "const": "create_chat_completion",
+          "default": "create_chat_completion",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "gpt-4o-mini",
+          "enum": [
+            "gpt-4o-mini",
+            "gpt-4.1-mini",
+            "gpt-4.1"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Tokens"
+        }
+      },
+      "required": [
+        "messages"
+      ],
+      "title": "CreateChatCompletion",
+      "type": "object"
+    },
+    "CreateEmbeddings": {
+      "additionalProperties": false,
+      "description": "Embed text for semantic search and retrieval.",
+      "properties": {
+        "operation": {
+          "const": "create_embeddings",
+          "default": "create_embeddings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "text-embedding-3-small",
+          "enum": [
+            "text-embedding-3-small",
+            "text-embedding-3-large"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "minLength": 1,
+          "title": "Text to embed"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "CreateEmbeddings",
+      "type": "object"
+    },
+    "CreateMessage": {
+      "additionalProperties": false,
+      "description": "Generate an Anthropic-compatible message.",
+      "properties": {
+        "operation": {
+          "const": "create_message",
+          "default": "create_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "claude-opus-4-1-20250805",
+          "enum": [
+            "claude-opus-4-1-20250805",
+            "anthropic/claude-opus-4-1-20250805"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "messages": {
+          "description": "Use user and assistant roles; put system instructions in the System field.",
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "System"
+        },
+        "max_tokens": {
+          "default": 1024,
+          "minimum": 1,
+          "title": "Max Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "messages"
+      ],
+      "title": "CreateMessage",
+      "type": "object"
+    },
+    "CreateResponse": {
+      "additionalProperties": false,
+      "description": "Generate a text response using the Responses API.",
+      "properties": {
+        "operation": {
+          "const": "create_response",
+          "default": "create_response",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "gpt-4o-mini",
+          "enum": [
+            "gpt-4o-mini",
+            "gpt-4.1-mini",
+            "gpt-4.1"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "minLength": 1,
+          "title": "Input text",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "max_output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 16,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Output Tokens"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "CreateResponse",
+      "type": "object"
+    },
+    "CreateTranscription": {
+      "additionalProperties": false,
+      "description": "Start transcription of an audio URL; use the returned generation ID to poll.",
+      "properties": {
+        "operation": {
+          "const": "create_transcription",
+          "default": "create_transcription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "gpt-4o-mini-transcribe",
+          "enum": [
+            "gpt-4o-transcribe",
+            "gpt-4o-mini-transcribe"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Audio URL",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CreateTranscription",
+      "type": "object"
+    },
+    "ExtractDocument": {
+      "additionalProperties": false,
+      "description": "Extract text from a document using Google Document AI OCR.",
+      "properties": {
+        "operation": {
+          "const": "extract_document",
+          "default": "extract_document",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "gc-document-ai",
+          "enum": [
+            "gc-document-ai",
+            "google/gc-document-ai"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "document": {
+          "minLength": 1,
+          "title": "Document URL",
+          "type": "string"
+        },
+        "mimeType": {
+          "anyOf": [
+            {
+              "enum": [
+                "application/pdf",
+                "image/gif",
+                "image/tiff",
+                "image/jpeg",
+                "image/png",
+                "image/bmp",
+                "image/webp",
+                "text/html"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mimetype",
+          "enum": [
+            "application/pdf",
+            "image/gif",
+            "image/tiff",
+            "image/jpeg",
+            "image/png",
+            "image/bmp",
+            "image/webp",
+            "text/html"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document"
+      ],
+      "title": "ExtractDocument",
+      "type": "object"
+    },
+    "GenerateAudio": {
+      "additionalProperties": false,
+      "description": "Start an Eleven Music generation; poll with Get audio.",
+      "properties": {
+        "operation": {
+          "const": "generate_audio",
+          "default": "generate_audio",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "const": "elevenlabs/eleven_music",
+          "default": "elevenlabs/eleven_music",
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "music_length_ms": {
+          "default": 10000,
+          "maximum": 300000,
+          "minimum": 10000,
+          "title": "Music Length Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateAudio",
+      "type": "object"
+    },
+    "GenerateImage": {
+      "additionalProperties": false,
+      "description": "Generate an image; provider base64 media is returned as a file.",
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "gpt-image-1-mini",
+          "enum": [
+            "gpt-image-1-mini",
+            "gpt-image-1.5"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "maxLength": 32000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "size": {
+          "default": "1024x1024",
+          "enum": [
+            "auto",
+            "1024x1024",
+            "1024x1536",
+            "1536x1024"
+          ],
+          "title": "Size",
+          "type": "string"
+        },
+        "quality": {
+          "default": "medium",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "output_format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "jpeg",
+            "webp"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        },
+        "response_format": {
+          "default": "url",
+          "enum": [
+            "url",
+            "b64_json"
+          ],
+          "title": "Response Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateImage",
+      "type": "object"
+    },
+    "GenerateVideo": {
+      "additionalProperties": false,
+      "description": "Start a Seedance video generation; poll with Get video.",
+      "properties": {
+        "operation": {
+          "const": "generate_video",
+          "default": "generate_video",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "default": "bytedance/seedance-1-0-pro",
+          "enum": [
+            "bytedance/seedance-1-0-pro",
+            "bytedance/seedance-1-0-pro-fast"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Url"
+        },
+        "resolution": {
+          "default": "1080p",
+          "enum": [
+            "480p",
+            "720p",
+            "1080p"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "duration": {
+          "default": 5,
+          "enum": [
+            5,
+            10
+          ],
+          "title": "Duration",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateVideo",
+      "type": "object"
+    },
+    "GetAudio": {
+      "additionalProperties": false,
+      "description": "Read one music generation's status and output URL.",
+      "properties": {
+        "operation": {
+          "const": "get_audio",
+          "default": "get_audio",
+          "title": "Operation",
+          "type": "string"
+        },
+        "generation_id": {
+          "minLength": 1,
+          "title": "Generation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "generation_id"
+      ],
+      "title": "GetAudio",
+      "type": "object"
+    },
+    "GetTranscription": {
+      "additionalProperties": false,
+      "description": "Read a transcription job using the returned generation ID.",
+      "properties": {
+        "operation": {
+          "const": "get_transcription",
+          "default": "get_transcription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "generation_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Generation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "generation_id"
+      ],
+      "title": "GetTranscription",
+      "type": "object"
+    },
+    "GetVideo": {
+      "additionalProperties": false,
+      "description": "Read one video generation's status and output URL.",
+      "properties": {
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "title": "Operation",
+          "type": "string"
+        },
+        "generation_id": {
+          "minLength": 1,
+          "title": "Generation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "generation_id"
+      ],
+      "title": "GetVideo",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "default": "user",
+          "enum": [
+            "user",
+            "assistant",
+            "system"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "Message",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_chat_completion": "#/$defs/CreateChatCompletion",
+          "create_embeddings": "#/$defs/CreateEmbeddings",
+          "create_message": "#/$defs/CreateMessage",
+          "create_response": "#/$defs/CreateResponse",
+          "create_transcription": "#/$defs/CreateTranscription",
+          "extract_document": "#/$defs/ExtractDocument",
+          "generate_audio": "#/$defs/GenerateAudio",
+          "generate_image": "#/$defs/GenerateImage",
+          "generate_video": "#/$defs/GenerateVideo",
+          "get_audio": "#/$defs/GetAudio",
+          "get_transcription": "#/$defs/GetTranscription",
+          "get_video": "#/$defs/GetVideo"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateResponse"
+        },
+        {
+          "$ref": "#/$defs/CreateChatCompletion"
+        },
+        {
+          "$ref": "#/$defs/CreateEmbeddings"
+        },
+        {
+          "$ref": "#/$defs/GenerateImage"
+        },
+        {
+          "$ref": "#/$defs/CreateTranscription"
+        },
+        {
+          "$ref": "#/$defs/GetTranscription"
+        },
+        {
+          "$ref": "#/$defs/CreateMessage"
+        },
+        {
+          "$ref": "#/$defs/GenerateVideo"
+        },
+        {
+          "$ref": "#/$defs/GetVideo"
+        },
+        {
+          "$ref": "#/$defs/GenerateAudio"
+        },
+        {
+          "$ref": "#/$defs/GetAudio"
+        },
+        {
+          "$ref": "#/$defs/ExtractDocument"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AiMlApiCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ai-ml-api Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
