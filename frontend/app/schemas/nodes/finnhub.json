@@ -1,0 +1,940 @@
+{
+  "$defs": {
+    "FinnhubAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "finnhub_api_key",
+          "default": "finnhub_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Finnhub API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Finnhub API key from the dashboard. Your subscription determines available endpoints. NoClick sends it as the token query parameter to finnhub.io. Connecting checks public market news access, not account identity or premium permissions.",
+      "x-credential-url": "https://finnhub.io/dashboard"
+    },
+    "FinnhubAiChatConfig": {
+      "additionalProperties": false,
+      "description": "AI Copilot.",
+      "properties": {
+        "operation": {
+          "const": "ai_chat",
+          "default": "ai_chat",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/FinnhubChatMessage"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "messages"
+      ],
+      "title": "FinnhubAiChatConfig",
+      "type": "object"
+    },
+    "FinnhubChatMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "system",
+            "user"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "FinnhubChatMessage",
+      "type": "object"
+    },
+    "FinnhubCompanyBasicFinancialsConfig": {
+      "additionalProperties": false,
+      "description": "Basic Financials.",
+      "properties": {
+        "operation": {
+          "const": "company_basic_financials",
+          "default": "company_basic_financials",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "metric": {
+          "const": "all",
+          "default": "all",
+          "title": "Metric",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubCompanyBasicFinancialsConfig",
+      "type": "object"
+    },
+    "FinnhubCompanyEarningsConfig": {
+      "additionalProperties": false,
+      "description": "Earnings Surprises.",
+      "properties": {
+        "operation": {
+          "const": "company_earnings",
+          "default": "company_earnings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubCompanyEarningsConfig",
+      "type": "object"
+    },
+    "FinnhubCompanyNewsConfig": {
+      "additionalProperties": false,
+      "description": "Company News.",
+      "properties": {
+        "operation": {
+          "const": "company_news",
+          "default": "company_news",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "from": {
+          "format": "date",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "format": "date",
+          "title": "To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "from",
+        "to"
+      ],
+      "title": "FinnhubCompanyNewsConfig",
+      "type": "object"
+    },
+    "FinnhubCompanyPeersConfig": {
+      "additionalProperties": false,
+      "description": "Peers.",
+      "properties": {
+        "operation": {
+          "const": "company_peers",
+          "default": "company_peers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "grouping": {
+          "anyOf": [
+            {
+              "enum": [
+                "sector",
+                "industry",
+                "subIndustry"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grouping",
+          "enum": [
+            "sector",
+            "industry",
+            "subIndustry"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubCompanyPeersConfig",
+      "type": "object"
+    },
+    "FinnhubCompanyProfile2Config": {
+      "additionalProperties": false,
+      "description": "Company Profile 2, selected by symbol.",
+      "properties": {
+        "operation": {
+          "const": "company_profile2",
+          "default": "company_profile2",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubCompanyProfile2Config",
+      "type": "object"
+    },
+    "FinnhubCryptoCandlesConfig": {
+      "additionalProperties": false,
+      "description": "Crypto Candles.",
+      "properties": {
+        "operation": {
+          "const": "crypto_candles",
+          "default": "crypto_candles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "resolution": {
+          "enum": [
+            "1",
+            "5",
+            "15",
+            "30",
+            "60",
+            "D",
+            "W",
+            "M"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "from": {
+          "minimum": 0,
+          "title": "From",
+          "type": "integer"
+        },
+        "to": {
+          "minimum": 0,
+          "title": "To",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "symbol",
+        "resolution",
+        "from",
+        "to"
+      ],
+      "title": "FinnhubCryptoCandlesConfig",
+      "type": "object"
+    },
+    "FinnhubEarningsCalendarConfig": {
+      "additionalProperties": false,
+      "description": "Earnings Calendar.",
+      "properties": {
+        "operation": {
+          "const": "earnings_calendar",
+          "default": "earnings_calendar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbol"
+        },
+        "international": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "International"
+        }
+      },
+      "title": "FinnhubEarningsCalendarConfig",
+      "type": "object"
+    },
+    "FinnhubForexRatesConfig": {
+      "additionalProperties": false,
+      "description": "Forex rates.",
+      "properties": {
+        "operation": {
+          "const": "forex_rates",
+          "default": "forex_rates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "base": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        }
+      },
+      "title": "FinnhubForexRatesConfig",
+      "type": "object"
+    },
+    "FinnhubInsiderTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "Insider Transactions.",
+      "properties": {
+        "operation": {
+          "const": "insider_transactions",
+          "default": "insider_transactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubInsiderTransactionsConfig",
+      "type": "object"
+    },
+    "FinnhubMarketNewsConfig": {
+      "additionalProperties": false,
+      "description": "Market News.",
+      "properties": {
+        "operation": {
+          "const": "get_market_news",
+          "default": "get_market_news",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "category": {
+          "default": "general",
+          "enum": [
+            "general",
+            "forex",
+            "crypto",
+            "merger"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "minId": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minid"
+        }
+      },
+      "title": "FinnhubMarketNewsConfig",
+      "type": "object"
+    },
+    "FinnhubMarketStatusConfig": {
+      "additionalProperties": false,
+      "description": "Market Status.",
+      "properties": {
+        "operation": {
+          "const": "market_status",
+          "default": "market_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "exchange": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Exchange",
+          "type": "string"
+        }
+      },
+      "required": [
+        "exchange"
+      ],
+      "title": "FinnhubMarketStatusConfig",
+      "type": "object"
+    },
+    "FinnhubPriceTargetConfig": {
+      "additionalProperties": false,
+      "description": "Price Target.",
+      "properties": {
+        "operation": {
+          "const": "price_target",
+          "default": "price_target",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubPriceTargetConfig",
+      "type": "object"
+    },
+    "FinnhubQuoteConfig": {
+      "additionalProperties": false,
+      "description": "Quote.",
+      "properties": {
+        "operation": {
+          "const": "quote",
+          "default": "quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubQuoteConfig",
+      "type": "object"
+    },
+    "FinnhubRecommendationTrendsConfig": {
+      "additionalProperties": false,
+      "description": "Recommendation Trends.",
+      "properties": {
+        "operation": {
+          "const": "recommendation_trends",
+          "default": "recommendation_trends",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "FinnhubRecommendationTrendsConfig",
+      "type": "object"
+    },
+    "FinnhubStockCandlesConfig": {
+      "additionalProperties": false,
+      "description": "Stock Candles.",
+      "properties": {
+        "operation": {
+          "const": "stock_candles",
+          "default": "stock_candles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "resolution": {
+          "enum": [
+            "1",
+            "5",
+            "15",
+            "30",
+            "60",
+            "D",
+            "W",
+            "M"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "from": {
+          "minimum": 0,
+          "title": "From",
+          "type": "integer"
+        },
+        "to": {
+          "minimum": 0,
+          "title": "To",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "symbol",
+        "resolution",
+        "from",
+        "to"
+      ],
+      "title": "FinnhubStockCandlesConfig",
+      "type": "object"
+    },
+    "FinnhubStockDividendsConfig": {
+      "additionalProperties": false,
+      "description": "Dividends.",
+      "properties": {
+        "operation": {
+          "const": "stock_dividends",
+          "default": "stock_dividends",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "from": {
+          "format": "date",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "format": "date",
+          "title": "To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "from",
+        "to"
+      ],
+      "title": "FinnhubStockDividendsConfig",
+      "type": "object"
+    },
+    "FinnhubStockSplitsConfig": {
+      "additionalProperties": false,
+      "description": "Splits.",
+      "properties": {
+        "operation": {
+          "const": "stock_splits",
+          "default": "stock_splits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "from": {
+          "format": "date",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "format": "date",
+          "title": "To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "from",
+        "to"
+      ],
+      "title": "FinnhubStockSplitsConfig",
+      "type": "object"
+    },
+    "FinnhubStockSymbolsConfig": {
+      "additionalProperties": false,
+      "description": "Stock Symbol.",
+      "properties": {
+        "operation": {
+          "const": "stock_symbols",
+          "default": "stock_symbols",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "exchange": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Exchange",
+          "type": "string"
+        },
+        "mic": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mic"
+        },
+        "securityType": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Securitytype"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        }
+      },
+      "required": [
+        "exchange"
+      ],
+      "title": "FinnhubStockSymbolsConfig",
+      "type": "object"
+    },
+    "FinnhubSymbolSearchConfig": {
+      "additionalProperties": false,
+      "description": "Symbol Lookup.",
+      "properties": {
+        "operation": {
+          "const": "symbol_search",
+          "default": "symbol_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exchange"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "FinnhubSymbolSearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "ai_chat": "#/$defs/FinnhubAiChatConfig",
+          "company_basic_financials": "#/$defs/FinnhubCompanyBasicFinancialsConfig",
+          "company_earnings": "#/$defs/FinnhubCompanyEarningsConfig",
+          "company_news": "#/$defs/FinnhubCompanyNewsConfig",
+          "company_peers": "#/$defs/FinnhubCompanyPeersConfig",
+          "company_profile2": "#/$defs/FinnhubCompanyProfile2Config",
+          "crypto_candles": "#/$defs/FinnhubCryptoCandlesConfig",
+          "earnings_calendar": "#/$defs/FinnhubEarningsCalendarConfig",
+          "forex_rates": "#/$defs/FinnhubForexRatesConfig",
+          "get_market_news": "#/$defs/FinnhubMarketNewsConfig",
+          "insider_transactions": "#/$defs/FinnhubInsiderTransactionsConfig",
+          "market_status": "#/$defs/FinnhubMarketStatusConfig",
+          "price_target": "#/$defs/FinnhubPriceTargetConfig",
+          "quote": "#/$defs/FinnhubQuoteConfig",
+          "recommendation_trends": "#/$defs/FinnhubRecommendationTrendsConfig",
+          "stock_candles": "#/$defs/FinnhubStockCandlesConfig",
+          "stock_dividends": "#/$defs/FinnhubStockDividendsConfig",
+          "stock_splits": "#/$defs/FinnhubStockSplitsConfig",
+          "stock_symbols": "#/$defs/FinnhubStockSymbolsConfig",
+          "symbol_search": "#/$defs/FinnhubSymbolSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FinnhubSymbolSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubStockSymbolsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubMarketStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubCompanyProfile2Config"
+        },
+        {
+          "$ref": "#/$defs/FinnhubMarketNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubCompanyNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubCompanyPeersConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubCompanyBasicFinancialsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubInsiderTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubStockDividendsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubRecommendationTrendsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubPriceTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubCompanyEarningsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubEarningsCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubStockCandlesConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubStockSplitsConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubForexRatesConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubCryptoCandlesConfig"
+        },
+        {
+          "$ref": "#/$defs/FinnhubAiChatConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FinnhubAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Finnhub Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
