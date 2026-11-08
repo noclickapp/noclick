@@ -1,0 +1,991 @@
+{
+  "$defs": {
+    "CorrectWhiteBalance": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "correct_white_balance",
+          "default": "correct_white_balance",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "CorrectWhiteBalance",
+      "type": "object"
+    },
+    "DeblurImage": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "deblur_image",
+          "default": "deblur_image",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "DeblurImage",
+      "type": "object"
+    },
+    "DeepimageAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "deepimage_api_key",
+          "default": "deepimage_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Deepimage API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Deepimage API key from your account's API page. Processing uses your Deepimage credits. NoClick verifies the key by reading your account profile.",
+      "x-credential-url": "https://deep-image.ai/app/my-profile/api"
+    },
+    "DeleteResult": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_result",
+          "default": "delete_result",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_hash": {
+          "description": "Job hash returned by a processing action.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_hash"
+      ],
+      "title": "DeleteResult",
+      "type": "object"
+    },
+    "DenoiseImage": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "denoise_image",
+          "default": "denoise_image",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "DenoiseImage",
+      "type": "object"
+    },
+    "EnhanceColors": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "enhance_colors",
+          "default": "enhance_colors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "EnhanceColors",
+      "type": "object"
+    },
+    "EnhanceLighting": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "enhance_lighting",
+          "default": "enhance_lighting",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "EnhanceLighting",
+      "type": "object"
+    },
+    "GenerateImage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "description": {
+          "description": "Describe the image to generate.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "title": "GenerateImage",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetResult": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_result",
+          "default": "get_result",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_hash": {
+          "description": "Job hash returned by a processing action.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_hash"
+      ],
+      "title": "GetResult",
+      "type": "object"
+    },
+    "ProcessImage": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "width": {
+          "description": "Output width in pixels; height is calculated proportionally when omitted.",
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "enum": [
+                "canvas",
+                "bounds",
+                "cover",
+                "crop"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fit",
+          "enum": [
+            "canvas",
+            "bounds",
+            "cover",
+            "crop"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "process_image",
+          "default": "process_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "enhancements": {
+          "items": {
+            "enum": [
+              "denoise",
+              "deblur",
+              "light",
+              "color",
+              "white_balance"
+            ],
+            "type": "string"
+          },
+          "title": "Enhancements",
+          "type": "array"
+        }
+      },
+      "required": [
+        "image_url",
+        "width"
+      ],
+      "title": "ProcessImage",
+      "type": "object"
+    },
+    "ProcessImageWait": {
+      "additionalProperties": false,
+      "description": "Wait up to the provider's 25 second processing window; a pending job remains possible.",
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "width": {
+          "description": "Output width in pixels; height is calculated proportionally when omitted.",
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "enum": [
+                "canvas",
+                "bounds",
+                "cover",
+                "crop"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fit",
+          "enum": [
+            "canvas",
+            "bounds",
+            "cover",
+            "crop"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "process_image_wait",
+          "default": "process_image_wait",
+          "title": "Operation",
+          "type": "string"
+        },
+        "enhancements": {
+          "items": {
+            "enum": [
+              "denoise",
+              "deblur",
+              "light",
+              "color",
+              "white_balance"
+            ],
+            "type": "string"
+          },
+          "title": "Enhancements",
+          "type": "array"
+        }
+      },
+      "required": [
+        "image_url",
+        "width"
+      ],
+      "title": "ProcessImageWait",
+      "type": "object"
+    },
+    "RemoveBackground": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "remove_background",
+          "default": "remove_background",
+          "title": "Operation",
+          "type": "string"
+        },
+        "remove": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "human",
+            "item"
+          ],
+          "title": "Remove",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "RemoveBackground",
+      "type": "object"
+    },
+    "ReplaceBackground": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "operation": {
+          "const": "replace_background",
+          "default": "replace_background",
+          "title": "Operation",
+          "type": "string"
+        },
+        "remove": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "human",
+            "item"
+          ],
+          "title": "Remove",
+          "type": "string"
+        },
+        "background_url": {
+          "description": "Public HTTPS replacement background image URL.",
+          "minLength": 1,
+          "title": "Background Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url",
+        "background_url"
+      ],
+      "title": "ReplaceBackground",
+      "type": "object"
+    },
+    "UpscaleImage": {
+      "additionalProperties": false,
+      "properties": {
+        "image_url": {
+          "description": "Public HTTPS image URL. Deepimage fetches this image; NoClick does not download it.",
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JPEG or WebP compression quality.",
+          "title": "Quality"
+        },
+        "width": {
+          "description": "Output width in pixels; height is calculated proportionally when omitted.",
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "enum": [
+                "canvas",
+                "bounds",
+                "cover",
+                "crop"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fit",
+          "enum": [
+            "canvas",
+            "bounds",
+            "cover",
+            "crop"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "upscale_image",
+          "default": "upscale_image",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url",
+        "width"
+      ],
+      "title": "UpscaleImage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "correct_white_balance": "#/$defs/CorrectWhiteBalance",
+          "deblur_image": "#/$defs/DeblurImage",
+          "delete_result": "#/$defs/DeleteResult",
+          "denoise_image": "#/$defs/DenoiseImage",
+          "enhance_colors": "#/$defs/EnhanceColors",
+          "enhance_lighting": "#/$defs/EnhanceLighting",
+          "generate_image": "#/$defs/GenerateImage",
+          "get_account": "#/$defs/GetAccount",
+          "get_result": "#/$defs/GetResult",
+          "process_image": "#/$defs/ProcessImage",
+          "process_image_wait": "#/$defs/ProcessImageWait",
+          "remove_background": "#/$defs/RemoveBackground",
+          "replace_background": "#/$defs/ReplaceBackground",
+          "upscale_image": "#/$defs/UpscaleImage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/GetResult"
+        },
+        {
+          "$ref": "#/$defs/DeleteResult"
+        },
+        {
+          "$ref": "#/$defs/ProcessImage"
+        },
+        {
+          "$ref": "#/$defs/ProcessImageWait"
+        },
+        {
+          "$ref": "#/$defs/UpscaleImage"
+        },
+        {
+          "$ref": "#/$defs/DenoiseImage"
+        },
+        {
+          "$ref": "#/$defs/DeblurImage"
+        },
+        {
+          "$ref": "#/$defs/EnhanceLighting"
+        },
+        {
+          "$ref": "#/$defs/EnhanceColors"
+        },
+        {
+          "$ref": "#/$defs/CorrectWhiteBalance"
+        },
+        {
+          "$ref": "#/$defs/RemoveBackground"
+        },
+        {
+          "$ref": "#/$defs/ReplaceBackground"
+        },
+        {
+          "$ref": "#/$defs/GenerateImage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DeepimageAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Deepimage Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
