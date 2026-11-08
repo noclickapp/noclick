@@ -1,0 +1,445 @@
+[
+  {
+    "config": {
+      "operation": "list_groups"
+    },
+    "method": "GET",
+    "path": "/groups",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": 123,
+          "name": "Support Team",
+          "fields": [
+            {
+              "name": "language",
+              "label": "Language",
+              "input_required": true
+            },
+            {
+              "name": "weight",
+              "label": "Agent Weight",
+              "input_required": false
+            }
+          ]
+        },
+        {
+          "id": 456,
+          "name": "Sales Team",
+          "fields": [
+            {
+              "name": "department",
+              "label": "Department",
+              "input_required": true
+            }
+          ]
+        },
+        {
+          "id": 789,
+          "name": "Customer Service",
+          "fields": [
+            {
+              "name": "issue_type",
+              "label": "Issue Type",
+              "input_required": true,
+              "instructions": "Classify the type of customer issue based on their message"
+            },
+            {
+              "name": "language_preference",
+              "label": "Language Preference",
+              "input_required": true,
+              "instructions": "Detect the customer's preferred communication language"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "get_fields",
+      "group_id": 123
+    },
+    "method": "GET",
+    "path": "/123/fields",
+    "status": 200,
+    "response": {
+      "fields": [
+        {
+          "name": "skills",
+          "label": "Skills",
+          "type": "MultiSelectEvaluator",
+          "options": [
+            "JavaScript",
+            "React",
+            "Node.js",
+            "Python"
+          ]
+        },
+        {
+          "name": "language_preference",
+          "label": "Language Preference",
+          "type": "AISelectEvaluator",
+          "instructions": "Detect the primary language of the customer's message",
+          "options": [
+            {
+              "label": "Spanish",
+              "ai_instruction": "Customer is communicating in Spanish"
+            },
+            {
+              "label": "French",
+              "ai_instruction": "Customer is communicating in French"
+            },
+            {
+              "label": "English",
+              "ai_instruction": "Customer is communicating in English"
+            }
+          ]
+        },
+        {
+          "name": "issue_type",
+          "label": "Issue Type",
+          "type": "AISelectEvaluator",
+          "instructions": null,
+          "options": [
+            {
+              "label": "Technical Support",
+              "ai_instruction": "Issue relates to technical problems, bugs, or system errors"
+            },
+            {
+              "label": "Billing",
+              "ai_instruction": "Issue relates to payments, invoices, or billing questions"
+            },
+            {
+              "label": "Account Management",
+              "ai_instruction": "Issue relates to account settings, password resets, or profile changes"
+            }
+          ]
+        },
+        {
+          "name": "weight",
+          "label": "Agent Weight",
+          "type": "WeightEvaluator",
+          "options": null
+        }
+      ],
+      "metadata_fields": [
+        "email",
+        "slack_user_id",
+        "phone"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "list_agents",
+      "group_id": 123,
+      "active": true
+    },
+    "method": "GET",
+    "path": "/123/agents",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": 456,
+          "name": "John Doe",
+          "meta": {
+            "email": "john@example.com",
+            "slack_user_id": "U1234567"
+          },
+          "is_active": true,
+          "fields": {
+            "weight": 50,
+            "skills": [
+              "JavaScript",
+              "React"
+            ]
+          }
+        },
+        {
+          "id": 457,
+          "name": "Jane Smith",
+          "meta": {
+            "email": "jane@example.com",
+            "slack_user_id": "U7654321"
+          },
+          "is_active": false,
+          "fields": {
+            "weight": 25,
+            "timezone": {
+              "timezone": "America/New_York",
+              "businessHoursStart": "09:00",
+              "businessHoursEnd": "17:00"
+            }
+          }
+        }
+      ]
+    },
+    "params": {
+      "active": "true"
+    }
+  },
+  {
+    "config": {
+      "operation": "next_agent",
+      "group_id": 123,
+      "criteria": {
+        "language": [
+          "English"
+        ],
+        "department": [
+          "Support"
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/123/next-agent",
+    "status": 200,
+    "response": {
+      "agent": {
+        "id": 456,
+        "name": "John Doe",
+        "meta": {
+          "email": "john@example.com",
+          "phone": "555-0123",
+          "slack_user_id": "U1234567"
+        }
+      },
+      "criteria_used": {
+        "language": [
+          "English"
+        ],
+        "department": [
+          "Support"
+        ]
+      },
+      "agent_found": true
+    },
+    "body": {
+      "language": [
+        "English"
+      ],
+      "department": [
+        "Support"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "email_next_agent",
+      "group_id": 123,
+      "content": "Hello, I need help with my English language course. Can someone assist me?"
+    },
+    "method": "POST",
+    "path": "/123/email-next-agent",
+    "status": 202,
+    "response": {
+      "success": true,
+      "message": "Request accepted for processing"
+    },
+    "body": {
+      "content": "Hello, I need help with my English language course. Can someone assist me?"
+    }
+  },
+  {
+    "config": {
+      "operation": "upsert_agent",
+      "group_id": 123,
+      "filter": {
+        "meta": {
+          "email": "john.doe@company.com"
+        }
+      },
+      "data": {
+        "name": "John Doe",
+        "active": true,
+        "meta": {
+          "email": "john.doe@company.com",
+          "slack_user_id": "U1234567",
+          "department": "Engineering"
+        }
+      }
+    },
+    "method": "PUT",
+    "path": "/123/agents",
+    "status": 200,
+    "response": {
+      "agent": {
+        "id": 456,
+        "name": "Jane Smith",
+        "meta": {
+          "email": "jane@company.com",
+          "slack_user_id": "U9876543",
+          "department": "Support"
+        },
+        "is_active": true
+      },
+      "created": false
+    },
+    "body": {
+      "filter": {
+        "meta": {
+          "email": "john.doe@company.com"
+        }
+      },
+      "data": {
+        "name": "John Doe",
+        "active": true,
+        "meta": {
+          "email": "john.doe@company.com",
+          "slack_user_id": "U1234567",
+          "department": "Engineering"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_agent",
+      "group_id": 123,
+      "name": "John Doe",
+      "active": true,
+      "meta": {
+        "email": "john.doe@company.com",
+        "slack_user_id": "U1234567",
+        "department": "Engineering"
+      }
+    },
+    "method": "PUT",
+    "path": "/123/agents",
+    "status": 200,
+    "response": {
+      "agent": {
+        "id": 456,
+        "name": "Jane Smith",
+        "meta": {
+          "email": "jane@company.com",
+          "slack_user_id": "U9876543",
+          "department": "Support"
+        },
+        "is_active": true
+      },
+      "created": false
+    },
+    "body": {
+      "data": {
+        "name": "John Doe",
+        "active": true,
+        "meta": {
+          "email": "john.doe@company.com",
+          "slack_user_id": "U1234567",
+          "department": "Engineering"
+        },
+        "fields": {}
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_agent",
+      "group_id": 123,
+      "agent_id": 123,
+      "data": {
+        "name": "Jane Smith Updated",
+        "active": false,
+        "meta": {
+          "email": "jane@company.com",
+          "department": "Support"
+        }
+      }
+    },
+    "method": "PUT",
+    "path": "/123/agents",
+    "status": 200,
+    "response": {
+      "agent": {
+        "id": 456,
+        "name": "Jane Smith",
+        "meta": {
+          "email": "jane@company.com",
+          "slack_user_id": "U9876543",
+          "department": "Support"
+        },
+        "is_active": true
+      },
+      "created": false
+    },
+    "body": {
+      "filter": {
+        "id": 123
+      },
+      "data": {
+        "name": "Jane Smith Updated",
+        "active": false,
+        "meta": {
+          "email": "jane@company.com",
+          "department": "Support"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "activate_agent",
+      "group_id": 123,
+      "agent_id": 123
+    },
+    "method": "PUT",
+    "path": "/123/agents",
+    "status": 200,
+    "response": {
+      "agent": {
+        "id": 456,
+        "name": "Jane Smith",
+        "meta": {
+          "email": "jane@company.com",
+          "slack_user_id": "U9876543",
+          "department": "Support"
+        },
+        "is_active": true
+      },
+      "created": false
+    },
+    "body": {
+      "filter": {
+        "id": 123
+      },
+      "data": {
+        "active": true
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "deactivate_agent",
+      "group_id": 123,
+      "agent_id": 123
+    },
+    "method": "PUT",
+    "path": "/123/agents",
+    "status": 200,
+    "response": {
+      "agent": {
+        "id": 456,
+        "name": "Jane Smith",
+        "meta": {
+          "email": "jane@company.com",
+          "slack_user_id": "U9876543",
+          "department": "Support"
+        },
+        "is_active": true
+      },
+      "created": false
+    },
+    "body": {
+      "filter": {
+        "id": 123
+      },
+      "data": {
+        "active": false
+      }
+    }
+  }
+]
