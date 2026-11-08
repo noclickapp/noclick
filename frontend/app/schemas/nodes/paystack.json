@@ -1,0 +1,1484 @@
+{
+  "$defs": {
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create a customer record.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stringified JSON object of custom data.",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreatePlan": {
+      "additionalProperties": false,
+      "description": "Create a recurring billing plan.",
+      "properties": {
+        "operation": {
+          "const": "create_plan",
+          "default": "create_plan",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount in minor currency units.",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "interval": {
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly",
+            "biannually",
+            "annually"
+          ],
+          "title": "Interval",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "NGN",
+                "GHS",
+                "ZAR",
+                "USD"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency",
+          "enum": [
+            "NGN",
+            "GHS",
+            "ZAR",
+            "USD"
+          ],
+          "x-enum-searchable": true
+        },
+        "send_invoices": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Invoices"
+        },
+        "send_sms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Sms"
+        },
+        "invoice_limit": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Limit"
+        }
+      },
+      "required": [
+        "name",
+        "amount",
+        "interval"
+      ],
+      "title": "CreatePlan",
+      "type": "object"
+    },
+    "CreateRefund": {
+      "additionalProperties": false,
+      "description": "Request a full or partial refund; processing may be asynchronous.",
+      "properties": {
+        "operation": {
+          "const": "create_refund",
+          "default": "create_refund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "transaction": {
+          "description": "Reference of a previously completed transaction.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Transaction",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minor units; omit for a full refund. Cannot exceed the original amount.",
+          "title": "Amount"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "GHS",
+                "KES",
+                "NGN",
+                "USD",
+                "ZAR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency",
+          "enum": [
+            "GHS",
+            "KES",
+            "NGN",
+            "USD",
+            "ZAR"
+          ],
+          "x-enum-searchable": true
+        },
+        "customer_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Note"
+        },
+        "merchant_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Merchant Note"
+        }
+      },
+      "required": [
+        "transaction"
+      ],
+      "title": "CreateRefund",
+      "type": "object"
+    },
+    "CreateSubscription": {
+      "additionalProperties": false,
+      "description": "Subscribe an existing customer to a plan using their saved authorization.",
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer": {
+          "description": "Customer code or email address.",
+          "minLength": 1,
+          "title": "Customer",
+          "type": "string"
+        },
+        "plan": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Plan",
+          "type": "string"
+        },
+        "authorization": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Saved authorization code; defaults to the customer's most recent authorization.",
+          "title": "Authorization"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        }
+      },
+      "required": [
+        "customer",
+        "plan"
+      ],
+      "title": "CreateSubscription",
+      "type": "object"
+    },
+    "DisableSubscription": {
+      "additionalProperties": false,
+      "description": "Disable a subscription with its email token.",
+      "properties": {
+        "operation": {
+          "const": "disable_subscription",
+          "default": "disable_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "token": {
+          "description": "Subscription email_token returned by Paystack.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "code",
+        "token"
+      ],
+      "title": "DisableSubscription",
+      "type": "object"
+    },
+    "EnableSubscription": {
+      "additionalProperties": false,
+      "description": "Enable a subscription with its email token.",
+      "properties": {
+        "operation": {
+          "const": "enable_subscription",
+          "default": "enable_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "token": {
+          "description": "Subscription email_token returned by Paystack.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "code",
+        "token"
+      ],
+      "title": "EnableSubscription",
+      "type": "object"
+    },
+    "GetBalance": {
+      "additionalProperties": false,
+      "description": "Read the account's balances by currency.",
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetBalance",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "description": "Fetch a customer by customer code.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetPlan": {
+      "additionalProperties": false,
+      "description": "Fetch a billing plan by code.",
+      "properties": {
+        "operation": {
+          "const": "get_plan",
+          "default": "get_plan",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "GetPlan",
+      "type": "object"
+    },
+    "GetRefund": {
+      "additionalProperties": false,
+      "description": "Fetch a refund by numeric ID.",
+      "properties": {
+        "operation": {
+          "const": "get_refund",
+          "default": "get_refund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetRefund",
+      "type": "object"
+    },
+    "GetSubscription": {
+      "additionalProperties": false,
+      "description": "Fetch a subscription by code.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "GetSubscription",
+      "type": "object"
+    },
+    "GetTransaction": {
+      "additionalProperties": false,
+      "description": "Fetch a transaction by numeric ID.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTransaction",
+      "type": "object"
+    },
+    "InitializeTransaction": {
+      "additionalProperties": false,
+      "description": "Initialize checkout; the customer must still complete payment.",
+      "properties": {
+        "operation": {
+          "const": "initialize_transaction",
+          "default": "initialize_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Customer email address.",
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount in the currency's smallest denomination.",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "GHS",
+                "KES",
+                "NGN",
+                "USD",
+                "ZAR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency",
+          "enum": [
+            "GHS",
+            "KES",
+            "NGN",
+            "USD",
+            "ZAR"
+          ],
+          "x-enum-searchable": true
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique reference; letters, numbers, -, . and = only.",
+          "title": "Reference"
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fully qualified customer redirect URL.",
+          "title": "Callback Url"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plan code; Paystack overrides amount when supplied.",
+          "title": "Plan"
+        },
+        "invoice_limit": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Limit"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "email",
+        "amount"
+      ],
+      "title": "InitializeTransaction",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "description": "List one page of this account's customers.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run fetches exactly one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Records per page (1\u2013100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start timestamp in ISO 8601 format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End timestamp in ISO 8601 format.",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListPlans": {
+      "additionalProperties": false,
+      "description": "List one page of billing plans.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run fetches exactly one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Records per page (1\u2013100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start timestamp in ISO 8601 format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End timestamp in ISO 8601 format.",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_plans",
+          "default": "list_plans",
+          "title": "Operation",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly",
+                "biannually",
+                "annually"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly",
+            "biannually",
+            "annually"
+          ],
+          "x-enum-searchable": true
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        }
+      },
+      "title": "ListPlans",
+      "type": "object"
+    },
+    "ListRefunds": {
+      "additionalProperties": false,
+      "description": "List one page of refunds.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run fetches exactly one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Records per page (1\u2013100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start timestamp in ISO 8601 format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End timestamp in ISO 8601 format.",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_refunds",
+          "default": "list_refunds",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRefunds",
+      "type": "object"
+    },
+    "ListSubscriptions": {
+      "additionalProperties": false,
+      "description": "List one page of subscriptions.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run fetches exactly one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Records per page (1\u2013100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start timestamp in ISO 8601 format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End timestamp in ISO 8601 format.",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "plan_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric plan ID, not plan code.",
+          "title": "Plan Id"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer ID.",
+          "title": "Customer"
+        }
+      },
+      "title": "ListSubscriptions",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "additionalProperties": false,
+      "description": "List one page of transactions with optional filters.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each run fetches exactly one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Records per page (1\u2013100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start timestamp in ISO 8601 format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End timestamp in ISO 8601 format.",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "success",
+                "failed",
+                "abandoned",
+                "reversed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "success",
+            "failed",
+            "abandoned",
+            "reversed"
+          ],
+          "x-enum-searchable": true
+        },
+        "customer_code": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Code"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "enum": [
+                "card",
+                "pos",
+                "bank",
+                "dedicated_nuban",
+                "ussd",
+                "bank_transfer"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel",
+          "enum": [
+            "card",
+            "pos",
+            "bank",
+            "dedicated_nuban",
+            "ussd",
+            "bank_transfer"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "PaystackAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "paystack_api_key",
+          "default": "paystack_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secret key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "secret_key"
+      ],
+      "title": "Paystack API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Paystack secret key from Settings \u2192 API Keys & Webhooks. Use a test secret key for test data or a live secret key for real payments. Public keys cannot authorize these operations. NoClick sends the key only to api.paystack.co. Connecting reads your customer list; it does not test write permissions.",
+      "x-credential-url": "https://dashboard.paystack.com/#/settings/developers"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "description": "Update selected customer fields; omitted fields are not sent.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stringified JSON object of custom data.",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdatePlan": {
+      "additionalProperties": false,
+      "description": "Update a billing plan's name, price, cadence or notification settings.",
+      "properties": {
+        "operation": {
+          "const": "update_plan",
+          "default": "update_plan",
+          "title": "Operation",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly",
+                "biannually",
+                "annually"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly",
+            "biannually",
+            "annually"
+          ],
+          "x-enum-searchable": true
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "NGN",
+                "GHS",
+                "ZAR",
+                "USD"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency",
+          "enum": [
+            "NGN",
+            "GHS",
+            "ZAR",
+            "USD"
+          ],
+          "x-enum-searchable": true
+        },
+        "send_invoices": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Invoices"
+        },
+        "send_sms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Sms"
+        },
+        "invoice_limit": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Limit"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "UpdatePlan",
+      "type": "object"
+    },
+    "VerifyTransaction": {
+      "additionalProperties": false,
+      "description": "Verify a transaction reference; inspect data.status to determine payment state.",
+      "properties": {
+        "operation": {
+          "const": "verify_transaction",
+          "default": "verify_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.=-]+$",
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference"
+      ],
+      "title": "VerifyTransaction",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_plan": "#/$defs/CreatePlan",
+          "create_refund": "#/$defs/CreateRefund",
+          "create_subscription": "#/$defs/CreateSubscription",
+          "disable_subscription": "#/$defs/DisableSubscription",
+          "enable_subscription": "#/$defs/EnableSubscription",
+          "get_balance": "#/$defs/GetBalance",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_plan": "#/$defs/GetPlan",
+          "get_refund": "#/$defs/GetRefund",
+          "get_subscription": "#/$defs/GetSubscription",
+          "get_transaction": "#/$defs/GetTransaction",
+          "initialize_transaction": "#/$defs/InitializeTransaction",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_plans": "#/$defs/ListPlans",
+          "list_refunds": "#/$defs/ListRefunds",
+          "list_subscriptions": "#/$defs/ListSubscriptions",
+          "list_transactions": "#/$defs/ListTransactions",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_plan": "#/$defs/UpdatePlan",
+          "verify_transaction": "#/$defs/VerifyTransaction"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/InitializeTransaction"
+        },
+        {
+          "$ref": "#/$defs/VerifyTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/GetTransaction"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreatePlan"
+        },
+        {
+          "$ref": "#/$defs/ListPlans"
+        },
+        {
+          "$ref": "#/$defs/GetPlan"
+        },
+        {
+          "$ref": "#/$defs/UpdatePlan"
+        },
+        {
+          "$ref": "#/$defs/CreateSubscription"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/GetSubscription"
+        },
+        {
+          "$ref": "#/$defs/EnableSubscription"
+        },
+        {
+          "$ref": "#/$defs/DisableSubscription"
+        },
+        {
+          "$ref": "#/$defs/CreateRefund"
+        },
+        {
+          "$ref": "#/$defs/ListRefunds"
+        },
+        {
+          "$ref": "#/$defs/GetRefund"
+        },
+        {
+          "$ref": "#/$defs/GetBalance"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PaystackAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Paystack Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
