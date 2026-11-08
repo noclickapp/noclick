@@ -25,6 +25,7 @@ EnginemailerIcon.displayName = 'EnginemailerIcon';
 export const EnginemailerNode: NodeDefinition = {
     type: 'automation-enginemailer',
     label: 'Enginemailer',
+    category: 'marketing',
     description:
         'Manage subscribers, tags, templates and email with Enginemailer',
     Icon: EnginemailerIcon,
