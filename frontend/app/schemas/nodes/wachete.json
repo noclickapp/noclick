@@ -1,0 +1,745 @@
+{
+  "$defs": {
+    "Alert": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "title": "Type",
+          "type": "integer"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Alert",
+      "type": "object"
+    },
+    "DeleteFolder": {
+      "additionalProperties": false,
+      "description": "Delete a folder and every nested folder and monitor.",
+      "properties": {
+        "folder_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "DeleteFolder",
+      "type": "object"
+    },
+    "DeleteMonitor": {
+      "additionalProperties": false,
+      "description": "Delete a monitor and its monitoring configuration.",
+      "properties": {
+        "monitor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DeleteMonitor",
+      "type": "object"
+    },
+    "GetMonitor": {
+      "additionalProperties": false,
+      "description": "Read a monitor's definition and latest data.",
+      "properties": {
+        "monitor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "GetMonitor",
+      "type": "object"
+    },
+    "GetNotification": {
+      "additionalProperties": false,
+      "description": "Read a notification's HTML content in its JSON response envelope.",
+      "properties": {
+        "operation": {
+          "const": "get_notification",
+          "default": "get_notification",
+          "title": "Operation",
+          "type": "string"
+        },
+        "alert_id": {
+          "minLength": 1,
+          "title": "Notification ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "GetNotification",
+      "type": "object"
+    },
+    "ListFolder": {
+      "additionalProperties": false,
+      "description": "Read root or selected folder contents, one page at a time.",
+      "properties": {
+        "operation": {
+          "const": "list_folder_contents",
+          "default": "list_folder_contents",
+          "title": "Operation",
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the account's root folder.",
+          "title": "Parent Folder ID"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token"
+        }
+      },
+      "title": "ListFolder",
+      "type": "object"
+    },
+    "ListHistory": {
+      "additionalProperties": false,
+      "description": "Read one page of a monitor's content history.",
+      "properties": {
+        "from_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO 8601 time.",
+          "title": "From"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 time.",
+          "title": "To"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Count"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy continuationToken from the previous response; one page is returned per run.",
+          "title": "Continuation Token"
+        },
+        "monitor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_history",
+          "default": "list_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "return_diff": {
+          "default": false,
+          "title": "Return Diff",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ListHistory",
+      "type": "object"
+    },
+    "ListNotifications": {
+      "additionalProperties": false,
+      "description": "Read triggered notifications, newest first, optionally for one monitor.",
+      "properties": {
+        "from_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO 8601 time.",
+          "title": "From"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 time.",
+          "title": "To"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Count"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy continuationToken from the previous response; one page is returned per run.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_notifications",
+          "default": "list_notifications",
+          "title": "Operation",
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Monitor ID"
+        },
+        "html": {
+          "default": false,
+          "title": "Include HTML",
+          "type": "boolean"
+        }
+      },
+      "title": "ListNotifications",
+      "type": "object"
+    },
+    "ListPages": {
+      "additionalProperties": false,
+      "description": "Read the pages belonging to a portal/crawler monitor.",
+      "properties": {
+        "monitor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_monitor_pages",
+          "default": "list_monitor_pages",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ListPages",
+      "type": "object"
+    },
+    "MoveItems": {
+      "additionalProperties": false,
+      "description": "Move the selected monitors and folders to a destination folder.",
+      "properties": {
+        "operation": {
+          "const": "move_items",
+          "default": "move_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "task_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Monitor IDs",
+          "type": "array"
+        },
+        "folder_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Folder IDs",
+          "type": "array"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for root.",
+          "title": "Destination Folder ID"
+        }
+      },
+      "title": "MoveItems",
+      "type": "object"
+    },
+    "NotificationEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            0,
+            1,
+            4,
+            8,
+            16,
+            32,
+            64,
+            92
+          ],
+          "title": "Type",
+          "type": "integer"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "NotificationEndpoint",
+      "type": "object"
+    },
+    "SaveFolder": {
+      "additionalProperties": false,
+      "description": "Create a folder, or update it when a folder ID is supplied.",
+      "properties": {
+        "operation": {
+          "const": "save_folder",
+          "default": "save_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to create; supply to update.",
+          "title": "Folder ID"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SaveFolder",
+      "type": "object"
+    },
+    "SaveMonitor": {
+      "additionalProperties": false,
+      "description": "Create or replace a monitor definition with one PUT; supply its ID to update.\n\nUpdating sends the supplied definition, not a patch. Include all settings\nyou want to retain, including alerts and notification endpoints.",
+      "properties": {
+        "operation": {
+          "const": "save_monitor",
+          "default": "save_monitor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "monitor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to create; supply to replace an existing definition.",
+          "title": "Monitor ID"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Page URL",
+          "type": "string"
+        },
+        "xpath": {
+          "default": "/",
+          "title": "XPath",
+          "type": "string"
+        },
+        "recurrence_in_seconds": {
+          "default": 86400,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Check Interval (Seconds)",
+          "type": "integer"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder ID"
+        },
+        "job_type": {
+          "default": 0,
+          "description": "Contract enum: 0 = SinglePage, 1 = Portal.",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Monitor Type",
+          "type": "integer"
+        },
+        "dynamic_content": {
+          "default": false,
+          "title": "Render JavaScript",
+          "type": "boolean"
+        },
+        "crawling_depth": {
+          "default": 0,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Crawling Depth",
+          "type": "integer"
+        },
+        "alerts": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Alert"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric AlertType values from the Wachete v1 contract.",
+          "title": "Alerts"
+        },
+        "notification_endpoints": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/NotificationEndpoint"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use account defaults. Numeric MessagingServiceType values from the v1 contract.",
+          "title": "Notification Endpoints"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "title": "SaveMonitor",
+      "type": "object"
+    },
+    "SearchMonitors": {
+      "additionalProperties": false,
+      "description": "Search monitors; Wachete returns at most 500 results.",
+      "properties": {
+        "operation": {
+          "const": "search_monitors",
+          "default": "search_monitors",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wachete search syntax: https://www.wachete.com/faq#faq_search",
+          "title": "Search Query"
+        }
+      },
+      "title": "SearchMonitors",
+      "type": "object"
+    },
+    "WacheteTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "wachete_api_token",
+          "default": "wachete_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:help": "Paste the token from the API login response, without the Bearer prefix.",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Wachete API Token",
+      "type": "object",
+      "x-credential-instructions": "Use the token returned by Wachete's API-key login (POST /thirdparty/v1/user/apilogin with the userId and apiKey from your Wachete profile). Paste only the returned token. Tokens expire: replace this credential's token when it expires. NoClick does not store your password or refresh the token.",
+      "x-credential-url": "https://www.wachete.com/api"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete_folder": "#/$defs/DeleteFolder",
+          "delete_monitor": "#/$defs/DeleteMonitor",
+          "get_monitor": "#/$defs/GetMonitor",
+          "get_notification": "#/$defs/GetNotification",
+          "list_folder_contents": "#/$defs/ListFolder",
+          "list_history": "#/$defs/ListHistory",
+          "list_monitor_pages": "#/$defs/ListPages",
+          "list_notifications": "#/$defs/ListNotifications",
+          "move_items": "#/$defs/MoveItems",
+          "save_folder": "#/$defs/SaveFolder",
+          "save_monitor": "#/$defs/SaveMonitor",
+          "search_monitors": "#/$defs/SearchMonitors"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListFolder"
+        },
+        {
+          "$ref": "#/$defs/DeleteFolder"
+        },
+        {
+          "$ref": "#/$defs/SaveFolder"
+        },
+        {
+          "$ref": "#/$defs/MoveItems"
+        },
+        {
+          "$ref": "#/$defs/GetMonitor"
+        },
+        {
+          "$ref": "#/$defs/DeleteMonitor"
+        },
+        {
+          "$ref": "#/$defs/SearchMonitors"
+        },
+        {
+          "$ref": "#/$defs/ListPages"
+        },
+        {
+          "$ref": "#/$defs/ListHistory"
+        },
+        {
+          "$ref": "#/$defs/ListNotifications"
+        },
+        {
+          "$ref": "#/$defs/GetNotification"
+        },
+        {
+          "$ref": "#/$defs/SaveMonitor"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WacheteTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wachete Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

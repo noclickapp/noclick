@@ -1,0 +1,44 @@
+{
+  "ClientTask": {
+    "id": "4e5c5176-1238-45a3-8a87-35435baecaa2",
+    "name": "My First Wachet",
+    "url": "http://www.mypage.com",
+    "xPath": "/",
+    "alerts": [
+      {
+        "type": "Error"
+      },
+      {
+        "type": "NotEq"
+      }
+    ],
+    "recurrenceInSeconds": 86400,
+    "data": {
+      "lastCheckTimestamp": "2015-07-12T12:52:48Z",
+      "valueChangedTimestamp": "2015-07-12T11:52:48Z",
+      "raw": "This is content of my page"
+    },
+    "notificationEndpoints": [
+      {
+        "type": "Webhook",
+        "value": "https://www.myservice.com/callback"
+      }
+    ],
+    "dynamicContent": false,
+    "scrollPage": false,
+    "ignoreInvalidPages": false,
+    "collectRawHtml": false,
+    "jobType": "SinglePage",
+    "crawlingDepth": 0,
+    "crawlBinaryContent": false,
+    "crawlPagesFromAllDomains": false
+  },
+  "Folder": {
+    "id": "8cae5176-1238-45a3-8a87-35435bae8bb3",
+    "name": "My Folder",
+    "parentId": "9a4c5176-3338-a523-8a66-22435baeca77",
+    "count": 0,
+    "failedCount": 0,
+    "pausedCount": 0
+  }
+}
