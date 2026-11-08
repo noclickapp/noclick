@@ -139,3 +139,39 @@ def test_raw_family_bound_origin_and_closed_four_operation_schema():
     ops = {schema["$defs"][r["$ref"].split("/")[-1]]["properties"]["operation"]["const"] for r in schema["properties"]["config"]["oneOf"]}
     assert ops == {"list_domains", "list_tags", "list_short_urls", "get_short_url"}
     for field in ("url", "longUrl", "shortUrl", "redirects", "headers", "visits", "api_key"): assert field not in schema["$defs"]["ShlinkShortUrlConfig"]["properties"]
+
+
+@pytest.fixture
+def documented_short_urls():
+    from pathlib import Path
+    return json.loads((Path(__file__).parent / "fixtures/shlink/documented_short_urls.json").read_text())
+
+
+def test_documented_short_url_records_parse_without_redirect_targets(documented_short_urls):
+    from nodes.shlink_node import _short_url
+    rows = documented_short_urls["list"]["shortUrls"]["data"]
+    for row in [*rows, documented_short_urls["detail"]]:
+        projected, anchor = _short_url(row, row["domain"], True)
+        assert anchor == (row["domain"], row["shortCode"])
+        assert projected["visitsSummary"] == row["visitsSummary"]
+        assert projected["meta"] == row["meta"]
+        assert projected["dateCreated"] == row["dateCreated"]
+        assert projected["title"] == row["title"]
+        assert "longUrl" not in projected and "shortUrl" not in projected
+
+
+def test_documented_list_example_contradicts_filter_and_page_count(documented_short_urls):
+    from nodes.shlink_node import _paging, _short_url, ShlinkShortUrlsConfig
+    envelope = documented_short_urls["list"]["shortUrls"]
+    rows = envelope["data"]
+    # The provider documents domain=DEFAULT as default-domain-only, but its
+    # generic list example includes a custom-domain row as well.
+    assert {row["domain"] for row in rows} == {None, "example.com"}
+    with pytest.raises(ValueError, match="returned domain differs"):
+        _short_url(rows[-1], None, False)
+    # Preserve the example verbatim: its pagination claims ten current items
+    # while its actual data array contains three. Do not relax this invariant.
+    config = ShlinkShortUrlsConfig(domain="DEFAULT", page=5, items_per_page=10)
+    assert len(rows) == 3 and envelope["pagination"]["itemsInCurrentPage"] == 10
+    with pytest.raises(ValueError, match="page count differs"):
+        _paging(envelope["pagination"], len(rows), len(rows), config)
