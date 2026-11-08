@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/beach-day-api.svg",
+  "source": "https://beachdayapi.com/static/favicon.9c05966b1a69.svg",
+  "license": "Provider brand asset, used to identify the Beach Day API integration. All rights remain with the provider.",
+  "sha256": "a514e8ffd67ddad1c15821a2a3eeb90bcde687f691e5b1fd386257203e154f8b",
+  "notes": "Official favicon; only trailing whitespace and final newline normalized."
+}
