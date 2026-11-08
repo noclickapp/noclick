@@ -1863,10 +1863,13 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             result.requests.append(record)
             try:
                 matches = []
+                postman_mismatches = []
                 for index, candidate in enumerate(contracts):
                     try:
                         match = candidate.match(request)
-                    except ValueError:
+                    except ValueError as exc:
+                        if isinstance(candidate, PostmanContract):
+                            postman_mismatches.append(str(exc))
                         continue
                     path = match[0]
                     matches.append(
@@ -1885,7 +1888,9 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                     )
                 if not matches:
                     raise ValueError(
-                        f"No spec operation for {request.method} {request.url}"
+                        " / ".join(postman_mismatches)
+                        if postman_mismatches
+                        else f"No spec operation for {request.method} {request.url}"
                     )
                 rank, selected, (path, method, operation) = min(
                     matches, key=lambda m: m[0]

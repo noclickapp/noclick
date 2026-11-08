@@ -190,6 +190,25 @@ conflicting filename/MIME declarations and unsatisfied constraints are fixture
 errors: the harness never guesses an image, audio or document type. These files
 make an input executable; they are never evidence of a provider's response.
 
+## Postman example replay
+
+Collections use `format: postman` and the same immutable file, hash, version
+and source pins. Every saved response is replayed as published UTF-8 text,
+without JSON reserialization or variable substitution, including error statuses
+and invalid JSON. Since the saved text is already decoded, replay drops
+`Content-Encoding` and any `Content-Length` that differs from the replayed byte
+length. HTTP clients frame the resulting body; all other headers retain their
+published values and duplicates. A node still has to parse every saved example
+and pass its own response guards.
+
+Only `:name` and `{{name}}` path segments are variable matches. Single braces
+are literal URL text, encoded in a path, and a `{dc_id}` host cannot be bound by
+catalog server overrides or by the outgoing request. See Postman's
+[path-variable matching](https://learning.postman.com/docs/tests-and-scripts/write-scripts/postman-sandbox-reference/pm-mock/),
+[variable substitution](https://learning.postman.com/docs/sending-requests/variables/variables/)
+and [URL encoding](https://blog.postman.com/introducing-the-next-generation-postman-url-processor/).
+Unmatched Postman requests retain the contract's diagnostic in the report.
+
 ## Postman collection evidence
 
 A pin with `"format": "postman"` accepts only Postman Collection v2.0/v2.1.

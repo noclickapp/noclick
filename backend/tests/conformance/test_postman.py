@@ -251,8 +251,9 @@ def test_form_fields(collection, mode, content_type, body):
         )
 
 
+@pytest.mark.parametrize("encoded", [False, True])
 async def test_runner_replays_all_responses_and_preserves_node_guards(
-    collection, monkeypatch
+    collection, monkeypatch, encoded
 ):
     from nodes.core.registry import NODE_REGISTRY
 
@@ -280,12 +281,19 @@ async def test_runner_replays_all_responses_and_preserves_node_guards(
             return {"ok": True}
 
     monkeypatch.setitem(NODE_REGISTRY, "test-postman", Node)
+    if encoded:
+        for example in collection["item"][0]["response"]:
+            example["header"] += [
+                {"key": "Content-Encoding", "value": "gzip"},
+                {"key": "Content-Length", "value": "9999"},
+            ]
     monkeypatch.setitem(harness.PROVIDERS, "postman", ("test-postman", {}))
     monkeypatch.setattr(harness, "spec_entry", lambda _: (None, {}))
     monkeypatch.setattr(harness, "load_specs", lambda _: [collection])
     report = await harness.run_provider("postman")
     assert set(seen) == {b'{ "ok": true }', b'{"other":true}'}
     assert report["failed"] >= 1
+    assert report["fixture_errors"] == 0
     assert any(
         "existing node guard" in f
         for op in report["operations"]
@@ -296,6 +304,68 @@ async def test_runner_replays_all_responses_and_preserves_node_guards(
         for op in report["operations"]
         for req in op["requests"]
     )
+
+
+@pytest.mark.parametrize("client_kind", ["httpx", "aiohttp"])
+async def test_encoded_invalid_json_is_a_node_parser_failure(
+    collection, monkeypatch, client_kind
+):
+    import aiohttp
+    from nodes.core.registry import NODE_REGISTRY
+
+    class Inputs(BaseModel):
+        operation: Literal["create"]
+
+    class Config(BaseModel):
+        config: Inputs
+        credentials: dict
+
+    class Node:
+        scope_registry = None
+        get_config_model = staticmethod(lambda: Config)
+
+        def __init__(self, **kwargs):
+            pass
+
+        async def execute(self, data):
+            req = request(json={"data": {"name": "x"}})
+            if client_kind == "aiohttp":
+                async with aiohttp.ClientSession() as client:
+                    async with client.request(
+                        req.method, str(req.url), headers=req.headers, data=req.content
+                    ) as response:
+                        return await response.json()
+            else:
+                async with httpx.AsyncClient() as client:
+                    response = await client.send(req)
+                    return response.json()
+
+    collection["item"][0]["response"] = [
+        {
+            "code": 200,
+            "header": [
+                {"key": "Content-Encoding", "value": "gzip"},
+                {"key": "Content-Length", "value": "9999"},
+                {"key": "Content-Type", "value": "application/json"},
+            ],
+            "body": '{"invalid":',
+        }
+    ]
+    monkeypatch.setitem(NODE_REGISTRY, "test-postman-invalid", Node)
+    monkeypatch.setitem(
+        harness.PROVIDERS, "postman-invalid", ("test-postman-invalid", {})
+    )
+    monkeypatch.setattr(harness, "spec_entry", lambda _: (None, {}))
+    monkeypatch.setattr(harness, "load_specs", lambda _: [collection])
+    report = await harness.run_provider("postman-invalid")
+    assert report["failed"] == 1
+    assert report["passed"] == report["fixture_errors"] == 0
+    result = report["operations"][0]
+    assert (
+        result["requests"][0]["response_sha256"]
+        == hashlib.sha256(b'{"invalid":').hexdigest()
+    )
+    assert any("JSONDecodeError" in failure for failure in result["failures"])
 
 
 async def test_openapi_match_cannot_be_downgraded_by_postman(collection, monkeypatch):
@@ -490,6 +560,101 @@ def test_error_status_and_duplicate_response_headers_are_verbatim(collection):
     assert response.status_code == 429
     assert response.headers.get_list("set-cookie") == ["a=1", "b=2"]
     assert response.content == example["body"].encode()
+
+
+@pytest.mark.parametrize("encoding", ["gzip", "deflate", "br"])
+def test_decoded_example_drops_only_obsolete_wire_headers(collection, encoding):
+    example = collection["item"][0]["response"][0]
+    example["body"] = '{ "message": "café", "template": "{{literal}}" }\n'
+    example["code"] = 422
+    example["header"] = [
+        {"key": "cOnTeNt-EnCoDiNg", "value": encoding},
+        {"key": "Content-Length", "value": "9999"},
+        {"key": "Content-Type", "value": "application/problem+json"},
+        {"key": "Set-Cookie", "value": "a=1"},
+        {"key": "Set-Cookie", "value": "b=2"},
+        {"key": "X-Published", "value": "unchanged"},
+    ]
+    original = copy.deepcopy(collection)
+    c = PostmanContract(collection)
+    response = c.response(request(), c.match(request())[2])
+    assert response.content == example["body"].encode("utf-8")
+    assert response.json() == {"message": "café", "template": "{{literal}}"}
+    assert response.status_code == 422
+    assert "content-encoding" not in response.headers
+    assert response.headers["content-length"] == str(len(response.content))
+    assert response.headers["content-type"] == "application/problem+json"
+    assert response.headers.get_list("set-cookie") == ["a=1", "b=2"]
+    assert response.headers["x-published"] == "unchanged"
+    assert collection == original
+
+
+@pytest.mark.parametrize("length", ["9999", "14"])
+def test_saved_body_length_matches_replayed_bytes(collection, length):
+    example = collection["item"][0]["response"][0]
+    example["header"] = [{"key": "Content-Length", "value": length}]
+    c = PostmanContract(collection)
+    response = c.response(request(), c.match(request())[2])
+    assert response.headers["content-length"] == str(len(response.content))
+
+
+def test_single_brace_path_is_encoded_literal_not_a_variable(collection):
+    collection["item"][0]["request"]["url"]["path"] = ["items", "{id}"]
+    c = PostmanContract(collection)
+    c.validate_request(request(url="https://example.test/v1/items/%7Bid%7D?limit=1"))
+    for path in ("123", "other", "%7Bother%7D", "%7Bid%7D/extra"):
+        with pytest.raises(ValueError, match="No spec operation"):
+            c.match(request(url=f"https://example.test/v1/items/{path}?limit=1"))
+
+
+def test_single_brace_host_cannot_be_bound_by_catalog_or_request(collection):
+    collection["item"][0]["request"]["url"] = "https://{dc_id}.example.test/items/:id"
+    c = PostmanContract(
+        collection,
+        server_url="https://us1.example.test",
+        server_variables={"dc_id": "us1"},
+    )
+    for host in ("us1.example.test", "evil.example.test", "example.test"):
+        with pytest.raises(ValueError, match="single-brace hosts are literal"):
+            c.match(request(url=f"https://{host}/items/123"))
+
+
+async def test_runner_retains_postman_host_rejection_reason(collection, monkeypatch):
+    from nodes.core.registry import NODE_REGISTRY
+
+    class Inputs(BaseModel):
+        operation: Literal["create"]
+
+    class Config(BaseModel):
+        config: Inputs
+        credentials: dict
+
+    class Node:
+        scope_registry = None
+        get_config_model = staticmethod(lambda: Config)
+
+        def __init__(self, **kwargs):
+            pass
+
+        async def execute(self, data):
+            async with httpx.AsyncClient() as client:
+                await client.send(request(url="https://us1.example.test/items/123"))
+            return {"ok": True}
+
+    collection["item"][0]["request"]["url"] = "https://{dc_id}.example.test/items/:id"
+    monkeypatch.setitem(NODE_REGISTRY, "test-postman-host", Node)
+    monkeypatch.setitem(harness.PROVIDERS, "postman-host", ("test-postman-host", {}))
+    monkeypatch.setattr(harness, "spec_entry", lambda _: (None, {}))
+    monkeypatch.setattr(harness, "load_specs", lambda _: [collection])
+    report = await harness.run_provider("postman-host")
+    assert report["failed"] == 1
+    assert (
+        report["passed"] == report["fixture_errors"] == report["response_checked"] == 0
+    )
+    assert any(
+        "single-brace hosts are literal" in failure
+        for failure in report["operations"][0]["failures"]
+    )
 
 
 def test_catalog_auth_cannot_override_collection_auth(collection):

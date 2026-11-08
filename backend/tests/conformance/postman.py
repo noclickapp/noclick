@@ -6,7 +6,7 @@ import json
 import re
 from email.parser import BytesParser
 from email.policy import default
-from urllib.parse import parse_qsl, urlsplit
+from urllib.parse import parse_qsl, quote, urlsplit
 
 import httpx
 
@@ -126,9 +126,10 @@ class PostmanContract:
                     regex = re.compile(
                         "^"
                         + "/".join(
-                            "[^/]+"
-                            if re.fullmatch(r":[^/]+|\{\{[^{}]+\}\}", segment)
-                            else re.escape(segment)
+                            "[^/]+" if re.fullmatch(r":[^/]+|\{\{[^{}]+\}\}", segment)
+                            # Postman encodes literal braces; only :name and
+                            # {{name}} are variables, never single {name}.
+                            else re.escape(quote(segment, safe="!$&'()*+,-.:;=@_%~"))
                             for segment in path.split("/")
                         )
                         + "$"
@@ -221,8 +222,17 @@ class PostmanContract:
             and regex.fullmatch(path)
         ]
         if not matches:
+            literal_host = any(
+                op["origin"] and re.search(r"[{}]", op["origin"][1])
+                for _, _, _, op in self.paths
+            )
             raise ValueError(
                 f"No spec operation for {request.method} {request.url} (Postman host/path/method)"
+                + (
+                    "; single-brace hosts are literal in Postman, not substitutable variables"
+                    if literal_host
+                    else ""
+                )
             )
         # Collections may have several items on one RPC route. Choose an item
         # accepting the whole request, never a union of unrelated items.
@@ -420,11 +430,23 @@ class PostmanContract:
         if body is not None and not isinstance(body, str):
             raise FixtureError("Postman example body must be published text")
         # No JSON reserialization, MIME inference, placeholder interpolation,
-        # status filtering, or generated fallback. Headers retain duplicates.
+        # status filtering, or generated fallback. Postman saves decoded text,
+        # not the encoded wire entity. Do not ask clients to decompress it again
+        # or frame it using the original compressed/otherwise stale length.
+        content = (body or "").encode("utf-8")
+        headers = [
+            (h["key"], h["value"])
+            for h in example.get("header", [])
+            if h["key"].lower() != "content-encoding"
+            and not (
+                h["key"].lower() == "content-length" and h["value"] != str(len(content))
+            )
+        ]
+        # All other headers, including duplicate values, remain as published.
         response = httpx.Response(
             example["code"],
-            content=(body or "").encode(),
-            headers=[(h["key"], h["value"]) for h in example.get("header", [])],
+            content=content,
+            headers=headers,
             request=request,
         )
         if record is not None:
