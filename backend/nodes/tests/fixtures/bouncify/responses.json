@@ -1,0 +1,60 @@
+{
+  "GET /verify": {
+    "result": "deliverable",
+    "message": "This address can receive emails.",
+    "email": "support@bouncify.io",
+    "user": "support",
+    "domain": "bouncify.io",
+    "accept_all": 2,
+    "role": 1,
+    "free_email": 0,
+    "disposable": 0,
+    "spamtrap": 0,
+    "success": true
+  },
+  "POST /bulk": {
+    "job_id": "r374aki32rnatv868nntpxloc7dkilszc3eu",
+    "success": true,
+    "message": "Bulk email verification list has been created"
+  },
+  "PATCH /bulk": {
+    "job_id": "r374aki32rnatv868nntpxloc7dkilszc3eu",
+    "success": true,
+    "message": "Job verification will be attempted shortly. Call /status endpoint to know the status of the Job"
+  },
+  "DELETE /bulk": {
+    "job_id": "r374aki32rnatv868nntpxloc7dkilszc3eu",
+    "success": true,
+    "message": "List will be deleted"
+  },
+  "GET /bulk": {
+    "job_id": "r374aki32rnatv868nntpxloc7dkilszc3eu",
+    "status": "completed",
+    "created_at": "08/13/2021, 9:39:37 AM",
+    "total": 2,
+    "pending": 0,
+    "verified": 2,
+    "analysis": {
+      "common_isp": 1,
+      "role_based": 1,
+      "disposable": 0,
+      "spamtrap": 0,
+      "syntax_error": 0
+    },
+    "results": {
+      "deliverable": 1,
+      "undeliverable": 0,
+      "accept_all": 1,
+      "unknown": 0
+    },
+    "success": true,
+    "message": "Verification completed successfully. Please download the result using /download endpoint"
+  },
+  "GET /info": {
+    "success": true,
+    "credits_info": {
+      "credits_remaining": 100
+    }
+  },
+  "POST /download": "\"Email\", \"Verification Result\",\t\"Syntax Error\",\t\"ISP\", \"Role\", \"Accept-all\", \"Disposable\", \"Trap\", \"Verified At\"\n\"info@sample.com\", \"deliverable\", \"N\", \"Y\", \"N\", \"N\", \"N\", \"2021-09-13T06:49:39.280Z\"\n\"support@sample.in\", \"accept-all\", \"N\",\t\"N\", \"Y\", \"Y\", \"N\", \"2021-09-13T06:49:39.282Z\""
+}
