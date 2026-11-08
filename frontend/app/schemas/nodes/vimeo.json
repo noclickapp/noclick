@@ -1,0 +1,758 @@
+{
+  "$defs": {
+    "AddVideoToFolder": {
+      "additionalProperties": false,
+      "description": "Add a specific video to a project",
+      "properties": {
+        "operation": {
+          "const": "add_video_to_folder",
+          "default": "add_video_to_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Vimeo numeric project id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "video_id"
+      ],
+      "title": "AddVideoToFolder",
+      "type": "object"
+    },
+    "CreateComment": {
+      "additionalProperties": false,
+      "description": "Add a comment to a video",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Comment text",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "text"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateFolder": {
+      "additionalProperties": false,
+      "description": "Create a project",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "New name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFolder",
+      "type": "object"
+    },
+    "DeleteComment": {
+      "additionalProperties": false,
+      "description": "Delete a video comment",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "description": "Vimeo numeric comment id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Comment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "comment_id"
+      ],
+      "title": "DeleteComment",
+      "type": "object"
+    },
+    "DeleteFolder": {
+      "additionalProperties": false,
+      "description": "Delete a project",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Vimeo numeric project id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "DeleteFolder",
+      "type": "object"
+    },
+    "DeleteVideo": {
+      "additionalProperties": false,
+      "description": "Delete a video",
+      "properties": {
+        "operation": {
+          "const": "delete_video",
+          "default": "delete_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "DeleteVideo",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Get a user",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetComment": {
+      "additionalProperties": false,
+      "description": "Get a specific video comment",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "description": "Vimeo numeric comment id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Comment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "comment_id"
+      ],
+      "title": "GetComment",
+      "type": "object"
+    },
+    "GetFolder": {
+      "additionalProperties": false,
+      "description": "Get a specific project",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Vimeo numeric project id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetFolder",
+      "type": "object"
+    },
+    "GetVideo": {
+      "additionalProperties": false,
+      "description": "Get a specific video",
+      "properties": {
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "GetVideo",
+      "type": "object"
+    },
+    "LikeVideo": {
+      "additionalProperties": false,
+      "description": "Cause a user to like a video",
+      "properties": {
+        "operation": {
+          "const": "like_video",
+          "default": "like_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "LikeVideo",
+      "type": "object"
+    },
+    "ListComments": {
+      "additionalProperties": false,
+      "description": "Get all the comments on a video",
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; increment to read another page",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "ListComments",
+      "type": "object"
+    },
+    "ListFolderVideos": {
+      "additionalProperties": false,
+      "description": "Get all the videos in a project",
+      "properties": {
+        "operation": {
+          "const": "list_folder_videos",
+          "default": "list_folder_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Vimeo numeric project id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; increment to read another page",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListFolderVideos",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "description": "Get all the projects that belong to a user",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; increment to read another page",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListVideos": {
+      "additionalProperties": false,
+      "description": "Get all the videos that a user has uploaded",
+      "properties": {
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; increment to read another page",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search your videos",
+          "title": "Query"
+        }
+      },
+      "title": "ListVideos",
+      "type": "object"
+    },
+    "RemoveVideoFromFolder": {
+      "additionalProperties": false,
+      "description": "Remove a specific video from a project",
+      "properties": {
+        "operation": {
+          "const": "remove_video_from_folder",
+          "default": "remove_video_from_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Vimeo numeric project id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "video_id"
+      ],
+      "title": "RemoveVideoFromFolder",
+      "type": "object"
+    },
+    "UnlikeVideo": {
+      "additionalProperties": false,
+      "description": "Cause a user to unlike a video",
+      "properties": {
+        "operation": {
+          "const": "unlike_video",
+          "default": "unlike_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "UnlikeVideo",
+      "type": "object"
+    },
+    "UpdateComment": {
+      "additionalProperties": false,
+      "description": "Edit a video comment",
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "description": "Vimeo numeric comment id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Comment text",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "comment_id",
+        "text"
+      ],
+      "title": "UpdateComment",
+      "type": "object"
+    },
+    "UpdateFolder": {
+      "additionalProperties": false,
+      "description": "Edit a project",
+      "properties": {
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Vimeo numeric project id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "UpdateFolder",
+      "type": "object"
+    },
+    "UpdateVideo": {
+      "additionalProperties": false,
+      "description": "Edit a video",
+      "properties": {
+        "operation": {
+          "const": "update_video",
+          "default": "update_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "description": "Vimeo numeric video id",
+          "maxLength": 32,
+          "pattern": "^[0-9]+$",
+          "title": "Video Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "video_id",
+        "name"
+      ],
+      "title": "UpdateVideo",
+      "type": "object"
+    },
+    "VimeoTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vimeo_token",
+          "default": "vimeo_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Vimeo Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create an authenticated personal access token for your Vimeo account in your app's Authentication tab. Enable public and private for reads, edit for updates, create for folders, delete for deletions and removing folder members, and interact for adding folder members, posting comments and likes as needed. Paste the token below. Account reads verify identity, not every write permission.",
+      "x-credential-url": "https://developer.vimeo.com/apps"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_video_to_folder": "#/$defs/AddVideoToFolder",
+          "create_comment": "#/$defs/CreateComment",
+          "create_folder": "#/$defs/CreateFolder",
+          "delete_comment": "#/$defs/DeleteComment",
+          "delete_folder": "#/$defs/DeleteFolder",
+          "delete_video": "#/$defs/DeleteVideo",
+          "get_account": "#/$defs/GetAccount",
+          "get_comment": "#/$defs/GetComment",
+          "get_folder": "#/$defs/GetFolder",
+          "get_video": "#/$defs/GetVideo",
+          "like_video": "#/$defs/LikeVideo",
+          "list_comments": "#/$defs/ListComments",
+          "list_folder_videos": "#/$defs/ListFolderVideos",
+          "list_folders": "#/$defs/ListFolders",
+          "list_videos": "#/$defs/ListVideos",
+          "remove_video_from_folder": "#/$defs/RemoveVideoFromFolder",
+          "unlike_video": "#/$defs/UnlikeVideo",
+          "update_comment": "#/$defs/UpdateComment",
+          "update_folder": "#/$defs/UpdateFolder",
+          "update_video": "#/$defs/UpdateVideo"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListVideos"
+        },
+        {
+          "$ref": "#/$defs/GetVideo"
+        },
+        {
+          "$ref": "#/$defs/UpdateVideo"
+        },
+        {
+          "$ref": "#/$defs/DeleteVideo"
+        },
+        {
+          "$ref": "#/$defs/ListComments"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        },
+        {
+          "$ref": "#/$defs/GetComment"
+        },
+        {
+          "$ref": "#/$defs/UpdateComment"
+        },
+        {
+          "$ref": "#/$defs/DeleteComment"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/CreateFolder"
+        },
+        {
+          "$ref": "#/$defs/GetFolder"
+        },
+        {
+          "$ref": "#/$defs/UpdateFolder"
+        },
+        {
+          "$ref": "#/$defs/DeleteFolder"
+        },
+        {
+          "$ref": "#/$defs/ListFolderVideos"
+        },
+        {
+          "$ref": "#/$defs/AddVideoToFolder"
+        },
+        {
+          "$ref": "#/$defs/RemoveVideoFromFolder"
+        },
+        {
+          "$ref": "#/$defs/LikeVideo"
+        },
+        {
+          "$ref": "#/$defs/UnlikeVideo"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VimeoTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vimeo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
