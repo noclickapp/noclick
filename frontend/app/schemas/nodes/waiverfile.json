@@ -1,0 +1,991 @@
+{
+  "$defs": {
+    "WaiverfileAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "waiverfile_api_key",
+          "default": "waiverfile_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "site_id": {
+          "description": "Site GUID belonging to this API key.",
+          "format": "uuid",
+          "title": "Site ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "site_id"
+      ],
+      "title": "Waiverfile API Key",
+      "type": "object",
+      "x-credential-instructions": "In your WaiverFile admin, open Settings > API Keys. Paste the API key and its site ID (GUID). The key must belong to that site.",
+      "x-credential-url": "https://www.waiverfile.com/"
+    },
+    "WaiverfileCountWaiverDataConfig": {
+      "additionalProperties": false,
+      "description": "Get the number of rows GetWaiverData will return for a date range.",
+      "properties": {
+        "operation": {
+          "const": "count_waiver_data",
+          "default": "count_waiver_data",
+          "title": "Count Waiver Data",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileCountWaiverDataConfig",
+      "type": "object"
+    },
+    "WaiverfileCountWaiversConfig": {
+      "additionalProperties": false,
+      "description": "Get the number of waivers signed in a date range, to plan paging through GetAllWaiversByDateRange.",
+      "properties": {
+        "operation": {
+          "const": "count_waivers",
+          "default": "count_waivers",
+          "title": "Count Waivers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileCountWaiversConfig",
+      "type": "object"
+    },
+    "WaiverfileCreateEventCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Create a new event category.",
+      "properties": {
+        "operation": {
+          "const": "create_event_category",
+          "default": "create_event_category",
+          "title": "Create Event Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WaiverfileCreateEventCategoryConfig",
+      "type": "object"
+    },
+    "WaiverfileCreateEventConfig": {
+      "additionalProperties": false,
+      "description": "Create an event with dates, category, location, forms, capacity and signing cutoff.",
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Create Event",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Event Name",
+          "type": "string"
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        },
+        "is_all_day": {
+          "default": false,
+          "title": "Is All Day",
+          "type": "boolean"
+        },
+        "event_category_id": {
+          "format": "uuid",
+          "title": "Event Category Id",
+          "type": "string"
+        },
+        "event_location": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Location"
+        },
+        "max_participants": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": -1,
+          "title": "Max Participants",
+          "type": "integer"
+        },
+        "waiver_form_id_list": {
+          "default": "",
+          "description": "Comma-separated waiver form GUIDs. Empty attaches all active forms.",
+          "title": "Waiver Form Id List",
+          "type": "string"
+        },
+        "signing_cutoff": {
+          "format": "date-time",
+          "title": "Signing Cutoff",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_name",
+        "start_date",
+        "end_date",
+        "event_category_id",
+        "signing_cutoff"
+      ],
+      "title": "WaiverfileCreateEventConfig",
+      "type": "object"
+    },
+    "WaiverfileDeleteEventCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Delete an event category.",
+      "properties": {
+        "operation": {
+          "const": "delete_event_category",
+          "default": "delete_event_category",
+          "title": "Delete Event Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_category_id": {
+          "format": "uuid",
+          "title": "Event Category Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_category_id"
+      ],
+      "title": "WaiverfileDeleteEventCategoryConfig",
+      "type": "object"
+    },
+    "WaiverfileDeleteEventConfig": {
+      "additionalProperties": false,
+      "description": "Delete an event.",
+      "properties": {
+        "operation": {
+          "const": "delete_event",
+          "default": "delete_event",
+          "title": "Delete Event",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "format": "uuid",
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WaiverfileDeleteEventConfig",
+      "type": "object"
+    },
+    "WaiverfileGetSiteDetailsConfig": {
+      "additionalProperties": false,
+      "description": "Get the details of your WaiverFile site.",
+      "properties": {
+        "operation": {
+          "const": "get_site_details",
+          "default": "get_site_details",
+          "title": "Get Site Details",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WaiverfileGetSiteDetailsConfig",
+      "type": "object"
+    },
+    "WaiverfileGetWaiverConfig": {
+      "additionalProperties": false,
+      "description": "Get a single signed waiver with all of its related data.",
+      "properties": {
+        "operation": {
+          "const": "get_waiver",
+          "default": "get_waiver",
+          "title": "Get Waiver",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "waiver_id": {
+          "format": "uuid",
+          "title": "Waiver Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "waiver_id"
+      ],
+      "title": "WaiverfileGetWaiverConfig",
+      "type": "object"
+    },
+    "WaiverfileGetWaiverDataConfig": {
+      "additionalProperties": false,
+      "description": "Get a page of waiver data as flat, report-style rows (one row per participant).",
+      "properties": {
+        "operation": {
+          "const": "get_waiver_data",
+          "default": "get_waiver_data",
+          "title": "Get Waiver Data",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        },
+        "include_custom_columns": {
+          "default": false,
+          "title": "Include Custom Columns",
+          "type": "boolean"
+        },
+        "consolidate_participants": {
+          "default": false,
+          "description": "Reserved by WaiverFile; results remain one row per participant.",
+          "title": "Consolidate Participants",
+          "type": "boolean"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "One-based report page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 10,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileGetWaiverDataConfig",
+      "type": "object"
+    },
+    "WaiverfileGetWaiverLiteConfig": {
+      "additionalProperties": false,
+      "description": "Get a single signed waiver with only the collected form data (no agreement text, event details or signatures).",
+      "properties": {
+        "operation": {
+          "const": "get_waiver_lite",
+          "default": "get_waiver_lite",
+          "title": "Get Waiver Lite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "waiver_id": {
+          "format": "uuid",
+          "title": "Waiver Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "waiver_id"
+      ],
+      "title": "WaiverfileGetWaiverLiteConfig",
+      "type": "object"
+    },
+    "WaiverfileGetWaiversByReferenceIdConfig": {
+      "additionalProperties": false,
+      "description": "Get waivers that match one or more reference IDs.",
+      "properties": {
+        "operation": {
+          "const": "get_waivers_by_reference_id",
+          "default": "get_waivers_by_reference_id",
+          "title": "Get Waivers By Reference Id",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ref_id1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref Id1"
+        },
+        "ref_id2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref Id2"
+        },
+        "ref_id3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref Id3"
+        },
+        "ref_id_any": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref Id Any"
+        }
+      },
+      "title": "WaiverfileGetWaiversByReferenceIdConfig",
+      "type": "object"
+    },
+    "WaiverfileListActiveWaiverFormsConfig": {
+      "additionalProperties": false,
+      "description": "Get the waiver forms that are currently active on your site.",
+      "properties": {
+        "operation": {
+          "const": "list_active_waiver_forms",
+          "default": "list_active_waiver_forms",
+          "title": "List Active Waiver Forms",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WaiverfileListActiveWaiverFormsConfig",
+      "type": "object"
+    },
+    "WaiverfileListAllWaiverFormsConfig": {
+      "additionalProperties": false,
+      "description": "Get all waiver forms on your site, including disabled and deleted forms.",
+      "properties": {
+        "operation": {
+          "const": "list_all_waiver_forms",
+          "default": "list_all_waiver_forms",
+          "title": "List All Waiver Forms",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WaiverfileListAllWaiverFormsConfig",
+      "type": "object"
+    },
+    "WaiverfileListEventCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "Get your site's event categories.",
+      "properties": {
+        "operation": {
+          "const": "list_event_categories",
+          "default": "list_event_categories",
+          "title": "List Event Categories",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_disabled_categories": {
+          "default": false,
+          "title": "Include Disabled Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "WaiverfileListEventCategoriesConfig",
+      "type": "object"
+    },
+    "WaiverfileListEventWaiversConfig": {
+      "additionalProperties": false,
+      "description": "Get the waivers signed for an event.",
+      "properties": {
+        "operation": {
+          "const": "list_event_waivers",
+          "default": "list_event_waivers",
+          "title": "List Event Waivers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "format": "uuid",
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WaiverfileListEventWaiversConfig",
+      "type": "object"
+    },
+    "WaiverfileListEventsByCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Get events in a specific event category that fall within a date range. Dates are in UTC.",
+      "properties": {
+        "operation": {
+          "const": "list_events_by_category",
+          "default": "list_events_by_category",
+          "title": "List Events By Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_category_id": {
+          "format": "uuid",
+          "title": "Event Category Id",
+          "type": "string"
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_category_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListEventsByCategoryConfig",
+      "type": "object"
+    },
+    "WaiverfileListEventsConfig": {
+      "additionalProperties": false,
+      "description": "Get events (in any category) that fall within a date range. Dates are in UTC.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListEventsConfig",
+      "type": "object"
+    },
+    "WaiverfileListOptedOutSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "Get SMS subscribers who opted out within a date range. Dates are in UTC.",
+      "properties": {
+        "operation": {
+          "const": "list_opted_out_subscribers",
+          "default": "list_opted_out_subscribers",
+          "title": "List Opted Out Subscribers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListOptedOutSubscribersConfig",
+      "type": "object"
+    },
+    "WaiverfileListSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "Get SMS subscribers who were added within a date range. Dates are in UTC.",
+      "properties": {
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "List Subscribers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListSubscribersConfig",
+      "type": "object"
+    },
+    "WaiverfileListUpcomingEventsConfig": {
+      "additionalProperties": false,
+      "description": "Get events (in any category) within a date range, up to 3,000 events. Dates are in UTC.",
+      "properties": {
+        "operation": {
+          "const": "list_upcoming_events",
+          "default": "list_upcoming_events",
+          "title": "List Upcoming Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListUpcomingEventsConfig",
+      "type": "object"
+    },
+    "WaiverfileListWaiversConfig": {
+      "additionalProperties": false,
+      "description": "Get a page of full waiver records signed within a date range.",
+      "properties": {
+        "operation": {
+          "const": "list_waivers",
+          "default": "list_waivers",
+          "title": "List Waivers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        },
+        "page_index": {
+          "default": 0,
+          "description": "Zero-based waiver page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 10,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListWaiversConfig",
+      "type": "object"
+    },
+    "WaiverfileListWaiversLiteConfig": {
+      "additionalProperties": false,
+      "description": "Get a page of waivers signed within a date range, with only the collected form data (no agreement text, event details or signatures).",
+      "properties": {
+        "operation": {
+          "const": "list_waivers_lite",
+          "default": "list_waivers_lite",
+          "title": "List Waivers Lite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        },
+        "page_index": {
+          "default": 0,
+          "description": "Zero-based waiver page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 10,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "WaiverfileListWaiversLiteConfig",
+      "type": "object"
+    },
+    "WaiverfileSearchWaiversConfig": {
+      "additionalProperties": false,
+      "description": "Search all of your waivers by name (or by your configured quick-search fields).",
+      "properties": {
+        "operation": {
+          "const": "search_waivers",
+          "default": "search_waivers",
+          "title": "Search Waivers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "terms": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Terms",
+          "type": "string"
+        }
+      },
+      "required": [
+        "terms"
+      ],
+      "title": "WaiverfileSearchWaiversConfig",
+      "type": "object"
+    },
+    "WaiverfileUpdateEventCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Rename an event category and set whether it is active.",
+      "properties": {
+        "operation": {
+          "const": "update_event_category",
+          "default": "update_event_category",
+          "title": "Update Event Category",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_category_id": {
+          "format": "uuid",
+          "title": "Event Category Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_category_id",
+        "name"
+      ],
+      "title": "WaiverfileUpdateEventCategoryConfig",
+      "type": "object"
+    },
+    "WaiverfileUpdateEventConfig": {
+      "additionalProperties": false,
+      "description": "Update an existing event's name, dates, all-day flag, category and attached waiver forms.",
+      "properties": {
+        "operation": {
+          "const": "update_event",
+          "default": "update_event",
+          "title": "Update Event",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "format": "uuid",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "event_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Event Name",
+          "type": "string"
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End Date",
+          "type": "string"
+        },
+        "is_all_day": {
+          "default": false,
+          "title": "Is All Day",
+          "type": "boolean"
+        },
+        "event_category_id": {
+          "format": "uuid",
+          "title": "Event Category Id",
+          "type": "string"
+        },
+        "waiver_form_ids": {
+          "description": "Replaces attached forms. Empty attaches all active forms.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Waiver Form Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "event_id",
+        "event_name",
+        "start_date",
+        "end_date",
+        "event_category_id",
+        "waiver_form_ids"
+      ],
+      "title": "WaiverfileUpdateEventConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "count_waiver_data": "#/$defs/WaiverfileCountWaiverDataConfig",
+          "count_waivers": "#/$defs/WaiverfileCountWaiversConfig",
+          "create_event": "#/$defs/WaiverfileCreateEventConfig",
+          "create_event_category": "#/$defs/WaiverfileCreateEventCategoryConfig",
+          "delete_event": "#/$defs/WaiverfileDeleteEventConfig",
+          "delete_event_category": "#/$defs/WaiverfileDeleteEventCategoryConfig",
+          "get_site_details": "#/$defs/WaiverfileGetSiteDetailsConfig",
+          "get_waiver": "#/$defs/WaiverfileGetWaiverConfig",
+          "get_waiver_data": "#/$defs/WaiverfileGetWaiverDataConfig",
+          "get_waiver_lite": "#/$defs/WaiverfileGetWaiverLiteConfig",
+          "get_waivers_by_reference_id": "#/$defs/WaiverfileGetWaiversByReferenceIdConfig",
+          "list_active_waiver_forms": "#/$defs/WaiverfileListActiveWaiverFormsConfig",
+          "list_all_waiver_forms": "#/$defs/WaiverfileListAllWaiverFormsConfig",
+          "list_event_categories": "#/$defs/WaiverfileListEventCategoriesConfig",
+          "list_event_waivers": "#/$defs/WaiverfileListEventWaiversConfig",
+          "list_events": "#/$defs/WaiverfileListEventsConfig",
+          "list_events_by_category": "#/$defs/WaiverfileListEventsByCategoryConfig",
+          "list_opted_out_subscribers": "#/$defs/WaiverfileListOptedOutSubscribersConfig",
+          "list_subscribers": "#/$defs/WaiverfileListSubscribersConfig",
+          "list_upcoming_events": "#/$defs/WaiverfileListUpcomingEventsConfig",
+          "list_waivers": "#/$defs/WaiverfileListWaiversConfig",
+          "list_waivers_lite": "#/$defs/WaiverfileListWaiversLiteConfig",
+          "search_waivers": "#/$defs/WaiverfileSearchWaiversConfig",
+          "update_event": "#/$defs/WaiverfileUpdateEventConfig",
+          "update_event_category": "#/$defs/WaiverfileUpdateEventCategoryConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WaiverfileGetSiteDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileGetWaiverConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileGetWaiverLiteConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileSearchWaiversConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileGetWaiversByReferenceIdConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileCountWaiversConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListWaiversConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListWaiversLiteConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileGetWaiverDataConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileCountWaiverDataConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListActiveWaiverFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListAllWaiverFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListEventsByCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListUpcomingEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListEventWaiversConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListEventCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileUpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileDeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileCreateEventCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileUpdateEventCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileDeleteEventCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/WaiverfileListOptedOutSubscribersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WaiverfileAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Waiverfile Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
