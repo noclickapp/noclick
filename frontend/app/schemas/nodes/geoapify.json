@@ -1,0 +1,1629 @@
+{
+  "$defs": {
+    "AutocompleteAddress": {
+      "additionalProperties": false,
+      "description": "Complete a partial address query.",
+      "properties": {
+        "operation": {
+          "const": "autocomplete_address",
+          "default": "autocomplete_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "limit": {
+          "default": 5,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "pattern": "^(rect|circle|countrycode|place):.+",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "bias": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "pattern": "^(proximity|rect|circle|countrycode):.+",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bias"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "AutocompleteAddress",
+      "type": "object"
+    },
+    "CalculateGeometry": {
+      "additionalProperties": false,
+      "description": "Union or intersect two or more stored geometry or isoline IDs.",
+      "properties": {
+        "operation": {
+          "const": "calculate_geometry",
+          "default": "calculate_geometry",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "items": {
+            "pattern": "^[a-f0-9]{32}$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 2,
+          "title": "Id",
+          "type": "array"
+        },
+        "geometry_operation": {
+          "description": "Sent as the provider's operation query parameter.",
+          "enum": [
+            "union",
+            "intersection"
+          ],
+          "title": "Geometry Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "geometry_operation"
+      ],
+      "title": "CalculateGeometry",
+      "type": "object"
+    },
+    "CalculateIsoline": {
+      "additionalProperties": false,
+      "description": "Calculate time or distance reachability areas.",
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "operation": {
+          "const": "calculate_isoline",
+          "default": "calculate_isoline",
+          "title": "Operation",
+          "type": "string"
+        },
+        "range": {
+          "items": {
+            "minimum": 1,
+            "type": "number"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Range",
+          "type": "array"
+        },
+        "type": {
+          "default": "time",
+          "enum": [
+            "time",
+            "distance"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "mode": {
+          "default": "drive",
+          "enum": [
+            "walk",
+            "hike",
+            "scooter",
+            "motorcycle",
+            "drive",
+            "light_truck",
+            "bicycle",
+            "mountain_bike",
+            "road_bike",
+            "bus",
+            "medium_truck",
+            "truck",
+            "truck_dangerous_goods",
+            "heavy_truck",
+            "long_truck"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "units": {
+          "default": "metric",
+          "enum": [
+            "metric",
+            "imperial"
+          ],
+          "title": "Units",
+          "type": "string"
+        },
+        "avoid": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "pattern": "^(tolls|ferries|highways|green_zones|transfers|location|location_lonlat|location_latlon|polygon|polygon_lonlat|polygon_latlon|country_codes)(:.*)?$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avoid"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "range"
+      ],
+      "title": "CalculateIsoline",
+      "type": "object"
+    },
+    "CalculateRoute": {
+      "additionalProperties": false,
+      "description": "Calculate directions; waypoints use latitude,longitude order.",
+      "properties": {
+        "operation": {
+          "const": "calculate_route",
+          "default": "calculate_route",
+          "title": "Operation",
+          "type": "string"
+        },
+        "waypoints": {
+          "items": {
+            "pattern": "^-?(?:90(?:\\.0+)?|[0-8]?\\d(?:\\.\\d+)?),-?(?:180(?:\\.0+)?|(?:1[0-7]\\d|[0-9]?\\d)(?:\\.\\d+)?)$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 2,
+          "title": "Waypoints",
+          "type": "array"
+        },
+        "mode": {
+          "default": "drive",
+          "enum": [
+            "walk",
+            "hike",
+            "scooter",
+            "motorcycle",
+            "drive",
+            "light_truck",
+            "bicycle",
+            "mountain_bike",
+            "road_bike",
+            "bus",
+            "medium_truck",
+            "truck",
+            "truck_dangerous_goods",
+            "heavy_truck",
+            "long_truck"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "units": {
+          "default": "metric",
+          "enum": [
+            "metric",
+            "imperial"
+          ],
+          "title": "Units",
+          "type": "string"
+        },
+        "type": {
+          "default": "balanced",
+          "enum": [
+            "balanced",
+            "short",
+            "less_maneuvers"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "avoid": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "pattern": "^(tolls|ferries|highways|green_zones|transfers|location|polygon|country_codes)(:.*)?$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avoid"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "instruction_details",
+                  "route_details",
+                  "elevation",
+                  "admin_areas",
+                  "polyline5",
+                  "polyline6"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "waypoints"
+      ],
+      "title": "CalculateRoute",
+      "type": "object"
+    },
+    "CalculateRouteMatrix": {
+      "additionalProperties": false,
+      "description": "Calculate travel distances and times between sources and targets.",
+      "properties": {
+        "operation": {
+          "const": "calculate_route_matrix",
+          "default": "calculate_route_matrix",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mode": {
+          "default": "drive",
+          "enum": [
+            "walk",
+            "hike",
+            "scooter",
+            "motorcycle",
+            "drive",
+            "light_truck",
+            "bicycle",
+            "mountain_bike",
+            "road_bike",
+            "bus",
+            "medium_truck",
+            "truck",
+            "truck_dangerous_goods",
+            "heavy_truck",
+            "long_truck"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/MatrixLocation"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/$defs/MatrixLocation"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Targets",
+          "type": "array"
+        },
+        "units": {
+          "default": "metric",
+          "enum": [
+            "metric",
+            "imperial"
+          ],
+          "title": "Units",
+          "type": "string"
+        },
+        "type": {
+          "default": "balanced",
+          "enum": [
+            "balanced",
+            "short",
+            "less_maneuvers"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "traffic": {
+          "default": "free_flow",
+          "enum": [
+            "free_flow",
+            "approximated"
+          ],
+          "title": "Traffic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sources",
+        "targets"
+      ],
+      "title": "CalculateRouteMatrix",
+      "type": "object"
+    },
+    "Coordinates": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "Coordinates",
+      "type": "object"
+    },
+    "GeoCollection": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "FeatureCollection",
+          "default": "FeatureCollection",
+          "title": "Type",
+          "type": "string"
+        },
+        "features": {
+          "items": {
+            "$ref": "#/$defs/GeoFeature"
+          },
+          "maxItems": 1000,
+          "title": "Features",
+          "type": "array"
+        }
+      },
+      "required": [
+        "features"
+      ],
+      "title": "GeoCollection",
+      "type": "object"
+    },
+    "GeoFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Feature",
+          "default": "Feature",
+          "title": "Type",
+          "type": "string"
+        },
+        "geometry": {
+          "discriminator": {
+            "mapping": {
+              "LineString": "#/$defs/LineString",
+              "Point": "#/$defs/Point",
+              "Polygon": "#/$defs/Polygon"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Point"
+            },
+            {
+              "$ref": "#/$defs/LineString"
+            },
+            {
+              "$ref": "#/$defs/Polygon"
+            }
+          ],
+          "title": "Geometry"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "geometry"
+      ],
+      "title": "GeoFeature",
+      "type": "object"
+    },
+    "GeoapifyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "geoapify_api_key",
+          "default": "geoapify_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Geoapify API Key",
+      "type": "object",
+      "x-credential-instructions": "Open your project in Geoapify MyProjects, select API Keys, and paste an API key. Allow NoClick's server requests in any key restrictions. NoClick sends it only to api.geoapify.com in the x-api-key header. Connecting uses one IP Geolocation credit and proves key acceptance, not account identity.",
+      "x-credential-url": "https://myprojects.geoapify.com/"
+    },
+    "GeocodeAddress": {
+      "additionalProperties": false,
+      "description": "Find coordinates and address metadata from a free-text address.",
+      "properties": {
+        "operation": {
+          "const": "geocode_address",
+          "default": "geocode_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        },
+        "limit": {
+          "default": 5,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "pattern": "^(rect|circle|countrycode|place):.+",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider filters, for example countrycode:de or circle:lon,lat,radius.",
+          "title": "Filter"
+        },
+        "bias": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "pattern": "^(proximity|rect|circle|countrycode):.+",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider bias rules, for example proximity:lon,lat.",
+          "title": "Bias"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "GeocodeAddress",
+      "type": "object"
+    },
+    "GetBatchGeocode": {
+      "additionalProperties": false,
+      "description": "Read a forward batch job, preserving pending or completed results.",
+      "properties": {
+        "operation": {
+          "const": "get_batch_geocode",
+          "default": "get_batch_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetBatchGeocode",
+      "type": "object"
+    },
+    "GetBatchReverseGeocode": {
+      "additionalProperties": false,
+      "description": "Read a reverse batch job, preserving pending or completed results.",
+      "properties": {
+        "operation": {
+          "const": "get_batch_reverse_geocode",
+          "default": "get_batch_reverse_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetBatchReverseGeocode",
+      "type": "object"
+    },
+    "GetBoundaries": {
+      "additionalProperties": false,
+      "description": "Find the administrative or postal boundaries containing coordinates.",
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "operation": {
+          "const": "get_boundaries",
+          "default": "get_boundaries",
+          "title": "Operation",
+          "type": "string"
+        },
+        "boundaries": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "administrative",
+                  "postal_code",
+                  "political",
+                  "low_emission_zone",
+                  "timezone"
+                ],
+                "type": "string"
+              },
+              "maxItems": 10,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Boundaries"
+        },
+        "geometry": {
+          "default": "point",
+          "enum": [
+            "point",
+            "geometry_1000",
+            "geometry_5000",
+            "geometry_10000"
+          ],
+          "title": "Geometry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "GetBoundaries",
+      "type": "object"
+    },
+    "GetElevations": {
+      "additionalProperties": false,
+      "description": "Get terrain elevations for ordered longitude,latitude locations.",
+      "properties": {
+        "operation": {
+          "const": "get_elevations",
+          "default": "get_elevations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "locations": {
+          "items": {
+            "anyOf": [
+              {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "maximum": 180,
+                    "minimum": -180,
+                    "type": "number"
+                  },
+                  {
+                    "maximum": 90,
+                    "minimum": -90,
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "$ref": "#/$defs/Coordinates"
+              }
+            ]
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Locations",
+          "type": "array"
+        },
+        "units": {
+          "default": "metric",
+          "enum": [
+            "metric",
+            "imperial"
+          ],
+          "title": "Units",
+          "type": "string"
+        },
+        "includeDistance": {
+          "default": false,
+          "title": "Includedistance",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "locations"
+      ],
+      "title": "GetElevations",
+      "type": "object"
+    },
+    "GetIPLocation": {
+      "additionalProperties": false,
+      "description": "Locate an IP; omitting it locates NoClick's outbound server address.",
+      "properties": {
+        "operation": {
+          "const": "get_ip_location",
+          "default": "get_ip_location",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ip"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "title": "GetIPLocation",
+      "type": "object"
+    },
+    "GetPlaceDetails": {
+      "additionalProperties": false,
+      "description": "Read details for a place ID returned by geocoding or places search.",
+      "properties": {
+        "operation": {
+          "const": "get_place_details",
+          "default": "get_place_details",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 2048,
+          "minLength": 3,
+          "title": "Id",
+          "type": "string"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "details",
+                  "building",
+                  "radius_100",
+                  "radius_500",
+                  "radius_1000",
+                  "walk_5",
+                  "walk_10",
+                  "walk_15",
+                  "walk_30",
+                  "drive_5",
+                  "drive_10",
+                  "drive_15"
+                ],
+                "type": "string"
+              },
+              "maxItems": 30,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented feature IDs, such as details, building or radius_500.",
+          "title": "Features"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetPlaceDetails",
+      "type": "object"
+    },
+    "GetTimezone": {
+      "additionalProperties": false,
+      "description": "Read timezone and UTC offset, optionally at an RFC3339 instant.",
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "operation": {
+          "const": "get_timezone",
+          "default": "get_timezone",
+          "title": "Operation",
+          "type": "string"
+        },
+        "at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 date and time, for example 2026-03-29T01:30:00Z.",
+          "title": "At"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "GetTimezone",
+      "type": "object"
+    },
+    "LineString": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "LineString",
+          "default": "LineString",
+          "title": "Type",
+          "type": "string"
+        },
+        "coordinates": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maximum": 180,
+                "minimum": -180,
+                "type": "number"
+              },
+              {
+                "maximum": 90,
+                "minimum": -90,
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 2,
+          "title": "Coordinates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "LineString",
+      "type": "object"
+    },
+    "ListPostcodes": {
+      "additionalProperties": false,
+      "description": "List postcodes matching text; request subsequent pages with offset.",
+      "properties": {
+        "operation": {
+          "const": "list_postcodes",
+          "default": "list_postcodes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "countrycode": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Countrycode",
+          "type": "string"
+        },
+        "limit": {
+          "default": 5,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "geometry": {
+          "default": "point",
+          "enum": [
+            "point",
+            "original"
+          ],
+          "title": "Geometry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "countrycode"
+      ],
+      "title": "ListPostcodes",
+      "type": "object"
+    },
+    "MatrixLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "location": {
+          "description": "Longitude, latitude.",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            }
+          ],
+          "title": "Location",
+          "type": "array"
+        }
+      },
+      "required": [
+        "location"
+      ],
+      "title": "MatrixLocation",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Point",
+          "default": "Point",
+          "title": "Type",
+          "type": "string"
+        },
+        "coordinates": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            }
+          ],
+          "title": "Coordinates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "Polygon": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Polygon",
+          "default": "Polygon",
+          "title": "Type",
+          "type": "string"
+        },
+        "coordinates": {
+          "items": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "maximum": 180,
+                  "minimum": -180,
+                  "type": "number"
+                },
+                {
+                  "maximum": 90,
+                  "minimum": -90,
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "Polygon",
+      "type": "object"
+    },
+    "ReverseGeocode": {
+      "additionalProperties": false,
+      "description": "Find an address at latitude and longitude.",
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "operation": {
+          "const": "reverse_geocode",
+          "default": "reverse_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "country",
+                "state",
+                "city",
+                "postcode",
+                "street",
+                "amenity",
+                "locality",
+                "building"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "country",
+            "state",
+            "city",
+            "postcode",
+            "street",
+            "amenity",
+            "locality",
+            "building"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "ReverseGeocode",
+      "type": "object"
+    },
+    "SearchPlaces": {
+      "additionalProperties": false,
+      "description": "Search place categories in a spatial filter; use offset for the next page.",
+      "properties": {
+        "operation": {
+          "const": "search_places",
+          "default": "search_places",
+          "title": "Operation",
+          "type": "string"
+        },
+        "categories": {
+          "description": "Geoapify category keys, for example catering.restaurant or commercial.supermarket.",
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Categories",
+          "type": "array"
+        },
+        "filter": {
+          "description": "Provider spatial filter, for example circle:13.405,52.52,1000.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Filter",
+          "type": "string"
+        },
+        "conditions": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conditions"
+        },
+        "bias": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bias"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "categories",
+        "filter"
+      ],
+      "title": "SearchPlaces",
+      "type": "object"
+    },
+    "SearchPostcodes": {
+      "additionalProperties": false,
+      "description": "Find a postcode and its boundary within a country.",
+      "properties": {
+        "operation": {
+          "const": "search_postcodes",
+          "default": "search_postcodes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "postcode": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Postcode",
+          "type": "string"
+        },
+        "countrycode": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Countrycode",
+          "type": "string"
+        },
+        "geometry": {
+          "default": "point",
+          "enum": [
+            "point",
+            "original"
+          ],
+          "title": "Geometry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "postcode",
+        "countrycode"
+      ],
+      "title": "SearchPostcodes",
+      "type": "object"
+    },
+    "StoreGeometry": {
+      "additionalProperties": false,
+      "description": "Store a Point, LineString, Polygon, Feature or FeatureCollection.",
+      "properties": {
+        "operation": {
+          "const": "store_geometry",
+          "default": "store_geometry",
+          "title": "Operation",
+          "type": "string"
+        },
+        "geojson": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "LineString": "#/$defs/LineString",
+                  "Point": "#/$defs/Point",
+                  "Polygon": "#/$defs/Polygon"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Point"
+                },
+                {
+                  "$ref": "#/$defs/LineString"
+                },
+                {
+                  "$ref": "#/$defs/Polygon"
+                }
+              ]
+            },
+            {
+              "$ref": "#/$defs/GeoFeature"
+            },
+            {
+              "$ref": "#/$defs/GeoCollection"
+            }
+          ],
+          "title": "Geojson"
+        }
+      },
+      "required": [
+        "geojson"
+      ],
+      "title": "StoreGeometry",
+      "type": "object"
+    },
+    "SubmitBatchGeocode": {
+      "additionalProperties": false,
+      "description": "Submit up to 1000 addresses; save the job ID and poll explicitly later.",
+      "properties": {
+        "operation": {
+          "const": "submit_batch_geocode",
+          "default": "submit_batch_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "addresses": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Addresses",
+          "type": "array"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "addresses"
+      ],
+      "title": "SubmitBatchGeocode",
+      "type": "object"
+    },
+    "SubmitBatchReverseGeocode": {
+      "additionalProperties": false,
+      "description": "Submit longitude,latitude positions or lat/lon objects for batch lookup.",
+      "properties": {
+        "operation": {
+          "const": "submit_batch_reverse_geocode",
+          "default": "submit_batch_reverse_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "locations": {
+          "items": {
+            "anyOf": [
+              {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "maximum": 180,
+                    "minimum": -180,
+                    "type": "number"
+                  },
+                  {
+                    "maximum": 90,
+                    "minimum": -90,
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "$ref": "#/$defs/Coordinates"
+              }
+            ]
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Locations",
+          "type": "array"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "locations"
+      ],
+      "title": "SubmitBatchReverseGeocode",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "autocomplete_address": "#/$defs/AutocompleteAddress",
+          "calculate_geometry": "#/$defs/CalculateGeometry",
+          "calculate_isoline": "#/$defs/CalculateIsoline",
+          "calculate_route": "#/$defs/CalculateRoute",
+          "calculate_route_matrix": "#/$defs/CalculateRouteMatrix",
+          "geocode_address": "#/$defs/GeocodeAddress",
+          "get_batch_geocode": "#/$defs/GetBatchGeocode",
+          "get_batch_reverse_geocode": "#/$defs/GetBatchReverseGeocode",
+          "get_boundaries": "#/$defs/GetBoundaries",
+          "get_elevations": "#/$defs/GetElevations",
+          "get_ip_location": "#/$defs/GetIPLocation",
+          "get_place_details": "#/$defs/GetPlaceDetails",
+          "get_timezone": "#/$defs/GetTimezone",
+          "list_postcodes": "#/$defs/ListPostcodes",
+          "reverse_geocode": "#/$defs/ReverseGeocode",
+          "search_places": "#/$defs/SearchPlaces",
+          "search_postcodes": "#/$defs/SearchPostcodes",
+          "store_geometry": "#/$defs/StoreGeometry",
+          "submit_batch_geocode": "#/$defs/SubmitBatchGeocode",
+          "submit_batch_reverse_geocode": "#/$defs/SubmitBatchReverseGeocode"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GeocodeAddress"
+        },
+        {
+          "$ref": "#/$defs/ReverseGeocode"
+        },
+        {
+          "$ref": "#/$defs/AutocompleteAddress"
+        },
+        {
+          "$ref": "#/$defs/GetIPLocation"
+        },
+        {
+          "$ref": "#/$defs/SearchPlaces"
+        },
+        {
+          "$ref": "#/$defs/GetPlaceDetails"
+        },
+        {
+          "$ref": "#/$defs/CalculateRoute"
+        },
+        {
+          "$ref": "#/$defs/CalculateIsoline"
+        },
+        {
+          "$ref": "#/$defs/CalculateRouteMatrix"
+        },
+        {
+          "$ref": "#/$defs/GetElevations"
+        },
+        {
+          "$ref": "#/$defs/GetTimezone"
+        },
+        {
+          "$ref": "#/$defs/SearchPostcodes"
+        },
+        {
+          "$ref": "#/$defs/ListPostcodes"
+        },
+        {
+          "$ref": "#/$defs/GetBoundaries"
+        },
+        {
+          "$ref": "#/$defs/StoreGeometry"
+        },
+        {
+          "$ref": "#/$defs/CalculateGeometry"
+        },
+        {
+          "$ref": "#/$defs/SubmitBatchGeocode"
+        },
+        {
+          "$ref": "#/$defs/GetBatchGeocode"
+        },
+        {
+          "$ref": "#/$defs/SubmitBatchReverseGeocode"
+        },
+        {
+          "$ref": "#/$defs/GetBatchReverseGeocode"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GeoapifyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Geoapify Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
