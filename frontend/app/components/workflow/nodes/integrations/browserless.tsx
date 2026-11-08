@@ -15,6 +15,7 @@ BrowserlessIcon.displayName = 'BrowserlessIcon';
 export const BrowserlessNode: NodeDefinition = {
     type: 'automation-browserless',
     label: 'Browserless',
+    category: 'developer-tools',
     description: 'Capture screenshots and PDFs, scrape pages, search, crawl and manage browser profiles',
     keywords: ['browser', 'scraping', 'screenshots', 'pdf', 'crawl', 'lighthouse'],
     Icon: BrowserlessIcon,
