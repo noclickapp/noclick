@@ -1,0 +1,816 @@
+{
+  "$defs": {
+    "GriptapeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "griptape_api_key",
+          "default": "griptape_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Griptape API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Griptape Cloud and paste it here. NoClick sends it as a Bearer token only to cloud.griptape.ai. The connection check lists your conversation threads. The key must have access to the resources your workflow uses.",
+      "x-credential-url": "https://help.griptape.ai/en/articles/10509294-api-keys"
+    },
+    "GriptapeCancelAssistantRunConfig": {
+      "additionalProperties": false,
+      "description": "Request cancellation of an assistant run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_assistant_run",
+          "default": "cancel_assistant_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assistant_run_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Assistant Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assistant_run_id"
+      ],
+      "title": "GriptapeCancelAssistantRunConfig",
+      "type": "object"
+    },
+    "GriptapeCancelStructureRunConfig": {
+      "additionalProperties": false,
+      "description": "Request cancellation of a structure run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_structure_run",
+          "default": "cancel_structure_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "structure_run_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Structure Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "structure_run_id"
+      ],
+      "title": "GriptapeCancelStructureRunConfig",
+      "type": "object"
+    },
+    "GriptapeCreateAssistantRunConfig": {
+      "additionalProperties": false,
+      "description": "Start a non-streaming assistant run; may incur provider charges.",
+      "properties": {
+        "operation": {
+          "const": "create_assistant_run",
+          "default": "create_assistant_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assistant_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Assistant Id",
+          "type": "string"
+        },
+        "input": {
+          "description": "Prompt to send to the assistant.",
+          "title": "Input",
+          "type": "string"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thread Id"
+        },
+        "new_thread": {
+          "default": false,
+          "description": "Create a thread if no thread_id is supplied.",
+          "title": "New Thread",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "assistant_id",
+        "input"
+      ],
+      "title": "GriptapeCreateAssistantRunConfig",
+      "type": "object"
+    },
+    "GriptapeCreateMessageConfig": {
+      "additionalProperties": false,
+      "description": "Store a conversation input and output pair in a thread.",
+      "properties": {
+        "operation": {
+          "const": "create_message",
+          "default": "create_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "thread_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "input": {
+          "description": "Stored user input.",
+          "title": "Input",
+          "type": "string"
+        },
+        "output": {
+          "description": "Stored assistant response.",
+          "title": "Output",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id",
+        "input",
+        "output"
+      ],
+      "title": "GriptapeCreateMessageConfig",
+      "type": "object"
+    },
+    "GriptapeCreateStructureRunConfig": {
+      "additionalProperties": false,
+      "description": "Start a structure run; returns immediately and may incur provider charges.",
+      "properties": {
+        "operation": {
+          "const": "create_structure_run",
+          "default": "create_structure_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "structure_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Structure Id",
+          "type": "string"
+        },
+        "args": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": "[]",
+          "description": "JSON array of string arguments, for example [\"arg1\"].",
+          "title": "Args",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "structure_id"
+      ],
+      "title": "GriptapeCreateStructureRunConfig",
+      "type": "object"
+    },
+    "GriptapeCreateThreadConfig": {
+      "additionalProperties": false,
+      "description": "Create a named conversation thread.",
+      "properties": {
+        "operation": {
+          "const": "create_thread",
+          "default": "create_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alias"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GriptapeCreateThreadConfig",
+      "type": "object"
+    },
+    "GriptapeDeleteThreadConfig": {
+      "additionalProperties": false,
+      "description": "Delete a thread; this cannot be undone.",
+      "properties": {
+        "operation": {
+          "const": "delete_thread",
+          "default": "delete_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "thread_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Thread Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GriptapeDeleteThreadConfig",
+      "type": "object"
+    },
+    "GriptapeGetAssistantConfig": {
+      "additionalProperties": false,
+      "description": "Get an assistant configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_assistant",
+          "default": "get_assistant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assistant_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Assistant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assistant_id"
+      ],
+      "title": "GriptapeGetAssistantConfig",
+      "type": "object"
+    },
+    "GriptapeGetAssistantRunConfig": {
+      "additionalProperties": false,
+      "description": "Get an assistant run and its output.",
+      "properties": {
+        "operation": {
+          "const": "get_assistant_run",
+          "default": "get_assistant_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assistant_run_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Assistant Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assistant_run_id"
+      ],
+      "title": "GriptapeGetAssistantRunConfig",
+      "type": "object"
+    },
+    "GriptapeGetKnowledgeBaseConfig": {
+      "additionalProperties": false,
+      "description": "Get knowledge base configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_knowledge_base",
+          "default": "get_knowledge_base",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "knowledge_base_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Knowledge Base Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "knowledge_base_id"
+      ],
+      "title": "GriptapeGetKnowledgeBaseConfig",
+      "type": "object"
+    },
+    "GriptapeGetStructureConfig": {
+      "additionalProperties": false,
+      "description": "Get a structure configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_structure",
+          "default": "get_structure",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "structure_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Structure Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "structure_id"
+      ],
+      "title": "GriptapeGetStructureConfig",
+      "type": "object"
+    },
+    "GriptapeGetStructureRunConfig": {
+      "additionalProperties": false,
+      "description": "Get a run status and output.",
+      "properties": {
+        "operation": {
+          "const": "get_structure_run",
+          "default": "get_structure_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "structure_run_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Structure Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "structure_run_id"
+      ],
+      "title": "GriptapeGetStructureRunConfig",
+      "type": "object"
+    },
+    "GriptapeGetThreadConfig": {
+      "additionalProperties": false,
+      "description": "Get a conversation thread.",
+      "properties": {
+        "operation": {
+          "const": "get_thread",
+          "default": "get_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "thread_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Thread Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GriptapeGetThreadConfig",
+      "type": "object"
+    },
+    "GriptapeListAssistantsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of assistants.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use data.pagination.next_page to continue; only one page is returned.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_assistants",
+          "default": "list_assistants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GriptapeListAssistantsConfig",
+      "type": "object"
+    },
+    "GriptapeListKnowledgeBasesConfig": {
+      "additionalProperties": false,
+      "description": "List one page of knowledge bases.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use data.pagination.next_page to continue; only one page is returned.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_knowledge_bases",
+          "default": "list_knowledge_bases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GriptapeListKnowledgeBasesConfig",
+      "type": "object"
+    },
+    "GriptapeListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "List one page of messages in a thread.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use data.pagination.next_page to continue; only one page is returned.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "thread_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Thread Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GriptapeListMessagesConfig",
+      "type": "object"
+    },
+    "GriptapeListStructureRunEventsConfig": {
+      "additionalProperties": false,
+      "description": "Read a bounded page of structure run events.",
+      "properties": {
+        "operation": {
+          "const": "list_structure_run_events",
+          "default": "list_structure_run_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "structure_run_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Structure Run Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "structure_run_id"
+      ],
+      "title": "GriptapeListStructureRunEventsConfig",
+      "type": "object"
+    },
+    "GriptapeListStructureRunsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of runs for a structure.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use data.pagination.next_page to continue; only one page is returned.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_structure_runs",
+          "default": "list_structure_runs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "structure_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Structure Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "structure_id"
+      ],
+      "title": "GriptapeListStructureRunsConfig",
+      "type": "object"
+    },
+    "GriptapeListStructuresConfig": {
+      "additionalProperties": false,
+      "description": "List deployed structures in one page.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use data.pagination.next_page to continue; only one page is returned.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_structures",
+          "default": "list_structures",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GriptapeListStructuresConfig",
+      "type": "object"
+    },
+    "GriptapeListThreadsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of conversation threads.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use data.pagination.next_page to continue; only one page is returned.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_threads",
+          "default": "list_threads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GriptapeListThreadsConfig",
+      "type": "object"
+    },
+    "GriptapeQueryKnowledgeBaseConfig": {
+      "additionalProperties": false,
+      "description": "Query a knowledge base; returns the provider query response.",
+      "properties": {
+        "operation": {
+          "const": "query_knowledge_base",
+          "default": "query_knowledge_base",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "knowledge_base_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Knowledge Base Id",
+          "type": "string"
+        },
+        "query": {
+          "description": "Text to query or search for.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "knowledge_base_id",
+        "query"
+      ],
+      "title": "GriptapeQueryKnowledgeBaseConfig",
+      "type": "object"
+    },
+    "GriptapeSearchKnowledgeBaseConfig": {
+      "additionalProperties": false,
+      "description": "Search a knowledge base; returns the provider search response.",
+      "properties": {
+        "operation": {
+          "const": "search_knowledge_base",
+          "default": "search_knowledge_base",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "knowledge_base_id": {
+          "description": "Griptape resource UUID (version 4).",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+          "title": "Knowledge Base Id",
+          "type": "string"
+        },
+        "query": {
+          "description": "Text to query or search for.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "knowledge_base_id",
+        "query"
+      ],
+      "title": "GriptapeSearchKnowledgeBaseConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_assistant_run": "#/$defs/GriptapeCancelAssistantRunConfig",
+          "cancel_structure_run": "#/$defs/GriptapeCancelStructureRunConfig",
+          "create_assistant_run": "#/$defs/GriptapeCreateAssistantRunConfig",
+          "create_message": "#/$defs/GriptapeCreateMessageConfig",
+          "create_structure_run": "#/$defs/GriptapeCreateStructureRunConfig",
+          "create_thread": "#/$defs/GriptapeCreateThreadConfig",
+          "delete_thread": "#/$defs/GriptapeDeleteThreadConfig",
+          "get_assistant": "#/$defs/GriptapeGetAssistantConfig",
+          "get_assistant_run": "#/$defs/GriptapeGetAssistantRunConfig",
+          "get_knowledge_base": "#/$defs/GriptapeGetKnowledgeBaseConfig",
+          "get_structure": "#/$defs/GriptapeGetStructureConfig",
+          "get_structure_run": "#/$defs/GriptapeGetStructureRunConfig",
+          "get_thread": "#/$defs/GriptapeGetThreadConfig",
+          "list_assistants": "#/$defs/GriptapeListAssistantsConfig",
+          "list_knowledge_bases": "#/$defs/GriptapeListKnowledgeBasesConfig",
+          "list_messages": "#/$defs/GriptapeListMessagesConfig",
+          "list_structure_run_events": "#/$defs/GriptapeListStructureRunEventsConfig",
+          "list_structure_runs": "#/$defs/GriptapeListStructureRunsConfig",
+          "list_structures": "#/$defs/GriptapeListStructuresConfig",
+          "list_threads": "#/$defs/GriptapeListThreadsConfig",
+          "query_knowledge_base": "#/$defs/GriptapeQueryKnowledgeBaseConfig",
+          "search_knowledge_base": "#/$defs/GriptapeSearchKnowledgeBaseConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GriptapeListStructuresConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeGetStructureConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeListStructureRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeCreateStructureRunConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeGetStructureRunConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeCancelStructureRunConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeListStructureRunEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeListAssistantsConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeGetAssistantConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeCreateAssistantRunConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeGetAssistantRunConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeCancelAssistantRunConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeListThreadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeCreateThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeGetThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeDeleteThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeCreateMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeListKnowledgeBasesConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeGetKnowledgeBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeQueryKnowledgeBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GriptapeSearchKnowledgeBaseConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GriptapeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Griptape Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,90 @@
+{
+  "list_structures": {
+    "method": "GET",
+    "path": "/api/structures"
+  },
+  "get_structure": {
+    "method": "GET",
+    "path": "/api/structures/{structure_id}"
+  },
+  "list_structure_runs": {
+    "method": "GET",
+    "path": "/api/structures/{structure_id}/runs"
+  },
+  "create_structure_run": {
+    "method": "POST",
+    "path": "/api/structures/{structure_id}/runs"
+  },
+  "get_structure_run": {
+    "method": "GET",
+    "path": "/api/structure-runs/{structure_run_id}"
+  },
+  "cancel_structure_run": {
+    "method": "POST",
+    "path": "/api/structure-runs/{structure_run_id}/cancel"
+  },
+  "list_structure_run_events": {
+    "method": "GET",
+    "path": "/api/structure-runs/{structure_run_id}/events"
+  },
+  "list_assistants": {
+    "method": "GET",
+    "path": "/api/assistants"
+  },
+  "get_assistant": {
+    "method": "GET",
+    "path": "/api/assistants/{assistant_id}"
+  },
+  "create_assistant_run": {
+    "method": "POST",
+    "path": "/api/assistants/{assistant_id}/runs"
+  },
+  "get_assistant_run": {
+    "method": "GET",
+    "path": "/api/assistant-runs/{assistant_run_id}"
+  },
+  "cancel_assistant_run": {
+    "method": "POST",
+    "path": "/api/assistant-runs/{assistant_run_id}/cancel"
+  },
+  "list_threads": {
+    "method": "GET",
+    "path": "/api/threads"
+  },
+  "create_thread": {
+    "method": "POST",
+    "path": "/api/threads"
+  },
+  "get_thread": {
+    "method": "GET",
+    "path": "/api/threads/{thread_id}"
+  },
+  "delete_thread": {
+    "method": "DELETE",
+    "path": "/api/threads/{thread_id}"
+  },
+  "list_messages": {
+    "method": "GET",
+    "path": "/api/threads/{thread_id}/messages"
+  },
+  "create_message": {
+    "method": "POST",
+    "path": "/api/threads/{thread_id}/messages"
+  },
+  "list_knowledge_bases": {
+    "method": "GET",
+    "path": "/api/knowledge-bases"
+  },
+  "get_knowledge_base": {
+    "method": "GET",
+    "path": "/api/knowledge-bases/{knowledge_base_id}"
+  },
+  "query_knowledge_base": {
+    "method": "POST",
+    "path": "/api/knowledge-bases/{knowledge_base_id}/query"
+  },
+  "search_knowledge_base": {
+    "method": "POST",
+    "path": "/api/knowledge-bases/{knowledge_base_id}/search"
+  }
+}
