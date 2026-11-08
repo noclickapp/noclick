@@ -1,0 +1,1224 @@
+[
+  {
+    "config": {
+      "operation": "get_me"
+    },
+    "method": "GET",
+    "path": "/api/v1/me",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "User information retrieved successfully",
+      "data": {
+        "id": "64a1b2c3d4e5f6789012345",
+        "_id": "64a1b2c3d4e5f6789012345",
+        "firstname": "John",
+        "lastname": "Doe",
+        "full_name": "John Doe",
+        "username": "johndoe",
+        "email": "john@example.com",
+        "phone_no": "+1234567890",
+        "image": "/uploads/profile/user.jpg",
+        "state": "active",
+        "date_format": "Y-m-d",
+        "time_format": "H:i:s",
+        "created_at": "2024-01-15T10:30:00.000Z",
+        "authenticated_at": "2024-01-20T14:25:30.000Z"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_workspaces"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces",
+    "query": {
+      "page": "1",
+      "per_page": "10"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Workspaces retrieved successfully",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 25,
+      "last_page": 3,
+      "from": 1,
+      "to": 10,
+      "data": [
+        {
+          "id": "610a1e660cb41530ca40d372",
+          "_id": "610a1e660cb41530ca40d372",
+          "name": "Hello Support",
+          "slug": "topviewsports",
+          "timezone": "Australia/Adelaide",
+          "logo": "https://storage.googleapis.com/.../settings/XfEEs26zMaTNdlczyHwp.jpg",
+          "created_at": "2021-08-04T04:58:14.000000Z",
+          "company_name": "Topviewsports",
+          "company_logo": "https://storage.googleapis.com/.../analytics/companies/2J34kSrkU7GwqrUqshYe.jpg",
+          "policy": {
+            "can_edit": false,
+            "can_remove": false
+          },
+          "on_hold": false
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_accounts",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "platform": "facebook",
+      "search": "BloomVille"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/accounts",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "platform": "facebook",
+      "search": "BloomVille"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Accounts retrieved successfully",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 25,
+      "last_page": 3,
+      "from": 1,
+      "to": 10,
+      "data": [
+        {
+          "id": "123456789",
+          "_id": "123456789",
+          "platform": "telegram",
+          "account_name": "My Business Page",
+          "profile_picture": "https://example.com/profile.jpg",
+          "status": "active",
+          "connected_at": "2024-01-15T10:30:00.000Z",
+          "expires_at": "2024-03-15T10:30:00.000Z"
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_posts",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "status": [
+        "scheduled",
+        "published"
+      ],
+      "date_from": "2026-01-01",
+      "date_to": "2026-12-31",
+      "labels": [
+        "66a1f2e4c8b9a1234567890b"
+      ]
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/posts",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "status[]": [
+        "scheduled",
+        "published"
+      ],
+      "date_from": "2026-01-01",
+      "date_to": "2026-12-31",
+      "labels[]": "66a1f2e4c8b9a1234567890b"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Posts retrieved successfully",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 25,
+      "last_page": 3,
+      "from": 1,
+      "to": 10,
+      "data": [
+        {
+          "id": "61e006a89be9dd0cd07ec692",
+          "workspace_id": "610a1e660cb41530ca40d372",
+          "status": "scheduled",
+          "post_url": "https://app.contentstudio.io/my-workspace/publisher/planner/list-view?plan_ids=61e006a89be9dd0cd07ec692",
+          "post_type": "reel",
+          "post_video_title": "Launch cut",
+          "instagram_options": {
+            "collaborators": [
+              "brandpartner"
+            ]
+          },
+          "common": {
+            "content": {
+              "text": "Check out our latest product launch! ",
+              "media": {
+                "images": [
+                  {
+                    "url": "https://example.com/image1.jpg"
+                  }
+                ],
+                "video": {
+                  "url": "https://example.com/video.mp4",
+                  "thumbnail": "https://example.com/thumb.jpg",
+                  "duration": "00:34"
+                }
+              }
+            }
+          },
+          "platform_overrides": {
+            "facebook": {
+              "content": {
+                "text": "Separate copy for Facebook \ud83d\udc4d",
+                "media": {
+                  "images": [
+                    {
+                      "url": "https://example.com/fb-image.jpg"
+                    }
+                  ],
+                  "video": {
+                    "url": "https://example.com/video.mp4",
+                    "duration": "00:34"
+                  }
+                }
+              }
+            }
+          },
+          "accounts": [
+            {
+              "id": "350830594784444",
+              "platform": "facebook",
+              "name": "My Business Page",
+              "username": "@mybusiness",
+              "posting_status": "success",
+              "post_link": "https://facebook.com/350830594784444/posts/123",
+              "deleted": false
+            }
+          ],
+          "scheduling": {
+            "publish_type": "scheduled",
+            "execute_time": "2025-07-25T15:30:00Z",
+            "repeat": {
+              "is_parent": true,
+              "is_child": false,
+              "parent_id": "6aa3984024cbeb43a0004a92",
+              "type": "Day",
+              "times": 2,
+              "gap": 3
+            }
+          },
+          "created_at": "2026-01-05T10:30:00Z",
+          "updated_at": "2026-01-05T10:30:00Z",
+          "created_by": "John Doe",
+          "content_category_id": "66a1f2e4c8b9a1234567890d",
+          "hide_client": false,
+          "labels": [
+            {
+              "id": "66a1f2e4c8b9a1234567890b",
+              "name": "Marketing",
+              "color": "color_1"
+            }
+          ],
+          "campaign": {
+            "id": "66a1f2e4c8b9a1234567890c",
+            "name": "Summer Campaign",
+            "color": "color_9"
+          },
+          "first_comment": {
+            "message": "Don't forget to check our website!",
+            "accounts": [
+              "66a1f2e4c8b9a1234567890e"
+            ]
+          },
+          "gmb_options": {
+            "topic_type": "STANDARD"
+          },
+          "youtube_options": {
+            "privacy_status": "public",
+            "category": "22",
+            "tags": [
+              null
+            ]
+          },
+          "tiktok_options": {
+            "privacy_level": "PUBLIC_TO_EVERYONE"
+          },
+          "pinterest_options": {},
+          "twitter_options": {
+            "has_threaded_tweets": true,
+            "threaded_tweets": [
+              {
+                "message": "Part 1 of the thread",
+                "media": [
+                  "https://example.com/media.jpg"
+                ]
+              }
+            ]
+          },
+          "threads_options": {
+            "has_multi_threads": true,
+            "multi_threads": [
+              {
+                "message": "Part 1 of the thread",
+                "media": [
+                  "https://example.com/media.jpg"
+                ]
+              }
+            ]
+          },
+          "facebook_options": {
+            "facebook_background_id": "",
+            "carousel": {
+              "is_carousel_post": true,
+              "cards": [
+                {}
+              ],
+              "accounts": [
+                null
+              ],
+              "call_to_action": "NO_BUTTON"
+            }
+          },
+          "linkedin_options": {
+            "title": "Q3 Product Highlights",
+            "is_carousel": true,
+            "accounts": [
+              "105256406"
+            ],
+            "post_type": "poll",
+            "poll": {
+              "question": "Which framework do you prefer?",
+              "options": [
+                "Vue"
+              ],
+              "duration": "SEVEN_DAYS"
+            }
+          },
+          "approval": {
+            "status": "pending_approval",
+            "approve_option": "anyone",
+            "notes": "Please review before publishing",
+            "approvers": [
+              {
+                "user_id": "66a1f2e4c8b9a1234567890d",
+                "name": "Jane Smith",
+                "email": "jane@example.com",
+                "is_external": false,
+                "status": "pending",
+                "last_action_time": "2026-01-10T15:30:00Z",
+                "last_action_note": "Looks good, approved!"
+              }
+            ]
+          },
+          "approval_workflow": {
+            "workflow_id": "66a1f2e4c8b9a1234567890d",
+            "workflow_name": "Marketing Approval",
+            "status": "pending",
+            "current_level": 1,
+            "total_levels": 2,
+            "submitted_at": "2026-01-10T15:30:00Z",
+            "levels": [
+              {
+                "level_number": 1,
+                "title": "Editors",
+                "rule": "anyone",
+                "members": [
+                  {
+                    "user_id": "627a078300a7d866600e7d02",
+                    "status": "pending"
+                  }
+                ]
+              }
+            ]
+          },
+          "external_actions": [
+            {
+              "name": "h2",
+              "email": "hello@yopmail.com",
+              "action": "approve"
+            }
+          ],
+          "external_comments": [
+            {
+              "name": "h2",
+              "email": "hello@yopmail.com",
+              "comment": "Looks good",
+              "reaction": [
+                null
+              ],
+              "is_resolved": false
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "get_post",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "post_id": "66a1f2e4c8b9a1234567890a"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/posts/66a1f2e4c8b9a1234567890a",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Post retrieved successfully.",
+      "data": {
+        "id": "61e006a89be9dd0cd07ec692",
+        "workspace_id": "610a1e660cb41530ca40d372",
+        "status": "scheduled",
+        "post_url": "https://app.contentstudio.io/my-workspace/publisher/planner/list-view?plan_ids=61e006a89be9dd0cd07ec692",
+        "post_type": "reel",
+        "post_video_title": "Launch cut",
+        "instagram_options": {
+          "collaborators": [
+            "brandpartner"
+          ]
+        },
+        "common": {
+          "content": {
+            "text": "Check out our latest product launch! ",
+            "media": {
+              "images": [
+                {
+                  "url": "https://example.com/image1.jpg"
+                }
+              ],
+              "video": {
+                "url": "https://example.com/video.mp4",
+                "thumbnail": "https://example.com/thumb.jpg",
+                "duration": "00:34"
+              }
+            }
+          }
+        },
+        "platform_overrides": {
+          "facebook": {
+            "content": {
+              "text": "Separate copy for Facebook \ud83d\udc4d",
+              "media": {
+                "images": [
+                  {
+                    "url": "https://example.com/fb-image.jpg"
+                  }
+                ],
+                "video": {
+                  "url": "https://example.com/video.mp4",
+                  "duration": "00:34"
+                }
+              }
+            }
+          }
+        },
+        "accounts": [
+          {
+            "id": "350830594784444",
+            "platform": "facebook",
+            "name": "My Business Page",
+            "username": "@mybusiness",
+            "posting_status": "success",
+            "post_link": "https://facebook.com/350830594784444/posts/123",
+            "deleted": false
+          }
+        ],
+        "scheduling": {
+          "publish_type": "scheduled",
+          "execute_time": "2025-07-25T15:30:00Z",
+          "repeat": {
+            "is_parent": true,
+            "is_child": false,
+            "parent_id": "6aa3984024cbeb43a0004a92",
+            "type": "Day",
+            "times": 2,
+            "gap": 3
+          }
+        },
+        "created_at": "2026-01-05T10:30:00Z",
+        "updated_at": "2026-01-05T10:30:00Z",
+        "created_by": "John Doe",
+        "content_category_id": "66a1f2e4c8b9a1234567890d",
+        "hide_client": false,
+        "labels": [
+          {
+            "id": "66a1f2e4c8b9a1234567890b",
+            "name": "Marketing",
+            "color": "color_1"
+          }
+        ],
+        "campaign": {
+          "id": "66a1f2e4c8b9a1234567890c",
+          "name": "Summer Campaign",
+          "color": "color_9"
+        },
+        "first_comment": {
+          "message": "Don't forget to check our website!",
+          "accounts": [
+            "66a1f2e4c8b9a1234567890e"
+          ]
+        },
+        "gmb_options": {
+          "topic_type": "STANDARD"
+        },
+        "youtube_options": {
+          "privacy_status": "public",
+          "category": "22",
+          "tags": [
+            null
+          ]
+        },
+        "tiktok_options": {
+          "privacy_level": "PUBLIC_TO_EVERYONE"
+        },
+        "pinterest_options": {},
+        "twitter_options": {
+          "has_threaded_tweets": true,
+          "threaded_tweets": [
+            {
+              "message": "Part 1 of the thread",
+              "media": [
+                "https://example.com/media.jpg"
+              ]
+            }
+          ]
+        },
+        "threads_options": {
+          "has_multi_threads": true,
+          "multi_threads": [
+            {
+              "message": "Part 1 of the thread",
+              "media": [
+                "https://example.com/media.jpg"
+              ]
+            }
+          ]
+        },
+        "facebook_options": {
+          "facebook_background_id": "",
+          "carousel": {
+            "is_carousel_post": true,
+            "cards": [
+              {}
+            ],
+            "accounts": [
+              null
+            ],
+            "call_to_action": "NO_BUTTON"
+          }
+        },
+        "linkedin_options": {
+          "title": "Q3 Product Highlights",
+          "is_carousel": true,
+          "accounts": [
+            "105256406"
+          ],
+          "post_type": "poll",
+          "poll": {
+            "question": "Which framework do you prefer?",
+            "options": [
+              "Vue"
+            ],
+            "duration": "SEVEN_DAYS"
+          }
+        },
+        "approval": {
+          "status": "pending_approval",
+          "approve_option": "anyone",
+          "notes": "Please review before publishing",
+          "approvers": [
+            {
+              "user_id": "66a1f2e4c8b9a1234567890d",
+              "name": "Jane Smith",
+              "email": "jane@example.com",
+              "is_external": false,
+              "status": "pending",
+              "last_action_time": "2026-01-10T15:30:00Z",
+              "last_action_note": "Looks good, approved!"
+            }
+          ]
+        },
+        "approval_workflow": {
+          "workflow_id": "66a1f2e4c8b9a1234567890d",
+          "workflow_name": "Marketing Approval",
+          "status": "pending",
+          "current_level": 1,
+          "total_levels": 2,
+          "submitted_at": "2026-01-10T15:30:00Z",
+          "levels": [
+            {
+              "level_number": 1,
+              "title": "Editors",
+              "rule": "anyone",
+              "members": [
+                {
+                  "user_id": "627a078300a7d866600e7d02",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        "external_actions": [
+          {
+            "name": "h2",
+            "email": "hello@yopmail.com",
+            "action": "approve"
+          }
+        ],
+        "external_comments": [
+          {
+            "name": "h2",
+            "email": "hello@yopmail.com",
+            "comment": "Looks good",
+            "reaction": [
+              null
+            ],
+            "is_resolved": false
+          }
+        ]
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "create_post",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "text": "Check out our latest product launch! ",
+      "accounts": [
+        "BjniecijWv",
+        "350830594784444",
+        "17841453340834745"
+      ],
+      "labels": [
+        "625d06734ceb636c2f5e7743"
+      ],
+      "media_ids": [
+        "625d06734ceb636c2f5e7743"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/posts",
+    "body": {
+      "content": {
+        "text": "Check out our latest product launch! ",
+        "media": {
+          "media_ids": [
+            "625d06734ceb636c2f5e7743"
+          ]
+        }
+      },
+      "accounts": [
+        "BjniecijWv",
+        "350830594784444",
+        "17841453340834745"
+      ],
+      "scheduling": {
+        "publish_type": "draft"
+      },
+      "labels": [
+        "625d06734ceb636c2f5e7743"
+      ]
+    },
+    "response_status": 201,
+    "response": {
+      "status": true,
+      "message": "Post created successfully. Use the returned `id` as `post_id` to update, delete, approve, or comment on this post.",
+      "data": {
+        "id": "66a1f2e4c8b9a1234567890a",
+        "post_url": "https://example.com"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "update_post",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "post_id": "66a1f2e4c8b9a1234567890a",
+      "text": "Updated post text",
+      "accounts": [
+        "BjniecijWv"
+      ]
+    },
+    "method": "PUT",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/posts/66a1f2e4c8b9a1234567890a",
+    "body": {
+      "content": {
+        "text": "Updated post text"
+      },
+      "accounts": [
+        "BjniecijWv"
+      ],
+      "scheduling": {
+        "publish_type": "draft"
+      }
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Post updated successfully. Use the returned `id` as `post_id` for further updates, deletion, approval, or comments.",
+      "data": {
+        "id": "66a1f2e4c8b9a1234567890a",
+        "post_url": "https://app.contentstudio.io/my-workspace/publisher/planner/list-view?plan_ids=66a1f2e4c8b9a1234567890a"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "delete_post",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "post_id": "66a1f2e4c8b9a1234567890a",
+      "delete_from_social": true,
+      "account_ids": [
+        "350830594784444"
+      ]
+    },
+    "method": "DELETE",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/posts/66a1f2e4c8b9a1234567890a",
+    "body": {
+      "delete_from_social": true,
+      "account_ids": [
+        "350830594784444"
+      ]
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Post deleted successfully"
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_labels",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "search": "marketing"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/labels",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "search": "marketing"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Labels retrieved successfully",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 25,
+      "last_page": 3,
+      "from": 1,
+      "to": 10,
+      "data": [
+        {
+          "id": "625d06734ceb636c2f5e7743",
+          "_id": "625d06734ceb636c2f5e7743",
+          "name": "Urgent",
+          "color": "color_1"
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "create_label",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "name": "Urgent",
+      "color": "color_2"
+    },
+    "method": "POST",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/labels",
+    "body": {
+      "name": "Urgent",
+      "color": "color_2"
+    },
+    "response_status": 201,
+    "response": {
+      "status": true,
+      "message": "Label created successfully. Use the returned `id` in `labels[]` when creating a post, or to update or delete this label.",
+      "data": {
+        "id": "625d06734ceb636c2f5e7743",
+        "_id": "625d06734ceb636c2f5e7743",
+        "name": "Urgent",
+        "color": "color_2"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "update_label",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "label_id": "625d06734ceb636c2f5e7743",
+      "name": "High priority",
+      "color": "color_4"
+    },
+    "method": "PUT",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/labels/625d06734ceb636c2f5e7743",
+    "body": {
+      "name": "High priority",
+      "color": "color_4"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Label updated successfully",
+      "data": {
+        "id": "625d06734ceb636c2f5e7743",
+        "_id": "625d06734ceb636c2f5e7743",
+        "name": "High priority",
+        "color": "color_4"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "delete_label",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "label_id": "625d06734ceb636c2f5e7743"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/labels/625d06734ceb636c2f5e7743",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Label deleted successfully"
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_campaigns",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "search": "marketing"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/campaigns",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "search": "marketing"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Campaigns retrieved successfully",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 25,
+      "last_page": 3,
+      "from": 1,
+      "to": 10,
+      "data": [
+        {
+          "id": "625d06734ceb636c2f5e7743",
+          "_id": "625d06734ceb636c2f5e7743",
+          "name": "Q1 Marketing",
+          "color": "color_9"
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "create_campaign",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "name": "Q1 Marketing",
+      "color": "color_2"
+    },
+    "method": "POST",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/campaigns",
+    "body": {
+      "name": "Q1 Marketing",
+      "color": "color_2"
+    },
+    "response_status": 201,
+    "response": {
+      "status": true,
+      "message": "Campaign created successfully. Use the returned `id` as `campaign_id` when creating a post, or to update or delete this campaign.",
+      "data": {
+        "id": "625d06734ceb636c2f5e7743",
+        "_id": "625d06734ceb636c2f5e7743",
+        "name": "Q1 Marketing",
+        "color": "color_2"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "update_campaign",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "campaign_id": "625d06734ceb636c2f5e7743",
+      "name": "Q2 Marketing",
+      "color": "color_4"
+    },
+    "method": "PUT",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/campaigns/625d06734ceb636c2f5e7743",
+    "body": {
+      "name": "Q2 Marketing",
+      "color": "color_4"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Campaign updated successfully",
+      "data": {
+        "id": "625d06734ceb636c2f5e7743",
+        "_id": "625d06734ceb636c2f5e7743",
+        "name": "Q2 Marketing",
+        "color": "color_4"
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "delete_campaign",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "campaign_id": "625d06734ceb636c2f5e7743"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/campaigns/625d06734ceb636c2f5e7743",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Campaign deleted successfully"
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_content_categories",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "search": "marketing"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/content-categories",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "search": "marketing"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Content categories retrieved successfully.",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 25,
+      "last_page": 3,
+      "from": 1,
+      "to": 10,
+      "data": [
+        {
+          "id": "625d06734ceb636c2f5e7743",
+          "_id": "625d06734ceb636c2f5e7743",
+          "name": "My Category",
+          "color": "color_15",
+          "state": "active",
+          "accounts": [
+            {
+              "id": "106939092115395",
+              "_id": "106939092115395",
+              "platform": "facebook",
+              "name": "My Facebook Page"
+            }
+          ],
+          "slots_count": 5,
+          "posts_count": 10,
+          "color_code": "#544c72"
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "get_content_category",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "category_id": "625d06734ceb636c2f5e7743"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/content-categories/625d06734ceb636c2f5e7743",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Content category retrieved successfully.",
+      "data": {
+        "id": "66a1f2e4c8b9a1234567890b",
+        "_id": "66a1f2e4c8b9a1234567890b",
+        "name": "Product Launch",
+        "color": "color_3",
+        "color_code": "#ff6462",
+        "state": "active",
+        "category_state": "local",
+        "slots_count": 0,
+        "posts_count": 0,
+        "accounts": [
+          {
+            "id": "106939092115395",
+            "_id": "106939092115395",
+            "platform": "facebook",
+            "name": "My Facebook Page"
+          }
+        ],
+        "slots": [
+          {
+            "id": "66c3d1a2b4e5f6789012345a",
+            "_id": "66c3d1a2b4e5f6789012345a",
+            "category_id": "66a1f2e4c8b9a1234567890b",
+            "day": "monday",
+            "weekday_sorting": 1,
+            "hour": 9,
+            "minute": 30,
+            "period": "AM"
+          }
+        ]
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "create_content_category",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "name": "Product Launch",
+      "color": "color_3"
+    },
+    "method": "POST",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/content-categories",
+    "body": {
+      "name": "Product Launch",
+      "color": "color_3"
+    },
+    "response_status": 201,
+    "response": {
+      "status": true,
+      "message": "Content category created successfully. Use the returned `id` as `content_category_id` when scheduling a post assigned to this category.",
+      "data": {
+        "id": "66a1f2e4c8b9a1234567890b",
+        "_id": "66a1f2e4c8b9a1234567890b",
+        "name": "Product Launch",
+        "color": "color_3",
+        "color_code": "#ff6462",
+        "state": "active",
+        "category_state": "local",
+        "slots_count": 0,
+        "posts_count": 0,
+        "accounts": [
+          {
+            "id": "106939092115395",
+            "_id": "106939092115395",
+            "platform": "facebook",
+            "name": "My Facebook Page"
+          }
+        ]
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "update_content_category",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "category_id": "625d06734ceb636c2f5e7743",
+      "name": "Product Launch 2026",
+      "color": "color_5"
+    },
+    "method": "PUT",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/content-categories/625d06734ceb636c2f5e7743",
+    "body": {
+      "name": "Product Launch 2026",
+      "color": "color_5"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Content category updated successfully.",
+      "data": {
+        "id": "66a1f2e4c8b9a1234567890b",
+        "_id": "66a1f2e4c8b9a1234567890b",
+        "name": "Product Launch",
+        "color": "color_3",
+        "color_code": "#ff6462",
+        "state": "active",
+        "category_state": "local",
+        "slots_count": 0,
+        "posts_count": 0,
+        "accounts": [
+          {
+            "id": "106939092115395",
+            "_id": "106939092115395",
+            "platform": "facebook",
+            "name": "My Facebook Page"
+          }
+        ]
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "delete_content_category",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "category_id": "625d06734ceb636c2f5e7743"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/content-categories/625d06734ceb636c2f5e7743",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Content category deleted successfully.",
+      "data": []
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_media",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "type": "images",
+      "search": "banner",
+      "archived": false
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/media",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "type": "images",
+      "search": "banner",
+      "archived": "false"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Media retrieved successfully.",
+      "current_page": 1,
+      "per_page": 20,
+      "total": 150,
+      "last_page": 8,
+      "from": 1,
+      "to": 20,
+      "data": [
+        {
+          "id": "625d06734ceb636c2f5e7743",
+          "_id": "625d06734ceb636c2f5e7743",
+          "name": "banner.jpg",
+          "url": "https://storage.googleapis.com/.../banner.jpg",
+          "mime_type": "image/jpeg",
+          "extension": "jpg",
+          "size": 245760,
+          "type": "image",
+          "is_processing": false,
+          "is_ai_generated": false,
+          "dimensions": {
+            "width": 1920,
+            "height": 1080
+          }
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "list_team_members",
+      "workspace_id": "610a1e660cb41530ca40d372",
+      "search": "john"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/team-members",
+    "query": {
+      "page": "1",
+      "per_page": "10",
+      "search": "john"
+    },
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Team members retrieved successfully",
+      "current_page": 1,
+      "per_page": 10,
+      "total": 5,
+      "last_page": 1,
+      "from": 1,
+      "to": 5,
+      "data": [
+        {
+          "id": "627a078300a7d866600e7d02",
+          "_id": "627a078300a7d866600e7d02",
+          "member_id": "66a1f2e4c8b9a1234567890d",
+          "name": "John Doe",
+          "email": "john@example.com",
+          "profile_picture": "https://example.com/avatar.jpg",
+          "role": "admin",
+          "membership": "member"
+        }
+      ]
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  },
+  {
+    "config": {
+      "operation": "get_limits",
+      "workspace_id": "610a1e660cb41530ca40d372"
+    },
+    "method": "GET",
+    "path": "/api/v1/workspaces/610a1e660cb41530ca40d372/limits",
+    "response_status": 200,
+    "response": {
+      "status": true,
+      "message": "Limits and usage retrieved successfully.",
+      "data": {
+        "plan": {
+          "slug": "agency-annual",
+          "name": "Business & Agency - Medium (Annually)",
+          "is_annually": true,
+          "billing_cycle": "annually"
+        },
+        "limits": [
+          {
+            "key": "social_accounts",
+            "label": "Social Accounts",
+            "used": 13,
+            "limit": 16,
+            "remaining": 3,
+            "scope": "account",
+            "is_unlimited": false,
+            "is_on_plan": true,
+            "unit": "count",
+            "period": "lifetime",
+            "resets_at": null,
+            "note": "Resets on the 1st of each month; next reset 2026-10-01T00:00:00+00:00."
+          }
+        ],
+        "usage_reset": {
+          "last_reset_at": "2026-09-01T00:05:12+00:00",
+          "next_reset_at": "2026-10-01T00:00:00+00:00"
+        }
+      }
+    },
+    "source": "https://api.contentstudio.io/docs?api-docs.json"
+  }
+]
