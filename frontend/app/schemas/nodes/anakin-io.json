@@ -1,0 +1,1393 @@
+{
+  "$defs": {
+    "AnakinBuildWireActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "build_wire_action",
+          "default": "build_wire_action",
+          "description": "Request a brand-new Wire action for a website that isn't in the catalog yet. Describe the site (website_url) and what the action should do or extract (goal); Wire generates and auto-tests a scraper, then publishes it. Asynchronous (returns status \"pending\") and charges credits, refunded automatically if the build fails.",
+          "title": "Build a New Wire Action",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "website_url": {
+          "description": "The site to build an action for. The domain is extracted automatically.",
+          "minLength": 1,
+          "title": "Website Url",
+          "type": "string"
+        },
+        "goal": {
+          "description": "Natural-language description of what the action should do or extract. Be specific \u2014 the builder synthesizes the scraper from this.",
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "catalog_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional \u2014 attach to an existing catalog instead of creating one.",
+          "title": "Catalog Id"
+        },
+        "visibility": {
+          "default": "private",
+          "description": "Action visibility.",
+          "enum": [
+            "private",
+            "public"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Build even if similar actions already exist for the domain (otherwise the request is rejected with ACTION_EXISTS).",
+          "title": "Force",
+          "type": "boolean"
+        },
+        "actions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of separate capabilities to build, each as its own action, for example \"search products\".",
+          "title": "Actions"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional 2-letter country code to build and test from, for example \"US\".",
+          "title": "Country"
+        }
+      },
+      "required": [
+        "website_url",
+        "goal"
+      ],
+      "title": "AnakinBuildWireActionConfig",
+      "type": "object"
+    },
+    "AnakinCrawlSiteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "crawl_site",
+          "default": "crawl_site",
+          "description": "Bulk-fetch markdown across a site \u2014 catalog ingestion, site-wide RAG corpora. Submit a URL to crawl. Returns a job ID \u2014 poll GET /crawl/{jobId} (with a delay in between) to fetch the completed pages.",
+          "title": "Crawl a Site",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The starting URL to crawl from.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "maxPages": {
+          "default": 10,
+          "description": "Hard cap on pages fetched.",
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "depth": {
+          "default": 1,
+          "description": "Link-hops from the starting URL to follow.",
+          "title": "Depth",
+          "type": "integer"
+        },
+        "country": {
+          "default": "us",
+          "description": "Proxy country code, e.g. us, gb, de.",
+          "title": "Country",
+          "type": "string"
+        },
+        "useBrowser": {
+          "default": false,
+          "description": "Render each page in a headless browser (for SPAs).",
+          "title": "Use Browser",
+          "type": "boolean"
+        },
+        "includePatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Glob/regex patterns. Only URLs matching at least one pattern are fetched.",
+          "title": "Include Patterns"
+        },
+        "excludePatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Glob/regex patterns. URLs matching any pattern are skipped.",
+          "title": "Exclude Patterns"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse an existing authenticated browser session (see Browser Sessions) instead of an anonymous request.",
+          "title": "Session Id"
+        },
+        "sessionName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable name of a saved browser session \u2014 alternative to sessionId.",
+          "title": "Session Name"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "AnakinCrawlSiteConfig",
+      "type": "object"
+    },
+    "AnakinCreateMonitorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "description": "Create a scheduled website monitor that checks a URL every intervalMinutes (min 15) and records a change when the content differs \u2014 optionally alerting a webhook or email. scope \"page\" (default) watches one URL; \"site\" crawls the site each run and tracks pages added/removed/changed; \"wire\" runs a Wire action each check and diffs its JSON. watchMode \"full_page\" (2 credits/check) compares the whole page; \"specific_data\" (3 credits/check) extracts only the fields in outputSchema with AI \u2014 ideal for price/stock/status tracking. aiMode (+1 credit/check) filters out trivial noise and summarizes real changes. Active-monitor caps per plan: Free 5, Pro 20, Scale 100.",
+          "title": "Create a Website Monitor",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The URL to watch (root URL for site scope; the Wire site's URL for wire scope).",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "intervalMinutes": {
+          "description": "Check frequency in minutes. Minimum 15.",
+          "minimum": 15,
+          "title": "Interval Minutes",
+          "type": "integer"
+        },
+        "scope": {
+          "default": "page",
+          "description": "What to monitor: one page (default), a whole site, or a Wire action.",
+          "enum": [
+            "page",
+            "site",
+            "wire"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "watchMode": {
+          "default": "full_page",
+          "description": "Compare the whole page (default) or only the fields in outputSchema, extracted with AI.",
+          "enum": [
+            "full_page",
+            "specific_data"
+          ],
+          "title": "Watch Mode",
+          "type": "string"
+        },
+        "watchFormat": {
+          "default": "markdown",
+          "description": "Format compared in full_page mode. Defaults to markdown.",
+          "enum": [
+            "markdown",
+            "html",
+            "cleaned_html"
+          ],
+          "title": "Watch Format",
+          "type": "string"
+        },
+        "outputSchema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON Schema of the fields to track. Required when watchMode is \"specific_data\".",
+          "title": "Output Schema"
+        },
+        "aiMode": {
+          "default": false,
+          "description": "AI meaningful-change filtering: ignores trivial noise (ads, timestamps) and summarizes real changes. +1 credit per check.",
+          "title": "Ai Mode",
+          "type": "boolean"
+        },
+        "aiGoal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Natural-language description of which changes count as meaningful (used with aiMode), e.g. \"only when the price drops or it goes out of stock\".",
+          "title": "Ai Goal"
+        },
+        "useBrowser": {
+          "default": false,
+          "description": "Render checks with a stealth headless browser (needed for JS-heavy pages). Forced true when sessionId is set.",
+          "title": "Use Browser",
+          "type": "boolean"
+        },
+        "country": {
+          "default": "us",
+          "description": "Two-letter proxy country code. Defaults to \"us\".",
+          "title": "Country",
+          "type": "string"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Saved browser-session ID for monitoring login-protected pages (see List Browser Sessions).",
+          "title": "Session Id"
+        },
+        "isActive": {
+          "default": true,
+          "description": "Start running immediately. Defaults to true.",
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional end date (ISO 8601 timestamp or YYYY-MM-DD); the monitor auto-pauses when it passes.",
+          "title": "Expires At"
+        },
+        "alertWebhookUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL that receives signed change alerts.",
+          "title": "Alert Webhook Url"
+        },
+        "alertEmails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated email recipients for change alerts.",
+          "title": "Alert Emails"
+        },
+        "maxPages": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site scope: max pages crawled per run.",
+          "title": "Max Pages"
+        },
+        "maxDepth": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site scope: crawl depth (1\u20135). Defaults to 2.",
+          "title": "Max Depth"
+        },
+        "includePatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site scope: glob patterns or hand-picked same-site URLs to track.",
+          "title": "Include Patterns"
+        },
+        "excludePatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site scope: glob patterns to skip.",
+          "title": "Exclude Patterns"
+        },
+        "wireActionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wire scope (required there): the Wire action run each check, e.g. \"amazon.search_products\" (see Discover Wire Actions).",
+          "title": "Wire Action Id"
+        },
+        "wireCatalogSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wire scope: catalogue slug of the Wire site.",
+          "title": "Wire Catalog Slug"
+        },
+        "wireCredentialId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wire scope: credential ID when the action needs auth (see List Wire Identities).",
+          "title": "Wire Credential Id"
+        },
+        "wireParams": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wire scope: parameters passed to the action each check.",
+          "title": "Wire Params"
+        },
+        "wireWatchPaths": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wire scope: JSON paths to diff instead of the whole response.",
+          "title": "Wire Watch Paths"
+        }
+      },
+      "required": [
+        "url",
+        "intervalMinutes"
+      ],
+      "title": "AnakinCreateMonitorConfig",
+      "type": "object"
+    },
+    "AnakinDeleteMonitorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "description": "Permanently remove a monitor and its change history. Irreversible.",
+          "title": "Delete a Website Monitor",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The monitor ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AnakinDeleteMonitorConfig",
+      "type": "object"
+    },
+    "AnakinDiscoverWireActionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "discover_wire_actions",
+          "default": "discover_wire_actions",
+          "description": "Find Wire actions for a task from a natural-language intent. Wire is a catalog of pre-built automation actions across hundreds of websites (Amazon, Walmart, LinkedIn, Airbnb, Zillow, and others) \u2014 read actions extract data, write actions perform interactions. Many read actions need no authentication. Returns ranked candidate actions, each with its action_id, type (read/write), required/optional params, credit cost, and whether auth is needed. Run a returned action with Run a Wire Action.",
+          "title": "Discover Wire Actions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "description": "The intent in natural language, e.g. \"top phones on walmart\", \"search airbnb listings in Lisbon\", \"a linkedin profile's work history\".",
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "limit": {
+          "default": 5,
+          "description": "Maximum number of candidate actions to return.",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "AnakinDiscoverWireActionsConfig",
+      "type": "object"
+    },
+    "AnakinGetCrawlResultConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_crawl_result",
+          "default": "get_crawl_result",
+          "description": "Fetch the status and results of a crawl job started by Crawl a Site.",
+          "title": "Get Crawl Result",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobId": {
+          "description": "The jobId returned by Crawl a Site.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "AnakinGetCrawlResultConfig",
+      "type": "object"
+    },
+    "AnakinGetMapResultConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_map_result",
+          "default": "get_map_result",
+          "description": "Fetch the status and results of a map job started by Map a Site's URLs.",
+          "title": "Get Map Result",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobId": {
+          "description": "The jobId returned by Map a Site's URLs.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "AnakinGetMapResultConfig",
+      "type": "object"
+    },
+    "AnakinGetMonitorChangesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_monitor_changes",
+          "default": "get_monitor_changes",
+          "description": "Get the detected changes for a monitor \u2014 each entry records when the watched content differed from the previous check, with a diff/summary (and the AI change summary when aiMode is on).",
+          "title": "Get Monitor Changes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The monitor ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AnakinGetMonitorChangesConfig",
+      "type": "object"
+    },
+    "AnakinGetMonitorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "description": "Fetch one monitor's full configuration and status (next/last check time, active state, per-check credit cost, alert settings).",
+          "title": "Get a Website Monitor",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The monitor ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AnakinGetMonitorConfig",
+      "type": "object"
+    },
+    "AnakinGetResearchResultConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_research_result",
+          "default": "get_research_result",
+          "description": "Fetch the status and results of an agentic search job started by Start Agentic Search.",
+          "title": "Get Agentic Search Result",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobId": {
+          "description": "The job_id returned by Start Agentic Search.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "AnakinGetResearchResultConfig",
+      "type": "object"
+    },
+    "AnakinGetScrapeResultConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_scrape_result",
+          "default": "get_scrape_result",
+          "description": "Fetch the status and results of a scrape job started by Extract Website Data.",
+          "title": "Get Scrape Result",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobId": {
+          "description": "The jobId returned by Extract Website Data.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "AnakinGetScrapeResultConfig",
+      "type": "object"
+    },
+    "AnakinGetWireCatalogConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_wire_catalog",
+          "default": "get_wire_catalog",
+          "description": "Get one catalog's full action list with exact parameter schemas, each action's type (read/write), auth mode (none/optional/required), and credit cost \u2014 plus the login fields for credentials-mode sites.",
+          "title": "Get a Wire Catalog",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slug": {
+          "description": "Catalog slug to inspect, e.g. \"walmart\".",
+          "minLength": 1,
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "AnakinGetWireCatalogConfig",
+      "type": "object"
+    },
+    "AnakinGetWireJobConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_wire_job",
+          "default": "get_wire_job",
+          "description": "Fetch the status and result of an asynchronous Wire action job started by Run a Wire Action.",
+          "title": "Get Wire Job Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobId": {
+          "description": "The job_id returned by Run a Wire Action.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "AnakinGetWireJobConfig",
+      "type": "object"
+    },
+    "AnakinIoCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "anakin_io_api_key",
+          "default": "anakin_io_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste the API key from your Anakin dashboard.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Anakin Io API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Anakin dashboard. Requests use the X-API-Key header.",
+      "x-credential-url": "https://anakin.io/dashboard"
+    },
+    "AnakinListMonitorsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "description": "List your website monitors.",
+          "title": "List Website Monitors",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "AnakinListMonitorsConfig",
+      "type": "object"
+    },
+    "AnakinListWireCatalogsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_wire_catalogs",
+          "default": "list_wire_catalogs",
+          "description": "List every website supported by Wire and its action count.",
+          "title": "List Wire Catalogs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "AnakinListWireCatalogsConfig",
+      "type": "object"
+    },
+    "AnakinListWireIdentitiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_wire_identities",
+          "default": "list_wire_identities",
+          "description": "List your saved Wire identities and their credentials. An identity is a named account on a site; each credential's id is the credential_id passed to Run a Wire Action for actions whose auth_mode is \"required\". Optionally filter by catalog_id.",
+          "title": "List Wire Identities",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "catalog_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional \u2014 restrict to identities for a single catalog.",
+          "title": "Catalog Id"
+        }
+      },
+      "title": "AnakinListWireIdentitiesConfig",
+      "type": "object"
+    },
+    "AnakinMapSiteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "map_site",
+          "default": "map_site",
+          "description": "Discover all reachable URLs under a given site \u2014 internal links, external links, and counts. Submit a URL to map. Returns a job ID \u2014 poll GET /map/{jobId} (with a delay in between) to fetch the completed link list.",
+          "title": "Map a Site's URLs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The starting URL for discovery (typically a homepage or section root).",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of URLs to return overall.",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "depth": {
+          "default": 2,
+          "description": "How many link-hops from the starting URL to follow.",
+          "title": "Depth",
+          "type": "integer"
+        },
+        "limitPerLevel": {
+          "default": 100,
+          "description": "Maximum URLs collected per depth level (controls breadth).",
+          "title": "Limit Per Level",
+          "type": "integer"
+        },
+        "includeSubdomains": {
+          "default": false,
+          "description": "Include URLs on subdomains of the starting host.",
+          "title": "Include Subdomains",
+          "type": "boolean"
+        },
+        "includeExternalLinks": {
+          "default": false,
+          "description": "Also collect (but do not follow) external links.",
+          "title": "Include External Links",
+          "type": "boolean"
+        },
+        "useBrowser": {
+          "default": false,
+          "description": "Use a headless browser \u2014 best for JS-heavy sites.",
+          "title": "Use Browser",
+          "type": "boolean"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional keyword filter \u2014 only return URLs whose path/title matches.",
+          "title": "Search"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "AnakinMapSiteConfig",
+      "type": "object"
+    },
+    "AnakinPauseMonitorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "pause_monitor",
+          "default": "pause_monitor",
+          "description": "Stop scheduled checks for a monitor.",
+          "title": "Pause a Website Monitor",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The monitor ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AnakinPauseMonitorConfig",
+      "type": "object"
+    },
+    "AnakinResumeMonitorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resume_monitor",
+          "default": "resume_monitor",
+          "description": "Restart scheduled checks for a paused monitor. May hit the plan's active-monitor cap.",
+          "title": "Resume a Website Monitor",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The monitor ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AnakinResumeMonitorConfig",
+      "type": "object"
+    },
+    "AnakinRunMonitorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "run_monitor",
+          "default": "run_monitor",
+          "description": "Trigger an immediate out-of-schedule check. Billed like a normal check.",
+          "title": "Run a Website Monitor Now",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The monitor ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AnakinRunMonitorConfig",
+      "type": "object"
+    },
+    "AnakinRunWireActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "run_wire_action",
+          "default": "run_wire_action",
+          "description": "Run a Wire action by its action_id \u2014 either a READ action that extracts data (search listings, fetch a product's price/specs/reviews, read a profile) or a WRITE action that performs a state-changing interaction (submit a form, add to cart). The action's type, reported by Discover Wire Actions and Get a Wire Catalog, determines which kind it is. params must match that action's parameter schema; omit for actions that take none. Some actions complete synchronously and return their data inline in this same response; others return {status, job_id} \u2014 poll GET /wire/jobs/{jobId} for those. Does not execute payments or transfer funds; such actions are refused.",
+          "title": "Run a Wire Action",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "action_id": {
+          "description": "The action to run (from Discover Wire Actions or Get a Wire Catalog).",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The action's input parameters. Shape depends on the action \u2014 use its parameter schema from discovery. Omit for actions that take none.",
+          "title": "Params"
+        },
+        "credential_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when the action's auth_mode is \"required\"; honored when \"optional\"; ignored when \"none\". Get one from List Wire Identities or Sign In to a Wire Site.",
+          "title": "Credential Id"
+        },
+        "identity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional identity selector \u2014 the server resolves a credential from it (alternative to credential_id).",
+          "title": "Identity Id"
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "AnakinRunWireActionConfig",
+      "type": "object"
+    },
+    "AnakinScrapeUrlConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scrape_url",
+          "default": "scrape_url",
+          "description": "Submit a URL to scrape. Returns a job ID \u2014 poll GET /url-scraper/{jobId} (with a delay in between) to fetch the completed markdown/JSON.",
+          "title": "Extract Website Data",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The full URL of the website to extract data from.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "country": {
+          "default": "us",
+          "description": "Proxy country code, e.g. us, gb, de.",
+          "title": "Country",
+          "type": "string"
+        },
+        "useBrowser": {
+          "default": false,
+          "description": "Use a headless browser \u2014 best for JS-heavy sites.",
+          "title": "Use Browser",
+          "type": "boolean"
+        },
+        "generateJson": {
+          "default": false,
+          "description": "AI-extract structured JSON from the page content.",
+          "title": "Generate Json",
+          "type": "boolean"
+        },
+        "forceFresh": {
+          "default": false,
+          "description": "Bypass the cache and force a fresh extraction.",
+          "title": "Force Fresh",
+          "type": "boolean"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse an existing authenticated browser session (see Browser Sessions) instead of an anonymous request.",
+          "title": "Session Id"
+        },
+        "sessionName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable name of a saved browser session \u2014 alternative to sessionId.",
+          "title": "Session Name"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "AnakinScrapeUrlConfig",
+      "type": "object"
+    },
+    "AnakinScrapeUrlSyncConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scrape_url_sync",
+          "default": "scrape_url_sync",
+          "description": "Scrapes a single URL and returns the result in the same response, so no polling is needed. Takes the same body as POST /url-scraper. If the scrape takes longer than about 90 seconds, the response is a 202 with an `id` and a non-terminal `status`; fetch the result later with GET /url-scraper/{jobId}. A failed scrape also returns 200 with `status: \"failed\"`, so check `status`. Limited to 20 requests per minute.",
+          "title": "Scrape a URL and Wait for the Result",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The full URL of the website to extract data from.",
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "country": {
+          "default": "us",
+          "description": "Proxy country code, e.g. us, gb, de.",
+          "title": "Country",
+          "type": "string"
+        },
+        "useBrowser": {
+          "default": false,
+          "description": "Use a headless browser \u2014 best for JS-heavy sites.",
+          "title": "Use Browser",
+          "type": "boolean"
+        },
+        "generateJson": {
+          "default": false,
+          "description": "AI-extract structured JSON from the page content.",
+          "title": "Generate Json",
+          "type": "boolean"
+        },
+        "forceFresh": {
+          "default": false,
+          "description": "Bypass the cache and force a fresh extraction.",
+          "title": "Force Fresh",
+          "type": "boolean"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse an existing authenticated browser session (see Browser Sessions) instead of an anonymous request.",
+          "title": "Session Id"
+        },
+        "sessionName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable name of a saved browser session \u2014 alternative to sessionId.",
+          "title": "Session Name"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "AnakinScrapeUrlSyncConfig",
+      "type": "object"
+    },
+    "AnakinSearchConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "description": "AI-powered web search with citations. Synchronous \u2014 returns immediately, no polling needed. Costs 3 credits per call.",
+          "title": "Perform AI Search",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "The search query or question.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "limit": {
+          "default": 5,
+          "description": "Maximum number of results to return (default 5, max 20).",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "AnakinSearchConfig",
+      "type": "object"
+    },
+    "AnakinStartResearchConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_research",
+          "default": "start_research",
+          "description": "Start a multi-stage AI research pipeline: search, scrape citations, extract structured data. Returns a job ID \u2014 poll GET /agentic-search/{jobId} (with a delay in between, this can take minutes) to fetch the report. Costs 10 credits.",
+          "title": "Start Agentic Search",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "The research question or topic (max 8KB).",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "useBrowser": {
+          "default": true,
+          "description": "Use a headless browser for citation scraping \u2014 matches the API default.",
+          "title": "Use Browser",
+          "type": "boolean"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON Schema describing the structured_data shape you want back.",
+          "title": "Schema"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "AnakinStartResearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "build_wire_action": "#/$defs/AnakinBuildWireActionConfig",
+          "crawl_site": "#/$defs/AnakinCrawlSiteConfig",
+          "create_monitor": "#/$defs/AnakinCreateMonitorConfig",
+          "delete_monitor": "#/$defs/AnakinDeleteMonitorConfig",
+          "discover_wire_actions": "#/$defs/AnakinDiscoverWireActionsConfig",
+          "get_crawl_result": "#/$defs/AnakinGetCrawlResultConfig",
+          "get_map_result": "#/$defs/AnakinGetMapResultConfig",
+          "get_monitor": "#/$defs/AnakinGetMonitorConfig",
+          "get_monitor_changes": "#/$defs/AnakinGetMonitorChangesConfig",
+          "get_research_result": "#/$defs/AnakinGetResearchResultConfig",
+          "get_scrape_result": "#/$defs/AnakinGetScrapeResultConfig",
+          "get_wire_catalog": "#/$defs/AnakinGetWireCatalogConfig",
+          "get_wire_job": "#/$defs/AnakinGetWireJobConfig",
+          "list_monitors": "#/$defs/AnakinListMonitorsConfig",
+          "list_wire_catalogs": "#/$defs/AnakinListWireCatalogsConfig",
+          "list_wire_identities": "#/$defs/AnakinListWireIdentitiesConfig",
+          "map_site": "#/$defs/AnakinMapSiteConfig",
+          "pause_monitor": "#/$defs/AnakinPauseMonitorConfig",
+          "resume_monitor": "#/$defs/AnakinResumeMonitorConfig",
+          "run_monitor": "#/$defs/AnakinRunMonitorConfig",
+          "run_wire_action": "#/$defs/AnakinRunWireActionConfig",
+          "scrape_url": "#/$defs/AnakinScrapeUrlConfig",
+          "scrape_url_sync": "#/$defs/AnakinScrapeUrlSyncConfig",
+          "search": "#/$defs/AnakinSearchConfig",
+          "start_research": "#/$defs/AnakinStartResearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AnakinScrapeUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinScrapeUrlSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetScrapeResultConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinStartResearchConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetResearchResultConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinMapSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetMapResultConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinCrawlSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetCrawlResultConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinDiscoverWireActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinListWireCatalogsConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetWireCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinRunWireActionConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetWireJobConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinListWireIdentitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinBuildWireActionConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinDeleteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinGetMonitorChangesConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinPauseMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinResumeMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/AnakinRunMonitorConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AnakinIoCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Anakin-io Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
