@@ -1,0 +1,726 @@
+{
+  "source": "https://api.cabinpanda.com/api/docs/swagger.yaml",
+  "version": "0.1.9",
+  "paths": {
+    "/forms": {
+      "get": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "Get your all forms in CabinPanda",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "Create a new form",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/{key}": {
+      "get": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "Get form detail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "description": "Key of the form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "Update the details of the specified form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "Delete a form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/{key}/submissions": {
+      "get": {
+        "tags": [
+          "Form Submissions"
+        ],
+        "summary": "Get submissions of the specified form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "description": "Key of the Form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "minimum": 3
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "finish",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/{key}/submit": {
+      "post": {
+        "tags": [
+          "Form Submit"
+        ],
+        "summary": "Submit a form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "description": "Key of the form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormSubmitBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/submissions/{id}": {
+      "delete": {
+        "tags": [
+          "Form Submissions"
+        ],
+        "summary": "Delete a submission",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/{key}/receivers": {
+      "get": {
+        "tags": [
+          "Form Receivres"
+        ],
+        "summary": "Get form receivers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "description": "Key of the Form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/types": {
+      "get": {
+        "tags": [
+          "Form Types"
+        ],
+        "summary": "Get form types",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/field_types": {
+      "get": {
+        "tags": [
+          "Form Field Types"
+        ],
+        "summary": "Get form field types",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/templates": {
+      "get": {
+        "tags": [
+          "Form Templates"
+        ],
+        "summary": "Get form templates",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Form Templates"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormTemplateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/templates/{id}": {
+      "patch": {
+        "tags": [
+          "Form Templates"
+        ],
+        "summary": "Update a form template",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormTemplateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/public-templates": {
+      "get": {
+        "tags": [
+          "Form Templates"
+        ],
+        "summary": "Get public form templates",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/forms/{key}/notify-respondent": {
+      "patch": {
+        "tags": [
+          "Form Submit Notify Respondent"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormNotifyRespondentBody"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/{key}/respondent-email-template": {
+      "get": {
+        "tags": [
+          "Form Respondent Email Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Form Respondent Email Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormRespondentEmailTemplateBody"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/forms/{key}/respondent-email-template/{id}": {
+      "patch": {
+        "tags": [
+          "Form Respondent Email Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer",
+              "description": "Form Respondent Email Template ID"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormRespondentEmailTemplateBody"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/team-members": {
+      "get": {
+        "tags": [
+          "Team Members"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    },
+    "/teams": {
+      "get": {
+        "tags": [
+          "Get Auth User's Teams"
+        ],
+        "summary": "Get Auth User's Teams event",
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": [
+              "bearer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "schemas": {
+    "FormCreateBody": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Form name"
+        },
+        "template_id": {
+          "type": "integer",
+          "description": "Form template ID"
+        },
+        "type_id": {
+          "type": "integer",
+          "description": "Form type ID"
+        }
+      }
+    },
+    "FormTemplateBody": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "required": false
+        },
+        "is_public": {
+          "type": "boolean",
+          "required": true
+        },
+        "variables": {
+          "type": "object"
+        }
+      }
+    },
+    "FormSubmitBody": {
+      "properties": {
+        "fields": {
+          "type": "object",
+          "description": "Array of fields detail",
+          "properties": {
+            "label-973219de0c44102d73a7daf6bb6143487ab2d213": {
+              "description": "Form's input key and value",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "FormNotifyRespondentBody": {
+      "properties": {
+        "notify_respondent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FormRespondentEmailTemplateBody": {
+      "properties": {
+        "reply_to": {
+          "type": "object",
+          "required": true
+        },
+        "subject": {
+          "type": "string",
+          "example": "Hello {form_field_key}",
+          "required": true
+        },
+        "message": {
+          "type": "string",
+          "example": "Hello {form_field_key}, This is your message: {form_field_key}",
+          "required": true
+        }
+      }
+    }
+  },
+  "sha256": "70fd15712347027428445a33fe9a95400f3569c29c1111a5a84b25bb161e8013"
+}
