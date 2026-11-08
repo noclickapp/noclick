@@ -1,0 +1,155 @@
+{
+  "get_user": {
+    "method": "GET",
+    "path": "/user"
+  },
+  "list_companies": {
+    "method": "GET",
+    "path": "/companies"
+  },
+  "get_company": {
+    "method": "GET",
+    "path": "/company/{company_id}"
+  },
+  "list_departments": {
+    "method": "GET",
+    "path": "/company/{company_id}/departments"
+  },
+  "list_pipelines": {
+    "method": "GET",
+    "path": "/company/{company_id}/pipelines"
+  },
+  "get_pipeline": {
+    "method": "GET",
+    "path": "/company/{company_id}/pipeline/{pipeline_id}"
+  },
+  "list_positions": {
+    "method": "GET",
+    "path": "/company/{company_id}/positions",
+    "query": [
+      "state",
+      "page_size",
+      "page",
+      "sort"
+    ]
+  },
+  "get_position": {
+    "method": "GET",
+    "path": "/company/{company_id}/position/{position_id}"
+  },
+  "create_position": {
+    "method": "POST",
+    "path": "/company/{company_id}/positions",
+    "body": [
+      "name",
+      "description",
+      "type",
+      "location",
+      "department",
+      "category",
+      "pipeline_id",
+      "tags"
+    ]
+  },
+  "update_position": {
+    "method": "PUT",
+    "path": "/company/{company_id}/position/{position_id}",
+    "body": [
+      "name",
+      "description",
+      "type",
+      "department",
+      "category",
+      "pipeline_id",
+      "tags"
+    ]
+  },
+  "set_position_state": {
+    "method": "PUT",
+    "path": "/company/{company_id}/position/{position_id}/state",
+    "body": [
+      "state"
+    ],
+    "status": 204
+  },
+  "get_position_team": {
+    "method": "GET",
+    "path": "/company/{company_id}/position/{position_id}/team"
+  },
+  "search_candidates": {
+    "method": "GET",
+    "path": "/company/{company_id}/candidates/search",
+    "query": [
+      "email_address"
+    ]
+  },
+  "list_candidates": {
+    "method": "GET",
+    "path": "/company/{company_id}/position/{position_id}/candidates",
+    "query": [
+      "page_size",
+      "page",
+      "sort",
+      "stage_id"
+    ]
+  },
+  "add_candidate": {
+    "method": "POST",
+    "path": "/company/{company_id}/position/{position_id}/candidates",
+    "body": [
+      "name",
+      "email_address",
+      "phone_number",
+      "address",
+      "summary",
+      "cover_letter",
+      "tags",
+      "source",
+      "origin"
+    ],
+    "query": [
+      "stage_actions_enabled"
+    ]
+  },
+  "get_candidate": {
+    "method": "GET",
+    "path": "/company/{company_id}/position/{position_id}/candidate/{candidate_id}"
+  },
+  "update_candidate": {
+    "method": "PUT",
+    "path": "/company/{company_id}/position/{position_id}/candidate/{candidate_id}",
+    "body": [
+      "name",
+      "email_address",
+      "phone_number",
+      "address",
+      "summary",
+      "cover_letter",
+      "tags",
+      "source",
+      "headline"
+    ]
+  },
+  "set_candidate_stage": {
+    "method": "PUT",
+    "path": "/company/{company_id}/position/{position_id}/candidate/{candidate_id}/stage",
+    "body": [
+      "stage_id"
+    ],
+    "status": 204
+  },
+  "get_candidate_stream": {
+    "method": "GET",
+    "path": "/company/{company_id}/position/{position_id}/candidate/{candidate_id}/stream",
+    "query": [
+      "skip"
+    ]
+  },
+  "post_candidate_note": {
+    "method": "POST",
+    "path": "/company/{company_id}/position/{position_id}/candidate/{candidate_id}/stream",
+    "body": [
+      "body"
+    ]
+  }
+}
