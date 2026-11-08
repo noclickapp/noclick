@@ -189,6 +189,7 @@ async def test_execute_oauth_uses_shared_refresh_and_adopts_token(monkeypatch):
     async def freshen(**kwargs):
         assert kwargs["provider"] == "omnisend"
         assert kwargs["credential_id"] == "credential-id"
+        assert kwargs["caller_path"] == "execute"
         kwargs["credential"].update(access_token="new-token", refresh_token="new-refresh")
 
     fresh = AsyncMock(side_effect=freshen)

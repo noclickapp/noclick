@@ -256,7 +256,7 @@ class OmnisendNode(WorkflowNode):
             await ensure_fresh_oauth_token(
                 credential_id=(self.node_data or {}).get("credential_id"),
                 user_id=self.user_id, credential=current,
-                refresh=refresh_access_token, provider="omnisend",
+                refresh=refresh_access_token, provider="omnisend", caller_path="execute",
             )
             credential.access_token = current["access_token"]
             credential.refresh_token = current.get("refresh_token")
