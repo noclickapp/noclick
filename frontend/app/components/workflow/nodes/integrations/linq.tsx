@@ -11,6 +11,7 @@ const LinqIcon = ({ className, style }: { className?: string; style?: CSSPropert
 
 export const LinqNode: NodeDefinition = {
     type: 'automation-linq', label: 'Linq',
+    category: 'communication',
     description: 'Send messages and manage Linq iMessage conversations, reactions and blocked handles',
     Icon: LinqIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
