@@ -1,0 +1,1730 @@
+{
+  "$defs": {
+    "AddProspectTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_prospect_tag",
+          "default": "add_prospect_tag",
+          "title": "Add Prospect Tag",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "tagId": {
+          "description": "Tag ID to add to the prospect",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Tagid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "tagId"
+      ],
+      "title": "AddProspectTag",
+      "type": "object"
+    },
+    "CheckBlacklistedEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_blacklisted_email",
+          "default": "check_blacklisted_email",
+          "title": "Check Blacklisted Email",
+          "type": "string"
+        },
+        "email": {
+          "description": "Parameter: email",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CheckBlacklistedEmail",
+      "type": "object"
+    },
+    "CreateCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create Campaign",
+          "type": "string"
+        },
+        "name": {
+          "description": "Campaign display name for identification and organization; maximum 256 characters.",
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description explaining the purpose or goal of this campaign; maximum 512 characters.",
+          "title": "Description"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email subject line for the initial campaign email; maximum 4,000 characters.",
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML body for the initial campaign email. Include {{SENDER_SIGNATURE}} where the sender's signature should appear; it is not appended automatically. Per-campaign sign-off HTML can be written inline.",
+          "title": "Body"
+        },
+        "fromEmails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of sender email addresses to use for sending campaign emails.",
+          "title": "Fromemails"
+        },
+        "dailyLimit": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of emails this campaign can send per day; must be between 1 and 10,000.",
+          "title": "Dailylimit"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCampaign",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string"
+        },
+        "title": {
+          "description": "Display name of the mailing list; maximum 256 characters.",
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description explaining the purpose or source of this list; maximum 4,000 characters.",
+          "title": "Description"
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder identifier for organizing and grouping lists; must be a positive integer.",
+          "title": "Folderid"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "CreateProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_prospect",
+          "default": "create_prospect",
+          "title": "Create Prospect",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the prospect; must be valid email format with maximum 256 characters.",
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Email",
+          "type": "string"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prospect's first name for personalization; maximum 512 characters.",
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prospect's last name for personalization; maximum 512 characters.",
+          "title": "Lastname"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name where the prospect works; maximum 512 characters.",
+          "title": "Company"
+        },
+        "baseListId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ID of the list where the prospect will be added. Use the `/lists` endpoint to create or retrieve a\r\nvalid list ID. Must be a positive integer when provided. If omitted, the prospect is created without being\r\nassigned to a list (ListID defaults to 0 in the database).",
+          "title": "Baselistid"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateProspect",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string"
+        },
+        "title": {
+          "description": "Tag name used for organizing and categorizing prospects; required. Maximum 128 characters.",
+          "maxLength": 128,
+          "minLength": 0,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description explaining the purpose or criteria for this tag; maximum 1,000 characters.",
+          "title": "Description"
+        },
+        "tagType": {
+          "anyOf": [
+            {
+              "enum": [
+                "Campaign",
+                "Crm",
+                "Sender"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag classification: Crm (prospect/CRM), Campaign, or Sender. Defaults to Crm for new API tags.",
+          "title": "Tagtype",
+          "enum": [
+            "Campaign",
+            "Crm",
+            "Sender"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_prospect",
+          "default": "delete_prospect",
+          "title": "Delete Prospect",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteProspect",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign_stats",
+          "default": "get_campaign_stats",
+          "title": "Get Campaign Stats",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "dateStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. The start date (inclusive) for the statistics data range.\r\nAccepts ISO 8601 format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss.fffZ (Z is optional, always interpreted as UTC).\r\nIf not provided, defaults to the campaign creation date.",
+          "title": "Datestart"
+        },
+        "dateEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. The end date (inclusive) for the statistics data range.\r\nAccepts ISO 8601 format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss.fffZ (Z is optional, always interpreted as UTC).\r\nIf not provided, defaults to the current date.",
+          "title": "Dateend"
+        },
+        "refresh": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. Set to true to force refresh campaign statistics before retrieval.\r\nWhen true, recalculates all stats, processes A/B test variants, refreshes followups, and clears caches.\r\nDefaults to false for faster response times.",
+          "title": "Refresh"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaignStats",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Get Credits",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_prospect",
+          "default": "get_prospect",
+          "title": "Get Prospect",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetProspect",
+      "type": "object"
+    },
+    "GetSender": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_sender",
+          "default": "get_sender",
+          "title": "Get Sender",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSender",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Get Tag",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "ListCampaignProspects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_campaign_prospects",
+          "default": "list_campaign_prospects",
+          "title": "List Campaign Prospects",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "sendingStatus": {
+          "anyOf": [
+            {
+              "enum": [
+                "Unknown",
+                "EspMatchNotFound",
+                "EspNotAllowed",
+                "NoWarmup",
+                "NotReceiving",
+                "WarmupLimits",
+                "SendingLimits",
+                "NoSender",
+                "Stuck",
+                "MailboxInexistent",
+                "EmptySubject",
+                "EmptyBody",
+                "MissingPlaceholder",
+                "Invalid",
+                "Blacklisted",
+                "Stopped",
+                "Unsub",
+                "BounceHard",
+                "BounceSoft",
+                "AutoNolonger",
+                "AutoOoo",
+                "AutoReply",
+                "CollegueReplied",
+                "SenderDisconnected",
+                "Paused",
+                "InsufficientCredit",
+                "ScheduleInactive",
+                "NotInterested",
+                "NotSet",
+                "Neutral",
+                "MaybeLater",
+                "Interested",
+                "MeetingBooked",
+                "MeetingCompleted",
+                "Won",
+                "Subbed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only enrollments with this campaign-level sending status (for example MissingPlaceholder).",
+          "title": "Sendingstatus",
+          "enum": [
+            "Unknown",
+            "EspMatchNotFound",
+            "EspNotAllowed",
+            "NoWarmup",
+            "NotReceiving",
+            "WarmupLimits",
+            "SendingLimits",
+            "NoSender",
+            "Stuck",
+            "MailboxInexistent",
+            "EmptySubject",
+            "EmptyBody",
+            "MissingPlaceholder",
+            "Invalid",
+            "Blacklisted",
+            "Stopped",
+            "Unsub",
+            "BounceHard",
+            "BounceSoft",
+            "AutoNolonger",
+            "AutoOoo",
+            "AutoReply",
+            "CollegueReplied",
+            "SenderDisconnected",
+            "Paused",
+            "InsufficientCredit",
+            "ScheduleInactive",
+            "NotInterested",
+            "NotSet",
+            "Neutral",
+            "MaybeLater",
+            "Interested",
+            "MeetingBooked",
+            "MeetingCompleted",
+            "Won",
+            "Subbed"
+          ],
+          "x-enum-searchable": true
+        },
+        "sendingActive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only enrollments that are (true) or are not (false) still eligible to receive emails from this campaign.",
+          "title": "Sendingactive"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListCampaignProspects",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Campaigns",
+          "type": "string"
+        },
+        "includeArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When false (default), rows with CampStatus archived are excluded unless Status is set to archived.",
+          "title": "Includearchived"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact CampStatus filter (case-insensitive), e.g. running, paused, draft, completed, archived, scheduled, preparing.",
+          "title": "Status"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListProspectMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_prospect_messages",
+          "default": "list_prospect_messages",
+          "title": "List Prospect Messages",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListProspectMessages",
+      "type": "object"
+    },
+    "ListProspects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_prospects",
+          "default": "list_prospects",
+          "title": "List Prospects",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact email match (used for email-to-ID lookup)",
+          "title": "Email"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Unknown",
+                "EspMatchNotFound",
+                "EspNotAllowed",
+                "NoWarmup",
+                "NotReceiving",
+                "WarmupLimits",
+                "SendingLimits",
+                "NoSender",
+                "Stuck",
+                "MailboxInexistent",
+                "EmptySubject",
+                "EmptyBody",
+                "MissingPlaceholder",
+                "Invalid",
+                "Blacklisted",
+                "Stopped",
+                "Unsub",
+                "BounceHard",
+                "BounceSoft",
+                "AutoNolonger",
+                "AutoOoo",
+                "AutoReply",
+                "CollegueReplied",
+                "SenderDisconnected",
+                "Paused",
+                "InsufficientCredit",
+                "ScheduleInactive",
+                "NotInterested",
+                "NotSet",
+                "Neutral",
+                "MaybeLater",
+                "Interested",
+                "MeetingBooked",
+                "MeetingCompleted",
+                "Won",
+                "Subbed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by CRM status",
+          "title": "Status",
+          "enum": [
+            "Unknown",
+            "EspMatchNotFound",
+            "EspNotAllowed",
+            "NoWarmup",
+            "NotReceiving",
+            "WarmupLimits",
+            "SendingLimits",
+            "NoSender",
+            "Stuck",
+            "MailboxInexistent",
+            "EmptySubject",
+            "EmptyBody",
+            "MissingPlaceholder",
+            "Invalid",
+            "Blacklisted",
+            "Stopped",
+            "Unsub",
+            "BounceHard",
+            "BounceSoft",
+            "AutoNolonger",
+            "AutoOoo",
+            "AutoReply",
+            "CollegueReplied",
+            "SenderDisconnected",
+            "Paused",
+            "InsufficientCredit",
+            "ScheduleInactive",
+            "NotInterested",
+            "NotSet",
+            "Neutral",
+            "MaybeLater",
+            "Interested",
+            "MeetingBooked",
+            "MeetingCompleted",
+            "Won",
+            "Subbed"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tags (comma-separated)",
+          "title": "Tags"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search in email, first name, last name",
+          "title": "Search"
+        },
+        "validationStatus": {
+          "anyOf": [
+            {
+              "enum": [
+                "Unvalidated",
+                "Valid",
+                "Invalid",
+                "CatchAll",
+                "Disposable",
+                "Unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by email validation verdict (Unvalidated, Valid, Invalid, CatchAll, Disposable, Unknown)",
+          "title": "Validationstatus",
+          "enum": [
+            "Unvalidated",
+            "Valid",
+            "Invalid",
+            "CatchAll",
+            "Disposable",
+            "Unknown"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "title": "ListProspects",
+      "type": "object"
+    },
+    "ListSenders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_senders",
+          "default": "list_senders",
+          "title": "List Senders",
+          "type": "string"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by folder name.",
+          "title": "Folder"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status: \"error\" (disconnected senders) or \"blacklisted\" (sender email domain currently listed by the daily blacklist scan; requires Blacklist Monitoring, otherwise the list is empty).",
+          "title": "Status"
+        },
+        "warmup": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by warmup status.",
+          "title": "Warmup"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by text (first/last/email).",
+          "title": "Search"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "title": "ListSenders",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional case-insensitive search term for tag name",
+          "title": "Search"
+        },
+        "tagType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filter: Crm, Campaign, or Sender (matches EM_TAG.TagType)",
+          "title": "Tagtype"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of additional data to include (e.g., \"prospectCount\")",
+          "title": "Include"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-indexed, default: 1)",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items per page (default: 100, max: 1000)",
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (optional, for cursor-based pagination)",
+          "title": "Startingafter"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ManyreachApiKey": {
+      "properties": {
+        "credential_type": {
+          "const": "manyreach_api_key",
+          "default": "manyreach_api_key",
+          "title": "Credential Type",
+          "type": "string"
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Manyreach API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Manyreach account settings and paste it here. Requests send it in the X-API-Key header.",
+      "x-credential-url": "https://api.manyreach.com/swagger/ui/index"
+    },
+    "PauseCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "pause_campaign",
+          "default": "pause_campaign",
+          "title": "Pause Campaign",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PauseCampaign",
+      "type": "object"
+    },
+    "StartCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_campaign",
+          "default": "start_campaign",
+          "title": "Start Campaign",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "StartCampaign",
+      "type": "object"
+    },
+    "UpdateProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_prospect",
+          "default": "update_prospect",
+          "title": "Update Prospect",
+          "type": "string"
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prospect's first name for personalization; maximum 512 characters.",
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prospect's last name for personalization; maximum 512 characters.",
+          "title": "Lastname"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name where the prospect works; maximum 512 characters.",
+          "title": "Company"
+        },
+        "sendingStatus": {
+          "anyOf": [
+            {
+              "enum": [
+                "Unknown",
+                "EspMatchNotFound",
+                "EspNotAllowed",
+                "NoWarmup",
+                "NotReceiving",
+                "WarmupLimits",
+                "SendingLimits",
+                "NoSender",
+                "Stuck",
+                "MailboxInexistent",
+                "EmptySubject",
+                "EmptyBody",
+                "MissingPlaceholder",
+                "Invalid",
+                "Blacklisted",
+                "Stopped",
+                "Unsub",
+                "BounceHard",
+                "BounceSoft",
+                "AutoNolonger",
+                "AutoOoo",
+                "AutoReply",
+                "CollegueReplied",
+                "SenderDisconnected",
+                "Paused",
+                "InsufficientCredit",
+                "ScheduleInactive",
+                "NotInterested",
+                "NotSet",
+                "Neutral",
+                "MaybeLater",
+                "Interested",
+                "MeetingBooked",
+                "MeetingCompleted",
+                "Won",
+                "Subbed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Current sending status code indicating the prospect's campaign participation state.",
+          "title": "Sendingstatus",
+          "enum": [
+            "Unknown",
+            "EspMatchNotFound",
+            "EspNotAllowed",
+            "NoWarmup",
+            "NotReceiving",
+            "WarmupLimits",
+            "SendingLimits",
+            "NoSender",
+            "Stuck",
+            "MailboxInexistent",
+            "EmptySubject",
+            "EmptyBody",
+            "MissingPlaceholder",
+            "Invalid",
+            "Blacklisted",
+            "Stopped",
+            "Unsub",
+            "BounceHard",
+            "BounceSoft",
+            "AutoNolonger",
+            "AutoOoo",
+            "AutoReply",
+            "CollegueReplied",
+            "SenderDisconnected",
+            "Paused",
+            "InsufficientCredit",
+            "ScheduleInactive",
+            "NotInterested",
+            "NotSet",
+            "Neutral",
+            "MaybeLater",
+            "Interested",
+            "MeetingBooked",
+            "MeetingCompleted",
+            "Won",
+            "Subbed"
+          ],
+          "x-enum-searchable": true
+        },
+        "sendingActive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the prospect is active and eligible for sending in campaigns.",
+          "title": "Sendingactive"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "General notes or comments about this prospect for internal reference.",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateProspect",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_prospect_tag": "#/$defs/AddProspectTag",
+          "check_blacklisted_email": "#/$defs/CheckBlacklistedEmail",
+          "create_campaign": "#/$defs/CreateCampaign",
+          "create_list": "#/$defs/CreateList",
+          "create_prospect": "#/$defs/CreateProspect",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_prospect": "#/$defs/DeleteProspect",
+          "get_account": "#/$defs/GetAccount",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_stats": "#/$defs/GetCampaignStats",
+          "get_credits": "#/$defs/GetCredits",
+          "get_list": "#/$defs/GetList",
+          "get_prospect": "#/$defs/GetProspect",
+          "get_sender": "#/$defs/GetSender",
+          "get_tag": "#/$defs/GetTag",
+          "list_campaign_prospects": "#/$defs/ListCampaignProspects",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_lists": "#/$defs/ListLists",
+          "list_prospect_messages": "#/$defs/ListProspectMessages",
+          "list_prospects": "#/$defs/ListProspects",
+          "list_senders": "#/$defs/ListSenders",
+          "list_tags": "#/$defs/ListTags",
+          "pause_campaign": "#/$defs/PauseCampaign",
+          "start_campaign": "#/$defs/StartCampaign",
+          "update_prospect": "#/$defs/UpdateProspect"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/CreateCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/PauseCampaign"
+        },
+        {
+          "$ref": "#/$defs/StartCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignStats"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignProspects"
+        },
+        {
+          "$ref": "#/$defs/ListProspects"
+        },
+        {
+          "$ref": "#/$defs/CreateProspect"
+        },
+        {
+          "$ref": "#/$defs/GetProspect"
+        },
+        {
+          "$ref": "#/$defs/UpdateProspect"
+        },
+        {
+          "$ref": "#/$defs/DeleteProspect"
+        },
+        {
+          "$ref": "#/$defs/ListProspectMessages"
+        },
+        {
+          "$ref": "#/$defs/AddProspectTag"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/ListSenders"
+        },
+        {
+          "$ref": "#/$defs/GetSender"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/CheckBlacklistedEmail"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ManyreachApiKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Manyreach Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
