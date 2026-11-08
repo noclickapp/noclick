@@ -1,0 +1,885 @@
+{
+  "$defs": {
+    "AppcircleAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "appcircle_access_token",
+          "default": "appcircle_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Appcircle Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste the generated access token, without Bearer. Exchange your Personal Access Key at Appcircle's Auth API first; the key itself is not an access token. Access tokens expire: replace this credential when it expires. The token must allow the selected build or testing-distribution actions.",
+      "x-credential-url": "https://docs.appcircle.io/appcircle-api-and-cli/api-authentication"
+    },
+    "AppcircleAddTestersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_testers",
+          "default": "add_testers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "emails": {
+          "description": "Tester email addresses. Adding testers can send invitations.",
+          "items": {
+            "format": "email",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "group_id",
+        "emails"
+      ],
+      "title": "AppcircleAddTestersConfig",
+      "type": "object"
+    },
+    "AppcircleCancelBuildConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_build",
+          "default": "cancel_build",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AppcircleCancelBuildConfig",
+      "type": "object"
+    },
+    "AppcircleCreateTestingGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_testing_group",
+          "default": "create_testing_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "organization_id": {
+          "format": "uuid",
+          "title": "Organization Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "organization_id"
+      ],
+      "title": "AppcircleCreateTestingGroupConfig",
+      "type": "object"
+    },
+    "AppcircleCreateVariableGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_variable_group",
+          "default": "create_variable_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "organization_id": {
+          "format": "uuid",
+          "title": "Organization Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "organization_id"
+      ],
+      "title": "AppcircleCreateVariableGroupConfig",
+      "type": "object"
+    },
+    "AppcircleDeleteBuildProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_build_profile",
+          "default": "delete_build_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "AppcircleDeleteBuildProfileConfig",
+      "type": "object"
+    },
+    "AppcircleDeleteTestingGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_testing_group",
+          "default": "delete_testing_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "AppcircleDeleteTestingGroupConfig",
+      "type": "object"
+    },
+    "AppcircleDeleteVariableGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_variable_group",
+          "default": "delete_variable_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "variable_group_id": {
+          "format": "uuid",
+          "title": "Variable Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variable_group_id"
+      ],
+      "title": "AppcircleDeleteVariableGroupConfig",
+      "type": "object"
+    },
+    "AppcircleGetBuildProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_build_profile",
+          "default": "get_build_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "AppcircleGetBuildProfileConfig",
+      "type": "object"
+    },
+    "AppcircleGetBuildQueueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_build_queue",
+          "default": "get_build_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AppcircleGetBuildQueueConfig",
+      "type": "object"
+    },
+    "AppcircleGetBuildStatusConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_build_status",
+          "default": "get_build_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "commit_id": {
+          "format": "uuid",
+          "title": "Commit Id",
+          "type": "string"
+        },
+        "build_id": {
+          "format": "uuid",
+          "title": "Build Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "commit_id",
+        "build_id"
+      ],
+      "title": "AppcircleGetBuildStatusConfig",
+      "type": "object"
+    },
+    "AppcircleGetTaskStatusConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task_status",
+          "default": "get_task_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AppcircleGetTaskStatusConfig",
+      "type": "object"
+    },
+    "AppcircleGetTestingGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_testing_group",
+          "default": "get_testing_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "AppcircleGetTestingGroupConfig",
+      "type": "object"
+    },
+    "AppcircleListAppVersionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "description": "Requested page size. Increment page to fetch more results.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_app_versions",
+          "default": "list_app_versions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "AppcircleListAppVersionsConfig",
+      "type": "object"
+    },
+    "AppcircleListBuildConfigurationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_build_configurations",
+          "default": "list_build_configurations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "branch_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch Id"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "AppcircleListBuildConfigurationsConfig",
+      "type": "object"
+    },
+    "AppcircleListBuildProfilesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "description": "Requested page size. Increment page to fetch more results.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_build_profiles",
+          "default": "list_build_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "AppcircleListBuildProfilesConfig",
+      "type": "object"
+    },
+    "AppcircleListBuildWorkflowsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_build_workflows",
+          "default": "list_build_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "AppcircleListBuildWorkflowsConfig",
+      "type": "object"
+    },
+    "AppcircleListCommitsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "description": "Requested page size. Increment page to fetch more results.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_commits",
+          "default": "list_commits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "branch_id": {
+          "format": "uuid",
+          "title": "Branch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id",
+        "branch_id"
+      ],
+      "title": "AppcircleListCommitsConfig",
+      "type": "object"
+    },
+    "AppcircleListDistributionProfilesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "description": "Requested page size. Increment page to fetch more results.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_distribution_profiles",
+          "default": "list_distribution_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "AppcircleListDistributionProfilesConfig",
+      "type": "object"
+    },
+    "AppcircleListOrganizationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "AppcircleListOrganizationsConfig",
+      "type": "object"
+    },
+    "AppcircleListTestingGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "description": "Requested page size. Increment page to fetch more results.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_testing_groups",
+          "default": "list_testing_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "AppcircleListTestingGroupsConfig",
+      "type": "object"
+    },
+    "AppcircleListVariableGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "description": "Requested page size. Increment page to fetch more results.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_variable_groups",
+          "default": "list_variable_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "AppcircleListVariableGroupsConfig",
+      "type": "object"
+    },
+    "AppcircleRenameVariableGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rename_variable_group",
+          "default": "rename_variable_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "variable_group_id": {
+          "format": "uuid",
+          "title": "Variable Group Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variable_group_id",
+        "name"
+      ],
+      "title": "AppcircleRenameVariableGroupConfig",
+      "type": "object"
+    },
+    "AppcircleStartBuildConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_build",
+          "default": "start_build",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "commit_id": {
+          "format": "uuid",
+          "title": "Commit Id",
+          "type": "string"
+        },
+        "configuration_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Configuration Id"
+        }
+      },
+      "required": [
+        "commit_id"
+      ],
+      "title": "AppcircleStartBuildConfig",
+      "type": "object"
+    },
+    "AppcircleStartWorkflowBuildConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_workflow_build",
+          "default": "start_workflow_build",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "commit_id": {
+          "format": "uuid",
+          "title": "Commit Id",
+          "type": "string"
+        },
+        "workflow_id": {
+          "format": "uuid",
+          "title": "Workflow Id",
+          "type": "string"
+        },
+        "configuration_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Configuration Id"
+        }
+      },
+      "required": [
+        "commit_id",
+        "workflow_id"
+      ],
+      "title": "AppcircleStartWorkflowBuildConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_testers": "#/$defs/AppcircleAddTestersConfig",
+          "cancel_build": "#/$defs/AppcircleCancelBuildConfig",
+          "create_testing_group": "#/$defs/AppcircleCreateTestingGroupConfig",
+          "create_variable_group": "#/$defs/AppcircleCreateVariableGroupConfig",
+          "delete_build_profile": "#/$defs/AppcircleDeleteBuildProfileConfig",
+          "delete_testing_group": "#/$defs/AppcircleDeleteTestingGroupConfig",
+          "delete_variable_group": "#/$defs/AppcircleDeleteVariableGroupConfig",
+          "get_build_profile": "#/$defs/AppcircleGetBuildProfileConfig",
+          "get_build_queue": "#/$defs/AppcircleGetBuildQueueConfig",
+          "get_build_status": "#/$defs/AppcircleGetBuildStatusConfig",
+          "get_task_status": "#/$defs/AppcircleGetTaskStatusConfig",
+          "get_testing_group": "#/$defs/AppcircleGetTestingGroupConfig",
+          "list_app_versions": "#/$defs/AppcircleListAppVersionsConfig",
+          "list_build_configurations": "#/$defs/AppcircleListBuildConfigurationsConfig",
+          "list_build_profiles": "#/$defs/AppcircleListBuildProfilesConfig",
+          "list_build_workflows": "#/$defs/AppcircleListBuildWorkflowsConfig",
+          "list_commits": "#/$defs/AppcircleListCommitsConfig",
+          "list_distribution_profiles": "#/$defs/AppcircleListDistributionProfilesConfig",
+          "list_organizations": "#/$defs/AppcircleListOrganizationsConfig",
+          "list_testing_groups": "#/$defs/AppcircleListTestingGroupsConfig",
+          "list_variable_groups": "#/$defs/AppcircleListVariableGroupsConfig",
+          "rename_variable_group": "#/$defs/AppcircleRenameVariableGroupConfig",
+          "start_build": "#/$defs/AppcircleStartBuildConfig",
+          "start_workflow_build": "#/$defs/AppcircleStartWorkflowBuildConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AppcircleListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListBuildProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleGetBuildProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleDeleteBuildProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListCommitsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleGetBuildStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleStartBuildConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleStartWorkflowBuildConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListBuildConfigurationsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListBuildWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleGetBuildQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleCancelBuildConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListVariableGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleCreateVariableGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleDeleteVariableGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleRenameVariableGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListDistributionProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListAppVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleListTestingGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleCreateTestingGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleGetTestingGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleDeleteTestingGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleAddTestersConfig"
+        },
+        {
+          "$ref": "#/$defs/AppcircleGetTaskStatusConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppcircleAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Appcircle Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

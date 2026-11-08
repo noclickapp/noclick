@@ -1,0 +1,425 @@
+[
+  {
+    "source": "https://api.appcircle.io/openapi/modules/identity",
+    "config": {
+      "operation": "list_organizations",
+      "page": 1,
+      "per_page": 200
+    },
+    "method": "GET",
+    "path": "/identity/v1/organizations",
+    "query": {
+      "page": "1",
+      "perPage": "200"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "name": "QA mobile"
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "perPage": 200
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "list_build_profiles",
+      "page": 1,
+      "size": 50
+    },
+    "method": "GET",
+    "path": "/build/v2/profiles",
+    "query": {
+      "Page": "1",
+      "Size": "50"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "get_build_profile",
+      "profile_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/build/v2/profiles/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "delete_build_profile",
+      "profile_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "DELETE",
+    "path": "/build/v2/profiles/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "list_commits",
+      "page": 1,
+      "size": 50,
+      "profile_id": "123e4567-e89b-12d3-a456-426614174000",
+      "branch_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/build/v2/commits",
+    "query": {
+      "profileId": "123e4567-e89b-12d3-a456-426614174000",
+      "branchId": "123e4567-e89b-12d3-a456-426614174000",
+      "Page": "1",
+      "Size": "50"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "get_build_status",
+      "commit_id": "123e4567-e89b-12d3-a456-426614174000",
+      "build_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/build/v2/commits/123e4567-e89b-12d3-a456-426614174000/builds/123e4567-e89b-12d3-a456-426614174000/status",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "start_build",
+      "commit_id": "123e4567-e89b-12d3-a456-426614174000",
+      "configuration_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "POST",
+    "path": "/build/v3/commits/123e4567-e89b-12d3-a456-426614174000/build",
+    "query": {
+      "configurationId": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "start_workflow_build",
+      "commit_id": "123e4567-e89b-12d3-a456-426614174000",
+      "workflow_id": "123e4567-e89b-12d3-a456-426614174000",
+      "configuration_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "POST",
+    "path": "/build/v3/commits/123e4567-e89b-12d3-a456-426614174000/build/by-workflow",
+    "query": {
+      "workflowId": "123e4567-e89b-12d3-a456-426614174000",
+      "configurationId": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "list_build_configurations",
+      "profile_id": "123e4567-e89b-12d3-a456-426614174000",
+      "branch_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/build/v2/profiles/123e4567-e89b-12d3-a456-426614174000/configurations",
+    "query": {
+      "branchId": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "list_build_workflows",
+      "profile_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/build/v2/profiles/123e4567-e89b-12d3-a456-426614174000/workflows",
+    "query": {},
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "get_build_queue",
+      "task_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/build/v3/queue/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "cancel_build",
+      "task_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "POST",
+    "path": "/build/v3/queue/123e4567-e89b-12d3-a456-426614174000/cancel",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "list_variable_groups",
+      "page": 1,
+      "size": 50
+    },
+    "method": "GET",
+    "path": "/build/v2/variable-groups",
+    "query": {
+      "Page": "1",
+      "Size": "50"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "create_variable_group",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    },
+    "method": "POST",
+    "path": "/build/v2/variable-groups",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    },
+    "body": {
+      "name": "QA mobile",
+      "organizationId": "123e4567-e89b-12d3-a456-426614174000"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "delete_variable_group",
+      "variable_group_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "DELETE",
+    "path": "/build/v2/variable-groups/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/build",
+    "config": {
+      "operation": "rename_variable_group",
+      "variable_group_id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    },
+    "method": "PATCH",
+    "path": "/build/v2/variable-groups/123e4567-e89b-12d3-a456-426614174000",
+    "query": {
+      "name": "QA mobile"
+    },
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "list_distribution_profiles",
+      "page": 1,
+      "size": 50
+    },
+    "method": "GET",
+    "path": "/distribution/v2/profiles",
+    "query": {
+      "Page": "1",
+      "Size": "50"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "list_app_versions",
+      "page": 1,
+      "size": 50,
+      "profile_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/distribution/v2/profiles/123e4567-e89b-12d3-a456-426614174000/app-versions",
+    "query": {
+      "Page": "1",
+      "Size": "50"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "list_testing_groups",
+      "page": 1,
+      "size": 50
+    },
+    "method": "GET",
+    "path": "/distribution/v2/testing-groups",
+    "query": {
+      "Page": "1",
+      "Size": "50"
+    },
+    "response": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "QA mobile"
+      }
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "create_testing_group",
+      "organization_id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    },
+    "method": "POST",
+    "path": "/distribution/v2/testing-groups",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    },
+    "body": {
+      "name": "QA mobile",
+      "organizationId": "123e4567-e89b-12d3-a456-426614174000"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "get_testing_group",
+      "group_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/distribution/v2/testing-groups/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "delete_testing_group",
+      "group_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "DELETE",
+    "path": "/distribution/v2/testing-groups/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/distribution",
+    "config": {
+      "operation": "add_testers",
+      "group_id": "123e4567-e89b-12d3-a456-426614174000",
+      "emails": [
+        "qa@example.test"
+      ]
+    },
+    "method": "POST",
+    "path": "/distribution/v3/testing-groups/123e4567-e89b-12d3-a456-426614174000/testers",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    },
+    "body": [
+      "qa@example.test"
+    ]
+  },
+  {
+    "source": "https://api.appcircle.io/openapi/modules/task",
+    "config": {
+      "operation": "get_task_status",
+      "task_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/task/v1/tasks/123e4567-e89b-12d3-a456-426614174000",
+    "query": {},
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "QA mobile"
+    }
+  }
+]
