@@ -1,0 +1,1559 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "description": "Check key acceptance with the documented sample Phone Validation lookup.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "GetAddressValidation": {
+      "additionalProperties": false,
+      "description": "Validate and normalize a US street address.",
+      "properties": {
+        "operation": {
+          "const": "get_address_validation",
+          "default": "get_address_validation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "street_line_1": {
+          "description": "The first line of the street part of the address. If it is missing, the response has `is_valid: false` and the `Missing Input` warning. Example `800 Bellevue Way NE`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Street line 1",
+          "type": "string"
+        },
+        "street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The second line of the street part of the address, for example an apartment or suite number. Example `Ste 100`",
+          "title": "Street line 2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the city. Example `Bellevue`",
+          "title": "City"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter state code, any case. Example `WA`",
+          "title": "State code"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The postal code: a 5-digit ZIP (`98004`) or a ZIP+4, with or without the dash (`98004-4286` or `980044286`). The response always returns the 5-digit ZIP in `postal_code` and the 4-digit extension in `zip4`. Example `98004`",
+          "title": "Postal code"
+        }
+      },
+      "required": [
+        "street_line_1"
+      ],
+      "title": "GetAddressValidation",
+      "type": "object"
+    },
+    "GetCallerIdentification": {
+      "additionalProperties": false,
+      "description": "Identify the top owner of a phone number.",
+      "properties": {
+        "operation": {
+          "const": "get_caller_identification",
+          "default": "get_caller_identification",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Phone number in E.164 or local format. The default country calling code is +1 (USA). Example `2069735100`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "phone.country_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the phone number, any case. Example `US`",
+          "title": "Phone country hint"
+        },
+        "phone.name_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person or business name associated with the phone number. If multiple names are associated with the phone in the Trestle database, this name is ranked higher. Example `Waidong Syrws`",
+          "title": "Phone name hint"
+        },
+        "phone.postal_code_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal code of the subscriber address associated with the phone number. If multiple names or addresses are associated with the phone in the Trestle database, this postal code is used to rank the matching name and address higher. Example `98264`",
+          "title": "Phone postal code hint"
+        },
+        "add_ons": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "litigator_checks",
+                  "spam_checks"
+                ],
+                "type": "string"
+              },
+              "maxItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated add-ons to enable. Options: `litigator_checks` (TCPA litigator detection, returned under `add_ons.litigator_checks`) and `spam_checks` (spam and scam detection, returned under `add_ons.spam_checks`). Additional charges apply. Example `litigator_checks,spam_checks`",
+          "title": "Add ons"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional identifier used to group queries by source, campaign, channel, or cohort. Maximum length is 255 characters. Use only letters, numbers, spaces, and `. _ - : / | #`; the value cannot begin with `-`. An invalid value does not fail the request: it is dropped and a warning is added.",
+          "title": "Source id"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "GetCallerIdentification",
+      "type": "object"
+    },
+    "GetDecisionSignals": {
+      "additionalProperties": false,
+      "description": "Cross-check identity signals for a transaction.",
+      "properties": {
+        "operation": {
+          "const": "get_decision_signals",
+          "default": "get_decision_signals",
+          "title": "Operation",
+          "type": "string"
+        },
+        "transaction_id": {
+          "description": "Caller-supplied correlation ID for the transaction. Example `txn_123`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Transaction id",
+          "type": "string"
+        },
+        "transaction_time": {
+          "description": "UTC timestamp for the transaction, in `YYYY-MM-DD HH:MM` or ISO 8601 format. Positive UTC offsets and compact formats such as `YYYYMMDDTHHMM` are rejected. Example `2026-06-15T10:00`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Transaction time",
+          "type": "string"
+        },
+        "primary.name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full legal name of the primary person. Either `primary.name` or `primary.business_name` is required. Example `Robin Cooke`",
+          "title": "Primary name"
+        },
+        "primary.business_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full legal name of the primary business. Either `primary.name` or `primary.business_name` is required. Example `The Golden Company`",
+          "title": "Primary business name"
+        },
+        "secondary.name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full legal name of the secondary person. Example `Vicky Kunal`",
+          "title": "Secondary name"
+        },
+        "secondary.business_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full legal name of the secondary business. Example `The Silver Company`",
+          "title": "Secondary business name"
+        },
+        "primary.phone": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number. Accepted formats: `+12065551234`, `12065551234`, `2065551234`, `(206) 555-1234`, `206-555-1234`. E.164 is recommended.",
+          "title": "Primary phone"
+        },
+        "primary.phone.country_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code for the primary phone. Defaults to `US`.",
+          "title": "Primary phone country hint"
+        },
+        "secondary.phone": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary phone number. Same accepted formats as `primary.phone`.",
+          "title": "Secondary phone"
+        },
+        "secondary.phone.country_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code for the secondary phone.",
+          "title": "Secondary phone country hint"
+        },
+        "primary.address.street_line_1": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First line of the primary street address. Example `12843 NE 91st St`",
+          "title": "Primary address street line 1"
+        },
+        "primary.address.street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Second line of the primary street address. Example `Apt 4B`",
+          "title": "Primary address street line 2"
+        },
+        "primary.address.city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City of the primary address. Example `Bellingham`",
+          "title": "Primary address city"
+        },
+        "primary.address.state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter state or province code of the primary address. Example `WA`",
+          "title": "Primary address state code"
+        },
+        "primary.address.postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal or ZIP code of the primary address. Example `98033`",
+          "title": "Primary address postal code"
+        },
+        "primary.address.country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the primary address. Example `US`",
+          "title": "Primary address country code"
+        },
+        "secondary.address.street_line_1": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First line of the secondary street address. Example `4492 163rd Pl SE`",
+          "title": "Secondary address street line 1"
+        },
+        "secondary.address.street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Second line of the secondary street address. Example `Suite 200`",
+          "title": "Secondary address street line 2"
+        },
+        "secondary.address.city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City of the secondary address. Example `Bellevue`",
+          "title": "Secondary address city"
+        },
+        "secondary.address.state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter state or province code of the secondary address. Example `WA`",
+          "title": "Secondary address state code"
+        },
+        "secondary.address.postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal or ZIP code of the secondary address. Example `98006`",
+          "title": "Secondary address postal code"
+        },
+        "secondary.address.country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the secondary address. Example `US`",
+          "title": "Secondary address country code"
+        },
+        "primary.email_address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address. Example `john.doe@example.com`",
+          "title": "Primary email address"
+        },
+        "secondary.email_address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary email address. Example `jane.doe@example.com`",
+          "title": "Secondary email address"
+        },
+        "ip_address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IPv4 or IPv6 address associated with the transaction. Private and loopback ranges return `is_valid: false`. Example `73.25.97.8`",
+          "title": "Ip address"
+        },
+        "is_sandbox": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When `true`, returns a pre-stored response for a sandbox scenario without live enrichment. See the Sandbox section of the API reference for the inputs that select each scenario.",
+          "title": "Is sandbox"
+        }
+      },
+      "required": [
+        "transaction_id",
+        "transaction_time"
+      ],
+      "title": "GetDecisionSignals",
+      "type": "object"
+    },
+    "GetPhoneValidation": {
+      "additionalProperties": false,
+      "description": "Validate a phone number and get metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_phone_validation",
+          "default": "get_phone_validation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Phone number in E.164 or local format. Example `2069735100`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "phone.country_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the phone number, any case, used to read a number given in local format. Example `US`",
+          "title": "Phone country hint"
+        },
+        "add_ons": {
+          "anyOf": [
+            {
+              "items": {
+                "const": "litigator_checks",
+                "type": "string"
+              },
+              "maxItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated add-ons to enable. Options: `litigator_checks` (TCPA litigator detection, returned under `add_ons.litigator_checks`). Additional charges apply. Example `litigator_checks`",
+          "title": "Add ons"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional identifier used to group queries by source, campaign, channel, or cohort. Maximum length is 255 characters. Use only letters, numbers, spaces, and `. _ - : / | #`; the value cannot begin with `-`. An invalid value does not fail the request: it is dropped and a warning is added.",
+          "title": "Source id"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "GetPhoneValidation",
+      "type": "object"
+    },
+    "GetRealContact": {
+      "additionalProperties": false,
+      "description": "Verify and grade a lead's contact information.",
+      "properties": {
+        "operation": {
+          "const": "get_real_contact",
+          "default": "get_real_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the person to search. Example `John Doe`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the person to search. Example `John`",
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the person to search. Example `Doe`",
+          "title": "Last name"
+        },
+        "business.name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The business name to search. Example `The Golden Company`",
+          "title": "Business name"
+        },
+        "phone": {
+          "description": "The phone number provided by the lead on the web form. Example `4259853735`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email provided by the lead on the web form. Example `john.doe@example.com`",
+          "title": "Email"
+        },
+        "address.street_line_1": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first line of the street part of the address. Example `100 Syrws St`",
+          "title": "Address street line 1"
+        },
+        "address.street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The second line of the street part of the address. Example `Apt 4B`",
+          "title": "Address street line 2"
+        },
+        "address.city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the city. Example `Lynden`",
+          "title": "Address city"
+        },
+        "address.state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter state code, any case, or the full state name (for example `Washington`). Example `WA`",
+          "title": "Address state code"
+        },
+        "address.postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The postal code: a 5-digit ZIP (`98229`) or a ZIP+4, with or without the dash (`98229-1234` or `982291234`). Example `98229`",
+          "title": "Address postal code"
+        },
+        "address.country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the address. Example `US`",
+          "title": "Address country code"
+        },
+        "ip_address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The IPv4 or IPv6 address captured at the time of interaction (web form, sign up, etc.). Example `192.0.0.1`",
+          "title": "Ip address"
+        },
+        "add_ons": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "email_checks_deliverability",
+                  "email_checks_age",
+                  "litigator_checks"
+                ],
+                "type": "string"
+              },
+              "maxItems": 3,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated add-ons to enable. Options: `email_checks_deliverability` (email deliverability), `email_checks_age` (email age score), and `litigator_checks` (TCPA litigator detection). Additional charges apply. Example `litigator_checks,email_checks_deliverability`",
+          "title": "Add ons"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional identifier used to group queries by source, campaign, channel, or cohort. Maximum length is 255 characters. Use only letters, numbers, spaces, and `. _ - : / | #`; the value cannot begin with `-`. An invalid value does not fail the request: it is dropped and a warning is added.",
+          "title": "Source id"
+        }
+      },
+      "required": [
+        "name",
+        "phone"
+      ],
+      "title": "GetRealContact",
+      "type": "object"
+    },
+    "GetRealContactV11": {
+      "additionalProperties": false,
+      "description": "Verify and grade a lead's contact information.",
+      "properties": {
+        "operation": {
+          "const": "get_real_contact_v1_1",
+          "default": "get_real_contact_v1_1",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the person to search. Example `John Doe`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the person to search. Example `John`",
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the person to search. Example `Doe`",
+          "title": "Last name"
+        },
+        "business.name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The business name to search. Example `The Golden Company`",
+          "title": "Business name"
+        },
+        "phone": {
+          "description": "The phone number provided by the lead on the web form. Example `4259853735`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email provided by the lead on the web form. Example `john.doe@example.com`",
+          "title": "Email"
+        },
+        "address.street_line_1": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first line of the street part of the address. Example `100 Syrws St`",
+          "title": "Address street line 1"
+        },
+        "address.street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The second line of the street part of the address. Example `Apt 4B`",
+          "title": "Address street line 2"
+        },
+        "address.city": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the city. Example `Lynden`",
+          "title": "Address city"
+        },
+        "address.state_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter state code, any case, or the full state name (for example `Washington`). Example `WA`",
+          "title": "Address state code"
+        },
+        "address.postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The postal code: a 5-digit ZIP (`98229`) or a ZIP+4, with or without the dash (`98229-1234` or `982291234`). Example `98229`",
+          "title": "Address postal code"
+        },
+        "address.country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the address. Example `US`",
+          "title": "Address country code"
+        },
+        "ip_address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The IP address from which the lead signed up on the web form. Version 1.1 returns no IP results; use version 2.0 for IP trust signals. Example `192.0.0.1`",
+          "title": "Ip address"
+        },
+        "add_ons": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "email_checks_deliverability",
+                  "email_checks_age",
+                  "litigator_checks"
+                ],
+                "type": "string"
+              },
+              "maxItems": 3,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated add-ons to enable. Options: `email_checks_deliverability` (email deliverability), `email_checks_age` (email age score), and `litigator_checks` (TCPA litigator detection). Additional charges apply. Example `litigator_checks,email_checks_deliverability`",
+          "title": "Add ons"
+        }
+      },
+      "required": [
+        "name",
+        "phone"
+      ],
+      "title": "GetRealContactV11",
+      "type": "object"
+    },
+    "GetReverseAddress": {
+      "additionalProperties": false,
+      "description": "Look up residents at a street address.",
+      "properties": {
+        "operation": {
+          "const": "get_reverse_address",
+          "default": "get_reverse_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "street_line_1": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first line of the street part of the address. Needed, together with `postal_code` or `state_code`, for a lookup. Example `100 Syrws St`",
+          "title": "Street line 1"
+        },
+        "street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The second line of the street part of the address, for example a suite or apartment number. Example `Ste 1`",
+          "title": "Street line 2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the city. Example `Seattle`",
+          "title": "City"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter state code, any case. Either `state_code` or `postal_code` is needed for a lookup. Example `WA`",
+          "title": "State code"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The postal code: a 5-digit ZIP (`98101`) or a ZIP+4, with or without the dash (`98101-1234` or `981011234`). The response always returns the 5-digit ZIP in `postal_code` and the 4-digit extension in `zip4`. Either `postal_code` or `state_code` is needed for a lookup. Example `98101`",
+          "title": "Postal code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the address. Example `US`",
+          "title": "Country code"
+        }
+      },
+      "title": "GetReverseAddress",
+      "type": "object"
+    },
+    "GetReversePhone": {
+      "additionalProperties": false,
+      "description": "Find all owners of a phone number.",
+      "properties": {
+        "operation": {
+          "const": "get_reverse_phone",
+          "default": "get_reverse_phone",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Phone number in E.164 or local format. The default country calling code is +1 (USA). Example `2069735100`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "phone.country_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-3166 alpha-2 country code of the phone number, any case. Example `US`",
+          "title": "Phone country hint"
+        },
+        "phone.name_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person or business name associated with the phone number. If multiple names are associated with the phone in Trestle's database, this name is ranked higher. Example `John Doe`",
+          "title": "Phone name hint"
+        },
+        "phone.postal_code_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal code of the subscriber address associated with the phone number. If multiple names or addresses are associated with the phone in Trestle's database, this postal code is used to rank the matching name and address higher. Example `98264`",
+          "title": "Phone postal code hint"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "GetReversePhone",
+      "type": "object"
+    },
+    "GetSmartCnam": {
+      "additionalProperties": false,
+      "description": "Get the name associated with a phone number.",
+      "properties": {
+        "operation": {
+          "const": "get_smart_cnam",
+          "default": "get_smart_cnam",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Phone number in E.164 or local format. Example `2069735100`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "phone.name_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person or business name associated with the phone number. If multiple names are associated with the phone in the Trestle database, this name is ranked higher. Example `Waidong Syrws`",
+          "title": "Phone name hint"
+        },
+        "phone.postal_code_hint": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal code of the subscriber address associated with the phone number. If multiple names or addresses are associated with the phone in the Trestle database, this postal code is used to rank the matching name higher. Example `98264`",
+          "title": "Phone postal code hint"
+        },
+        "add_ons": {
+          "anyOf": [
+            {
+              "items": {
+                "const": "spam_checks",
+                "type": "string"
+              },
+              "maxItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated add-ons to enable. Options: `spam_checks` (spam and scam detection, returned under `add_ons.spam_checks`). Additional charges apply. Example `spam_checks`",
+          "title": "Add ons"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "GetSmartCnam",
+      "type": "object"
+    },
+    "SubmitPhoneFeedback": {
+      "additionalProperties": false,
+      "description": "Submit real live-call outcomes; accepted feedback changes Trestle models.\n\nUse the Response-ID of a prior lookup when available. Never submit synthetic\noutcomes or use this write as a connection test.",
+      "properties": {
+        "operation": {
+          "const": "submit_phone_feedback",
+          "default": "submit_phone_feedback",
+          "title": "Operation",
+          "type": "string"
+        },
+        "response_id": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The value of the `Response-ID` header (format `T_<uuid>`) returned by the prior Trestle API call this feedback is about. Returned by Address Validation, Reverse Address, Phone Validation, Real Contact 1.1 and 2.0, and Decision Signals. Smart CNAM, Caller Identification, and Reverse Phone do not return it. Optional, but send it whenever you have it so the feedback is linked to that lookup. Example `T_b5d031b8-e8a3-4eef-8fa8-d87d3b7e386f`",
+          "title": "Response id"
+        },
+        "phone": {
+          "description": "The phone number in E.164 or local format. The default country calling code is +1 (USA). Example `2069735100`",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person or business name associated with the phone number. Optional. Example `Waidong Syrws`",
+          "title": "Name"
+        },
+        "phone_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Connected",
+                "Disconnected"
+              ],
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Live-call status for the phone number: `Connected` or `Disconnected` (case-insensitive). Optional. Any other value is rejected with `status: failed`.",
+          "title": "Phone status",
+          "enum": [
+            "Connected",
+            "Disconnected"
+          ],
+          "x-enum-searchable": true
+        },
+        "phone_right_party_contact": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True if the call confirmed the number belongs to the right party. Optional. Any value other than true or false is rejected with `status: failed`.",
+          "title": "Phone right party contact"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "SubmitPhoneFeedback",
+      "type": "object"
+    },
+    "TrestleAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "trestle_api_key",
+          "default": "trestle_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Trestle API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Trestle API key from the Trestle portal. Enable the products you will use. Connecting performs a Phone Validation lookup of the documentation's sample number (2069735100); this may consume quota. This proves key acceptance for that product, not account identity.",
+      "x-credential-url": "https://portal.trestleiq.com/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_address_validation": "#/$defs/GetAddressValidation",
+          "get_caller_identification": "#/$defs/GetCallerIdentification",
+          "get_decision_signals": "#/$defs/GetDecisionSignals",
+          "get_phone_validation": "#/$defs/GetPhoneValidation",
+          "get_real_contact": "#/$defs/GetRealContact",
+          "get_real_contact_v1_1": "#/$defs/GetRealContactV11",
+          "get_reverse_address": "#/$defs/GetReverseAddress",
+          "get_reverse_phone": "#/$defs/GetReversePhone",
+          "get_smart_cnam": "#/$defs/GetSmartCnam",
+          "submit_phone_feedback": "#/$defs/SubmitPhoneFeedback"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/GetAddressValidation"
+        },
+        {
+          "$ref": "#/$defs/GetCallerIdentification"
+        },
+        {
+          "$ref": "#/$defs/GetDecisionSignals"
+        },
+        {
+          "$ref": "#/$defs/SubmitPhoneFeedback"
+        },
+        {
+          "$ref": "#/$defs/GetPhoneValidation"
+        },
+        {
+          "$ref": "#/$defs/GetRealContactV11"
+        },
+        {
+          "$ref": "#/$defs/GetRealContact"
+        },
+        {
+          "$ref": "#/$defs/GetReverseAddress"
+        },
+        {
+          "$ref": "#/$defs/GetReversePhone"
+        },
+        {
+          "$ref": "#/$defs/GetSmartCnam"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrestleAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trestle Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
