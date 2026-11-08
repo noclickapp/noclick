@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/timely.png",
+  "source": "https://timelyapp.com/favicon.ico",
+  "license": "Timely trademark; used to identify the integration.",
+  "sha256": "b79a313d5cd26b054d2546f00071eff78b1633925e413c660c39c7333e5356ce",
+  "modifications": "Largest image from the official ICO saved losslessly as PNG."
+}
