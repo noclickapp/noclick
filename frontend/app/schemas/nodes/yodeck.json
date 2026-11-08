@@ -1,0 +1,383 @@
+{
+  "$defs": {
+    "GetFolder": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "description": "Verify an exact existing folder ID and its selected-workspace ancestry.",
+          "title": "Get Workspace Folder Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "Get Workspace Folder Metadata",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "Existing decimal folder ID. The picker is limited to the credential's selected workspace.",
+          "maxLength": 19,
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolder",
+      "type": "object"
+    },
+    "GetPlaylist": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_playlist",
+          "default": "get_playlist",
+          "description": "Verify an exact existing playlist ID and workspace ancestry. Playlist elements, media and thumbnails are omitted whole.",
+          "title": "Get Workspace Playlist Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "Get Workspace Playlist Metadata",
+          "x-is-trigger": false
+        },
+        "playlist_id": {
+          "description": "Existing decimal playlist ID. The saved picker locally filters a single catalog page by the selected workspace.",
+          "maxLength": 19,
+          "minLength": 1,
+          "title": "Playlist ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "GetPlaylist",
+      "type": "object"
+    },
+    "GetWorkspace": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "description": "Read the exact workspace witness configured in the credential; no workspace settings or working hours.",
+          "title": "Get Selected Workspace Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "Get Selected Workspace Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetWorkspace",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Documented numeric offset; one page only, local maximum 1,000,000. Returned links are never followed.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Documented numeric limit. The 1\u2013100 cap is local, not a claimed vendor maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "description": "Verify the selected workspace and filter folders with the documented workspace query; validate every returned parent.",
+          "title": "List Workspace Folder Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "List Workspace Folder Metadata",
+          "x-is-trigger": false
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "maxLength": 19,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional explicit existing folder ID. The parent is independently read and must belong to the selected workspace. Omitted or null means no parent filter.",
+          "title": "Parent Folder ID"
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListPlaylists": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Documented numeric offset; one page only, local maximum 1,000,000. Returned links are never followed.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Documented numeric limit. The 1\u2013100 cap is local, not a claimed vendor maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_playlists",
+          "default": "list_playlists",
+          "description": "Read one playlist catalog page and locally keep the selected workspace. The published route has no workspace query; count and continuation describe the full catalog.",
+          "title": "List Workspace Playlist Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "List Workspace Playlist Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListPlaylists",
+      "type": "object"
+    },
+    "ListScreens": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Documented numeric offset; one page only, local maximum 1,000,000. Returned links are never followed.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Documented numeric limit. The 1\u2013100 cap is local, not a claimed vendor maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_screens",
+          "default": "list_screens",
+          "description": "Request subset=basic explicitly; only ID, UUID, online/registered/last_seen and exact workspace ID are returned. No expanded fallback.",
+          "title": "List Workspace Screen Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "List Workspace Screen Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListScreens",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to resource display names. Content, descriptions, player/network/configuration, URLs, registration codes and capabilities remain omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Documented numeric offset; one page only, local maximum 1,000,000. Returned links are never followed.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Documented numeric limit. The 1\u2013100 cap is local, not a claimed vendor maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "description": "Verify the credential's selected workspace, then read one accessible workspace catalog page. This is resource access, not actor/account ownership.",
+          "title": "List Workspace Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signage Metadata",
+          "x-display-name": "List Workspace Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "YodeckTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "yodeck_token",
+          "default": "yodeck_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "token_label": {
+          "default": "noclick",
+          "description": "Nonsecret label for the documented Token label:value header; local header-safe limit is 128 characters.",
+          "title": "Token Label",
+          "type": "string"
+        },
+        "token_value": {
+          "title": "API Token Value",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace_id": {
+          "description": "Exact existing accessible workspace ID as decimal text. Every operation verifies this witness and child workspace ancestry.",
+          "maxLength": 19,
+          "minLength": 1,
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_value",
+        "workspace_id"
+      ],
+      "title": "Yodeck API Token",
+      "type": "object",
+      "x-credential-help-url": "https://app.yodeck.com/api-docs/",
+      "x-credential-instructions": "Supply an existing Yodeck API token value, a nonsecret label and an existing accessible workspace ID. Requests use Authorization: Token label:value. This integration does not issue tokens or log in. The selected workspace is an access witness, not account or actor identity. Permissions and entitlement remain specific to the token's role.",
+      "x-credential-type": "yodeck_token"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_folder": "#/$defs/GetFolder",
+          "get_playlist": "#/$defs/GetPlaylist",
+          "get_workspace": "#/$defs/GetWorkspace",
+          "list_folders": "#/$defs/ListFolders",
+          "list_playlists": "#/$defs/ListPlaylists",
+          "list_screens": "#/$defs/ListScreens",
+          "list_workspaces": "#/$defs/ListWorkspaces"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/GetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/GetFolder"
+        },
+        {
+          "$ref": "#/$defs/ListPlaylists"
+        },
+        {
+          "$ref": "#/$defs/GetPlaylist"
+        },
+        {
+          "$ref": "#/$defs/ListScreens"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YodeckTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    },
+    "node_type": {
+      "const": "automation-yodeck",
+      "default": "automation-yodeck",
+      "title": "Node Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Yodeck Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
