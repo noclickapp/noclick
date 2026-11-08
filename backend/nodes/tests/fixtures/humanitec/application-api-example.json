@@ -1,0 +1,14 @@
+{
+  "body": {
+    "created_at": "2020-06-15T09:32:03Z",
+    "created_by": "a-user@example.com",
+    "envs": {
+      "id": "development",
+      "name": "Development",
+      "type": "development"
+    },
+    "id": "my-app",
+    "name": "My Awesome App"
+  },
+  "source": "https://api-docs.humanitec.com/#tag/Application/operation/getApplication"
+}

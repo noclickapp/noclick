@@ -1,0 +1,1026 @@
+{
+  "$defs": {
+    "HumanitecApplicationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "operation": {
+          "const": "get_application",
+          "default": "get_application",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Application Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "HumanitecApplicationConfig",
+      "type": "object"
+    },
+    "HumanitecApplicationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to current saved authority, organization, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Native label filter; pipeline searches inspect the current provider page only.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_applications",
+          "default": "list_applications",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Applications",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HumanitecApplicationsConfig",
+      "type": "object"
+    },
+    "HumanitecCreateApplicationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_application",
+          "default": "create_application",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata Writes",
+          "x-display-name": "Create Application Without Environment",
+          "x-is-trigger": false
+        },
+        "app_id": {
+          "description": "New application ID; no initial environment, deployment or provisioning is requested. This node provides no cascading deletion or cleanup action.",
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "metadata_confirmed": {
+          "const": true,
+          "description": "Explicitly confirm this provider metadata write.",
+          "title": "Metadata Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "app_id",
+        "name",
+        "metadata_confirmed"
+      ],
+      "title": "HumanitecCreateApplicationConfig",
+      "type": "object"
+    },
+    "HumanitecDeploymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "environment_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "Environment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_environment"
+        },
+        "operation": {
+          "const": "get_deployment",
+          "default": "get_deployment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Observed Deployment Status",
+          "x-is-trigger": false
+        },
+        "deployment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Deployment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id",
+              "environment_id"
+            ],
+            "field_name": "deployment_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_deployment"
+        }
+      },
+      "required": [
+        "app_id",
+        "environment_id",
+        "deployment_id"
+      ],
+      "title": "HumanitecDeploymentConfig",
+      "type": "object"
+    },
+    "HumanitecDeploymentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to current saved authority, organization, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Native label filter; pipeline searches inspect the current provider page only.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "environment_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "Environment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_environment"
+        },
+        "operation": {
+          "const": "list_deployments",
+          "default": "list_deployments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Observed Deployment Statuses",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "app_id",
+        "environment_id"
+      ],
+      "title": "HumanitecDeploymentsConfig",
+      "type": "object"
+    },
+    "HumanitecEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "environment_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "Environment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_environment"
+        },
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Environment Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "app_id",
+        "environment_id"
+      ],
+      "title": "HumanitecEnvironmentConfig",
+      "type": "object"
+    },
+    "HumanitecEnvironmentTypesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to current saved authority, organization, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Native label filter; pipeline searches inspect the current provider page only.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_environment_types",
+          "default": "list_environment_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Environment Type Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HumanitecEnvironmentTypesConfig",
+      "type": "object"
+    },
+    "HumanitecEnvironmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to current saved authority, organization, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Native label filter; pipeline searches inspect the current provider page only.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Application Environments",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "HumanitecEnvironmentsConfig",
+      "type": "object"
+    },
+    "HumanitecOrganizationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Selected Organization",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HumanitecOrganizationConfig",
+      "type": "object"
+    },
+    "HumanitecPipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "pipeline_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Pipeline Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "pipeline_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_pipeline"
+        },
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Current Pipeline Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "app_id",
+        "pipeline_id"
+      ],
+      "title": "HumanitecPipelineConfig",
+      "type": "object"
+    },
+    "HumanitecPipelinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to current saved authority, organization, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Native label filter; pipeline searches inspect the current provider page only.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Pipeline Metadata",
+          "x-is-trigger": false
+        },
+        "trigger_type": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional documented trigger filter. Does not trigger or run a pipeline.",
+          "title": "Trigger Type"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "HumanitecPipelinesConfig",
+      "type": "object"
+    },
+    "HumanitecRenameApplicationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "operation": {
+          "const": "rename_application",
+          "default": "rename_application",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata Writes",
+          "x-display-name": "Rename Application",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "expected_name": {
+          "description": "Must match the immediately observed current name. Vendor atomic compare-and-swap is not claimed.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Expected Name",
+          "type": "string"
+        },
+        "metadata_confirmed": {
+          "const": true,
+          "title": "Metadata Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "app_id",
+        "name",
+        "expected_name",
+        "metadata_confirmed"
+      ],
+      "title": "HumanitecRenameApplicationConfig",
+      "type": "object"
+    },
+    "HumanitecRenameEnvironmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "environment_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "Environment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_environment"
+        },
+        "operation": {
+          "const": "rename_environment",
+          "default": "rename_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata Writes",
+          "x-display-name": "Rename Environment",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "expected_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Expected Name",
+          "type": "string"
+        },
+        "metadata_confirmed": {
+          "const": true,
+          "title": "Metadata Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "app_id",
+        "environment_id",
+        "name",
+        "expected_name",
+        "metadata_confirmed"
+      ],
+      "title": "HumanitecRenameEnvironmentConfig",
+      "type": "object"
+    },
+    "HumanitecRunConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "pipeline_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Pipeline Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "pipeline_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_pipeline"
+        },
+        "operation": {
+          "const": "get_pipeline_run",
+          "default": "get_pipeline_run",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Observed Pipeline Run Metadata",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Run Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id",
+              "pipeline_id"
+            ],
+            "field_name": "run_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_run"
+        }
+      },
+      "required": [
+        "app_id",
+        "pipeline_id",
+        "run_id"
+      ],
+      "title": "HumanitecRunConfig",
+      "type": "object"
+    },
+    "HumanitecRunsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native continuation bound to current saved authority, organization, parents and filters. Never a provider URL.",
+          "title": "Page Token"
+        },
+        "search": {
+          "default": "",
+          "description": "Native label filter; pipeline searches inspect the current provider page only.",
+          "maxLength": 128,
+          "title": "Search",
+          "type": "string"
+        },
+        "app_id": {
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "App Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "app_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "humanitec_app"
+        },
+        "pipeline_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Pipeline Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "pipeline_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_pipeline"
+        },
+        "operation": {
+          "const": "list_pipeline_runs",
+          "default": "list_pipeline_runs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Observed Pipeline Run Statuses",
+          "x-is-trigger": false
+        },
+        "environment_id": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "app_id"
+            ],
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "humanitec_environment"
+        },
+        "status_filters": {
+          "description": "Documented repeated status filter. Provider states are not invented or used to execute runs.",
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Status Filters",
+          "type": "array"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional provider completion filter; observation does not execute a run.",
+          "title": "Completed"
+        }
+      },
+      "required": [
+        "app_id",
+        "pipeline_id"
+      ],
+      "title": "HumanitecRunsConfig",
+      "type": "object"
+    },
+    "HumanitecServiceTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "humanitec_service_token",
+          "default": "humanitec_service_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_token": {
+          "description": "Already issued service-user API token; sent only as Bearer to api.humanitec.io. No browser login, OAuth app, refresh or token mint is configured.",
+          "title": "Service Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "organization_id": {
+          "description": "Exact existing Humanitec organization ID. All API paths and saved-authority checks remain scoped to this organization.",
+          "maxLength": 50,
+          "pattern": "^[a-z0-9](?:-?[a-z0-9]+)+$",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "allow_metadata_writes": {
+          "default": false,
+          "description": "Off by default. Allows explicitly confirmed app creation without an environment and app/environment name changes. Notifications/automation effects are not assumed suppressed; irreversible cascading deletes are omitted.",
+          "title": "Allow Metadata Writes",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "service_token",
+        "organization_id"
+      ],
+      "title": "Humanitec Service User Token",
+      "type": "object",
+      "x-credential-url": "https://developer.humanitec.com/platform-orchestrator/docs/platform-orchestrator/security/authentication/"
+    },
+    "HumanitecTestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Test Current Token and Organization",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HumanitecTestConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_application": "#/$defs/HumanitecCreateApplicationConfig",
+          "get_application": "#/$defs/HumanitecApplicationConfig",
+          "get_deployment": "#/$defs/HumanitecDeploymentConfig",
+          "get_environment": "#/$defs/HumanitecEnvironmentConfig",
+          "get_organization": "#/$defs/HumanitecOrganizationConfig",
+          "get_pipeline": "#/$defs/HumanitecPipelineConfig",
+          "get_pipeline_run": "#/$defs/HumanitecRunConfig",
+          "list_applications": "#/$defs/HumanitecApplicationsConfig",
+          "list_deployments": "#/$defs/HumanitecDeploymentsConfig",
+          "list_environment_types": "#/$defs/HumanitecEnvironmentTypesConfig",
+          "list_environments": "#/$defs/HumanitecEnvironmentsConfig",
+          "list_pipeline_runs": "#/$defs/HumanitecRunsConfig",
+          "list_pipelines": "#/$defs/HumanitecPipelinesConfig",
+          "rename_application": "#/$defs/HumanitecRenameApplicationConfig",
+          "rename_environment": "#/$defs/HumanitecRenameEnvironmentConfig",
+          "test_connection": "#/$defs/HumanitecTestConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HumanitecTestConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecApplicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecEnvironmentTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecDeploymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecDeploymentConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecRunConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecCreateApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecRenameApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/HumanitecRenameEnvironmentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HumanitecServiceTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Humanitec Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List applications in my Humanitec organization",
+    "Read deployment status without deploying",
+    "Inspect pipeline run metadata without inputs or secrets",
+    "Rename an application after explicit confirmation"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

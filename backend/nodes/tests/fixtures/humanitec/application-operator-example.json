@@ -1,0 +1,17 @@
+{
+  "body": {
+    "id": "my-app",
+    "name": "My-App",
+    "org_id": "my-org",
+    "created_at": "2030-11-27T09:25:59.856902846Z",
+    "created_by": "s-d3e60a0e-8a53-40e9-a686-34548b7e06f0",
+    "envs": [
+      {
+        "id": "development",
+        "name": "Development",
+        "type": "development"
+      }
+    ]
+  },
+  "source": "https://developer.humanitec.com/platform-orchestrator/docs/integration-and-extensions/humanitec-operator/testing/"
+}
