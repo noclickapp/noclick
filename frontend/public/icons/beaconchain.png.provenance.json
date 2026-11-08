@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/beaconchain.png",
+  "source": "https://raw.githubusercontent.com/gobitfly/eth2-beaconchain-explorer/fd4838987939d83198dd87db1a54d37513184d23/static/img/logo.png",
+  "license": "Beaconcha.in brand mark, used nominatively to identify the service; trademark rights remain with the provider. Source repository is GPL-3.0.",
+  "sha256": "d8e2a133e1d42bff77b4ce481713a265ae1ad1a39531951cecacd54f0cedf517"
+}

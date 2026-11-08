@@ -1,0 +1,758 @@
+{
+  "$defs": {
+    "BeaconchainAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "beaconchain_api_key",
+          "default": "beaconchain_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Beaconchain API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your beaconcha.in API key from Settings. Chain reads are public and prove service reachability only, not account ownership or permission to submit metrics. Metric submission writes to the account owning the key.",
+      "x-credential-url": "https://beaconcha.in/user/settings"
+    },
+    "GetAddressBalances": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "description": "0x-prefixed Ethereum address.",
+          "pattern": "^0x[a-fA-F0-9]{40}$",
+          "title": "Address",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_address_balances",
+          "default": "get_address_balances",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "GetAddressBalances",
+      "type": "object"
+    },
+    "GetEpoch": {
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "default": "latest",
+          "description": "Nonnegative epoch number, latest or finalized.",
+          "title": "Epoch",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_epoch",
+          "default": "get_epoch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetEpoch",
+      "type": "object"
+    },
+    "GetExecutionRewards": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_execution_rewards",
+          "default": "get_execution_rewards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "GetExecutionRewards",
+      "type": "object"
+    },
+    "GetGasPrices": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_gas_prices",
+          "default": "get_gas_prices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetGasPrices",
+      "type": "object"
+    },
+    "GetLatestState": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_latest_state",
+          "default": "get_latest_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetLatestState",
+      "type": "object"
+    },
+    "GetRocketpoolStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_rocketpool_stats",
+          "default": "get_rocketpool_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetRocketpoolStats",
+      "type": "object"
+    },
+    "GetSlot": {
+      "additionalProperties": false,
+      "properties": {
+        "slot": {
+          "default": "latest",
+          "description": "Nonnegative slot number or latest.",
+          "title": "Slot",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_slot",
+          "default": "get_slot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetSlot",
+      "type": "object"
+    },
+    "GetSyncCommittee": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_sync_committee",
+          "default": "get_sync_committee",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "period": {
+          "default": "latest",
+          "description": "Sync committee period, latest or next.",
+          "pattern": "^(?:[0-9]{1,16}|latest|next)$",
+          "title": "Period",
+          "type": "string"
+        }
+      },
+      "title": "GetSyncCommittee",
+      "type": "object"
+    },
+    "GetValidatorQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_validator_queue",
+          "default": "get_validator_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetValidatorQueue",
+      "type": "object"
+    },
+    "GetValidatorRewards": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_validator_rewards",
+          "default": "get_validator_rewards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "GetValidatorRewards",
+      "type": "object"
+    },
+    "GetValidators": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_validators",
+          "default": "get_validators",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "GetValidators",
+      "type": "object"
+    },
+    "ListAddressTokens": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "description": "0x-prefixed Ethereum address.",
+          "pattern": "^0x[a-fA-F0-9]{40}$",
+          "title": "Address",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records in this page. Request the next offset explicitly.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_address_tokens",
+          "default": "list_address_tokens",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "ListAddressTokens",
+      "type": "object"
+    },
+    "ListBalanceHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "latest_epoch": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end epoch; absent uses the provider's latest epoch.",
+          "title": "Latest Epoch"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Epochs to skip backwards from latest_epoch.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of epochs in this window; this is not an item count.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_balance_history",
+          "default": "list_balance_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "ListBalanceHistory",
+      "type": "object"
+    },
+    "ListEpochSlots": {
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "default": "latest",
+          "description": "Nonnegative epoch number, latest or finalized.",
+          "title": "Epoch",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_epoch_slots",
+          "default": "list_epoch_slots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEpochSlots",
+      "type": "object"
+    },
+    "ListIncomeHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "latest_epoch": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end epoch; absent uses the provider's latest epoch.",
+          "title": "Latest Epoch"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Epochs to skip backwards from latest_epoch.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of epochs in this window; this is not an item count.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_income_history",
+          "default": "list_income_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "ListIncomeHistory",
+      "type": "object"
+    },
+    "ListSlotAttestations": {
+      "additionalProperties": false,
+      "properties": {
+        "slot": {
+          "default": "latest",
+          "description": "Nonnegative slot number or latest.",
+          "title": "Slot",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_slot_attestations",
+          "default": "list_slot_attestations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSlotAttestations",
+      "type": "object"
+    },
+    "ListSlotWithdrawals": {
+      "additionalProperties": false,
+      "properties": {
+        "slot": {
+          "default": "latest",
+          "description": "Nonnegative slot number or latest.",
+          "title": "Slot",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_slot_withdrawals",
+          "default": "list_slot_withdrawals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSlotWithdrawals",
+      "type": "object"
+    },
+    "ListValidatorDeposits": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_validator_deposits",
+          "default": "list_validator_deposits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "ListValidatorDeposits",
+      "type": "object"
+    },
+    "ListValidatorProposals": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "epoch": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive upper epoch of the provider's 100-epoch window.",
+          "title": "Epoch"
+        },
+        "operation": {
+          "const": "list_validator_proposals",
+          "default": "list_validator_proposals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "ListValidatorProposals",
+      "type": "object"
+    },
+    "ListValidatorWithdrawals": {
+      "additionalProperties": false,
+      "properties": {
+        "validators": {
+          "description": "Up to 100 comma-separated validator indices or 48-byte BLS public keys, with no spaces.",
+          "maxLength": 10000,
+          "title": "Validators",
+          "type": "string"
+        },
+        "epoch": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive upper epoch of the provider's 100-epoch window.",
+          "title": "Epoch"
+        },
+        "operation": {
+          "const": "list_validator_withdrawals",
+          "default": "list_validator_withdrawals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "validators"
+      ],
+      "title": "ListValidatorWithdrawals",
+      "type": "object"
+    },
+    "ResolveENS": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resolve_ens",
+          "default": "resolve_ens",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "ENS name such as vitalik.eth, or Ethereum address.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z0-9-]+$|^0x[a-fA-F0-9]{40}$",
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ResolveENS",
+      "type": "object"
+    },
+    "SubmitSystemMetrics": {
+      "additionalProperties": false,
+      "description": "Submit one system sample; no retries and no delivery/readback claim.",
+      "properties": {
+        "operation": {
+          "const": "submit_system_metrics",
+          "default": "submit_system_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "machine": {
+          "description": "Machine name shown in the beaconcha.in monitoring dashboard.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.-]+$",
+          "title": "Machine",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Unix timestamp in seconds for this sample.",
+          "minimum": 0,
+          "title": "Timestamp",
+          "type": "integer"
+        },
+        "exporter_version": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Exporter Version",
+          "type": "string"
+        },
+        "cpu_cores": {
+          "minimum": 0,
+          "title": "Cpu Cores",
+          "type": "integer"
+        },
+        "cpu_threads": {
+          "minimum": 0,
+          "title": "Cpu Threads",
+          "type": "integer"
+        },
+        "memory_node_bytes_total": {
+          "minimum": 0,
+          "title": "Memory Node Bytes Total",
+          "type": "integer"
+        },
+        "memory_node_bytes_free": {
+          "minimum": 0,
+          "title": "Memory Node Bytes Free",
+          "type": "integer"
+        },
+        "disk_node_bytes_total": {
+          "minimum": 0,
+          "title": "Disk Node Bytes Total",
+          "type": "integer"
+        },
+        "disk_node_bytes_free": {
+          "minimum": 0,
+          "title": "Disk Node Bytes Free",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "machine",
+        "timestamp",
+        "exporter_version",
+        "cpu_cores",
+        "cpu_threads",
+        "memory_node_bytes_total",
+        "memory_node_bytes_free",
+        "disk_node_bytes_total",
+        "disk_node_bytes_free"
+      ],
+      "title": "SubmitSystemMetrics",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_address_balances": "#/$defs/GetAddressBalances",
+          "get_epoch": "#/$defs/GetEpoch",
+          "get_execution_rewards": "#/$defs/GetExecutionRewards",
+          "get_gas_prices": "#/$defs/GetGasPrices",
+          "get_latest_state": "#/$defs/GetLatestState",
+          "get_rocketpool_stats": "#/$defs/GetRocketpoolStats",
+          "get_slot": "#/$defs/GetSlot",
+          "get_sync_committee": "#/$defs/GetSyncCommittee",
+          "get_validator_queue": "#/$defs/GetValidatorQueue",
+          "get_validator_rewards": "#/$defs/GetValidatorRewards",
+          "get_validators": "#/$defs/GetValidators",
+          "list_address_tokens": "#/$defs/ListAddressTokens",
+          "list_balance_history": "#/$defs/ListBalanceHistory",
+          "list_epoch_slots": "#/$defs/ListEpochSlots",
+          "list_income_history": "#/$defs/ListIncomeHistory",
+          "list_slot_attestations": "#/$defs/ListSlotAttestations",
+          "list_slot_withdrawals": "#/$defs/ListSlotWithdrawals",
+          "list_validator_deposits": "#/$defs/ListValidatorDeposits",
+          "list_validator_proposals": "#/$defs/ListValidatorProposals",
+          "list_validator_withdrawals": "#/$defs/ListValidatorWithdrawals",
+          "resolve_ens": "#/$defs/ResolveENS",
+          "submit_system_metrics": "#/$defs/SubmitSystemMetrics"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetLatestState"
+        },
+        {
+          "$ref": "#/$defs/GetGasPrices"
+        },
+        {
+          "$ref": "#/$defs/GetEpoch"
+        },
+        {
+          "$ref": "#/$defs/ListEpochSlots"
+        },
+        {
+          "$ref": "#/$defs/GetSlot"
+        },
+        {
+          "$ref": "#/$defs/ListSlotWithdrawals"
+        },
+        {
+          "$ref": "#/$defs/ListSlotAttestations"
+        },
+        {
+          "$ref": "#/$defs/GetValidators"
+        },
+        {
+          "$ref": "#/$defs/GetValidatorRewards"
+        },
+        {
+          "$ref": "#/$defs/GetExecutionRewards"
+        },
+        {
+          "$ref": "#/$defs/ListBalanceHistory"
+        },
+        {
+          "$ref": "#/$defs/ListIncomeHistory"
+        },
+        {
+          "$ref": "#/$defs/ListValidatorDeposits"
+        },
+        {
+          "$ref": "#/$defs/ListValidatorWithdrawals"
+        },
+        {
+          "$ref": "#/$defs/ListValidatorProposals"
+        },
+        {
+          "$ref": "#/$defs/GetValidatorQueue"
+        },
+        {
+          "$ref": "#/$defs/GetRocketpoolStats"
+        },
+        {
+          "$ref": "#/$defs/GetSyncCommittee"
+        },
+        {
+          "$ref": "#/$defs/GetAddressBalances"
+        },
+        {
+          "$ref": "#/$defs/ListAddressTokens"
+        },
+        {
+          "$ref": "#/$defs/ResolveENS"
+        },
+        {
+          "$ref": "#/$defs/SubmitSystemMetrics"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BeaconchainAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Beaconchain Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
