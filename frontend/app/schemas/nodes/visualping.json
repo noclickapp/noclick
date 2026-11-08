@@ -1,0 +1,1475 @@
+{
+  "$defs": {
+    "CountJobs": {
+      "additionalProperties": false,
+      "description": "Read total and active monitor counts without requesting job records.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "count_jobs",
+          "default": "count_jobs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CountJobs",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "description": "Create a monitor with the required v2 fields and daily checking by default.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "url": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "mode": {
+          "default": "ALL",
+          "enum": [
+            "VISUAL",
+            "WEB",
+            "TEXT",
+            "ALL"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "interval": {
+          "default": "1440",
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Interval",
+          "type": "string"
+        },
+        "trigger": {
+          "default": "1",
+          "pattern": "^(?:[0-9]+)(?:\\.[0-9]+)?$",
+          "title": "Trigger",
+          "type": "string"
+        },
+        "target_device": {
+          "default": "4",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "title": "Target Device",
+          "type": "string"
+        },
+        "wait_time": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Wait Time",
+          "type": "integer"
+        },
+        "xpath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Xpath"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "keyword_action": {
+          "anyOf": [
+            {
+              "enum": [
+                "ALL",
+                "ADDED",
+                "DELETED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword Action",
+          "enum": [
+            "ALL",
+            "ADDED",
+            "DELETED"
+          ],
+          "x-enum-searchable": true
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Ids"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "DeleteJob": {
+      "additionalProperties": false,
+      "description": "Delete one monitor and report the provider's deletion acknowledgement.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_job",
+          "default": "delete_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DeleteJob",
+      "type": "object"
+    },
+    "DescribeUser": {
+      "additionalProperties": false,
+      "description": "Read the authenticated profile, organisation and workspace memberships.",
+      "properties": {
+        "operation": {
+          "const": "describe_user",
+          "default": "describe_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "DescribeUser",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "description": "Get a monitor's details, history and detected changes.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetJobHistory": {
+      "additionalProperties": false,
+      "description": "Read a monitor's available check history and detected changes.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_job_history",
+          "default": "get_job_history",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobHistory",
+      "type": "object"
+    },
+    "ListChangedJobs": {
+      "additionalProperties": false,
+      "description": "Find jobs with changes since yesterday, or another selected interval.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "list_changed_jobs",
+          "default": "list_changed_jobs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_index": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page_index from the previous result.",
+          "minimum": 0,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum jobs on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Substring of job URL or description.",
+          "title": "Search"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter active or paused jobs; omit to include both.",
+          "title": "Active"
+        },
+        "event": {
+          "default": "changed",
+          "enum": [
+            "changed",
+            "changedImportant"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "date_filter": {
+          "default": "since_yesterday",
+          "enum": [
+            "since_last_login",
+            "since_yesterday",
+            "since_last_week",
+            "since_last_month",
+            "since_custom_date"
+          ],
+          "title": "Date Filter",
+          "type": "string"
+        },
+        "date_filter_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date/time, required for since_custom_date.",
+          "title": "Date Filter Start"
+        }
+      },
+      "title": "ListChangedJobs",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "description": "Read one page of monitors with optional activity, text and event filters.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_index": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page_index from the previous result.",
+          "minimum": 0,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum jobs on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Substring of job URL or description.",
+          "title": "Search"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter active or paused jobs; omit to include both.",
+          "title": "Active"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "enum": [
+                "changed",
+                "changedImportant",
+                "errored",
+                "checked"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event",
+          "enum": [
+            "changed",
+            "changedImportant",
+            "errored",
+            "checked"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "since_last_login",
+                "since_yesterday",
+                "since_last_week",
+                "since_last_month",
+                "since_custom_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Filter",
+          "enum": [
+            "since_last_login",
+            "since_yesterday",
+            "since_last_week",
+            "since_last_month",
+            "since_custom_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_filter_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date/time, required for since_custom_date.",
+          "title": "Date Filter Start"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListPausedJobs": {
+      "additionalProperties": false,
+      "description": "Read one page of paused monitors.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "list_paused_jobs",
+          "default": "list_paused_jobs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_index": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page_index from the previous result.",
+          "minimum": 0,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum jobs on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Substring of job URL or description.",
+          "title": "Search"
+        },
+        "active": {
+          "const": false,
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "enum": [
+                "changed",
+                "changedImportant",
+                "errored",
+                "checked"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event",
+          "enum": [
+            "changed",
+            "changedImportant",
+            "errored",
+            "checked"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "since_last_login",
+                "since_yesterday",
+                "since_last_week",
+                "since_last_month",
+                "since_custom_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Filter",
+          "enum": [
+            "since_last_login",
+            "since_yesterday",
+            "since_last_week",
+            "since_last_month",
+            "since_custom_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_filter_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date/time, required for since_custom_date.",
+          "title": "Date Filter Start"
+        }
+      },
+      "title": "ListPausedJobs",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "additionalProperties": false,
+      "description": "List your workspace names and IDs using the authenticated account API.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "PauseJob": {
+      "additionalProperties": false,
+      "description": "Pause a monitor by setting active to false.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "organisation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business updates by the published request schema.",
+          "title": "Organisation Id"
+        },
+        "operation": {
+          "const": "pause_job",
+          "default": "pause_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "PauseJob",
+      "type": "object"
+    },
+    "ResumeJob": {
+      "additionalProperties": false,
+      "description": "Resume a monitor by setting active to true.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "organisation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business updates by the published request schema.",
+          "title": "Organisation Id"
+        },
+        "operation": {
+          "const": "resume_job",
+          "default": "resume_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ResumeJob",
+      "type": "object"
+    },
+    "SearchJobs": {
+      "additionalProperties": false,
+      "description": "Find monitors by a substring in their URL or description.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "search_jobs",
+          "default": "search_jobs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_index": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page_index from the previous result.",
+          "minimum": 0,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum jobs on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Search",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter active or paused jobs; omit to include both.",
+          "title": "Active"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "enum": [
+                "changed",
+                "changedImportant",
+                "errored",
+                "checked"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event",
+          "enum": [
+            "changed",
+            "changedImportant",
+            "errored",
+            "checked"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "since_last_login",
+                "since_yesterday",
+                "since_last_week",
+                "since_last_month",
+                "since_custom_date"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Filter",
+          "enum": [
+            "since_last_login",
+            "since_yesterday",
+            "since_last_week",
+            "since_last_month",
+            "since_custom_date"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_filter_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date/time, required for since_custom_date.",
+          "title": "Date Filter Start"
+        }
+      },
+      "required": [
+        "search"
+      ],
+      "title": "SearchJobs",
+      "type": "object"
+    },
+    "SetJobFrequency": {
+      "additionalProperties": false,
+      "description": "Change a monitor's check interval in minutes.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "organisation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business updates by the published request schema.",
+          "title": "Organisation Id"
+        },
+        "operation": {
+          "const": "set_job_frequency",
+          "default": "set_job_frequency",
+          "title": "Operation",
+          "type": "string"
+        },
+        "interval": {
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Interval",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "interval"
+      ],
+      "title": "SetJobFrequency",
+      "type": "object"
+    },
+    "SetJobKeywords": {
+      "additionalProperties": false,
+      "description": "Set comma-separated keywords and their change filter on a text monitor.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "organisation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business updates by the published request schema.",
+          "title": "Organisation Id"
+        },
+        "operation": {
+          "const": "set_job_keywords",
+          "default": "set_job_keywords",
+          "title": "Operation",
+          "type": "string"
+        },
+        "keywords": {
+          "minLength": 1,
+          "title": "Keywords",
+          "type": "string"
+        },
+        "keyword_action": {
+          "default": "ALL",
+          "enum": [
+            "ALL",
+            "ADDED",
+            "DELETED"
+          ],
+          "title": "Keyword Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "keywords"
+      ],
+      "title": "SetJobKeywords",
+      "type": "object"
+    },
+    "SetJobLabels": {
+      "additionalProperties": false,
+      "description": "Replace a monitor's label IDs; an empty list clears them.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "job_id": {
+          "description": "Visualping job ID.",
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "organisation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business updates by the published request schema.",
+          "title": "Organisation Id"
+        },
+        "operation": {
+          "const": "set_job_labels",
+          "default": "set_job_labels",
+          "title": "Operation",
+          "type": "string"
+        },
+        "label_ids": {
+          "description": "Existing label IDs. Use [] to clear labels.",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Label Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "job_id",
+        "label_ids"
+      ],
+      "title": "SetJobLabels",
+      "type": "object"
+    },
+    "UpdateJob": {
+      "additionalProperties": false,
+      "description": "Update only the supplied monitor fields; omitted values are unchanged.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business accounts. Find it with List Workspaces.",
+          "title": "Workspace Id"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "VISUAL",
+                "WEB",
+                "TEXT",
+                "ALL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "VISUAL",
+            "WEB",
+            "TEXT",
+            "ALL"
+          ],
+          "x-enum-searchable": true
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "pattern": "^[1-9][0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Check interval in minutes, sent as a string.",
+          "title": "Interval"
+        },
+        "trigger": {
+          "anyOf": [
+            {
+              "pattern": "^(?:[0-9]+)(?:\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Change threshold in percent, sent as a string.",
+          "title": "Trigger"
+        },
+        "target_device": {
+          "anyOf": [
+            {
+              "enum": [
+                "1",
+                "2",
+                "3",
+                "4"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Device",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "x-enum-searchable": true
+        },
+        "wait_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wait Time"
+        },
+        "xpath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Xpath"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "keyword_action": {
+          "anyOf": [
+            {
+              "enum": [
+                "ALL",
+                "ADDED",
+                "DELETED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword Action",
+          "enum": [
+            "ALL",
+            "ADDED",
+            "DELETED"
+          ],
+          "x-enum-searchable": true
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Ids"
+        },
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "organisation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for business updates by the published request schema.",
+          "title": "Organisation Id"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "UpdateJob",
+      "type": "object"
+    },
+    "VisualpingAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "visualping_api_key",
+          "default": "visualping_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Visualping API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Visualping's Developer settings and paste it here. NoClick sends it as a Bearer token to Visualping's account and job APIs. Business accounts must select a workspace for job operations.",
+      "x-credential-url": "https://visualping.io/account/developer"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "count_jobs": "#/$defs/CountJobs",
+          "create_job": "#/$defs/CreateJob",
+          "delete_job": "#/$defs/DeleteJob",
+          "describe_user": "#/$defs/DescribeUser",
+          "get_job": "#/$defs/GetJob",
+          "get_job_history": "#/$defs/GetJobHistory",
+          "list_changed_jobs": "#/$defs/ListChangedJobs",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_paused_jobs": "#/$defs/ListPausedJobs",
+          "list_workspaces": "#/$defs/ListWorkspaces",
+          "pause_job": "#/$defs/PauseJob",
+          "resume_job": "#/$defs/ResumeJob",
+          "search_jobs": "#/$defs/SearchJobs",
+          "set_job_frequency": "#/$defs/SetJobFrequency",
+          "set_job_keywords": "#/$defs/SetJobKeywords",
+          "set_job_labels": "#/$defs/SetJobLabels",
+          "update_job": "#/$defs/UpdateJob"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DescribeUser"
+        },
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/SearchJobs"
+        },
+        {
+          "$ref": "#/$defs/ListChangedJobs"
+        },
+        {
+          "$ref": "#/$defs/ListPausedJobs"
+        },
+        {
+          "$ref": "#/$defs/CountJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/GetJobHistory"
+        },
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/UpdateJob"
+        },
+        {
+          "$ref": "#/$defs/PauseJob"
+        },
+        {
+          "$ref": "#/$defs/ResumeJob"
+        },
+        {
+          "$ref": "#/$defs/SetJobFrequency"
+        },
+        {
+          "$ref": "#/$defs/SetJobKeywords"
+        },
+        {
+          "$ref": "#/$defs/SetJobLabels"
+        },
+        {
+          "$ref": "#/$defs/DeleteJob"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VisualpingAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Visualping Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
