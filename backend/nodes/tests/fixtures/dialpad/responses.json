@@ -1,0 +1,699 @@
+{
+  "list_calls": {
+    "method": "GET",
+    "path": "/api/v2/call",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Official get-call example inside the documented CallCollection items/cursor envelope.",
+    "config": {
+      "operation": "list_calls"
+    },
+    "body": {
+      "items": [
+        {
+          "call_id": "1002",
+          "contact": {
+            "email": "",
+            "id": "1001",
+            "name": "(415) 555-7777",
+            "phone": "+14155557777",
+            "type": "local"
+          },
+          "custom_data": "{\"service_titan\": \"my awesome custom data\"}",
+          "date_connected": "1356998400000",
+          "date_rang": "1356998400000",
+          "date_started": "1356998400000",
+          "direction": "inbound",
+          "entry_point_call_id": "1000",
+          "entry_point_target": {
+            "email": "",
+            "id": "124",
+            "name": "ファージー　ボール, Inc",
+            "phone": "+14155551000",
+            "type": "office"
+          },
+          "event_timestamp": "1356998400000",
+          "external_number": "+14155557777",
+          "group_id": "Office:124",
+          "internal_number": "+14155551001",
+          "is_transferred": false,
+          "proxy_target": {},
+          "state": "connected",
+          "target": {
+            "email": "bot@fuzz-ball.com",
+            "id": "2",
+            "name": "テÉst Bot",
+            "phone": "+14155551001",
+            "type": "user"
+          },
+          "was_recorded": false
+        }
+      ],
+      "cursor": null
+    }
+  },
+  "get_call": {
+    "method": "GET",
+    "path": "/api/v2/call/{id}",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "get_call",
+      "id": 1002
+    },
+    "body": {
+      "call_id": "1002",
+      "contact": {
+        "email": "",
+        "id": "1001",
+        "name": "(415) 555-7777",
+        "phone": "+14155557777",
+        "type": "local"
+      },
+      "custom_data": "{\"service_titan\": \"my awesome custom data\"}",
+      "date_connected": "1356998400000",
+      "date_rang": "1356998400000",
+      "date_started": "1356998400000",
+      "direction": "inbound",
+      "entry_point_call_id": "1000",
+      "entry_point_target": {
+        "email": "",
+        "id": "124",
+        "name": "ファージー　ボール, Inc",
+        "phone": "+14155551000",
+        "type": "office"
+      },
+      "event_timestamp": "1356998400000",
+      "external_number": "+14155557777",
+      "group_id": "Office:124",
+      "internal_number": "+14155551001",
+      "is_transferred": false,
+      "proxy_target": {},
+      "state": "connected",
+      "target": {
+        "email": "bot@fuzz-ball.com",
+        "id": "2",
+        "name": "テÉst Bot",
+        "phone": "+14155551001",
+        "type": "user"
+      },
+      "was_recorded": false
+    }
+  },
+  "initiate_call": {
+    "method": "POST",
+    "path": "/api/v2/call",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Schema-derived RingCallProto: integer call_id, using the ID from the official get-call example. No authored response example is published for this endpoint.",
+    "config": {
+      "operation": "initiate_call",
+      "phone_number": "+14155557777",
+      "user_id": 2
+    },
+    "body": {
+      "call_id": 1002
+    }
+  },
+  "transfer_call": {
+    "method": "POST",
+    "path": "/api/v2/call/{id}/transfer",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "transfer_call",
+      "id": 1007,
+      "to_number": "+14155551003",
+      "transfer_state": "hold"
+    },
+    "body": {
+      "call_id": "1007",
+      "transferred_to_number": "+14155551003",
+      "transferred_to_state": "hold"
+    }
+  },
+  "hangup_call": {
+    "method": "PUT",
+    "path": "/api/v2/call/{id}/actions/hangup",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Official response definition has no content; successful hangup has an empty body.",
+    "config": {
+      "operation": "hangup_call",
+      "id": 1002
+    },
+    "body": null
+  },
+  "add_call_labels": {
+    "method": "PUT",
+    "path": "/api/v2/call/{id}/labels",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Official get-call example: this endpoint returns the same documented CallProto schema.",
+    "config": {
+      "operation": "add_call_labels",
+      "id": 1002,
+      "labels": "connected"
+    },
+    "body": {
+      "call_id": "1002",
+      "contact": {
+        "email": "",
+        "id": "1001",
+        "name": "(415) 555-7777",
+        "phone": "+14155557777",
+        "type": "local"
+      },
+      "custom_data": "{\"service_titan\": \"my awesome custom data\"}",
+      "date_connected": "1356998400000",
+      "date_rang": "1356998400000",
+      "date_started": "1356998400000",
+      "direction": "inbound",
+      "entry_point_call_id": "1000",
+      "entry_point_target": {
+        "email": "",
+        "id": "124",
+        "name": "ファージー　ボール, Inc",
+        "phone": "+14155551000",
+        "type": "office"
+      },
+      "event_timestamp": "1356998400000",
+      "external_number": "+14155557777",
+      "group_id": "Office:124",
+      "internal_number": "+14155551001",
+      "is_transferred": false,
+      "proxy_target": {},
+      "state": "connected",
+      "target": {
+        "email": "bot@fuzz-ball.com",
+        "id": "2",
+        "name": "テÉst Bot",
+        "phone": "+14155551001",
+        "type": "user"
+      },
+      "was_recorded": false
+    }
+  },
+  "send_sms": {
+    "method": "POST",
+    "path": "/api/v2/sms",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "send_sms",
+      "from_number": "+14155551001",
+      "text": "Test text",
+      "to_numbers": "+14155557777"
+    },
+    "body": {
+      "contact_id": "1000",
+      "created_date": "2013-01-01T00:00:00",
+      "device_type": "public_api",
+      "direction": "outbound",
+      "from_number": "+14155551001",
+      "id": "1004",
+      "message_status": "pending",
+      "target_id": "2",
+      "target_type": "user",
+      "text": "Test text",
+      "to_numbers": [
+        "+14155557777"
+      ],
+      "user_id": "2"
+    }
+  },
+  "list_contacts": {
+    "method": "GET",
+    "path": "/api/v2/contacts",
+    "source": "https://developers.dialpad.com/docs/contact-events",
+    "note": "Verbatim contact object from the provider contact-event example; the REST response uses the same documented ContactProto. Collection wrapper follows the REST ContactCollection schema.",
+    "config": {
+      "operation": "list_contacts",
+      "name": "sample"
+    },
+    "body": {
+      "items": [
+        {
+          "id": "5908860123456789",
+          "type": "shared",
+          "first_name": "sample",
+          "last_name": "test",
+          "display_name": "sample test",
+          "phones": [
+            "+16043111111",
+            "+16043111112"
+          ],
+          "primary_phone": "+16043111111",
+          "emails": [
+            "someemail3@test.com"
+          ],
+          "primary_email": "someemail3@test.com",
+          "company_name": "Awesome company",
+          "job_title": "Awesome job",
+          "urls": [
+            "https://foobar.com",
+            "https://foobar2.com"
+          ],
+          "trunk_group": "TEST",
+          "extension": "12345"
+        }
+      ],
+      "cursor": null
+    }
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/api/v2/contacts/{id}",
+    "source": "https://developers.dialpad.com/docs/contact-events",
+    "note": "Verbatim contact object from the provider contact-event example; the REST response uses the same documented ContactProto.",
+    "config": {
+      "operation": "get_contact",
+      "id": "5908860123456789"
+    },
+    "body": {
+      "id": "5908860123456789",
+      "type": "shared",
+      "first_name": "sample",
+      "last_name": "test",
+      "display_name": "sample test",
+      "phones": [
+        "+16043111111",
+        "+16043111112"
+      ],
+      "primary_phone": "+16043111111",
+      "emails": [
+        "someemail3@test.com"
+      ],
+      "primary_email": "someemail3@test.com",
+      "company_name": "Awesome company",
+      "job_title": "Awesome job",
+      "urls": [
+        "https://foobar.com",
+        "https://foobar2.com"
+      ],
+      "trunk_group": "TEST",
+      "extension": "12345"
+    }
+  },
+  "create_contact": {
+    "method": "POST",
+    "path": "/api/v2/contacts",
+    "source": "https://developers.dialpad.com/docs/contact-events",
+    "note": "Verbatim contact object from the provider contact-event example; the REST response uses the same documented ContactProto.",
+    "config": {
+      "operation": "create_contact",
+      "first_name": "sample",
+      "last_name": "test",
+      "phones": "+16043111111, +16043111112",
+      "emails": "someemail3@test.com"
+    },
+    "body": {
+      "id": "5908860123456789",
+      "type": "shared",
+      "first_name": "sample",
+      "last_name": "test",
+      "display_name": "sample test",
+      "phones": [
+        "+16043111111",
+        "+16043111112"
+      ],
+      "primary_phone": "+16043111111",
+      "emails": [
+        "someemail3@test.com"
+      ],
+      "primary_email": "someemail3@test.com",
+      "company_name": "Awesome company",
+      "job_title": "Awesome job",
+      "urls": [
+        "https://foobar.com",
+        "https://foobar2.com"
+      ],
+      "trunk_group": "TEST",
+      "extension": "12345"
+    }
+  },
+  "update_contact": {
+    "method": "PATCH",
+    "path": "/api/v2/contacts/{id}",
+    "source": "https://developers.dialpad.com/docs/contact-events",
+    "note": "Verbatim contact object from the provider contact-event example; the REST response uses the same documented ContactProto.",
+    "config": {
+      "operation": "update_contact",
+      "id": "5908860123456789",
+      "company_name": "Awesome company 2"
+    },
+    "body": {
+      "id": "5908860123456789",
+      "type": "shared",
+      "first_name": "sample",
+      "last_name": "test",
+      "display_name": "sample test",
+      "phones": [
+        "+16043111111",
+        "+16043111112"
+      ],
+      "primary_phone": "+16043111111",
+      "emails": [
+        "someemail3@test.com"
+      ],
+      "primary_email": "someemail3@test.com",
+      "company_name": "Awesome company 2",
+      "job_title": "Awesome job 2",
+      "urls": [
+        "https://foobar.com",
+        "https://foobar2.com"
+      ],
+      "trunk_group": "TEST",
+      "extension": "12345"
+    }
+  },
+  "delete_contact": {
+    "method": "DELETE",
+    "path": "/api/v2/contacts/{id}",
+    "source": "https://developers.dialpad.com/docs/contact-events",
+    "note": "Verbatim contact object from the provider contact-event example; the REST response uses the same documented ContactProto.",
+    "config": {
+      "operation": "delete_contact",
+      "id": "5908860123456789"
+    },
+    "body": {
+      "id": "5908860123456789",
+      "type": "shared",
+      "first_name": "sample",
+      "last_name": "test",
+      "display_name": "sample test",
+      "phones": [
+        "+16043111111",
+        "+16043111112"
+      ],
+      "primary_phone": "+16043111111",
+      "emails": [
+        "someemail3@test.com"
+      ],
+      "primary_email": "someemail3@test.com",
+      "company_name": "Awesome company 2",
+      "job_title": "Awesome job 2",
+      "urls": [
+        "https://foobar.com",
+        "https://foobar2.com"
+      ],
+      "trunk_group": "TEST",
+      "extension": "12345"
+    }
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/api/v2/users",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "list_users",
+      "state": "active"
+    },
+    "body": {
+      "items": [
+        {
+          "admin_office_ids": [
+            "6422934115149452"
+          ],
+          "company_id": "4508591728425653",
+          "country": "us",
+          "date_active": "2021-06-20T19:18:00",
+          "date_added": "2021-06-20T19:18:00",
+          "date_first_login": "2021-06-20T19:18:00",
+          "display_name": "テÉst Bot",
+          "do_not_disturb": false,
+          "emails": [
+            "bot@fuzz-ball.com"
+          ],
+          "first_name": "テÉst",
+          "forwarding_numbers": [
+            "+14152301358"
+          ],
+          "group_details": [
+            {
+              "do_not_disturb": false,
+              "group_id": "6422934115149452",
+              "group_type": "office",
+              "role": "admin"
+            }
+          ],
+          "has_rbac": false,
+          "id": "5835806903417907",
+          "image_url": "https://dialpad.com/avatar/user/ag5kZXZ-dWJlci12b2ljZXIYCxILVXNlclByb2ZpbGUYs_jS66r0rgoM.png?version=36c0561fb8e0f5765ccfb3a5316f6d5d",
+          "international_dialing_enabled": false,
+          "is_admin": true,
+          "is_available": true,
+          "is_on_duty": false,
+          "is_online": false,
+          "is_super_admin": true,
+          "job_title": "Mock Job Title",
+          "language": "en",
+          "last_name": "Bot",
+          "license": "talk",
+          "location": "Mock Location",
+          "muted": false,
+          "office_id": "6422934115149452",
+          "onboarding_completed": true,
+          "phone_numbers": [
+            "+14155551001"
+          ],
+          "remote_service": "google",
+          "state": "active",
+          "status_message": "Mock Status",
+          "timezone": "US/Pacific",
+          "voicemail": {
+            "is_default_voicemail": true,
+            "name": "default",
+            "voicemail_notifications_enabled": true
+          }
+        },
+        {
+          "admin_office_ids": [
+            "6422934115149452"
+          ],
+          "company_id": "4508591728425653",
+          "country": "us",
+          "date_active": "2021-06-20T19:18:00",
+          "date_added": "2021-06-20T19:18:00",
+          "date_first_login": "2021-06-20T19:18:00",
+          "display_name": "テÉst Bot",
+          "do_not_disturb": false,
+          "emails": [
+            "test_contact@fuzz-ball.com"
+          ],
+          "first_name": "テÉst",
+          "forwarding_numbers": [
+            "+14152301358"
+          ],
+          "group_details": [
+            {
+              "do_not_disturb": false,
+              "group_id": "6422934115149452",
+              "group_type": "office",
+              "role": "admin"
+            }
+          ],
+          "has_rbac": false,
+          "id": "4335858969377504",
+          "image_url": "https://dialpad.com/avatar/user/ag5kZXZ-dWJlci12b2ljZXIYCxILVXNlclByb2ZpbGUY4PWprY3u2QcM.png?version=36c0561fb8e0f5765ccfb3a5316f6d5d",
+          "international_dialing_enabled": false,
+          "is_admin": true,
+          "is_available": true,
+          "is_on_duty": false,
+          "is_online": false,
+          "is_super_admin": false,
+          "job_title": "Mock Job Title",
+          "language": "en",
+          "last_name": "Bot",
+          "license": "talk",
+          "location": "Mock Location",
+          "muted": false,
+          "office_id": "6422934115149452",
+          "onboarding_completed": false,
+          "phone_numbers": [
+            "+14155551002"
+          ],
+          "remote_service": "",
+          "state": "active",
+          "status_message": "Mock Status",
+          "timezone": "US/Pacific",
+          "voicemail": {
+            "is_default_voicemail": true,
+            "name": "default",
+            "voicemail_notifications_enabled": true
+          }
+        }
+      ]
+    }
+  },
+  "get_user": {
+    "method": "GET",
+    "path": "/api/v2/users/{id}",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "get_user",
+      "id": "5835806903417907"
+    },
+    "body": {
+      "admin_office_ids": [
+        "6422934115149452"
+      ],
+      "company_id": "4508591728425653",
+      "country": "us",
+      "date_active": "2021-06-20T19:18:00",
+      "date_added": "2021-06-20T19:18:00",
+      "date_first_login": "2021-06-20T19:18:00",
+      "display_name": "テÉst Bot",
+      "do_not_disturb": false,
+      "duty_status_started": "2013-01-01T00:00:00",
+      "emails": [
+        "bot@fuzz-ball.com"
+      ],
+      "first_name": "テÉst",
+      "forwarding_numbers": [
+        "+14152301358"
+      ],
+      "group_details": [
+        {
+          "do_not_disturb": false,
+          "group_id": "5220648944236254",
+          "group_type": "callcenter",
+          "role": "admin"
+        },
+        {
+          "do_not_disturb": false,
+          "group_id": "6422934115149452",
+          "group_type": "office",
+          "role": "admin"
+        }
+      ],
+      "has_rbac": false,
+      "id": "5835806903417907",
+      "image_url": "https://dialpad.com/avatar/user/ag5kZXZ-dWJlci12b2ljZXIYCxILVXNlclByb2ZpbGUYs_jS66r0rgoM.png?version=36c0561fb8e0f5765ccfb3a5316f6d5d",
+      "international_dialing_enabled": false,
+      "is_admin": true,
+      "is_available": true,
+      "is_on_duty": false,
+      "is_online": false,
+      "is_super_admin": true,
+      "job_title": "Mock Job Title",
+      "language": "en",
+      "last_name": "Bot",
+      "license": "talk",
+      "location": "Mock Location",
+      "muted": false,
+      "office_id": "6422934115149452",
+      "on_duty_started": "2013-01-01T00:00:00",
+      "on_duty_status": "unavailable",
+      "onboarding_completed": true,
+      "phone_numbers": [
+        "+14155551001"
+      ],
+      "remote_service": "google",
+      "state": "active",
+      "status_message": "Mock Status",
+      "timezone": "US/Pacific",
+      "voicemail": {
+        "is_default_voicemail": true,
+        "name": "default",
+        "voicemail_notifications_enabled": true
+      }
+    }
+  },
+  "update_user": {
+    "method": "PATCH",
+    "path": "/api/v2/users/{id}",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "update_user",
+      "id": "5835806903417907",
+      "job_title": "Mock Job Title"
+    },
+    "body": {
+      "admin_office_ids": [
+        "4449170667665453"
+      ],
+      "company_id": "4508591728425653",
+      "country": "us",
+      "date_active": "2021-06-20T19:18:00",
+      "date_added": "2021-06-20T19:18:00",
+      "date_first_login": "2021-06-20T19:18:00",
+      "display_name": "Blocky Mockson",
+      "do_not_disturb": false,
+      "emails": [
+        "bot@fuzz-ball.com"
+      ],
+      "extension": "12345",
+      "first_name": "Blocky",
+      "forwarding_numbers": [
+        "+442074865800",
+        "+815058098764"
+      ],
+      "has_rbac": false,
+      "id": "5835806903417907",
+      "image_url": "https://dialpad.com/avatar/user/ag5kZXZ-dWJlci12b2ljZXIYCxILVXNlclByb2ZpbGUYs_jS66r0rgoM.png?version=a54c75379069406d7958461d98788fb4",
+      "international_dialing_enabled": false,
+      "is_admin": true,
+      "is_available": true,
+      "is_on_duty": false,
+      "is_online": false,
+      "is_super_admin": true,
+      "job_title": "Junior Accountant",
+      "language": "en",
+      "last_name": "Mockson",
+      "license": "lite_support_agents",
+      "location": "Mock Location",
+      "muted": false,
+      "office_id": "4449170667665453",
+      "onboarding_completed": true,
+      "phone_numbers": [
+        "+14155551001"
+      ],
+      "remote_service": "google",
+      "state": "active",
+      "status_message": "Mock Status",
+      "timezone": "US/Pacific",
+      "voicemail": {
+        "is_default_voicemail": true,
+        "name": "default",
+        "voicemail_notifications_enabled": true
+      }
+    }
+  },
+  "set_user_dnd": {
+    "method": "PATCH",
+    "path": "/api/v2/users/{id}/togglednd",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "set_user_dnd",
+      "id": "5835806903417907",
+      "do_not_disturb": true
+    },
+    "body": {
+      "do_not_disturb": true,
+      "group_id": "5220648944236254",
+      "group_type": "department",
+      "id": "5835806903417907"
+    }
+  },
+  "get_company": {
+    "method": "GET",
+    "path": "/api/v2/company",
+    "source": "https://dialpad.com/static/openapi/platform-v1.0.json",
+    "note": "Verbatim response example from the official OpenAPI.",
+    "config": {
+      "operation": "get_company"
+    },
+    "body": {
+      "account_type": "standard",
+      "country": "us",
+      "domain": "fuzz-ball.com",
+      "id": "6456332278300672",
+      "name": "ファージー　ボール, Inc",
+      "office_count": "1",
+      "settings": {
+        "has_callai": true
+      }
+    }
+  }
+}
