@@ -11,6 +11,7 @@ const Msg91Icon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const Msg91Node: NodeDefinition = {
     type: 'automation-msg91', label: 'MSG91',
+    category: 'communication',
     description: 'Send SMS, OTP and email; manage templates and read reports and contacts',
     Icon: Msg91Icon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
