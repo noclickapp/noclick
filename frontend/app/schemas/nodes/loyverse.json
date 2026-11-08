@@ -1,0 +1,1975 @@
+{
+  "$defs": {
+    "GetCategoryConfig": {
+      "additionalProperties": false,
+      "description": "GET /categories/{category_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "category_id": {
+          "format": "uuid",
+          "title": "Category Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "GetCategoryConfig",
+      "type": "object"
+    },
+    "GetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "GET /customers/{customer_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "format": "uuid",
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomerConfig",
+      "type": "object"
+    },
+    "GetItemConfig": {
+      "additionalProperties": false,
+      "description": "GET /items/{item_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_id": {
+          "format": "uuid",
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItemConfig",
+      "type": "object"
+    },
+    "GetMerchantConfig": {
+      "additionalProperties": false,
+      "description": "GET /merchant/.",
+      "properties": {
+        "operation": {
+          "const": "get_merchant",
+          "default": "get_merchant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetMerchantConfig",
+      "type": "object"
+    },
+    "GetReceiptConfig": {
+      "additionalProperties": false,
+      "description": "GET /receipts/{receipt_number}.",
+      "properties": {
+        "operation": {
+          "const": "get_receipt",
+          "default": "get_receipt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "receipt_number": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Receipt Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receipt_number"
+      ],
+      "title": "GetReceiptConfig",
+      "type": "object"
+    },
+    "GetStoreConfig": {
+      "additionalProperties": false,
+      "description": "GET /stores/{store_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_store",
+          "default": "get_store",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "store_id": {
+          "format": "uuid",
+          "title": "Store Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "GetStoreConfig",
+      "type": "object"
+    },
+    "GetSupplierConfig": {
+      "additionalProperties": false,
+      "description": "GET /suppliers/{supplier_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_supplier",
+          "default": "get_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "supplier_id": {
+          "format": "uuid",
+          "title": "Supplier Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supplier_id"
+      ],
+      "title": "GetSupplierConfig",
+      "type": "object"
+    },
+    "GetVariantConfig": {
+      "additionalProperties": false,
+      "description": "GET /variants/{variant_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_variant",
+          "default": "get_variant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "variant_id": {
+          "format": "uuid",
+          "title": "Variant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variant_id"
+      ],
+      "title": "GetVariantConfig",
+      "type": "object"
+    },
+    "ListCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "GET /categories.",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "categories_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only categories specified by a comma-separated list of IDs",
+          "title": "Categories Ids"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListCategoriesConfig",
+      "type": "object"
+    },
+    "ListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "GET /customers.",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only customers specified by a comma-separated list of IDs",
+          "title": "Customer Ids"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter customers by email",
+          "title": "Email"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListCustomersConfig",
+      "type": "object"
+    },
+    "ListEmployeesConfig": {
+      "additionalProperties": false,
+      "description": "GET /employees.",
+      "properties": {
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "employee_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only employees specified by a comma-separated list of IDs",
+          "title": "Employee Ids"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListEmployeesConfig",
+      "type": "object"
+    },
+    "ListInventoryConfig": {
+      "additionalProperties": false,
+      "description": "GET /inventory.",
+      "properties": {
+        "operation": {
+          "const": "list_inventory",
+          "default": "list_inventory",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "store_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show inventory levels only for specified stores",
+          "title": "Store Ids"
+        },
+        "variant_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show inventory levels only for specified variants",
+          "title": "Variant Ids"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show inventory levels updated at or after specified date",
+          "format": "date-time",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show inventory levels updated at or before specified date",
+          "format": "date-time",
+          "title": "Updated At Max"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListInventoryConfig",
+      "type": "object"
+    },
+    "ListItemsConfig": {
+      "additionalProperties": false,
+      "description": "GET /items.",
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only items specified by a comma-separated list of IDs",
+          "title": "Items Ids"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListItemsConfig",
+      "type": "object"
+    },
+    "ListPaymentTypesConfig": {
+      "additionalProperties": false,
+      "description": "GET /payment_types.",
+      "properties": {
+        "operation": {
+          "const": "list_payment_types",
+          "default": "list_payment_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_type_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only payment types specified by a comma-separated list of IDs",
+          "title": "Payment Type Ids"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListPaymentTypesConfig",
+      "type": "object"
+    },
+    "ListReceiptsConfig": {
+      "additionalProperties": false,
+      "description": "GET /receipts.",
+      "properties": {
+        "operation": {
+          "const": "list_receipts",
+          "default": "list_receipts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "receipt_numbers": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only receipts specified by a comma-separated list of receipt numbers",
+          "title": "Receipt Numbers"
+        },
+        "since_receipt_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show receipts since date which is equal to created_at date of the receipt with specified number",
+          "title": "Since Receipt Number"
+        },
+        "before_receipt_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show receipts up to date which is equal to created_at date of the receipt with specified number",
+          "title": "Before Receipt Number"
+        },
+        "store_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show receipts only for specified store",
+          "title": "Store Id"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter receipts by order",
+          "title": "Order"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the the source this receipt comes from",
+          "title": "Source"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show receipts updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)",
+          "format": "date-time",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show receipts updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)",
+          "format": "date-time",
+          "title": "Updated At Max"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListReceiptsConfig",
+      "type": "object"
+    },
+    "ListStoresConfig": {
+      "additionalProperties": false,
+      "description": "GET /stores.",
+      "properties": {
+        "operation": {
+          "const": "list_stores",
+          "default": "list_stores",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "store_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only store specified by a comma-separated list of IDs",
+          "title": "Store Ids"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListStoresConfig",
+      "type": "object"
+    },
+    "ListSuppliersConfig": {
+      "additionalProperties": false,
+      "description": "GET /suppliers/.",
+      "properties": {
+        "operation": {
+          "const": "list_suppliers",
+          "default": "list_suppliers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suppliers_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only suppliers specified by a comma-separated list of IDs",
+          "title": "Suppliers Ids"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListSuppliersConfig",
+      "type": "object"
+    },
+    "ListTaxesConfig": {
+      "additionalProperties": false,
+      "description": "GET /taxes.",
+      "properties": {
+        "operation": {
+          "const": "list_taxes",
+          "default": "list_taxes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tax_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only taxes specified by a comma-separated list of IDs",
+          "title": "Tax Ids"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListTaxesConfig",
+      "type": "object"
+    },
+    "ListVariantsConfig": {
+      "additionalProperties": false,
+      "description": "GET /variants.",
+      "properties": {
+        "operation": {
+          "const": "list_variants",
+          "default": "list_variants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "variants_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only variants specified by a comma-separated list of IDs",
+          "title": "Variants Ids"
+        },
+        "items_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only variants attached to specified item ids",
+          "title": "Items Ids"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter variants by sku",
+          "title": "Sku"
+        },
+        "created_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Min"
+        },
+        "created_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources created before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "format": "date-time",
+          "title": "Created At Max"
+        },
+        "updated_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated after date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Min"
+        },
+        "updated_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show resources updated before date (ISO 8601 format, e.g: 2020-03-30T18:30:00.000Z)\n",
+          "title": "Updated At Max"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Used for pagination",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used for pagination",
+          "title": "Cursor"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show deleted modifiers and modifier options",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "ListVariantsConfig",
+      "type": "object"
+    },
+    "LoyverseTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "loyverse_token",
+          "default": "loyverse_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Loyverse Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create a personal access token in Loyverse Back Office \u2192 Integrations \u2192 Access tokens. Paste the token only. Grant read access for the resources you use and write access for customer, category or supplier saves. Store reads verify access to your account; they do not verify write permissions.",
+      "x-credential-url": "https://r.loyverse.com/dashboard/#/integrations/tokens"
+    },
+    "SaveCategoryConfig": {
+      "additionalProperties": false,
+      "description": "POST /categories \u2014 omit id to create, supply id to update.",
+      "properties": {
+        "operation": {
+          "const": "save_category",
+          "default": "save_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The category id. If included in the POST request it will cause an update instead of a creating a new object.",
+          "title": "Id"
+        },
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "enum": [
+                "GREY",
+                "RED",
+                "PINK",
+                "ORANGE",
+                "GREEN",
+                "BLUE",
+                "PURPLE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color",
+          "enum": [
+            "GREY",
+            "RED",
+            "PINK",
+            "ORANGE",
+            "GREEN",
+            "BLUE",
+            "PURPLE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SaveCategoryConfig",
+      "type": "object"
+    },
+    "SaveCustomerConfig": {
+      "additionalProperties": false,
+      "description": "POST /customers \u2014 omit id to create, supply id to update.",
+      "properties": {
+        "operation": {
+          "const": "save_customer",
+          "default": "save_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer id. If included in the POST request it will cause an update instead of a creating a new object.",
+          "title": "Id"
+        },
+        "name": {
+          "description": "The customer's name",
+          "maxLength": 64,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer's email",
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer's phone number",
+          "title": "Phone Number"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer's address",
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer's city, town, or village.",
+          "title": "City"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer\u2019s region name. Typically a province, a state, or a prefecture.",
+          "title": "Region"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customer\u2019s postal code, also known as zip, postcode, Eircode, etc.",
+          "title": "Postal Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The two-letter country code corresponding to the customer's country in ISO 3166-1-alpha-2 format.",
+          "title": "Country Code"
+        },
+        "customer_code": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Code"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The note about the customer",
+          "title": "Note"
+        },
+        "total_points": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Actual customer points balance",
+          "title": "Total Points"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SaveCustomerConfig",
+      "type": "object"
+    },
+    "SaveSupplierConfig": {
+      "additionalProperties": false,
+      "description": "POST /suppliers/ \u2014 omit id to create, supply id to update.",
+      "properties": {
+        "operation": {
+          "const": "save_supplier",
+          "default": "save_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier id. If included in the POST request it will cause an update instead of a creating a new object.",
+          "title": "Id"
+        },
+        "name": {
+          "description": "The supplier company name",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier contact person name",
+          "title": "Contact"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier email",
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier website page",
+          "title": "Website"
+        },
+        "address_1": {
+          "anyOf": [
+            {
+              "maxLength": 192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier address",
+          "title": "Address 1"
+        },
+        "address_2": {
+          "anyOf": [
+            {
+              "maxLength": 192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier address",
+          "title": "Address 2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier city, town, or village.",
+          "title": "City"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier\u2019s region name. Typically a province, a state, or a prefecture.",
+          "title": "Region"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The supplier\u2019s postal code, also known as zip, postcode, Eircode, etc.",
+          "title": "Postal Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The two-letter country code corresponding to the supplier country in ISO 3166-1-alpha-2 format.",
+          "title": "Country Code"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SaveSupplierConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_category": "#/$defs/GetCategoryConfig",
+          "get_customer": "#/$defs/GetCustomerConfig",
+          "get_item": "#/$defs/GetItemConfig",
+          "get_merchant": "#/$defs/GetMerchantConfig",
+          "get_receipt": "#/$defs/GetReceiptConfig",
+          "get_store": "#/$defs/GetStoreConfig",
+          "get_supplier": "#/$defs/GetSupplierConfig",
+          "get_variant": "#/$defs/GetVariantConfig",
+          "list_categories": "#/$defs/ListCategoriesConfig",
+          "list_customers": "#/$defs/ListCustomersConfig",
+          "list_employees": "#/$defs/ListEmployeesConfig",
+          "list_inventory": "#/$defs/ListInventoryConfig",
+          "list_items": "#/$defs/ListItemsConfig",
+          "list_payment_types": "#/$defs/ListPaymentTypesConfig",
+          "list_receipts": "#/$defs/ListReceiptsConfig",
+          "list_stores": "#/$defs/ListStoresConfig",
+          "list_suppliers": "#/$defs/ListSuppliersConfig",
+          "list_taxes": "#/$defs/ListTaxesConfig",
+          "list_variants": "#/$defs/ListVariantsConfig",
+          "save_category": "#/$defs/SaveCategoryConfig",
+          "save_customer": "#/$defs/SaveCustomerConfig",
+          "save_supplier": "#/$defs/SaveSupplierConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ListVariantsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/ListReceiptsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetReceiptConfig"
+        },
+        {
+          "$ref": "#/$defs/ListStoresConfig"
+        },
+        {
+          "$ref": "#/$defs/GetStoreConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSuppliersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPaymentTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTaxesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMerchantConfig"
+        },
+        {
+          "$ref": "#/$defs/SaveCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/SaveCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SaveSupplierConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LoyverseTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Loyverse Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
