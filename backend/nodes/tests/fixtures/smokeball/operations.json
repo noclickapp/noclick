@@ -1,0 +1,205 @@
+{
+  "get_firm": {
+    "config": {
+      "operation": "get_firm"
+    },
+    "method": "GET",
+    "path": "/firm"
+  },
+  "list_staff": {
+    "config": {
+      "operation": "list_staff"
+    },
+    "method": "GET",
+    "path": "/staff"
+  },
+  "list_matter_types": {
+    "config": {
+      "operation": "list_matter_types"
+    },
+    "method": "GET",
+    "path": "/mattertypes"
+  },
+  "list_contacts": {
+    "config": {
+      "operation": "list_contacts",
+      "offset": 500,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/contacts"
+  },
+  "get_contact": {
+    "config": {
+      "operation": "get_contact",
+      "contact_id": "7fdbdd5b-0f5e-4095-af9e-ae5b055325c7"
+    },
+    "method": "GET",
+    "path": "/contacts/7fdbdd5b-0f5e-4095-af9e-ae5b055325c7"
+  },
+  "create_contact": {
+    "config": {
+      "operation": "create_contact",
+      "person": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@brown.com",
+        "notes": "Prefers to answer work phone."
+      },
+      "external_system_id": "EXT01"
+    },
+    "method": "POST",
+    "path": "/contacts"
+  },
+  "update_contact": {
+    "config": {
+      "operation": "update_contact",
+      "contact_id": "7fdbdd5b-0f5e-4095-af9e-ae5b055325c7",
+      "person": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@brown.com",
+        "notes": "Prefers to answer work phone."
+      },
+      "external_system_id": "EXT01"
+    },
+    "method": "PUT",
+    "path": "/contacts/7fdbdd5b-0f5e-4095-af9e-ae5b055325c7"
+  },
+  "list_matters": {
+    "config": {
+      "operation": "list_matters",
+      "offset": 500,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/matters"
+  },
+  "get_matter": {
+    "config": {
+      "operation": "get_matter",
+      "matter_id": "1bf55840-cba3-4f8a-8c0f-66082692e493"
+    },
+    "method": "GET",
+    "path": "/matters/1bf55840-cba3-4f8a-8c0f-66082692e493"
+  },
+  "create_matter": {
+    "config": {
+      "operation": "create_matter",
+      "matter_type_id": "009f778f-83df-454a-b344-768a862a7e55",
+      "client_ids": [
+        "832e778f-83df-454a-b344-768a862a7e67"
+      ],
+      "status": "Open",
+      "description": "This is a brief description for the matter",
+      "number": "FUS-124"
+    },
+    "method": "POST",
+    "path": "/matters"
+  },
+  "update_matter": {
+    "config": {
+      "operation": "update_matter",
+      "matter_id": "1bf55840-cba3-4f8a-8c0f-66082692e493",
+      "matter_type_id": "009f778f-83df-454a-b344-768a862a7e55",
+      "client_ids": [
+        "832e778f-83df-454a-b344-768a862a7e67"
+      ],
+      "status": "Open",
+      "description": "This is a brief description for the matter",
+      "number": "FUS-124"
+    },
+    "method": "PUT",
+    "path": "/matters/1bf55840-cba3-4f8a-8c0f-66082692e493"
+  },
+  "list_tasks": {
+    "config": {
+      "operation": "list_tasks",
+      "offset": 500,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/tasks"
+  },
+  "get_task": {
+    "config": {
+      "operation": "get_task",
+      "task_id": "750eb5c5-ac0b-7d11-4997-e0ce9d8896c8"
+    },
+    "method": "GET",
+    "path": "/tasks/750eb5c5-ac0b-7d11-4997-e0ce9d8896c8"
+  },
+  "create_task": {
+    "config": {
+      "operation": "create_task",
+      "staff_id": "750eb5c5-ac0b-7d11-4997-e0ce9d8896c8",
+      "subject": "Review contract for John Smith",
+      "note": "Contract needs to be reviewed and discussed with John",
+      "is_completed": true,
+      "due_date": "2020-02-15T13:00:00Z"
+    },
+    "method": "POST",
+    "path": "/tasks"
+  },
+  "update_task": {
+    "config": {
+      "operation": "update_task",
+      "task_id": "750eb5c5-ac0b-7d11-4997-e0ce9d8896c8",
+      "staff_id": "750eb5c5-ac0b-7d11-4997-e0ce9d8896c8",
+      "subject": "Review contract for John Smith",
+      "note": "Contract needs to be reviewed and discussed with John",
+      "is_completed": true,
+      "due_date": "2020-02-15T13:00:00Z"
+    },
+    "method": "PUT",
+    "path": "/tasks/750eb5c5-ac0b-7d11-4997-e0ce9d8896c8"
+  },
+  "list_events": {
+    "config": {
+      "operation": "list_events",
+      "offset": 500,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/events"
+  },
+  "get_event": {
+    "config": {
+      "operation": "get_event",
+      "event_id": "b471682e-fa17-4e46-b7fe-9b2b8fdcb3c2"
+    },
+    "method": "GET",
+    "path": "/events/b471682e-fa17-4e46-b7fe-9b2b8fdcb3c2"
+  },
+  "create_event": {
+    "config": {
+      "operation": "create_event",
+      "subject": "Subject",
+      "start_time": "2000-01-01T20:00:00",
+      "end_time": "2000-01-01T20:00:00",
+      "time_zone": "Australia/Sydney",
+      "all_day": false,
+      "non_billable": false
+    },
+    "method": "POST",
+    "path": "/events"
+  },
+  "list_memos": {
+    "config": {
+      "operation": "list_memos",
+      "matter_id": "1bf55840-cba3-4f8a-8c0f-66082692e493"
+    },
+    "method": "GET",
+    "path": "/matters/1bf55840-cba3-4f8a-8c0f-66082692e493/memos"
+  },
+  "create_memo": {
+    "config": {
+      "operation": "create_memo",
+      "matter_id": "1bf55840-cba3-4f8a-8c0f-66082692e493",
+      "title": "Update",
+      "text": "There has been a recent update on this matter."
+    },
+    "method": "POST",
+    "path": "/matters/1bf55840-cba3-4f8a-8c0f-66082692e493/memos"
+  }
+}
