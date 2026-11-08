@@ -1,0 +1,1043 @@
+{
+  "$defs": {
+    "TemplatedAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "templated_api_key",
+          "default": "templated_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Templated API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Templated dashboard and paste it here without the Bearer prefix. NoClick uses it to read your templates and perform the operations you select.",
+      "x-credential-url": "https://templated.io/dashboard"
+    },
+    "TemplatedCloneTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Clone an existing template.",
+      "properties": {
+        "template_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "clone_template",
+          "default": "clone_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "TemplatedCloneTemplateConfig",
+      "type": "object"
+    },
+    "TemplatedCreateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Create a new folder to organize templates.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TemplatedCreateFolderConfig",
+      "type": "object"
+    },
+    "TemplatedCreateRenderConfig": {
+      "additionalProperties": false,
+      "description": "Create a new render from a template.",
+      "properties": {
+        "operation": {
+          "const": "create_render",
+          "default": "create_render",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Template",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "description": "Render format, for example png.",
+          "title": "Format",
+          "type": "string"
+        },
+        "layers": {
+          "additionalProperties": true,
+          "title": "Layers",
+          "type": "object"
+        }
+      },
+      "required": [
+        "template"
+      ],
+      "title": "TemplatedCreateRenderConfig",
+      "type": "object"
+    },
+    "TemplatedCreateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Create a new template with specified dimensions and layers.",
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "width": {
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "layers": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Layers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "width",
+        "height"
+      ],
+      "title": "TemplatedCreateTemplateConfig",
+      "type": "object"
+    },
+    "TemplatedDeleteFolderConfig": {
+      "additionalProperties": false,
+      "description": "Delete a folder by ID.",
+      "properties": {
+        "folder_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "TemplatedDeleteFolderConfig",
+      "type": "object"
+    },
+    "TemplatedDeleteFontsConfig": {
+      "additionalProperties": false,
+      "description": "Delete multiple fonts.",
+      "properties": {
+        "operation": {
+          "const": "delete_fonts",
+          "default": "delete_fonts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fonts": {
+          "description": "IDs or font names to delete.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Fonts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "fonts"
+      ],
+      "title": "TemplatedDeleteFontsConfig",
+      "type": "object"
+    },
+    "TemplatedDeleteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Delete a template by ID.",
+      "properties": {
+        "template_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "TemplatedDeleteTemplateConfig",
+      "type": "object"
+    },
+    "TemplatedDeleteUploadsConfig": {
+      "additionalProperties": false,
+      "description": "Delete multiple uploaded images by IDs.",
+      "properties": {
+        "operation": {
+          "const": "delete_uploads",
+          "default": "delete_uploads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "description": "IDs or font names to delete.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "TemplatedDeleteUploadsConfig",
+      "type": "object"
+    },
+    "TemplatedGetRenderConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a specific render by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_render",
+          "default": "get_render",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "render_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Render ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "render_id"
+      ],
+      "title": "TemplatedGetRenderConfig",
+      "type": "object"
+    },
+    "TemplatedGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a specific template by ID.",
+      "properties": {
+        "template_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "TemplatedGetTemplateConfig",
+      "type": "object"
+    },
+    "TemplatedListFolderRendersConfig": {
+      "additionalProperties": false,
+      "description": "List all renders in a specific folder.",
+      "properties": {
+        "folder_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_folder_renders",
+          "default": "list_folder_renders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "TemplatedListFolderRendersConfig",
+      "type": "object"
+    },
+    "TemplatedListFolderTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List all templates in a specific folder.",
+      "properties": {
+        "folder_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_folder_templates",
+          "default": "list_folder_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "includeLayers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includelayers"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "TemplatedListFolderTemplatesConfig",
+      "type": "object"
+    },
+    "TemplatedListFoldersConfig": {
+      "additionalProperties": false,
+      "description": "List all folders with optional filtering.",
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page per call. Use pagination.totalPages to decide whether to increment page.",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results per page.",
+          "title": "Limit"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "TemplatedListFoldersConfig",
+      "type": "object"
+    },
+    "TemplatedListFontsConfig": {
+      "additionalProperties": false,
+      "description": "List all available fonts.",
+      "properties": {
+        "operation": {
+          "const": "list_fonts",
+          "default": "list_fonts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TemplatedListFontsConfig",
+      "type": "object"
+    },
+    "TemplatedListTemplateLayersConfig": {
+      "additionalProperties": false,
+      "description": "List all layers in a template.",
+      "properties": {
+        "template_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_template_layers",
+          "default": "list_template_layers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "includeLockedLayers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includelockedlayers"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "TemplatedListTemplateLayersConfig",
+      "type": "object"
+    },
+    "TemplatedListTemplateRendersConfig": {
+      "additionalProperties": false,
+      "description": "List all renders for a specific template.",
+      "properties": {
+        "template_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_template_renders",
+          "default": "list_template_renders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalid"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "TemplatedListTemplateRendersConfig",
+      "type": "object"
+    },
+    "TemplatedListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List all templates with optional filtering.",
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page per call. Use pagination.totalPages to decide whether to increment page.",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results per page.",
+          "title": "Limit"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalid"
+        },
+        "includeLayers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includelayers"
+        },
+        "includePages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includepages"
+        }
+      },
+      "title": "TemplatedListTemplatesConfig",
+      "type": "object"
+    },
+    "TemplatedListUploadsConfig": {
+      "additionalProperties": false,
+      "description": "List all uploaded images.",
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page per call. Use pagination.totalPages to decide whether to increment page.",
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of results per page.",
+          "title": "Limit"
+        },
+        "operation": {
+          "const": "list_uploads",
+          "default": "list_uploads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "title": "TemplatedListUploadsConfig",
+      "type": "object"
+    },
+    "TemplatedUpdateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Update an existing folder.",
+      "properties": {
+        "folder_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "name"
+      ],
+      "title": "TemplatedUpdateFolderConfig",
+      "type": "object"
+    },
+    "TemplatedUpdateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Update an existing template; omitted layers remain unchanged.",
+      "properties": {
+        "template_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "layers": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to preserve existing layers. An empty list explicitly clears them.",
+          "title": "Layers"
+        }
+      },
+      "required": [
+        "template_id",
+        "name"
+      ],
+      "title": "TemplatedUpdateTemplateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clone_template": "#/$defs/TemplatedCloneTemplateConfig",
+          "create_folder": "#/$defs/TemplatedCreateFolderConfig",
+          "create_render": "#/$defs/TemplatedCreateRenderConfig",
+          "create_template": "#/$defs/TemplatedCreateTemplateConfig",
+          "delete_folder": "#/$defs/TemplatedDeleteFolderConfig",
+          "delete_fonts": "#/$defs/TemplatedDeleteFontsConfig",
+          "delete_template": "#/$defs/TemplatedDeleteTemplateConfig",
+          "delete_uploads": "#/$defs/TemplatedDeleteUploadsConfig",
+          "get_render": "#/$defs/TemplatedGetRenderConfig",
+          "get_template": "#/$defs/TemplatedGetTemplateConfig",
+          "list_folder_renders": "#/$defs/TemplatedListFolderRendersConfig",
+          "list_folder_templates": "#/$defs/TemplatedListFolderTemplatesConfig",
+          "list_folders": "#/$defs/TemplatedListFoldersConfig",
+          "list_fonts": "#/$defs/TemplatedListFontsConfig",
+          "list_template_layers": "#/$defs/TemplatedListTemplateLayersConfig",
+          "list_template_renders": "#/$defs/TemplatedListTemplateRendersConfig",
+          "list_templates": "#/$defs/TemplatedListTemplatesConfig",
+          "list_uploads": "#/$defs/TemplatedListUploadsConfig",
+          "update_folder": "#/$defs/TemplatedUpdateFolderConfig",
+          "update_template": "#/$defs/TemplatedUpdateTemplateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TemplatedCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedCloneTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListTemplateLayersConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListTemplateRendersConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedCreateRenderConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedGetRenderConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListFolderTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListFolderRendersConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListUploadsConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedDeleteUploadsConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedListFontsConfig"
+        },
+        {
+          "$ref": "#/$defs/TemplatedDeleteFontsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TemplatedAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Templated Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
