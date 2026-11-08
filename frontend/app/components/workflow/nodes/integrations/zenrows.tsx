@@ -11,6 +11,7 @@ const ZenrowsIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const ZenrowsNode: NodeDefinition = {
     type: 'automation-zenrows', label: 'ZenRows',
+    category: 'content-research',
     description: 'Submit scraping jobs, manage runs and schedules, and read results',
     keywords: ['zenrows', 'scraping', 'batch', 'crawler', 'web scraping'],
     Icon: ZenrowsIcon, iconColor: '',
