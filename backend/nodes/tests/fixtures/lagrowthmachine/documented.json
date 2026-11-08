@@ -1,0 +1,968 @@
+{
+  "source": "https://developers.lagrowthmachine.com/openapi.yaml",
+  "version": "1.0.0",
+  "sha256": "e90a51b1a62d3e47ce785e561f604fca714ef1cf21f380eab6b45077e9984ca7",
+  "cases": [
+    {
+      "operation": "get_me",
+      "operation_id": "getMe",
+      "method": "GET",
+      "path": "/me",
+      "config": {
+        "operation": "get_me"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "id": "64b7f0c2a1d3000000000001",
+        "email": "john.doe@acme.com"
+      }
+    },
+    {
+      "operation": "list_workspaces",
+      "operation_id": "listWorkspaces",
+      "method": "GET",
+      "path": "/workspaces",
+      "config": {
+        "operation": "list_workspaces"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "multiWorkspace": false,
+        "workspaces": [
+          {
+            "workspaceId": "64b7f0c2a1d3000000000001",
+            "name": "Acme",
+            "companyName": "Acme",
+            "slug": "",
+            "plan": "PRO",
+            "identitiesCount": 1,
+            "isCurrent": true
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_members",
+      "operation_id": "listMembers",
+      "method": "GET",
+      "path": "/members",
+      "config": {
+        "operation": "list_members"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "members": [
+          {
+            "id": "64b7f0c2a1d3000000000001",
+            "name": "John Doe",
+            "label": "John Doe"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_identities",
+      "operation_id": "listIdentities",
+      "method": "GET",
+      "path": "/identities",
+      "config": {
+        "operation": "list_identities"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "identities": [
+          {
+            "id": "64b7f0c2a1d3000000000004",
+            "name": "John Doe",
+            "linkedinConnected": false,
+            "companyName": null,
+            "companyUrl": null,
+            "location": null,
+            "jobTitle": null
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_credits",
+      "operation_id": "getCredits",
+      "method": "GET",
+      "path": "/credits",
+      "config": {
+        "operation": "get_credits"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "credits": {
+          "total": 1500,
+          "perishable": 1500
+        },
+        "permissions": {
+          "crmAccess": false,
+          "extensionAccess": false
+        }
+      }
+    },
+    {
+      "operation": "list_audiences",
+      "operation_id": "listAudiences",
+      "method": "GET",
+      "path": "/audiences",
+      "config": {
+        "operation": "list_audiences"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "audiences": [
+          {
+            "id": "64b7f0c2a1d3000000000005",
+            "name": "Acme prospects",
+            "description": "",
+            "userId": "64b7f0c2a1d3000000000003",
+            "modifiedAt": 1791192987296,
+            "createdAt": 1791192987020,
+            "size": 1,
+            "targetSize": null,
+            "sourceUrl": null,
+            "type": "CLASSIC",
+            "importationPending": false,
+            "sourceListId": null,
+            "refreshPeriod": 0,
+            "importStatus": null,
+            "deletionPending": null,
+            "filterLeads": null,
+            "enrichType": null,
+            "preEnrich": null,
+            "importationStartedAt": null,
+            "excludeContactedLeads": false,
+            "hasAutoImport": false,
+            "notContactedSourceCampaignId": null,
+            "signals": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "create_audience",
+      "operation_id": "createAudience",
+      "method": "POST",
+      "path": "/audiences/create",
+      "config": {
+        "operation": "create_audience",
+        "name": "Acme prospects"
+      },
+      "query": {},
+      "body": {
+        "name": "Acme prospects"
+      },
+      "response": {
+        "statusCode": 200,
+        "audience": {
+          "id": "64b7f0c2a1d3000000000005",
+          "name": "Acme prospects"
+        }
+      }
+    },
+    {
+      "operation": "get_audience",
+      "operation_id": "getAudienceDetail",
+      "method": "GET",
+      "path": "/audiences/64b7f0c2a1d3000000000005/detail",
+      "config": {
+        "operation": "get_audience",
+        "audience_id": "64b7f0c2a1d3000000000005"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "data": {
+          "id": "64b7f0c2a1d3000000000005",
+          "name": "Acme prospects",
+          "description": "",
+          "size": 1,
+          "type": "CLASSIC",
+          "createdAt": "2026-10-05 09:36:27.020000+00:00",
+          "modifiedAt": "2026-10-05 09:36:27.296000+00:00",
+          "importStatus": ""
+        }
+      }
+    },
+    {
+      "operation": "list_audience_leads",
+      "operation_id": "getAudienceLeads",
+      "method": "GET",
+      "path": "/audiences/64b7f0c2a1d3000000000005/leads",
+      "config": {
+        "operation": "list_audience_leads",
+        "audience_id": "64b7f0c2a1d3000000000005",
+        "skip": 25,
+        "limit": 25
+      },
+      "query": {
+        "skip": 25,
+        "limit": 25
+      },
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "data": [
+          {
+            "id": "64b7f0c2a1d3000000000006",
+            "firstname": "John",
+            "lastname": "Doe",
+            "companyName": "Acme",
+            "jobTitle": "Head of Sales",
+            "linkedinUrl": "",
+            "proEmail": "john.doe@acme.com",
+            "phone": "",
+            "status": "unknown",
+            "location": "",
+            "industry": "",
+            "shortBio": "",
+            "companyUrl": "https://acme.com",
+            "persoEmail": "",
+            "gender": "",
+            "twitter": "",
+            "relationsCount": null,
+            "enrichStatus": "Not enriched",
+            "emailStatus": null,
+            "emailFoundBy": null,
+            "signal": "",
+            "crm_id": "",
+            "audiences": [
+              "Acme prospects"
+            ],
+            "customAttribute1": "",
+            "customAttribute2": "",
+            "customAttribute3": "",
+            "customAttribute4": "",
+            "customAttribute5": "",
+            "customAttribute6": "",
+            "customAttribute7": "",
+            "customAttribute8": "",
+            "customAttribute9": "",
+            "customAttribute10": "",
+            "customAttribute11": "",
+            "customAttribute12": "",
+            "customAttribute13": "",
+            "customAttribute14": "",
+            "customAttribute15": "",
+            "customAttribute16": "",
+            "customAttribute17": "",
+            "customAttribute18": "",
+            "customAttribute19": "",
+            "customAttribute20": ""
+          }
+        ],
+        "total": 1
+      }
+    },
+    {
+      "operation": "upsert_lead",
+      "operation_id": "createOrUpdateALead",
+      "method": "POST",
+      "path": "/leads",
+      "config": {
+        "operation": "upsert_lead",
+        "audience": "Acme prospects",
+        "firstname": "John",
+        "lastname": "Doe",
+        "proEmail": "john.doe@acme.com",
+        "companyName": "Acme",
+        "companyUrl": "https://acme.com",
+        "jobTitle": "Head of Sales"
+      },
+      "query": {},
+      "body": {
+        "audience": "Acme prospects",
+        "firstname": "John",
+        "lastname": "Doe",
+        "proEmail": "john.doe@acme.com",
+        "companyName": "Acme",
+        "companyUrl": "https://acme.com",
+        "jobTitle": "Head of Sales"
+      },
+      "response": {
+        "statusCode": 200,
+        "message": "Lead created and added to the audience. Added to existing audience.",
+        "leadId": "64b7f0c2a1d3000000000006"
+      }
+    },
+    {
+      "operation": "search_lead",
+      "operation_id": "searchLead",
+      "method": "GET",
+      "path": "/leads/search",
+      "config": {
+        "operation": "search_lead",
+        "email": "john.doe@acme.com"
+      },
+      "query": {
+        "email": "john.doe@acme.com"
+      },
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "lead": {
+          "firstname": "John",
+          "lastname": "Doe",
+          "id": "64b7f0c2a1d3000000000006",
+          "linkedinId": null,
+          "gender": null,
+          "shortBio": null,
+          "linkedinLongPublicId": null,
+          "lastActions": {
+            "last": [],
+            "status": [],
+            "lastStatus": []
+          },
+          "companyName": "Acme",
+          "companyUrl": "https://acme.com",
+          "createdAt": 1791192987067,
+          "modifiedAt": 1791192987067,
+          "jobTitle": "Head of Sales",
+          "profilePicture": null,
+          "linkedinUrl": null,
+          "salesNavUrl": null,
+          "enriched": null,
+          "userId": "64b7f0c2a1d3000000000003",
+          "twitter": null,
+          "proEmail": "john.doe@acme.com",
+          "persoEmail": null,
+          "relationsCount": null,
+          "audiences": [
+            "64b7f0c2a1d3000000000005"
+          ],
+          "addedAtByAudience": [],
+          "industry": null,
+          "phone": null,
+          "companyPhone": null,
+          "note": null,
+          "location": null,
+          "audiencesWithName": [],
+          "pausedCampaigns": [],
+          "involvedCampaigns": [],
+          "involvedCampaignsLogs": [],
+          "hubspot": {},
+          "pipedrive": {},
+          "lifecycle": null,
+          "tags": [],
+          "campaigns": [],
+          "enrichData": null,
+          "enrichStatus": null,
+          "deleted": false,
+          "migrationDone": null,
+          "customAttribute1": null,
+          "customAttribute2": null,
+          "customAttribute3": null,
+          "customAttribute4": null,
+          "customAttribute5": null,
+          "customAttribute6": null,
+          "customAttribute7": null,
+          "customAttribute8": null,
+          "customAttribute9": null,
+          "customAttribute10": null,
+          "customAttribute11": null,
+          "customAttribute12": null,
+          "customAttribute13": null,
+          "customAttribute14": null,
+          "customAttribute15": null,
+          "customAttribute16": null,
+          "customAttribute17": null,
+          "customAttribute18": null,
+          "customAttribute19": null,
+          "customAttribute20": null
+        },
+        "recentLogs": []
+      }
+    },
+    {
+      "operation": "update_lead_status",
+      "operation_id": "updateLeadStatus",
+      "method": "POST",
+      "path": "/leads/status",
+      "config": {
+        "operation": "update_lead_status",
+        "leadId": "6650a1b2c3d4e5f6a7b8c903",
+        "campaign": "all",
+        "status": "CONVERTED"
+      },
+      "query": {},
+      "body": {
+        "leadId": "6650a1b2c3d4e5f6a7b8c903",
+        "campaign": "all",
+        "status": "CONVERTED"
+      },
+      "response": {
+        "logs": [],
+        "statusCode": 200
+      }
+    },
+    {
+      "operation": "list_lead_logs",
+      "operation_id": "getLeadLogs",
+      "method": "GET",
+      "path": "/leads/6650a1b2c3d4e5f6a7b8c903/logs",
+      "config": {
+        "operation": "list_lead_logs",
+        "lead_id": "6650a1b2c3d4e5f6a7b8c903",
+        "skip": 0,
+        "limit": 25
+      },
+      "query": {
+        "skip": 0,
+        "limit": 25
+      },
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "data": []
+      }
+    },
+    {
+      "operation": "list_lead_conversations",
+      "operation_id": "getLeadConversations",
+      "method": "GET",
+      "path": "/leads/6650a1b2c3d4e5f6a7b8c903/conversations",
+      "config": {
+        "operation": "list_lead_conversations",
+        "lead_id": "6650a1b2c3d4e5f6a7b8c903"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "data": [],
+        "total": 0
+      }
+    },
+    {
+      "operation": "list_campaigns",
+      "operation_id": "getCampaigns",
+      "method": "GET",
+      "path": "/campaigns",
+      "config": {
+        "operation": "list_campaigns",
+        "skip": 0,
+        "limit": 25,
+        "status": "RUNNING,PAUSED",
+        "search": "Acme"
+      },
+      "query": {
+        "skip": 0,
+        "limit": 25,
+        "status": "RUNNING,PAUSED",
+        "search": "Acme"
+      },
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "campaigns": [
+          {
+            "id": "64b7f0c2a1d300000000000b",
+            "name": "Email Only - 1 Follow-up 1 1",
+            "description": "",
+            "objective": null,
+            "language": "english",
+            "createdAt": 1791192988271,
+            "modifiedAt": 1791192988273,
+            "userId": "64b7f0c2a1d3000000000003",
+            "status": "READY",
+            "identity": {
+              "id": "64b7f0c2a1d3000000000004",
+              "firstname": "John",
+              "lastname": "Doe",
+              "gender": null,
+              "jobTitle": null,
+              "profilePicture": null
+            },
+            "launchedByMemberId": null,
+            "launchedAt": null,
+            "channels": [
+              "LGM",
+              "LINKEDIN",
+              "GOOGLE"
+            ],
+            "slotIds": [],
+            "hubspot": false,
+            "pipedrive": false,
+            "enrich": false,
+            "isShared": false,
+            "accessCode": null,
+            "isHiddenTemplate": false,
+            "alternateFrom": null,
+            "crmSettings": {
+              "exclusionEnabled": false,
+              "excludedListIds": [],
+              "pauseIfCrmHasDeal": false,
+              "pauseOnLifecycleChange": {
+                "enabled": false,
+                "targetStages": []
+              },
+              "pauseIfInDynamicList": {
+                "enabled": false,
+                "listIds": []
+              }
+            },
+            "autoRescheduleOutOfOffice": false,
+            "lastActivity": null,
+            "isPrioritised": false,
+            "ctaBoost": null,
+            "categoryIsAuto": null,
+            "categoryIsLoading": null,
+            "leadsCount": 0,
+            "replyRatePercent": 0
+          }
+        ],
+        "total": 1
+      }
+    },
+    {
+      "operation": "get_campaign",
+      "operation_id": "getCampaign",
+      "method": "GET",
+      "path": "/campaigns/65a1b2c3d4e5f60718293a4b",
+      "config": {
+        "operation": "get_campaign",
+        "campaign_id": "65a1b2c3d4e5f60718293a4b"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "campaign": {
+          "id": "64b7f0c2a1d300000000000b",
+          "name": "Email Only - 1 Follow-up 1 1",
+          "description": "",
+          "language": "english",
+          "createdAt": 1791192988271,
+          "modifiedAt": 1791192988273,
+          "launchedAt": null,
+          "userId": "64b7f0c2a1d3000000000003",
+          "status": "READY",
+          "channels": [
+            "LGM",
+            "LINKEDIN",
+            "GOOGLE"
+          ],
+          "identityId": "64b7f0c2a1d3000000000004",
+          "identityFirstname": "John",
+          "identityLastname": "Doe",
+          "launchedByMemberId": null,
+          "converted": 0,
+          "activated": 0,
+          "hubspot": false,
+          "pipedrive": false,
+          "enrich": false,
+          "autoRescheduleOutOfOffice": true,
+          "ignoreEmojiOnlyReply": false,
+          "objective": null
+        }
+      }
+    },
+    {
+      "operation": "get_campaign_stats",
+      "operation_id": "getCampaignStats",
+      "method": "GET",
+      "path": "/campaigns/65a1b2c3d4e5f60718293a4b/stats",
+      "config": {
+        "operation": "get_campaign_stats",
+        "campaign_id": "65a1b2c3d4e5f60718293a4b"
+      },
+      "query": {},
+      "body": null,
+      "response": {
+        "statusCode": 200,
+        "engagementStats": {
+          "campaignId": "64b7f0c2a1d300000000000b",
+          "audienceSize": 0,
+          "notActivated": 0,
+          "converted": 0,
+          "completed": 0,
+          "started": 0,
+          "skipped": 0,
+          "skippedPercent": 0,
+          "replies": {
+            "contacted": 0,
+            "replied": 0,
+            "linkedinContacted": 0,
+            "emailContacted": 0,
+            "linkedinReplied": 0,
+            "emailReplied": 0,
+            "contactedPercent": 0,
+            "totalReplyPercent": 0,
+            "contactedReplyPercent": 0,
+            "linkedinContactedReplyPercent": 0,
+            "emailContactedReplyPercent": 0
+          },
+          "relations": {
+            "activated": true,
+            "requestSent": 0,
+            "relations": 0,
+            "newRelations": 0,
+            "alreadyConnected": 0,
+            "requestSentPercent": 0,
+            "relationsPercent": 0,
+            "totalRelationsPercent": 0,
+            "newRelationsPercent": 0,
+            "alreadyConnectedPercent": 0
+          },
+          "channel": {
+            "email": {
+              "activated": true,
+              "sent": 0,
+              "received": 0,
+              "opened": 0,
+              "replied": 0,
+              "clicked": 0,
+              "bounced": 0,
+              "won": 0,
+              "sentPercent": 0,
+              "receivedPercent": 0,
+              "openedPercent": 0,
+              "repliedPercent": 0,
+              "clickedPercent": 0,
+              "bouncedPercent": 0,
+              "wonPercent": 0
+            },
+            "linkedin": {
+              "activated": true,
+              "contactRequest": {
+                "activated": true,
+                "sent": 0,
+                "newRelations": 0,
+                "alreadyContact": 0,
+                "sentPercent": 0,
+                "newRelationsPercent": 0,
+                "alreadyContactPercent": 0
+              },
+              "message": {
+                "sent": 0,
+                "replied": 0,
+                "won": 0,
+                "sentPercent": 0,
+                "repliedPercent": 0,
+                "wonPercent": 0
+              }
+            },
+            "twitter": {
+              "activated": false,
+              "sent": 0,
+              "retweet": 0,
+              "favorited": 0,
+              "followed": 0,
+              "followBack": 0,
+              "followedPercent": 0,
+              "followBackPercent": 0
+            },
+            "enrich": {
+              "activated": false,
+              "proUpgrade": false,
+              "businessUpgrade": true,
+              "enriched": 0,
+              "found": {
+                "profile": 0,
+                "profileSearch": 0,
+                "website": 0,
+                "proEmail": 0,
+                "persoEmail": 0,
+                "phone": 0,
+                "companyPhone": 0,
+                "twitter": 0,
+                "profilePercent": 0,
+                "profileSearchPercent": 0,
+                "profileOnProfileSearchPercent": 0,
+                "websitePercent": 0,
+                "proEmailPercent": 0,
+                "persoEmailPercent": 0,
+                "phonePercent": 0,
+                "companyPhonePercent": 0,
+                "twitterPercent": 0
+              },
+              "enrichedPercent": 0
+            },
+            "call": {
+              "activated": false,
+              "contacted": 0,
+              "decisive": 0,
+              "unreachable": 0,
+              "won": 0,
+              "decisivePercent": 0,
+              "unreachablePercent": 0
+            }
+          },
+          "status": {
+            "activated": {
+              "total": 0,
+              "activated": 0,
+              "enriched": 0,
+              "contacted": 0,
+              "completed": 0,
+              "outOfOffice": 0,
+              "activatedPercent": 0,
+              "enrichedPercent": 0,
+              "contactedPercent": 0,
+              "completedPercent": 0,
+              "audiencePercent": 0,
+              "contactedAudiencePercent": 0,
+              "outOfOfficePercent": 0,
+              "notActivated": 0,
+              "notActivatedPercent": 0
+            },
+            "replied": {
+              "total": 0,
+              "toQualify": 0,
+              "wrongTiming": 0,
+              "toReview": 0,
+              "toCall": 0,
+              "inviteNote": 0,
+              "customMessage": 0,
+              "toQualifyPercent": 0,
+              "wrongTimingPercent": 0,
+              "audiencePercent": 0,
+              "activatedPercent": 0,
+              "contactedPercent": 0,
+              "toReviewPercent": 0,
+              "inviteNotePercent": 0,
+              "customMessagePercent": 0
+            },
+            "won": {
+              "total": 0,
+              "interested": 0,
+              "callBooked": 0,
+              "negotiating": 0,
+              "readyToBuy": 0,
+              "converted": 0,
+              "interestedPercent": 0,
+              "callBookedPercent": 0,
+              "negotiatingPercent": 0,
+              "readyToBuyPercent": 0,
+              "convertedPercent": 0,
+              "audiencePercent": 0,
+              "repliedPercent": 0
+            },
+            "lost": {
+              "total": 0,
+              "wrongTarget": 0,
+              "notInterested": 0,
+              "alreadyEquipped": 0,
+              "unsubscribed": 0,
+              "wrongTargetPercent": 0,
+              "notInterestedPercent": 0,
+              "alreadyEquippedPercent": 0,
+              "unsubscribedPercent": 0,
+              "audiencePercent": 0,
+              "repliedPercent": 0
+            }
+          },
+          "templates": [
+            {
+              "sent": 0,
+              "opened": 0,
+              "clicked": 0,
+              "replied": 0,
+              "bounced": 0,
+              "openedPercent": 0,
+              "clickedPercent": 0,
+              "repliedPercent": 0,
+              "bouncedPercent": 0,
+              "won": 0,
+              "channel": "GOOGLE",
+              "createdAt": 1791192988676,
+              "newHtml": "<p>Hi <var name=\"firstname\" default=\"there\"/>, a quick question about Acme.</p>",
+              "name": "GOOGLE message - step 4",
+              "subjectNewHtml": "",
+              "note": "",
+              "templateId": "64b7f0c2a1d300000000000d",
+              "type": "TEXT",
+              "position": 0,
+              "isCustomMessage": false
+            }
+          ],
+          "objective": null
+        }
+      }
+    },
+    {
+      "operation": "update_campaign_status",
+      "operation_id": "updateCampaignStatus",
+      "method": "POST",
+      "path": "/campaigns/65a1b2c3d4e5f60718293a4b/status",
+      "config": {
+        "operation": "update_campaign_status",
+        "campaign_id": "65a1b2c3d4e5f60718293a4b",
+        "status": "PAUSED"
+      },
+      "query": {},
+      "body": {
+        "status": "PAUSED"
+      },
+      "response": {
+        "statusCode": 200,
+        "data": {
+          "id": "65a1b2c3d4e5f60718293a4b",
+          "name": "My Campaign",
+          "status": "PAUSED"
+        }
+      }
+    },
+    {
+      "operation": "send_linkedin_message",
+      "operation_id": "sendALinkedinMessageToALead",
+      "method": "POST",
+      "path": "/inbox/linkedin",
+      "config": {
+        "operation": "send_linkedin_message",
+        "identityId": "6650a1b2c3d4e5f6a7b8c901",
+        "memberId": "6650a1b2c3d4e5f6a7b8c902",
+        "leadId": "6650a1b2c3d4e5f6a7b8c903",
+        "message": "Hi John, are you available to chat this week?"
+      },
+      "query": {},
+      "body": {
+        "identityId": "6650a1b2c3d4e5f6a7b8c901",
+        "memberId": "6650a1b2c3d4e5f6a7b8c902",
+        "leadId": "6650a1b2c3d4e5f6a7b8c903",
+        "message": "Hi John, are you available to chat this week?"
+      },
+      "response": {
+        "statusCode": 200,
+        "lead": {
+          "id": "6650a1b2c3d4e5f6a7b8c903",
+          "firstname": "John",
+          "lastname": "Doe",
+          "gender": "man",
+          "shortBio": "Head of Sales at Acme",
+          "jobTitle": "Head of Sales",
+          "companyName": "Acme",
+          "companyUrl": "https://acme.com",
+          "industry": "Software",
+          "location": "Paris, France",
+          "linkedinUrl": "https://www.linkedin.com/in/john-doe-acme",
+          "salesNavUrl": "https://www.linkedin.com/sales/people/ACwAAA0000000,NAME_SEARCH",
+          "proEmail": "john.doe@acme.com",
+          "twitter": null,
+          "phone": null,
+          "companyPhone": null,
+          "note": null,
+          "userId": "6650a1b2c3d4e5f6a7b8c900",
+          "audiences": [
+            "6650a1b2c3d4e5f6a7b8c910"
+          ],
+          "involvedCampaigns": [
+            {
+              "_id": "6650a1b2c3d4e5f6a7b8c920",
+              "name": "Q3 outreach",
+              "status": "RUNNING",
+              "launchedAt": 1719820800000,
+              "tag": "TO_QUALIFY"
+            }
+          ],
+          "tags": [
+            {
+              "campaignId": "6650a1b2c3d4e5f6a7b8c920",
+              "tag": "TO_QUALIFY",
+              "status": "REPLIED"
+            }
+          ],
+          "reply": {
+            "repliedAt": 1720000000000,
+            "content": "Yes, ok for me",
+            "identityId": "6650a1b2c3d4e5f6a7b8c901",
+            "channel": "LINKEDIN"
+          },
+          "lastMessageSentAt": 1720100000000,
+          "createdAt": 1719000000000,
+          "modifiedAt": 1720100000000,
+          "customAttribute1": null
+        }
+      }
+    },
+    {
+      "operation": "reply_email",
+      "operation_id": "sendAnEmailMessageToALead",
+      "method": "POST",
+      "path": "/inbox/email",
+      "config": {
+        "operation": "reply_email",
+        "identityId": "6650a1b2c3d4e5f6a7b8c901",
+        "leadId": "6650a1b2c3d4e5f6a7b8c903",
+        "html": "<p>Hi John,</p><p>Just following up on my last email.</p>",
+        "text": "Hi John, just following up on my last email."
+      },
+      "query": {},
+      "body": {
+        "identityId": "6650a1b2c3d4e5f6a7b8c901",
+        "leadId": "6650a1b2c3d4e5f6a7b8c903",
+        "message": {
+          "html": "<p>Hi John,</p><p>Just following up on my last email.</p>",
+          "text": "Hi John, just following up on my last email."
+        },
+        "replyInLastThread": true
+      },
+      "response": {
+        "statusCode": 200,
+        "lead": {
+          "id": "6650a1b2c3d4e5f6a7b8c903",
+          "firstname": "John",
+          "lastname": "Doe",
+          "gender": "man",
+          "shortBio": "Head of Sales at Acme",
+          "jobTitle": "Head of Sales",
+          "companyName": "Acme",
+          "companyUrl": "https://acme.com",
+          "industry": "Software",
+          "location": "Paris, France",
+          "linkedinUrl": "https://www.linkedin.com/in/john-doe-acme",
+          "salesNavUrl": "https://www.linkedin.com/sales/people/ACwAAA0000000,NAME_SEARCH",
+          "proEmail": "john.doe@acme.com",
+          "twitter": null,
+          "phone": null,
+          "companyPhone": null,
+          "note": null,
+          "userId": "6650a1b2c3d4e5f6a7b8c900",
+          "audiences": [
+            "6650a1b2c3d4e5f6a7b8c910"
+          ],
+          "involvedCampaigns": [
+            {
+              "_id": "6650a1b2c3d4e5f6a7b8c920",
+              "name": "Q3 outreach",
+              "status": "RUNNING",
+              "launchedAt": 1719820800000,
+              "tag": "TO_QUALIFY"
+            }
+          ],
+          "tags": [
+            {
+              "campaignId": "6650a1b2c3d4e5f6a7b8c920",
+              "tag": "TO_QUALIFY",
+              "status": "REPLIED"
+            }
+          ],
+          "reply": {
+            "repliedAt": 1720000000000,
+            "content": "Yes, ok for me",
+            "identityId": "6650a1b2c3d4e5f6a7b8c901",
+            "channel": "LINKEDIN"
+          },
+          "lastMessageSentAt": 1720100000000,
+          "createdAt": 1719000000000,
+          "modifiedAt": 1720100000000,
+          "customAttribute1": null
+        }
+      }
+    }
+  ]
+}

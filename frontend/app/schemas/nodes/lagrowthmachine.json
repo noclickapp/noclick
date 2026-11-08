@@ -1,0 +1,984 @@
+{
+  "$defs": {
+    "CreateAudience": {
+      "properties": {
+        "operation": {
+          "const": "create_audience",
+          "default": "create_audience",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "description": "Unique audience name in this workspace.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateAudience",
+      "type": "object"
+    },
+    "GetAudience": {
+      "properties": {
+        "operation": {
+          "const": "get_audience",
+          "default": "get_audience",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audience_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Audience Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "audience_id"
+      ],
+      "title": "GetAudience",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignStats": {
+      "properties": {
+        "operation": {
+          "const": "get_campaign_stats",
+          "default": "get_campaign_stats",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaignStats",
+      "type": "object"
+    },
+    "GetCredits": {
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetMe": {
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "LagrowthmachineAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "lagrowthmachine_api_key",
+          "default": "lagrowthmachine_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "La Growth Machine API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from La Growth Machine Settings \u2192 Integrations & API, then paste it here. Your plan must include API access. The key acts as the workspace owner; NoClick sends it in the Authorization Bearer header.",
+      "x-credential-url": "https://app.lagrowthmachine.com/settings/api"
+    },
+    "ListAudienceLeads": {
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by limit for the next page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_audience_leads",
+          "default": "list_audience_leads",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audience_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Audience Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "audience_id"
+      ],
+      "title": "ListAudienceLeads",
+      "type": "object"
+    },
+    "ListAudiences": {
+      "properties": {
+        "operation": {
+          "const": "list_audiences",
+          "default": "list_audiences",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAudiences",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by limit for the next page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 25,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated RUNNING, READY, PAUSED, CANCELED statuses.",
+          "title": "Status"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListIdentities": {
+      "properties": {
+        "operation": {
+          "const": "list_identities",
+          "default": "list_identities",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListIdentities",
+      "type": "object"
+    },
+    "ListLeadConversations": {
+      "properties": {
+        "operation": {
+          "const": "list_lead_conversations",
+          "default": "list_lead_conversations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lead_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "identityId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identity ID"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "ListLeadConversations",
+      "type": "object"
+    },
+    "ListLeadLogs": {
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by limit for the next page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lead_logs",
+          "default": "list_lead_logs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lead_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "identityId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identity ID"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "ListLeadLogs",
+      "type": "object"
+    },
+    "ListMembers": {
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMembers",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "ReplyEmail": {
+      "properties": {
+        "operation": {
+          "const": "reply_email",
+          "default": "reply_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "identityId": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Email identity ID",
+          "type": "string"
+        },
+        "leadId": {
+          "description": "Replies to this lead's most recent existing email thread.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "html": {
+          "minLength": 1,
+          "title": "HTML body",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Plain text body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identityId",
+        "leadId",
+        "html",
+        "text"
+      ],
+      "title": "ReplyEmail",
+      "type": "object"
+    },
+    "SearchLead": {
+      "properties": {
+        "operation": {
+          "const": "search_lead",
+          "default": "search_lead",
+          "title": "Operation",
+          "type": "string"
+        },
+        "leadId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "crmId": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "CRM ID"
+        },
+        "linkedinUrl": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "LinkedIn URL"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company name"
+        },
+        "companyUrl": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company URL"
+        }
+      },
+      "title": "SearchLead",
+      "type": "object"
+    },
+    "SendLinkedinMessage": {
+      "properties": {
+        "operation": {
+          "const": "send_linkedin_message",
+          "default": "send_linkedin_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "identityId": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "LinkedIn identity ID",
+          "type": "string"
+        },
+        "memberId": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Member ID",
+          "type": "string"
+        },
+        "leadId": {
+          "description": "An existing conversation with this sending identity is required.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "Text to queue for sending. Success does not prove delivery.",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identityId",
+        "memberId",
+        "leadId",
+        "message"
+      ],
+      "title": "SendLinkedinMessage",
+      "type": "object"
+    },
+    "UpdateCampaignStatus": {
+      "properties": {
+        "operation": {
+          "const": "update_campaign_status",
+          "default": "update_campaign_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "status": {
+          "description": "Pause a running campaign or resume a paused campaign.",
+          "enum": [
+            "PAUSED",
+            "RUNNING"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "status"
+      ],
+      "title": "UpdateCampaignStatus",
+      "type": "object"
+    },
+    "UpdateLeadStatus": {
+      "properties": {
+        "operation": {
+          "const": "update_lead_status",
+          "default": "update_lead_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "leadId": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "campaign": {
+          "description": "Campaign name or ID, or all for every non-stopped campaign containing this lead.",
+          "minLength": 1,
+          "title": "Campaign",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "RESUME",
+            "PAUSED",
+            "STOPPED",
+            "CONVERTED",
+            "SUBSCRIBED",
+            "COMPLETED_NO_REPLY",
+            "REPLIED",
+            "CANNOT_CONTACT",
+            "NOT_ACTIVATED",
+            "SKIPPED",
+            "ACTIVATED",
+            "ENRICHED",
+            "CONTACTED",
+            "COMPLETED_WITHOUT_REPLY",
+            "TO_QUALIFY",
+            "UNSUBSCRIBED",
+            "OUT_OF_OFFICE",
+            "WRONG_TIMING",
+            "INTERESTED",
+            "NOT_INTERESTED",
+            "CALL_BOOKED",
+            "NEGOTIATING",
+            "READY_TO_BUY",
+            "WRONG_TARGET",
+            "ALREADY_EQUIPPED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leadId",
+        "campaign",
+        "status"
+      ],
+      "title": "UpdateLeadStatus",
+      "type": "object"
+    },
+    "UpsertLead": {
+      "properties": {
+        "operation": {
+          "const": "upsert_lead",
+          "default": "upsert_lead",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audience": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Audience name or ID. A missing named audience is created.",
+          "title": "Audience"
+        },
+        "leadId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead ID"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "proEmail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work email"
+        },
+        "persoEmail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Personal email"
+        },
+        "linkedinUrl": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "LinkedIn URL"
+        },
+        "twitter": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Twitter"
+        },
+        "crm_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "CRM ID"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company name"
+        },
+        "companyUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company URL"
+        },
+        "jobTitle": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job title"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 1500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the existing lead note.",
+          "title": "Note"
+        },
+        "bio": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bio"
+        }
+      },
+      "title": "UpsertLead",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_audience": "#/$defs/CreateAudience",
+          "get_audience": "#/$defs/GetAudience",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_stats": "#/$defs/GetCampaignStats",
+          "get_credits": "#/$defs/GetCredits",
+          "get_me": "#/$defs/GetMe",
+          "list_audience_leads": "#/$defs/ListAudienceLeads",
+          "list_audiences": "#/$defs/ListAudiences",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_identities": "#/$defs/ListIdentities",
+          "list_lead_conversations": "#/$defs/ListLeadConversations",
+          "list_lead_logs": "#/$defs/ListLeadLogs",
+          "list_members": "#/$defs/ListMembers",
+          "list_workspaces": "#/$defs/ListWorkspaces",
+          "reply_email": "#/$defs/ReplyEmail",
+          "search_lead": "#/$defs/SearchLead",
+          "send_linkedin_message": "#/$defs/SendLinkedinMessage",
+          "update_campaign_status": "#/$defs/UpdateCampaignStatus",
+          "update_lead_status": "#/$defs/UpdateLeadStatus",
+          "upsert_lead": "#/$defs/UpsertLead"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/ListMembers"
+        },
+        {
+          "$ref": "#/$defs/ListIdentities"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/ListAudiences"
+        },
+        {
+          "$ref": "#/$defs/CreateAudience"
+        },
+        {
+          "$ref": "#/$defs/GetAudience"
+        },
+        {
+          "$ref": "#/$defs/ListAudienceLeads"
+        },
+        {
+          "$ref": "#/$defs/UpsertLead"
+        },
+        {
+          "$ref": "#/$defs/SearchLead"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadStatus"
+        },
+        {
+          "$ref": "#/$defs/ListLeadLogs"
+        },
+        {
+          "$ref": "#/$defs/ListLeadConversations"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignStats"
+        },
+        {
+          "$ref": "#/$defs/UpdateCampaignStatus"
+        },
+        {
+          "$ref": "#/$defs/SendLinkedinMessage"
+        },
+        {
+          "$ref": "#/$defs/ReplyEmail"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LagrowthmachineAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Lagrowthmachine Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
