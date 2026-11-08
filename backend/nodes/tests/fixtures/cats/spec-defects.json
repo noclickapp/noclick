@@ -1,0 +1,9 @@
+[
+  {
+    "kind": "d",
+    "issue": "OpenAPI servers URL omits /v3",
+    "contract": "https://docs.catsone.com/openapi.yaml",
+    "docs": "https://docs.catsone.com/#host",
+    "detail": "The pinned contract declares https://api.catsone.com and paths /site, /candidates, etc. The same contract description and current provider Host docs specify https://api.catsone.com/v3. Every node request follows that documented v3 base. This produces all 25 No spec operation blockers; no request-body or parser verdict is possible in the unmodified harness. Native tests separately validate each operation against the pinned body schema and provider response example."
+  }
+]

@@ -1,0 +1,1907 @@
+{
+  "get_site": {
+    "method": "GET",
+    "route": "/site",
+    "status": 200,
+    "body": {
+      "id": 5821,
+      "mode": "recruiter",
+      "subdomain": "kitten",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_site"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": []
+  },
+  "list_candidates": {
+    "method": "GET",
+    "route": "/candidates",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 617,
+      "_links": {},
+      "_embedded": {
+        "candidates": [
+          {
+            "id": 3372,
+            "first_name": "Arno",
+            "middle_name": "Skyla",
+            "last_name": "Hintz",
+            "title": "Regional Program Supervisor",
+            "emails": {
+              "primary": "Idella_Carter58@gmail.com",
+              "secondary": "Donna.Von84@hotmail.com"
+            },
+            "address": {
+              "street": "3896 Elsie Camp",
+              "city": "Rhiannafort",
+              "state": "IN",
+              "postal_code": "74174-7694"
+            },
+            "country_code": "US",
+            "social_media_urls": [],
+            "website": "http://lavada.name",
+            "best_time_to_call": "After 5pm",
+            "current_employer": "Jacobson Group",
+            "date_available": "Next month",
+            "current_pay": "50k",
+            "desired_pay": "120k",
+            "is_willing_to_relocate": false,
+            "key_skills": "Programming, management, fishing",
+            "notes": "Alias beatae laudantium corrupti consequatur laboriosam facere labore dolor tempore.",
+            "source": "Google",
+            "is_hot": true,
+            "is_active": false,
+            "is_registered": false,
+            "contact_id": 1611,
+            "owner_id": 5676,
+            "entered_by_id": 3269,
+            "date_created": "2025-10-27T22:51:17.077Z",
+            "date_modified": "2025-03-15T16:35:18.710Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_candidates"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "get_candidate": {
+    "method": "GET",
+    "route": "/candidates/{id}",
+    "status": 200,
+    "body": {
+      "id": 3372,
+      "first_name": "Arno",
+      "middle_name": "Skyla",
+      "last_name": "Hintz",
+      "title": "Regional Program Supervisor",
+      "emails": {
+        "primary": "Idella_Carter58@gmail.com",
+        "secondary": "Donna.Von84@hotmail.com"
+      },
+      "address": {
+        "street": "3896 Elsie Camp",
+        "city": "Rhiannafort",
+        "state": "IN",
+        "postal_code": "74174-7694"
+      },
+      "country_code": "US",
+      "social_media_urls": [],
+      "website": "http://lavada.name",
+      "best_time_to_call": "After 5pm",
+      "current_employer": "Jacobson Group",
+      "date_available": "Next month",
+      "current_pay": "50k",
+      "desired_pay": "120k",
+      "is_willing_to_relocate": false,
+      "key_skills": "Programming, management, fishing",
+      "notes": "Alias beatae laudantium corrupti consequatur laboriosam facere labore dolor tempore.",
+      "source": "Google",
+      "is_hot": true,
+      "is_active": false,
+      "is_registered": false,
+      "contact_id": 1611,
+      "owner_id": 5676,
+      "entered_by_id": 3269,
+      "date_created": "2025-10-27T22:51:17.077Z",
+      "date_modified": "2025-03-15T16:35:18.710Z",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_candidate",
+      "candidate_id": 3372
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "search_candidates": {
+    "method": "GET",
+    "route": "/candidates/search",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 617,
+      "_links": {},
+      "_embedded": {
+        "candidates": [
+          {
+            "id": 3372,
+            "first_name": "Arno",
+            "middle_name": "Skyla",
+            "last_name": "Hintz",
+            "title": "Regional Program Supervisor",
+            "emails": {
+              "primary": "Idella_Carter58@gmail.com",
+              "secondary": "Donna.Von84@hotmail.com"
+            },
+            "address": {
+              "street": "3896 Elsie Camp",
+              "city": "Rhiannafort",
+              "state": "IN",
+              "postal_code": "74174-7694"
+            },
+            "country_code": "US",
+            "social_media_urls": [],
+            "website": "http://lavada.name",
+            "best_time_to_call": "After 5pm",
+            "current_employer": "Jacobson Group",
+            "date_available": "Next month",
+            "current_pay": "50k",
+            "desired_pay": "120k",
+            "is_willing_to_relocate": false,
+            "key_skills": "Programming, management, fishing",
+            "notes": "Alias beatae laudantium corrupti consequatur laboriosam facere labore dolor tempore.",
+            "source": "Google",
+            "is_hot": true,
+            "is_active": false,
+            "is_registered": false,
+            "contact_id": 1611,
+            "owner_id": 5676,
+            "entered_by_id": 3269,
+            "date_created": "2025-10-27T22:51:17.077Z",
+            "date_modified": "2025-03-15T16:35:18.710Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "search_candidates",
+      "query": "Guido",
+      "page": 1,
+      "per_page": 25
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "query",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "create_candidate": {
+    "method": "POST",
+    "route": "/candidates",
+    "status": 201,
+    "body": null,
+    "config": {
+      "operation": "create_candidate",
+      "check_duplicate": true,
+      "first_name": "Arnaldo",
+      "middle_name": "Claudine Bull",
+      "last_name": "Adams",
+      "title": "Forward Applications Analyst",
+      "emails": [
+        {
+          "email": "Meda.Waelchi@hotmail.com",
+          "is_primary": false
+        }
+      ],
+      "phones": [
+        {
+          "number": "+16124063451",
+          "extension": "8371",
+          "type": "Mobile"
+        }
+      ],
+      "address": {
+        "street": "046 Zander Unions",
+        "city": "Lake Jeramyport",
+        "state": "Missouri",
+        "postal_code": "53147-2751"
+      },
+      "country_code": "US",
+      "website": "http://filiberto.name",
+      "current_employer": "",
+      "key_skills": "",
+      "notes": "",
+      "source": "Google",
+      "owner_id": 6773,
+      "is_active": true,
+      "is_hot": false
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "emails": {
+          "type": "array",
+          "items": {}
+        },
+        "phones": {
+          "type": "array",
+          "items": {}
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "social_media_urls": {
+          "type": "array",
+          "items": {}
+        },
+        "website": {
+          "type": "string"
+        },
+        "best_time_to_call": {
+          "type": "string"
+        },
+        "current_employer": {
+          "type": "string"
+        },
+        "date_available": {
+          "type": "string"
+        },
+        "current_pay": {
+          "type": "string"
+        },
+        "desired_pay": {
+          "type": "string"
+        },
+        "is_willing_to_relocate": {
+          "type": "boolean"
+        },
+        "key_skills": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "password": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        },
+        "work_history": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "check_duplicate",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ]
+  },
+  "update_candidate": {
+    "method": "PUT",
+    "route": "/candidates/{id}",
+    "status": 204,
+    "body": null,
+    "config": {
+      "operation": "update_candidate",
+      "candidate_id": 9424,
+      "first_name": "Arturo",
+      "middle_name": "Brock Bull",
+      "last_name": "Emard",
+      "title": "National Intranet Administrator",
+      "address": {
+        "street": "25849 Hobart Crescent",
+        "city": "East Alyssonmouth",
+        "state": "New Jersey",
+        "postal_code": "43919"
+      },
+      "country_code": "US",
+      "website": "",
+      "current_employer": "",
+      "key_skills": "",
+      "notes": "",
+      "source": "Google",
+      "owner_id": 9945,
+      "is_active": false,
+      "is_hot": true
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "social_media_urls": {
+          "type": "array",
+          "items": {}
+        },
+        "website": {
+          "type": "string"
+        },
+        "best_time_to_call": {
+          "type": "string"
+        },
+        "current_employer": {
+          "type": "string"
+        },
+        "date_available": {
+          "type": "string"
+        },
+        "current_pay": {
+          "type": "string"
+        },
+        "desired_pay": {
+          "type": "string"
+        },
+        "is_willing_to_relocate": {
+          "type": "boolean"
+        },
+        "key_skills": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "password": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "list_companies": {
+    "method": "GET",
+    "route": "/companies",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 552,
+      "_links": {},
+      "_embedded": {
+        "companies": [
+          {
+            "id": 8627,
+            "owner_id": 1516,
+            "name": "Altenwerth - Baumbach",
+            "website": "https://tiara.info",
+            "address": {
+              "street": "3896 Elsie Camp",
+              "city": "Rhiannafort",
+              "state": "IN",
+              "postal_code": "74174-7694"
+            },
+            "country_code": "US",
+            "entered_by_id": 834,
+            "social_media_urls": [],
+            "notes": "Quisquam ad fugiat hic.",
+            "is_hot": true,
+            "key_technologies": "",
+            "billing_contact_id": 9977,
+            "user_groups": [],
+            "status_id": 8484,
+            "date_created": "2025-05-30T13:51:49.081Z",
+            "date_modified": "2025-09-27T04:43:54.487Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_companies"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "get_company": {
+    "method": "GET",
+    "route": "/companies/{id}",
+    "status": 200,
+    "body": {
+      "id": 8627,
+      "owner_id": 1516,
+      "name": "Altenwerth - Baumbach",
+      "website": "https://tiara.info",
+      "address": {
+        "street": "3896 Elsie Camp",
+        "city": "Rhiannafort",
+        "state": "IN",
+        "postal_code": "74174-7694"
+      },
+      "country_code": "US",
+      "entered_by_id": 834,
+      "social_media_urls": [],
+      "notes": "Quisquam ad fugiat hic.",
+      "is_hot": true,
+      "key_technologies": "",
+      "billing_contact_id": 9977,
+      "user_groups": [],
+      "status_id": 8484,
+      "date_created": "2025-05-30T13:51:49.081Z",
+      "date_modified": "2025-09-27T04:43:54.487Z",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_company",
+      "company_id": 8627
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "create_company": {
+    "method": "POST",
+    "route": "/companies",
+    "status": 201,
+    "body": null,
+    "config": {
+      "operation": "create_company",
+      "check_duplicate": true,
+      "name": "Kuvalis, Hackett and Jones",
+      "owner_id": 5348,
+      "website": "http://jaeden.name",
+      "phones": [
+        {
+          "number": "+16124063451",
+          "extension": "664",
+          "type": "Main"
+        }
+      ],
+      "address": {
+        "street": "869 Terry Ramp",
+        "city": "Kozeyborough",
+        "state": "Nebraska",
+        "postal_code": "92987"
+      },
+      "country_code": "US",
+      "notes": "Possimus mollitia amet ex error quisquam quibusdam et quae.",
+      "is_hot": false,
+      "key_technologies": ""
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "website": {
+          "type": "string"
+        },
+        "phones": {
+          "type": "array",
+          "items": {}
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "entered_by_id": {
+          "type": "number"
+        },
+        "social_media_urls": {
+          "type": "array",
+          "items": {}
+        },
+        "notes": {
+          "type": "string"
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "key_technologies": {
+          "type": "string"
+        },
+        "billing_contact_id": {
+          "type": "number"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        },
+        "user_groups": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "name",
+        "owner_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "check_duplicate",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ]
+  },
+  "update_company": {
+    "method": "PUT",
+    "route": "/companies/{id}",
+    "status": 204,
+    "body": null,
+    "config": {
+      "operation": "update_company",
+      "company_id": 8829,
+      "name": "Kuvalis, Hackett and Jones",
+      "owner_id": 5348,
+      "website": "http://jaeden.name",
+      "phones": [
+        {
+          "number": "+16124063451",
+          "extension": "664",
+          "type": "Main"
+        }
+      ],
+      "address": {
+        "street": "869 Terry Ramp",
+        "city": "Kozeyborough",
+        "state": "Nebraska",
+        "postal_code": "92987"
+      },
+      "country_code": "US",
+      "notes": "Possimus mollitia amet ex error quisquam quibusdam et quae.",
+      "is_hot": false,
+      "key_technologies": ""
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "website": {
+          "type": "string"
+        },
+        "phones": {
+          "type": "array",
+          "items": {}
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "entered_by_id": {
+          "type": "number"
+        },
+        "social_media_urls": {
+          "type": "array",
+          "items": {}
+        },
+        "notes": {
+          "type": "string"
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "key_technologies": {
+          "type": "string"
+        },
+        "billing_contact_id": {
+          "type": "number"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        },
+        "user_groups": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "name",
+        "owner_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "list_contacts": {
+    "method": "GET",
+    "route": "/contacts",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 458,
+      "_links": {},
+      "_embedded": {
+        "contacts": [
+          {
+            "id": 2451,
+            "first_name": "Roy",
+            "last_name": "Kub",
+            "title": "Direct Web Consultant",
+            "reports_to_id": 1557,
+            "emails": {
+              "primary": "Liana90@gmail.com",
+              "secondary": "Tyree_Ankunding@hotmail.com"
+            },
+            "address": {
+              "street": "3896 Elsie Camp",
+              "city": "Rhiannafort",
+              "state": "IN",
+              "postal_code": "74174-7694"
+            },
+            "country_code": "US",
+            "social_media_urls": [],
+            "is_hot": false,
+            "notes": "Quo ratione facilis cum accusantium.",
+            "entered_by_id": 3589,
+            "status_id": 2576,
+            "date_created": "2025-07-29T05:51:14.381Z",
+            "date_modified": "2025-11-23T02:12:47.037Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_contacts"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "get_contact": {
+    "method": "GET",
+    "route": "/contacts/{id}",
+    "status": 200,
+    "body": {
+      "id": 2451,
+      "first_name": "Roy",
+      "last_name": "Kub",
+      "title": "Direct Web Consultant",
+      "reports_to_id": 1557,
+      "emails": {
+        "primary": "Liana90@gmail.com",
+        "secondary": "Tyree_Ankunding@hotmail.com"
+      },
+      "address": {
+        "street": "3896 Elsie Camp",
+        "city": "Rhiannafort",
+        "state": "IN",
+        "postal_code": "74174-7694"
+      },
+      "country_code": "US",
+      "social_media_urls": [],
+      "is_hot": false,
+      "notes": "Quo ratione facilis cum accusantium.",
+      "entered_by_id": 3589,
+      "status_id": 2576,
+      "date_created": "2025-07-29T05:51:14.381Z",
+      "date_modified": "2025-11-23T02:12:47.037Z",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_contact",
+      "contact_id": 2451
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "create_contact": {
+    "method": "POST",
+    "route": "/contacts",
+    "status": 201,
+    "body": null,
+    "config": {
+      "operation": "create_contact",
+      "check_duplicate": true,
+      "first_name": "Chelsey",
+      "last_name": "Hermiston",
+      "owner_id": 5510,
+      "company_id": 3914,
+      "title": "Product Brand Representative",
+      "reports_to_id": 3264,
+      "has_left_company": false,
+      "emails": [
+        {
+          "email": "Meda.Waelchi@hotmail.com",
+          "is_primary": false
+        }
+      ],
+      "phones": [
+        {
+          "number": "+16124063451",
+          "extension": "8371",
+          "type": "Mobile"
+        }
+      ],
+      "address": {
+        "street": "077 Kiarra Islands",
+        "city": "Hildegardland",
+        "state": "New Hampshire",
+        "postal_code": "39861"
+      },
+      "country_code": "US",
+      "is_hot": true,
+      "notes": "Vel sequi et et rerum."
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "company_id": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "reports_to_id": {
+          "type": "number"
+        },
+        "has_left_company": {
+          "type": "boolean"
+        },
+        "emails": {
+          "type": "array",
+          "items": {}
+        },
+        "phones": {
+          "type": "array",
+          "items": {}
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "social_media_urls": {
+          "type": "array",
+          "items": {}
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "owner_id",
+        "company_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "check_duplicate",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ]
+  },
+  "update_contact": {
+    "method": "PUT",
+    "route": "/contacts/{id}",
+    "status": 204,
+    "body": null,
+    "config": {
+      "operation": "update_contact",
+      "contact_id": 6445,
+      "first_name": "Chelsey",
+      "last_name": "Hermiston",
+      "owner_id": 5510,
+      "company_id": 3914,
+      "title": "Product Brand Representative",
+      "reports_to_id": 3264,
+      "has_left_company": false,
+      "emails": [
+        {
+          "email": "Meda.Waelchi@hotmail.com",
+          "is_primary": false
+        }
+      ],
+      "phones": [
+        {
+          "number": "+16124063451",
+          "extension": "8371",
+          "type": "Mobile"
+        }
+      ],
+      "address": {
+        "street": "077 Kiarra Islands",
+        "city": "Hildegardland",
+        "state": "New Hampshire",
+        "postal_code": "39861"
+      },
+      "country_code": "US",
+      "is_hot": true,
+      "notes": "Vel sequi et et rerum."
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "company_id": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "reports_to_id": {
+          "type": "number"
+        },
+        "has_left_company": {
+          "type": "boolean"
+        },
+        "emails": {
+          "type": "array",
+          "items": {}
+        },
+        "phones": {
+          "type": "array",
+          "items": {}
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "social_media_urls": {
+          "type": "array",
+          "items": {}
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "owner_id",
+        "company_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "list_jobs": {
+    "method": "GET",
+    "route": "/jobs",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 217,
+      "_links": {},
+      "_embedded": {
+        "jobs": [
+          {
+            "id": 9207,
+            "title": "National Paradigm Executive",
+            "location": {
+              "city": "South Taureanfurt",
+              "state": "MS",
+              "postal_code": "34114"
+            },
+            "country_code": "US",
+            "description": "Consequatur quo temporibus. Illo quia et molestiae eos ducimus porro nobis sed. Aut sunt eveniet et quasi sequi. Voluptatem expedita vel aut. Excepturi deleniti libero blanditiis beatae.",
+            "notes": "Quam autem praesentium veniam velit.",
+            "recruiter_id": 3493,
+            "owner_id": 5390,
+            "category": null,
+            "is_hot": false,
+            "start_date": "2025-01-29T13:24:13.171Z",
+            "salary": null,
+            "max_rate": null,
+            "duration": "",
+            "external_id": null,
+            "company_id": 7835,
+            "department_id": 1609,
+            "status_id": 1156,
+            "workflow_id": 9740,
+            "is_published": true,
+            "portal_hidden": true,
+            "user_groups": [],
+            "date_created": "2025-02-11T06:50:38.970Z",
+            "date_modified": "2025-11-07T15:09:08.391Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_jobs"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "get_job": {
+    "method": "GET",
+    "route": "/jobs/{id}",
+    "status": 200,
+    "body": {
+      "id": 9207,
+      "title": "National Paradigm Executive",
+      "location": {
+        "city": "South Taureanfurt",
+        "state": "MS",
+        "postal_code": "34114"
+      },
+      "country_code": "US",
+      "description": "Consequatur quo temporibus. Illo quia et molestiae eos ducimus porro nobis sed. Aut sunt eveniet et quasi sequi. Voluptatem expedita vel aut. Excepturi deleniti libero blanditiis beatae.",
+      "notes": "Quam autem praesentium veniam velit.",
+      "recruiter_id": 3493,
+      "owner_id": 5390,
+      "category": null,
+      "is_hot": false,
+      "start_date": "2025-01-29T13:24:13.171Z",
+      "salary": null,
+      "max_rate": null,
+      "duration": "",
+      "external_id": null,
+      "company_id": 7835,
+      "department_id": 1609,
+      "status_id": 1156,
+      "workflow_id": 9740,
+      "is_published": true,
+      "portal_hidden": true,
+      "user_groups": [],
+      "date_created": "2025-02-11T06:50:38.970Z",
+      "date_modified": "2025-11-07T15:09:08.391Z",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_job",
+      "job_id": 9207
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "create_job": {
+    "method": "POST",
+    "route": "/jobs",
+    "status": 201,
+    "body": null,
+    "config": {
+      "operation": "create_job",
+      "check_duplicate": true,
+      "title": "Regional Security Facilitator",
+      "location": {
+        "city": "East Lelahborough",
+        "state": "FL",
+        "postal_code": "06887-3024"
+      },
+      "country_code": "US",
+      "company_id": 4345,
+      "department_id": 8525,
+      "recruiter_id": 488,
+      "owner_id": 6913,
+      "is_hot": false,
+      "salary": "",
+      "type": "",
+      "openings": 0,
+      "external_id": "",
+      "description": "",
+      "notes": "",
+      "contact_id": 6883,
+      "workflow_id": 396
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "number"
+        },
+        "department_id": {
+          "type": "number"
+        },
+        "recruiter_id": {
+          "type": "number"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "start_date": {
+          "type": "string"
+        },
+        "salary": {
+          "type": "string"
+        },
+        "max_rate": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "openings": {
+          "type": "number"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "contact_id": {
+          "type": "number"
+        },
+        "workflow_id": {
+          "type": "number"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        },
+        "user_groups": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "title",
+        "location",
+        "company_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "check_duplicate",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ]
+  },
+  "update_job": {
+    "method": "PUT",
+    "route": "/jobs/{id}",
+    "status": 204,
+    "body": null,
+    "config": {
+      "operation": "update_job",
+      "job_id": 2409,
+      "title": "National Infrastructure Technician",
+      "location": {
+        "city": "North Tristian",
+        "state": "WA",
+        "postal_code": "84834"
+      },
+      "country_code": "US",
+      "company_id": 4541,
+      "department_id": 7361,
+      "recruiter_id": 6745,
+      "owner_id": 8844,
+      "is_hot": false,
+      "salary": "",
+      "type": "",
+      "openings": 0,
+      "external_id": "",
+      "description": "",
+      "notes": "",
+      "contact_id": 1920
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            }
+          }
+        },
+        "country_code": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "number"
+        },
+        "department_id": {
+          "type": "number"
+        },
+        "recruiter_id": {
+          "type": "number"
+        },
+        "owner_id": {
+          "type": "number"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "is_hot": {
+          "type": "boolean"
+        },
+        "start_date": {
+          "type": "string"
+        },
+        "salary": {
+          "type": "string"
+        },
+        "max_rate": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "openings": {
+          "type": "number"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "contact_id": {
+          "type": "number"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {}
+        },
+        "user_groups": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "title",
+        "location",
+        "company_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "list_pipelines": {
+    "method": "GET",
+    "route": "/pipelines",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 524,
+      "_links": {},
+      "_embedded": {
+        "pipelines": [
+          {
+            "id": 7847,
+            "candidate_id": 7057,
+            "job_id": 8484,
+            "rating": 0,
+            "workflow_id": 3189,
+            "status_id": 6705,
+            "date_created": "2025-02-06T18:44:24.989Z",
+            "date_modified": "2025-08-24T22:11:56.567Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_pipelines"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "get_pipeline": {
+    "method": "GET",
+    "route": "/pipelines/{id}",
+    "status": 200,
+    "body": {
+      "id": 7847,
+      "candidate_id": 7057,
+      "job_id": 8484,
+      "rating": 0,
+      "workflow_id": 3189,
+      "status_id": 6705,
+      "date_created": "2025-02-06T18:44:24.989Z",
+      "date_modified": "2025-08-24T22:11:56.567Z",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_pipeline",
+      "pipeline_id": 7847
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "create_pipeline": {
+    "method": "POST",
+    "route": "/pipelines",
+    "status": 201,
+    "body": null,
+    "config": {
+      "operation": "create_pipeline",
+      "create_activity": true,
+      "candidate_id": 7930,
+      "job_id": 8093,
+      "rating": 3
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "candidate_id": {
+          "type": "number"
+        },
+        "job_id": {
+          "type": "number"
+        },
+        "rating": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "job_id"
+      ]
+    },
+    "parameters": [
+      {
+        "name": "create_activity",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ]
+  },
+  "list_tasks": {
+    "method": "GET",
+    "route": "/tasks",
+    "status": 200,
+    "body": {
+      "count": 25,
+      "total": 322,
+      "_links": {},
+      "_embedded": {
+        "tasks": [
+          {
+            "id": 9047,
+            "data_item": {
+              "id": 5258,
+              "type": "job"
+            },
+            "entered_by_id": 3632,
+            "assigned_to_id": 8799,
+            "description": "Eum qui deserunt molestias sunt unde earum id eligendi consequatur.",
+            "priority": 2,
+            "date_due": "2025-08-16T04:03:50.702Z",
+            "is_completed": true,
+            "date_completed": "2025-03-04T09:39:28.864Z",
+            "date_created": "2025-08-09T21:21:22.273Z",
+            "date_updated": "2025-11-05T20:41:28.952Z",
+            "_links": {},
+            "_embedded": {}
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_tasks"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "per_page",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  },
+  "get_task": {
+    "method": "GET",
+    "route": "/tasks/{id}",
+    "status": 200,
+    "body": {
+      "id": 9047,
+      "data_item": {
+        "id": 5258,
+        "type": "job"
+      },
+      "entered_by_id": 3632,
+      "assigned_to_id": 8799,
+      "description": "Eum qui deserunt molestias sunt unde earum id eligendi consequatur.",
+      "priority": 2,
+      "date_due": "2025-08-16T04:03:50.702Z",
+      "is_completed": true,
+      "date_completed": "2025-03-04T09:39:28.864Z",
+      "date_created": "2025-08-09T21:21:22.273Z",
+      "date_updated": "2025-11-05T20:41:28.952Z",
+      "_links": {},
+      "_embedded": {}
+    },
+    "config": {
+      "operation": "get_task",
+      "task_id": "9047"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ]
+  },
+  "create_task": {
+    "method": "POST",
+    "route": "/tasks",
+    "status": 201,
+    "body": null,
+    "config": {
+      "operation": "create_task",
+      "data_item": {
+        "id": 5258,
+        "type": "job"
+      },
+      "assigned_to_id": 7689,
+      "description": "Est reiciendis et harum culpa est repudiandae et.",
+      "priority": 3,
+      "date_due": "2025-04-30T11:45:54.372Z"
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "data_item": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "assigned_to_id": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "date_due": {
+          "type": "string"
+        }
+      }
+    },
+    "parameters": []
+  },
+  "update_task": {
+    "method": "PUT",
+    "route": "/tasks/{id}",
+    "status": 204,
+    "body": null,
+    "config": {
+      "operation": "update_task",
+      "task_id": 4566,
+      "assigned_to_id": 3526,
+      "description": "Maxime quod excepturi veritatis.",
+      "priority": 3,
+      "date_due": "2025-01-03T02:01:47.215Z",
+      "is_completed": true
+    },
+    "source": "https://docs.catsone.com/openapi.yaml",
+    "request_schema": {
+      "type": "object",
+      "properties": {
+        "assigned_to_id": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "date_due": {
+          "type": "string"
+        },
+        "is_completed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,2280 @@
+{
+  "$defs": {
+    "CatsAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cats_api_key",
+          "default": "cats_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "CATS API Key",
+      "type": "object",
+      "x-credential-instructions": "In CATS, open Administration settings and create a v3 API key. Paste the key here without the Token prefix. Older transaction codes do not work. The key can read and change records allowed by your CATS account.",
+      "x-credential-url": "https://docs.catsone.com/#authentication"
+    },
+    "CatsAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        }
+      },
+      "title": "CatsAddress",
+      "type": "object"
+    },
+    "CatsCreateCandidateConfig": {
+      "additionalProperties": false,
+      "description": "POST /candidates.",
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "current_employer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Employer"
+        },
+        "key_skills": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key Skills"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "operation": {
+          "const": "create_candidate",
+          "default": "create_candidate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "check_duplicate": {
+          "default": true,
+          "description": "Refuse a duplicate instead of creating another record.",
+          "title": "Check Duplicate",
+          "type": "boolean"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsEmail"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "CatsCreateCandidateConfig",
+      "type": "object"
+    },
+    "CatsCreateCompanyConfig": {
+      "additionalProperties": false,
+      "description": "POST /companies.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "exclusiveMinimum": 0,
+          "title": "Owner Id",
+          "type": "integer"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "key_technologies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key Technologies"
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "check_duplicate": {
+          "default": true,
+          "description": "Refuse a duplicate instead of creating another record.",
+          "title": "Check Duplicate",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "owner_id"
+      ],
+      "title": "CatsCreateCompanyConfig",
+      "type": "object"
+    },
+    "CatsCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "POST /contacts.",
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "exclusiveMinimum": 0,
+          "title": "Owner Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "reports_to_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reports To Id"
+        },
+        "has_left_company": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Has Left Company"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsEmail"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "check_duplicate": {
+          "default": true,
+          "description": "Refuse a duplicate instead of creating another record.",
+          "title": "Check Duplicate",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "owner_id",
+        "company_id"
+      ],
+      "title": "CatsCreateContactConfig",
+      "type": "object"
+    },
+    "CatsCreateJobConfig": {
+      "additionalProperties": false,
+      "description": "POST /jobs.",
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/CatsLocation",
+          "description": "Job location, using city, state and postal_code."
+        },
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id"
+        },
+        "recruiter_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recruiter Id"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "salary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Salary"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "openings": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openings"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "check_duplicate": {
+          "default": true,
+          "description": "Refuse a duplicate instead of creating another record.",
+          "title": "Check Duplicate",
+          "type": "boolean"
+        },
+        "workflow_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workflow Id"
+        }
+      },
+      "required": [
+        "title",
+        "location",
+        "company_id"
+      ],
+      "title": "CatsCreateJobConfig",
+      "type": "object"
+    },
+    "CatsCreatePipelineConfig": {
+      "additionalProperties": false,
+      "description": "POST /pipelines.",
+      "properties": {
+        "operation": {
+          "const": "create_pipeline",
+          "default": "create_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "exclusiveMinimum": 0,
+          "title": "Candidate Id",
+          "type": "integer"
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rating"
+        },
+        "create_activity": {
+          "default": false,
+          "description": "Also create a corresponding activity in CATS.",
+          "title": "Create Activity",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "job_id"
+      ],
+      "title": "CatsCreatePipelineConfig",
+      "type": "object"
+    },
+    "CatsCreateTaskConfig": {
+      "additionalProperties": false,
+      "description": "POST /tasks.",
+      "properties": {
+        "assigned_to_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "date_due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp. Omit for ASAP when creating a task.",
+          "title": "Date Due"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data_item": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsDataItem"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "CatsCreateTaskConfig",
+      "type": "object"
+    },
+    "CatsDataItem": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "candidate",
+            "contact",
+            "company",
+            "job"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "CatsDataItem",
+      "type": "object"
+    },
+    "CatsEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "is_primary": {
+          "default": false,
+          "title": "Is Primary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CatsEmail",
+      "type": "object"
+    },
+    "CatsGetCandidateConfig": {
+      "additionalProperties": false,
+      "description": "GET /candidates/{id}.",
+      "properties": {
+        "operation": {
+          "const": "get_candidate",
+          "default": "get_candidate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "exclusiveMinimum": 0,
+          "title": "Candidate Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "CatsGetCandidateConfig",
+      "type": "object"
+    },
+    "CatsGetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "GET /companies/{id}.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "CatsGetCompanyConfig",
+      "type": "object"
+    },
+    "CatsGetContactConfig": {
+      "additionalProperties": false,
+      "description": "GET /contacts/{id}.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CatsGetContactConfig",
+      "type": "object"
+    },
+    "CatsGetJobConfig": {
+      "additionalProperties": false,
+      "description": "GET /jobs/{id}.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "CatsGetJobConfig",
+      "type": "object"
+    },
+    "CatsGetPipelineConfig": {
+      "additionalProperties": false,
+      "description": "GET /pipelines/{id}.",
+      "properties": {
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pipeline_id": {
+          "exclusiveMinimum": 0,
+          "title": "Pipeline Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "CatsGetPipelineConfig",
+      "type": "object"
+    },
+    "CatsGetSiteConfig": {
+      "additionalProperties": false,
+      "description": "GET /site.",
+      "properties": {
+        "operation": {
+          "const": "get_site",
+          "default": "get_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsGetSiteConfig",
+      "type": "object"
+    },
+    "CatsGetTaskConfig": {
+      "additionalProperties": false,
+      "description": "GET /tasks/{id}.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "CatsGetTaskConfig",
+      "type": "object"
+    },
+    "CatsListCandidatesConfig": {
+      "additionalProperties": false,
+      "description": "GET /candidates.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_candidates",
+          "default": "list_candidates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsListCandidatesConfig",
+      "type": "object"
+    },
+    "CatsListCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "GET /companies.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsListCompaniesConfig",
+      "type": "object"
+    },
+    "CatsListContactsConfig": {
+      "additionalProperties": false,
+      "description": "GET /contacts.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsListContactsConfig",
+      "type": "object"
+    },
+    "CatsListJobsConfig": {
+      "additionalProperties": false,
+      "description": "GET /jobs.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsListJobsConfig",
+      "type": "object"
+    },
+    "CatsListPipelinesConfig": {
+      "additionalProperties": false,
+      "description": "GET /pipelines.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsListPipelinesConfig",
+      "type": "object"
+    },
+    "CatsListTasksConfig": {
+      "additionalProperties": false,
+      "description": "GET /tasks.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CatsListTasksConfig",
+      "type": "object"
+    },
+    "CatsLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        }
+      },
+      "title": "CatsLocation",
+      "type": "object"
+    },
+    "CatsPhone": {
+      "additionalProperties": false,
+      "properties": {
+        "number": {
+          "minLength": 1,
+          "title": "Number",
+          "type": "string"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extension"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "CatsPhone",
+      "type": "object"
+    },
+    "CatsSearchCandidatesConfig": {
+      "additionalProperties": false,
+      "description": "GET /candidates/search.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to retrieve the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_candidates",
+          "default": "search_candidates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Text to search within candidates.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "CatsSearchCandidatesConfig",
+      "type": "object"
+    },
+    "CatsUpdateCandidateConfig": {
+      "additionalProperties": false,
+      "description": "PUT /candidates/{id}.",
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "current_employer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Employer"
+        },
+        "key_skills": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key Skills"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "operation": {
+          "const": "update_candidate",
+          "default": "update_candidate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "exclusiveMinimum": 0,
+          "title": "Candidate Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "candidate_id"
+      ],
+      "title": "CatsUpdateCandidateConfig",
+      "type": "object"
+    },
+    "CatsUpdateCompanyConfig": {
+      "additionalProperties": false,
+      "description": "PUT /companies/{id}.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "exclusiveMinimum": 0,
+          "title": "Owner Id",
+          "type": "integer"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "key_technologies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key Technologies"
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "owner_id",
+        "company_id"
+      ],
+      "title": "CatsUpdateCompanyConfig",
+      "type": "object"
+    },
+    "CatsUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "PUT /contacts/{id}.",
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "exclusiveMinimum": 0,
+          "title": "Owner Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "reports_to_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reports To Id"
+        },
+        "has_left_company": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Has Left Company"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsEmail"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CatsPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatsAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "owner_id",
+        "company_id",
+        "contact_id"
+      ],
+      "title": "CatsUpdateContactConfig",
+      "type": "object"
+    },
+    "CatsUpdateJobConfig": {
+      "additionalProperties": false,
+      "description": "PUT /jobs/{id}.",
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/CatsLocation",
+          "description": "Job location, using city, state and postal_code."
+        },
+        "company_id": {
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id"
+        },
+        "recruiter_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recruiter Id"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "is_hot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Hot"
+        },
+        "salary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Salary"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "openings": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openings"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "title",
+        "location",
+        "company_id",
+        "job_id"
+      ],
+      "title": "CatsUpdateJobConfig",
+      "type": "object"
+    },
+    "CatsUpdateTaskConfig": {
+      "additionalProperties": false,
+      "description": "PUT /tasks/{id}.",
+      "properties": {
+        "assigned_to_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "date_due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp. Omit for ASAP when creating a task.",
+          "title": "Date Due"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task Id",
+          "type": "integer"
+        },
+        "is_completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Completed"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "CatsUpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_candidate": "#/$defs/CatsCreateCandidateConfig",
+          "create_company": "#/$defs/CatsCreateCompanyConfig",
+          "create_contact": "#/$defs/CatsCreateContactConfig",
+          "create_job": "#/$defs/CatsCreateJobConfig",
+          "create_pipeline": "#/$defs/CatsCreatePipelineConfig",
+          "create_task": "#/$defs/CatsCreateTaskConfig",
+          "get_candidate": "#/$defs/CatsGetCandidateConfig",
+          "get_company": "#/$defs/CatsGetCompanyConfig",
+          "get_contact": "#/$defs/CatsGetContactConfig",
+          "get_job": "#/$defs/CatsGetJobConfig",
+          "get_pipeline": "#/$defs/CatsGetPipelineConfig",
+          "get_site": "#/$defs/CatsGetSiteConfig",
+          "get_task": "#/$defs/CatsGetTaskConfig",
+          "list_candidates": "#/$defs/CatsListCandidatesConfig",
+          "list_companies": "#/$defs/CatsListCompaniesConfig",
+          "list_contacts": "#/$defs/CatsListContactsConfig",
+          "list_jobs": "#/$defs/CatsListJobsConfig",
+          "list_pipelines": "#/$defs/CatsListPipelinesConfig",
+          "list_tasks": "#/$defs/CatsListTasksConfig",
+          "search_candidates": "#/$defs/CatsSearchCandidatesConfig",
+          "update_candidate": "#/$defs/CatsUpdateCandidateConfig",
+          "update_company": "#/$defs/CatsUpdateCompanyConfig",
+          "update_contact": "#/$defs/CatsUpdateContactConfig",
+          "update_job": "#/$defs/CatsUpdateJobConfig",
+          "update_task": "#/$defs/CatsUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CatsGetSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsListCandidatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsGetCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsSearchCandidatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsCreateCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsUpdateCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsCreateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsUpdateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsCreateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsUpdateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsGetPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsCreatePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/CatsUpdateTaskConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CatsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cats Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a candidate in CATS",
+    "Find candidates by name",
+    "Add a candidate to a job pipeline",
+    "Complete a recruiting task"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
