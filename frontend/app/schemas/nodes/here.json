@@ -1,0 +1,1783 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "postalCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postalcode"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        }
+      },
+      "title": "Address",
+      "type": "object"
+    },
+    "CircleDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/Point"
+        },
+        "radius": {
+          "description": "Radius in metres",
+          "minimum": 0,
+          "title": "Radius",
+          "type": "number"
+        },
+        "floor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Floor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "center",
+        "radius"
+      ],
+      "title": "CircleDefinition",
+      "type": "object"
+    },
+    "CircleGeofence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "const": "circle",
+          "title": "Type",
+          "type": "string"
+        },
+        "definition": {
+          "$ref": "#/$defs/CircleDefinition"
+        }
+      },
+      "required": [
+        "type",
+        "definition"
+      ],
+      "title": "CircleGeofence",
+      "type": "object"
+    },
+    "CreateGeofence": {
+      "additionalProperties": false,
+      "description": "Create a circle, polygon or POI geofence.",
+      "properties": {
+        "operation": {
+          "const": "create_geofence",
+          "default": "create_geofence",
+          "title": "Operation",
+          "type": "string"
+        },
+        "geofence": {
+          "discriminator": {
+            "mapping": {
+              "circle": "#/$defs/CircleGeofence",
+              "poi": "#/$defs/POIGeofence",
+              "polygon": "#/$defs/PolygonGeofence"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CircleGeofence"
+            },
+            {
+              "$ref": "#/$defs/PolygonGeofence"
+            },
+            {
+              "$ref": "#/$defs/POIGeofence"
+            }
+          ],
+          "title": "Geofence"
+        }
+      },
+      "required": [
+        "geofence"
+      ],
+      "title": "CreateGeofence",
+      "type": "object"
+    },
+    "CreateLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_location",
+          "default": "create_location",
+          "title": "Operation",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/LocationBody"
+        }
+      },
+      "required": [
+        "location"
+      ],
+      "title": "CreateLocation",
+      "type": "object"
+    },
+    "CreateRule": {
+      "additionalProperties": false,
+      "description": "Create a dwelling, detention, utilization, stock, online or shipment schedule rule.",
+      "properties": {
+        "operation": {
+          "const": "create_rule",
+          "default": "create_rule",
+          "title": "Operation",
+          "type": "string"
+        },
+        "rule": {
+          "discriminator": {
+            "mapping": {
+              "detention": "#/$defs/DurationRule",
+              "dwelling": "#/$defs/DurationRule",
+              "online": "#/$defs/OnlineRule",
+              "shipmentSchedule": "#/$defs/ShipmentScheduleRule",
+              "stock": "#/$defs/StockRule",
+              "utilization": "#/$defs/DurationRule"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DurationRule"
+            },
+            {
+              "$ref": "#/$defs/StockRule"
+            },
+            {
+              "$ref": "#/$defs/OnlineRule"
+            },
+            {
+              "$ref": "#/$defs/ShipmentScheduleRule"
+            }
+          ],
+          "title": "Rule"
+        }
+      },
+      "required": [
+        "rule"
+      ],
+      "title": "CreateRule",
+      "type": "object"
+    },
+    "DeleteGeofence": {
+      "additionalProperties": false,
+      "properties": {
+        "geofence_id": {
+          "description": "Geofence UUID",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Geofence Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_geofence",
+          "default": "delete_geofence",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "geofence_id"
+      ],
+      "title": "DeleteGeofence",
+      "type": "object"
+    },
+    "DeleteLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "location_id": {
+          "pattern": "^LOC-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Location Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_location",
+          "default": "delete_location",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "DeleteLocation",
+      "type": "object"
+    },
+    "DeleteRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "description": "Rule UUID",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_rule",
+          "default": "delete_rule",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id"
+      ],
+      "title": "DeleteRule",
+      "type": "object"
+    },
+    "DurationRule": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "enum": [
+            "utilization",
+            "detention",
+            "dwelling"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "threshold": {
+          "$ref": "#/$defs/DurationThreshold"
+        }
+      },
+      "required": [
+        "type",
+        "threshold"
+      ],
+      "title": "DurationRule",
+      "type": "object"
+    },
+    "DurationThreshold": {
+      "additionalProperties": false,
+      "properties": {
+        "durationS": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Durations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "durationS"
+      ],
+      "title": "DurationThreshold",
+      "type": "object"
+    },
+    "Floor": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "maximum": 999,
+              "minimum": -999,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "Floor",
+      "type": "object"
+    },
+    "GetDeviceMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "tracking_id": {
+          "description": "Physical tracking ID or virtual device external ID.",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        },
+        "app_id": {
+          "anyOf": [
+            {
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Application ID, needed when using a virtual device external ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_device_metadata",
+          "default": "get_device_metadata",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tracking_id"
+      ],
+      "title": "GetDeviceMetadata",
+      "type": "object"
+    },
+    "GetGeofence": {
+      "additionalProperties": false,
+      "properties": {
+        "geofence_id": {
+          "description": "Geofence UUID",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Geofence Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_geofence",
+          "default": "get_geofence",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "geofence_id"
+      ],
+      "title": "GetGeofence",
+      "type": "object"
+    },
+    "GetLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "location_id": {
+          "pattern": "^LOC-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Location Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GetLocation",
+      "type": "object"
+    },
+    "GetRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "description": "Rule UUID",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_rule",
+          "default": "get_rule",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id"
+      ],
+      "title": "GetRule",
+      "type": "object"
+    },
+    "GetShadow": {
+      "additionalProperties": false,
+      "description": "Get a device's desired and reported state.",
+      "properties": {
+        "tracking_id": {
+          "description": "Physical tracking ID or virtual device external ID.",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        },
+        "app_id": {
+          "anyOf": [
+            {
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Application ID, needed when using a virtual device external ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_shadow",
+          "default": "get_shadow",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tracking_id"
+      ],
+      "title": "GetShadow",
+      "type": "object"
+    },
+    "GetTraces": {
+      "additionalProperties": false,
+      "description": "Read one page of historical device positions and telemetry.",
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token returned by the previous call; leave empty for the first page.",
+          "title": "Page Token"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "tracking_id": {
+          "description": "Physical tracking ID or virtual device external ID.",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        },
+        "app_id": {
+          "anyOf": [
+            {
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Application ID, needed when using a virtual device external ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_traces",
+          "default": "get_traces",
+          "title": "Operation",
+          "type": "string"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in milliseconds",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in milliseconds",
+          "title": "After"
+        },
+        "outliers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outliers"
+        },
+        "smooth": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Smooth"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "unknown",
+                "normal",
+                "flight",
+                "transport",
+                "sleep"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "unknown",
+            "normal",
+            "flight",
+            "transport",
+            "sleep"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "tracking_id"
+      ],
+      "title": "GetTraces",
+      "type": "object"
+    },
+    "HereUserTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "here_user_token",
+          "default": "here_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional for a single project; required by HERE when your user belongs to multiple projects.",
+          "title": "Project ID"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "HERE Tracking User Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing HERE Tracking user access token obtained with /users/v2/login or /users/v2/tokenExchange. Use a user token, not an API key or a device token. Tokens expire; replace the token when it expires. For membership in multiple projects, enter the project ID. NoClick checks the project's claimed devices.",
+      "x-credential-url": "https://developer.here.com/documentation/tracking/swagger/swagger.json"
+    },
+    "ListDevices": {
+      "additionalProperties": false,
+      "description": "List devices claimed by the selected project.",
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token returned by the previous call; leave empty for the first page.",
+          "title": "Page Token"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_devices",
+          "default": "list_devices",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDevices",
+      "type": "object"
+    },
+    "ListGeofences": {
+      "additionalProperties": false,
+      "description": "List geofences in the selected project.",
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token returned by the previous call; leave empty for the first page.",
+          "title": "Page Token"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_geofences",
+          "default": "list_geofences",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListGeofences",
+      "type": "object"
+    },
+    "ListLocations": {
+      "additionalProperties": false,
+      "description": "List locations in the selected project.",
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token returned by the previous call; leave empty for the first page.",
+          "title": "Page Token"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "geofence_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geofence Id"
+        }
+      },
+      "title": "ListLocations",
+      "type": "object"
+    },
+    "ListRules": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token returned by the previous call; leave empty for the first page.",
+          "title": "Page Token"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_rules",
+          "default": "list_rules",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRules",
+      "type": "object"
+    },
+    "ListShadows": {
+      "additionalProperties": false,
+      "description": "List the latest device states in the selected project.",
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token returned by the previous call; leave empty for the first page.",
+          "title": "Page Token"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_shadows",
+          "default": "list_shadows",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "pattern": "^(trackingId|reported.timestamp|desired.timestamp):(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        }
+      },
+      "title": "ListShadows",
+      "type": "object"
+    },
+    "LocationBody": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Point"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "geofenceId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geofenceid"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "externalLocationId": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externallocationid"
+        }
+      },
+      "title": "LocationBody",
+      "type": "object"
+    },
+    "OnlineRule": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "const": "online",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "OnlineRule",
+      "type": "object"
+    },
+    "POIDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "floor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Floor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/POILocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "POIDefinition",
+      "type": "object"
+    },
+    "POIGeofence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "const": "poi",
+          "title": "Type",
+          "type": "string"
+        },
+        "definition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/POIDefinition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "POIGeofence",
+      "type": "object"
+    },
+    "POILocation": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Point"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "room": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Room"
+        }
+      },
+      "title": "POILocation",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lng": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lng",
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lng"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "PolygonDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "points": {
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "maxItems": 10,
+          "minItems": 3,
+          "title": "Points",
+          "type": "array"
+        },
+        "floor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Floor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "title": "PolygonDefinition",
+      "type": "object"
+    },
+    "PolygonGeofence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "const": "polygon",
+          "title": "Type",
+          "type": "string"
+        },
+        "definition": {
+          "$ref": "#/$defs/PolygonDefinition"
+        }
+      },
+      "required": [
+        "type",
+        "definition"
+      ],
+      "title": "PolygonGeofence",
+      "type": "object"
+    },
+    "ScheduleThreshold": {
+      "additionalProperties": false,
+      "properties": {
+        "before": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        }
+      },
+      "title": "ScheduleThreshold",
+      "type": "object"
+    },
+    "SetDeviceMetadata": {
+      "additionalProperties": false,
+      "description": "Create or replace the device's metadata object (at most 1 KB).",
+      "properties": {
+        "tracking_id": {
+          "description": "Physical tracking ID or virtual device external ID.",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Tracking Id",
+          "type": "string"
+        },
+        "app_id": {
+          "anyOf": [
+            {
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Application ID, needed when using a virtual device external ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "set_device_metadata",
+          "default": "set_device_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "tracking_id",
+        "metadata"
+      ],
+      "title": "SetDeviceMetadata",
+      "type": "object"
+    },
+    "ShipmentScheduleRule": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "const": "shipmentSchedule",
+          "title": "Type",
+          "type": "string"
+        },
+        "threshold": {
+          "$ref": "#/$defs/ScheduleThreshold"
+        }
+      },
+      "required": [
+        "type",
+        "threshold"
+      ],
+      "title": "ShipmentScheduleRule",
+      "type": "object"
+    },
+    "StockRule": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "const": "stock",
+          "title": "Type",
+          "type": "string"
+        },
+        "geofenceId": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Geofenceid",
+          "type": "string"
+        },
+        "threshold": {
+          "$ref": "#/$defs/StockThreshold"
+        }
+      },
+      "required": [
+        "type",
+        "geofenceId",
+        "threshold"
+      ],
+      "title": "StockRule",
+      "type": "object"
+    },
+    "StockThreshold": {
+      "additionalProperties": false,
+      "properties": {
+        "minVolume": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minvolume"
+        },
+        "maxVolume": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxvolume"
+        }
+      },
+      "title": "StockThreshold",
+      "type": "object"
+    },
+    "UpdateGeofence": {
+      "additionalProperties": false,
+      "description": "Replace a geofence definition.",
+      "properties": {
+        "geofence_id": {
+          "description": "Geofence UUID",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Geofence Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_geofence",
+          "default": "update_geofence",
+          "title": "Operation",
+          "type": "string"
+        },
+        "geofence": {
+          "discriminator": {
+            "mapping": {
+              "circle": "#/$defs/CircleGeofence",
+              "poi": "#/$defs/POIGeofence",
+              "polygon": "#/$defs/PolygonGeofence"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CircleGeofence"
+            },
+            {
+              "$ref": "#/$defs/PolygonGeofence"
+            },
+            {
+              "$ref": "#/$defs/POIGeofence"
+            }
+          ],
+          "title": "Geofence"
+        }
+      },
+      "required": [
+        "geofence_id",
+        "geofence"
+      ],
+      "title": "UpdateGeofence",
+      "type": "object"
+    },
+    "UpdateLocation": {
+      "additionalProperties": false,
+      "description": "Replace a location, specifying coordinates or a geofence.",
+      "properties": {
+        "location_id": {
+          "pattern": "^LOC-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Location Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_location",
+          "default": "update_location",
+          "title": "Operation",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/LocationBody"
+        }
+      },
+      "required": [
+        "location_id",
+        "location"
+      ],
+      "title": "UpdateLocation",
+      "type": "object"
+    },
+    "UpdateRule": {
+      "additionalProperties": false,
+      "description": "Replace an existing rule.",
+      "properties": {
+        "rule_id": {
+          "description": "Rule UUID",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_rule",
+          "default": "update_rule",
+          "title": "Operation",
+          "type": "string"
+        },
+        "rule": {
+          "discriminator": {
+            "mapping": {
+              "detention": "#/$defs/DurationRule",
+              "dwelling": "#/$defs/DurationRule",
+              "online": "#/$defs/OnlineRule",
+              "shipmentSchedule": "#/$defs/ShipmentScheduleRule",
+              "stock": "#/$defs/StockRule",
+              "utilization": "#/$defs/DurationRule"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DurationRule"
+            },
+            {
+              "$ref": "#/$defs/StockRule"
+            },
+            {
+              "$ref": "#/$defs/OnlineRule"
+            },
+            {
+              "$ref": "#/$defs/ShipmentScheduleRule"
+            }
+          ],
+          "title": "Rule"
+        }
+      },
+      "required": [
+        "rule_id",
+        "rule"
+      ],
+      "title": "UpdateRule",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_geofence": "#/$defs/CreateGeofence",
+          "create_location": "#/$defs/CreateLocation",
+          "create_rule": "#/$defs/CreateRule",
+          "delete_geofence": "#/$defs/DeleteGeofence",
+          "delete_location": "#/$defs/DeleteLocation",
+          "delete_rule": "#/$defs/DeleteRule",
+          "get_device_metadata": "#/$defs/GetDeviceMetadata",
+          "get_geofence": "#/$defs/GetGeofence",
+          "get_location": "#/$defs/GetLocation",
+          "get_rule": "#/$defs/GetRule",
+          "get_shadow": "#/$defs/GetShadow",
+          "get_traces": "#/$defs/GetTraces",
+          "list_devices": "#/$defs/ListDevices",
+          "list_geofences": "#/$defs/ListGeofences",
+          "list_locations": "#/$defs/ListLocations",
+          "list_rules": "#/$defs/ListRules",
+          "list_shadows": "#/$defs/ListShadows",
+          "set_device_metadata": "#/$defs/SetDeviceMetadata",
+          "update_geofence": "#/$defs/UpdateGeofence",
+          "update_location": "#/$defs/UpdateLocation",
+          "update_rule": "#/$defs/UpdateRule"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDevices"
+        },
+        {
+          "$ref": "#/$defs/ListShadows"
+        },
+        {
+          "$ref": "#/$defs/GetShadow"
+        },
+        {
+          "$ref": "#/$defs/GetTraces"
+        },
+        {
+          "$ref": "#/$defs/ListGeofences"
+        },
+        {
+          "$ref": "#/$defs/GetGeofence"
+        },
+        {
+          "$ref": "#/$defs/CreateGeofence"
+        },
+        {
+          "$ref": "#/$defs/UpdateGeofence"
+        },
+        {
+          "$ref": "#/$defs/DeleteGeofence"
+        },
+        {
+          "$ref": "#/$defs/ListLocations"
+        },
+        {
+          "$ref": "#/$defs/GetLocation"
+        },
+        {
+          "$ref": "#/$defs/CreateLocation"
+        },
+        {
+          "$ref": "#/$defs/UpdateLocation"
+        },
+        {
+          "$ref": "#/$defs/DeleteLocation"
+        },
+        {
+          "$ref": "#/$defs/ListRules"
+        },
+        {
+          "$ref": "#/$defs/GetRule"
+        },
+        {
+          "$ref": "#/$defs/CreateRule"
+        },
+        {
+          "$ref": "#/$defs/UpdateRule"
+        },
+        {
+          "$ref": "#/$defs/DeleteRule"
+        },
+        {
+          "$ref": "#/$defs/GetDeviceMetadata"
+        },
+        {
+          "$ref": "#/$defs/SetDeviceMetadata"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HereUserTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Here Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
