@@ -1,0 +1,3389 @@
+{
+  "$defs": {
+    "FreeeCreateDealConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_deal",
+          "default": "create_deal",
+          "title": "Create Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Deal",
+          "x-is-trigger": false
+        },
+        "issue_date": {
+          "description": "Documented request body field.",
+          "examples": [
+            "2019-12-17"
+          ],
+          "title": "Issue Date",
+          "type": "string"
+        },
+        "type": {
+          "description": "Documented request body field.",
+          "enum": [
+            "income",
+            "expense"
+          ],
+          "examples": [
+            "income"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "due_date": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "2019-12-17"
+          ],
+          "title": "Due Date",
+          "type": "string"
+        },
+        "partner_id": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Partner Id",
+          "type": "integer"
+        },
+        "partner_code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "code001"
+          ],
+          "title": "Partner Code",
+          "type": "string"
+        },
+        "ref_number": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "1"
+          ],
+          "title": "Ref Number",
+          "type": "string"
+        },
+        "details": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/create_dealDetailsItem"
+            },
+            "type": "array"
+          },
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Details",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "payments": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/create_dealPaymentsItem"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Payments",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "receipt_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Receipt Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "parent_id": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Parent Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "issue_date",
+        "type",
+        "company_id",
+        "details"
+      ],
+      "title": "FreeeCreateDealConfig",
+      "type": "object"
+    },
+    "FreeeCreateDealPaymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_deal_payment",
+          "default": "create_deal_payment",
+          "title": "Create Deal Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Deal Payment",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "date": {
+          "description": "Documented request body field.",
+          "examples": [
+            "2019-12-17"
+          ],
+          "title": "Date",
+          "type": "string"
+        },
+        "from_walletable_type": {
+          "description": "Documented request body field.",
+          "enum": [
+            "bank_account",
+            "credit_card",
+            "wallet",
+            "private_account_item"
+          ],
+          "examples": [
+            "bank_account"
+          ],
+          "title": "From Walletable Type",
+          "type": "string"
+        },
+        "from_walletable_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "From Walletable Id",
+          "type": "integer"
+        },
+        "amount": {
+          "description": "Documented request body field.",
+          "examples": [
+            10000
+          ],
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Amount",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "date",
+        "from_walletable_type",
+        "from_walletable_id",
+        "amount"
+      ],
+      "title": "FreeeCreateDealPaymentConfig",
+      "type": "object"
+    },
+    "FreeeCreateItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Create Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Item",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Documented request body field.",
+          "examples": [
+            "\u65b0\u3057\u3044\u54c1\u76ee"
+          ],
+          "maxLength": 30,
+          "title": "Name",
+          "type": "string"
+        },
+        "shortcut1": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "NEWITEM"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut1",
+          "type": "string"
+        },
+        "shortcut2": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "202"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut2",
+          "type": "string"
+        },
+        "code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "code001"
+          ],
+          "maxLength": 20,
+          "pattern": "^[0-9a-zA-Z_-]+$",
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "name"
+      ],
+      "title": "FreeeCreateItemConfig",
+      "type": "object"
+    },
+    "FreeeCreatePartnerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_partner",
+          "default": "create_partner",
+          "title": "Create Partner",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Partner",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Documented request body field.",
+          "examples": [
+            "\u65b0\u3057\u3044\u53d6\u5f15\u5148"
+          ],
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "code001"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "shortcut1": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "NEWPARTNER"
+          ],
+          "maxLength": 255,
+          "title": "Shortcut1",
+          "type": "string"
+        },
+        "shortcut2": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "502"
+          ],
+          "maxLength": 255,
+          "title": "Shortcut2",
+          "type": "string"
+        },
+        "org_code": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "title": "Org Code"
+        },
+        "country_code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "enum": [
+            "JP",
+            "ZZ"
+          ],
+          "examples": [
+            "JP"
+          ],
+          "title": "Country Code",
+          "type": "string"
+        },
+        "long_name": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "\u682a\u5f0f\u4f1a\u793eABC\u5546\u5e97"
+          ],
+          "maxLength": 255,
+          "title": "Long Name",
+          "type": "string"
+        },
+        "name_kana": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "\u30a8\u30fc\u30d3\u30fc\u30b7\u30fc\u30b7\u30e7\u30a6\u30c6\u30f3"
+          ],
+          "maxLength": 255,
+          "title": "Name Kana",
+          "type": "string"
+        },
+        "default_title": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "\u5fa1\u4e2d"
+          ],
+          "title": "Default Title",
+          "type": "string"
+        },
+        "phone": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "03-1234-5678"
+          ],
+          "title": "Phone",
+          "type": "string"
+        },
+        "contact_name": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "freee\u592a\u90ce"
+          ],
+          "maxLength": 255,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "email": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "contact@example.com"
+          ],
+          "maxLength": 255,
+          "title": "Email",
+          "type": "string"
+        },
+        "payer_walletable_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "title": "Payer Walletable Id"
+        },
+        "transfer_fee_handling_side": {
+          "default": null,
+          "description": "Documented request body field.",
+          "enum": [
+            "payer",
+            "payee"
+          ],
+          "examples": [
+            "payer"
+          ],
+          "title": "Transfer Fee Handling Side",
+          "type": "string"
+        },
+        "qualified_invoice_issuer": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            false
+          ],
+          "title": "Qualified Invoice Issuer",
+          "type": "boolean"
+        },
+        "invoice_registration_number": {
+          "anyOf": [
+            {
+              "maxLength": 14,
+              "minLength": 13,
+              "pattern": "^T?[1-9][0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "T1000000000001"
+          ],
+          "title": "Invoice Registration Number"
+        },
+        "address_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/create_partnerAddress_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Address Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "partner_doc_setting_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/create_partnerPartner_Doc_Setting_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Partner Doc Setting Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "partner_bank_account_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/create_partnerPartner_Bank_Account_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Partner Bank Account Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "payment_term_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/create_partnerPayment_Term_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Payment Term Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "invoice_payment_term_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/create_partnerInvoice_Payment_Term_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Invoice Payment Term Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "company_id",
+        "name"
+      ],
+      "title": "FreeeCreatePartnerConfig",
+      "type": "object"
+    },
+    "FreeeCreateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Documented request body field.",
+          "examples": [
+            "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8A"
+          ],
+          "maxLength": 30,
+          "title": "Name",
+          "type": "string"
+        },
+        "shortcut1": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "PROJECTA"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut1",
+          "type": "string"
+        },
+        "shortcut2": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "101"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "name"
+      ],
+      "title": "FreeeCreateTagConfig",
+      "type": "object"
+    },
+    "FreeeGetCompanyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Company",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [],
+          "title": "Id",
+          "type": "integer"
+        },
+        "details": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Details",
+          "type": "boolean"
+        },
+        "account_items": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Account Items",
+          "type": "boolean"
+        },
+        "taxes": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Taxes",
+          "type": "boolean"
+        },
+        "items": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Items",
+          "type": "boolean"
+        },
+        "partners": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Partners",
+          "type": "boolean"
+        },
+        "sections": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Sections",
+          "type": "boolean"
+        },
+        "tags": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Tags",
+          "type": "boolean"
+        },
+        "walletables": {
+          "const": true,
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Walletables",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FreeeGetCompanyConfig",
+      "type": "object"
+    },
+    "FreeeGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        },
+        "companies": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            true,
+            false
+          ],
+          "examples": [],
+          "title": "Companies",
+          "type": "boolean"
+        },
+        "advisor": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            true,
+            false
+          ],
+          "examples": [],
+          "title": "Advisor",
+          "type": "boolean"
+        }
+      },
+      "title": "FreeeGetCurrentUserConfig",
+      "type": "object"
+    },
+    "FreeeGetDealConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_deal",
+          "default": "get_deal",
+          "title": "Get Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Deal",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "accruals": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "without",
+            "with"
+          ],
+          "examples": [],
+          "title": "Accruals",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "id"
+      ],
+      "title": "FreeeGetDealConfig",
+      "type": "object"
+    },
+    "FreeeGetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Invoice",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "id"
+      ],
+      "title": "FreeeGetInvoiceConfig",
+      "type": "object"
+    },
+    "FreeeGetPartnerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_partner",
+          "default": "get_partner",
+          "title": "Get Partner",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Partner",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "company_id"
+      ],
+      "title": "FreeeGetPartnerConfig",
+      "type": "object"
+    },
+    "FreeeListAccountItemsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_account_items",
+          "default": "list_account_items",
+          "title": "List Account Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Account Items",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "base_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Base Date",
+          "type": "string"
+        },
+        "start_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Update Date",
+          "type": "string"
+        },
+        "end_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Update Date",
+          "type": "string"
+        },
+        "keyword": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maxLength": 255,
+          "title": "Keyword",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListAccountItemsConfig",
+      "type": "object"
+    },
+    "FreeeListCompaniesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List Companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Companies",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreeeListCompaniesConfig",
+      "type": "object"
+    },
+    "FreeeListCompanyTaxesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_company_taxes",
+          "default": "list_company_taxes",
+          "title": "List Company Taxes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Company Taxes",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Freee resource ID.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "display_category": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "tax_5",
+            "tax_8",
+            "tax_r8",
+            "tax_10",
+            "tax_5_e80",
+            "tax_5_e70",
+            "tax_5_e50",
+            "tax_5_e30",
+            "tax_8_e80",
+            "tax_8_e70",
+            "tax_8_e50",
+            "tax_8_e30",
+            "tax_r8_e80",
+            "tax_r8_e70",
+            "tax_r8_e50",
+            "tax_r8_e30",
+            "tax_10_e80",
+            "tax_10_e70",
+            "tax_10_e50",
+            "tax_10_e30"
+          ],
+          "examples": [],
+          "title": "Display Category",
+          "type": "string"
+        },
+        "available": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListCompanyTaxesConfig",
+      "type": "object"
+    },
+    "FreeeListDealsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List Deals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Deals",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "partner_id": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Partner Id",
+          "type": "integer"
+        },
+        "account_item_id": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Account Item Id",
+          "type": "integer"
+        },
+        "partner_code": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Partner Code",
+          "type": "string"
+        },
+        "status": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "unsettled",
+            "settled"
+          ],
+          "examples": [],
+          "title": "Status",
+          "type": "string"
+        },
+        "type": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "income",
+            "expense"
+          ],
+          "examples": [],
+          "title": "Type",
+          "type": "string"
+        },
+        "start_issue_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Issue Date",
+          "type": "string"
+        },
+        "end_issue_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Issue Date",
+          "type": "string"
+        },
+        "start_due_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Due Date",
+          "type": "string"
+        },
+        "end_due_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Due Date",
+          "type": "string"
+        },
+        "start_renew_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Renew Date",
+          "type": "string"
+        },
+        "end_renew_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Renew Date",
+          "type": "string"
+        },
+        "min_due_amount": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Min Due Amount",
+          "type": "integer"
+        },
+        "offset": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "accruals": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "without",
+            "with"
+          ],
+          "examples": [],
+          "title": "Accruals",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListDealsConfig",
+      "type": "object"
+    },
+    "FreeeListInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Invoices",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "partner_id": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Partner Id",
+          "type": "integer"
+        },
+        "partner_code": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Partner Code",
+          "type": "string"
+        },
+        "start_issue_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Issue Date",
+          "type": "string"
+        },
+        "end_issue_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Issue Date",
+          "type": "string"
+        },
+        "start_due_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Due Date",
+          "type": "string"
+        },
+        "end_due_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Due Date",
+          "type": "string"
+        },
+        "invoice_number": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Invoice Number",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Description",
+          "type": "string"
+        },
+        "invoice_status": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "draft",
+            "applying",
+            "remanded",
+            "rejected",
+            "approved",
+            "unsubmitted",
+            "submitted"
+          ],
+          "examples": [],
+          "title": "Invoice Status",
+          "type": "string"
+        },
+        "payment_status": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "unsettled",
+            "settled"
+          ],
+          "examples": [],
+          "title": "Payment Status",
+          "type": "string"
+        },
+        "offset": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListInvoicesConfig",
+      "type": "object"
+    },
+    "FreeeListItemsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Items",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "start_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-01"
+          ],
+          "title": "Start Update Date",
+          "type": "string"
+        },
+        "end_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-31"
+          ],
+          "title": "End Update Date",
+          "type": "string"
+        },
+        "offset": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            0
+          ],
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            50
+          ],
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListItemsConfig",
+      "type": "object"
+    },
+    "FreeeListPartnersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_partners",
+          "default": "list_partners",
+          "title": "List Partners",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Partners",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "start_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-01"
+          ],
+          "title": "Start Update Date",
+          "type": "string"
+        },
+        "end_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-31"
+          ],
+          "title": "End Update Date",
+          "type": "string"
+        },
+        "offset": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            0
+          ],
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            50
+          ],
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "keyword": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "ABC\u5546\u5e97"
+          ],
+          "title": "Keyword",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListPartnersConfig",
+      "type": "object"
+    },
+    "FreeeListSectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sections",
+          "default": "list_sections",
+          "title": "List Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Sections",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "start_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-01"
+          ],
+          "title": "Start Update Date",
+          "type": "string"
+        },
+        "end_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-31"
+          ],
+          "title": "End Update Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListSectionsConfig",
+      "type": "object"
+    },
+    "FreeeListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "start_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-01"
+          ],
+          "title": "Start Update Date",
+          "type": "string"
+        },
+        "end_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            "2024-01-31"
+          ],
+          "title": "End Update Date",
+          "type": "string"
+        },
+        "offset": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            0
+          ],
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [
+            50
+          ],
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListTagsConfig",
+      "type": "object"
+    },
+    "FreeeListWalletTxnsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_wallet_txns",
+          "default": "list_wallet_txns",
+          "title": "List Wallet Txns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Wallet Txns",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "walletable_type": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "bank_account",
+            "credit_card",
+            "wallet"
+          ],
+          "examples": [],
+          "title": "Walletable Type",
+          "type": "string"
+        },
+        "walletable_id": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Walletable Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Date",
+          "type": "string"
+        },
+        "entry_side": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "income",
+            "expense"
+          ],
+          "examples": [],
+          "title": "Entry Side",
+          "type": "string"
+        },
+        "sort_type": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Sort Type",
+          "type": "string"
+        },
+        "offset": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListWalletTxnsConfig",
+      "type": "object"
+    },
+    "FreeeListWalletablesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_walletables",
+          "default": "list_walletables",
+          "title": "List Walletables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Walletables",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "type": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "enum": [
+            "bank_account",
+            "credit_card",
+            "wallet"
+          ],
+          "examples": [],
+          "title": "Type",
+          "type": "string"
+        },
+        "with_balance": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "With Balance",
+          "type": "boolean"
+        },
+        "with_last_synced_at": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "With Last Synced At",
+          "type": "boolean"
+        },
+        "with_sync_status": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "With Sync Status",
+          "type": "boolean"
+        },
+        "start_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "Start Update Date",
+          "type": "string"
+        },
+        "end_update_date": {
+          "default": null,
+          "description": "Documented query parameter; lists return one page.",
+          "examples": [],
+          "title": "End Update Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FreeeListWalletablesConfig",
+      "type": "object"
+    },
+    "FreeeOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "freee_oauth",
+          "default": "freee_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Freee OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.secure.freee.co.jp/developers",
+      "x-oauth-provider": "freee",
+      "x-oauth-scopes": [
+        "read",
+        "write"
+      ]
+    },
+    "FreeeUpdateDealConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_deal",
+          "default": "update_deal",
+          "title": "Update Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Deal",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "issue_date": {
+          "description": "Documented request body field.",
+          "examples": [
+            "2019-12-17"
+          ],
+          "title": "Issue Date",
+          "type": "string"
+        },
+        "type": {
+          "description": "Documented request body field.",
+          "enum": [
+            "income",
+            "expense"
+          ],
+          "examples": [
+            "income"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "due_date": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "2019-12-17"
+          ],
+          "title": "Due Date",
+          "type": "string"
+        },
+        "partner_id": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Partner Id",
+          "type": "integer"
+        },
+        "partner_code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "code001"
+          ],
+          "title": "Partner Code",
+          "type": "string"
+        },
+        "ref_number": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "1"
+          ],
+          "title": "Ref Number",
+          "type": "string"
+        },
+        "details": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/update_dealDetailsItem"
+            },
+            "type": "array"
+          },
+          "description": "JSON array replacing ALL deal lines. Include existing line IDs for every line to retain.",
+          "examples": [],
+          "title": "Details",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "receipt_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Receipt Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "id",
+        "issue_date",
+        "type",
+        "company_id",
+        "details"
+      ],
+      "title": "FreeeUpdateDealConfig",
+      "type": "object"
+    },
+    "FreeeUpdateItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Update Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Item",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [
+            101
+          ],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Documented request body field.",
+          "examples": [
+            "\u65b0\u3057\u3044\u54c1\u76ee"
+          ],
+          "maxLength": 30,
+          "title": "Name",
+          "type": "string"
+        },
+        "shortcut1": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "NEWITEM"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut1",
+          "type": "string"
+        },
+        "shortcut2": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "202"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut2",
+          "type": "string"
+        },
+        "code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "code001"
+          ],
+          "maxLength": 20,
+          "pattern": "^[0-9a-zA-Z_-]+$",
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "name"
+      ],
+      "title": "FreeeUpdateItemConfig",
+      "type": "object"
+    },
+    "FreeeUpdatePartnerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_partner",
+          "default": "update_partner",
+          "title": "Update Partner",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Partner",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Documented request body field.",
+          "examples": [
+            "\u65b0\u3057\u3044\u53d6\u5f15\u5148"
+          ],
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "available": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            false
+          ],
+          "title": "Available",
+          "type": "boolean"
+        },
+        "shortcut1": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "NEWPARTNER"
+          ],
+          "maxLength": 255,
+          "title": "Shortcut1",
+          "type": "string"
+        },
+        "shortcut2": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "502"
+          ],
+          "maxLength": 255,
+          "title": "Shortcut2",
+          "type": "string"
+        },
+        "org_code": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "title": "Org Code"
+        },
+        "country_code": {
+          "default": null,
+          "description": "Documented request body field.",
+          "enum": [
+            "JP",
+            "ZZ"
+          ],
+          "examples": [
+            "JP"
+          ],
+          "title": "Country Code",
+          "type": "string"
+        },
+        "long_name": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "\u682a\u5f0f\u4f1a\u793eABC\u5546\u5e97"
+          ],
+          "maxLength": 255,
+          "title": "Long Name",
+          "type": "string"
+        },
+        "name_kana": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "\u30a8\u30fc\u30d3\u30fc\u30b7\u30fc\u30b7\u30e7\u30a6\u30c6\u30f3"
+          ],
+          "maxLength": 255,
+          "title": "Name Kana",
+          "type": "string"
+        },
+        "default_title": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "\u5fa1\u4e2d"
+          ],
+          "title": "Default Title",
+          "type": "string"
+        },
+        "phone": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "03-1234-5678"
+          ],
+          "title": "Phone",
+          "type": "string"
+        },
+        "contact_name": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "freee\u592a\u90ce"
+          ],
+          "maxLength": 255,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "email": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "contact@example.com"
+          ],
+          "maxLength": 255,
+          "title": "Email",
+          "type": "string"
+        },
+        "payer_walletable_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "title": "Payer Walletable Id"
+        },
+        "transfer_fee_handling_side": {
+          "default": null,
+          "description": "Documented request body field.",
+          "enum": [
+            "payer",
+            "payee"
+          ],
+          "examples": [
+            "payer"
+          ],
+          "title": "Transfer Fee Handling Side",
+          "type": "string"
+        },
+        "qualified_invoice_issuer": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            false
+          ],
+          "title": "Qualified Invoice Issuer",
+          "type": "boolean"
+        },
+        "invoice_registration_number": {
+          "anyOf": [
+            {
+              "maxLength": 14,
+              "minLength": 13,
+              "pattern": "^T?[1-9][0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "T1000000000001"
+          ],
+          "title": "Invoice Registration Number"
+        },
+        "address_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/update_partnerAddress_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Address Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "partner_doc_setting_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/update_partnerPartner_Doc_Setting_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Partner Doc Setting Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "partner_bank_account_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/update_partnerPartner_Bank_Account_Attributes"
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Partner Bank Account Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "payment_term_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/update_partnerPayment_Term_Attributes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Payment Term Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "invoice_payment_term_attributes": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/update_partnerInvoice_Payment_Term_Attributes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [],
+          "title": "Invoice Payment Term Attributes",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "name"
+      ],
+      "title": "FreeeUpdatePartnerConfig",
+      "type": "object"
+    },
+    "FreeeUpdateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Update Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Tag",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Freee resource ID.",
+          "examples": [
+            101
+          ],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "description": "Documented request body field.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Documented request body field.",
+          "examples": [
+            "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8A"
+          ],
+          "maxLength": 30,
+          "title": "Name",
+          "type": "string"
+        },
+        "shortcut1": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "PROJECTA"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut1",
+          "type": "string"
+        },
+        "shortcut2": {
+          "default": null,
+          "description": "Documented request body field.",
+          "examples": [
+            "101"
+          ],
+          "maxLength": 20,
+          "title": "Shortcut2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "name"
+      ],
+      "title": "FreeeUpdateTagConfig",
+      "type": "object"
+    },
+    "create_dealDetailsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "tax_code": {
+          "examples": [
+            1
+          ],
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Tax Code",
+          "type": "integer"
+        },
+        "account_item_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Account Item Id",
+          "type": "integer"
+        },
+        "account_item_code": {
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Account Item Code",
+          "type": "string"
+        },
+        "amount": {
+          "examples": [
+            1
+          ],
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "item_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "item_code": {
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Item Code",
+          "type": "string"
+        },
+        "section_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Section Id",
+          "type": "integer"
+        },
+        "section_code": {
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Section Code",
+          "type": "string"
+        },
+        "partner_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            1
+          ],
+          "title": "Partner Id"
+        },
+        "partner_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Partner Code"
+        },
+        "tag_ids": {
+          "default": null,
+          "examples": [],
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "title": "Tag Ids",
+          "type": "array"
+        },
+        "segment_1_tag_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Segment 1 Tag Id",
+          "type": "integer"
+        },
+        "segment_1_tag_code": {
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Segment 1 Tag Code",
+          "type": "string"
+        },
+        "segment_2_tag_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Segment 2 Tag Id",
+          "type": "integer"
+        },
+        "segment_2_tag_code": {
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Segment 2 Tag Code",
+          "type": "string"
+        },
+        "segment_3_tag_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Segment 3 Tag Id",
+          "type": "integer"
+        },
+        "segment_3_tag_code": {
+          "default": null,
+          "examples": [
+            "code001"
+          ],
+          "title": "Segment 3 Tag Code",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "examples": [
+            "\u5099\u8003"
+          ],
+          "title": "Description",
+          "type": "string"
+        },
+        "vat": {
+          "default": null,
+          "examples": [
+            800
+          ],
+          "title": "Vat",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tax_code",
+        "amount"
+      ],
+      "title": "create_dealDetailsItem",
+      "type": "object"
+    },
+    "create_dealPaymentsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "examples": [
+            5250
+          ],
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "from_walletable_id": {
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "From Walletable Id",
+          "type": "integer"
+        },
+        "from_walletable_type": {
+          "enum": [
+            "bank_account",
+            "credit_card",
+            "wallet",
+            "private_account_item"
+          ],
+          "examples": [
+            "bank_account"
+          ],
+          "title": "From Walletable Type",
+          "type": "string"
+        },
+        "date": {
+          "examples": [
+            "2019-12-17"
+          ],
+          "title": "Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "from_walletable_id",
+        "from_walletable_type",
+        "date"
+      ],
+      "title": "create_dealPaymentsItem",
+      "type": "object"
+    },
+    "create_partnerAddress_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "zipcode": {
+          "default": null,
+          "examples": [
+            "000-0000"
+          ],
+          "maxLength": 8,
+          "title": "Zipcode",
+          "type": "string"
+        },
+        "prefecture_code": {
+          "default": null,
+          "examples": [
+            4
+          ],
+          "maximum": 46,
+          "minimum": -1,
+          "title": "Prefecture Code",
+          "type": "integer"
+        },
+        "street_name1": {
+          "default": null,
+          "examples": [
+            "\u5343\u4ee3\u7530\u533a\u4e38\u306e\u51851-1-1"
+          ],
+          "maxLength": 255,
+          "title": "Street Name1",
+          "type": "string"
+        },
+        "street_name2": {
+          "default": null,
+          "examples": [
+            "freee\u30d3\u30eb 10F"
+          ],
+          "maxLength": 255,
+          "title": "Street Name2",
+          "type": "string"
+        }
+      },
+      "title": "create_partnerAddress_Attributes",
+      "type": "object"
+    },
+    "create_partnerInvoice_Payment_Term_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "cutoff_day": {
+          "default": null,
+          "examples": [
+            15
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Cutoff Day",
+          "type": "integer"
+        },
+        "additional_months": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Additional Months",
+          "type": "integer"
+        },
+        "fixed_day": {
+          "default": null,
+          "examples": [
+            32
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Fixed Day",
+          "type": "integer"
+        }
+      },
+      "title": "create_partnerInvoice_Payment_Term_Attributes",
+      "type": "object"
+    },
+    "create_partnerPartner_Bank_Account_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "bank_name": {
+          "default": null,
+          "examples": [
+            "freee\u9280\u884c"
+          ],
+          "title": "Bank Name",
+          "type": "string"
+        },
+        "bank_name_kana": {
+          "default": null,
+          "examples": [
+            "\u30d5\u30ea\u30fc\u30ae\u30f3\u30b3\u30a6"
+          ],
+          "title": "Bank Name Kana",
+          "type": "string"
+        },
+        "bank_code": {
+          "default": null,
+          "examples": [
+            "0001"
+          ],
+          "title": "Bank Code",
+          "type": "string"
+        },
+        "branch_name": {
+          "default": null,
+          "examples": [
+            "\u9280\u5ea7\u652f\u5e97"
+          ],
+          "title": "Branch Name",
+          "type": "string"
+        },
+        "branch_kana": {
+          "default": null,
+          "examples": [
+            "\u30ae\u30f3\u30b6\u30b7\u30c6\u30f3"
+          ],
+          "title": "Branch Kana",
+          "type": "string"
+        },
+        "branch_code": {
+          "default": null,
+          "examples": [
+            "101"
+          ],
+          "title": "Branch Code",
+          "type": "string"
+        },
+        "account_type": {
+          "default": null,
+          "examples": [
+            "ordinary"
+          ],
+          "title": "Account Type",
+          "type": "string"
+        },
+        "account_number": {
+          "default": null,
+          "examples": [
+            "1010101"
+          ],
+          "title": "Account Number",
+          "type": "string"
+        },
+        "long_account_name": {
+          "default": null,
+          "examples": [
+            "freee\u592a\u90ce"
+          ],
+          "title": "Long Account Name",
+          "type": "string"
+        },
+        "account_name": {
+          "default": null,
+          "examples": [
+            "\u30d5\u30ea\u30fc\u30bf\u30ed\u30a6"
+          ],
+          "title": "Account Name",
+          "type": "string"
+        }
+      },
+      "title": "create_partnerPartner_Bank_Account_Attributes",
+      "type": "object"
+    },
+    "create_partnerPartner_Doc_Setting_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "sending_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "email",
+                "posting",
+                "email_and_posting",
+                "pdf_delivery",
+                "pdf_delivery_and_posting"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "posting"
+          ],
+          "title": "Sending Method",
+          "enum": [
+            "email",
+            "posting",
+            "email_and_posting",
+            "pdf_delivery",
+            "pdf_delivery_and_posting"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "create_partnerPartner_Doc_Setting_Attributes",
+      "type": "object"
+    },
+    "create_partnerPayment_Term_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "cutoff_day": {
+          "default": null,
+          "examples": [
+            15
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Cutoff Day",
+          "type": "integer"
+        },
+        "additional_months": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Additional Months",
+          "type": "integer"
+        },
+        "fixed_day": {
+          "default": null,
+          "examples": [
+            32
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Fixed Day",
+          "type": "integer"
+        }
+      },
+      "title": "create_partnerPayment_Term_Attributes",
+      "type": "object"
+    },
+    "update_dealDetailsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "tax_code": {
+          "examples": [
+            1
+          ],
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Tax Code",
+          "type": "integer"
+        },
+        "account_item_id": {
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Account Item Id",
+          "type": "integer"
+        },
+        "amount": {
+          "examples": [
+            1
+          ],
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "item_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "section_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Section Id",
+          "type": "integer"
+        },
+        "partner_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            1
+          ],
+          "title": "Partner Id"
+        },
+        "tag_ids": {
+          "default": null,
+          "examples": [],
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "title": "Tag Ids",
+          "type": "array"
+        },
+        "segment_1_tag_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Segment 1 Tag Id",
+          "type": "integer"
+        },
+        "segment_2_tag_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Segment 2 Tag Id",
+          "type": "integer"
+        },
+        "segment_3_tag_id": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Segment 3 Tag Id",
+          "type": "integer"
+        },
+        "description": {
+          "default": null,
+          "examples": [
+            "\u5099\u8003"
+          ],
+          "title": "Description",
+          "type": "string"
+        },
+        "vat": {
+          "default": null,
+          "examples": [
+            800
+          ],
+          "title": "Vat",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tax_code",
+        "account_item_id",
+        "amount"
+      ],
+      "title": "update_dealDetailsItem",
+      "type": "object"
+    },
+    "update_partnerAddress_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "zipcode": {
+          "default": null,
+          "examples": [
+            "000-0000"
+          ],
+          "maxLength": 8,
+          "title": "Zipcode",
+          "type": "string"
+        },
+        "prefecture_code": {
+          "default": null,
+          "examples": [
+            4
+          ],
+          "maximum": 46,
+          "minimum": -1,
+          "title": "Prefecture Code",
+          "type": "integer"
+        },
+        "street_name1": {
+          "default": null,
+          "examples": [
+            "\u5343\u4ee3\u7530\u533a\u4e38\u306e\u51851-1-1"
+          ],
+          "maxLength": 255,
+          "title": "Street Name1",
+          "type": "string"
+        },
+        "street_name2": {
+          "default": null,
+          "examples": [
+            "freee\u30d3\u30eb 10F"
+          ],
+          "maxLength": 255,
+          "title": "Street Name2",
+          "type": "string"
+        }
+      },
+      "title": "update_partnerAddress_Attributes",
+      "type": "object"
+    },
+    "update_partnerInvoice_Payment_Term_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "cutoff_day": {
+          "default": null,
+          "examples": [
+            15
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Cutoff Day",
+          "type": "integer"
+        },
+        "additional_months": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Additional Months",
+          "type": "integer"
+        },
+        "fixed_day": {
+          "default": null,
+          "examples": [
+            32
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Fixed Day",
+          "type": "integer"
+        }
+      },
+      "title": "update_partnerInvoice_Payment_Term_Attributes",
+      "type": "object"
+    },
+    "update_partnerPartner_Bank_Account_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "bank_name": {
+          "default": null,
+          "examples": [
+            "freee\u9280\u884c"
+          ],
+          "title": "Bank Name",
+          "type": "string"
+        },
+        "bank_name_kana": {
+          "default": null,
+          "examples": [
+            "\u30d5\u30ea\u30fc\u30ae\u30f3\u30b3\u30a6"
+          ],
+          "title": "Bank Name Kana",
+          "type": "string"
+        },
+        "bank_code": {
+          "default": null,
+          "examples": [
+            "0001"
+          ],
+          "title": "Bank Code",
+          "type": "string"
+        },
+        "branch_name": {
+          "default": null,
+          "examples": [
+            "\u9280\u5ea7\u652f\u5e97"
+          ],
+          "title": "Branch Name",
+          "type": "string"
+        },
+        "branch_kana": {
+          "default": null,
+          "examples": [
+            "\u30ae\u30f3\u30b6\u30b7\u30c6\u30f3"
+          ],
+          "title": "Branch Kana",
+          "type": "string"
+        },
+        "branch_code": {
+          "default": null,
+          "examples": [
+            "101"
+          ],
+          "title": "Branch Code",
+          "type": "string"
+        },
+        "account_type": {
+          "default": null,
+          "examples": [
+            "ordinary"
+          ],
+          "title": "Account Type",
+          "type": "string"
+        },
+        "account_number": {
+          "default": null,
+          "examples": [
+            "1010101"
+          ],
+          "title": "Account Number",
+          "type": "string"
+        },
+        "long_account_name": {
+          "default": null,
+          "examples": [
+            "freee\u592a\u90ce"
+          ],
+          "title": "Long Account Name",
+          "type": "string"
+        },
+        "account_name": {
+          "default": null,
+          "examples": [
+            "\u30d5\u30ea\u30fc\u30bf\u30ed\u30a6"
+          ],
+          "title": "Account Name",
+          "type": "string"
+        }
+      },
+      "title": "update_partnerPartner_Bank_Account_Attributes",
+      "type": "object"
+    },
+    "update_partnerPartner_Doc_Setting_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "sending_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "email",
+                "posting",
+                "email_and_posting",
+                "pdf_delivery",
+                "pdf_delivery_and_posting"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "posting"
+          ],
+          "title": "Sending Method",
+          "enum": [
+            "email",
+            "posting",
+            "email_and_posting",
+            "pdf_delivery",
+            "pdf_delivery_and_posting"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "update_partnerPartner_Doc_Setting_Attributes",
+      "type": "object"
+    },
+    "update_partnerPayment_Term_Attributes": {
+      "additionalProperties": false,
+      "properties": {
+        "cutoff_day": {
+          "default": null,
+          "examples": [
+            15
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Cutoff Day",
+          "type": "integer"
+        },
+        "additional_months": {
+          "default": null,
+          "examples": [
+            1
+          ],
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Additional Months",
+          "type": "integer"
+        },
+        "fixed_day": {
+          "default": null,
+          "examples": [
+            32
+          ],
+          "maximum": 32,
+          "minimum": 1,
+          "title": "Fixed Day",
+          "type": "integer"
+        }
+      },
+      "title": "update_partnerPayment_Term_Attributes",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_deal": "#/$defs/FreeeCreateDealConfig",
+          "create_deal_payment": "#/$defs/FreeeCreateDealPaymentConfig",
+          "create_item": "#/$defs/FreeeCreateItemConfig",
+          "create_partner": "#/$defs/FreeeCreatePartnerConfig",
+          "create_tag": "#/$defs/FreeeCreateTagConfig",
+          "get_company": "#/$defs/FreeeGetCompanyConfig",
+          "get_current_user": "#/$defs/FreeeGetCurrentUserConfig",
+          "get_deal": "#/$defs/FreeeGetDealConfig",
+          "get_invoice": "#/$defs/FreeeGetInvoiceConfig",
+          "get_partner": "#/$defs/FreeeGetPartnerConfig",
+          "list_account_items": "#/$defs/FreeeListAccountItemsConfig",
+          "list_companies": "#/$defs/FreeeListCompaniesConfig",
+          "list_company_taxes": "#/$defs/FreeeListCompanyTaxesConfig",
+          "list_deals": "#/$defs/FreeeListDealsConfig",
+          "list_invoices": "#/$defs/FreeeListInvoicesConfig",
+          "list_items": "#/$defs/FreeeListItemsConfig",
+          "list_partners": "#/$defs/FreeeListPartnersConfig",
+          "list_sections": "#/$defs/FreeeListSectionsConfig",
+          "list_tags": "#/$defs/FreeeListTagsConfig",
+          "list_wallet_txns": "#/$defs/FreeeListWalletTxnsConfig",
+          "list_walletables": "#/$defs/FreeeListWalletablesConfig",
+          "update_deal": "#/$defs/FreeeUpdateDealConfig",
+          "update_item": "#/$defs/FreeeUpdateItemConfig",
+          "update_partner": "#/$defs/FreeeUpdatePartnerConfig",
+          "update_tag": "#/$defs/FreeeUpdateTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FreeeGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListPartnersConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeGetPartnerConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeCreatePartnerConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeUpdatePartnerConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListDealsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeGetDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeCreateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeUpdateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeCreateDealPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListAccountItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListWalletablesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListWalletTxnsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListCompanyTaxesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/FreeeUpdateItemConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FreeeOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Freee Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
