@@ -11,6 +11,7 @@ const FreeeIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const FreeeNode: NodeDefinition = {
     type: 'automation-freee', label: 'Freee',
+    category: 'finance-accounting',
     keywords: ['accounting', 'bookkeeping', '会計', 'freee会計'],
     description: 'Automate accounting deals, partners, invoices, tags and items',
     Icon: FreeeIcon, iconColor: '',
