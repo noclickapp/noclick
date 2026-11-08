@@ -1,0 +1,2180 @@
+{
+  "$defs": {
+    "CreateAbsence": {
+      "additionalProperties": false,
+      "description": "Create an absence.",
+      "properties": {
+        "operation": {
+          "const": "create_absence",
+          "default": "create_absence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appcalendarid": {
+          "description": "ID of the calendar. Use the \"Calendar - Get calendar details\" function to get a list with all available calendars.",
+          "title": "Appcalendarid",
+          "type": "integer"
+        },
+        "startdate": {
+          "description": "Start time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Startdate",
+          "type": "string"
+        },
+        "enddate": {
+          "description": "End time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Enddate",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason or note for the absence.",
+          "title": "Reason"
+        },
+        "nwtype": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates if the absence is dynamic.",
+          "title": "Nwtype"
+        },
+        "dynamicdays": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days for the dynamic absence to begin (nwtype has to be 1).",
+          "title": "Dynamicdays"
+        },
+        "dynamicdaysduration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days for the dynamic absence to last (nwtype has to be 1).",
+          "title": "Dynamicdaysduration"
+        }
+      },
+      "required": [
+        "appcalendarid",
+        "startdate",
+        "enddate"
+      ],
+      "title": "CreateAbsence",
+      "type": "object"
+    },
+    "CreateAppointment": {
+      "additionalProperties": false,
+      "description": "Create appointment.",
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "description": "Start date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "End date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "End",
+          "type": "string"
+        },
+        "calendarid": {
+          "description": "ID of the calendar. Use the 'Calendar - Get calendar details' function to get a list with all available calendars",
+          "title": "Calendarid",
+          "type": "integer"
+        },
+        "services": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the service. Use the 'Service - Get service details' function to get a list with all available services. To use multiple services use a comma (,) to seperate the IDs",
+          "title": "Services"
+        },
+        "capacity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the capacity of the appointment",
+          "title": "Capacity"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location of the appointment",
+          "title": "Location"
+        },
+        "checkexist": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Checks if the appointment start/end time is available (1 = yes, 0 = no). May not work with multiple capacity",
+          "title": "Checkexist"
+        },
+        "manualconfirmed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 0 to have the appointment manually confirmed by the appoinment provider",
+          "title": "Manualconfirmed"
+        },
+        "sendemail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send a confirmation email to the adress that was specified in the email parameter (1 = yes, 0 = no)",
+          "title": "Sendemail"
+        },
+        "sms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send a confirmation sms to the phone number that was specified in the phone field (1 = yes, 0 = no).",
+          "title": "Sms"
+        },
+        "notificationmsg": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send an information email to the appointment provider (1 = yes, 0 = no).",
+          "title": "Notificationmsg"
+        },
+        "sync": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True if the appointment should be synchronized with external calendars (1 = yes, 0 = no).",
+          "title": "Sync"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lastname of the person",
+          "title": "Lastname"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Firstname of the person",
+          "title": "Firstname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E-Mail of the person",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone of the person",
+          "title": "Phone"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment notes",
+          "title": "Notes"
+        },
+        "customernumber": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the person that booked appointment",
+          "title": "Customernumber"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "calendarid"
+      ],
+      "title": "CreateAppointment",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "updatewhenexistsgdt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 1 to check if the contact is already existing. If so the existing contact gets updated. Needs email or firstname, lastname, birthday.",
+          "title": "Updatewhenexistsgdt"
+        },
+        "salutation": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Salutation of the person.",
+          "title": "Salutation"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title of the person.",
+          "title": "Title"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lastname of the person.",
+          "title": "Lastname"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Firstname of the person.",
+          "title": "Firstname"
+        },
+        "birthday": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Birthday of the person.",
+          "title": "Birthday"
+        },
+        "email": {
+          "description": "E-Mail of the person.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone of the person.",
+          "title": "Phone"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company of the person (make sure this field exists in your account)",
+          "title": "Company"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Street of the person.",
+          "title": "Street"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zip of the person.",
+          "title": "Zip"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City of the person.",
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State of the person.",
+          "title": "State"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country of the person.",
+          "title": "Country"
+        },
+        "customernumber": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the person.",
+          "title": "Customernumber"
+        },
+        "newsletter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opts the contact into the newsletter.",
+          "title": "Newsletter"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateService": {
+      "additionalProperties": false,
+      "description": "Create service.",
+      "properties": {
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "servicegroupid": {
+          "description": "ID of the service group",
+          "title": "Servicegroupid",
+          "type": "integer"
+        },
+        "servicede": {
+          "description": "Name of the service in german. For other languages use serviceLANGUAGECODE e.g. serviceen",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Servicede",
+          "type": "string"
+        },
+        "timeslotminutes": {
+          "description": "Duration of the service in minutes",
+          "title": "Timeslotminutes",
+          "type": "integer"
+        },
+        "infode": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional description of the service in german. For other languages use serviceLANGUAGECODE e.g. infoen",
+          "title": "Infode"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price of the service",
+          "title": "Price"
+        },
+        "abbreviation": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "abbreviation of the service",
+          "title": "Abbreviation"
+        },
+        "enablecapacity": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True to enable the capacity of the service",
+          "title": "Enablecapacity"
+        },
+        "maxcapacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sets the maximum capacity of the service",
+          "title": "Maxcapacity"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the currency of the service",
+          "title": "Currency"
+        },
+        "showinternal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines if the service is shown in the backend",
+          "title": "Showinternal"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines if the service is shown in the frontend",
+          "title": "Enabled"
+        }
+      },
+      "required": [
+        "servicegroupid",
+        "servicede",
+        "timeslotminutes"
+      ],
+      "title": "CreateService",
+      "type": "object"
+    },
+    "DeleteAbsence": {
+      "additionalProperties": false,
+      "description": "Delete an absence.",
+      "properties": {
+        "operation": {
+          "const": "delete_absence",
+          "default": "delete_absence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the absence.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteAbsence",
+      "type": "object"
+    },
+    "DeleteAppointment": {
+      "additionalProperties": false,
+      "description": "Delete appointment.",
+      "properties": {
+        "operation": {
+          "const": "delete_appointment",
+          "default": "delete_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the appointment,  use externalid instead, if you use the parameter sync=1 or sendemail=1  (relates to the ExternalID)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteAppointment",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cid": {
+          "description": "CID of the contact",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Cid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cid"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteService": {
+      "additionalProperties": false,
+      "description": "Delete service.",
+      "properties": {
+        "operation": {
+          "const": "delete_service",
+          "default": "delete_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the service",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteService",
+      "type": "object"
+    },
+    "EterminAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "etermin_api_key",
+          "default": "etermin_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Public API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "private_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Private secret key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "public_key",
+        "private_key"
+      ],
+      "title": "Etermin API Keys",
+      "type": "object",
+      "x-credential-instructions": "Copy the public API key and private secret key from your eTermin account settings under Configuration \u2192 Integration \u2013 API \u2192 API. NoClick signs each request with a fresh salt and HMAC-SHA256. Both keys are required. Connecting reads your account's calendars.",
+      "x-credential-url": "https://www.etermin.net/online-terminplaner-api"
+    },
+    "ListAbsences": {
+      "additionalProperties": false,
+      "description": "Get absences.",
+      "properties": {
+        "operation": {
+          "const": "list_absences",
+          "default": "list_absences",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "calendarid": {
+          "description": "ID of the calendar.",
+          "title": "Calendarid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "calendarid"
+      ],
+      "title": "ListAbsences",
+      "type": "object"
+    },
+    "ListAppointments": {
+      "additionalProperties": false,
+      "description": "Get appointment details.",
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appid": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of an appointment. (relates to the ID)",
+          "title": "Appid"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of an appointment. (relates to the ExternalID)",
+          "title": "Id"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date of the appointments. Format yyyy-mm-dd. It will return a list with all appointments that are between \"start\" and \"end\".",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date of the appointments. Format yyyy-mm-dd. It will return a list with all appointments that are between \"start\" and \"end\".",
+          "title": "End"
+        },
+        "bycreationdate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Changes the start and end parameters to look for the creation date instead of the date, the appointment takes place",
+          "title": "Bycreationdate"
+        },
+        "calendarid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of the calendars that you want to get appointments from, you can separate multiple calendars with a \",\"",
+          "title": "Calendarid"
+        },
+        "cid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use a customer ID to see all appointments that are related to this customer. (start and end parameters not required)",
+          "title": "Cid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an email address to see all appointments that are related to this email. (start and end parameters required)",
+          "title": "Email"
+        },
+        "limited": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reduces the amount of information that the response have. Set to 1 if you want basic information about a lot of appointments.",
+          "title": "Limited"
+        },
+        "manualconfirmed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 0 shows all appointments in the specified timeframe (start and end) that are not confirmed yet",
+          "title": "Manualconfirmed"
+        }
+      },
+      "title": "ListAppointments",
+      "type": "object"
+    },
+    "ListCalendars": {
+      "additionalProperties": false,
+      "description": "Get calendar details.",
+      "properties": {
+        "operation": {
+          "const": "list_calendars",
+          "default": "list_calendars",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "calendarid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the calendar, if you only need to get the details of a single calendar",
+          "title": "Calendarid"
+        }
+      },
+      "title": "ListCalendars",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "Get contact details.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E-Mail of the contact",
+          "title": "Email"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ExternalID of the contact",
+          "title": "Id"
+        },
+        "cid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID of the contact",
+          "title": "Cid"
+        },
+        "creationdate": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Displays all contacts that were created on this date",
+          "title": "Creationdate"
+        },
+        "creationdateall": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Displays all contacts that were created since this date",
+          "title": "Creationdateall"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListDeletedAppointments": {
+      "additionalProperties": false,
+      "description": "Get Deleted Appointments.",
+      "properties": {
+        "operation": {
+          "const": "list_deleted_appointments",
+          "default": "list_deleted_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start day when appointment(s) got deleted. Format: yyyy-mm-dd. It will return a list with all appointments that are between start and end",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End day when appointment(s) got deleted. Format: yyyy-mm-dd. It will return a list with all appointments there are between start and end",
+          "title": "End"
+        }
+      },
+      "title": "ListDeletedAppointments",
+      "type": "object"
+    },
+    "ListServiceGroups": {
+      "additionalProperties": false,
+      "description": "Get service groups details.",
+      "properties": {
+        "operation": {
+          "const": "list_service_groups",
+          "default": "list_service_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "servicegroupid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the servicegroup that you want information on",
+          "title": "Servicegroupid"
+        },
+        "languageid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code if you only want the information for a specific language e.g. DE, EN, etc.",
+          "title": "Languageid"
+        }
+      },
+      "title": "ListServiceGroups",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "description": "Get service details.",
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "languageid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the language code in which you want the name and description of the service (e.g., DE, EN, etc.)",
+          "title": "Languageid"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the service to get the information of a specific service",
+          "title": "Id"
+        },
+        "ServiceGroupID": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use if you want only services of a specific service group",
+          "title": "Servicegroupid"
+        },
+        "addimage": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "true if you want to also get the image-data in your response",
+          "title": "Addimage"
+        }
+      },
+      "title": "ListServices",
+      "type": "object"
+    },
+    "ListTimeslots": {
+      "additionalProperties": false,
+      "description": "Get available time slots.",
+      "properties": {
+        "operation": {
+          "const": "list_timeslots",
+          "default": "list_timeslots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "description": "Day that you want to check if there are available slots. Format: yyyy-mm-dd",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Date",
+          "type": "string"
+        },
+        "rangesearch": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0 - All slots of a specific day will be displayed   1 - Searches until it found a date when slots are available. Returns the number of slots that are available on a specific day (according to the account settings, the available slots may differ)",
+          "title": "Rangesearch"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date of the time range. Only works if rangesearch=1. Format: yyyy-mm-dd",
+          "title": "End"
+        },
+        "serviceid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID(s) of the selected service(s). This parameter is required if you restrict the calendar or working times to specific services. Several service ID's can be separated with a comma (,). e.g. 45345,45346 etc.",
+          "title": "Serviceid"
+        },
+        "calendarid": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the calendar. Use this parameter if you want to get available time slots for a specific calendar. If this parameter is empty, available time slots for all calendars will be returned.",
+          "title": "Calendarid"
+        },
+        "capacity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the capacity that is searched for, if you have capacity enabled",
+          "title": "Capacity"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment duration in minutes. Use this parameter if you want to use a different duration than specified for the service",
+          "title": "Duration"
+        },
+        "cluster": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment cluster on (1) or off (0)",
+          "title": "Cluster"
+        }
+      },
+      "required": [
+        "date"
+      ],
+      "title": "ListTimeslots",
+      "type": "object"
+    },
+    "ListWorkingTimes": {
+      "additionalProperties": false,
+      "description": "Get Working times.",
+      "properties": {
+        "operation": {
+          "const": "list_working_times",
+          "default": "list_working_times",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "calendarid": {
+          "description": "CalendarID of the calendar you need the working times for",
+          "title": "Calendarid",
+          "type": "integer"
+        },
+        "all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this parameter instead of calendarid, if you want the workingtimes of all calendars",
+          "title": "All"
+        },
+        "join": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 1 for the same information but with names instead of numbers",
+          "title": "Join"
+        }
+      },
+      "required": [
+        "calendarid"
+      ],
+      "title": "ListWorkingTimes",
+      "type": "object"
+    },
+    "UpdateAbsence": {
+      "additionalProperties": false,
+      "description": "Update an absence.",
+      "properties": {
+        "operation": {
+          "const": "update_absence",
+          "default": "update_absence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the absence.",
+          "title": "Id",
+          "type": "integer"
+        },
+        "appcalendarid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the calendar. Use the \"Calendar - Get calendar details\" function to get a list with all available calendars.",
+          "title": "Appcalendarid"
+        },
+        "startdate": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00",
+          "title": "Startdate"
+        },
+        "enddate": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00",
+          "title": "Enddate"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason or note for the absence.",
+          "title": "Reason"
+        },
+        "nwtype": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates if the absence is dynamic.",
+          "title": "Nwtype"
+        },
+        "dynamicdays": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days for the dynamic absence (nwtype has to be 1).",
+          "title": "Dynamicdays"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateAbsence",
+      "type": "object"
+    },
+    "UpdateAppointment": {
+      "additionalProperties": false,
+      "description": "Update appointment.",
+      "properties": {
+        "operation": {
+          "const": "update_appointment",
+          "default": "update_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the appointment that you want to modify.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00",
+          "title": "End"
+        },
+        "calendarid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the calendar.",
+          "title": "Calendarid"
+        },
+        "services": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the service. Use the 'Service - Get service details' function to get a list with all available services. To use multiple services use a comma (,) to seperate the IDs",
+          "title": "Services"
+        },
+        "capacity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the capacity of the appointment",
+          "title": "Capacity"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location of the appointment",
+          "title": "Location"
+        },
+        "manualconfirmed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 0 to have the appointment manually confirmed by the appoinment provider, set to 1 if the appointment got confirmed",
+          "title": "Manualconfirmed"
+        },
+        "sendemail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send a confirmation email to the adress that was specified in the email parameter (1 = yes, 0 = no).",
+          "title": "Sendemail"
+        },
+        "msgtype": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the template that is sent to the customer with the API call",
+          "title": "Msgtype"
+        },
+        "sendsms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send a confirmation SMS to the phone number that was specified in the phone parameter (1 = yes, 0 = no).",
+          "title": "Sendsms"
+        },
+        "msgtypesms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the template that is sent to the customer via SMS with the API call (required to send a SMS)",
+          "title": "Msgtypesms"
+        },
+        "notificationmsg": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send an information email to the appointment provider (1 = yes, 0 = no).",
+          "title": "Notificationmsg"
+        },
+        "sync": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True if the appointment should be synchronized with external calendars (1 = yes, 0 = no).",
+          "title": "Sync"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lastname of the person.",
+          "title": "Lastname"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Firstname of the person.",
+          "title": "Firstname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E-Mail of the person.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone of the person.",
+          "title": "Phone"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment notes.",
+          "title": "Notes"
+        },
+        "customernumber": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the person that booked appointment.",
+          "title": "Customernumber"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateAppointment",
+      "type": "object"
+    },
+    "UpdateService": {
+      "additionalProperties": false,
+      "description": "Update service.",
+      "properties": {
+        "operation": {
+          "const": "update_service",
+          "default": "update_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the service",
+          "title": "Id",
+          "type": "integer"
+        },
+        "servicegroupid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the service group",
+          "title": "Servicegroupid"
+        },
+        "servicede": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the service in german. For other languages use serviceLANGUAGECODE e.g. serviceen",
+          "title": "Servicede"
+        },
+        "timeslotminutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration of the service in minutes",
+          "title": "Timeslotminutes"
+        },
+        "infode": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional description of the service in german. For other languages use serviceLANGUAGECODE e.g. infoen",
+          "title": "Infode"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price of the service",
+          "title": "Price"
+        },
+        "abbreviation": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "abbreviation of the service",
+          "title": "Abbreviation"
+        },
+        "enablecapacity": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True to enable the capacity of the service",
+          "title": "Enablecapacity"
+        },
+        "maxcapacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sets the maximum capacity of the service",
+          "title": "Maxcapacity"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the currency of the service",
+          "title": "Currency"
+        },
+        "showinternal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines if the service is shown in the backend",
+          "title": "Showinternal"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines if the service is shown in the frontend",
+          "title": "Enabled"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateService",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_absence": "#/$defs/CreateAbsence",
+          "create_appointment": "#/$defs/CreateAppointment",
+          "create_contact": "#/$defs/CreateContact",
+          "create_service": "#/$defs/CreateService",
+          "delete_absence": "#/$defs/DeleteAbsence",
+          "delete_appointment": "#/$defs/DeleteAppointment",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_service": "#/$defs/DeleteService",
+          "list_absences": "#/$defs/ListAbsences",
+          "list_appointments": "#/$defs/ListAppointments",
+          "list_calendars": "#/$defs/ListCalendars",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_deleted_appointments": "#/$defs/ListDeletedAppointments",
+          "list_service_groups": "#/$defs/ListServiceGroups",
+          "list_services": "#/$defs/ListServices",
+          "list_timeslots": "#/$defs/ListTimeslots",
+          "list_working_times": "#/$defs/ListWorkingTimes",
+          "update_absence": "#/$defs/UpdateAbsence",
+          "update_appointment": "#/$defs/UpdateAppointment",
+          "update_service": "#/$defs/UpdateService"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAppointments"
+        },
+        {
+          "$ref": "#/$defs/CreateAppointment"
+        },
+        {
+          "$ref": "#/$defs/UpdateAppointment"
+        },
+        {
+          "$ref": "#/$defs/DeleteAppointment"
+        },
+        {
+          "$ref": "#/$defs/ListDeletedAppointments"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListCalendars"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/CreateService"
+        },
+        {
+          "$ref": "#/$defs/UpdateService"
+        },
+        {
+          "$ref": "#/$defs/DeleteService"
+        },
+        {
+          "$ref": "#/$defs/ListServiceGroups"
+        },
+        {
+          "$ref": "#/$defs/ListTimeslots"
+        },
+        {
+          "$ref": "#/$defs/ListWorkingTimes"
+        },
+        {
+          "$ref": "#/$defs/ListAbsences"
+        },
+        {
+          "$ref": "#/$defs/CreateAbsence"
+        },
+        {
+          "$ref": "#/$defs/UpdateAbsence"
+        },
+        {
+          "$ref": "#/$defs/DeleteAbsence"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EterminAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Etermin Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
