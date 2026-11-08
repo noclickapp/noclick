@@ -59,7 +59,7 @@ BroadcastID = Annotated[StrictStr, BeforeValidator(path_id), Field(min_length=1,
 
 class ESputnikAPIKeyCredential(BaseModel):
     model_config = ConfigDict(title="Yespo API Key", extra="ignore", hide_input_in_errors=True, json_schema_extra={
-        "x-credential-type": TYPE,
+        "x-credential-type": "api_key",
         "x-credential-help-url": "https://docs.esputnik.com/reference/getting-started-with-your-api",
         "x-credential-instructions": "Use an existing eSputnik/Yespo API key as the HTTP Basic password. Any username is accepted by the provider; the default is noclick. This is not your account password or an event Bearer token. Connection reads account/info and shows the returned organization name and user email; it does not prove contact/broadcast permissions, entitlement or subscription status.",
     })

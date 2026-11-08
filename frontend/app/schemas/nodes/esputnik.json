@@ -43,7 +43,7 @@
       "type": "object",
       "x-credential-help-url": "https://docs.esputnik.com/reference/getting-started-with-your-api",
       "x-credential-instructions": "Use an existing eSputnik/Yespo API key as the HTTP Basic password. Any username is accepted by the provider; the default is noclick. This is not your account password or an event Bearer token. Connection reads account/info and shows the returned organization name and user email; it does not prove contact/broadcast permissions, entitlement or subscription status.",
-      "x-credential-type": "esputnik_api_key"
+      "x-credential-type": "api_key"
     },
     "GetAccountInfo": {
       "additionalProperties": false,
