@@ -1,0 +1,444 @@
+{
+  "$defs": {
+    "CoinMarketCalAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "coinmarketcal_api_key",
+          "default": "coinmarketcal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Coinmarketcal API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Coinmarketcal developer dashboard, copy its full secret, and paste it here. Your organization plan controls history, filters and exports. NoClick checks your monthly usage to verify access.",
+      "x-credential-url": "https://coinmarketcal.com/developer/dashboard/keys"
+    },
+    "ExportEventsCSV": {
+      "description": "Download an inclusive date range as a CSV file (Elite+).",
+      "properties": {
+        "from_date": {
+          "description": "Inclusive ISO-8601 datetime with timezone.",
+          "title": "From Date",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive ISO-8601 datetime with timezone.",
+          "title": "To Date",
+          "type": "string"
+        },
+        "operation": {
+          "const": "export_events_csv",
+          "default": "export_events_csv",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_date",
+        "to_date"
+      ],
+      "title": "ExportEventsCSV",
+      "type": "object",
+      "x-requires-tier": "elite",
+      "x-tier-label": "Elite+"
+    },
+    "GetCoin": {
+      "properties": {
+        "operation": {
+          "const": "get_coin",
+          "default": "get_coin",
+          "title": "Operation",
+          "type": "string"
+        },
+        "slug": {
+          "description": "Canonical coin slug, e.g. bitcoin.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetCoin",
+      "type": "object"
+    },
+    "GetEvent": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Event ID returned by list events.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetEventsSnapshot": {
+      "description": "Get a private daily CSV.gz link, valid for 15 minutes (Elite+).",
+      "properties": {
+        "operation": {
+          "const": "get_events_snapshot",
+          "default": "get_events_snapshot",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetEventsSnapshot",
+      "type": "object",
+      "x-requires-tier": "elite",
+      "x-tier-label": "Elite+"
+    },
+    "GetUsage": {
+      "description": "Read the authenticated key's monthly quota and consumption.",
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetUsage",
+      "type": "object"
+    },
+    "ListCategories": {
+      "description": "Read the unpaginated taxonomy and tier-windowed counts (Standard+).",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCategories",
+      "type": "object",
+      "x-requires-tier": "standard",
+      "x-tier-label": "Standard+"
+    },
+    "ListCoins": {
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous page; keep the filters unchanged. Null means the final page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_coins",
+          "default": "list_coins",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search coin name and symbol.",
+          "title": "Q"
+        },
+        "tracked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for all coins; false includes only coins outside active editorial coverage.",
+          "title": "Tracked"
+        }
+      },
+      "title": "ListCoins",
+      "type": "object"
+    },
+    "ListEventCancellations": {
+      "description": "Poll permanent removals at least every 90 days.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous page; keep the filters unchanged. Null means the final page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_event_cancellations",
+          "default": "list_event_cancellations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive RFC3339 timestamp or YYYY-MM-DD; defaults to 90 days ago.",
+          "title": "Since"
+        }
+      },
+      "title": "ListEventCancellations",
+      "type": "object"
+    },
+    "ListEvents": {
+      "description": "Find crypto events. Use displayedDate for estimated event dates.",
+      "properties": {
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO-8601 start with timezone. History depends on your plan.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO-8601 end with timezone.",
+          "title": "To Date"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous page; keep the filters unchanged. Null means the final page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "coins": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated canonical coin slugs, e.g. bitcoin,ethereum.",
+          "title": "Coins"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated category IDs; requires Standard+.",
+          "title": "Categories"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        },
+        "impact_min": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum precise impact; requires Elite+.",
+          "title": "Impact Min"
+        },
+        "sort_by": {
+          "default": "date_asc",
+          "description": "impact_desc requires Elite+.",
+          "enum": [
+            "date_asc",
+            "date_desc",
+            "created_desc",
+            "created_desc_and_updated_desc",
+            "impact_desc"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "export_events_csv": "#/$defs/ExportEventsCSV",
+          "get_coin": "#/$defs/GetCoin",
+          "get_event": "#/$defs/GetEvent",
+          "get_events_snapshot": "#/$defs/GetEventsSnapshot",
+          "get_usage": "#/$defs/GetUsage",
+          "list_categories": "#/$defs/ListCategories",
+          "list_coins": "#/$defs/ListCoins",
+          "list_event_cancellations": "#/$defs/ListEventCancellations",
+          "list_events": "#/$defs/ListEvents"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/ListEventCancellations"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/ExportEventsCSV"
+        },
+        {
+          "$ref": "#/$defs/GetEventsSnapshot"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/ListCoins"
+        },
+        {
+          "$ref": "#/$defs/GetCoin"
+        },
+        {
+          "$ref": "#/$defs/GetUsage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoinMarketCalAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Coinmarketcal Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/coinmarketcal.png",
+  "source": "https://coinmarketcal.com/favicon.ico",
+  "license": "CoinMarketCal trademark; official publisher favicon used to identify the integration.",
+  "sha256": "7ff10cb84b80429781b40e2afcec5bc32c9cad4a0e51f8e7385bab00917fe70b",
+  "transformation": "Largest PNG image extracted byte-for-byte from the official ICO container."
+}
