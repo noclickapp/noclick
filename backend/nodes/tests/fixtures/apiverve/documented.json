@@ -1,0 +1,1145 @@
+{
+  "validate_email": {
+    "config": {
+      "operation": "validate_email",
+      "email": "support@myspace.com"
+    },
+    "method": "GET",
+    "path": "/v1/emailvalidator",
+    "params": {
+      "email": "support@myspace.com"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "email": "support@myspace.com",
+        "domain": "myspace.com",
+        "username": "support",
+        "isRegexValid": true,
+        "hasTypo": false,
+        "isMxValid": true,
+        "isValid": true,
+        "isFreeEmail": false,
+        "isCompanyEmail": true,
+        "isDisposable": false,
+        "isRoleAccount": true,
+        "mxRecord": "mxa-00ac0e01.gslb.pphosted.com",
+        "isNullMx": false,
+        "canReceiveMail": true,
+        "hasSpf": true,
+        "hasDmarc": true,
+        "isSubaddressed": false,
+        "normalizedEmail": "support@myspace.com",
+        "suggestedCorrection": null,
+        "mailProvider": "Proofpoint",
+        "isSecurityGateway": true,
+        "riskScore": 10,
+        "riskLevel": "low"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/emailvalidator"
+  },
+  "check_disposable_email": {
+    "config": {
+      "operation": "check_disposable_email",
+      "email": "support@myspace.com"
+    },
+    "method": "GET",
+    "path": "/v1/emaildisposablechecker",
+    "params": {
+      "email": "support@myspace.com"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "isDisposable": false,
+        "email": "support@myspace.com",
+        "domain": "myspace.com",
+        "isRelay": false,
+        "relayService": null,
+        "isDisposableMx": false
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/emaildisposablechecker"
+  },
+  "validate_phone": {
+    "config": {
+      "operation": "validate_phone",
+      "number": "816-555-1017",
+      "country": "us"
+    },
+    "method": "GET",
+    "path": "/v1/phonenumbervalidator",
+    "params": {
+      "number": "816-555-1017",
+      "country": "us"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "country": "US",
+        "detectedCountry": "US",
+        "countryName": "United States",
+        "countrycode": 1,
+        "numberNational": 8165551017,
+        "extension": null,
+        "isValid": true,
+        "isMobile": true,
+        "isVoip": false,
+        "isDisposable": false,
+        "type": "fixed_line_or_mobile",
+        "isValidNumber": true,
+        "nationalSignificantNumber": "8165551017",
+        "location": "Missouri",
+        "carrier": null,
+        "timezones": [
+          "America/Chicago"
+        ],
+        "formatted": {
+          "international": "+1 816-555-1017",
+          "national": "(816) 555-1017",
+          "rfc": "tel:+1-816-555-1017",
+          "e164": "+18165551017"
+        },
+        "riskScore": 0,
+        "riskLevel": "low"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/phonenumbervalidator"
+  },
+  "lookup_ip": {
+    "config": {
+      "operation": "lookup_ip",
+      "ip": "173.172.81.20"
+    },
+    "method": "GET",
+    "path": "/v1/iplookup",
+    "params": {
+      "ip": "173.172.81.20"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "ip": "173.172.81.20",
+        "country": "US",
+        "countryName": "United States",
+        "region": "NE",
+        "regionName": "Nebraska",
+        "city": "Lincoln",
+        "continent": "NA",
+        "continentName": "North America",
+        "timezone": "America/Chicago",
+        "coordinates": [
+          40.7579,
+          -96.6962
+        ],
+        "postalCode": "68512",
+        "accuracyRadius": 20,
+        "isEU": false,
+        "asn": "AS11427",
+        "asnName": "TWC-11427-TEXAS",
+        "ipVersion": 4,
+        "isPublic": true,
+        "reservedType": null,
+        "countryCode3": "USA",
+        "capital": "Washington D.C.",
+        "callingCode": "+1",
+        "currency": {
+          "code": "USD",
+          "name": "United States dollar",
+          "symbol": "$"
+        },
+        "languages": [
+          "English"
+        ],
+        "flag": "\ud83c\uddfa\ud83c\uddf8",
+        "tld": ".us",
+        "utcOffset": "-05:00",
+        "localTime": "2026-10-26T20:28:33-05:00",
+        "isDst": true,
+        "hostname": "syn-173-172-081-020.res.spectrum.com"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/iplookup"
+  },
+  "check_domain_availability": {
+    "config": {
+      "operation": "check_domain_availability",
+      "domain": "myspace.com"
+    },
+    "method": "GET",
+    "path": "/v1/domainavailability",
+    "params": {
+      "domain": "myspace.com"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "domain": "myspace.com",
+        "available": false,
+        "owner": {
+          "registrar": "GoDaddy.com, LLC",
+          "createdDate": "1996-02-22T05:00:00Z",
+          "expiryDate": "2029-02-23T05:00:00Z"
+        },
+        "source": "rdap",
+        "pricing": {
+          "tld": "com",
+          "currency": "USD",
+          "registration": {
+            "low": 11.08,
+            "high": 11.25
+          },
+          "renewal": {
+            "low": 11.08,
+            "high": 11.25
+          },
+          "transfer": {
+            "low": 11.08,
+            "high": 11.25
+          },
+          "sources": 2,
+          "premiumLikely": null,
+          "premiumReason": null,
+          "updatedAt": "2026-10-18T10:00:00.000Z"
+        },
+        "lifecycle": "registered",
+        "eppStatus": [
+          "client delete prohibited",
+          "client renew prohibited",
+          "client transfer prohibited",
+          "client update prohibited"
+        ],
+        "nameservers": [
+          "ns-cloud-a1.googledomains.com",
+          "ns-cloud-a2.googledomains.com",
+          "ns-cloud-a3.googledomains.com",
+          "ns-cloud-a4.googledomains.com"
+        ],
+        "isParked": false,
+        "isForSale": false,
+        "parkingService": null
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/domainavailability"
+  },
+  "get_domain_expiration": {
+    "config": {
+      "operation": "get_domain_expiration",
+      "domain": "myspace.com"
+    },
+    "method": "GET",
+    "path": "/v1/domainexpiration",
+    "params": {
+      "domain": "myspace.com"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "domain": "myspace.com",
+        "expirationDate": "2029-02-23T05:00:00Z",
+        "daysToExpiration": 1164,
+        "expirationStatus": "healthy",
+        "createdDate": "1996-02-22T05:00:00Z",
+        "lastUpdatedDate": "2023-01-17T00:16:21Z",
+        "daysSinceLastUpdate": 1064,
+        "domainAgeDays": 10890,
+        "domainAgeYears": 29.8
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/domainexpiration"
+  },
+  "convert_currency": {
+    "config": {
+      "operation": "convert_currency",
+      "value": 1.0,
+      "from_currency": "USD",
+      "to": "EUR"
+    },
+    "method": "GET",
+    "path": "/v1/currencyconverter",
+    "params": {
+      "value": 1.0,
+      "from": "USD",
+      "to": "EUR"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "from": "USD",
+        "to": "EUR",
+        "value": 100,
+        "convertedValue": 89.5099,
+        "rate": 0.895099,
+        "change24h": 0.003587,
+        "change24hPct": 0.4024,
+        "changeDirection": "up",
+        "high24h": 0.895323,
+        "low24h": 0.8911,
+        "date": "2026-10-27",
+        "lastUpdated": "2026-10-27T17:41:09.810Z",
+        "fromName": "US Dollar",
+        "toName": "Euro",
+        "change1d": 0.4467,
+        "change7d": 0.5739,
+        "change30d": 1.9699,
+        "change1y": 4.1682,
+        "high30d": 0.895099,
+        "low30d": 0.878037,
+        "average30d": 0.889911,
+        "volatility30d": 0.2427,
+        "history": [
+          {
+            "date": "2026-09-28",
+            "rate": 0.878037
+          },
+          {
+            "date": "2026-09-29",
+            "rate": 0.880226
+          },
+          {
+            "date": "2026-09-30",
+            "rate": 0.882434
+          },
+          {
+            "date": "2026-10-01",
+            "rate": 0.883652
+          },
+          {
+            "date": "2026-10-02",
+            "rate": 0.888626
+          },
+          {
+            "date": "2026-10-03",
+            "rate": 0.888626
+          },
+          {
+            "date": "2026-10-04",
+            "rate": 0.888246
+          },
+          {
+            "date": "2026-10-05",
+            "rate": 0.894174
+          },
+          {
+            "date": "2026-10-06",
+            "rate": 0.891674
+          },
+          {
+            "date": "2026-10-07",
+            "rate": 0.890419
+          },
+          {
+            "date": "2026-10-08",
+            "rate": 0.892463
+          },
+          {
+            "date": "2026-10-09",
+            "rate": 0.889796
+          },
+          {
+            "date": "2026-10-10",
+            "rate": 0.892716
+          },
+          {
+            "date": "2026-10-11",
+            "rate": 0.892571
+          },
+          {
+            "date": "2026-10-12",
+            "rate": 0.892822
+          },
+          {
+            "date": "2026-10-13",
+            "rate": 0.894845
+          },
+          {
+            "date": "2026-10-14",
+            "rate": 0.891987
+          },
+          {
+            "date": "2026-10-15",
+            "rate": 0.890861
+          },
+          {
+            "date": "2026-10-16",
+            "rate": 0.88987
+          },
+          {
+            "date": "2026-10-17",
+            "rate": 0.889757
+          },
+          {
+            "date": "2026-10-18",
+            "rate": 0.889761
+          },
+          {
+            "date": "2026-10-19",
+            "rate": 0.890515
+          },
+          {
+            "date": "2026-10-20",
+            "rate": 0.889991
+          },
+          {
+            "date": "2026-10-21",
+            "rate": 0.890629
+          },
+          {
+            "date": "2026-10-22",
+            "rate": 0.889437
+          },
+          {
+            "date": "2026-10-23",
+            "rate": 0.891773
+          },
+          {
+            "date": "2026-10-24",
+            "rate": 0.892532
+          },
+          {
+            "date": "2026-10-25",
+            "rate": 0.892668
+          },
+          {
+            "date": "2026-10-26",
+            "rate": 0.891118
+          },
+          {
+            "date": "2026-10-27",
+            "rate": 0.895099
+          }
+        ],
+        "hourly": [
+          {
+            "hour": 18,
+            "rate": 0.891512,
+            "timestamp": "2026-10-26T18:41:09.810Z"
+          },
+          {
+            "hour": 19,
+            "rate": 0.891173,
+            "timestamp": "2026-10-26T19:41:09.810Z"
+          },
+          {
+            "hour": 20,
+            "rate": 0.8911,
+            "timestamp": "2026-10-26T20:41:09.810Z"
+          },
+          {
+            "hour": 21,
+            "rate": 0.891849,
+            "timestamp": "2026-10-26T21:41:09.810Z"
+          },
+          {
+            "hour": 22,
+            "rate": 0.89212,
+            "timestamp": "2026-10-26T22:41:09.810Z"
+          },
+          {
+            "hour": 23,
+            "rate": 0.891692,
+            "timestamp": "2026-10-26T23:41:09.810Z"
+          },
+          {
+            "hour": 0,
+            "rate": 0.891922,
+            "timestamp": "2026-10-27T00:41:09.810Z"
+          },
+          {
+            "hour": 1,
+            "rate": 0.892681,
+            "timestamp": "2026-10-27T01:41:09.810Z"
+          },
+          {
+            "hour": 2,
+            "rate": 0.892646,
+            "timestamp": "2026-10-27T02:41:09.810Z"
+          },
+          {
+            "hour": 3,
+            "rate": 0.892287,
+            "timestamp": "2026-10-27T03:41:09.810Z"
+          },
+          {
+            "hour": 4,
+            "rate": 0.892805,
+            "timestamp": "2026-10-27T04:41:09.810Z"
+          },
+          {
+            "hour": 5,
+            "rate": 0.893422,
+            "timestamp": "2026-10-27T05:41:09.810Z"
+          },
+          {
+            "hour": 6,
+            "rate": 0.893135,
+            "timestamp": "2026-10-27T06:41:09.810Z"
+          },
+          {
+            "hour": 7,
+            "rate": 0.892984,
+            "timestamp": "2026-10-27T07:41:09.810Z"
+          },
+          {
+            "hour": 8,
+            "rate": 0.8937,
+            "timestamp": "2026-10-27T08:41:09.810Z"
+          },
+          {
+            "hour": 9,
+            "rate": 0.894058,
+            "timestamp": "2026-10-27T09:41:09.810Z"
+          },
+          {
+            "hour": 10,
+            "rate": 0.89364,
+            "timestamp": "2026-10-27T10:41:09.810Z"
+          },
+          {
+            "hour": 11,
+            "rate": 0.893781,
+            "timestamp": "2026-10-27T11:41:09.810Z"
+          },
+          {
+            "hour": 12,
+            "rate": 0.894553,
+            "timestamp": "2026-10-27T12:41:09.810Z"
+          },
+          {
+            "hour": 13,
+            "rate": 0.894604,
+            "timestamp": "2026-10-27T13:41:09.810Z"
+          },
+          {
+            "hour": 14,
+            "rate": 0.894209,
+            "timestamp": "2026-10-27T14:41:09.810Z"
+          },
+          {
+            "hour": 15,
+            "rate": 0.894651,
+            "timestamp": "2026-10-27T15:41:09.810Z"
+          },
+          {
+            "hour": 16,
+            "rate": 0.895323,
+            "timestamp": "2026-10-27T16:41:09.810Z"
+          },
+          {
+            "hour": 17,
+            "rate": 0.895099,
+            "timestamp": "2026-10-27T17:41:09.810Z"
+          }
+        ]
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/currencyconverter"
+  },
+  "get_weather": {
+    "config": {
+      "operation": "get_weather",
+      "city": "San Francisco"
+    },
+    "method": "GET",
+    "path": "/v1/weatherforecast",
+    "params": {
+      "city": "San Francisco"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "tempC": 13.3,
+        "tempF": 55.9,
+        "windMph": 4.7,
+        "windKph": 7.6,
+        "windDegree": 273,
+        "windDir": "W",
+        "isDay": false,
+        "uvRisk": "low",
+        "location": {
+          "name": "San Francisco",
+          "region": "California",
+          "country": "United States of America",
+          "latitude": 37.775,
+          "longitude": -122.4183,
+          "timezone": "America/Los_Angeles",
+          "localTime": "2026-10-27T21:05"
+        },
+        "pressureMb": 1022,
+        "pressureIn": 30.17,
+        "precipMm": 0,
+        "precipIn": 0,
+        "feelslikeC": 13,
+        "feelslikeF": 55.3,
+        "visKm": 16,
+        "visMiles": 9,
+        "gustMph": 7.2,
+        "gustKph": 11.6,
+        "forecast": [
+          {
+            "date": "2026-09-21",
+            "condition": "Sunny",
+            "maxtempC": 22.5,
+            "maxtempF": 72.5,
+            "mintempC": 13.3,
+            "mintempF": 56,
+            "avgtempC": 17.7,
+            "avgtempF": 63.9,
+            "maxwindMph": 4.7,
+            "maxwindKph": 7.6,
+            "avghumidity": 48,
+            "uv": 4,
+            "willItRain": 0,
+            "chanceOfRain": 4,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 0,
+            "totalprecipIn": 0,
+            "totalsnowCm": 0,
+            "avgvisKm": 10,
+            "avgvisMiles": 6
+          },
+          {
+            "date": "2026-09-22",
+            "condition": "Sunny",
+            "maxtempC": 22.8,
+            "maxtempF": 73,
+            "mintempC": 16.5,
+            "mintempF": 61.7,
+            "avgtempC": 19.7,
+            "avgtempF": 67.5,
+            "maxwindMph": 4.7,
+            "maxwindKph": 7.6,
+            "avghumidity": 63,
+            "uv": 3.9,
+            "willItRain": 0,
+            "chanceOfRain": 8,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 0.02,
+            "totalprecipIn": 0,
+            "totalsnowCm": 0,
+            "avgvisKm": 10,
+            "avgvisMiles": 6
+          },
+          {
+            "date": "2026-09-23",
+            "condition": "Overcast",
+            "maxtempC": 22.8,
+            "maxtempF": 73.1,
+            "mintempC": 14.1,
+            "mintempF": 57.4,
+            "avgtempC": 18.4,
+            "avgtempF": 65.2,
+            "maxwindMph": 15.7,
+            "maxwindKph": 25.2,
+            "avghumidity": 70,
+            "uv": 3.1,
+            "willItRain": 1,
+            "chanceOfRain": 76,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 5.97,
+            "totalprecipIn": 0.23,
+            "totalsnowCm": 0,
+            "avgvisKm": 9.9,
+            "avgvisMiles": 6
+          },
+          {
+            "date": "2026-09-24",
+            "condition": "Partly Cloudy",
+            "maxtempC": 18,
+            "maxtempF": 64.5,
+            "mintempC": 10.5,
+            "mintempF": 50.8,
+            "avgtempC": 14.3,
+            "avgtempF": 57.7,
+            "maxwindMph": 11,
+            "maxwindKph": 17.6,
+            "avghumidity": 64,
+            "uv": 3.5,
+            "willItRain": 0,
+            "chanceOfRain": 11,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 0.03,
+            "totalprecipIn": 0,
+            "totalsnowCm": 0,
+            "avgvisKm": 10,
+            "avgvisMiles": 6
+          },
+          {
+            "date": "2026-09-25",
+            "condition": "Sunny",
+            "maxtempC": 21.3,
+            "maxtempF": 70.3,
+            "mintempC": 12,
+            "mintempF": 53.6,
+            "avgtempC": 16,
+            "avgtempF": 60.8,
+            "maxwindMph": 6.5,
+            "maxwindKph": 10.4,
+            "avghumidity": 56,
+            "uv": 6,
+            "willItRain": 0,
+            "chanceOfRain": 4,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 0,
+            "totalprecipIn": 0,
+            "totalsnowCm": 0,
+            "avgvisKm": 10,
+            "avgvisMiles": 6
+          },
+          {
+            "date": "2026-09-26",
+            "condition": "Sunny",
+            "maxtempC": 22,
+            "maxtempF": 71.5,
+            "mintempC": 13,
+            "mintempF": 55.3,
+            "avgtempC": 17.1,
+            "avgtempF": 62.8,
+            "maxwindMph": 8.9,
+            "maxwindKph": 14.4,
+            "avghumidity": 62,
+            "uv": 6,
+            "willItRain": 0,
+            "chanceOfRain": 8,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 0,
+            "totalprecipIn": 0,
+            "totalsnowCm": 0,
+            "avgvisKm": 10,
+            "avgvisMiles": 6
+          },
+          {
+            "date": "2026-09-27",
+            "condition": "Overcast",
+            "maxtempC": 19.3,
+            "maxtempF": 66.8,
+            "mintempC": 12.8,
+            "mintempF": 55.1,
+            "avgtempC": 16.3,
+            "avgtempF": 61.3,
+            "maxwindMph": 6.9,
+            "maxwindKph": 11.2,
+            "avghumidity": 67,
+            "uv": 4,
+            "willItRain": 0,
+            "chanceOfRain": 36,
+            "willItSnow": 0,
+            "chanceOfSnow": 0,
+            "totalprecipMm": 0.32,
+            "totalprecipIn": 0.01,
+            "totalsnowCm": 0,
+            "avgvisKm": 10,
+            "avgvisMiles": 6
+          }
+        ],
+        "forecastSummary": {
+          "rainExpectedOn": "2026-09-23",
+          "daysWithRain": 1,
+          "tempTrend": "cooling",
+          "tempTrendC": -2.1,
+          "maxChanceOfRain": 76
+        }
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/weatherforecast"
+  },
+  "generate_qr_code": {
+    "config": {
+      "operation": "generate_qr_code",
+      "value": "https://apiverve.com"
+    },
+    "method": "POST",
+    "path": "/v1/qrcodegenerator",
+    "params": {
+      "value": "https://apiverve.com"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "id": "b07577c8-e17f-4af3-aeff-94c74d9ea04a",
+        "format": "png",
+        "type": "url",
+        "correction": "M",
+        "size": 5,
+        "margin": 0,
+        "expires": 1766096864874,
+        "downloadURL": "https://storage.googleapis.com/apiverve/APIData/qrcodegenerator/2556d708-7ec4-45ce-b0fb-98d47fcf170f.png?GoogleAccessId=635500398038-compute%40developer.gserviceaccount.com&Expires=1766096864&Signatur\u2026"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/qrcodegenerator"
+  },
+  "generate_pdf": {
+    "config": {
+      "operation": "generate_pdf",
+      "html": "<!doctype html> <html>  <head> <title>This is the title of the webpage!</title> </head> <body> <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p> </body> </html>"
+    },
+    "method": "POST",
+    "path": "/v1/htmltopdf",
+    "params": {
+      "html": "<!doctype html> <html>  <head> <title>This is the title of the webpage!</title> </head> <body> <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p> </body> </html>"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "marginLeft": "0.4in",
+        "marginRight": "0.4in",
+        "marginTop": "0.4in",
+        "marginBottom": "0.4in",
+        "landscape": false,
+        "format": "A4",
+        "scale": 1,
+        "pageCount": 1,
+        "pdfName": "c064eacc-c29f-43a1-8375-a4b2562ea9d8.pdf",
+        "expires": 1766096665366,
+        "downloadURL": "https://storage.googleapis.com/apiverve-helpers.appspot.com/htmltopdf/c064eacc-c29f-43a1-8375-a4b2562ea9d8.pdf?GoogleAccessId=1089020767582-compute%40developer.gserviceaccount.com&Expires=1766096665&S\u2026"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/htmltopdf"
+  },
+  "generate_image": {
+    "config": {
+      "operation": "generate_image",
+      "html": "<html><head><style>body { font-family: Arial; padding: 20px; } h1 { color: #333; }</style></head><body><h1>Hello World</h1><p>This is a sample HTML document converted to an image.</p></body></html>"
+    },
+    "method": "POST",
+    "path": "/v1/htmltoimage",
+    "params": {
+      "html": "<html><head><style>body { font-family: Arial; padding: 20px; } h1 { color: #333; }</style></head><body><h1>Hello World</h1><p>This is a sample HTML document converted to an image.</p></body></html>"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "width": 800,
+        "height": 600,
+        "format": "png",
+        "imageName": "bf3d3d67-bc6e-477b-a916-560b895f8091.png",
+        "expires": 1789676439207,
+        "downloadURL": "https://storage.googleapis.com/apiverve/APIData/htmltoimage/bf3d3d67-bc6e-477b-a916-560b895f8091.png?GoogleAccessId=635500398038-compute%40developer.gserviceaccount.com&Expires=1789676439&Signature=Uw\u2026",
+        "htmlLength": 197
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/htmltoimage"
+  },
+  "capture_screenshot": {
+    "config": {
+      "operation": "capture_screenshot",
+      "url": "https://ebay.com/"
+    },
+    "method": "POST",
+    "path": "/v1/webscreenshots",
+    "params": {
+      "url": "https://ebay.com/"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "width": 1024,
+        "height": 600,
+        "scaleFactor": 1,
+        "imageName": "77072426-6af8-45c2-93dd-d7013d2c765e.png",
+        "expires": 1766097105719,
+        "url": "https://ebay.com/",
+        "downloadURL": "https://storage.googleapis.com/apiverve-helpers.appspot.com/webscreenshots/77072426-6af8-45c2-93dd-d7013d2c765e.png?GoogleAccessId=1089020767582-compute%40developer.gserviceaccount.com&Expires=1766097\u2026"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/webscreenshots"
+  },
+  "unshorten_url": {
+    "config": {
+      "operation": "unshorten_url",
+      "url": "https://bit.ly/3k3j4"
+    },
+    "method": "POST",
+    "path": "/v1/urlunshortener",
+    "params": {
+      "url": "https://bit.ly/3k3j4"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "source": "https://bit.ly/3k3j4",
+        "destination": "http://www.allclimbing.com/archive/2009/09/climbing-video-alex-puccio-on-trice-v12/",
+        "unshortened": true,
+        "redirectCount": 1,
+        "destinationDomain": "www.allclimbing.com",
+        "redirectChain": [
+          "https://bit.ly/3k3j4",
+          "http://www.allclimbing.com/archive/2009/09/climbing-video-alex-puccio-on-trice-v12/"
+        ]
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/urlunshortener"
+  },
+  "convert_markdown": {
+    "config": {
+      "operation": "convert_markdown",
+      "markdown": "# Hello World\n\nThis is a **bold** statement and this is *italic*.\n\n## Features\n\n- Easy to use\n- Fast conversion\n- Supports common markdown syntax\n\n[Link to example](https://example.com)"
+    },
+    "method": "POST",
+    "path": "/v1/markdowntohtml",
+    "params": {
+      "markdown": "# Hello World\n\nThis is a **bold** statement and this is *italic*.\n\n## Features\n\n- Easy to use\n- Fast conversion\n- Supports common markdown syntax\n\n[Link to example](https://example.com)"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "html": "<h1>Hello World</h1>\n<p>This is a <strong>bold</strong> statement and this is <em>italic</em>.</p>\n<h2>Features</h2>\n<ul>\n<li>Easy to use</li>\n<li>Fast conversion</li>\n<li>Supports common markdown syn\u2026",
+        "markdownLength": 185,
+        "htmlLength": 272
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/markdowntohtml"
+  },
+  "list_currency_symbols": {
+    "config": {
+      "operation": "list_currency_symbols",
+      "currency": "USD"
+    },
+    "method": "GET",
+    "path": "/v1/currencysymbols",
+    "params": {
+      "currency": "USD"
+    },
+    "response": {
+      "status": "ok",
+      "error": null,
+      "data": {
+        "countriesFound": [
+          {
+            "country_name": "AMERICAN SAMOA",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "BONAIRE, SINT EUSTATIUS AND SABA",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "BRITISH INDIAN OCEAN TERRITORY (THE)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "ECUADOR",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "EL SALVADOR",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "GUAM",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "HAITI",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "MARSHALL ISLANDS (THE)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "MICRONESIA (FEDERATED STATES OF)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "NORTHERN MARIANA ISLANDS (THE)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "PALAU",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "PANAMA",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "PUERTO RICO",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "TIMOR-LESTE",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "TURKS AND CAICOS ISLANDS (THE)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "UNITED STATES MINOR OUTLYING ISLANDS (THE)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "UNITED STATES OF AMERICA (THE)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "VIRGIN ISLANDS (BRITISH)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          },
+          {
+            "country_name": "VIRGIN ISLANDS (U.S.)",
+            "currency_name": "US Dollar",
+            "currency_iso_code": "USD",
+            "currency_number": "840",
+            "currency_mnr_unts": "2",
+            "currency_symbol": "$",
+            "exchangeRate": 1,
+            "usdValue": 1,
+            "change1d": 0
+          }
+        ],
+        "ratesUpdated": "2026-10-27T17:41:09.810Z",
+        "currency": "USD"
+      }
+    },
+    "source": "https://docs.apiverve.com/ref/currencysymbols"
+  }
+}
