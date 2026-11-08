@@ -11,6 +11,7 @@ const SliteIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const SliteNode: NodeDefinition = {
     type: 'automation-slite', label: 'Slite',
+    category: 'documents',
     description: 'Search, create and update knowledge base notes, reviews, users and groups',
     keywords: ['wiki', 'knowledge base', 'documents'],
     Icon: SliteIcon, iconColor: '',
