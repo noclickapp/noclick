@@ -1,0 +1,1332 @@
+{
+  "$defs": {
+    "ArchiveCustomer": {
+      "additionalProperties": false,
+      "description": "Archive the customer profile; does not claim permanent deletion.",
+      "properties": {
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "archive_customer",
+          "default": "archive_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ArchiveCustomer",
+      "type": "object"
+    },
+    "ChangeBookingStatus": {
+      "additionalProperties": false,
+      "description": "Change status; notifications, payment creation and overbooking are explicit switches.",
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "change_booking_status",
+          "default": "change_booking_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status_id": {
+          "description": "Status ID from list_statuses, such as PAID.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Status Id",
+          "type": "string"
+        },
+        "send_notifications": {
+          "default": false,
+          "description": "Send the provider's configured status email notifications.",
+          "title": "Send Notifications",
+          "type": "boolean"
+        },
+        "apply_payment": {
+          "default": false,
+          "description": "Create a POS transaction for the balance when setting PAID.",
+          "title": "Apply Payment",
+          "type": "boolean"
+        },
+        "allow_overbooking": {
+          "default": false,
+          "description": "Allow inventory overbooking when setting a locked status.",
+          "title": "Allow Overbooking",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "booking_code",
+        "status_id"
+      ],
+      "title": "ChangeBookingStatus",
+      "type": "object"
+    },
+    "CheckInBooking": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "guest_activity_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxItems": 250,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest activity slot IDs; omit to apply to all guests in this booking.",
+          "title": "Guest Activity Ids"
+        },
+        "operation": {
+          "const": "checkin_booking",
+          "default": "checkin_booking",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "CheckInBooking",
+      "type": "object"
+    },
+    "CheckOutBooking": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "guest_activity_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxItems": 250,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest activity slot IDs; omit to apply to all guests in this booking.",
+          "title": "Guest Activity Ids"
+        },
+        "operation": {
+          "const": "checkout_booking",
+          "default": "checkout_booking",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "CheckOutBooking",
+      "type": "object"
+    },
+    "CheckfrontAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "checkfront_api_key",
+          "default": "checkfront_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_url": {
+          "description": "Your Checkfront HTTPS origin, without /api/4.0.",
+          "title": "Tenant URL",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "tenant_url",
+        "api_key",
+        "api_secret"
+      ],
+      "title": "Checkfront API Key",
+      "type": "object",
+      "x-credential-instructions": "In Checkfront, open Manage > Developer and create a token-pair application. Paste its API key and API secret, plus your tenant URL (for example https://your-company.checkfront.com). Migrated accounts can use their manage.na1.bookingplatform.app or manage.eu1.bookingplatform.app URL. API access requires an eligible paid account. The pair is sent using HTTP Basic authentication. Use a credential with permission for the selected operations.",
+      "x-credential-url": "https://api.checkfront.com/overview/connecting.html"
+    },
+    "CreateBookingNote": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_booking_note",
+          "default": "create_booking_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "description": "Note content.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "public": {
+          "default": false,
+          "description": "Show this note on customer-visible invoices.",
+          "title": "Public",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "booking_code",
+        "body"
+      ],
+      "title": "CreateBookingNote",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/$defs/CustomerFields"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CustomerFields": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer First Name"
+        },
+        "customer_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Last Name"
+        },
+        "customer_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Email"
+        },
+        "customer_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Address"
+        },
+        "customer_city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer City"
+        },
+        "customer_country": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Country"
+        },
+        "customer_region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Region"
+        },
+        "customer_postal_zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Postal Zip"
+        },
+        "customer_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Phone"
+        },
+        "customer_email_optin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Email Optin"
+        }
+      },
+      "title": "CustomerFields",
+      "type": "object"
+    },
+    "DeleteBookingNote": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_booking_note",
+          "default": "delete_booking_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code",
+        "note_id"
+      ],
+      "title": "DeleteBookingNote",
+      "type": "object"
+    },
+    "GetBooking": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "GetBooking",
+      "type": "object"
+    },
+    "GetBookingNote": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_booking_note",
+          "default": "get_booking_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code",
+        "note_id"
+      ],
+      "title": "GetBookingNote",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "minimum": 1,
+          "title": "Product Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "ListBookingGuests": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_booking_guests",
+          "default": "list_booking_guests",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "ListBookingGuests",
+      "type": "object"
+    },
+    "ListBookingNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_booking_notes",
+          "default": "list_booking_notes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "ListBookingNotes",
+      "type": "object"
+    },
+    "ListBookingTransactions": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_booking_transactions",
+          "default": "list_booking_transactions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "ListBookingTransactions",
+      "type": "object"
+    },
+    "ListBookings": {
+      "additionalProperties": false,
+      "description": "Search bookings by contact, creation time or travel dates; returns one page.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_bookings",
+          "default": "list_bookings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "start_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO 8601 date-time.",
+          "title": "Start Min"
+        },
+        "start_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time upper bound.",
+          "title": "Start Max"
+        },
+        "created_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time lower bound.",
+          "title": "Created Min"
+        },
+        "created_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time upper bound.",
+          "title": "Created Max"
+        }
+      },
+      "title": "ListBookings",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListCustomerBookings": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customer_bookings",
+          "default": "list_customer_bookings",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ListCustomerBookings",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "archived",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "draft",
+            "archived",
+            "unarchived",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListStatuses": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum results in this page. Use next_offset to continue.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_statuses",
+          "default": "list_statuses",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListStatuses",
+      "type": "object"
+    },
+    "ResetBookingCheckIn": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "guest_activity_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxItems": 250,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest activity slot IDs; omit to apply to all guests in this booking.",
+          "title": "Guest Activity Ids"
+        },
+        "operation": {
+          "const": "reset_booking_checkin",
+          "default": "reset_booking_checkin",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "ResetBookingCheckIn",
+      "type": "object"
+    },
+    "UpdateBooking": {
+      "additionalProperties": false,
+      "description": "Update the booking's customer/contact fields, partner or language.",
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_booking",
+          "default": "update_booking",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "partner_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partner Id"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerFields"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "booking_code"
+      ],
+      "title": "UpdateBooking",
+      "type": "object"
+    },
+    "UpdateBookingNote": {
+      "additionalProperties": false,
+      "properties": {
+        "booking_code": {
+          "description": "Booking code, for example ABCD-010115.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Booking Code",
+          "type": "string"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_booking_note",
+          "default": "update_booking_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to retain current invoice visibility.",
+          "title": "Public"
+        }
+      },
+      "required": [
+        "booking_code",
+        "note_id",
+        "body"
+      ],
+      "title": "UpdateBookingNote",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/$defs/CustomerFields"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        }
+      },
+      "required": [
+        "customer_id",
+        "fields"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_customer": "#/$defs/ArchiveCustomer",
+          "change_booking_status": "#/$defs/ChangeBookingStatus",
+          "checkin_booking": "#/$defs/CheckInBooking",
+          "checkout_booking": "#/$defs/CheckOutBooking",
+          "create_booking_note": "#/$defs/CreateBookingNote",
+          "create_customer": "#/$defs/CreateCustomer",
+          "delete_booking_note": "#/$defs/DeleteBookingNote",
+          "get_booking": "#/$defs/GetBooking",
+          "get_booking_note": "#/$defs/GetBookingNote",
+          "get_company": "#/$defs/GetCompany",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_product": "#/$defs/GetProduct",
+          "list_booking_guests": "#/$defs/ListBookingGuests",
+          "list_booking_notes": "#/$defs/ListBookingNotes",
+          "list_booking_transactions": "#/$defs/ListBookingTransactions",
+          "list_bookings": "#/$defs/ListBookings",
+          "list_categories": "#/$defs/ListCategories",
+          "list_customer_bookings": "#/$defs/ListCustomerBookings",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_products": "#/$defs/ListProducts",
+          "list_statuses": "#/$defs/ListStatuses",
+          "reset_booking_checkin": "#/$defs/ResetBookingCheckIn",
+          "update_booking": "#/$defs/UpdateBooking",
+          "update_booking_note": "#/$defs/UpdateBookingNote",
+          "update_customer": "#/$defs/UpdateCustomer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBookings"
+        },
+        {
+          "$ref": "#/$defs/GetBooking"
+        },
+        {
+          "$ref": "#/$defs/UpdateBooking"
+        },
+        {
+          "$ref": "#/$defs/CheckInBooking"
+        },
+        {
+          "$ref": "#/$defs/CheckOutBooking"
+        },
+        {
+          "$ref": "#/$defs/ResetBookingCheckIn"
+        },
+        {
+          "$ref": "#/$defs/ChangeBookingStatus"
+        },
+        {
+          "$ref": "#/$defs/ListBookingNotes"
+        },
+        {
+          "$ref": "#/$defs/GetBookingNote"
+        },
+        {
+          "$ref": "#/$defs/CreateBookingNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateBookingNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteBookingNote"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ArchiveCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerBookings"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/ListStatuses"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/ListBookingTransactions"
+        },
+        {
+          "$ref": "#/$defs/ListBookingGuests"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CheckfrontAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Checkfront Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find bookings created today",
+    "Add a private note to this booking",
+    "Create a customer profile"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
