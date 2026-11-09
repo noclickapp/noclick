@@ -1,0 +1,1242 @@
+{
+  "$defs": {
+    "ChunkText": {
+      "properties": {
+        "operation": {
+          "const": "chunk_text",
+          "default": "chunk_text",
+          "title": "Chunk Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Chunk Text"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "chunk_max_length": {
+          "default": 1024,
+          "maximum": 30000,
+          "minimum": 1024,
+          "title": "Chunk Max Length",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 256,
+          "minimum": 256,
+          "title": "Chunk Overlap",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "ChunkText",
+      "type": "object"
+    },
+    "CreateMemory": {
+      "properties": {
+        "operation": {
+          "const": "create_memory",
+          "default": "create_memory",
+          "title": "Create Memory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Memory"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "embedding_model": {
+          "default": "openai:text-embedding-3-large",
+          "enum": [
+            "openai:text-embedding-3-large",
+            "cohere:embed-v4.0",
+            "cohere:embed-multilingual-v3.0",
+            "cohere:embed-multilingual-light-v3.0",
+            "google:text-embedding-004"
+          ],
+          "title": "Embedding Model",
+          "type": "string"
+        },
+        "chunk_size": {
+          "default": 10000,
+          "maximum": 30000,
+          "minimum": 1024,
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 2048,
+          "minimum": 256,
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "top_k": {
+          "default": 3,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Top K",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateMemory",
+      "type": "object"
+    },
+    "CreateMessages": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_messages",
+          "default": "create_messages",
+          "title": "Add Thread Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Add Thread Messages"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "thread_id",
+        "messages"
+      ],
+      "title": "CreateMessages",
+      "type": "object"
+    },
+    "CreatePipe": {
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "status": {
+          "default": "private",
+          "enum": [
+            "private",
+            "public"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "messages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PipeMessage"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Messages"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Tokens"
+        },
+        "top_p": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top P"
+        },
+        "store": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Store"
+        },
+        "moderate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moderate"
+        },
+        "operation": {
+          "const": "create_pipe",
+          "default": "create_pipe",
+          "title": "Create Pipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Pipe"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "upsert": {
+          "default": false,
+          "description": "Update an existing pipe with this name if it exists.",
+          "title": "Upsert",
+          "type": "boolean"
+        },
+        "type": {
+          "default": "generate",
+          "enum": [
+            "chat",
+            "generate"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreatePipe",
+      "type": "object"
+    },
+    "CreateThread": {
+      "properties": {
+        "operation": {
+          "const": "create_thread",
+          "default": "create_thread",
+          "title": "Create Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Thread"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "title": "CreateThread",
+      "type": "object"
+    },
+    "DeleteDocument": {
+      "properties": {
+        "memory_name": {
+          "minLength": 1,
+          "title": "Memory Name",
+          "type": "string"
+        },
+        "document_name": {
+          "minLength": 1,
+          "title": "Document Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Memory Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Memory Document"
+        }
+      },
+      "required": [
+        "memory_name",
+        "document_name"
+      ],
+      "title": "DeleteDocument",
+      "type": "object"
+    },
+    "DeleteMemory": {
+      "properties": {
+        "memory_name": {
+          "minLength": 1,
+          "title": "Memory Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_memory",
+          "default": "delete_memory",
+          "title": "Delete Memory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Memory"
+        }
+      },
+      "required": [
+        "memory_name"
+      ],
+      "title": "DeleteMemory",
+      "type": "object"
+    },
+    "DeleteMessage": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "Message UUID",
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Thread Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Thread Message"
+        }
+      },
+      "required": [
+        "thread_id",
+        "message_id"
+      ],
+      "title": "DeleteMessage",
+      "type": "object"
+    },
+    "DeleteThread": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_thread",
+          "default": "delete_thread",
+          "title": "Delete Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Thread"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "DeleteThread",
+      "type": "object"
+    },
+    "EmbedText": {
+      "properties": {
+        "operation": {
+          "const": "embed_text",
+          "default": "embed_text",
+          "title": "Embed Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Embed Text"
+        },
+        "chunks": {
+          "items": {
+            "maxLength": 8192,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Chunks",
+          "type": "array"
+        },
+        "embedding_model": {
+          "default": "openai:text-embedding-3-large",
+          "title": "Embedding Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chunks"
+      ],
+      "title": "EmbedText",
+      "type": "object"
+    },
+    "GetPipe": {
+      "properties": {
+        "operation": {
+          "const": "get_pipe",
+          "default": "get_pipe",
+          "title": "Get Pipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Pipe"
+        },
+        "owner_login": {
+          "minLength": 1,
+          "title": "Owner Login",
+          "type": "string"
+        },
+        "pipe_name": {
+          "minLength": 1,
+          "title": "Pipe Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_login",
+        "pipe_name"
+      ],
+      "title": "GetPipe",
+      "type": "object"
+    },
+    "GetThread": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_thread",
+          "default": "get_thread",
+          "title": "Get Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Thread"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GetThread",
+      "type": "object"
+    },
+    "LangbaseAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "langbase_api_key",
+          "default": "langbase_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Langbase API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste a Langbase user or organization API key with access to the pipes, memories and threads you need. Use an account key rather than a pipe-only key so NoClick can list your pipes to check the connection. LLM operations use the provider keys configured in Langbase.",
+      "x-credential-url": "https://langbase.com/docs/api-reference/api-keys"
+    },
+    "ListDocuments": {
+      "properties": {
+        "memory_name": {
+          "minLength": 1,
+          "title": "Memory Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Memory Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Memory Documents"
+        }
+      },
+      "required": [
+        "memory_name"
+      ],
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListMemories": {
+      "properties": {
+        "operation": {
+          "const": "list_memories",
+          "default": "list_memories",
+          "title": "List Memories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Memories"
+        }
+      },
+      "title": "ListMemories",
+      "type": "object"
+    },
+    "ListMessages": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "List Thread Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Thread Messages"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "ListMessages",
+      "type": "object"
+    },
+    "ListPipes": {
+      "properties": {
+        "operation": {
+          "const": "list_pipes",
+          "default": "list_pipes",
+          "title": "List Pipes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Pipes"
+        }
+      },
+      "title": "ListPipes",
+      "type": "object"
+    },
+    "MemoryReference": {
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filters"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MemoryReference",
+      "type": "object"
+    },
+    "Message": {
+      "properties": {
+        "role": {
+          "enum": [
+            "system",
+            "user",
+            "assistant",
+            "function",
+            "tool"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "default": "",
+          "title": "Content",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "tool_call_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Call Id"
+        },
+        "tool_calls": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Calls"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 2048,
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "role"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "PipeMessage": {
+      "properties": {
+        "role": {
+          "enum": [
+            "system",
+            "user",
+            "assistant",
+            "function"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "PipeMessage",
+      "type": "object"
+    },
+    "RetrieveMemory": {
+      "properties": {
+        "operation": {
+          "const": "retrieve_memory",
+          "default": "retrieve_memory",
+          "title": "Search Memory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Memory"
+        },
+        "memory": {
+          "items": {
+            "$ref": "#/$defs/MemoryReference"
+          },
+          "minItems": 1,
+          "title": "Memory",
+          "type": "array"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "top_k": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Top K",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "memory",
+        "query"
+      ],
+      "title": "RetrieveMemory",
+      "type": "object"
+    },
+    "RetryEmbeddings": {
+      "properties": {
+        "memory_name": {
+          "minLength": 1,
+          "title": "Memory Name",
+          "type": "string"
+        },
+        "document_name": {
+          "minLength": 1,
+          "title": "Document Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "retry_embeddings",
+          "default": "retry_embeddings",
+          "title": "Retry Document Embeddings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Retry Document Embeddings"
+        }
+      },
+      "required": [
+        "memory_name",
+        "document_name"
+      ],
+      "title": "RetryEmbeddings",
+      "type": "object"
+    },
+    "RunPipe": {
+      "properties": {
+        "operation": {
+          "const": "run_pipe",
+          "default": "run_pipe",
+          "title": "Run Pipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Run Pipe"
+        },
+        "name": {
+          "description": "Pipe name in the connected account.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continue an existing conversation.",
+          "format": "uuid",
+          "title": "Thread Id"
+        }
+      },
+      "required": [
+        "name",
+        "messages"
+      ],
+      "title": "RunPipe",
+      "type": "object"
+    },
+    "UpdateMessage": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "Message UUID",
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Update Thread Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Thread Message"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 2048,
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "thread_id",
+        "message_id"
+      ],
+      "title": "UpdateMessage",
+      "type": "object"
+    },
+    "UpdatePipe": {
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "private",
+                "public"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "private",
+            "public"
+          ],
+          "x-enum-searchable": true
+        },
+        "messages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PipeMessage"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Messages"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Tokens"
+        },
+        "top_p": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top P"
+        },
+        "store": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Store"
+        },
+        "moderate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moderate"
+        },
+        "operation": {
+          "const": "update_pipe",
+          "default": "update_pipe",
+          "title": "Update Pipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Pipe"
+        },
+        "pipe_name": {
+          "minLength": 1,
+          "title": "Pipe Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pipe_name"
+      ],
+      "title": "UpdatePipe",
+      "type": "object"
+    },
+    "UpdateThread": {
+      "properties": {
+        "thread_id": {
+          "description": "Thread UUID",
+          "format": "uuid",
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_thread",
+          "default": "update_thread",
+          "title": "Update Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Thread"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "UpdateThread",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "chunk_text": "#/$defs/ChunkText",
+          "create_memory": "#/$defs/CreateMemory",
+          "create_messages": "#/$defs/CreateMessages",
+          "create_pipe": "#/$defs/CreatePipe",
+          "create_thread": "#/$defs/CreateThread",
+          "delete_document": "#/$defs/DeleteDocument",
+          "delete_memory": "#/$defs/DeleteMemory",
+          "delete_message": "#/$defs/DeleteMessage",
+          "delete_thread": "#/$defs/DeleteThread",
+          "embed_text": "#/$defs/EmbedText",
+          "get_pipe": "#/$defs/GetPipe",
+          "get_thread": "#/$defs/GetThread",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_memories": "#/$defs/ListMemories",
+          "list_messages": "#/$defs/ListMessages",
+          "list_pipes": "#/$defs/ListPipes",
+          "retrieve_memory": "#/$defs/RetrieveMemory",
+          "retry_embeddings": "#/$defs/RetryEmbeddings",
+          "run_pipe": "#/$defs/RunPipe",
+          "update_message": "#/$defs/UpdateMessage",
+          "update_pipe": "#/$defs/UpdatePipe",
+          "update_thread": "#/$defs/UpdateThread"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListPipes"
+        },
+        {
+          "$ref": "#/$defs/CreatePipe"
+        },
+        {
+          "$ref": "#/$defs/UpdatePipe"
+        },
+        {
+          "$ref": "#/$defs/GetPipe"
+        },
+        {
+          "$ref": "#/$defs/RunPipe"
+        },
+        {
+          "$ref": "#/$defs/ListMemories"
+        },
+        {
+          "$ref": "#/$defs/CreateMemory"
+        },
+        {
+          "$ref": "#/$defs/RetrieveMemory"
+        },
+        {
+          "$ref": "#/$defs/DeleteMemory"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocument"
+        },
+        {
+          "$ref": "#/$defs/RetryEmbeddings"
+        },
+        {
+          "$ref": "#/$defs/ChunkText"
+        },
+        {
+          "$ref": "#/$defs/EmbedText"
+        },
+        {
+          "$ref": "#/$defs/CreateThread"
+        },
+        {
+          "$ref": "#/$defs/GetThread"
+        },
+        {
+          "$ref": "#/$defs/UpdateThread"
+        },
+        {
+          "$ref": "#/$defs/DeleteThread"
+        },
+        {
+          "$ref": "#/$defs/CreateMessages"
+        },
+        {
+          "$ref": "#/$defs/ListMessages"
+        },
+        {
+          "$ref": "#/$defs/UpdateMessage"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LangbaseAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Langbase Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
