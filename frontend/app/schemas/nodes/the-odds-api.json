@@ -1,0 +1,1179 @@
+{
+  "$defs": {
+    "GetEventMarketsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event_markets",
+          "default": "get_event_markets",
+          "title": "Get Event Markets",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Event ids can be found in the `id` field in the response of the `/events` endpoint (see `/v4/sports/{sports}/events`). If the event has expired (not receiving updates due to completion or cancellation), a HTTP 404 status code will be returned.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event id",
+          "type": "string"
+        },
+        "regions": {
+          "default": "us",
+          "description": "Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Each region will count as 1 request against the usage quota for each market. Most use cases will only need to specify one region. See [the full list of bookmakers by region](https://the-odds-api.com/sports-odds-data/bookmaker-apis.html)",
+          "maxLength": 256,
+          "pattern": "^(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi)(?:,(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi))*$",
+          "title": "Regions",
+          "type": "string"
+        },
+        "bookmakers": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests",
+          "title": "Bookmakers"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sport",
+        "event_id"
+      ],
+      "title": "GetEventMarketsConfig",
+      "type": "object"
+    },
+    "GetEventOddsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event_odds",
+          "default": "get_event_odds",
+          "title": "Get Event Odds",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Event ids can be found in the `id` field in the response of the `/events` endpoint (see `/v4/sports/{sports}/events`). If the event has expired (not receiving updates due to completion or cancellation), a HTTP 404 status code will be returned.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event id",
+          "type": "string"
+        },
+        "regions": {
+          "default": "us",
+          "description": "Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Each region will count as 1 request against the usage quota for each market. Most use cases will only need to specify one region. See [the full list of bookmakers by region](https://the-odds-api.com/sports-odds-data/bookmaker-apis.html)",
+          "maxLength": 256,
+          "pattern": "^(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi)(?:,(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi))*$",
+          "title": "Regions",
+          "type": "string"
+        },
+        "markets": {
+          "default": "h2h",
+          "description": "The odds markets to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights only avaialable for select sports. See [the full list of supported market keys](https://the-odds-api.com/sports-odds-data/betting-markets.html) Comma-separated market keys; historical data availability and plan restrictions apply.",
+          "maxLength": 4096,
+          "pattern": "^[a-z0-9_]+(?:,[a-z0-9_]+)*$",
+          "title": "Markets",
+          "type": "string"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "odds_format": {
+          "default": "decimal",
+          "description": "Format of returned odds",
+          "enum": [
+            "decimal",
+            "american"
+          ],
+          "title": "Odds format",
+          "type": "string"
+        },
+        "bookmakers": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests",
+          "title": "Bookmakers"
+        },
+        "include_links": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include bookmaker links to events, markets, and betslips if available.",
+          "title": "Include links"
+        },
+        "include_sids": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include source ids (bookmaker ids) for events, markets, and outcomes if available.",
+          "title": "Include sids"
+        },
+        "include_bet_limits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include the bet limit of each betting option, mainly available for betting exchanges.",
+          "title": "Include bet limits"
+        },
+        "include_multipliers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Applicable to US DFS sites. When true, a \"multiplier\" field will be included with each bet selection in the response",
+          "title": "Include multipliers"
+        },
+        "include_rotation_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include home and away rotation numbers if available. For details, see https://the-odds-api.com/releases/rotation-numbers.html",
+          "title": "Include rotation numbers"
+        }
+      },
+      "required": [
+        "sport",
+        "event_id"
+      ],
+      "title": "GetEventOddsConfig",
+      "type": "object"
+    },
+    "GetHistoricalEventMarketsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_event_markets",
+          "default": "get_historical_event_markets",
+          "title": "Get Historical Event Markets",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Event ids can be found in the `id` field in the response of the historical events endpoint (see `/v4/historical/sports/{sports}/events`). If the event had expired at the specified timestamp (not receiving updates due to completion or cancellation), a HTTP 404 status code will be returned.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event id",
+          "type": "string"
+        },
+        "regions": {
+          "default": "us",
+          "description": "Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Each region will count as 1 request against the usage quota. Most use cases will only need to specify one region. See [the full list of bookmakers by region](https://the-odds-api.com/sports-odds-data/bookmaker-apis.html)",
+          "maxLength": 256,
+          "pattern": "^(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi)(?:,(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi))*$",
+          "title": "Regions",
+          "type": "string"
+        },
+        "bookmakers": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests",
+          "title": "Bookmakers"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "date": {
+          "description": "The timestamp of the data snapshot to be returned, specified in ISO8601 format. The API will return the closest snapshot equal to or earlier than the provided date parameter",
+          "maxLength": 64,
+          "title": "Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sport",
+        "event_id",
+        "date"
+      ],
+      "title": "GetHistoricalEventMarketsConfig",
+      "type": "object",
+      "x-requires-tier": "paid",
+      "x-tier-label": "Paid plan"
+    },
+    "GetHistoricalEventOddsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_event_odds",
+          "default": "get_historical_event_odds",
+          "title": "Get Historical Event Odds",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Event ids can be found in the `id` field in the response of the historical events endpoint (see `/v4/historical/sports/{sports}/events`). If the event had expired at the specified timestamp (not receiving updates due to completion or cancellation), a HTTP 404 status code will be returned.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event id",
+          "type": "string"
+        },
+        "regions": {
+          "default": "us",
+          "description": "Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Most use cases will only need to specify one region. See [the full list of bookmakers by region](https://the-odds-api.com/sports-odds-data/bookmaker-apis.html)",
+          "maxLength": 256,
+          "pattern": "^(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi)(?:,(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi))*$",
+          "title": "Regions",
+          "type": "string"
+        },
+        "markets": {
+          "default": "h2h",
+          "description": "The odds markets to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights only avaialable for select sports. See [the full list of supported market keys](https://the-odds-api.com/sports-odds-data/betting-markets.html) Comma-separated market keys; historical data availability and plan restrictions apply.",
+          "maxLength": 4096,
+          "pattern": "^[a-z0-9_]+(?:,[a-z0-9_]+)*$",
+          "title": "Markets",
+          "type": "string"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "odds_format": {
+          "default": "decimal",
+          "description": "Format of returned odds",
+          "enum": [
+            "decimal",
+            "american"
+          ],
+          "title": "Odds format",
+          "type": "string"
+        },
+        "bookmakers": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests",
+          "title": "Bookmakers"
+        },
+        "date": {
+          "description": "The timestamp of the data snapshot to be returned, specified in ISO8601 format. The API will return the closest snapshot equal to or earlier than the provided date parameter",
+          "maxLength": 64,
+          "title": "Date",
+          "type": "string"
+        },
+        "include_rotation_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include home and away rotation numbers if available. For details, see https://the-odds-api.com/releases/rotation-numbers.html",
+          "title": "Include rotation numbers"
+        },
+        "include_multipliers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Applicable to US DFS sites. When true, a \"multiplier\" field will be included with each bet selection in the response",
+          "title": "Include multipliers"
+        },
+        "include_sids": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include source ids (bookmaker ids) for events, markets, and outcomes if available.",
+          "title": "Include sids"
+        },
+        "include_bet_limits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include the bet limit of each betting option, mainly available for betting exchanges.",
+          "title": "Include bet limits"
+        }
+      },
+      "required": [
+        "sport",
+        "event_id",
+        "date"
+      ],
+      "title": "GetHistoricalEventOddsConfig",
+      "type": "object",
+      "x-requires-tier": "paid",
+      "x-tier-label": "Paid plan"
+    },
+    "GetHistoricalOddsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_historical_odds",
+          "default": "get_historical_odds",
+          "title": "Get Historical Odds",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "regions": {
+          "default": "us",
+          "description": "Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Most use cases will only need to specify one region. For a list of bookmakers by region, see https://the-odds-api.com/sports-odds-data/bookmaker-apis.html",
+          "maxLength": 256,
+          "pattern": "^(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi)(?:,(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi))*$",
+          "title": "Regions",
+          "type": "string"
+        },
+        "markets": {
+          "default": "h2h",
+          "description": "The odds market to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights are only avaialable for select sports, such as golf. Comma-separated market keys; historical data availability and plan restrictions apply.",
+          "maxLength": 4096,
+          "pattern": "^[a-z0-9_]+(?:,[a-z0-9_]+)*$",
+          "title": "Markets",
+          "type": "string"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "odds_format": {
+          "default": "decimal",
+          "description": "Format of returned odds",
+          "enum": [
+            "decimal",
+            "american"
+          ],
+          "title": "Odds format",
+          "type": "string"
+        },
+        "event_ids": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired",
+          "title": "Event ids"
+        },
+        "bookmakers": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers counts as 1 request. Specifying between 11 and 20 bookmakers counts as 2 requests",
+          "title": "Bookmakers"
+        },
+        "commence_time_from": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and after this parameter. Values are in ISO8601 format",
+          "title": "Commence time from"
+        },
+        "commence_time_to": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and before this parameter. Values are in ISO8601 format",
+          "title": "Commence time to"
+        },
+        "date": {
+          "description": "The timestamp of the data snapshot to be returned, specified in ISO8601 format. The historical odds API will return the closest snapshot equal to or earlier than the provided date parameter",
+          "maxLength": 64,
+          "title": "Date",
+          "type": "string"
+        },
+        "include_sids": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include source ids (bookmaker ids) for events, markets, and outcomes if available.",
+          "title": "Include sids"
+        },
+        "include_bet_limits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include the bet limit of each betting option, mainly available for betting exchanges.",
+          "title": "Include bet limits"
+        },
+        "include_rotation_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include home and away rotation numbers if available. For details, see https://the-odds-api.com/releases/rotation-numbers.html",
+          "title": "Include rotation numbers"
+        }
+      },
+      "required": [
+        "sport",
+        "date"
+      ],
+      "title": "GetHistoricalOddsConfig",
+      "type": "object",
+      "x-requires-tier": "paid",
+      "x-tier-label": "Paid plan"
+    },
+    "GetOddsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_odds",
+          "default": "get_odds",
+          "title": "Get Odds",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "regions": {
+          "default": "us",
+          "description": "Determines which bookmakers appear in the response. Multiple regions can be specified if comma delimited. Each region will count as 1 request against the usage quota for each market. Most use cases will only need to specify one region. For a list of bookmakers by region, see https://the-odds-api.com/sports-odds-data/bookmaker-apis.html",
+          "maxLength": 256,
+          "pattern": "^(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi)(?:,(?:uk|us|us2|us_dfs|us_ex|eu|au|ca|fr|se|fi))*$",
+          "title": "Regions",
+          "type": "string"
+        },
+        "markets": {
+          "default": "h2h",
+          "description": "The odds market to return. Multiple markets can be specified if comma delimited. Defaults to h2h (head to head / moneyline). Outrights are only avaialable for select sports, such as golf. Comma-separated market keys; historical data availability and plan restrictions apply.",
+          "maxLength": 4096,
+          "pattern": "^[a-z0-9_]+(?:,[a-z0-9_]+)*$",
+          "title": "Markets",
+          "type": "string"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "odds_format": {
+          "default": "decimal",
+          "description": "Format of returned odds",
+          "enum": [
+            "decimal",
+            "american"
+          ],
+          "title": "Odds format",
+          "type": "string"
+        },
+        "event_ids": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired",
+          "title": "Event ids"
+        },
+        "bookmakers": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of bookmakers to be returned. If both `bookmakers` and `regions` are specified, `bookmakers` takes precendence. Bookmakers can be from any region. Every group of 10 bookmakers counts as 1 request. For example for a single market, specifying up to 10 bookmakers is the equivalent of 1 region. Specifying between 11 and 20 bookmakers is the equivalent of 2 regions",
+          "title": "Bookmakers"
+        },
+        "commence_time_from": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and after this parameter. Values are in ISO8601 format",
+          "title": "Commence time from"
+        },
+        "commence_time_to": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and before this parameter. Values are in ISO8601 format",
+          "title": "Commence time to"
+        },
+        "include_links": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include bookmaker links to events, markets, and betslips if available.",
+          "title": "Include links"
+        },
+        "include_sids": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include source ids (bookmaker ids) for events, markets, and outcomes if available.",
+          "title": "Include sids"
+        },
+        "include_bet_limits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include the bet limit of each betting option, mainly available for betting exchanges.",
+          "title": "Include bet limits"
+        },
+        "include_rotation_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include home and away rotation numbers if available. For details, see https://the-odds-api.com/releases/rotation-numbers.html",
+          "title": "Include rotation numbers"
+        }
+      },
+      "required": [
+        "sport"
+      ],
+      "title": "GetOddsConfig",
+      "type": "object"
+    },
+    "GetScoresConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_scores",
+          "default": "get_scores",
+          "title": "Get Scores",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "days_from": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of days in the past from which to return completed events. Valid values are integers from `1` to `3`. If this field is missing, only live and upcoming events are returned.",
+          "title": "Days from"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "event_ids": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired",
+          "title": "Event ids"
+        }
+      },
+      "required": [
+        "sport"
+      ],
+      "title": "GetScoresConfig",
+      "type": "object"
+    },
+    "ListEventsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "event_ids": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired",
+          "title": "Event ids"
+        },
+        "commence_time_from": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and after this parameter. Values are in ISO8601 format",
+          "title": "Commence time from"
+        },
+        "commence_time_to": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and before this parameter. Values are in ISO8601 format",
+          "title": "Commence time to"
+        },
+        "include_rotation_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include home and away rotation numbers if available. For details, see https://the-odds-api.com/releases/rotation-numbers.html",
+          "title": "Include rotation numbers"
+        }
+      },
+      "required": [
+        "sport"
+      ],
+      "title": "ListEventsConfig",
+      "type": "object"
+    },
+    "ListHistoricalEventsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_historical_events",
+          "default": "list_historical_events",
+          "title": "List Historical Events",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        },
+        "date_format": {
+          "default": "iso",
+          "description": "Format of returned timestamps. Can be iso (ISO8601) or unix timestamp (seconds since epoch)",
+          "enum": [
+            "iso",
+            "unix"
+          ],
+          "title": "Date format",
+          "type": "string"
+        },
+        "event_ids": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated event ids. Filters the response to only return events for the specified ids, provided those events have not expired",
+          "title": "Event ids"
+        },
+        "commence_time_from": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and after this parameter. Values are in ISO8601 format",
+          "title": "Commence time from"
+        },
+        "commence_time_to": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the response to show events that commence on and before this parameter. Values are in ISO8601 format",
+          "title": "Commence time to"
+        },
+        "date": {
+          "description": "The timestamp of the data snapshot to be returned, specified in ISO8601 format. The API will return the closest snapshot equal to or earlier than the provided date parameter",
+          "maxLength": 64,
+          "title": "Date",
+          "type": "string"
+        },
+        "include_rotation_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The response will include home and away rotation numbers if available. For details, see https://the-odds-api.com/releases/rotation-numbers.html",
+          "title": "Include rotation numbers"
+        }
+      },
+      "required": [
+        "sport",
+        "date"
+      ],
+      "title": "ListHistoricalEventsConfig",
+      "type": "object",
+      "x-requires-tier": "paid",
+      "x-tier-label": "Paid plan"
+    },
+    "ListParticipantsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_participants",
+          "default": "list_participants",
+          "title": "List Participants",
+          "type": "string"
+        },
+        "sport": {
+          "description": "sport key for which to return events and odds. This is obtained from the /sports endpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sport",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sport"
+      ],
+      "title": "ListParticipantsConfig",
+      "type": "object"
+    },
+    "ListSportsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sports",
+          "default": "list_sports",
+          "title": "List Sports",
+          "type": "string"
+        },
+        "all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When excluded, only recently updated (in-season) sports appear. Include this paramter to see all available sports",
+          "title": "All"
+        }
+      },
+      "title": "ListSportsConfig",
+      "type": "object"
+    },
+    "TheOddsAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "the_odds_api_key",
+          "default": "the_odds_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "The Odds API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your API key from The Odds API email or account dashboard. Sports-list access verifies that the key is accepted, not account identity. Historical endpoints require a paid plan; odds and scores may consume your request quota.",
+      "x-credential-url": "https://the-odds-api.com/#get-access"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_event_markets": "#/$defs/GetEventMarketsConfig",
+          "get_event_odds": "#/$defs/GetEventOddsConfig",
+          "get_historical_event_markets": "#/$defs/GetHistoricalEventMarketsConfig",
+          "get_historical_event_odds": "#/$defs/GetHistoricalEventOddsConfig",
+          "get_historical_odds": "#/$defs/GetHistoricalOddsConfig",
+          "get_odds": "#/$defs/GetOddsConfig",
+          "get_scores": "#/$defs/GetScoresConfig",
+          "list_events": "#/$defs/ListEventsConfig",
+          "list_historical_events": "#/$defs/ListHistoricalEventsConfig",
+          "list_participants": "#/$defs/ListParticipantsConfig",
+          "list_sports": "#/$defs/ListSportsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListSportsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetOddsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScoresConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEventOddsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEventMarketsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetHistoricalOddsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListHistoricalEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetHistoricalEventOddsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetHistoricalEventMarketsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TheOddsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "The-odds-api Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
