@@ -1,0 +1,400 @@
+{
+  "list_notes": {
+    "method": "GET",
+    "path": "/v1/notes",
+    "status": 200,
+    "body": {
+      "notes": [
+        {
+          "id": "note-id",
+          "title": "Meeting notes",
+          "created_at": "2026-10-01T00:00:00.000Z",
+          "updated_at": "2026-10-01T00:00:00.000Z",
+          "deleted_at": null,
+          "status": "ready",
+          "type": "voice_note",
+          "share_url": "https://note.blinq.me/share-id",
+          "linked_contacts": [
+            {
+              "id": "contact-id",
+              "full_name": "Jane Doe",
+              "workspace_id": "workspace-id"
+            }
+          ]
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null,
+      "total_count": 1
+    },
+    "response_keys": [
+      "notes",
+      "has_more",
+      "next_cursor",
+      "total_count"
+    ]
+  },
+  "search_notes": {
+    "method": "GET",
+    "path": "/v1/notes/search",
+    "status": 200,
+    "body": {
+      "notes": [
+        {
+          "id": "note-id",
+          "title": "Pricing discussion",
+          "created_at": "2026-10-01T00:00:00.000Z",
+          "updated_at": "2026-10-01T00:00:00.000Z",
+          "deleted_at": null,
+          "status": "ready",
+          "type": "phone_call",
+          "share_url": null,
+          "linked_contacts": []
+        }
+      ],
+      "is_truncated": false
+    },
+    "response_keys": [
+      "notes",
+      "is_truncated"
+    ]
+  },
+  "query_notes": {
+    "method": "POST",
+    "path": "/v1/notes/query",
+    "status": 200,
+    "body": {
+      "answer": "The launch moved to November [1] and the pricing page still needs sign-off [1, 2]. Reply to Dana once legal approves. [2]",
+      "citations": [
+        {
+          "id": "note-id-1",
+          "title": "Launch planning",
+          "share_url": "https://note.blinq.me/share-id-1"
+        },
+        {
+          "id": "note-id-2",
+          "title": "Call with Dana",
+          "share_url": "https://note.blinq.me/share-id-2"
+        }
+      ]
+    },
+    "response_keys": [
+      "answer",
+      "citations"
+    ]
+  },
+  "get_note": {
+    "method": "GET",
+    "path": "/v1/notes/{id}",
+    "status": 200,
+    "body": {
+      "id": "note-id",
+      "title": "Meeting notes",
+      "created_at": "2026-10-01T00:00:00.000Z",
+      "updated_at": "2026-10-01T00:00:00.000Z",
+      "deleted_at": null,
+      "status": "ready",
+      "type": "voice_note",
+      "share_url": "https://note.blinq.me/share-id",
+      "linked_contacts": [
+        {
+          "id": "contact-id",
+          "full_name": "Jane Doe",
+          "workspace_id": "workspace-id"
+        }
+      ],
+      "content": "## Next steps\n\n- Share the project proposal.",
+      "content_format": null,
+      "source": "mobile"
+    },
+    "response_keys": [
+      "id",
+      "title",
+      "created_at",
+      "updated_at",
+      "deleted_at",
+      "status",
+      "type",
+      "share_url",
+      "linked_contacts",
+      "content",
+      "content_format",
+      "source"
+    ]
+  },
+  "get_note_transcript": {
+    "method": "GET",
+    "path": "/v1/notes/{id}/transcript",
+    "status": 200,
+    "body": {
+      "status": "available",
+      "retry_after": null,
+      "text": "Let's send the proposal tomorrow."
+    },
+    "response_keys": [
+      "status",
+      "retry_after",
+      "text"
+    ]
+  },
+  "get_current_user": {
+    "method": "GET",
+    "path": "/v1/me",
+    "status": 200,
+    "body": {
+      "user_id": "user_123",
+      "email": "person@example.com"
+    },
+    "response_keys": [
+      "user_id",
+      "email"
+    ]
+  },
+  "list_workspaces": {
+    "method": "GET",
+    "path": "/v1/workspaces",
+    "status": 200,
+    "body": {
+      "workspaces": [
+        {
+          "id": "workspace-id",
+          "name": "Acme",
+          "type": "business",
+          "role": "admin"
+        }
+      ]
+    },
+    "response_keys": [
+      "workspaces"
+    ]
+  },
+  "list_contacts": {
+    "method": "GET",
+    "path": "/v1/workspaces/{workspace_id}/contacts",
+    "status": 200,
+    "body": {
+      "contacts": [
+        {
+          "id": "contact-id",
+          "type": "personal",
+          "full_name": "Jane Doe",
+          "job_title": "Designer",
+          "company_name": "Example",
+          "created_at": "2026-10-01T00:00:00.000Z",
+          "updated_at": "2026-10-01T00:00:00.000Z",
+          "workspace_id": "workspace-id"
+        }
+      ],
+      "has_more": true,
+      "next_cursor": "cursor-token",
+      "total_count": 42
+    },
+    "response_keys": [
+      "contacts",
+      "has_more",
+      "next_cursor",
+      "total_count"
+    ]
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/v1/workspaces/{workspace_id}/contacts/{contact_id}",
+    "status": 200,
+    "body": {
+      "id": "contact-id",
+      "workspace_id": "workspace-id",
+      "type": "business",
+      "first_name": "Jane",
+      "middle_name": null,
+      "last_name": "Doe",
+      "full_name": "Jane Doe",
+      "preferred_name": null,
+      "pronouns": null,
+      "job_title": "Designer",
+      "company_name": "Example",
+      "department": null,
+      "headline": null,
+      "avatar_url": "https://example.com/avatar.png",
+      "company_logo_url": null,
+      "emails": [
+        {
+          "value": "jane@example.com",
+          "label": "Work"
+        }
+      ],
+      "phone_numbers": [
+        {
+          "value": "5550100",
+          "label": null,
+          "country_code": "+1",
+          "extension": null
+        }
+      ],
+      "urls": [
+        {
+          "value": "https://example.com",
+          "label": "Website"
+        }
+      ],
+      "addresses": [
+        {
+          "value": "123 Example St, Melbourne",
+          "label": "Office"
+        }
+      ],
+      "tags": [
+        {
+          "value": "Customer"
+        }
+      ],
+      "contact_notes": [
+        {
+          "id": "contact-note-id",
+          "text": "Follow up next week.",
+          "created_at": "2026-10-01T00:00:00.000Z"
+        }
+      ],
+      "linked_notes": [
+        {
+          "id": "note-id",
+          "title": "Meeting notes",
+          "created_at": "2026-10-01T00:00:00.000Z",
+          "type": "voice_note"
+        }
+      ],
+      "capture_context": {
+        "recorded_at": "2026-10-01T00:00:00.000Z",
+        "location": "Melbourne",
+        "cardholder_name": "Sam Smith"
+      },
+      "created_at": "2026-10-01T00:00:00.000Z",
+      "updated_at": "2026-10-01T00:00:00.000Z"
+    },
+    "response_keys": [
+      "id",
+      "workspace_id",
+      "type",
+      "first_name",
+      "middle_name",
+      "last_name",
+      "full_name",
+      "preferred_name",
+      "pronouns",
+      "job_title",
+      "company_name",
+      "department",
+      "headline",
+      "avatar_url",
+      "company_logo_url",
+      "emails",
+      "phone_numbers",
+      "urls",
+      "addresses",
+      "tags",
+      "contact_notes",
+      "linked_notes",
+      "capture_context",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "list_cards": {
+    "method": "GET",
+    "path": "/v1/workspaces/{workspace_id}/cards",
+    "status": 200,
+    "body": {
+      "cards": [
+        {
+          "id": "card-id",
+          "workspace_id": "workspace-id",
+          "url": "https://blinq.me/card-id",
+          "card_title": "Work",
+          "first_name": "Jane",
+          "last_name": "Doe",
+          "job_title": "Designer",
+          "company_name": "Example",
+          "department": null,
+          "qr_code": null
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null,
+      "total_count": 1
+    },
+    "response_keys": [
+      "cards",
+      "has_more",
+      "next_cursor",
+      "total_count"
+    ]
+  },
+  "get_card": {
+    "method": "GET",
+    "path": "/v1/workspaces/{workspace_id}/cards/{card_id}",
+    "status": 200,
+    "body": {
+      "id": "card-id",
+      "workspace_id": "workspace-id",
+      "url": "https://blinq.me/card-id",
+      "card_title": "Work",
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "job_title": "Designer",
+      "company_name": "Example",
+      "department": null,
+      "qr_code": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+    },
+    "response_keys": [
+      "id",
+      "workspace_id",
+      "url",
+      "card_title",
+      "first_name",
+      "last_name",
+      "job_title",
+      "company_name",
+      "department",
+      "qr_code"
+    ]
+  },
+  "create_webhook": {
+    "method": "POST",
+    "path": "/v1/workspaces/{workspace_id}/webhooks",
+    "status": 201,
+    "body": {
+      "id": "subscription-id",
+      "signing_secret": "whsec_example"
+    },
+    "response_keys": [
+      "id",
+      "signing_secret"
+    ]
+  },
+  "list_webhooks": {
+    "method": "GET",
+    "path": "/v1/workspaces/{workspace_id}/webhooks",
+    "status": 200,
+    "body": {
+      "webhooks": [
+        {
+          "id": "subscription-id",
+          "url": "https://example.com/webhooks/blinq",
+          "events": [
+            "contact.created"
+          ],
+          "created_at": "2026-01-01T00:00:00.000Z"
+        }
+      ]
+    },
+    "response_keys": [
+      "webhooks"
+    ]
+  },
+  "delete_webhook": {
+    "method": "DELETE",
+    "path": "/v1/workspaces/{workspace_id}/webhooks/{subscription_id}",
+    "status": 204,
+    "body": null,
+    "response_keys": []
+  }
+}
