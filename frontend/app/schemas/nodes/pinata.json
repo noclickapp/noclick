@@ -1,0 +1,1177 @@
+{
+  "$defs": {
+    "AddFileToGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_file_to_group",
+          "default": "add_file_to_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "file_id"
+      ],
+      "title": "AddFileToGroup",
+      "type": "object"
+    },
+    "AddSwap": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "cid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Cid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_swap",
+          "default": "add_swap",
+          "title": "Operation",
+          "type": "string"
+        },
+        "swap_cid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Swap Cid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cid",
+        "swap_cid"
+      ],
+      "title": "AddSwap",
+      "type": "object"
+    },
+    "CancelPinRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_pin_request",
+          "default": "cancel_pin_request",
+          "title": "Operation",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "CancelPinRequest",
+      "type": "object"
+    },
+    "CreateDownloadLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_download_link",
+          "default": "create_download_link",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "description": "Private file URL on your Pinata gateway. Only signed, never fetched by NoClick.",
+          "title": "Url",
+          "type": "string"
+        },
+        "date": {
+          "description": "Unix signing timestamp in seconds.",
+          "minimum": 0,
+          "title": "Date",
+          "type": "integer"
+        },
+        "expires": {
+          "default": 3600,
+          "description": "Link lifetime in seconds.",
+          "minimum": 1,
+          "title": "Expires",
+          "type": "integer"
+        },
+        "method": {
+          "const": "GET",
+          "default": "GET",
+          "title": "Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "date"
+      ],
+      "title": "CreateDownloadLink",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Public"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "DeleteFile": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "GetDataUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_data_usage",
+          "default": "get_data_usage",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetDataUsage",
+      "type": "object"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetSwapHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "cid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Cid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_swap_history",
+          "default": "get_swap_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain": {
+          "description": "Gateway domain with the Hot Swaps plugin installed.",
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cid",
+        "domain"
+      ],
+      "title": "GetSwapHistory",
+      "type": "object"
+    },
+    "ListFiles": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "One page only; use next_page_token to continue.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group ID, or the string null for ungrouped files.",
+          "title": "Group"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mime Type"
+        },
+        "cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cid"
+        },
+        "cid_pending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cid Pending"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "One page only; use next_page_token to continue.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Public"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListPinRequests": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pin_requests",
+          "default": "list_pin_requests",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "prechecking",
+                "backfilled",
+                "retreiving",
+                "expired",
+                "searching",
+                "over_free_limit",
+                "over_max_size",
+                "invalid_object",
+                "bad_host_node"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "prechecking",
+            "backfilled",
+            "retreiving",
+            "expired",
+            "searching",
+            "over_free_limit",
+            "over_max_size",
+            "invalid_object",
+            "bad_host_node"
+          ],
+          "x-enum-searchable": true
+        },
+        "cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cid"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "ListPinRequests",
+      "type": "object"
+    },
+    "PinByCID": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "pin_by_cid",
+          "default": "pin_by_cid",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Cid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "keyvalues": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyvalues"
+        },
+        "host_nodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Host Nodes"
+        }
+      },
+      "required": [
+        "cid"
+      ],
+      "title": "PinByCID",
+      "type": "object"
+    },
+    "PinJSON": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "pin_json",
+          "default": "pin_json",
+          "title": "Operation",
+          "type": "string"
+        },
+        "content": {
+          "additionalProperties": true,
+          "description": "JSON object to pin to the public IPFS network.",
+          "title": "Content",
+          "type": "object"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "keyvalues": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyvalues"
+        },
+        "cid_version": {
+          "default": 1,
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Cid Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "PinJSON",
+      "type": "object"
+    },
+    "PinataJWTCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "pinata_jwt",
+          "default": "pinata_jwt",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jwt": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "JWT",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "jwt"
+      ],
+      "title": "Pinata JWT",
+      "type": "object",
+      "x-credential-instructions": "Create a Pinata API key and paste its JWT. Grant file and group read/write permissions for the operations you use. Legacy JSON pinning and usage require the corresponding IPFS permissions. NoClick sends it only to api.pinata.cloud. Listing public-network files proves account read access, not every write permission.",
+      "x-credential-url": "https://app.pinata.cloud/developers/api-keys"
+    },
+    "RemoveFileFromGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_file_from_group",
+          "default": "remove_file_from_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "file_id"
+      ],
+      "title": "RemoveFileFromGroup",
+      "type": "object"
+    },
+    "RemoveSwap": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "cid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Cid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_swap",
+          "default": "remove_swap",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cid"
+      ],
+      "title": "RemoveSwap",
+      "type": "object"
+    },
+    "TestAuthentication": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "test_authentication",
+          "default": "test_authentication",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "TestAuthentication",
+      "type": "object"
+    },
+    "UpdateFile": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_file",
+          "default": "update_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "keyvalues": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyvalues"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "UpdateFile",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "default": "public",
+          "description": "Pinata network containing the resource.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Public"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_file_to_group": "#/$defs/AddFileToGroup",
+          "add_swap": "#/$defs/AddSwap",
+          "cancel_pin_request": "#/$defs/CancelPinRequest",
+          "create_download_link": "#/$defs/CreateDownloadLink",
+          "create_group": "#/$defs/CreateGroup",
+          "delete_file": "#/$defs/DeleteFile",
+          "delete_group": "#/$defs/DeleteGroup",
+          "get_data_usage": "#/$defs/GetDataUsage",
+          "get_file": "#/$defs/GetFile",
+          "get_group": "#/$defs/GetGroup",
+          "get_swap_history": "#/$defs/GetSwapHistory",
+          "list_files": "#/$defs/ListFiles",
+          "list_groups": "#/$defs/ListGroups",
+          "list_pin_requests": "#/$defs/ListPinRequests",
+          "pin_by_cid": "#/$defs/PinByCID",
+          "pin_json": "#/$defs/PinJSON",
+          "remove_file_from_group": "#/$defs/RemoveFileFromGroup",
+          "remove_swap": "#/$defs/RemoveSwap",
+          "test_authentication": "#/$defs/TestAuthentication",
+          "update_file": "#/$defs/UpdateFile",
+          "update_group": "#/$defs/UpdateGroup"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/UpdateFile"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        },
+        {
+          "$ref": "#/$defs/PinByCID"
+        },
+        {
+          "$ref": "#/$defs/ListPinRequests"
+        },
+        {
+          "$ref": "#/$defs/CancelPinRequest"
+        },
+        {
+          "$ref": "#/$defs/CreateDownloadLink"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/AddFileToGroup"
+        },
+        {
+          "$ref": "#/$defs/RemoveFileFromGroup"
+        },
+        {
+          "$ref": "#/$defs/AddSwap"
+        },
+        {
+          "$ref": "#/$defs/GetSwapHistory"
+        },
+        {
+          "$ref": "#/$defs/RemoveSwap"
+        },
+        {
+          "$ref": "#/$defs/TestAuthentication"
+        },
+        {
+          "$ref": "#/$defs/GetDataUsage"
+        },
+        {
+          "$ref": "#/$defs/PinJSON"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PinataJWTCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pinata Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

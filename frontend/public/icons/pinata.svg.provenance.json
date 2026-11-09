@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/pinata.svg",
+  "source": "https://mintcdn.com/pinata/1l40stvCFLGKMlbm/logo/light.svg (official logo linked from https://docs.pinata.cloud/api-reference/endpoint/ipfs/test-authentication)",
+  "license": "Pinata brand mark used nominatively to identify the connected service; trademark rights remain with Pinata.",
+  "sha256": "667ee080bf99f7a66fd43fa28c9cb92508f800c89cf777b6c0244058600ee89f"
+}

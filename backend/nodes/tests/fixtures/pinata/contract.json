@@ -1,0 +1,432 @@
+{
+  "source": "Pinned Pinata OpenAPI 1.0.0 examples; synthetic IDs for request assertions.",
+  "cases": [
+    {
+      "operation": "list_files",
+      "config": {
+        "operation": "list_files"
+      },
+      "method": "GET",
+      "path": "/v3/files/public",
+      "params": {
+        "limit": "10"
+      },
+      "body": null,
+      "response": {
+        "data": {
+          "files": [
+            {
+              "id": "e5323ea7-8a02-4486-9b6f-63c788810aeb",
+              "name": "e093dbd3-f276-4bb3-a43e-60437725f410.txt",
+              "cid": "bafkreicnu2aqjkoglrlrd65giwo4l64pdajxffk6jtq2vb7yaiopc3yu7m",
+              "size": 36,
+              "number_of_files": 1,
+              "mime_type": "text/plain",
+              "group_id": "18893556-de8e-4229-8a9a-27b95468dd3e",
+              "keyvalues": {
+                "whimsey": "true"
+              },
+              "created_at": "2024-08-27T14:57:51.485934Z"
+            }
+          ],
+          "next_page_token": "MDE5MTk0NTctYzJjNi03NzBlLTkzOTEtOGM3MmM0ZjQxZjY0"
+        }
+      }
+    },
+    {
+      "operation": "get_file",
+      "config": {
+        "operation": "get_file",
+        "file_id": "file-123"
+      },
+      "method": "GET",
+      "path": "/v3/files/public/file-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "id": "e5323ea7-8a02-4486-9b6f-63c788810aeb",
+          "name": "e093dbd3-f276-4bb3-a43e-60437725f410.txt",
+          "cid": "bafkreicnu2aqjkoglrlrd65giwo4l64pdajxffk6jtq2vb7yaiopc3yu7m",
+          "size": 36,
+          "number_of_files": 1,
+          "mime_type": "text/plain",
+          "group_id": "18893556-de8e-4229-8a9a-27b95468dd3e",
+          "keyvalues": {
+            "whimsey": "true"
+          },
+          "created_at": "2024-08-27T14:57:51.485934Z"
+        }
+      }
+    },
+    {
+      "operation": "update_file",
+      "config": {
+        "operation": "update_file",
+        "file_id": "file-123",
+        "name": "Hello Files API",
+        "keyvalues": {
+          "topic": "art"
+        }
+      },
+      "method": "PUT",
+      "path": "/v3/files/public/file-123",
+      "params": {},
+      "body": {
+        "name": "Hello Files API",
+        "keyvalues": {
+          "topic": "art"
+        }
+      },
+      "response": {
+        "data": {
+          "id": "e5323ea7-8a02-4486-9b6f-63c788810aeb",
+          "name": "e093dbd3-f276-4bb3-a43e-60437725f410.txt",
+          "cid": "bafkreicnu2aqjkoglrlrd65giwo4l64pdajxffk6jtq2vb7yaiopc3yu7m",
+          "size": 36,
+          "number_of_files": 1,
+          "mime_type": "text/plain",
+          "group_id": "18893556-de8e-4229-8a9a-27b95468dd3e",
+          "keyvalues": {
+            "whimsey": "true"
+          },
+          "created_at": "2024-08-27T14:57:51.485934Z"
+        }
+      }
+    },
+    {
+      "operation": "delete_file",
+      "config": {
+        "operation": "delete_file",
+        "file_id": "file-123"
+      },
+      "method": "DELETE",
+      "path": "/v3/files/public/file-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "operation": "pin_by_cid",
+      "config": {
+        "operation": "pin_by_cid",
+        "cid": "bafkreicnu2aqjkoglrlrd65giwo4l64pdajxffk6jtq2vb7yaiopc3yu7m"
+      },
+      "method": "POST",
+      "path": "/v3/files/public/pin_by_cid",
+      "params": {},
+      "body": {
+        "cid": "bafkreicnu2aqjkoglrlrd65giwo4l64pdajxffk6jtq2vb7yaiopc3yu7m"
+      },
+      "response": {
+        "data": {
+          "id": "request-123",
+          "cid": "bafkreicnu2aqjkoglrlrd65giwo4l64pdajxffk6jtq2vb7yaiopc3yu7m",
+          "status": "prechecking"
+        }
+      }
+    },
+    {
+      "operation": "list_pin_requests",
+      "config": {
+        "operation": "list_pin_requests"
+      },
+      "method": "GET",
+      "path": "/v3/files/public/pin_by_cid",
+      "params": {
+        "limit": "10"
+      },
+      "body": null,
+      "response": {
+        "data": {
+          "jobs": [],
+          "next_page_token": null
+        }
+      }
+    },
+    {
+      "operation": "cancel_pin_request",
+      "config": {
+        "operation": "cancel_pin_request",
+        "request_id": "request-123"
+      },
+      "method": "DELETE",
+      "path": "/v3/files/public/pin_by_cid/request-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "operation": "create_download_link",
+      "config": {
+        "operation": "create_download_link",
+        "url": "https://example.mypinata.cloud/files/bafybeifq444z4b7yqzcyz4a5gspb2rpyfcdxp3mrfpigmllh52ld5tyzwm",
+        "date": 1724875300,
+        "expires": 500000
+      },
+      "method": "POST",
+      "path": "/v3/files/private/download_link",
+      "params": {},
+      "body": {
+        "url": "https://example.mypinata.cloud/files/bafybeifq444z4b7yqzcyz4a5gspb2rpyfcdxp3mrfpigmllh52ld5tyzwm",
+        "date": 1724875300,
+        "expires": 500000,
+        "method": "GET"
+      },
+      "response": {
+        "data": "https://blush-fast-impala-660.mypinata.cloud/files/bafybeifq444z4b7yqzcyz4a5gspb2rpyfcdxp3mrfpigmllh52ld5tyzwm?X-Algorithm=PINATA1&X-Date=1724875300&X-Expires=500000&X-Method=GET&X-Signature=example-signature"
+      }
+    },
+    {
+      "operation": "create_group",
+      "config": {
+        "operation": "create_group",
+        "name": "Test Group 3"
+      },
+      "method": "POST",
+      "path": "/v3/groups/public",
+      "params": {},
+      "body": {
+        "name": "Test Group 3"
+      },
+      "response": {
+        "data": {
+          "id": "01919976-955f-7d06-bd59-72e80743fb95",
+          "name": "Test Private Group",
+          "public": false,
+          "created_at": "2024-08-28T14:49:31.246596Z"
+        }
+      }
+    },
+    {
+      "operation": "list_groups",
+      "config": {
+        "operation": "list_groups"
+      },
+      "method": "GET",
+      "path": "/v3/groups/public",
+      "params": {
+        "limit": "10"
+      },
+      "body": null,
+      "response": {
+        "data": {
+          "groups": [
+            {
+              "id": "01919976-955f-7d06-bd59-72e80743fb95",
+              "name": "Test Private Group",
+              "is_public": false,
+              "created_at": "2024-08-28T14:49:31.246596Z"
+            }
+          ],
+          "next_page_token": "MDE5MTk5NzYtOTU1Zi03ZDA2LWJkNTktNzJlODA3NDNmYjk1"
+        }
+      }
+    },
+    {
+      "operation": "get_group",
+      "config": {
+        "operation": "get_group",
+        "group_id": "group-123"
+      },
+      "method": "GET",
+      "path": "/v3/groups/public/group-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "id": "01919976-955f-7d06-bd59-72e80743fb95",
+          "name": "Test Private Group",
+          "is_public": false,
+          "created_at": "2024-08-28T14:49:31.246596Z"
+        }
+      }
+    },
+    {
+      "operation": "update_group",
+      "config": {
+        "operation": "update_group",
+        "group_id": "group-123",
+        "name": "Updated Name",
+        "is_public": false
+      },
+      "method": "PUT",
+      "path": "/v3/groups/public/group-123",
+      "params": {},
+      "body": {
+        "name": "Updated Name",
+        "is_public": false
+      },
+      "response": {
+        "data": {
+          "id": "01919ac8-a6f5-7e8e-a8a2-6cfe00122b90",
+          "name": "Updated Name",
+          "is_public": true,
+          "created_at": "2024-08-28T20:58:46.96779Z"
+        }
+      }
+    },
+    {
+      "operation": "delete_group",
+      "config": {
+        "operation": "delete_group",
+        "group_id": "group-123"
+      },
+      "method": "DELETE",
+      "path": "/v3/groups/public/group-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "operation": "add_file_to_group",
+      "config": {
+        "operation": "add_file_to_group",
+        "group_id": "group-123",
+        "file_id": "file-123"
+      },
+      "method": "PUT",
+      "path": "/v3/groups/public/group-123/ids/file-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "operation": "remove_file_from_group",
+      "config": {
+        "operation": "remove_file_from_group",
+        "group_id": "group-123",
+        "file_id": "file-123"
+      },
+      "method": "DELETE",
+      "path": "/v3/groups/public/group-123/ids/file-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "operation": "add_swap",
+      "config": {
+        "operation": "add_swap",
+        "cid": "cid-123",
+        "swap_cid": "cid-456"
+      },
+      "method": "PUT",
+      "path": "/v3/files/public/swap/cid-123",
+      "params": {},
+      "body": {
+        "swapCid": "cid-456"
+      },
+      "response": {
+        "data": {
+          "mapped_cid": "bafkreig4zcnmqa23zff3ye7tuef6wrlq3aimffzm22axfeh3ddmawzlzz4",
+          "created_at": "2024-09-20T17:09:39.490275Z"
+        }
+      }
+    },
+    {
+      "operation": "get_swap_history",
+      "config": {
+        "operation": "get_swap_history",
+        "cid": "cid-123",
+        "domain": "example.mypinata.cloud"
+      },
+      "method": "GET",
+      "path": "/v3/files/public/swap/cid-123",
+      "params": {
+        "domain": "example.mypinata.cloud"
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "mapped_cid": "bafkreig4zcnmqa23zff3ye7tuef6wrlq3aimffzm22axfeh3ddmawzlzz4",
+            "created_at": "2024-09-20T17:09:39.490275Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "remove_swap",
+      "config": {
+        "operation": "remove_swap",
+        "cid": "cid-123"
+      },
+      "method": "DELETE",
+      "path": "/v3/files/public/swap/cid-123",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "operation": "test_authentication",
+      "config": {
+        "operation": "test_authentication"
+      },
+      "method": "GET",
+      "path": "/data/testAuthentication",
+      "params": {},
+      "body": null,
+      "response": {
+        "message": "Congratulations! You are communicating with the Pinata API!"
+      }
+    },
+    {
+      "operation": "get_data_usage",
+      "config": {
+        "operation": "get_data_usage"
+      },
+      "method": "GET",
+      "path": "/data/userPinnedDataTotal",
+      "params": {},
+      "body": null,
+      "response": {
+        "pin_count": 15610,
+        "pin_size_total": 60686749507,
+        "pin_size_with_replications_total": 60686749507
+      }
+    },
+    {
+      "operation": "pin_json",
+      "config": {
+        "operation": "pin_json",
+        "content": {
+          "somekey": "somevalue"
+        },
+        "name": "pinnie.json"
+      },
+      "method": "POST",
+      "path": "/pinning/pinJSONToIPFS",
+      "params": {},
+      "body": {
+        "pinataContent": {
+          "somekey": "somevalue"
+        },
+        "pinataMetadata": {
+          "name": "pinnie.json"
+        },
+        "pinataOptions": {
+          "cidVersion": 1
+        }
+      },
+      "response": {
+        "IpfsHash": "QmVLwvmGehsrNEvhcCnnsw5RQNseohgEkFNN1848zNzdng",
+        "PinSize": 32942,
+        "Timestamp": "2023-06-16 17:24:37.998000+00:00",
+        "isDuplicate": true
+      }
+    }
+  ]
+}
