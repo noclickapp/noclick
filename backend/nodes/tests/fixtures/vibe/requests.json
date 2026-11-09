@@ -1,0 +1,540 @@
+[
+  {
+    "operation": "list_accounts",
+    "config": {
+      "operation": "list_accounts"
+    },
+    "method": "GET",
+    "path": "/accounts",
+    "query": {},
+    "body": null,
+    "response": [
+      {
+        "id": 1,
+        "name": "Acme Account"
+      }
+    ],
+    "status": 200
+  },
+  {
+    "operation": "list_advertisers",
+    "config": {
+      "operation": "list_advertisers"
+    },
+    "method": "GET",
+    "path": "/advertisers",
+    "query": {
+      "limit": "20",
+      "offset": "0"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+          "name": "Summer CTV Campaign"
+        }
+      ],
+      "total": 1,
+      "limit": 20,
+      "offset": 0
+    },
+    "status": 200
+  },
+  {
+    "operation": "get_advertiser",
+    "config": {
+      "operation": "get_advertiser",
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "GET",
+    "path": "/advertisers/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "create_advertiser",
+    "config": {
+      "operation": "create_advertiser",
+      "name": "Acme Retail",
+      "url": "https://acme.example.com",
+      "industry": "RETAIL"
+    },
+    "method": "POST",
+    "path": "/advertisers",
+    "query": {},
+    "body": {
+      "name": "Acme Retail",
+      "url": "https://acme.example.com",
+      "industry": "RETAIL"
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 201
+  },
+  {
+    "operation": "update_advertiser",
+    "config": {
+      "operation": "update_advertiser",
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "New Brand"
+    },
+    "method": "PATCH",
+    "path": "/advertisers/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": {
+      "name": "New Brand"
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "list_campaigns",
+    "config": {
+      "operation": "list_campaigns",
+      "status": [
+        "DRAFT",
+        "PAUSED"
+      ],
+      "account_id": 12
+    },
+    "method": "GET",
+    "path": "/campaigns",
+    "query": {
+      "limit": "20",
+      "offset": "0",
+      "status": [
+        "DRAFT",
+        "PAUSED"
+      ],
+      "account_id": "12"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+          "name": "Summer CTV Campaign"
+        }
+      ],
+      "total": 1,
+      "limit": 20,
+      "offset": 0
+    },
+    "status": 200
+  },
+  {
+    "operation": "get_campaign",
+    "config": {
+      "operation": "get_campaign",
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "GET",
+    "path": "/campaigns/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "create_campaign",
+    "config": {
+      "operation": "create_campaign",
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign",
+      "goal": "AWARENESS",
+      "optimization_goal": {
+        "type": "CPM",
+        "value": 10
+      },
+      "countries": [
+        "USA"
+      ],
+      "active": true
+    },
+    "method": "POST",
+    "path": "/campaigns",
+    "query": {},
+    "body": {
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign",
+      "goal": "AWARENESS",
+      "optimization_goal": {
+        "type": "CPM",
+        "value": 10
+      },
+      "countries": [
+        "USA"
+      ],
+      "active": true
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 201
+  },
+  {
+    "operation": "update_campaign",
+    "config": {
+      "operation": "update_campaign",
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "active": false
+    },
+    "method": "PATCH",
+    "path": "/campaigns/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": {
+      "active": false
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "delete_campaign",
+    "config": {
+      "operation": "delete_campaign",
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "DELETE",
+    "path": "/campaigns/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": null,
+    "status": 204
+  },
+  {
+    "operation": "perform_campaign_action",
+    "config": {
+      "operation": "perform_campaign_action",
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "action": "PAUSE"
+    },
+    "method": "POST",
+    "path": "/campaigns/b5101c24-e32a-4a53-a9f0-6ea38eca1a52/actions",
+    "query": {},
+    "body": {
+      "action": "PAUSE"
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "publish_campaign",
+    "config": {
+      "operation": "publish_campaign",
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "POST",
+    "path": "/campaigns/b5101c24-e32a-4a53-a9f0-6ea38eca1a52/publish",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "list_strategies",
+    "config": {
+      "operation": "list_strategies",
+      "active": false
+    },
+    "method": "GET",
+    "path": "/strategies",
+    "query": {
+      "limit": "20",
+      "offset": "0",
+      "active": "false"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+          "name": "Summer CTV Campaign"
+        }
+      ],
+      "total": 1,
+      "limit": 20,
+      "offset": 0
+    },
+    "status": 200
+  },
+  {
+    "operation": "get_strategy",
+    "config": {
+      "operation": "get_strategy",
+      "strategy_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "GET",
+    "path": "/strategies/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "create_strategy",
+    "config": {
+      "operation": "create_strategy",
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer TV",
+      "budget": 100,
+      "budget_type": "DAILY",
+      "starts_at": "2026-06-01T00:00:00Z",
+      "active": true
+    },
+    "method": "POST",
+    "path": "/strategies",
+    "query": {},
+    "body": {
+      "campaign_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer TV",
+      "budget": 100,
+      "budget_type": "DAILY",
+      "starts_at": "2026-06-01T00:00:00Z",
+      "active": true
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 201
+  },
+  {
+    "operation": "update_strategy",
+    "config": {
+      "operation": "update_strategy",
+      "strategy_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "budget": 200
+    },
+    "method": "PATCH",
+    "path": "/strategies/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": {
+      "budget": 200
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "delete_strategy",
+    "config": {
+      "operation": "delete_strategy",
+      "strategy_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "DELETE",
+    "path": "/strategies/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": null,
+    "status": 204
+  },
+  {
+    "operation": "perform_strategy_action",
+    "config": {
+      "operation": "perform_strategy_action",
+      "strategy_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "action": "ACTIVATE"
+    },
+    "method": "POST",
+    "path": "/strategies/b5101c24-e32a-4a53-a9f0-6ea38eca1a52/actions",
+    "query": {},
+    "body": {
+      "action": "ACTIVATE"
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "replace_strategy_creatives",
+    "config": {
+      "operation": "replace_strategy_creatives",
+      "strategy_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "creative_ids": []
+    },
+    "method": "PUT",
+    "path": "/strategies/b5101c24-e32a-4a53-a9f0-6ea38eca1a52/creatives",
+    "query": {},
+    "body": {
+      "creative_ids": []
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "list_creatives",
+    "config": {
+      "operation": "list_creatives"
+    },
+    "method": "GET",
+    "path": "/creatives",
+    "query": {
+      "limit": "20",
+      "offset": "0"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+          "name": "Summer CTV Campaign"
+        }
+      ],
+      "total": 1,
+      "limit": 20,
+      "offset": 0
+    },
+    "status": 200
+  },
+  {
+    "operation": "list_audiences",
+    "config": {
+      "operation": "list_audiences",
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "GET",
+    "path": "/audiences",
+    "query": {
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "limit": "20",
+      "offset": "0"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+          "name": "Summer CTV Campaign"
+        }
+      ],
+      "total": 1,
+      "limit": 20,
+      "offset": 0
+    },
+    "status": 200
+  },
+  {
+    "operation": "get_audience",
+    "config": {
+      "operation": "get_audience",
+      "audience_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "GET",
+    "path": "/audiences/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 200
+  },
+  {
+    "operation": "create_audience",
+    "config": {
+      "operation": "create_audience",
+      "advertiser_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Returning customers"
+    },
+    "method": "POST",
+    "path": "/advertisers/b5101c24-e32a-4a53-a9f0-6ea38eca1a52/audiences",
+    "query": {},
+    "body": {
+      "name": "Returning customers"
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "name": "Summer CTV Campaign"
+    },
+    "status": 201
+  },
+  {
+    "operation": "create_report",
+    "config": {
+      "operation": "create_report",
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-03",
+      "advertiser_ids": [
+        "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+      ],
+      "metrics": [
+        "spend",
+        "impressions"
+      ]
+    },
+    "method": "POST",
+    "path": "/reports",
+    "query": {},
+    "body": {
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-03",
+      "advertiser_ids": [
+        "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+      ],
+      "metrics": [
+        "spend",
+        "impressions"
+      ],
+      "timezone": "UTC",
+      "attribution_window": "7 days",
+      "granularity": "DAY",
+      "format": "JSON"
+    },
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "status": "CREATED"
+    },
+    "status": 201
+  },
+  {
+    "operation": "get_report",
+    "config": {
+      "operation": "get_report",
+      "report_id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52"
+    },
+    "method": "GET",
+    "path": "/reports/b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "b5101c24-e32a-4a53-a9f0-6ea38eca1a52",
+      "status": "READY",
+      "download_url": "https://example.com/signed-report"
+    },
+    "status": 200
+  }
+]

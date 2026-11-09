@@ -1,0 +1,2368 @@
+{
+  "$defs": {
+    "VibeAudienceTargeting": {
+      "additionalProperties": false,
+      "properties": {
+        "upload": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeIncludeExcludeUuid"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "VibeAudienceTargeting",
+      "type": "object"
+    },
+    "VibeCreateAdvertiserConfig": {
+      "additionalProperties": false,
+      "description": "Create an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "create_advertiser",
+          "default": "create_advertiser",
+          "title": "Create an advertiser",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "description": "The brand-owned website of the advertiser. Marketplace, app store and social media pages are rejected.",
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        },
+        "industry": {
+          "enum": [
+            "AUTOMOTIVE",
+            "EDUCATION",
+            "FINANCIAL_SERVICES",
+            "FOOD_DRINK",
+            "FOOD_DRINK_WINE",
+            "GAMING",
+            "GAMING_GAMBLING",
+            "HEALTH_FITNESS",
+            "HEALTH_FITNESS_ALTERNATIVE",
+            "HUNTING_SHOOTING",
+            "LAW_LEGAL_PRACTICE",
+            "MEDIA_ENTERTAINMENT",
+            "OTHER",
+            "POLITICS",
+            "PROFESSIONAL_SERVICES",
+            "REAL_ESTATE",
+            "RELIGION_SPIRITUALITY",
+            "RETAIL",
+            "TECHNOLOGY_TELECOMMUNICATIONS",
+            "TOBACCO_SMOKING",
+            "TRAVEL_HOSPITALITY"
+          ],
+          "title": "Industry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "url",
+        "industry"
+      ],
+      "title": "VibeCreateAdvertiserConfig",
+      "type": "object"
+    },
+    "VibeCreateAudienceConfig": {
+      "additionalProperties": false,
+      "description": "Create or upsert an audience under an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "create_audience",
+          "default": "create_audience",
+          "title": "Create or upsert an audience under an advertiser",
+          "type": "string"
+        },
+        "advertiser_id": {
+          "format": "uuid",
+          "title": "Advertiser Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name for the audience",
+          "title": "Name",
+          "type": "string"
+        },
+        "external_audience_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caller-provided stable key",
+          "title": "External Audience Key"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "name"
+      ],
+      "title": "VibeCreateAudienceConfig",
+      "type": "object"
+    },
+    "VibeCreateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Create a campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create a campaign",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "advertiser_id": {
+          "format": "uuid",
+          "title": "Advertiser Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 10,
+          "title": "Name",
+          "type": "string"
+        },
+        "goal": {
+          "enum": [
+            "AWARENESS",
+            "INSTALL",
+            "TRAFFIC",
+            "RETARGETING",
+            "SALES",
+            "LEADS",
+            "ABM"
+          ],
+          "title": "Goal",
+          "type": "string"
+        },
+        "optimization_goal": {
+          "$ref": "#/$defs/VibeOptimizationTarget"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "countries": {
+          "description": "ISO 3166-1 alpha-3 country codes the campaign targets. Must be the exact set: USA.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Countries",
+          "type": "array"
+        },
+        "attribution_window": {
+          "anyOf": [
+            {
+              "enum": [
+                "TWELVE_HOURS",
+                "ONE_DAY",
+                "FORTY_EIGHT_HOURS",
+                "SEVENTY_TWO_HOURS",
+                "SEVEN_DAYS",
+                "THIRTY_DAYS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribution Window",
+          "enum": [
+            "TWELVE_HOURS",
+            "ONE_DAY",
+            "FORTY_EIGHT_HOURS",
+            "SEVENTY_TWO_HOURS",
+            "SEVEN_DAYS",
+            "THIRTY_DAYS"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "name",
+        "goal",
+        "optimization_goal",
+        "countries"
+      ],
+      "title": "VibeCreateCampaignConfig",
+      "type": "object"
+    },
+    "VibeCreateReportConfig": {
+      "additionalProperties": false,
+      "description": "Create an async report.",
+      "properties": {
+        "operation": {
+          "const": "create_report",
+          "default": "create_report",
+          "title": "Create an async report",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Minimum date (inclusive) for which to return data",
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "Maximum date (exclusive) for which to return data",
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "description": "Timezone identifier for reported data",
+          "enum": [
+            "UTC",
+            "Europe/Amsterdam",
+            "Europe/Berlin",
+            "Europe/Helsinki",
+            "Europe/Istanbul",
+            "Europe/London",
+            "Europe/Stockholm",
+            "Asia/Seoul",
+            "Asia/Shanghai",
+            "Asia/Tel_Aviv",
+            "America/Denver",
+            "America/Los_Angeles",
+            "America/New_York",
+            "America/Phoenix"
+          ],
+          "title": "Timezone",
+          "type": "string"
+        },
+        "advertiser_ids": {
+          "description": "Advertisers to include. Must be owned by the tenant.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Advertiser Ids",
+          "type": "array"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "advertiser_id",
+                  "advertiser_name",
+                  "campaign_id",
+                  "campaign_name",
+                  "strategy_id",
+                  "strategy_name",
+                  "creative_id",
+                  "creative_name",
+                  "event_source_id",
+                  "event_source_platform",
+                  "screen",
+                  "channel_name",
+                  "content_name",
+                  "geo_region",
+                  "geo_metro",
+                  "geo_city",
+                  "geo_zip",
+                  "segment_ages",
+                  "segment_career",
+                  "segment_educations",
+                  "segment_estimated_incomes",
+                  "segment_estimated_net_worth",
+                  "segment_ethnicity",
+                  "segment_family_composition",
+                  "segment_genders",
+                  "segment_interests",
+                  "segment_languages",
+                  "segment_political_status",
+                  "segment_retargeting",
+                  "custom_audiences"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dimensions to group rows by, in addition to the time period set by `granularity`",
+          "title": "Dimensions"
+        },
+        "metrics": {
+          "description": "Metrics to compute",
+          "items": {
+            "enum": [
+              "spend",
+              "impressions",
+              "households",
+              "frequency",
+              "cpm",
+              "completed_views",
+              "cost_per_completed_view",
+              "view_through_rate",
+              "number_of_page_views",
+              "cost_per_page_view",
+              "number_of_sessions",
+              "cost_per_session",
+              "number_of_leads",
+              "cost_per_lead",
+              "installs",
+              "cost_per_install",
+              "number_of_purchases",
+              "cost_per_purchase",
+              "amount_of_purchases",
+              "number_of_signups",
+              "cost_per_signup",
+              "number_of_custom_1",
+              "cost_per_custom_1",
+              "number_of_custom_2",
+              "cost_per_custom_2",
+              "number_of_custom_3",
+              "cost_per_custom_3",
+              "roas"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Metrics",
+          "type": "array"
+        },
+        "attribution_window": {
+          "default": "7 days",
+          "enum": [
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "48h",
+            "72h",
+            "7 days",
+            "30 days"
+          ],
+          "title": "Attribution Window",
+          "type": "string"
+        },
+        "granularity": {
+          "default": "DAY",
+          "description": "Time aggregation granularity for rows in the report. Every report is split by time: each row has an `impression_date` column (YYYY-MM-DD) holding the date its period starts on.",
+          "enum": [
+            "HOUR",
+            "DAY",
+            "WEEK",
+            "MONTH"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VibeReportFilter"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filters, combined with AND",
+          "title": "Filters"
+        },
+        "format": {
+          "default": "JSON",
+          "enum": [
+            "JSON",
+            "CSV"
+          ],
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date",
+        "advertiser_ids",
+        "metrics"
+      ],
+      "title": "VibeCreateReportConfig",
+      "type": "object"
+    },
+    "VibeCreateStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Create a strategy.",
+      "properties": {
+        "operation": {
+          "const": "create_strategy",
+          "default": "create_strategy",
+          "title": "Create a strategy",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 3,
+          "title": "Name",
+          "type": "string"
+        },
+        "budget": {
+          "description": "Budget in USD",
+          "minimum": 1,
+          "title": "Budget",
+          "type": "integer"
+        },
+        "budget_type": {
+          "enum": [
+            "DAILY",
+            "GLOBAL"
+          ],
+          "title": "Budget Type",
+          "type": "string"
+        },
+        "starts_at": {
+          "format": "date-time",
+          "title": "Starts At",
+          "type": "string"
+        },
+        "ends_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Ends At"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "targeting": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeTargeting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "creative_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creative Ids"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "name",
+        "budget",
+        "budget_type",
+        "starts_at"
+      ],
+      "title": "VibeCreateStrategyConfig",
+      "type": "object"
+    },
+    "VibeDayparting": {
+      "additionalProperties": false,
+      "properties": {
+        "preset": {
+          "anyOf": [
+            {
+              "enum": [
+                "CUSTOM",
+                "ANY_TIME_ANY_DAY",
+                "PRIMETIME",
+                "AFTER_WORK",
+                "WORK_HOURS",
+                "SLEEPING_TIME",
+                "WEEKEND",
+                "WORK_DAYS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preset",
+          "enum": [
+            "CUSTOM",
+            "ANY_TIME_ANY_DAY",
+            "PRIMETIME",
+            "AFTER_WORK",
+            "WORK_HOURS",
+            "SLEEPING_TIME",
+            "WEEKEND",
+            "WORK_DAYS"
+          ],
+          "x-enum-searchable": true
+        },
+        "custom_ranges": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VibeDaypartingRange"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minutes from midnight Monday (0\u201310079). Only used when preset=CUSTOM.",
+          "title": "Custom Ranges"
+        }
+      },
+      "title": "VibeDayparting",
+      "type": "object"
+    },
+    "VibeDaypartingRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "maximum": 10079,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "maximum": 10079,
+          "minimum": 0,
+          "title": "End",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "VibeDaypartingRange",
+      "type": "object"
+    },
+    "VibeDeleteCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Delete a draft campaign.",
+      "properties": {
+        "operation": {
+          "const": "delete_campaign",
+          "default": "delete_campaign",
+          "title": "Delete a draft campaign",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VibeDeleteCampaignConfig",
+      "type": "object"
+    },
+    "VibeDeleteStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Delete a strategy.",
+      "properties": {
+        "operation": {
+          "const": "delete_strategy",
+          "default": "delete_strategy",
+          "title": "Delete a strategy",
+          "type": "string"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "strategy_id"
+      ],
+      "title": "VibeDeleteStrategyConfig",
+      "type": "object"
+    },
+    "VibeGeoTargeting": {
+      "additionalProperties": false,
+      "properties": {
+        "regions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeIncludeExcludeList"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cities": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeIncludeExcludeList"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metro_codes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeIncludeExcludeList"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "zip_codes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeIncludeExcludeList"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "VibeGeoTargeting",
+      "type": "object"
+    },
+    "VibeGetAdvertiserConfig": {
+      "additionalProperties": false,
+      "description": "Get an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "get_advertiser",
+          "default": "get_advertiser",
+          "title": "Get an advertiser",
+          "type": "string"
+        },
+        "advertiser_id": {
+          "format": "uuid",
+          "title": "Advertiser Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "VibeGetAdvertiserConfig",
+      "type": "object"
+    },
+    "VibeGetAudienceConfig": {
+      "additionalProperties": false,
+      "description": "Get a persistent audience.",
+      "properties": {
+        "operation": {
+          "const": "get_audience",
+          "default": "get_audience",
+          "title": "Get a persistent audience",
+          "type": "string"
+        },
+        "audience_id": {
+          "title": "Audience Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "audience_id"
+      ],
+      "title": "VibeGetAudienceConfig",
+      "type": "object"
+    },
+    "VibeGetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Get a campaign by id.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get a campaign by id",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VibeGetCampaignConfig",
+      "type": "object"
+    },
+    "VibeGetReportConfig": {
+      "additionalProperties": false,
+      "description": "Get the status of an async report.",
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Get the status of an async report",
+          "type": "string"
+        },
+        "report_id": {
+          "format": "uuid",
+          "title": "Report Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id"
+      ],
+      "title": "VibeGetReportConfig",
+      "type": "object"
+    },
+    "VibeGetStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Get a strategy by id.",
+      "properties": {
+        "operation": {
+          "const": "get_strategy",
+          "default": "get_strategy",
+          "title": "Get a strategy by id",
+          "type": "string"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "strategy_id"
+      ],
+      "title": "VibeGetStrategyConfig",
+      "type": "object"
+    },
+    "VibeIncludeExcludeList": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude"
+        }
+      },
+      "title": "VibeIncludeExcludeList",
+      "type": "object"
+    },
+    "VibeIncludeExcludeUuid": {
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude"
+        }
+      },
+      "title": "VibeIncludeExcludeUuid",
+      "type": "object"
+    },
+    "VibeInventoryTargeting": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "APPS_AND_CHANNELS",
+                "LIVE_SPORTS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "APPS_AND_CHANNELS",
+            "LIVE_SPORTS"
+          ],
+          "x-enum-searchable": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude"
+        }
+      },
+      "title": "VibeInventoryTargeting",
+      "type": "object"
+    },
+    "VibeListAccountsConfig": {
+      "additionalProperties": false,
+      "description": "List accounts.",
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List accounts",
+          "type": "string"
+        }
+      },
+      "title": "VibeListAccountsConfig",
+      "type": "object"
+    },
+    "VibeListAdvertisersConfig": {
+      "additionalProperties": false,
+      "description": "List advertisers.",
+      "properties": {
+        "operation": {
+          "const": "list_advertisers",
+          "default": "list_advertisers",
+          "title": "List advertisers",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "limit": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "title": "VibeListAdvertisersConfig",
+      "type": "object"
+    },
+    "VibeListAudiencesConfig": {
+      "additionalProperties": false,
+      "description": "List persistent audiences available for sync.",
+      "properties": {
+        "operation": {
+          "const": "list_audiences",
+          "default": "list_audiences",
+          "title": "List persistent audiences available for sync",
+          "type": "string"
+        },
+        "advertiser_id": {
+          "title": "Advertiser Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "VibeListAudiencesConfig",
+      "type": "object"
+    },
+    "VibeListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List campaigns",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "advertiser_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Advertiser Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "DRAFT",
+                  "UPCOMING_OR_DELIVERING",
+                  "PAUSED",
+                  "ARCHIVED",
+                  "COMPLETED",
+                  "BLOCKED"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "limit": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "title": "VibeListCampaignsConfig",
+      "type": "object"
+    },
+    "VibeListCreativesConfig": {
+      "additionalProperties": false,
+      "description": "List creatives.",
+      "properties": {
+        "operation": {
+          "const": "list_creatives",
+          "default": "list_creatives",
+          "title": "List creatives",
+          "type": "string"
+        },
+        "advertiser_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Advertiser Id"
+        },
+        "limit": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "title": "VibeListCreativesConfig",
+      "type": "object"
+    },
+    "VibeListStrategiesConfig": {
+      "additionalProperties": false,
+      "description": "List strategies.",
+      "properties": {
+        "operation": {
+          "const": "list_strategies",
+          "default": "list_strategies",
+          "title": "List strategies",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign Id"
+        },
+        "advertiser_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Advertiser Id"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "starts_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Starts At"
+        },
+        "ends_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Ends At"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "title": "VibeListStrategiesConfig",
+      "type": "object"
+    },
+    "VibeOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vibe_oauth",
+          "default": "vibe_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 UTC expiry, when importing a refreshable OAuth token.",
+          "title": "Token expiry"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Vibe OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Vibe account. The instance administrator must register a Vibe OAuth app and configure VIBE_CLIENT_ID, VIBE_CLIENT_SECRET and VIBE_REDIRECT_URI. Vibe approval is needed for other users to connect. For manual import, paste an OAuth access token; it expires in about 30 minutes unless a refresh token and expiry are also supplied. Legacy API keys are not supported.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://vibe.co/dashboard/settings/my-applications",
+      "x-oauth-provider": "vibe",
+      "x-oauth-scopes": [
+        "account:read",
+        "advertisers:read",
+        "advertisers:write",
+        "audiences:read",
+        "audiences:write",
+        "campaigns:publish",
+        "campaigns:read",
+        "campaigns:write",
+        "creatives:read",
+        "reporting:read"
+      ]
+    },
+    "VibeOptimizationTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "COST_PER_SESSION",
+            "COST_PER_LEAD",
+            "COST_PER_CALL",
+            "COST_PER_PURCHASE",
+            "ROAS",
+            "CPM",
+            "COST_PER_INSTALL",
+            "COST_PER_UNIQUE_HOUSEHOLD",
+            "COST_PER_UNIQUE_COMPANY"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "description": "Target value in USD (max 2 decimals)",
+          "minimum": 1,
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "VibeOptimizationTarget",
+      "type": "object"
+    },
+    "VibePerformCampaignActionConfig": {
+      "additionalProperties": false,
+      "description": "Perform a lifecycle action on a campaign.",
+      "properties": {
+        "operation": {
+          "const": "perform_campaign_action",
+          "default": "perform_campaign_action",
+          "title": "Perform a lifecycle action on a campaign",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "action": {
+          "description": "Lifecycle action to perform on the campaign",
+          "enum": [
+            "PAUSE",
+            "ACTIVATE"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "action"
+      ],
+      "title": "VibePerformCampaignActionConfig",
+      "type": "object"
+    },
+    "VibePerformStrategyActionConfig": {
+      "additionalProperties": false,
+      "description": "Perform a lifecycle action on a strategy.",
+      "properties": {
+        "operation": {
+          "const": "perform_strategy_action",
+          "default": "perform_strategy_action",
+          "title": "Perform a lifecycle action on a strategy",
+          "type": "string"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "action": {
+          "description": "Lifecycle action to perform on the strategy",
+          "enum": [
+            "PAUSE",
+            "ACTIVATE"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "action"
+      ],
+      "title": "VibePerformStrategyActionConfig",
+      "type": "object"
+    },
+    "VibePublishCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Publish a campaign.",
+      "properties": {
+        "operation": {
+          "const": "publish_campaign",
+          "default": "publish_campaign",
+          "title": "Publish a campaign",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VibePublishCampaignConfig",
+      "type": "object"
+    },
+    "VibeReplaceStrategyCreativesConfig": {
+      "additionalProperties": false,
+      "description": "Replace the creatives attached to a strategy.",
+      "properties": {
+        "operation": {
+          "const": "replace_strategy_creatives",
+          "default": "replace_strategy_creatives",
+          "title": "Replace the creatives attached to a strategy",
+          "type": "string"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "creative_ids": {
+          "description": "Full list of creatives to attach. Replaces any current attachments.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "title": "Creative Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "creative_ids"
+      ],
+      "title": "VibeReplaceStrategyCreativesConfig",
+      "type": "object"
+    },
+    "VibeReportFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "description": "Dimension to filter on",
+          "enum": [
+            "event_source_id",
+            "campaign_id",
+            "strategy_id"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values to include",
+          "title": "Values"
+        }
+      },
+      "required": [
+        "dimension"
+      ],
+      "title": "VibeReportFilter",
+      "type": "object"
+    },
+    "VibeTargeting": {
+      "additionalProperties": false,
+      "properties": {
+        "geo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeGeoTargeting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "inventory": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeInventoryTargeting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "age_ranges": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "RANGE_18_20",
+                  "RANGE_21_24",
+                  "RANGE_25_34",
+                  "RANGE_35_44",
+                  "RANGE_45_54",
+                  "RANGE_55_64",
+                  "RANGE_65_MORE"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Age Ranges"
+        },
+        "genders": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "MALE",
+                  "FEMALE"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Genders"
+        },
+        "devices": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "TV",
+                  "TABLET",
+                  "MOBILE"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Devices"
+        },
+        "interests": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interests"
+        },
+        "audiences": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeAudienceTargeting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "dayparting": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeDayparting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "VibeTargeting",
+      "type": "object"
+    },
+    "VibeUpdateAdvertiserConfig": {
+      "additionalProperties": false,
+      "description": "Update an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "update_advertiser",
+          "default": "update_advertiser",
+          "title": "Update an advertiser",
+          "type": "string"
+        },
+        "advertiser_id": {
+          "format": "uuid",
+          "title": "Advertiser Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The brand-owned website of the advertiser. Marketplace, app store and social media pages are rejected.",
+          "format": "uri",
+          "title": "Url"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "enum": [
+                "AUTOMOTIVE",
+                "EDUCATION",
+                "FINANCIAL_SERVICES",
+                "FOOD_DRINK",
+                "FOOD_DRINK_WINE",
+                "GAMING",
+                "GAMING_GAMBLING",
+                "HEALTH_FITNESS",
+                "HEALTH_FITNESS_ALTERNATIVE",
+                "HUNTING_SHOOTING",
+                "LAW_LEGAL_PRACTICE",
+                "MEDIA_ENTERTAINMENT",
+                "OTHER",
+                "POLITICS",
+                "PROFESSIONAL_SERVICES",
+                "REAL_ESTATE",
+                "RELIGION_SPIRITUALITY",
+                "RETAIL",
+                "TECHNOLOGY_TELECOMMUNICATIONS",
+                "TOBACCO_SMOKING",
+                "TRAVEL_HOSPITALITY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry",
+          "enum": [
+            "AUTOMOTIVE",
+            "EDUCATION",
+            "FINANCIAL_SERVICES",
+            "FOOD_DRINK",
+            "FOOD_DRINK_WINE",
+            "GAMING",
+            "GAMING_GAMBLING",
+            "HEALTH_FITNESS",
+            "HEALTH_FITNESS_ALTERNATIVE",
+            "HUNTING_SHOOTING",
+            "LAW_LEGAL_PRACTICE",
+            "MEDIA_ENTERTAINMENT",
+            "OTHER",
+            "POLITICS",
+            "PROFESSIONAL_SERVICES",
+            "REAL_ESTATE",
+            "RELIGION_SPIRITUALITY",
+            "RETAIL",
+            "TECHNOLOGY_TELECOMMUNICATIONS",
+            "TOBACCO_SMOKING",
+            "TRAVEL_HOSPITALITY"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "VibeUpdateAdvertiserConfig",
+      "type": "object"
+    },
+    "VibeUpdateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Update a campaign.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update a campaign",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "goal": {
+          "anyOf": [
+            {
+              "enum": [
+                "AWARENESS",
+                "INSTALL",
+                "TRAFFIC",
+                "RETARGETING",
+                "SALES",
+                "LEADS",
+                "ABM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Goal",
+          "enum": [
+            "AWARENESS",
+            "INSTALL",
+            "TRAFFIC",
+            "RETARGETING",
+            "SALES",
+            "LEADS",
+            "ABM"
+          ],
+          "x-enum-searchable": true
+        },
+        "attribution_window": {
+          "anyOf": [
+            {
+              "enum": [
+                "TWELVE_HOURS",
+                "ONE_DAY",
+                "FORTY_EIGHT_HOURS",
+                "SEVENTY_TWO_HOURS",
+                "SEVEN_DAYS",
+                "THIRTY_DAYS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribution Window",
+          "enum": [
+            "TWELVE_HOURS",
+            "ONE_DAY",
+            "FORTY_EIGHT_HOURS",
+            "SEVENTY_TWO_HOURS",
+            "SEVEN_DAYS",
+            "THIRTY_DAYS"
+          ],
+          "x-enum-searchable": true
+        },
+        "optimization_goal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeOptimizationTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VibeUpdateCampaignConfig",
+      "type": "object"
+    },
+    "VibeUpdateStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Update a strategy.",
+      "properties": {
+        "operation": {
+          "const": "update_strategy",
+          "default": "update_strategy",
+          "title": "Update a strategy",
+          "type": "string"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Budget in USD",
+          "title": "Budget"
+        },
+        "budget_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "DAILY",
+                "GLOBAL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Type",
+          "enum": [
+            "DAILY",
+            "GLOBAL"
+          ],
+          "x-enum-searchable": true
+        },
+        "starts_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Starts At"
+        },
+        "ends_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Ends At"
+        },
+        "targeting": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VibeTargeting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "creative_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creative Ids"
+        }
+      },
+      "required": [
+        "strategy_id"
+      ],
+      "title": "VibeUpdateStrategyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_advertiser": "#/$defs/VibeCreateAdvertiserConfig",
+          "create_audience": "#/$defs/VibeCreateAudienceConfig",
+          "create_campaign": "#/$defs/VibeCreateCampaignConfig",
+          "create_report": "#/$defs/VibeCreateReportConfig",
+          "create_strategy": "#/$defs/VibeCreateStrategyConfig",
+          "delete_campaign": "#/$defs/VibeDeleteCampaignConfig",
+          "delete_strategy": "#/$defs/VibeDeleteStrategyConfig",
+          "get_advertiser": "#/$defs/VibeGetAdvertiserConfig",
+          "get_audience": "#/$defs/VibeGetAudienceConfig",
+          "get_campaign": "#/$defs/VibeGetCampaignConfig",
+          "get_report": "#/$defs/VibeGetReportConfig",
+          "get_strategy": "#/$defs/VibeGetStrategyConfig",
+          "list_accounts": "#/$defs/VibeListAccountsConfig",
+          "list_advertisers": "#/$defs/VibeListAdvertisersConfig",
+          "list_audiences": "#/$defs/VibeListAudiencesConfig",
+          "list_campaigns": "#/$defs/VibeListCampaignsConfig",
+          "list_creatives": "#/$defs/VibeListCreativesConfig",
+          "list_strategies": "#/$defs/VibeListStrategiesConfig",
+          "perform_campaign_action": "#/$defs/VibePerformCampaignActionConfig",
+          "perform_strategy_action": "#/$defs/VibePerformStrategyActionConfig",
+          "publish_campaign": "#/$defs/VibePublishCampaignConfig",
+          "replace_strategy_creatives": "#/$defs/VibeReplaceStrategyCreativesConfig",
+          "update_advertiser": "#/$defs/VibeUpdateAdvertiserConfig",
+          "update_campaign": "#/$defs/VibeUpdateCampaignConfig",
+          "update_strategy": "#/$defs/VibeUpdateStrategyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VibeListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeListAdvertisersConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeCreateAdvertiserConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeGetAdvertiserConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeUpdateAdvertiserConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeListAudiencesConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeGetAudienceConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeCreateAudienceConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeDeleteCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/VibePerformCampaignActionConfig"
+        },
+        {
+          "$ref": "#/$defs/VibePublishCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeListCreativesConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeListStrategiesConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeCreateStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeGetStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeUpdateStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeDeleteStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeReplaceStrategyCreativesConfig"
+        },
+        {
+          "$ref": "#/$defs/VibePerformStrategyActionConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeCreateReportConfig"
+        },
+        {
+          "$ref": "#/$defs/VibeGetReportConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VibeOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vibe Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
