@@ -1,0 +1,1356 @@
+{
+  "$defs": {
+    "CloseConversation": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "target": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "operation": {
+          "const": "close_conversation",
+          "default": "close_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "user_id",
+        "target"
+      ],
+      "title": "CloseConversation",
+      "type": "object"
+    },
+    "ContactTag": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_id": {
+          "exclusiveMinimum": 0,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "ContactTag",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "phone": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Phone",
+          "type": "string"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom field IDs as string keys, with their values.",
+          "title": "Custom"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "minimum": -1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team member ID; -1 unassigns the contact.",
+          "title": "Assignee Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactTag"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "is_opted_out": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Opted Out"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "contacts": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contacts"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "E.164 digits without the leading plus sign.",
+                "pattern": "^[1-9][0-9]{6,14}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "local_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local Id"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetConversation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "exclusiveMinimum": 0,
+          "title": "Conversation Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GetConversation",
+      "type": "object"
+    },
+    "GetMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_messages",
+          "default": "get_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest time to search, as a Unix timestamp. Returns one history page.",
+          "title": "Timestamp"
+        }
+      },
+      "required": [
+        "phone_number",
+        "inbox_id"
+      ],
+      "title": "GetMessages",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "exclusiveMinimum": 0,
+          "title": "Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "HeymarketAPISecretCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "heymarket_api_secret",
+          "default": "heymarket_api_secret",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secret_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secret ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secret Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "secret_id",
+        "secret_key"
+      ],
+      "title": "Heymarket API Secret",
+      "type": "object",
+      "x-credential-instructions": "In Heymarket, open Settings > Integrations > API and generate an API Secret. Paste its Secret ID and Secret Key here. The key is shown only once. NoClick signs a fresh short-lived JWT on the server for each request. Connection checks read your inboxes.",
+      "x-credential-url": "https://app.heymarket.com"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 30,
+          "description": "Results per page. This action returns a single page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number; increment to request another page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp used by the provider to filter or paginate results.",
+          "title": "Date"
+        },
+        "ascending": {
+          "default": false,
+          "title": "Ascending",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListConversations": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 30,
+          "description": "Results per page. This action returns a single page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number; increment to request another page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp used by the provider to filter or paginate results.",
+          "title": "Date"
+        },
+        "ascending": {
+          "default": false,
+          "title": "Ascending",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Heymarket filters such as inboxes, closed, unread, ids and unanswered.",
+          "title": "Filters"
+        }
+      },
+      "title": "ListConversations",
+      "type": "object"
+    },
+    "ListInboxes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_inboxes",
+          "default": "list_inboxes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListInboxes",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 30,
+          "description": "Results per page. This action returns a single page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number; increment to request another page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp used by the provider to filter or paginate results.",
+          "title": "Date"
+        },
+        "ascending": {
+          "default": false,
+          "title": "Ascending",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 30,
+          "description": "Results per page. This action returns a single page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number; increment to request another page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp used by the provider to filter or paginate results.",
+          "title": "Date"
+        },
+        "ascending": {
+          "default": false,
+          "title": "Ascending",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "MarkConversationRead": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "target": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_conversation_read",
+          "default": "mark_conversation_read",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "user_id",
+        "target"
+      ],
+      "title": "MarkConversationRead",
+      "type": "object"
+    },
+    "MarkConversationUnread": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "target": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_conversation_unread",
+          "default": "mark_conversation_unread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "user_id",
+        "target"
+      ],
+      "title": "MarkConversationUnread",
+      "type": "object"
+    },
+    "OpenConversation": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "target": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "operation": {
+          "const": "open_conversation",
+          "default": "open_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "user_id",
+        "target"
+      ],
+      "title": "OpenConversation",
+      "type": "object"
+    },
+    "ReassignConversation": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "target": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reassign_conversation",
+          "default": "reassign_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reassign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Reassign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "user_id",
+        "target",
+        "reassign_id"
+      ],
+      "title": "ReassignConversation",
+      "type": "object"
+    },
+    "SearchChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_type": {
+          "enum": [
+            "phone",
+            "email"
+          ],
+          "title": "Channel Type",
+          "type": "string"
+        },
+        "channel_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Channel Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "channel_type",
+        "channel_ids"
+      ],
+      "title": "SearchChannel",
+      "type": "object"
+    },
+    "SearchContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_channels": {
+          "description": "Find contacts by phone numbers or email addresses.",
+          "items": {
+            "$ref": "#/$defs/SearchChannel"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Contact Channels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_channels"
+      ],
+      "title": "SearchContacts",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inbox_id": {
+          "exclusiveMinimum": 0,
+          "title": "Inbox Id",
+          "type": "integer"
+        },
+        "creator_id": {
+          "exclusiveMinimum": 0,
+          "title": "Creator Id",
+          "type": "integer"
+        },
+        "phone_number": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "text": {
+          "description": "SMS message text.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional publicly accessible MMS media URL. Heymarket retrieves this URL.",
+          "title": "Media Url"
+        },
+        "local_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional client message identifier; no automatic retry is performed.",
+          "title": "Local Id"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "creator_id",
+        "phone_number",
+        "text"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "phone": {
+          "description": "E.164 digits without the leading plus sign.",
+          "pattern": "^[1-9][0-9]{6,14}$",
+          "title": "Phone",
+          "type": "string"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom field IDs as string keys, with their values.",
+          "title": "Custom"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "minimum": -1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team member ID; -1 unassigns the contact.",
+          "title": "Assignee Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactTag"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "is_opted_out": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Opted Out"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "overwrite": {
+          "default": false,
+          "description": "Replace custom fields if true; otherwise merge. Names are always overwritten: supply current first, last and display_name to preserve them.",
+          "title": "Overwrite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "phone",
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "contacts": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replace the entire list membership. Prefer add_contacts/remove_contacts for incremental changes.",
+          "title": "Contacts"
+        },
+        "add_contacts": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Contacts"
+        },
+        "remove_contacts": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Contacts"
+        },
+        "add_phones": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "E.164 digits without the leading plus sign.",
+                "pattern": "^[1-9][0-9]{6,14}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Phones"
+        },
+        "remove_phones": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "E.164 digits without the leading plus sign.",
+                "pattern": "^[1-9][0-9]{6,14}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Phones"
+        },
+        "add_emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Emails"
+        },
+        "remove_emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Emails"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "UpdateList",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "close_conversation": "#/$defs/CloseConversation",
+          "create_contact": "#/$defs/CreateContact",
+          "create_list": "#/$defs/CreateList",
+          "delete_contact": "#/$defs/DeleteContact",
+          "get_contact": "#/$defs/GetContact",
+          "get_conversation": "#/$defs/GetConversation",
+          "get_messages": "#/$defs/GetMessages",
+          "get_team": "#/$defs/GetTeam",
+          "get_template": "#/$defs/GetTemplate",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_conversations": "#/$defs/ListConversations",
+          "list_inboxes": "#/$defs/ListInboxes",
+          "list_lists": "#/$defs/ListLists",
+          "list_templates": "#/$defs/ListTemplates",
+          "mark_conversation_read": "#/$defs/MarkConversationRead",
+          "mark_conversation_unread": "#/$defs/MarkConversationUnread",
+          "open_conversation": "#/$defs/OpenConversation",
+          "reassign_conversation": "#/$defs/ReassignConversation",
+          "search_contacts": "#/$defs/SearchContacts",
+          "send_message": "#/$defs/SendMessage",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_list": "#/$defs/UpdateList"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInboxes"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/SearchContacts"
+        },
+        {
+          "$ref": "#/$defs/ListConversations"
+        },
+        {
+          "$ref": "#/$defs/GetConversation"
+        },
+        {
+          "$ref": "#/$defs/CloseConversation"
+        },
+        {
+          "$ref": "#/$defs/OpenConversation"
+        },
+        {
+          "$ref": "#/$defs/MarkConversationRead"
+        },
+        {
+          "$ref": "#/$defs/MarkConversationUnread"
+        },
+        {
+          "$ref": "#/$defs/ReassignConversation"
+        },
+        {
+          "$ref": "#/$defs/GetMessages"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/UpdateList"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HeymarketAPISecretCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Heymarket Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
