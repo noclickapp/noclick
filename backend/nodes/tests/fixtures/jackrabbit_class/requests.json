@@ -1,0 +1,222 @@
+{
+  "get_organization": [
+    {},
+    "GET",
+    "/v1/Options/me",
+    null
+  ],
+  "list_locations": [
+    {},
+    "GET",
+    "/v1/Options/locations",
+    null
+  ],
+  "get_enrollment_options": [
+    {},
+    "GET",
+    "/v1/Options/enrollment",
+    null
+  ],
+  "get_class_roster": [
+    {
+      "class_id": 77
+    },
+    "GET",
+    "/v1/Classes/77/roster",
+    null
+  ],
+  "list_enrollments": [
+    {
+      "student_id": 12,
+      "enrolled": false
+    },
+    "GET",
+    "/v1/Enrollments",
+    null
+  ],
+  "get_enrollment": [
+    {
+      "enrollment_id": 32
+    },
+    "GET",
+    "/v1/Enrollments/32",
+    null
+  ],
+  "enroll_student": [
+    {
+      "student_id": 12,
+      "class_id": 77,
+      "enroll_type_id": 3
+    },
+    "POST",
+    "/v1/Enrollments/12",
+    {
+      "classId": 77,
+      "enrollTypeId": 3
+    }
+  ],
+  "drop_student": [
+    {
+      "student_id": 12,
+      "class_id": 77,
+      "drop_date": "2026-12-01",
+      "drop_reason_id": 2,
+      "email_primary_instructor": false
+    },
+    "POST",
+    "/v1/Enrollments/12/drop",
+    {
+      "classId": 77,
+      "dropDate": "2026-12-01",
+      "dropReasonId": 2,
+      "emailPrimaryInstructor": false
+    }
+  ],
+  "list_attendance": [
+    {
+      "student_id": 12,
+      "did_attend": false
+    },
+    "GET",
+    "/v1/Attendance",
+    null
+  ],
+  "list_families": [
+    {},
+    "GET",
+    "/v1/Families",
+    null
+  ],
+  "get_family": [
+    {
+      "family_id": 9
+    },
+    "GET",
+    "/v1/Families/9",
+    null
+  ],
+  "create_family": [
+    {
+      "family_name": "Smith",
+      "location_id": 2
+    },
+    "POST",
+    "/v1/Families",
+    {
+      "familyName": "Smith",
+      "locationId": 2
+    }
+  ],
+  "update_family": [
+    {
+      "family_id": 9,
+      "notes": "New note"
+    },
+    "PATCH",
+    "/v1/Families/9",
+    {
+      "notes": "New note"
+    }
+  ],
+  "list_students": [
+    {},
+    "GET",
+    "/v1/Students",
+    null
+  ],
+  "get_student": [
+    {
+      "student_id": 9
+    },
+    "GET",
+    "/v1/Students/9",
+    null
+  ],
+  "create_student": [
+    {
+      "family_id": 9,
+      "first_name": "Sam"
+    },
+    "POST",
+    "/v1/Students",
+    {
+      "familyId": 9,
+      "firstName": "Sam"
+    }
+  ],
+  "update_student": [
+    {
+      "student_id": 9,
+      "is_active": false
+    },
+    "PATCH",
+    "/v1/Students/9",
+    {
+      "isActive": false
+    }
+  ],
+  "list_contacts": [
+    {},
+    "GET",
+    "/v1/Contacts",
+    null
+  ],
+  "get_contact": [
+    {
+      "contact_id": 9
+    },
+    "GET",
+    "/v1/Contacts/9",
+    null
+  ],
+  "create_contact": [
+    {
+      "family_id": 9,
+      "first_name": "Pat",
+      "last_name": "Smith"
+    },
+    "POST",
+    "/v1/Contacts",
+    {
+      "familyId": 9,
+      "firstName": "Pat",
+      "lastName": "Smith"
+    }
+  ],
+  "update_contact": [
+    {
+      "contact_id": 9,
+      "is_authorized": false
+    },
+    "PATCH",
+    "/v1/Contacts/9",
+    {
+      "isAuthorized": false
+    }
+  ],
+  "list_classes": [
+    {},
+    "GET",
+    "/v1/Classes",
+    null
+  ],
+  "get_class": [
+    {
+      "class_id": 9
+    },
+    "GET",
+    "/v1/Classes/9",
+    null
+  ],
+  "update_class": [
+    {
+      "class_id": 9,
+      "description": "Beginner class"
+    },
+    "PATCH",
+    "/v1/Classes/9",
+    {
+      "description": "Beginner class"
+    }
+  ]
+}
