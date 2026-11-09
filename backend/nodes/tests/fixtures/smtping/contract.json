@@ -1,0 +1,66 @@
+{
+  "source": "https://smtping.com/openapi.json",
+  "version": "1.0.0",
+  "operations": {
+    "verify_single": [
+      "POST",
+      "/verify/single",
+      200
+    ],
+    "create_bulk_job": [
+      "POST",
+      "/verify/bulk",
+      202
+    ],
+    "get_bulk_job": [
+      "GET",
+      "/verify/bulk/{job_id}",
+      200
+    ],
+    "get_bulk_job_result": [
+      "GET",
+      "/verify/bulk/{job_id}/result",
+      200
+    ],
+    "check_one": [
+      "POST",
+      "/checks/{check}",
+      200
+    ],
+    "check_batch": [
+      "POST",
+      "/checks/{check}/batch",
+      200
+    ],
+    "create_check_job": [
+      "POST",
+      "/checks/{check}/jobs",
+      202
+    ],
+    "get_check_job": [
+      "GET",
+      "/checks/jobs/{job_id}",
+      200
+    ],
+    "get_check_job_result": [
+      "GET",
+      "/checks/jobs/{job_id}/result",
+      200
+    ],
+    "check_flags": [
+      "POST",
+      "/checks/flags",
+      200
+    ],
+    "get_credits": [
+      "GET",
+      "/credits",
+      200
+    ],
+    "get_usage": [
+      "GET",
+      "/usage",
+      200
+    ]
+  }
+}
