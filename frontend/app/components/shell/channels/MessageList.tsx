@@ -10,7 +10,7 @@
 // dismissable. Where the page takes threads and pins (Work), a message's hover
 // bar adds quick reactions, Reply in thread and Pin, a message with replies
 // wears Slack's replies bar, and a pinned one says who pinned it.
-import { Fragment, useMemo, useRef, useState } from 'react';
+import { Fragment, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
@@ -534,6 +534,7 @@ export function MessageList({
     onReact,
     onDismiss,
     actions,
+    intro,
 }: {
     channel: Channel;
     /** The schedules that post in it. */
@@ -551,6 +552,8 @@ export function MessageList({
     onReact: (messageId: string, emoji: string) => void;
     onDismiss: (messageId: string) => void;
     actions?: MessageActions;
+    /** Where the conversation starts, in place of a channel's (a DM's: the other person). */
+    intro?: ReactNode;
 }) {
     const root = useRef<HTMLDivElement>(null);
     const agents = members.filter((m) => m.kind === 'agent');
@@ -580,7 +583,7 @@ export function MessageList({
 
     return (
         <div ref={root} className="flex flex-1 flex-col justify-end">
-            <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} />
+            {intro && !older ? intro : <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} />}
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
                     {/* The day's hairline and its pill pin to the top while the day is on screen, over a band of the
