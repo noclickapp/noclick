@@ -39,7 +39,7 @@ export function paletteSources(): readonly PaletteSource[] {
 }
 
 /** The pages that hand the palette what they hold; each shows as a section of its own. */
-export type HoldingPage = 'Resources' | 'Channels';
+export type HoldingPage = 'Resources' | 'Work';
 
 let held: Partial<Record<HoldingPage, readonly PaletteEntry[]>> = {};
 const listeners = new Set<() => void>();

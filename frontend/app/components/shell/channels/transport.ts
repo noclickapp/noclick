@@ -3,12 +3,15 @@
 // (cloud/lib/channels/transport.ts); a test hands in its own.
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelSchedule, ChannelWorkspace } from './types';
 
-/** Something moved in the account's channels: new messages, one message's reactions, a channel itself, or a workspace. */
+/** Something moved in the account's channels: new messages, a thread's replies, one message's reactions or pin, its
+ *  bookmarks, a channel itself, or a workspace. */
 export interface ChannelChange {
-    kind: 'message' | 'reaction' | 'channel' | 'workspace';
+    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace';
     channelId?: string;
     workspaceId?: string;
     messageId?: string;
+    /** The thread it's in: a reply's (or a thread's) parent. */
+    threadId?: string;
 }
 
 export interface ChannelHistoryPage {

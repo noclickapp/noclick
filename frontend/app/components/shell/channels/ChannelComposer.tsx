@@ -36,7 +36,6 @@ import { useSurfaceFocus } from '~/hooks/useSurfaceFocus';
 import { useComposerAutocomplete, type AutocompleteMatch, type AutocompleteSource } from '~/hooks/useComposerAutocomplete';
 import type { PendingChatAttachment } from '~/hooks/useChatAttachments';
 import { useIsMobile } from '~/hooks/useIsMobile';
-import { useModKey } from '~/hooks/useIsMac';
 import { useTextFormatting } from '~/hooks/useTextFormatting';
 import { useVoiceClip, type VoiceClip } from '~/hooks/useVoiceClip';
 import { cn } from '~/lib/utils';
@@ -62,20 +61,20 @@ export interface DraftAttachment extends PendingChatAttachment {
 
 type Suggestion = { kind: 'member'; member: ChannelMember } | { kind: 'command'; command: ChannelCommand } | { kind: 'emoji'; emoji: Emoji };
 
-const FORMATS: { format: TextFormat; label: string; icon: LucideIcon; keys?: string }[][] = [
+const FORMATS: { format: TextFormat; label: string; icon: LucideIcon }[][] = [
     [
-        { format: 'bold', label: 'Bold', icon: Bold, keys: 'B' },
-        { format: 'italic', label: 'Italic', icon: Italic, keys: 'I' },
-        { format: 'strike', label: 'Strikethrough', icon: Strikethrough, keys: '⇧X' },
+        { format: 'bold', label: 'Bold', icon: Bold },
+        { format: 'italic', label: 'Italic', icon: Italic },
+        { format: 'strike', label: 'Strikethrough', icon: Strikethrough },
     ],
-    [{ format: 'link', label: 'Link', icon: Link2, keys: '⇧U' }],
+    [{ format: 'link', label: 'Link', icon: Link2 }],
     [
-        { format: 'numbered', label: 'Numbered list', icon: ListOrdered, keys: '⇧7' },
-        { format: 'bulleted', label: 'Bulleted list', icon: List, keys: '⇧8' },
+        { format: 'numbered', label: 'Numbered list', icon: ListOrdered },
+        { format: 'bulleted', label: 'Bulleted list', icon: List },
     ],
-    [{ format: 'quote', label: 'Quote', icon: TextQuote, keys: '⇧9' }],
+    [{ format: 'quote', label: 'Quote', icon: TextQuote }],
     [
-        { format: 'code', label: 'Code', icon: Code, keys: 'E' },
+        { format: 'code', label: 'Code', icon: Code },
         { format: 'codeBlock', label: 'Code block', icon: SquareCode },
     ],
 ];
@@ -116,13 +115,12 @@ function subscribeFormatBar(listener: () => void) {
 const ICON_BUTTON =
     'grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40';
 
-function Tip({ label, keys, children }: { label: string; keys?: string; children: ReactNode }) {
+function Tip({ label, children }: { label: string; children: ReactNode }) {
     return (
         <Tooltip>
             <TooltipTrigger asChild>{children}</TooltipTrigger>
             <TooltipContent side="top" sideOffset={8} className="rounded-lg px-2 py-1 text-[12.5px]">
                 {label}
-                {keys && <span className="ml-2 text-muted-foreground">{keys}</span>}
             </TooltipContent>
         </Tooltip>
     );
@@ -240,6 +238,10 @@ export function ChannelComposer({
     user,
     textareaRef,
     disabled,
+    placeholder,
+    footer,
+    compact,
+    commands = true,
 }: {
     channelName: string;
     value: string;
@@ -255,9 +257,16 @@ export function ChannelComposer({
     textareaRef: RefObject<HTMLTextAreaElement | null>;
     /** Why nothing can be posted (a closed channel), shown in place of the box. */
     disabled?: string;
+    /** What the empty box says, if not "Message #channel" (a DM, a thread). */
+    placeholder?: string;
+    /** Beside the box's buttons, before Send (a thread's "Also send to #channel"). */
+    footer?: ReactNode;
+    /** A narrow column (a thread's panel): less room around the box. */
+    compact?: boolean;
+    /** Slash commands (none in a thread, whose replies go as written). */
+    commands?: boolean;
 }) {
     const isMobile = useIsMobile();
-    const mod = useModKey();
     const formatBar = useSyncExternalStore(subscribeFormatBar, formatBarSnapshot, () => false);
     const [emojiOpen, setEmojiOpen] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
@@ -278,7 +287,7 @@ export function ChannelComposer({
         {
             trigger: '/',
             atStart: true,
-            search: (query) => CHANNEL_COMMANDS.filter((c) => c.name.startsWith(query.toLowerCase())).map((command): Suggestion => ({ kind: 'command', command })),
+            search: (query) => (commands ? CHANNEL_COMMANDS.filter((c) => c.name.startsWith(query.toLowerCase())).map((command): Suggestion => ({ kind: 'command', command })) : []),
             insert: (item) => (item.kind === 'command' ? `/${item.command.name}` : ''),
         },
         {
@@ -320,8 +329,8 @@ export function ChannelComposer({
 
     if (disabled) {
         return (
-            <div className="shrink-0 px-3 pb-4 pt-2 sm:px-5 sm:pb-5">
-                <p className={cn('rounded-[20px] px-4 py-4 text-center text-[14px] text-muted-foreground', COMPOSER_SURFACE)} data-testid="channel-composer-disabled">
+            <div className={cn('shrink-0 px-3 pb-4 pt-2', !compact && 'sm:px-5 sm:pb-5')}>
+                <p className={cn('rounded-[26px] px-4 py-4 text-center text-[14px] text-muted-foreground', COMPOSER_SURFACE)} data-testid="channel-composer-disabled">
                     {disabled}
                 </p>
             </div>
@@ -336,7 +345,7 @@ export function ChannelComposer({
                     <PopoverAnchor asChild>
                         {/* Pointer convenience only: keyboard users reach the text by Tab. */}
                         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-                        <div className={cn('relative z-10 cursor-text rounded-[20px]', COMPOSER_SURFACE)} data-testid="channel-composer" onMouseDown={focusText}>
+                        <div className={cn('relative z-10 cursor-text rounded-[26px]', COMPOSER_SURFACE)} data-testid="channel-composer" onMouseDown={focusText}>
                             {autocomplete.match && (
                                 <SuggestionMenu match={autocomplete.match} active={autocomplete.active} user={user} onPick={autocomplete.accept} onPoint={autocomplete.setActive} />
                             )}
@@ -345,15 +354,15 @@ export function ChannelComposer({
                                     {FORMATS.map((group, g) => (
                                         <div key={g} className="flex items-center gap-0.5">
                                             {g > 0 && <Divider />}
-                                            {group.map(({ format: f, label, icon: Icon, keys }) => (
-                                                <Tip key={f} label={label} keys={keys && `${mod}${keys}`}>
+                                            {group.map(({ format: f, label, icon: Icon }) => (
+                                                <Tip key={f} label={label}>
                                                     <button
                                                         type="button"
                                                         aria-label={label}
                                                         // The selection stays in the textarea while the button formats it.
                                                         onMouseDown={(e) => e.preventDefault()}
                                                         onClick={() => format.apply(f)}
-                                                        className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                                     >
                                                         <Icon className="h-4 w-4" strokeWidth={1.9} />
                                                     </button>
@@ -393,8 +402,8 @@ export function ChannelComposer({
                                 ref={textareaRef}
                                 value={value}
                                 rows={1}
-                                placeholder={`Message #${channelName}`}
-                                aria-label={`Message #${channelName}`}
+                                placeholder={placeholder ?? `Message #${channelName}`}
+                                aria-label={placeholder ?? `Message #${channelName}`}
                                 onChange={(e) => {
                                     onChange(e.target.value);
                                     autocomplete.sync(e.target);
@@ -499,12 +508,17 @@ export function ChannelComposer({
                                             <Mic className="h-[18px] w-[18px]" strokeWidth={1.75} />
                                         </button>
                                     </Tip>
-                                    <Divider />
-                                    <Tip label="Commands">
-                                        <button type="button" onClick={openCommands} aria-label="Commands" className={ICON_BUTTON}>
-                                            <SquareSlash className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                                        </button>
-                                    </Tip>
+                                    {commands && (
+                                        <>
+                                            <Divider />
+                                            <Tip label="Commands">
+                                                <button type="button" onClick={openCommands} aria-label="Commands" className={ICON_BUTTON}>
+                                                    <SquareSlash className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                                                </button>
+                                            </Tip>
+                                        </>
+                                    )}
+                                    {footer}
                                     <div className="ml-auto pl-2">
                                         <ComposerSendButton onClick={onSubmit} disabled={!canSend} />
                                     </div>

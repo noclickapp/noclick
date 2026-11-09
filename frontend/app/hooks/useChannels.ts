@@ -39,6 +39,8 @@ export interface Channels {
     /** NoClick answering you alone, in the channel, until dismissed. */
     note(channelId: string, text: string): void;
     dismiss(channelId: string, messageId: string): void;
+    /** A message as the server now has it (a pin, a thread's counts), into the timeline it's in. */
+    upsert(channelId: string, message: ChannelMessage): void;
     /** Add your reaction, or take it back if it's there. */
     toggleReaction(channelId: string, messageId: string, emoji: string): Promise<void>;
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
@@ -175,13 +177,23 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
             }
             pending.messages.clear();
         };
+        /** Read one message again, if the timeline shows it (a reply lives in its thread, not here). */
+        const reread = (channelId: string | undefined, messageId: string | undefined) => {
+            if (!channelId || !messageId || !historiesRef.current[channelId]?.messages.some((m) => m.id === messageId)) return;
+            const ids = pending.messages.get(channelId) ?? new Set<string>();
+            pending.messages.set(channelId, ids.add(messageId));
+        };
         const onChange = (change: ChannelChange) => {
             const id = change.channelId;
             const loaded = id !== undefined && historiesRef.current[id] !== undefined;
-            if (change.kind === 'reaction') {
-                if (!loaded || !change.messageId) return;
-                const ids = pending.messages.get(id) ?? new Set<string>();
-                pending.messages.set(id, ids.add(change.messageId));
+            if (change.kind === 'reaction' || change.kind === 'pin') {
+                reread(id, change.messageId);
+            } else if (change.kind === 'thread') {
+                // A reply moves its parent's counts, and what's unread.
+                reread(id, change.threadId);
+                pending.lists = true;
+            } else if (change.kind === 'bookmark') {
+                return;
             } else {
                 // New messages move unread counts and who's busy; a channel's own change moves the lists.
                 pending.lists = true;
@@ -290,6 +302,7 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                 setHistory(channelId, (h) => ({ ...h, messages: [...h.messages, note] }));
             },
             dismiss: (channelId, messageId) => setHistory(channelId, (h) => ({ ...h, messages: h.messages.filter((m) => m.id !== messageId) })),
+            upsert: (channelId, message) => setHistory(channelId, (h) => (h.messages.some((m) => m.id === message.id) ? { ...h, messages: mergeMessages(h.messages, [message]) } : h)),
             toggleReaction: async (channelId, messageId, emoji) => {
                 const before = historiesRef.current[channelId]?.messages.find((m) => m.id === messageId);
                 if (!before) return;

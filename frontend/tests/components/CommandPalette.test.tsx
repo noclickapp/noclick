@@ -130,7 +130,7 @@ describe('the command palette', () => {
 
     it("finds the person's own things by name: automations, folders, accounts, and what pages handed over", () => {
         act(() =>
-            rememberPaletteEntries('Channels', [{ id: 'channel:x', label: 'launch-week', context: 'Acme', icon: Globe, run: () => undefined }])
+            rememberPaletteEntries('Work', [{ id: 'channel:x', label: 'launch-week', context: 'Acme', icon: Globe, run: () => undefined }])
         );
         render(<CommandPalette />);
         openPalette();
@@ -146,7 +146,7 @@ describe('the command palette', () => {
         expect(rows()[0]).toMatch(/· sam@example\.com$/);
         search('launch');
         expect(rows()[0]).toBe('launch-week · Acme');
-        expect(sectionTitles()[0]).toBe('Channels');
+        expect(sectionTitles()[0]).toBe('Work');
     });
 
     it('offers where you went last before anything is typed', () => {

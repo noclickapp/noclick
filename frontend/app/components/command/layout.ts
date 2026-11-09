@@ -19,13 +19,13 @@ export interface Cmd extends Omit<PaletteEntry, 'action'> {
 }
 
 // The empty palette's order: what to make first, then where to go.
-export const SECTION_ORDER: Section[] = ['Actions', 'Open', 'Go to', 'Workflows', 'Credentials', 'Resources', 'Channels', 'Setup', 'Account'];
+export const SECTION_ORDER: Section[] = ['Actions', 'Open', 'Go to', 'Workflows', 'Credentials', 'Resources', 'Work', 'Setup', 'Account'];
 // With a query, sections are ordered by their best match, and a place wins a tie with a command.
-const QUERY_ORDER: Section[] = ['Go to', 'Workflows', 'Credentials', 'Resources', 'Channels', 'Actions', 'Open', 'Setup', 'Account'];
+const QUERY_ORDER: Section[] = ['Go to', 'Workflows', 'Credentials', 'Resources', 'Work', 'Actions', 'Open', 'Setup', 'Account'];
 /** Rows that take you somewhere; the latest of these are offered first. */
-export const PLACES = new Set<Section>(['Go to', 'Workflows', 'Credentials', 'Resources', 'Channels']);
+export const PLACES = new Set<Section>(['Go to', 'Workflows', 'Credentials', 'Resources', 'Work']);
 // How many of a section a query shows; a scope shows more.
-const QUERY_LIMIT: Partial<Record<Section, number>> = { 'Go to': 10, Workflows: 6, Credentials: 5, Resources: 5, Channels: 5 };
+const QUERY_LIMIT: Partial<Record<Section, number>> = { 'Go to': 10, Workflows: 6, Credentials: 5, Resources: 5, Work: 5 };
 const SCOPE_LIMIT = 50;
 const RECENT_LIMIT = 5;
 const BROWSE_WORKFLOWS = 3;
@@ -35,7 +35,7 @@ const BROWSE_WORKFLOWS = 3;
 function opening(section: Section, items: Cmd[]): Cmd[] {
     if (section === 'Go to') return items.filter((c) => c.browse);
     if (section === 'Workflows') return items.slice(0, BROWSE_WORKFLOWS);
-    if (section === 'Credentials' || section === 'Resources' || section === 'Channels') return [];
+    if (section === 'Credentials' || section === 'Resources' || section === 'Work') return [];
     return items;
 }
 

@@ -7,9 +7,11 @@
 // row of its own; what an agent posted for you is signed by it; NoClick's
 // notes in the room (why it halted) read as NoClick's, and an app's event as
 // that app's. NoClick's answers to your commands are yours alone, and
-// dismissable.
-import { useMemo, useRef, useState } from 'react';
-import { ArrowRight, ChevronDown, EyeOff, Hash, Plug, SmilePlus } from 'lucide-react';
+// dismissable. Where the page takes threads and pins (Work), a message's hover
+// bar adds quick reactions, Reply in thread and Pin, a message with replies
+// wears Slack's replies bar, and a pinned one says who pinned it.
+import { Fragment, useMemo, useRef, useState } from 'react';
+import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { clockLabel } from '~/components/dashboard/primitives';
 import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
@@ -23,7 +25,7 @@ import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
 import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
 import { ScheduleLines } from './schedules';
-import type { Channel, ChannelMember, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
+import type { Channel, ChannelAuthor, ChannelMember, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
 
 /** Consecutive messages from one author inside this window share a header. */
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
@@ -163,8 +165,12 @@ function DayPill({ label, earlier, onJump }: { label: string; earlier: { day: st
 }
 
 /** The emoji picker for a reaction, from a message's hover bar or the end of its reactions. */
-function ReactionPicker({ onPick, className, label }: { onPick: (emoji: string) => void; className?: string; label: string }) {
-    const [open, setOpen] = useState(false);
+function ReactionPicker({ onPick, className, label, onOpenChange }: { onPick: (emoji: string) => void; className?: string; label: string; onOpenChange?: (open: boolean) => void }) {
+    const [open, setOpenState] = useState(false);
+    const setOpen = (next: boolean) => {
+        setOpenState(next);
+        onOpenChange?.(next);
+    };
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <Tooltip>
@@ -189,6 +195,12 @@ function ReactionPicker({ onPick, className, label }: { onPick: (emoji: string) 
     );
 }
 
+/** Who reacted, you first with how to take yours back, as Slack lists them. */
+function reactedBy(r: ChannelReaction): string[] {
+    const others = r.names.filter((n) => n !== 'You');
+    return r.mine ? ['You (click to remove)', ...others] : others;
+}
+
 function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onReact: (emoji: string) => void }) {
     return (
         <div className="mt-1.5 flex flex-wrap items-center gap-1" data-testid="message-reactions">
@@ -209,8 +221,19 @@ function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onRea
                             {r.count}
                         </button>
                     </TooltipTrigger>
-                    <TooltipContent side="top" sideOffset={6} className="max-w-[240px] rounded-lg px-2 py-1 text-[12.5px]">
-                        {new Intl.ListFormat('en', { type: 'conjunction' }).format(r.names)}
+                    <TooltipContent side="top" sideOffset={6} className="w-max max-w-[15rem] rounded-2xl border-border px-3 pb-3 pt-3 text-center shadow-xl dark:border-foreground/[0.1]">
+                        <span className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-xl bg-foreground/[0.06] text-[28px] leading-none" aria-hidden>
+                            {r.emoji}
+                        </span>
+                        <span className="block text-[13px] leading-snug text-muted-foreground">
+                            {reactedBy(r).map((n, i, all) => (
+                                <Fragment key={`${n}:${i}`}>
+                                    {i > 0 && (i === all.length - 1 ? ' and ' : ', ')}
+                                    <span className="font-semibold text-foreground">{n}</span>
+                                </Fragment>
+                            ))}{' '}
+                            reacted with {r.emoji}
+                        </span>
                     </TooltipContent>
                 </Tooltip>
             ))}
@@ -248,7 +271,140 @@ function Handoffs({ from, to, user }: { from: ChannelMember; to: ChannelMember[]
     );
 }
 
-function MessageRow({
+/** What a page that keeps threads and pins (Work) lets you do with a channel's message. */
+export interface MessageActions {
+    /** Open its thread beside the channel. */
+    onThread?: (messageId: string) => void;
+    /** Pin it, or take its pin off. */
+    onPin?: (message: ChannelMessage) => void;
+    onCopyLink?: (messageId: string) => void;
+    /** Pins' own tab, from a pin's line in the timeline. */
+    onSeePins?: () => void;
+    /** A pin's line opens the message it pinned. */
+    onOpenMessage?: (messageId: string) => void;
+    /** The message a jump just landed on, lit for a moment. */
+    lit?: string | null;
+}
+
+/** The emoji a person reaches for most, first in the hover bar as in Slack. */
+const QUICK_EMOJI = ['✅', '👀', '🙌'];
+const TOOL = 'grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
+const LINKISH = 'rounded-full underline decoration-muted-foreground/40 underline-offset-2 transition-colors hover:text-foreground hover:decoration-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
+
+/** A person's first name, as Slack's quiet lines say it. */
+const firstName = (author: ChannelAuthor, members: ChannelMember[]) => (author.type === 'account' && !author.id ? 'You' : (authorMember(author, members)?.name ?? author.name).split(' ')[0]);
+
+/** A message's hover bar, as Slack's: quick emoji, more emoji, reply in thread, more (pin, copy link). */
+function HoverBar({ msg, actions, onReact }: { msg: ChannelMessage; actions: MessageActions; onReact: (emoji: string) => void }) {
+    // Stays up while one of its menus is open, which takes the focus away from it.
+    const [held, setHeld] = useState(false);
+    const threads = !!actions.onThread && !msg.threadId;
+    return (
+        <div
+            className={cn(
+                'absolute -top-4 right-5 items-center gap-0.5 rounded-full bg-popover p-0.5 shadow-sm ring-1 ring-border dark:ring-foreground/[0.12]',
+                held ? 'flex' : 'hidden group-focus-within:flex group-hover:flex'
+            )}
+            data-testid="message-actions"
+        >
+            {threads &&
+                QUICK_EMOJI.map((e) => (
+                    <button key={e} type="button" aria-label={`React ${e}`} onClick={() => onReact(e)} className={cn(TOOL, 'text-[16px]')}>
+                        {e}
+                    </button>
+                ))}
+            {threads && <span className="mx-0.5 h-4 border-l border-foreground/15" aria-hidden />}
+            <ReactionPicker onPick={onReact} label="More emoji" className={TOOL} onOpenChange={setHeld} />
+            {threads && (
+                <button type="button" aria-label="Reply in thread" title="Reply in thread" onClick={() => actions.onThread?.(msg.id)} className={TOOL}>
+                    <MessageSquareText className="h-[17px] w-[17px]" strokeWidth={2} />
+                </button>
+            )}
+            {(actions.onPin || actions.onCopyLink) && (
+                <DropdownMenu onOpenChange={setHeld}>
+                    <DropdownMenuTrigger aria-label="More" title="More" className={cn(TOOL, 'data-[state=open]:bg-foreground/[0.06] data-[state=open]:text-foreground')}>
+                        <MoreHorizontal className="h-[17px] w-[17px]" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" sideOffset={6} className="w-[220px] rounded-xl p-1">
+                        {actions.onPin && !msg.threadId && (
+                            <DropdownMenuItem onSelect={() => actions.onPin?.(msg)} className="gap-2.5 rounded-lg px-2.5 py-2 text-sm">
+                                {msg.pinned ? <PinOff className="h-4 w-4 text-muted-foreground" strokeWidth={1.9} /> : <Pin className="h-4 w-4 text-muted-foreground" strokeWidth={1.9} />}
+                                {msg.pinned ? 'Unpin from channel' : 'Pin to channel'}
+                            </DropdownMenuItem>
+                        )}
+                        {actions.onCopyLink && (
+                            <DropdownMenuItem onSelect={() => actions.onCopyLink?.(msg.id)} className="gap-2.5 rounded-lg px-2.5 py-2 text-sm">
+                                <Link2 className="h-4 w-4 text-muted-foreground" strokeWidth={1.9} />
+                                Copy link
+                            </DropdownMenuItem>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )}
+        </div>
+    );
+}
+
+/** Under a message with a thread, Slack's replies bar: who replied, "N replies", when the last came; hovering it says
+ *  "View thread". */
+function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; members: ChannelMember[]; user: AccountMenuUser; onOpen: () => void }) {
+    const thread = msg.thread;
+    if (!thread?.count) return null;
+    return (
+        <button
+            type="button"
+            onClick={onOpen}
+            data-testid="replies-bar"
+            className="group/replies -ml-1.5 mt-1 flex w-[calc(100%+0.375rem)] max-w-[30rem] items-center gap-2 rounded-full border border-transparent py-[6px] pl-[6px] pr-2.5 text-left text-xs transition-colors hover:border-border hover:bg-foreground/[0.06] focus-visible:border-border focus-visible:bg-foreground/[0.06] focus-visible:outline-none dark:hover:border-foreground/[0.08] dark:focus-visible:border-foreground/[0.08]"
+        >
+            <span className="flex shrink-0 gap-1">
+                {thread.authors.slice(0, 5).map((a, i) => {
+                    const face = authorMember(a, members);
+                    return face ? <MemberAvatar key={`${a.type}:${a.id ?? a.name}:${i}`} member={face} user={user} size={24} className="h-[22px] w-[22px] text-[10px]" /> : null;
+                })}
+            </span>
+            <span className="shrink-0 font-semibold text-foreground">
+                {thread.count} {thread.count === 1 ? 'reply' : 'replies'}
+            </span>
+            {thread.unread > 0 && <span className="shrink-0 rounded-full bg-foreground px-1.5 text-[11px] font-semibold leading-[18px] text-background">{thread.unread} new</span>}
+            <span className="relative min-w-0 flex-1 truncate text-muted-foreground">
+                <span className="group-hover/replies:hidden group-focus-visible/replies:hidden">{thread.lastAt ? `Last reply ${clockLabel(thread.lastAt)}` : ''}</span>
+                <span className="hidden group-hover/replies:inline group-focus-visible/replies:inline">View thread</span>
+            </span>
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity duration-150 group-hover/replies:opacity-100 group-focus-visible/replies:opacity-100" strokeWidth={2} />
+        </button>
+    );
+}
+
+/** The quiet line pinning leaves in the timeline, as Slack's. */
+function PinLine({ msg, members, actions }: { msg: ChannelMessage; members: ChannelMember[]; actions: MessageActions }) {
+    const pinned = msg.event?.messageId;
+    return (
+        <div className={cn('flex items-center gap-3 py-1.5 text-xs text-muted-foreground', GUTTER)} data-testid="pin-line">
+            <span className="grid w-8 shrink-0 place-items-center">
+                <Pin className="h-3.5 w-3.5" strokeWidth={2} />
+            </span>
+            <span className="min-w-0 truncate">
+                <span className="font-medium text-foreground/80">{firstName(msg.author, members)}</span> pinned{' '}
+                {pinned && actions.onOpenMessage ? (
+                    <button type="button" onClick={() => actions.onOpenMessage?.(pinned)} className={LINKISH}>
+                        a message
+                    </button>
+                ) : (
+                    'a message'
+                )}{' '}
+                to this channel · <time className="tabular-nums">{clockLabel(msg.at)}</time>
+            </span>
+            {actions.onSeePins && (
+                <button type="button" onClick={actions.onSeePins} className={cn(LINKISH, 'ml-auto shrink-0')}>
+                    See all pins
+                </button>
+            )}
+        </div>
+    );
+}
+
+export function MessageRow({
     msg,
     prev,
     members,
@@ -257,6 +413,8 @@ function MessageRow({
     onChannel,
     onReact,
     onDismiss,
+    actions = {},
+    compact,
 }: {
     msg: ChannelMessage;
     prev?: ChannelMessage;
@@ -266,24 +424,45 @@ function MessageRow({
     onChannel: (id: string) => void;
     onReact: (messageId: string, emoji: string) => void;
     onDismiss: (messageId: string) => void;
+    actions?: MessageActions;
+    /** A narrow column (a thread beside its channel): a smaller gutter. */
+    compact?: boolean;
 }) {
+    if (msg.event?.type === 'pinned') return <PinLine msg={msg} members={members} actions={actions} />;
     const noclick = byNoClick(msg.author);
     const app = msg.author.type === 'app';
     const author = authorMember(msg.author, members);
     const handoffs = handoffsOf(msg.author, msg.mentions, members);
     const continued =
         !!prev &&
+        !prev.event &&
+        !msg.pinned &&
         localDay(prev.at) === localDay(msg.at) &&
         authorKey(prev) === authorKey(msg) &&
         !prev.ephemeral &&
         !msg.ephemeral &&
         Date.parse(msg.at) - Date.parse(prev.at) < GROUP_WINDOW_MS;
     const canReact = !msg.ephemeral && !msg.pending;
+    const lit = actions.lit === msg.id;
     return (
         <div
-            className={cn('group relative flex gap-3 transition-colors hover:bg-foreground/[0.03]', GUTTER, continued ? 'py-1' : 'mt-1 pb-1.5 pt-2', msg.pending && 'opacity-60')}
+            className={cn(
+                'group relative flex gap-3 transition-colors hover:bg-foreground/[0.03]',
+                compact ? 'px-4' : GUTTER,
+                continued ? 'py-1' : 'mt-1 pb-1.5 pt-2',
+                msg.pending && 'opacity-60',
+                msg.pinned && 'bg-foreground/[0.035] pt-7 hover:bg-foreground/[0.05]',
+                lit && 'bg-foreground/[0.1] duration-1000 hover:bg-foreground/[0.1]'
+            )}
             data-testid="channel-message"
+            data-message-id={msg.id}
         >
+            {msg.pinned && (
+                <p className={cn('pointer-events-none absolute left-0 top-1.5 flex items-center gap-1.5 text-xs text-muted-foreground', compact ? 'pl-[60px]' : 'pl-[64px]')}>
+                    <Pin className="h-3 w-3" strokeWidth={2} />
+                    Pinned by {firstName(msg.pinned.by, members)}
+                </p>
+            )}
             <div className="w-8 shrink-0 pt-0.5">
                 {continued ? (
                     <time className="hidden pt-1 text-center text-[10.5px] tabular-nums text-muted-foreground group-hover:block">{clockLabel(msg.at)}</time>
@@ -324,16 +503,9 @@ function MessageRow({
                 {msg.attachments.length ? <MessageAttachments attachments={msg.attachments} /> : null}
                 {author && handoffs.length > 0 && <Handoffs from={author} to={handoffs} user={user} />}
                 {canReact && msg.reactions.length > 0 && <Reactions reactions={msg.reactions} onReact={(emoji) => onReact(msg.id, emoji)} />}
+                {actions.onThread && !msg.threadId && <RepliesBar msg={msg} members={members} user={user} onOpen={() => actions.onThread?.(msg.id)} />}
             </div>
-            {canReact && (
-                <div className="absolute -top-3 right-5 hidden rounded-full bg-popover p-0.5 shadow-sm ring-1 ring-border group-focus-within:block group-hover:block dark:ring-foreground/[0.12]">
-                    <ReactionPicker
-                        onPick={(emoji) => onReact(msg.id, emoji)}
-                        label="React"
-                        className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
-                    />
-                </div>
-            )}
+            {canReact && <HoverBar msg={msg} actions={actions} onReact={(emoji) => onReact(msg.id, emoji)} />}
         </div>
     );
 }
@@ -351,6 +523,7 @@ export function MessageList({
     onChannel,
     onReact,
     onDismiss,
+    actions,
 }: {
     channel: Channel;
     /** The schedules that post in it. */
@@ -367,6 +540,7 @@ export function MessageList({
     onChannel: (id: string) => void;
     onReact: (messageId: string, emoji: string) => void;
     onDismiss: (messageId: string) => void;
+    actions?: MessageActions;
 }) {
     const root = useRef<HTMLDivElement>(null);
     const agents = members.filter((m) => m.kind === 'agent');
@@ -407,7 +581,7 @@ export function MessageList({
                         <DayPill label={label} earlier={earlier} onJump={jump} />
                     </div>
                     {items.map(({ msg, prev }) => (
-                        <MessageRow key={msg.id} msg={msg} prev={prev} members={members} user={user} channels={channels} onChannel={onChannel} onReact={onReact} onDismiss={onDismiss} />
+                        <MessageRow key={msg.id} msg={msg} prev={prev} members={members} user={user} channels={channels} onChannel={onChannel} onReact={onReact} onDismiss={onDismiss} actions={actions} />
                     ))}
                 </section>
             ))}
