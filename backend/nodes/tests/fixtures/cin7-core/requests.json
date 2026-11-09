@@ -1,0 +1,239 @@
+{
+  "create_product": {
+    "operation": "create_product",
+    "sku": "Bread Test",
+    "name": "Baked Bread Test",
+    "category": "Other",
+    "type": "Stock",
+    "costing_method": "FEFO - Batch",
+    "default_location": "Main Warehouse",
+    "uom": "Item",
+    "barcode": "",
+    "minimum_before_reorder": 0,
+    "reorder_quantity": 0,
+    "price_tier1": 8,
+    "short_description": "",
+    "description": "",
+    "status": "Active",
+    "sellable": true,
+    "quantity_to_produce": 1,
+    "assembly_cost_estimation_method": "Average Cost"
+  },
+  "update_product": {
+    "operation": "update_product",
+    "id": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+    "sku": "Bread",
+    "name": "Baked Bread",
+    "category": "Other",
+    "costing_method": "FEFO - Batch",
+    "default_location": "Main Warehouse",
+    "uom": "Item",
+    "barcode": "",
+    "minimum_before_reorder": 0,
+    "reorder_quantity": 0,
+    "price_tier1": 8,
+    "short_description": "",
+    "description": "",
+    "status": "Active",
+    "sellable": true,
+    "quantity_to_produce": 1,
+    "assembly_cost_estimation_method": "Average Cost",
+    "type": "Stock"
+  },
+  "create_customer": {
+    "operation": "create_customer",
+    "name": "DIISR - Small Business Services customer",
+    "display_name": "Mary Jane",
+    "currency": "AUD",
+    "payment_term": "30 days",
+    "discount": 0,
+    "tax_rule": "GST Free Exports",
+    "carrier": "DEFAULT Carrier",
+    "location": "Main Warehouse",
+    "account_receivable": "610",
+    "revenue_account": "200",
+    "price_tier": "Tier 1",
+    "status": "Active",
+    "addresses": [
+      {
+        "ID": "4bc4e423-d8af-454d-a186-4a827c15bd0b",
+        "Line1": "L3, Southbank House",
+        "Line2": "13 Gallery Ave",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3131",
+        "Country": "Uruguay",
+        "Type": "Business",
+        "DefaultForType": true
+      },
+      {
+        "ID": "35cec087-04da-46b5-b3c8-c3a7311f2417",
+        "Line1": "L3, Southbank House",
+        "Line2": "13 Gallery Ave",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3131",
+        "Country": "Uruguay",
+        "Type": "Billing",
+        "DefaultForType": true
+      }
+    ],
+    "contacts": [
+      {
+        "ID": "1d62f59b-657d-423f-ad95-9ad9ec4f29a3",
+        "Name": "Sheree Bond",
+        "Phone": "0800 4389376",
+        "MobilePhone": null,
+        "Fax": "03 4389379",
+        "Email": "accounts@diisr.govt",
+        "Website": null,
+        "Default": true,
+        "Comment": null,
+        "IncludeInEmail": false,
+        "MarketingConsent": 1
+      }
+    ]
+  },
+  "update_customer": {
+    "operation": "update_customer",
+    "id": "7d6b441a-3067-42b1-9b81-2def95df827b",
+    "name": "DIISR - Small Business Services customer",
+    "display_name": "Mary Jane",
+    "currency": "AUD",
+    "payment_term": "30 days",
+    "discount": 0,
+    "tax_rule": "GST Free Exports",
+    "carrier": "DEFAULT Carrier",
+    "location": "Main Warehouse",
+    "account_receivable": "610",
+    "revenue_account": "200",
+    "price_tier": "Tier 1",
+    "status": "Active",
+    "addresses": [
+      {
+        "ID": "4bc4e423-d8af-454d-a186-4a827c15bd0b",
+        "Line1": "L3, Southbank House",
+        "Line2": "13 Gallery Ave",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3131",
+        "Country": "Uruguay",
+        "Type": "Business",
+        "DefaultForType": true
+      },
+      {
+        "ID": "35cec087-04da-46b5-b3c8-c3a7311f2417",
+        "Line1": "L3, Southbank House",
+        "Line2": "13 Gallery Ave",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3131",
+        "Country": "Uruguay",
+        "Type": "Billing",
+        "DefaultForType": true
+      }
+    ],
+    "contacts": [
+      {
+        "ID": "1d62f59b-657d-423f-ad95-9ad9ec4f29a3",
+        "Name": "Sheree Bond",
+        "Phone": "0800 4389376",
+        "MobilePhone": null,
+        "Fax": "03 4389379",
+        "Email": "accounts@diisr.govt",
+        "Website": null,
+        "Default": true,
+        "Comment": null,
+        "IncludeInEmail": false,
+        "MarketingConsent": 3
+      }
+    ]
+  },
+  "create_supplier": {
+    "operation": "create_supplier",
+    "name": "Post Supplier test",
+    "currency": "AUD",
+    "payment_term": "30 days",
+    "tax_rule": "BAS Excluded",
+    "account_payable": "800",
+    "status": "Active"
+  },
+  "update_supplier": {
+    "operation": "update_supplier",
+    "id": "57144411-51ce-446f-9c96-db4243c477dc",
+    "name": "PUT Supplier testing 3",
+    "currency": "AUD",
+    "payment_term": "30 days",
+    "tax_rule": "BAS Excluded",
+    "discount": 0,
+    "comments": "",
+    "account_payable": "800",
+    "status": "Active",
+    "addresses": [
+      {
+        "Line1": "PUT TEST address",
+        "Line2": "",
+        "City": "",
+        "State": "",
+        "Postcode": "",
+        "Country": "Australia",
+        "Type": "Shipping",
+        "DefaultForType": false
+      }
+    ],
+    "contacts": [
+      {
+        "Name": "PUT TEST contact",
+        "Phone": "",
+        "MobilePhone": "",
+        "Fax": "",
+        "Email": "",
+        "Website": "",
+        "Default": true,
+        "Comment": "",
+        "IncludeInEmail": false
+      }
+    ]
+  },
+  "create_stock_adjustment": {
+    "operation": "create_stock_adjustment",
+    "effective_date": "2017-12-01T00:00:00",
+    "status": "DRAFT",
+    "account": "403",
+    "reference": "",
+    "comment": "Test Comment",
+    "lines": [
+      {
+        "ProductID": "1845a9cd-e523-4a69-993b-d35f5ec31fb8",
+        "SKU": "AF308",
+        "Quantity": 600,
+        "UnitCost": 1,
+        "LocationID": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+        "Location": "Main Warehouse",
+        "ReceivedDate": "2017-12-01T00:00:00",
+        "Comments": ""
+      }
+    ]
+  },
+  "update_stock_adjustment": {
+    "operation": "update_stock_adjustment",
+    "task_id": "107e8ba9-418c-4233-bf80-369036867144",
+    "effective_date": "2017-12-01T00:00:00",
+    "status": "COMPLETED",
+    "account": "403",
+    "reference": "",
+    "comment": "Test Comment",
+    "lines": [
+      {
+        "ProductID": "1845a9cd-e523-4a69-993b-d35f5ec31fb8",
+        "SKU": "AF308",
+        "Quantity": 600,
+        "UnitCost": 1,
+        "LocationID": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+        "Location": "Main Warehouse",
+        "ReceivedDate": "2017-12-01T00:00:00",
+        "Comments": ""
+      }
+    ]
+  }
+}
