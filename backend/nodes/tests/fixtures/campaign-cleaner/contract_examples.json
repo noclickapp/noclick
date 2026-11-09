@@ -1,0 +1,910 @@
+{
+  "source": "https://campaign-cleaner.github.io/swagger/campaigncleaner.yaml",
+  "cases": [
+    {
+      "operation": "get_campaign_status",
+      "config": {
+        "operation": "get_campaign_status",
+        "campaign_id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+      },
+      "method": "POST",
+      "path": "/v1/get_campaign_status",
+      "body": {
+        "campaign": {
+          "id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+        }
+      },
+      "response": {
+        "campaign_status": {
+          "id": "e8c8af95-c033-11ed-9848-003048d8d536",
+          "campaign_name": "Test Campaign 1",
+          "status": "completed",
+          "date_added": "2023-02-23T12:02:46-05:00"
+        }
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "get_campaign_list",
+      "config": {
+        "operation": "get_campaign_list"
+      },
+      "method": "GET",
+      "path": "/v1/get_campaign_list",
+      "body": null,
+      "response": {
+        "campaign_list": [
+          {
+            "id": "e8c8af95-c033-11ed-9848-003048d8d536",
+            "campaign_name": "Test Campaign 1",
+            "status": "completed",
+            "date_added": "2023-02-23T12:02:46-05:00"
+          },
+          {
+            "id": "a8c8af95-c033-11ed-9848-003048d8d537",
+            "campaign_name": "Test Campaign 2",
+            "status": "completed",
+            "date_added": "2023-02-25T22:26:15-05:00"
+          }
+        ]
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "get_campaign",
+      "config": {
+        "operation": "get_campaign",
+        "campaign_id": "8e754ce1-c2df-11ed-9848-003048d8d533",
+        "minimize_html": true
+      },
+      "method": "POST",
+      "path": "/v1/get_campaign",
+      "body": {
+        "campaign": {
+          "id": "8e754ce1-c2df-11ed-9848-003048d8d533",
+          "minimize_html": true
+        }
+      },
+      "response": {
+        "campaign": {
+          "adjust_font_colors": true,
+          "adjust_font_size": false,
+          "all_capitalized_words": 52,
+          "all_capitalized_word_ratio": 7.14,
+          "all_capitalized_word_max_acceptable_ratio": 10,
+          "blacklisted_links_found": 0,
+          "bg_images_found": 0,
+          "broken_links_found": 2,
+          "campaign_id": "8e754ce1-c2df-11ed-9848-003048d8d533",
+          "campaign_name": "CC Postman Newsletter Analysis",
+          "convert_h_to_p_tags": false,
+          "convert_tables_to_divs": false,
+          "custom_info": "",
+          "header_tags_count": 19,
+          "image_count": 13,
+          "image_max_width": null,
+          "images_missing_alt_attribute": 10,
+          "links_missing_title_attribute": 5,
+          "links_scanned": 36,
+          "min_font_size_allowed": 10,
+          "max_font_size_allowed": 32,
+          "os_images_found": 6,
+          "pd_cdns_found": 0,
+          "pd_cdns_link_count": 0,
+          "preserve_media_queries": true,
+          "relative_links_base_url": null,
+          "remove_inherited_css": true,
+          "remove_classes_and_ids": true,
+          "remove_control_non_printable": false,
+          "remove_comments": true,
+          "remove_image_height": true,
+          "replace_non_ascii_characters": true,
+          "remove_successive_punctuation": false,
+          "results_time": "2023-03-14T23:14:26-04:00",
+          "spam_keyword_ratio": 2.06,
+          "spam_keyword_max_acceptable_ratio": 5,
+          "spam_words_count": 15,
+          "successive_exclaimations": 0,
+          "successive_question_marks": 0,
+          "successive_currency_marks": 0,
+          "successive_periods": 0,
+          "surrounding_div": {
+            "max_width": 600,
+            "text_align": "left",
+            "font_size": 15,
+            "center_to_parent": true
+          },
+          "text_image_ratio": 1.79,
+          "text_image_max_acceptable_ratio": 10,
+          "text_link_ratio": 1.79,
+          "text_link_max_acceptable_ratio": 10,
+          "total_word_count": 728,
+          "campaign_html": "",
+          "spam_keyword_list": [
+            {
+              "keyword": "Sign up",
+              "count": 2
+            },
+            {
+              "keyword": "Check",
+              "count": 2
+            },
+            {
+              "keyword": "Collect",
+              "count": 2
+            },
+            {
+              "keyword": "Offer",
+              "count": 1
+            },
+            {
+              "keyword": "Get paid",
+              "count": 1
+            },
+            {
+              "keyword": "Request",
+              "count": 1
+            },
+            {
+              "keyword": "Open",
+              "count": 1
+            },
+            {
+              "keyword": "Solution",
+              "count": 1
+            },
+            {
+              "keyword": "Subscribe",
+              "count": 1
+            },
+            {
+              "keyword": "Cure",
+              "count": 1
+            },
+            {
+              "keyword": "Now",
+              "count": 1
+            },
+            {
+              "keyword": "Privacy",
+              "count": 1
+            }
+          ],
+          "image_list": [
+            {
+              "image_url": "https://assets.getpostman.com/email/icon-github-color.png",
+              "image_size": 1,
+              "image_width": 24,
+              "image_height": 24,
+              "image_background": true
+            },
+            {
+              "image_url": "https://assets.getpostman.com/email/icon-li-color.png",
+              "image_size": 1,
+              "image_width": 24,
+              "image_height": 24,
+              "image_background": true
+            }
+          ],
+          "os_image_list": [
+            {
+              "image_url": "https://lp.postman.com/rs/067-UMD-991/images/Announcement-of-Ecosystem-Partner-Program%402x-100.jpg",
+              "image_size": 62,
+              "image_width": 1633,
+              "image_height": 865,
+              "image_background": true
+            }
+          ],
+          "bg_image_list": [
+            {
+              "image_url": "https://assets.getpostman.com/email/icon-github-color.png",
+              "image_size": 1,
+              "image_width": 24,
+              "image_height": 24,
+              "image_background": true
+            }
+          ],
+          "pd_cdn_list": [],
+          "blacklisted_links": [],
+          "domains_scanned": [
+            "assets.getpostman.com",
+            "blog.postman.com",
+            "github.com"
+          ],
+          "broken_links": [
+            {
+              "link_url": "http://go.postman.com/track?mktoTestLink",
+              "link_status": "PNR Falure",
+              "link_redirected_url": "",
+              "link_is_image": false,
+              "link_is_broken": true,
+              "link_initial": false
+            }
+          ],
+          "all_link_list": [
+            {
+              "link_url": "https://assets.getpostman.com/email/icon-github-color.png",
+              "link_status": "206",
+              "link_redirected_url": "",
+              "link_is_image": false,
+              "link_is_broken": false,
+              "link_initial": true
+            }
+          ],
+          "campaign_summary": [
+            {
+              "message": "CSS was inlined.",
+              "count": 0,
+              "html_changed": true,
+              "apply_count": false
+            },
+            {
+              "message": "spam keywords were found.",
+              "count": 24,
+              "html_changed": false,
+              "apply_count": true
+            }
+          ]
+        }
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "delete_campaign",
+      "config": {
+        "operation": "delete_campaign",
+        "campaign_id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+      },
+      "method": "POST",
+      "path": "/v1/delete_campaign",
+      "body": {
+        "campaign": {
+          "id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+        }
+      },
+      "response": {
+        "status": "success"
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "get_credits",
+      "config": {
+        "operation": "get_credits"
+      },
+      "method": "GET",
+      "path": "/v1/get_credits",
+      "body": null,
+      "response": {
+        "credits": 987
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "get_campaign_pdf_analysis",
+      "config": {
+        "operation": "get_campaign_pdf_analysis",
+        "campaign_id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+      },
+      "method": "POST",
+      "path": "/v1/get_campaign_pdf_analysis",
+      "body": {
+        "campaign": {
+          "id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+        }
+      },
+      "response": "PDF File Download",
+      "status": 200,
+      "content_type": "application/pdf"
+    },
+    {
+      "operation": "send_campaign",
+      "config": {
+        "operation": "send_campaign",
+        "campaign_html": "<html><body>Your Campaign HTML</body></html>",
+        "campaign_name": "My Campaign",
+        "adjust_font_colors": true,
+        "adjust_font_size": true,
+        "min_font_size_allowed": 10,
+        "max_font_size_allowed": 32,
+        "convert_h_to_p_tags": false,
+        "convert_tables_to_divs": false,
+        "custom_info": "",
+        "host_extensionless_images": false,
+        "inline_css": true,
+        "inline_css_important": false,
+        "media_queries_important": true,
+        "preserve_media_queries": true,
+        "relative_links_base_url": "",
+        "remove_classes_and_ids": true,
+        "remove_comments": true,
+        "remove_control_non_printable": false,
+        "remove_css_inheritance": true,
+        "remove_image_height": true,
+        "remove_successive_punctuation": true,
+        "replace_diacritics": true,
+        "replace_non_ascii_characters": true,
+        "resize_and_host": true,
+        "webhook_url": "",
+        "surrounding_div": {
+          "max_width": 600,
+          "text_align": "left",
+          "font_size": 15,
+          "center_to_parent": true
+        }
+      },
+      "method": "POST",
+      "path": "/v1/send_campaign",
+      "body": {
+        "send_campaign": {
+          "campaign_html": "<html><body>Your Campaign HTML</body></html>",
+          "campaign_name": "My Campaign",
+          "adjust_font_colors": true,
+          "adjust_font_size": true,
+          "min_font_size_allowed": 10,
+          "max_font_size_allowed": 32,
+          "convert_h_to_p_tags": false,
+          "convert_tables_to_divs": false,
+          "custom_info": "",
+          "host_extensionless_images": false,
+          "inline_css": true,
+          "inline_css_important": false,
+          "media_queries_important": true,
+          "preserve_media_queries": true,
+          "relative_links_base_url": "",
+          "remove_classes_and_ids": true,
+          "remove_comments": true,
+          "remove_control_non_printable": false,
+          "remove_css_inheritance": true,
+          "remove_image_height": true,
+          "remove_successive_punctuation": true,
+          "replace_diacritics": true,
+          "replace_non_ascii_characters": true,
+          "resize_and_host": true,
+          "webhook_url": "",
+          "surrounding_div": {
+            "max_width": 600,
+            "text_align": "left",
+            "font_size": 15,
+            "center_to_parent": true
+          }
+        }
+      },
+      "response": {
+        "campaign": {
+          "id": "8e754ce1-c2df-11ed-9848-003048d8d533"
+        }
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "create_inbox_test",
+      "config": {
+        "operation": "create_inbox_test",
+        "test_name": "My Campaign Inbox Test"
+      },
+      "method": "POST",
+      "path": "/v1/create_inbox_test",
+      "body": {
+        "test_name": "My Campaign Inbox Test"
+      },
+      "response": {
+        "job_id": "187",
+        "test_name": "My Campaign Inbox Test",
+        "mailtester_address": "mailtest+a1b2c3d4@campaigncleaner.com",
+        "instructions": "Send your campaign to ALL addresses in the send_to list. Results will be available via get_inbox_test_results once processing is complete.",
+        "send_to": [
+          "cc_seed_01@yahoo.com",
+          "cc.seed.01@gmail.com",
+          "cc.seed.02@yahoo.com",
+          "cc.test.1@outlook.com",
+          "cc.test.1@hotmail.com",
+          "samuelburge12@icloud.com",
+          "cc_seed_01@aol.com",
+          "cc.test.1@365emailtest.com",
+          "cc.test.1@test365delivery.com",
+          "cc.test.1@campaigncleaner.net",
+          "mailtest+a1b2c3d4@campaigncleaner.com"
+        ]
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "get_inbox_test_results",
+      "config": {
+        "operation": "get_inbox_test_results",
+        "job_id": "186"
+      },
+      "method": "POST",
+      "path": "/v1/get_inbox_test_results",
+      "body": {
+        "job_id": "186"
+      },
+      "response": {
+        "job_id": "186",
+        "test_name": "My Campaign Inbox Test",
+        "submitted_date": "4/24/2026 11:30:43 PM",
+        "submitted_by": "user@example.com",
+        "status": "Completed",
+        "summary": {
+          "total_seeds": 67,
+          "received": 67,
+          "inbox": 8,
+          "category": 5,
+          "spam": 54,
+          "pending": 0,
+          "inbox_rate": 11.9,
+          "category_rate": 7.5,
+          "spam_rate": 80.6
+        },
+        "results": [
+          {
+            "provider": "Apple - iCloud",
+            "seed_address": "cc.test.01@icloud.com",
+            "email_found": true,
+            "placement": "Spam",
+            "spf_status": "Pass",
+            "sender_ip": "45.45.212.114",
+            "submission_result": ""
+          },
+          {
+            "provider": "Microsoft - Hotmail, Outlook",
+            "seed_address": "cc.test.1@outlook.com",
+            "email_found": true,
+            "placement": "Spam",
+            "spf_status": "Pass",
+            "sender_ip": "205.166.50.8",
+            "submission_result": "Clean - No Threats Found"
+          },
+          {
+            "provider": "Verizon - Yahoo, AOL",
+            "seed_address": "cc_seed_01@yahoo.com",
+            "email_found": true,
+            "placement": "Inbox",
+            "spf_status": "Pass",
+            "sender_ip": "45.45.212.115",
+            "submission_result": ""
+          },
+          {
+            "provider": "Zoho - Business",
+            "seed_address": "cc.test.1@campaigncleaner.net",
+            "email_found": true,
+            "placement": "Inbox - Newsletter",
+            "spf_status": "Pass",
+            "sender_ip": "45.45.212.113",
+            "submission_result": ""
+          },
+          {
+            "provider": "Google - Gmail",
+            "seed_address": "cc.seed.01@gmail.com",
+            "email_found": true,
+            "placement": "Spam",
+            "spf_status": "Pass",
+            "sender_ip": "45.45.212.80",
+            "submission_result": ""
+          }
+        ]
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_seeds",
+      "config": {
+        "operation": "monitor_get_seeds"
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_seeds",
+      "body": null,
+      "response": {
+        "count": 79,
+        "seeds": [
+          {
+            "address": "cc.test.6@hotmail.com",
+            "provider": "Outlook.com / Hotmail",
+            "provider_key": "outlook.com"
+          },
+          {
+            "address": "cc.seed.01@gmail.com",
+            "provider": "Gmail",
+            "provider_key": "gmail.com"
+          }
+        ],
+        "note": "Add each address as a normal To recipient of your sends, from a verified domain."
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_domains",
+      "config": {
+        "operation": "monitor_get_domains"
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_domains",
+      "body": null,
+      "response": {
+        "domains": [
+          {
+            "domain_id": 12,
+            "domain": "example.com",
+            "purpose": "monitor",
+            "status": "verified",
+            "created_at": "2026-10-18T14:02:11Z",
+            "verified_at": "2026-10-18T14:20:45Z",
+            "last_checked_at": "2026-10-20T03:00:12Z",
+            "message_count": 214
+          },
+          {
+            "domain_id": 13,
+            "domain": "news.example.com",
+            "purpose": "monitor",
+            "status": "pending",
+            "created_at": "2026-10-20T09:15:00Z",
+            "verified_at": null,
+            "last_checked_at": null,
+            "message_count": 0,
+            "dns_record": {
+              "type": "TXT",
+              "host": "_cc-verify.news.example.com",
+              "value": "cc-verify=3f9c0b1e7a5d4c2e9b8a7f6e5d4c3b2a"
+            }
+          }
+        ],
+        "limits": {
+          "monitored_domains_used": 2,
+          "monitored_domains_max": 5,
+          "alert_domains_used": 0,
+          "alert_domains_max": 5
+        }
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_add_domain",
+      "config": {
+        "operation": "monitor_add_domain",
+        "domain": "news.example.com",
+        "alerts_only": false
+      },
+      "method": "POST",
+      "path": "/v1/monitor_add_domain",
+      "body": {
+        "domain": "news.example.com",
+        "alerts_only": false
+      },
+      "response": {
+        "domain": {
+          "domain_id": 13,
+          "domain": "news.example.com",
+          "purpose": "monitor",
+          "status": "pending",
+          "created_at": "2026-10-20T09:15:00Z",
+          "verified_at": null,
+          "last_checked_at": null,
+          "message_count": 0,
+          "dns_record": {
+            "type": "TXT",
+            "host": "_cc-verify.news.example.com",
+            "value": "cc-verify=3f9c0b1e7a5d4c2e9b8a7f6e5d4c3b2a"
+          }
+        },
+        "next_step": "Publish the DNS TXT record, then call monitor_verify_domain."
+      },
+      "status": 201,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_verify_domain",
+      "config": {
+        "operation": "monitor_verify_domain",
+        "domain_id": 13
+      },
+      "method": "POST",
+      "path": "/v1/monitor_verify_domain",
+      "body": {
+        "domain_id": 13
+      },
+      "response": {
+        "verified": true,
+        "message": "Domain verified. Monitoring has started.",
+        "domain": {
+          "domain_id": 13,
+          "domain": "news.example.com",
+          "purpose": "monitor",
+          "status": "verified",
+          "created_at": "2026-10-20T09:15:00Z",
+          "verified_at": "2026-10-20T09:31:02Z",
+          "last_checked_at": "2026-10-20T09:31:02Z",
+          "message_count": 0
+        }
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_remove_domain",
+      "config": {
+        "operation": "monitor_remove_domain",
+        "domain_id": 13
+      },
+      "method": "POST",
+      "path": "/v1/monitor_remove_domain",
+      "body": {
+        "domain_id": 13
+      },
+      "response": {
+        "removed": true,
+        "domain_id": 13
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_messages",
+      "config": {
+        "operation": "monitor_get_messages",
+        "provider_key": "gmail.com",
+        "placement": "Spam",
+        "days": 7,
+        "page": 1,
+        "page_size": 50
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_messages",
+      "body": null,
+      "response": {
+        "page": 1,
+        "page_size": 50,
+        "total": 21,
+        "messages": [
+          {
+            "message_id": 9821,
+            "domain_id": 12,
+            "domain": "example.com",
+            "from": "news@example.com",
+            "subject": "October offers",
+            "seed": "cc_seed_01@aol.com",
+            "provider": "AOL",
+            "provider_key": "imap.aol.com",
+            "placement": "Spam",
+            "folder": "Bulk",
+            "received_at": "2026-10-20T11:29:00Z",
+            "authentication": {
+              "passed": true,
+              "spf": "pass",
+              "dkim": "pass",
+              "dmarc": "pass"
+            }
+          }
+        ]
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_message",
+      "config": {
+        "operation": "monitor_get_message",
+        "message_id": 9821,
+        "include_eml": false
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_message",
+      "body": null,
+      "response": {
+        "message_id": 9821,
+        "domain_id": 12,
+        "domain": "example.com",
+        "from": "news@example.com",
+        "subject": "October offers",
+        "seed": "cc_seed_01@aol.com",
+        "provider": "AOL",
+        "provider_key": "imap.aol.com",
+        "placement": "Spam",
+        "folder": "Bulk",
+        "received_at": "2026-10-20T11:29:00Z",
+        "first_seen_at": "2026-10-20T11:31:04Z",
+        "last_seen_at": "2026-10-20T11:31:04Z",
+        "authentication": {
+          "passed": true,
+          "spf": "pass",
+          "dkim": "pass",
+          "dkim_domain": "example.com",
+          "dmarc": "pass"
+        },
+        "sender_ip": "203.0.113.25",
+        "preview": "Our biggest offers of the season are here...",
+        "headers": "From: Example News <news@example.com>\r\nSubject: October offers\r\n...",
+        "has_eml": true
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_summary",
+      "config": {
+        "operation": "monitor_get_summary",
+        "days": 30
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_summary",
+      "body": null,
+      "response": {
+        "days": 30,
+        "domain_id": null,
+        "overall": {
+          "total": 21,
+          "inbox": 12,
+          "tabs": 0,
+          "spam": 9,
+          "other": 0,
+          "inbox_rate": 57.1,
+          "spam_rate": 42.9
+        },
+        "providers": [
+          {
+            "provider": "Outlook.com / Hotmail",
+            "provider_key": "outlook.com",
+            "total": 12,
+            "inbox": 7,
+            "tabs": 0,
+            "spam": 5,
+            "other": 0,
+            "inbox_rate": 58.3,
+            "spam_rate": 41.7
+          }
+        ],
+        "note": "inbox_rate counts Gmail tabs (Promotions, Updates ...) as inbox, like the dashboard."
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_usage",
+      "config": {
+        "operation": "monitor_get_usage"
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_usage",
+      "body": null,
+      "response": {
+        "messages_used": 21,
+        "messages_limit": 1000,
+        "failed_auth_used": 0,
+        "failed_auth_limit": 50,
+        "not_stored": 0,
+        "resets_at": "2026-11-14T09:00:00Z"
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_get_alerts",
+      "config": {
+        "operation": "monitor_get_alerts"
+      },
+      "method": "GET",
+      "path": "/v1/monitor_get_alerts",
+      "body": null,
+      "response": {
+        "alerts": [
+          {
+            "alert_id": 4,
+            "kind": "spam",
+            "description": "Mail from example.com at Gmail lands in spam",
+            "domain_id": 12,
+            "domain": "example.com",
+            "provider_key": "gmail.com",
+            "provider": "Gmail",
+            "threshold": null,
+            "min_messages": null,
+            "delivery": "instant",
+            "recipients": [
+              {
+                "email": "ops@example.com",
+                "receiving": true
+              }
+            ],
+            "enabled": true
+          }
+        ],
+        "recent": [
+          {
+            "event_id": 77,
+            "alert_id": 4,
+            "kind": "spam",
+            "status": "open",
+            "domain": "example.com",
+            "provider": "Gmail",
+            "provider_key": "gmail.com",
+            "message_count": 3,
+            "detail": "Spam: October offers",
+            "opened_at": "2026-10-20T11:31:04Z",
+            "last_seen_at": "2026-10-20T11:40:12Z",
+            "resolved_at": null
+          }
+        ],
+        "account_owner_email": "you@example.com",
+        "max_alerts": 20
+      },
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_save_alert",
+      "config": {
+        "operation": "monitor_save_alert",
+        "kind": "spam",
+        "domain_id": 12,
+        "provider_key": "gmail.com",
+        "delivery": "instant",
+        "recipients": [
+          "ops@example.com"
+        ],
+        "enabled": true
+      },
+      "method": "POST",
+      "path": "/v1/monitor_save_alert",
+      "body": {
+        "kind": "spam",
+        "domain_id": 12,
+        "provider_key": "gmail.com",
+        "delivery": "instant",
+        "recipients": [
+          "ops@example.com"
+        ],
+        "enabled": true
+      },
+      "response": {
+        "alert": {
+          "alert_id": 4,
+          "kind": "spam",
+          "description": "Mail from example.com at Gmail lands in spam",
+          "domain_id": 12,
+          "domain": "example.com",
+          "provider_key": "gmail.com",
+          "provider": "Gmail",
+          "threshold": null,
+          "min_messages": null,
+          "delivery": "instant",
+          "recipients": [
+            {
+              "email": "ops@example.com",
+              "receiving": true
+            }
+          ],
+          "enabled": true
+        }
+      },
+      "status": 201,
+      "content_type": "application/json"
+    },
+    {
+      "operation": "monitor_delete_alert",
+      "config": {
+        "operation": "monitor_delete_alert",
+        "alert_id": 4
+      },
+      "method": "POST",
+      "path": "/v1/monitor_delete_alert",
+      "body": {
+        "alert_id": 4
+      },
+      "response": {
+        "deleted": true,
+        "alert_id": 4
+      },
+      "status": 200,
+      "content_type": "application/json"
+    }
+  ]
+}

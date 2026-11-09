@@ -1,0 +1,1170 @@
+{
+  "$defs": {
+    "CampaignCleanerAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "campaign_cleaner_api_key",
+          "default": "campaign_cleaner_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Campaign Cleaner API Key",
+      "type": "object",
+      "x-credential-instructions": "In Campaign Cleaner, open API Management \u2192 API Keys. Copy your API key and paste it here. Monitor writes require an active Inbox Placement Monitor plan and a role other than User.",
+      "x-credential-url": "https://campaigncleaner.com"
+    },
+    "CreateInboxTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_inbox_test",
+          "default": "create_inbox_test",
+          "description": "Create a seed test, consuming one credit. Send your email to the returned seed list separately.",
+          "title": "Create Inbox Test",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "test_name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Test Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test_name"
+      ],
+      "title": "CreateInboxTest",
+      "type": "object"
+    },
+    "DeleteCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "description": "ID returned by Send Campaign or Get Campaign List.",
+          "minLength": 1,
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_campaign",
+          "default": "delete_campaign",
+          "description": "Permanently delete the saved campaign and its analysis.",
+          "title": "Delete Campaign",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "DeleteCampaign",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "description": "ID returned by Send Campaign or Get Campaign List.",
+          "minLength": 1,
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "minimize_html": {
+          "default": true,
+          "description": "Remove whitespace from the cleaned HTML.",
+          "title": "Minimize Html",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign_list",
+          "default": "get_campaign_list",
+          "title": "Get Campaign List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCampaignList",
+      "type": "object"
+    },
+    "GetCampaignPDFAnalysis": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "description": "ID returned by Send Campaign or Get Campaign List.",
+          "minLength": 1,
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_campaign_pdf_analysis",
+          "default": "get_campaign_pdf_analysis",
+          "title": "Get Campaign PDF Analysis",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaignPDFAnalysis",
+      "type": "object"
+    },
+    "GetCampaignStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "description": "ID returned by Send Campaign or Get Campaign List.",
+          "minLength": 1,
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_campaign_status",
+          "default": "get_campaign_status",
+          "title": "Get Campaign Status",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaignStatus",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Get Credits",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetInboxTestResults": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_inbox_test_results",
+          "default": "get_inbox_test_results",
+          "title": "Get Inbox Test Results",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetInboxTestResults",
+      "type": "object"
+    },
+    "MonitorAddDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_add_domain",
+          "default": "monitor_add_domain",
+          "title": "Add Monitor Domain",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Domain only, for example news.example.com. Publish the returned DNS TXT record before verification.",
+          "minLength": 1,
+          "title": "Sending Domain",
+          "type": "string"
+        },
+        "alerts_only": {
+          "default": false,
+          "title": "Alerts Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MonitorAddDomain",
+      "type": "object"
+    },
+    "MonitorDeleteAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_delete_alert",
+          "default": "monitor_delete_alert",
+          "description": "Delete the alert and its history.",
+          "title": "Delete Monitor Alert",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "alert_id": {
+          "minimum": 1,
+          "title": "Alert Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "alert_id"
+      ],
+      "title": "MonitorDeleteAlert",
+      "type": "object"
+    },
+    "MonitorGetAlerts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_alerts",
+          "default": "monitor_get_alerts",
+          "title": "Get Monitor Alerts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MonitorGetAlerts",
+      "type": "object"
+    },
+    "MonitorGetDomains": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_domains",
+          "default": "monitor_get_domains",
+          "title": "Get Monitor Domains",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MonitorGetDomains",
+      "type": "object"
+    },
+    "MonitorGetMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_message",
+          "default": "monitor_get_message",
+          "title": "Get Monitor Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message ID",
+          "type": "integer"
+        },
+        "include_eml": {
+          "default": false,
+          "description": "Also return the original email as an EML file; provider limit 10 requests per minute.",
+          "title": "Include Eml",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "MonitorGetMessage",
+      "type": "object"
+    },
+    "MonitorGetMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_messages",
+          "default": "monitor_get_messages",
+          "title": "Get Monitor Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain Id"
+        },
+        "provider_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Key"
+        },
+        "placement": {
+          "anyOf": [
+            {
+              "enum": [
+                "Inbox",
+                "Spam",
+                "Promotions",
+                "Social",
+                "Updates",
+                "Newsletter",
+                "Announcements",
+                "Forums",
+                "Other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Placement",
+          "enum": [
+            "Inbox",
+            "Spam",
+            "Promotions",
+            "Social",
+            "Updates",
+            "Newsletter",
+            "Announcements",
+            "Forums",
+            "Other"
+          ],
+          "x-enum-searchable": true
+        },
+        "days": {
+          "default": 30,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Days",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "MonitorGetMessages",
+      "type": "object"
+    },
+    "MonitorGetSeeds": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_seeds",
+          "default": "monitor_get_seeds",
+          "title": "Get Monitor Seeds",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MonitorGetSeeds",
+      "type": "object"
+    },
+    "MonitorGetSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_summary",
+          "default": "monitor_get_summary",
+          "title": "Get Monitor Placement Summary",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "days": {
+          "default": 30,
+          "maximum": 365,
+          "minimum": 1,
+          "title": "Days",
+          "type": "integer"
+        },
+        "domain_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain Id"
+        }
+      },
+      "title": "MonitorGetSummary",
+      "type": "object"
+    },
+    "MonitorGetUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_get_usage",
+          "default": "monitor_get_usage",
+          "title": "Get Monitor Usage",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MonitorGetUsage",
+      "type": "object"
+    },
+    "MonitorRemoveDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "minimum": 1,
+          "title": "Domain ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "monitor_remove_domain",
+          "default": "monitor_remove_domain",
+          "description": "Permanently deletes the domain, stored messages and alerts.",
+          "title": "Remove Monitor Domain",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "title": "MonitorRemoveDomain",
+      "type": "object"
+    },
+    "MonitorSaveAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "monitor_save_alert",
+          "default": "monitor_save_alert",
+          "description": "Create an alert or replace the alert identified by Alert ID. Recipients must be the owner, team members or addresses at verified domains.",
+          "title": "Save Monitor Alert",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "enum": [
+            "spam",
+            "notinbox",
+            "rate",
+            "auth"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "alert_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alert Id"
+        },
+        "domain_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit or use 0 for all domains.",
+          "title": "Domain Id"
+        },
+        "provider_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Key"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold"
+        },
+        "min_messages": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Messages"
+        },
+        "delivery": {
+          "default": "instant",
+          "enum": [
+            "instant",
+            "digest"
+          ],
+          "title": "Delivery",
+          "type": "string"
+        },
+        "recipients": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to five email addresses. Empty sends to the account owner.",
+          "title": "Recipients"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "MonitorSaveAlert",
+      "type": "object"
+    },
+    "MonitorVerifyDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "minimum": 1,
+          "title": "Domain ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "monitor_verify_domain",
+          "default": "monitor_verify_domain",
+          "description": "Check the pending domain's DNS TXT record.",
+          "title": "Verify Monitor Domain",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "title": "MonitorVerifyDomain",
+      "type": "object"
+    },
+    "SendCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_campaign",
+          "default": "send_campaign",
+          "description": "Submit HTML for analysis and sanitization; consumes one API credit. This does not send email to recipients.",
+          "title": "Send Campaign for Cleaning",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_html": {
+          "minLength": 1,
+          "title": "Campaign HTML",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "campaign_name": {
+          "minLength": 1,
+          "title": "Campaign Name",
+          "type": "string"
+        },
+        "adjust_font_colors": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adjust Font Colors"
+        },
+        "adjust_font_size": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adjust Font Size"
+        },
+        "min_font_size_allowed": {
+          "anyOf": [
+            {
+              "maximum": 99,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Font Size Allowed"
+        },
+        "max_font_size_allowed": {
+          "anyOf": [
+            {
+              "maximum": 99,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Font Size Allowed"
+        },
+        "convert_h_to_p_tags": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Convert H To P Tags"
+        },
+        "convert_tables_to_divs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Convert Tables To Divs"
+        },
+        "custom_info": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Info"
+        },
+        "host_extensionless_images": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Host Extensionless Images"
+        },
+        "inline_css": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inline Css"
+        },
+        "inline_css_important": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inline Css Important"
+        },
+        "media_queries_important": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Queries Important"
+        },
+        "preserve_media_queries": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preserve Media Queries"
+        },
+        "relative_links_base_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relative Links Base Url"
+        },
+        "remove_classes_and_ids": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Classes And Ids"
+        },
+        "remove_comments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Comments"
+        },
+        "remove_control_non_printable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Control Non Printable"
+        },
+        "remove_css_inheritance": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Css Inheritance"
+        },
+        "remove_image_height": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Image Height"
+        },
+        "remove_large_widths_over": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Large Widths Over"
+        },
+        "remove_successive_punctuation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Successive Punctuation"
+        },
+        "replace_diacritics": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replace Diacritics"
+        },
+        "replace_non_ascii_characters": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replace Non Ascii Characters"
+        },
+        "resize_and_host": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resize And Host"
+        },
+        "set_image_max_width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Set Image Max Width"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Absolute HTTP(S) callback URL without a query string. The provider posts results here.",
+          "title": "Webhook Url"
+        },
+        "surrounding_div": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SurroundingDiv"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "campaign_html",
+        "campaign_name"
+      ],
+      "title": "SendCampaign",
+      "type": "object"
+    },
+    "SurroundingDiv": {
+      "additionalProperties": false,
+      "properties": {
+        "max_width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Width"
+        },
+        "text_align": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Align",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "x-enum-searchable": true
+        },
+        "font_size": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Font Size"
+        },
+        "center_to_parent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center To Parent"
+        }
+      },
+      "title": "SurroundingDiv",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_inbox_test": "#/$defs/CreateInboxTest",
+          "delete_campaign": "#/$defs/DeleteCampaign",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_list": "#/$defs/GetCampaignList",
+          "get_campaign_pdf_analysis": "#/$defs/GetCampaignPDFAnalysis",
+          "get_campaign_status": "#/$defs/GetCampaignStatus",
+          "get_credits": "#/$defs/GetCredits",
+          "get_inbox_test_results": "#/$defs/GetInboxTestResults",
+          "monitor_add_domain": "#/$defs/MonitorAddDomain",
+          "monitor_delete_alert": "#/$defs/MonitorDeleteAlert",
+          "monitor_get_alerts": "#/$defs/MonitorGetAlerts",
+          "monitor_get_domains": "#/$defs/MonitorGetDomains",
+          "monitor_get_message": "#/$defs/MonitorGetMessage",
+          "monitor_get_messages": "#/$defs/MonitorGetMessages",
+          "monitor_get_seeds": "#/$defs/MonitorGetSeeds",
+          "monitor_get_summary": "#/$defs/MonitorGetSummary",
+          "monitor_get_usage": "#/$defs/MonitorGetUsage",
+          "monitor_remove_domain": "#/$defs/MonitorRemoveDomain",
+          "monitor_save_alert": "#/$defs/MonitorSaveAlert",
+          "monitor_verify_domain": "#/$defs/MonitorVerifyDomain",
+          "send_campaign": "#/$defs/SendCampaign"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCampaignStatus"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignList"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/DeleteCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignPDFAnalysis"
+        },
+        {
+          "$ref": "#/$defs/SendCampaign"
+        },
+        {
+          "$ref": "#/$defs/CreateInboxTest"
+        },
+        {
+          "$ref": "#/$defs/GetInboxTestResults"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetSeeds"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetDomains"
+        },
+        {
+          "$ref": "#/$defs/MonitorAddDomain"
+        },
+        {
+          "$ref": "#/$defs/MonitorVerifyDomain"
+        },
+        {
+          "$ref": "#/$defs/MonitorRemoveDomain"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetMessages"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetMessage"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetSummary"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetUsage"
+        },
+        {
+          "$ref": "#/$defs/MonitorGetAlerts"
+        },
+        {
+          "$ref": "#/$defs/MonitorSaveAlert"
+        },
+        {
+          "$ref": "#/$defs/MonitorDeleteAlert"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CampaignCleanerAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Campaign-cleaner Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
