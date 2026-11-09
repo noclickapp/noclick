@@ -1,0 +1,97 @@
+{
+  "groups": {
+    "success": true,
+    "message": [],
+    "data": [
+      {
+        "groupid": 42,
+        "title": "Food Bank Volunteers",
+        "count": 2
+      }
+    ],
+    "links": {
+      "self": "https://api.signupgenius.com/v2/k/groups/",
+      "next": "",
+      "previous": ""
+    }
+  },
+  "members": {
+    "success": true,
+    "message": [],
+    "data": {
+      "groupid": 42,
+      "members": [
+        {
+          "memberid": 7,
+          "firstname": "Ada",
+          "lastname": "Example",
+          "email": "ada@example.com"
+        }
+      ]
+    },
+    "links": {
+      "self": "",
+      "next": "",
+      "previous": ""
+    }
+  },
+  "member": {
+    "success": true,
+    "message": [],
+    "data": {
+      "memberid": 7,
+      "firstname": "Ada",
+      "lastname": "Example",
+      "email": "ada@example.com",
+      "address": "",
+      "phone": ""
+    },
+    "links": {
+      "self": "",
+      "next": "",
+      "previous": ""
+    }
+  },
+  "write": {
+    "success": true,
+    "message": [
+      "Member added"
+    ],
+    "data": {}
+  },
+  "signups": {
+    "success": true,
+    "message": [],
+    "data": [
+      {
+        "signupid": 93,
+        "title": "Food Drive",
+        "groupid": 42,
+        "contactname": "Ada Example",
+        "group": "Food Bank Volunteers",
+        "mainimage": "",
+        "signupurl": "https://www.signupgenius.com/go/synthetic",
+        "thumbnail": "",
+        "rsvp": "Yes",
+        "rsvpid": 7
+      }
+    ]
+  },
+  "report": {
+    "success": true,
+    "message": [],
+    "data": {
+      "signups": [
+        {
+          "signupid": 93,
+          "item": "Morning shift",
+          "myqty": 1,
+          "firstname": "Ada",
+          "lastname": "Example",
+          "status": "Signed Up",
+          "amountpaid": "0"
+        }
+      ]
+    }
+  }
+}

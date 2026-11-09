@@ -1,0 +1,409 @@
+{
+  "$defs": {
+    "AddGroupMember": {
+      "description": "Add a participant to a group using their email address.",
+      "properties": {
+        "group_id": {
+          "description": "groupid from List Groups.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_group_member",
+          "default": "add_group_member",
+          "title": "Operation",
+          "type": "string"
+        },
+        "emailaddress": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Email address",
+          "type": "string"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        }
+      },
+      "required": [
+        "group_id",
+        "emailaddress"
+      ],
+      "title": "AddGroupMember",
+      "type": "object"
+    },
+    "GetAvailableSlotsReport": {
+      "description": "Read report data for empty or available slots.",
+      "properties": {
+        "signup_id": {
+          "description": "signupid from a created sign up.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Sign up ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_available_slots_report",
+          "default": "get_available_slots_report",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signup_id"
+      ],
+      "title": "GetAvailableSlotsReport",
+      "type": "object"
+    },
+    "GetFilledSlotsReport": {
+      "description": "Read report data for slots already filled.",
+      "properties": {
+        "signup_id": {
+          "description": "signupid from a created sign up.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Sign up ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_filled_slots_report",
+          "default": "get_filled_slots_report",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signup_id"
+      ],
+      "title": "GetFilledSlotsReport",
+      "type": "object"
+    },
+    "GetGroupMember": {
+      "description": "Get a group member's details, including supplied address and phone.",
+      "properties": {
+        "group_id": {
+          "description": "groupid from List Groups.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_group_member",
+          "default": "get_group_member",
+          "title": "Operation",
+          "type": "string"
+        },
+        "member_id": {
+          "description": "memberid from List Group Members.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Member Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id",
+        "member_id"
+      ],
+      "title": "GetGroupMember",
+      "type": "object"
+    },
+    "GetSignupReport": {
+      "description": "Read participants and associated details for all slots.",
+      "properties": {
+        "signup_id": {
+          "description": "signupid from a created sign up.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Sign up ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_signup_report",
+          "default": "get_signup_report",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signup_id"
+      ],
+      "title": "GetSignupReport",
+      "type": "object"
+    },
+    "ListActiveSignups": {
+      "description": "List active sign ups created by this account.",
+      "properties": {
+        "operation": {
+          "const": "list_active_signups",
+          "default": "list_active_signups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListActiveSignups",
+      "type": "object"
+    },
+    "ListAllSignups": {
+      "description": "List active and expired sign ups created by this account.",
+      "properties": {
+        "operation": {
+          "const": "list_all_signups",
+          "default": "list_all_signups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAllSignups",
+      "type": "object"
+    },
+    "ListExpiredSignups": {
+      "description": "List expired sign ups created by this account.",
+      "properties": {
+        "operation": {
+          "const": "list_expired_signups",
+          "default": "list_expired_signups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListExpiredSignups",
+      "type": "object"
+    },
+    "ListGroupMembers": {
+      "description": "List the members in a group.",
+      "properties": {
+        "group_id": {
+          "description": "groupid from List Groups.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_group_members",
+          "default": "list_group_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "ListGroupMembers",
+      "type": "object"
+    },
+    "ListGroups": {
+      "description": "List groups created by this account.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListInvitedSignups": {
+      "description": "List active invitations; unavailable to subadmin credentials.",
+      "properties": {
+        "operation": {
+          "const": "list_invited_signups",
+          "default": "list_invited_signups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListInvitedSignups",
+      "type": "object"
+    },
+    "ListJoinedSignups": {
+      "description": "List active sign ups joined by this account; unavailable to subadmins.",
+      "properties": {
+        "operation": {
+          "const": "list_joined_signups",
+          "default": "list_joined_signups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListJoinedSignups",
+      "type": "object"
+    },
+    "SignUpGeniusAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "signupgenius_api_key",
+          "default": "signupgenius_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "user_key"
+      ],
+      "title": "SignUpGenius API Key",
+      "type": "object",
+      "x-credential-instructions": "Enable API access in your SignUpGenius account's Tools section, then paste your private API key. API access requires a Premium subscription and is subject to your plan's daily call limit.",
+      "x-credential-url": "https://developer.signupgenius.com/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_member": "#/$defs/AddGroupMember",
+          "get_available_slots_report": "#/$defs/GetAvailableSlotsReport",
+          "get_filled_slots_report": "#/$defs/GetFilledSlotsReport",
+          "get_group_member": "#/$defs/GetGroupMember",
+          "get_signup_report": "#/$defs/GetSignupReport",
+          "list_active_signups": "#/$defs/ListActiveSignups",
+          "list_all_signups": "#/$defs/ListAllSignups",
+          "list_expired_signups": "#/$defs/ListExpiredSignups",
+          "list_group_members": "#/$defs/ListGroupMembers",
+          "list_groups": "#/$defs/ListGroups",
+          "list_invited_signups": "#/$defs/ListInvitedSignups",
+          "list_joined_signups": "#/$defs/ListJoinedSignups"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/ListGroupMembers"
+        },
+        {
+          "$ref": "#/$defs/GetGroupMember"
+        },
+        {
+          "$ref": "#/$defs/AddGroupMember"
+        },
+        {
+          "$ref": "#/$defs/ListActiveSignups"
+        },
+        {
+          "$ref": "#/$defs/ListAllSignups"
+        },
+        {
+          "$ref": "#/$defs/ListExpiredSignups"
+        },
+        {
+          "$ref": "#/$defs/ListInvitedSignups"
+        },
+        {
+          "$ref": "#/$defs/ListJoinedSignups"
+        },
+        {
+          "$ref": "#/$defs/GetSignupReport"
+        },
+        {
+          "$ref": "#/$defs/GetAvailableSlotsReport"
+        },
+        {
+          "$ref": "#/$defs/GetFilledSlotsReport"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SignUpGeniusAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Signupgenius Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
