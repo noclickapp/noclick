@@ -1,0 +1,607 @@
+{
+  "description": "Synthetic request regression cases based on the v2 published contract; no live account data.",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_studio"
+      },
+      "method": "GET",
+      "path": "/api/v2/studio/me",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Portrait Studio",
+        "currencyCode": "USD"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_contacts",
+        "email": "client@example.test",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/address-book",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10",
+        "email": "client@example.test",
+        "includeHidden": "false"
+      },
+      "response": {
+        "type": "addressbook-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record",
+            "kind": "person",
+            "firstName": "Asha",
+            "lastName": "Smith"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "get_contact",
+        "contact_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "GET",
+      "path": "/api/v2/address-book/01h35ccwymj5ctckp8px1azhg6",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "kind": "person",
+        "firstName": "Asha",
+        "lastName": "Smith"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "create_contact",
+        "first_name": "Asha",
+        "email": "asha@example.test"
+      },
+      "method": "POST",
+      "path": "/api/v2/address-book",
+      "body": {
+        "kind": "person",
+        "firstName": "Asha",
+        "email": "asha@example.test"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "kind": "person",
+        "firstName": "Asha",
+        "lastName": "Smith"
+      },
+      "status": 201
+    },
+    {
+      "config": {
+        "operation": "update_contact",
+        "contact_id": "01h35ccwymj5ctckp8px1azhg6",
+        "last_name": "Smith"
+      },
+      "method": "PUT",
+      "path": "/api/v2/address-book/01h35ccwymj5ctckp8px1azhg6",
+      "body": {
+        "kind": "person",
+        "lastName": "Smith"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "kind": "person",
+        "firstName": "Asha",
+        "lastName": "Smith"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_jobs",
+        "stage": "booked",
+        "event_date_from": "2020-04-10",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/job",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10",
+        "includeClosed": "false",
+        "stage": "booked",
+        "eventDateFrom": "2020-04-10"
+      },
+      "response": {
+        "type": "job-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "get_job",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "GET",
+      "path": "/api/v2/job/01h35ccwymj5ctckp8px1azhg6",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "create_job",
+        "name": "Portrait session"
+      },
+      "method": "POST",
+      "path": "/api/v2/job",
+      "body": {
+        "name": "Portrait session",
+        "stage": "lead"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 201
+    },
+    {
+      "config": {
+        "operation": "update_job",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6",
+        "stage": "completed",
+        "closed": false
+      },
+      "method": "PUT",
+      "path": "/api/v2/job/01h35ccwymj5ctckp8px1azhg6",
+      "body": {
+        "stage": "completed",
+        "closed": false
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_events",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6",
+        "occurs_from": "2020-04-10",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/event",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10",
+        "jobId": "01h35ccwymj5ctckp8px1azhg6",
+        "occursFrom": "2020-04-10"
+      },
+      "response": {
+        "type": "event-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "get_event",
+        "event_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "GET",
+      "path": "/api/v2/event/01h35ccwymj5ctckp8px1azhg6",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "create_event",
+        "name": "Session",
+        "start_date": "2020-04-10",
+        "start_time": "14:00:00",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "POST",
+      "path": "/api/v2/event",
+      "body": {
+        "name": "Session",
+        "startDate": "2020-04-10",
+        "startTime": "14:00:00",
+        "jobId": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 201
+    },
+    {
+      "config": {
+        "operation": "update_event",
+        "event_id": "01h35ccwymj5ctckp8px1azhg6",
+        "confirmed": false,
+        "end_time": "15:00:00"
+      },
+      "method": "PUT",
+      "path": "/api/v2/event/01h35ccwymj5ctckp8px1azhg6",
+      "body": {
+        "confirmed": false,
+        "endTime": "15:00:00"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_tasks",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6",
+        "completed": false,
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/task",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10",
+        "jobId": "01h35ccwymj5ctckp8px1azhg6",
+        "completed": "false"
+      },
+      "response": {
+        "type": "task-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record",
+            "taskListId": "01h35ccwymj5ctckp8px1azhg6"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "get_task",
+        "task_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "GET",
+      "path": "/api/v2/task/01h35ccwymj5ctckp8px1azhg6",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "taskListId": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "create_task",
+        "name": "Send gallery",
+        "task_list_id": "01h35ccwymj5ctckp8px1azhg6",
+        "due_date": "2020-04-10"
+      },
+      "method": "POST",
+      "path": "/api/v2/task",
+      "body": {
+        "name": "Send gallery",
+        "taskListId": "01h35ccwymj5ctckp8px1azhg6",
+        "dueDate": "2020-04-10"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "taskListId": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "status": 201
+    },
+    {
+      "config": {
+        "operation": "update_task",
+        "task_id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Send gallery",
+        "task_list_id": "01h35ccwymj5ctckp8px1azhg6",
+        "completed": true
+      },
+      "method": "PUT",
+      "path": "/api/v2/task/01h35ccwymj5ctckp8px1azhg6",
+      "body": {
+        "name": "Send gallery",
+        "taskListId": "01h35ccwymj5ctckp8px1azhg6",
+        "completed": true
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "taskListId": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_notes",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/note",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10",
+        "jobId": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "response": {
+        "type": "note-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record",
+            "contentHtml": "<p>Client prefers outdoor portraits.</p>"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "create_note",
+        "content_html": "<p>Client prefers outdoor portraits.</p>",
+        "job_id": "01h35ccwymj5ctckp8px1azhg6",
+        "date": "2020-04-10"
+      },
+      "method": "POST",
+      "path": "/api/v2/note",
+      "body": {
+        "contentHtml": "<p>Client prefers outdoor portraits.</p>",
+        "jobId": "01h35ccwymj5ctckp8px1azhg6",
+        "date": "2020-04-10"
+      },
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture",
+        "contentHtml": "<p>Client prefers outdoor portraits.</p>"
+      },
+      "status": 201
+    },
+    {
+      "config": {
+        "operation": "list_invoices",
+        "invoice_status": "open",
+        "past_due": true,
+        "due_to": "2020-04-10",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/invoice",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10",
+        "status": "open",
+        "pastDue": "true",
+        "includeVoided": "false",
+        "dueTo": "2020-04-10"
+      },
+      "response": {
+        "type": "invoice-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "get_invoice",
+        "invoice_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "GET",
+      "path": "/api/v2/invoice/01h35ccwymj5ctckp8px1azhg6",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_orders",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/order",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10"
+      },
+      "response": {
+        "type": "order-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "get_order",
+        "order_id": "01h35ccwymj5ctckp8px1azhg6"
+      },
+      "method": "GET",
+      "path": "/api/v2/order/01h35ccwymj5ctckp8px1azhg6",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": "01h35ccwymj5ctckp8px1azhg6",
+        "name": "Studio fixture"
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_lead_statuses",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/lead-status",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10"
+      },
+      "response": {
+        "type": "leadstatus-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    },
+    {
+      "config": {
+        "operation": "list_job_types",
+        "page": 2,
+        "page_size": 10
+      },
+      "method": "GET",
+      "path": "/api/v2/job-type",
+      "body": null,
+      "query": {
+        "page": "2",
+        "pageSize": "10"
+      },
+      "response": {
+        "type": "jobtype-collection",
+        "items": [
+          {
+            "id": "01h35ccwymj5ctckp8px1azhg6",
+            "name": "Fixture record"
+          }
+        ],
+        "meta": {
+          "currentPage": 2,
+          "totalPages": 3,
+          "totalItems": 25,
+          "rows": 10
+        }
+      },
+      "status": 200
+    }
+  ]
+}
