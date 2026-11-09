@@ -225,6 +225,32 @@ Postman evidence supports only `postman-checked`, with `ready: false`. Mixed
 catalogs retain each OpenAPI operation's existing bar and identify the verdict
 per operation. Existing OpenAPI contracts and report formats are unchanged.
 
+## Trigger checks
+
+A trigger operation (`x-is-trigger: true`) is verified, not just present (`triggers.py`):
+
+- **Webhook triggers** (`ExternalWebhookTriggerMixin`): `_register_external_webhook` and
+  `_unregister_external_webhook` run against the contract like any request. Each event the contract documents (the
+  spec's `webhooks`, operations' `callbacks`, else the catalog's `events.json`, `{"<event>": {"body", "source",
+  optional "headers", optional "webhook": a spec webhook whose schema it takes}}`) is delivered the node's own way:
+  `verify_webhook_signature` with a signature computed as the catalog entry's `webhook_signature` (or the spec's
+  `x-webhook-signature`) declares, which must also refuse the same body tampered with; then the control, filter, drop
+  and transform hooks, `resolve_trigger_payload` and `resolve_agent_event`. At least one event must reach the trigger.
+- **Poll triggers** (`PollTriggerConfigBase`): the list call is checked as any operation; the poll starts from state
+  that has seen nothing, so its new-item detection must emit what the response lists, and `resolve_agent_event` must
+  deliver it.
+- **Field reads**: every key the node's own code reads from an event or a listed response must be in its schema, or
+  in the provider's documented example where the published schema leaves it out. Reads by shared plumbing
+  (`nodes/core`) don't count, nor do reads of a copy the node made.
+
+`webhook_signature` is `{"header", "algorithm": sha1|sha256|sha512, "encoding": hex|base64, "message"
+(default "{body}"; also {timestamp} {id} {url}), "format" (e.g. "t={timestamp},v1={signature}"), "prefix",
+"timestamp_header", "id_header", "secret_field" (default signing_secret), "secret_encoding": utf-8|base64,
+"secret_prefix", "source": "<docs URL>"}`, or `{"scheme": "none", "source"}` for unsigned deliveries, or
+`{"scheme": "unsupported", "reason", "source"}` (advisory: RSA or a provider key can't be reproduced offline).
+Trigger failures always block; the verdict reports each trigger as passed, failed, or not checked (another family,
+such as app-event subscriptions) under `triggers`, and the source audit covers `events.json` like `witnesses.json`.
+
 ## Merge verdict
 
 `verdict.py` turns a report and its catalog into the verdict the integration

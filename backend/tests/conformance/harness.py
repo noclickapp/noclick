@@ -59,6 +59,7 @@ from werkzeug.datastructures import MultiDict
 from tests.conformance.files import file_values, is_file
 from tests.conformance.postman import PostmanContract, is_postman, validate_collection
 from tests.conformance.transports import intercept_http
+from tests.conformance import triggers
 from tests.conformance.strings import (
     PatternError,
     config_shapes,
@@ -157,6 +158,13 @@ INPUTS = (
 WITNESSES = (
     json.loads((CATALOG / "witnesses.json").read_text())
     if CATALOG and (CATALOG / "witnesses.json").exists()
+    else {}
+)
+# Provider-authored webhook deliveries for a contract that documents no `webhooks` or `callbacks` (event name ->
+# {"body", "source", optional "headers", optional "webhook": the spec webhook whose schema it takes}).
+EVENTS = (
+    json.loads((CATALOG / "events.json").read_text())
+    if CATALOG and (CATALOG / "events.json").exists()
     else {}
 )
 FULL_DEPTH = 6
@@ -799,9 +807,16 @@ class OperationResult:
     skipped: str | None = None
     scope_checks: int = 0
     config: dict = field(default_factory=dict)
+    # A webhook or poll trigger's own checks (triggers.py): its events, new-item detection and agent event.
+    trigger: dict | None = None
 
     @property
     def passed(self):
+        if self.trigger is not None and self.trigger.get("failures"):
+            return False
+        if self.trigger is not None and self.trigger.get("kind") == "webhook":
+            # Judged by its deliveries; a registration it makes still meets the contract.
+            return not (self.failures or self.fixture_errors or self.skipped)
         return bool(self.requests) and not (
             self.failures or self.fixture_errors or self.skipped
         )
@@ -1635,6 +1650,8 @@ class Contract:
                 self.api.validate_response(
                     self.adapter(request), response_adapter(response)
                 )
+                # The trigger checks read the node's field accesses against this schema.
+                response.extensions["conformance_schema"] = (self.doc, schema)
                 if record is not None and FULL:
                     record["response_source"] = source
                     if source == "docs":
@@ -1752,6 +1769,14 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             op: {**credential, "stripe_version": contracts[0].doc["info"]["version"]}
             for op, credential in credentials.items()
         }
+    trigger_events = triggers.contract_events(
+        [c for c in contracts if not isinstance(c, PostmanContract)], EVENTS
+    )
+    try:
+        signing, signing_error = triggers.signing_of(entry, contracts), None
+    except FixtureError as exc:
+        signing, signing_error = None, reason(exc)
+    node_files = triggers.node_files(node_cls)
     results, covered = [], set()
     cases = [
         (op, member, name, entry)
@@ -1768,8 +1793,14 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
         if response_plan:
             result.scenario = f"{case_name}:postman:{sorted(response_plan.items())}"
         results.append(result)
-        # Manual trigger execution is a passthrough, not a provider API call.
-        if op.startswith("on_") or op == "custom_request":
+        kind = (
+            triggers.trigger_kind(node_cls, model, op)
+            if member.get("x-is-trigger") is True or op.startswith("on_")
+            else None
+        )
+        # A webhook trigger is fed the contract's events and a poll trigger checked on its list call (triggers.py);
+        # any other trigger family (app-event subscriptions) is a passthrough on a manual run, not an API call.
+        if (op.startswith("on_") and kind is None) or op == "custom_request":
             result.skipped = (
                 "trigger passthrough"
                 if op.startswith("on_")
@@ -1786,6 +1817,9 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
         except Exception as exc:
             result.fixture_errors.append("Cannot generate config witness: " + reason(exc))
             continue
+        if kind and not case:
+            # A trigger's lifecycle fields (schedule, webhook id, registration mirrors) are NoClick's, never inputs.
+            raw = {k: v for k, v in raw.items() if k not in triggers.PLUMBING}
         raw["operation"] = op
         raw = {**raw, **(config_overrides or {}).get(case_name, {})}
         result.config = raw
@@ -1797,6 +1831,7 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             continue
 
         error_responses = []
+        poll_reads = None
 
         def transport(request):
             try:
@@ -1903,6 +1938,11 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                 )
                 record["response_status"] = response.status_code
                 record["response_sha256"] = hashlib.sha256(response.content).hexdigest()
+                if poll_reads is not None:
+                    triggers.track_response(
+                        response, poll_reads, f"{method.upper()} {path} response",
+                        record.get("response_source"),
+                    )
                 if isinstance(contract, PostmanContract) and not 200 <= response.status_code < 300:
                     error_responses.append(response)
                 return response
@@ -1924,8 +1964,24 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                 config=config,
                 sio=Mock(),
             )
+            if kind == "webhook":
+                if signing_error:
+                    result.fixture_errors.append(signing_error)
+                    continue
+                with offline(), intercept_http(transport), resolved_offline():
+                    result.trigger = await triggers.check_webhook(
+                        node_cls, node_type, model, raw, case_credential,
+                        trigger_events, signing, node_files,
+                    )
+                continue
+            if kind == "poll":
+                poll_reads = triggers.Reads(node_files)
+                await triggers.seen_nothing(node)
+                result.trigger = {"kind": "poll", "failures": [], "advisory": []}
             with offline(), intercept_http(transport), resolved_offline():
                 output = await node.execute({})
+                if kind == "poll":
+                    result.trigger = triggers.check_poll(node_cls, node, output, poll_reads)
             expected_error = bool(error_responses)
             error_envelope = isinstance(output, dict) and (
                 output.get("status") in ("error", "failed")
@@ -2017,6 +2073,13 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             "implemented": len(covered),
             "total": sum(len(c.paths) for c in contracts),
         },
+        **(
+            {"triggers": {
+                "checked": sum(r.trigger is not None for r in results),
+                "passed": sum(r.trigger is not None and r.passed for r in results),
+            }}
+            if any(r.trigger is not None for r in results) else {}
+        ),
         "operations": [dict(asdict(r), passed=r.passed) for r in results],
     }
 

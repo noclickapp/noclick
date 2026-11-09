@@ -123,12 +123,29 @@ def openapi_verdict(report, catalog, audit=True):
     catalog = Path(catalog)
     blocking, advisory = [], []
     stats = {"operations": 0, "skipped": 0, "request_ok": 0, "authored_parser_ok": 0, "generated_only": 0, "local_ok": 0}
+    trigger_ops, passthrough = set(), set()
     for op in report["operations"]:
         name = op["operation"]
         if op.get("skipped"):
+            if op["skipped"] == "trigger passthrough":
+                passthrough.add(name)
             stats["skipped"] += 1
             continue
         stats["operations"] += 1
+        trigger = op.get("trigger")
+        if trigger:
+            # A trigger's own checks (its events, new-item detection, agent event, field reads) always block: they
+            # judge the node against the contract's schema, whatever produced the payload.
+            trigger_ops.add(name)
+            blocking.extend(f"{name}: trigger: {f[:200]}" for f in trigger.get("failures", []))
+            advisory.extend(f"{name}: trigger: {a[:200]}" for a in trigger.get("advisory", []))
+        if trigger and trigger.get("kind") == "webhook":
+            # Judged by its deliveries, not by a request of its own; a registration request still meets the contract.
+            if op.get("failures"):
+                blocking.append(f"{name}: {op['failures'][0][:200]}")
+            if op.get("fixture_errors"):
+                blocking.append(f"{name}: fixture error: {op['fixture_errors'][0][:160]}")
+            continue
         fails = op.get("failures", [])
         req_fail = [f for f in fails if f.startswith("request:") or "No spec operation" in f or "No route" in f]
         if not op.get("requests"):
@@ -156,7 +173,8 @@ def openapi_verdict(report, catalog, audit=True):
             stats["authored_parser_ok"] += 1
 
     if audit:
-        for kind, fname, getter in (("response", "witnesses.json", lambda e: e["body"]), ("input", "inputs.json", lambda e: e["config"])):
+        for kind, fname, getter in (("response", "witnesses.json", lambda e: e["body"]), ("input", "inputs.json", lambda e: e["config"]),
+                                    ("event", "events.json", lambda e: e["body"])):
             path = catalog / fname
             if not path.exists():
                 continue
@@ -170,14 +188,22 @@ def openapi_verdict(report, catalog, audit=True):
                 except Exception as exc:
                     blocking.append(f"{kind} {key}: source unreadable ({type(exc).__name__})")
                     continue
-                # A documented response must show its keys and values; an input only its values (its keys are NoClick's
+                # A documented response or event must show its keys and values; an input only its values (its keys are NoClick's
                 # field names, and booleans or numbers are NoClick's own switches).
-                want = {w for w in leaves(getter(entry), set(), keys=(kind == "response")) if w not in ("operation",)}
+                want = {w for w in leaves(getter(entry), set(), keys=(kind != "input")) if w not in ("operation",)}
                 found = matched(want, text)
                 if want and len(found) / len(want) < 0.6:
                     blocking.append(f"{kind} {key}: only {len(found)}/{len(want)} of its keys and values appear on {src}")
-    return {"provider": report["provider"], "ready": not blocking, "blocking": blocking,
-            "advisory": advisory, "stats": stats}
+    result = {"provider": report["provider"], "ready": not blocking, "blocking": blocking,
+              "advisory": advisory, "stats": stats}
+    if trigger_ops or passthrough:
+        # Beside the operations: each trigger passed, failed, or (another family) wasn't checked.
+        result["triggers"] = {
+            **{name: "not checked: not a webhook or poll trigger" for name in sorted(passthrough - trigger_ops)},
+            **{name: "failed" if any(b.startswith(name + ":") for b in blocking) else "passed"
+               for name in sorted(trigger_ops)},
+        }
+    return result
 
 
 
