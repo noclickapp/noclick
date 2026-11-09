@@ -1,0 +1,1634 @@
+{
+  "$defs": {
+    "CancelPersonRun": {
+      "additionalProperties": false,
+      "description": "Cancel a deep person research run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_person_run",
+          "default": "cancel_person_run",
+          "title": "Operation",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "CancelPersonRun",
+      "type": "object"
+    },
+    "CompileMonitor": {
+      "additionalProperties": false,
+      "description": "Preview a monitor plan and output schema without creating it.",
+      "properties": {
+        "operation": {
+          "const": "compile_monitor",
+          "default": "compile_monitor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "output": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_MonitorOutput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "CompileMonitor",
+      "type": "object"
+    },
+    "CreateDataset": {
+      "additionalProperties": false,
+      "description": "Fill typed research columns for seeded rows; async mode returns a dataset ID.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key for a retry of the same request within 24 hours to avoid duplicate charges.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Operation",
+          "type": "string"
+        },
+        "entity": {
+          "$ref": "#/$defs/_Entity"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/_DatasetRow"
+          },
+          "maxItems": 2000,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/_DatasetColumn"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Columns",
+          "type": "array"
+        },
+        "mode": {
+          "default": "sync",
+          "enum": [
+            "sync",
+            "async"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "deadline_ms": {
+          "default": 20000,
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Deadline Ms",
+          "type": "integer"
+        },
+        "include_unverified": {
+          "default": false,
+          "title": "Include Unverified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entity",
+        "rows",
+        "columns"
+      ],
+      "title": "CreateDataset",
+      "type": "object"
+    },
+    "CreateMonitor": {
+      "additionalProperties": false,
+      "description": "Create a scheduled social monitor; scheduled runs consume ACU.",
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "schedule": {
+          "$ref": "#/$defs/_Schedule"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "output": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_MonitorOutput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Webhook Url"
+        },
+        "webhook_secret": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Secret",
+          "ui:widget": "password"
+        },
+        "max_items_per_run": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Items Per Run",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query",
+        "schedule"
+      ],
+      "title": "CreateMonitor",
+      "type": "object"
+    },
+    "DeleteMonitor": {
+      "additionalProperties": false,
+      "description": "Delete (disable) a monitor.",
+      "properties": {
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DeleteMonitor",
+      "type": "object"
+    },
+    "DetectTechnologies": {
+      "additionalProperties": false,
+      "description": "Detect a website's technology stack with evidence.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key for a retry of the same request within 24 hours to avoid duplicate charges.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "detect_technologies",
+          "default": "detect_technologies",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "DetectTechnologies",
+      "type": "object"
+    },
+    "EnrichPerson": {
+      "additionalProperties": false,
+      "description": "Resolve contact fields for exactly one person identifier.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key for a retry of the same request within 24 hours to avoid duplicate charges.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "enrich_person",
+          "default": "enrich_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedin Url"
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Id"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Domain"
+        },
+        "fields": {
+          "items": {
+            "enum": [
+              "work_email",
+              "personal_email",
+              "phone",
+              "linkedin_url"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "EnrichPerson",
+      "type": "object"
+    },
+    "GetAccountProfile": {
+      "additionalProperties": false,
+      "description": "Read the signed-in user's profile to prove account access.",
+      "properties": {
+        "operation": {
+          "const": "get_account_profile",
+          "default": "get_account_profile",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccountProfile",
+      "type": "object"
+    },
+    "GetAccountUsage": {
+      "additionalProperties": false,
+      "description": "Get workspace usage and active API key context.",
+      "properties": {
+        "operation": {
+          "const": "get_account_usage",
+          "default": "get_account_usage",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccountUsage",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Get workspace ACU balance and calling API key budget.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetDataset": {
+      "additionalProperties": false,
+      "description": "Get dataset progress and status.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Operation",
+          "type": "string"
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "GetDataset",
+      "type": "object"
+    },
+    "GetMonitor": {
+      "additionalProperties": false,
+      "description": "Read a monitor.",
+      "properties": {
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "GetMonitor",
+      "type": "object"
+    },
+    "GetMonitorRun": {
+      "additionalProperties": false,
+      "description": "Read one monitor run.",
+      "properties": {
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_monitor_run",
+          "default": "get_monitor_run",
+          "title": "Operation",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id",
+        "run_id"
+      ],
+      "title": "GetMonitorRun",
+      "type": "object"
+    },
+    "GetPerson": {
+      "additionalProperties": false,
+      "description": "Get an evidence-backed person record, including async status when returned.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key for a retry of the same request within 24 hours to avoid duplicate charges.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "get_person",
+          "default": "get_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "identifier": {
+          "$ref": "#/$defs/_PersonIdentifier"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "work_email",
+                  "personal_email",
+                  "phone"
+                ],
+                "type": "string"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "GetPerson",
+      "type": "object"
+    },
+    "GetPersonRun": {
+      "additionalProperties": false,
+      "description": "Poll a deep person research run.",
+      "properties": {
+        "operation": {
+          "const": "get_person_run",
+          "default": "get_person_run",
+          "title": "Operation",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetPersonRun",
+      "type": "object"
+    },
+    "ListDatasetRows": {
+      "additionalProperties": false,
+      "description": "Read a page of dataset rows; retain pending and partial cell states.",
+      "properties": {
+        "operation": {
+          "const": "list_dataset_rows",
+          "default": "list_dataset_rows",
+          "title": "Operation",
+          "type": "string"
+        },
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "ListDatasetRows",
+      "type": "object"
+    },
+    "ListMonitorItems": {
+      "additionalProperties": false,
+      "description": "List emitted items, optionally limited to one run.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_cursor from the preceding page; pagination is explicit.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_monitor_items",
+          "default": "list_monitor_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ListMonitorItems",
+      "type": "object"
+    },
+    "ListMonitorRuns": {
+      "additionalProperties": false,
+      "description": "List a monitor's runs, retaining the continuation cursor.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_cursor from the preceding page; pagination is explicit.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_monitor_runs",
+          "default": "list_monitor_runs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ListMonitorRuns",
+      "type": "object"
+    },
+    "ListMonitors": {
+      "additionalProperties": false,
+      "description": "List the connected account's monitors.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_cursor from the preceding page; pagination is explicit.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMonitors",
+      "type": "object"
+    },
+    "PloidAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ploid_api_key",
+          "default": "ploid_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Ploid API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Ploid account and paste it here. Enable account:read for the connection check, people:search for searches and datasets, people:enrich for contact enrichment, and the monitor permissions needed for your actions. Ploid charges ACU for research and monitor runs.",
+      "x-credential-url": "https://ploid.com/docs"
+    },
+    "ResolvePerson": {
+      "additionalProperties": false,
+      "description": "Identify a person from a name and at least one contextual hint.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key for a retry of the same request within 24 hours to avoid duplicate charges.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "resolve_person",
+          "default": "resolve_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 2,
+          "title": "Name",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "work_email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Work Email"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ResolvePerson",
+      "type": "object"
+    },
+    "ReverseEmail": {
+      "additionalProperties": false,
+      "description": "Find the person behind an email.",
+      "properties": {
+        "operation": {
+          "const": "reverse_email",
+          "default": "reverse_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 254,
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "fast_only": {
+          "default": false,
+          "title": "Fast Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ReverseEmail",
+      "type": "object"
+    },
+    "RunMonitor": {
+      "additionalProperties": false,
+      "description": "Trigger a paid monitor run now.",
+      "properties": {
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "run_monitor",
+          "default": "run_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "RunMonitor",
+      "type": "object"
+    },
+    "SearchPeople": {
+      "additionalProperties": false,
+      "description": "Search people; return the provider's results and pagination metadata.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key for a retry of the same request within 24 hours to avoid duplicate charges.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "search_people",
+          "default": "search_people",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "type": {
+          "default": "auto",
+          "enum": [
+            "instant",
+            "fast",
+            "auto",
+            "deep"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "num_results": {
+          "default": 10,
+          "description": "Inline results only. For another page use meta.next_offset with instant or fast mode.",
+          "maximum": 150,
+          "minimum": 1,
+          "title": "Num Results",
+          "type": "integer"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 149,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Filter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchPeople",
+      "type": "object"
+    },
+    "TestMonitor": {
+      "additionalProperties": false,
+      "description": "Test what a monitor finds now; consumes research credits.",
+      "properties": {
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "test_monitor",
+          "default": "test_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "TestMonitor",
+      "type": "object"
+    },
+    "UpdateMonitor": {
+      "additionalProperties": false,
+      "description": "Update, pause or resume a monitor; resuming enables paid scheduled runs.",
+      "properties": {
+        "monitor_id": {
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "paused"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "paused"
+          ],
+          "x-enum-searchable": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Schedule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_items_per_run": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Items Per Run"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "UpdateMonitor",
+      "type": "object"
+    },
+    "_DatasetColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "anyOf": [
+            {
+              "enum": [
+                "name",
+                "domain",
+                "description",
+                "founded_year",
+                "headquarters",
+                "headcount",
+                "industry",
+                "linkedin_url",
+                "page_text",
+                "socials.linkedin",
+                "socials.x",
+                "socials.instagram",
+                "socials.youtube",
+                "socials.tiktok",
+                "socials.github",
+                "title",
+                "company",
+                "location",
+                "email.work",
+                "email.personal",
+                "phone",
+                "website"
+              ],
+              "type": "string"
+            },
+            {
+              "pattern": "^custom\\.[a-z0-9_]{1,60}$",
+              "type": "string"
+            }
+          ],
+          "title": "Key"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "date",
+                "number",
+                "options",
+                "email",
+                "phone",
+                "url",
+                "boolean",
+                "range",
+                "currency"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format",
+          "enum": [
+            "text",
+            "date",
+            "number",
+            "options",
+            "email",
+            "phone",
+            "url",
+            "boolean",
+            "range",
+            "currency"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "_DatasetColumn",
+      "type": "object"
+    },
+    "_DatasetRow": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedin Url"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        }
+      },
+      "title": "_DatasetRow",
+      "type": "object"
+    },
+    "_Entity": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "person",
+            "company",
+            "custom"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "_Entity",
+      "type": "object"
+    },
+    "_Filter": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "seniority": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seniority"
+        }
+      },
+      "title": "_Filter",
+      "type": "object"
+    },
+    "_MonitorOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "text",
+            "object"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "_MonitorOutput",
+      "type": "object"
+    },
+    "_PersonIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "person_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Id"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedin Url"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Domain"
+        }
+      },
+      "title": "_PersonIdentifier",
+      "type": "object"
+    },
+    "_Schedule": {
+      "additionalProperties": false,
+      "properties": {
+        "preset": {
+          "enum": [
+            "hourly",
+            "daily",
+            "weekly"
+          ],
+          "title": "Preset",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "preset"
+      ],
+      "title": "_Schedule",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_person_run": "#/$defs/CancelPersonRun",
+          "compile_monitor": "#/$defs/CompileMonitor",
+          "create_dataset": "#/$defs/CreateDataset",
+          "create_monitor": "#/$defs/CreateMonitor",
+          "delete_monitor": "#/$defs/DeleteMonitor",
+          "detect_technologies": "#/$defs/DetectTechnologies",
+          "enrich_person": "#/$defs/EnrichPerson",
+          "get_account_profile": "#/$defs/GetAccountProfile",
+          "get_account_usage": "#/$defs/GetAccountUsage",
+          "get_credits": "#/$defs/GetCredits",
+          "get_dataset": "#/$defs/GetDataset",
+          "get_monitor": "#/$defs/GetMonitor",
+          "get_monitor_run": "#/$defs/GetMonitorRun",
+          "get_person": "#/$defs/GetPerson",
+          "get_person_run": "#/$defs/GetPersonRun",
+          "list_dataset_rows": "#/$defs/ListDatasetRows",
+          "list_monitor_items": "#/$defs/ListMonitorItems",
+          "list_monitor_runs": "#/$defs/ListMonitorRuns",
+          "list_monitors": "#/$defs/ListMonitors",
+          "resolve_person": "#/$defs/ResolvePerson",
+          "reverse_email": "#/$defs/ReverseEmail",
+          "run_monitor": "#/$defs/RunMonitor",
+          "search_people": "#/$defs/SearchPeople",
+          "test_monitor": "#/$defs/TestMonitor",
+          "update_monitor": "#/$defs/UpdateMonitor"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchPeople"
+        },
+        {
+          "$ref": "#/$defs/ResolvePerson"
+        },
+        {
+          "$ref": "#/$defs/ReverseEmail"
+        },
+        {
+          "$ref": "#/$defs/GetPerson"
+        },
+        {
+          "$ref": "#/$defs/GetPersonRun"
+        },
+        {
+          "$ref": "#/$defs/CancelPersonRun"
+        },
+        {
+          "$ref": "#/$defs/CompileMonitor"
+        },
+        {
+          "$ref": "#/$defs/CreateMonitor"
+        },
+        {
+          "$ref": "#/$defs/ListMonitors"
+        },
+        {
+          "$ref": "#/$defs/GetMonitor"
+        },
+        {
+          "$ref": "#/$defs/UpdateMonitor"
+        },
+        {
+          "$ref": "#/$defs/DeleteMonitor"
+        },
+        {
+          "$ref": "#/$defs/RunMonitor"
+        },
+        {
+          "$ref": "#/$defs/TestMonitor"
+        },
+        {
+          "$ref": "#/$defs/ListMonitorRuns"
+        },
+        {
+          "$ref": "#/$defs/GetMonitorRun"
+        },
+        {
+          "$ref": "#/$defs/ListMonitorItems"
+        },
+        {
+          "$ref": "#/$defs/DetectTechnologies"
+        },
+        {
+          "$ref": "#/$defs/CreateDataset"
+        },
+        {
+          "$ref": "#/$defs/GetDataset"
+        },
+        {
+          "$ref": "#/$defs/ListDatasetRows"
+        },
+        {
+          "$ref": "#/$defs/EnrichPerson"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/GetAccountUsage"
+        },
+        {
+          "$ref": "#/$defs/GetAccountProfile"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PloidAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ploid Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
