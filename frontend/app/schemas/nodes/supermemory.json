@@ -1,0 +1,1566 @@
+{
+  "$defs": {
+    "SupermemoryAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "supermemory_api_key",
+          "default": "supermemory_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Supermemory API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the Supermemory console and paste it here. Give the key read/write access to the namespaces your workflow uses. NoClick checks it by listing your namespaces.",
+      "x-credential-url": "https://console.supermemory.ai"
+    },
+    "SupermemoryAddDocumentConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/document.",
+      "properties": {
+        "taskType": {
+          "anyOf": [
+            {
+              "enum": [
+                "memory",
+                "superrag"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tasktype",
+          "enum": [
+            "memory",
+            "superrag"
+          ],
+          "x-enum-searchable": true
+        },
+        "dreaming": {
+          "anyOf": [
+            {
+              "enum": [
+                "dynamic",
+                "instant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instant processes independently and bills an extra operation per document.",
+          "title": "Dreaming",
+          "enum": [
+            "dynamic",
+            "instant"
+          ],
+          "x-enum-searchable": true
+        },
+        "content": {
+          "description": "Plain text or a URL to supported content.",
+          "title": "Content",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional caller-defined document ID.",
+          "title": "Id"
+        },
+        "supportingContext": {
+          "anyOf": [
+            {
+              "maxLength": 1500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supportingcontext"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source content date in ISO 8601 format.",
+          "title": "Date"
+        },
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_document",
+          "default": "add_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "content",
+        "namespace"
+      ],
+      "title": "SupermemoryAddDocumentConfig",
+      "type": "object"
+    },
+    "SupermemoryBatchAddDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/document/batch.",
+      "properties": {
+        "taskType": {
+          "anyOf": [
+            {
+              "enum": [
+                "memory",
+                "superrag"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tasktype",
+          "enum": [
+            "memory",
+            "superrag"
+          ],
+          "x-enum-searchable": true
+        },
+        "dreaming": {
+          "anyOf": [
+            {
+              "enum": [
+                "dynamic",
+                "instant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instant processes independently and bills an extra operation per document.",
+          "title": "Dreaming",
+          "enum": [
+            "dynamic",
+            "instant"
+          ],
+          "x-enum-searchable": true
+        },
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "batch_add_documents",
+          "default": "batch_add_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "documents": {
+          "items": {
+            "$ref": "#/$defs/_Document"
+          },
+          "maxItems": 600,
+          "minItems": 1,
+          "title": "Documents",
+          "type": "array"
+        }
+      },
+      "required": [
+        "namespace",
+        "documents"
+      ],
+      "title": "SupermemoryBatchAddDocumentsConfig",
+      "type": "object"
+    },
+    "SupermemoryCountDocumentMemoriesConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/list/documents/memory-counts.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "count_document_memories",
+          "default": "count_document_memories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "items": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "namespace",
+        "ids"
+      ],
+      "title": "SupermemoryCountDocumentMemoriesConfig",
+      "type": "object"
+    },
+    "SupermemoryDeleteConnectorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "deleteDocuments": {
+          "default": true,
+          "description": "Also permanently delete imported documents. Set false to keep them.",
+          "title": "Deletedocuments",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_connector",
+          "default": "delete_connector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "id"
+      ],
+      "title": "SupermemoryDeleteConnectorConfig",
+      "type": "object"
+    },
+    "SupermemoryDeleteDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "DELETE /ns/{namespace}/document.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_documents",
+          "default": "delete_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "items": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "namespace",
+        "ids"
+      ],
+      "title": "SupermemoryDeleteDocumentsConfig",
+      "type": "object"
+    },
+    "SupermemoryDeleteProfileBucketsConfig": {
+      "additionalProperties": false,
+      "description": "DELETE /ns/{namespace}/profile/buckets.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_profile_buckets",
+          "default": "delete_profile_buckets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "buckets": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$",
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Buckets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "namespace",
+        "buckets"
+      ],
+      "title": "SupermemoryDeleteProfileBucketsConfig",
+      "type": "object"
+    },
+    "SupermemoryForgetMemoriesConfig": {
+      "additionalProperties": false,
+      "description": "DELETE /ns/{namespace}/memories.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "forget_memories",
+          "default": "forget_memories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "namespace",
+        "ids"
+      ],
+      "title": "SupermemoryForgetMemoriesConfig",
+      "type": "object"
+    },
+    "SupermemoryForgetMemoriesSemanticConfig": {
+      "additionalProperties": false,
+      "description": "DELETE /ns/{namespace}/memories/semantic.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "forget_memories_semantic",
+          "default": "forget_memories_semantic",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "dryRun": {
+          "default": true,
+          "description": "Preview matching memories; set false explicitly to forget them.",
+          "title": "Dryrun",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "namespace",
+        "query"
+      ],
+      "title": "SupermemoryForgetMemoriesSemanticConfig",
+      "type": "object"
+    },
+    "SupermemoryGetConnectorConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns/{namespace}/connectors/{id}.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_connector",
+          "default": "get_connector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "id"
+      ],
+      "title": "SupermemoryGetConnectorConfig",
+      "type": "object"
+    },
+    "SupermemoryGetDocumentConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns/{namespace}/document/{id}.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "chunks",
+                  "memories"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "namespace",
+        "id"
+      ],
+      "title": "SupermemoryGetDocumentConfig",
+      "type": "object"
+    },
+    "SupermemoryGetMemoryConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns/{namespace}/memories/{id}.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_memory",
+          "default": "get_memory",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "related",
+                  "documents"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "relatedLimit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Relatedlimit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "namespace",
+        "id"
+      ],
+      "title": "SupermemoryGetMemoryConfig",
+      "type": "object"
+    },
+    "SupermemoryGetNamespaceConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns/{namespace}.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_namespace",
+          "default": "get_namespace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "SupermemoryGetNamespaceConfig",
+      "type": "object"
+    },
+    "SupermemoryGetOrganizationConfig": {
+      "additionalProperties": false,
+      "description": "GET /organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SupermemoryGetOrganizationConfig",
+      "type": "object"
+    },
+    "SupermemoryGetProfileBucketsConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns/{namespace}/profile/buckets.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_profile_buckets",
+          "default": "get_profile_buckets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "SupermemoryGetProfileBucketsConfig",
+      "type": "object"
+    },
+    "SupermemoryGetProfileConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/profile.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "buckets": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$",
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buckets"
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "SupermemoryGetProfileConfig",
+      "type": "object"
+    },
+    "SupermemoryListConnectorsConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns/{namespace}/connectors.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page; return pagination is preserved.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_connectors",
+          "default": "list_connectors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "notion",
+                "google-drive",
+                "onedrive",
+                "gmail",
+                "github",
+                "web-crawler",
+                "s3",
+                "granola"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider",
+          "enum": [
+            "notion",
+            "google-drive",
+            "onedrive",
+            "gmail",
+            "github",
+            "web-crawler",
+            "s3",
+            "granola"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "SupermemoryListConnectorsConfig",
+      "type": "object"
+    },
+    "SupermemoryListNamespacesConfig": {
+      "additionalProperties": false,
+      "description": "GET /ns.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page; return pagination is preserved.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_namespaces",
+          "default": "list_namespaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        }
+      },
+      "title": "SupermemoryListNamespacesConfig",
+      "type": "object"
+    },
+    "SupermemoryListResourcesConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/list/{type}.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page; return pagination is preserved.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_resources",
+          "default": "list_resources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "enum": [
+            "documents",
+            "chunks",
+            "memories"
+          ],
+          "title": "Resource type",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "sort": {
+          "default": "createdAt",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "position"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "type"
+      ],
+      "title": "SupermemoryListResourcesConfig",
+      "type": "object"
+    },
+    "SupermemorySearchConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/search.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "searchMode": {
+          "default": "hybrid",
+          "enum": [
+            "hybrid",
+            "memories",
+            "chunks"
+          ],
+          "title": "Searchmode",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "threshold": {
+          "default": 0.3,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Threshold",
+          "type": "number"
+        },
+        "rerank": {
+          "default": "none",
+          "enum": [
+            "none",
+            "order",
+            "aggregate"
+          ],
+          "title": "Rerank",
+          "type": "string"
+        },
+        "rewriteQuery": {
+          "default": false,
+          "title": "Rewritequery",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "namespace",
+        "query"
+      ],
+      "title": "SupermemorySearchConfig",
+      "type": "object"
+    },
+    "SupermemorySyncConnectorConfig": {
+      "additionalProperties": false,
+      "description": "POST /ns/{namespace}/connectors/{id}/sync.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "sync_connector",
+          "default": "sync_connector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "id"
+      ],
+      "title": "SupermemorySyncConnectorConfig",
+      "type": "object"
+    },
+    "SupermemoryUpdateDocumentConfig": {
+      "additionalProperties": false,
+      "description": "PATCH /ns/{namespace}/document/{id}.",
+      "properties": {
+        "taskType": {
+          "anyOf": [
+            {
+              "enum": [
+                "memory",
+                "superrag"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tasktype",
+          "enum": [
+            "memory",
+            "superrag"
+          ],
+          "x-enum-searchable": true
+        },
+        "dreaming": {
+          "anyOf": [
+            {
+              "enum": [
+                "dynamic",
+                "instant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instant processes independently and bills an extra operation per document.",
+          "title": "Dreaming",
+          "enum": [
+            "dynamic",
+            "instant"
+          ],
+          "x-enum-searchable": true
+        },
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "supportingContext": {
+          "anyOf": [
+            {
+              "maxLength": 1500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supportingcontext"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        }
+      },
+      "required": [
+        "namespace",
+        "id"
+      ],
+      "title": "SupermemoryUpdateDocumentConfig",
+      "type": "object"
+    },
+    "SupermemoryUpdateNamespaceConfig": {
+      "additionalProperties": false,
+      "description": "PATCH /ns/{namespace}.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_namespace",
+          "default": "update_namespace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "supportingContext": {
+          "anyOf": [
+            {
+              "maxLength": 1500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Set null to clear context.",
+          "title": "Supportingcontext"
+        }
+      },
+      "required": [
+        "namespace",
+        "supportingContext"
+      ],
+      "title": "SupermemoryUpdateNamespaceConfig",
+      "type": "object"
+    },
+    "SupermemoryUpsertProfileBucketsConfig": {
+      "additionalProperties": false,
+      "description": "PUT /ns/{namespace}/profile/buckets.",
+      "properties": {
+        "namespace": {
+          "description": "Namespace identifier, for example user_alex. Namespaces isolate users or projects.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_:-]+$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upsert_profile_buckets",
+          "default": "upsert_profile_buckets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "buckets": {
+          "patternProperties": {
+            "^[a-z0-9][a-z0-9_-]*$": {
+              "maxLength": 2000,
+              "type": "string"
+            }
+          },
+          "propertyNames": {
+            "maxLength": 64,
+            "minLength": 1
+          },
+          "title": "Buckets",
+          "type": "object"
+        }
+      },
+      "required": [
+        "namespace",
+        "buckets"
+      ],
+      "title": "SupermemoryUpsertProfileBucketsConfig",
+      "type": "object"
+    },
+    "_Document": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "description": "Plain text or a URL to supported content.",
+          "title": "Content",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional caller-defined document ID.",
+          "title": "Id"
+        },
+        "supportingContext": {
+          "anyOf": [
+            {
+              "maxLength": 1500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supportingcontext"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source content date in ISO 8601 format.",
+          "title": "Date"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "_Document",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_document": "#/$defs/SupermemoryAddDocumentConfig",
+          "batch_add_documents": "#/$defs/SupermemoryBatchAddDocumentsConfig",
+          "count_document_memories": "#/$defs/SupermemoryCountDocumentMemoriesConfig",
+          "delete_connector": "#/$defs/SupermemoryDeleteConnectorConfig",
+          "delete_documents": "#/$defs/SupermemoryDeleteDocumentsConfig",
+          "delete_profile_buckets": "#/$defs/SupermemoryDeleteProfileBucketsConfig",
+          "forget_memories": "#/$defs/SupermemoryForgetMemoriesConfig",
+          "forget_memories_semantic": "#/$defs/SupermemoryForgetMemoriesSemanticConfig",
+          "get_connector": "#/$defs/SupermemoryGetConnectorConfig",
+          "get_document": "#/$defs/SupermemoryGetDocumentConfig",
+          "get_memory": "#/$defs/SupermemoryGetMemoryConfig",
+          "get_namespace": "#/$defs/SupermemoryGetNamespaceConfig",
+          "get_organization": "#/$defs/SupermemoryGetOrganizationConfig",
+          "get_profile": "#/$defs/SupermemoryGetProfileConfig",
+          "get_profile_buckets": "#/$defs/SupermemoryGetProfileBucketsConfig",
+          "list_connectors": "#/$defs/SupermemoryListConnectorsConfig",
+          "list_namespaces": "#/$defs/SupermemoryListNamespacesConfig",
+          "list_resources": "#/$defs/SupermemoryListResourcesConfig",
+          "search": "#/$defs/SupermemorySearchConfig",
+          "sync_connector": "#/$defs/SupermemorySyncConnectorConfig",
+          "update_document": "#/$defs/SupermemoryUpdateDocumentConfig",
+          "update_namespace": "#/$defs/SupermemoryUpdateNamespaceConfig",
+          "upsert_profile_buckets": "#/$defs/SupermemoryUpsertProfileBucketsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SupermemoryAddDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryBatchAddDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryUpdateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryDeleteDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemorySearchConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetProfileBucketsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryUpsertProfileBucketsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryDeleteProfileBucketsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryForgetMemoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryForgetMemoriesSemanticConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryListResourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryListConnectorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryDeleteConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemorySyncConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryListNamespacesConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetNamespaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryUpdateNamespaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryGetMemoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SupermemoryCountDocumentMemoriesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SupermemoryAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Supermemory Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
