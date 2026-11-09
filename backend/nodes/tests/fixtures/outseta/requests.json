@@ -1,0 +1,251 @@
+[
+  {
+    "config": {
+      "operation": "list_people"
+    },
+    "method": "GET",
+    "path": "crm/people",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_person",
+      "person_uid": "p123"
+    },
+    "method": "GET",
+    "path": "crm/people/p123"
+  },
+  {
+    "config": {
+      "operation": "create_person",
+      "email": "person@example.com",
+      "first_name": "Alex"
+    },
+    "method": "POST",
+    "path": "crm/people",
+    "body": {
+      "Email": "person@example.com",
+      "FirstName": "Alex"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_person",
+      "person_uid": "p123",
+      "email": "person@example.com",
+      "first_name": "Alex"
+    },
+    "method": "PUT",
+    "path": "crm/people/p123",
+    "body": {
+      "Email": "person@example.com",
+      "FirstName": "Alex"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_person",
+      "person_uid": "p123"
+    },
+    "method": "DELETE",
+    "path": "crm/people/p123"
+  },
+  {
+    "config": {
+      "operation": "list_accounts"
+    },
+    "method": "GET",
+    "path": "crm/accounts",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_account",
+      "account_uid": "p123"
+    },
+    "method": "GET",
+    "path": "crm/accounts/p123"
+  },
+  {
+    "config": {
+      "operation": "create_account",
+      "name": "Fixture"
+    },
+    "method": "POST",
+    "path": "crm/accounts",
+    "body": {
+      "Name": "Fixture"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_account",
+      "account_uid": "p123",
+      "name": "Fixture"
+    },
+    "method": "PUT",
+    "path": "crm/accounts/p123",
+    "body": {
+      "Name": "Fixture"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_account",
+      "account_uid": "p123"
+    },
+    "method": "DELETE",
+    "path": "crm/accounts/p123"
+  },
+  {
+    "config": {
+      "operation": "list_deals"
+    },
+    "method": "GET",
+    "path": "crm/deals",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_deal",
+      "deal_uid": "p123"
+    },
+    "method": "GET",
+    "path": "crm/deals/p123"
+  },
+  {
+    "config": {
+      "operation": "create_deal",
+      "name": "Fixture"
+    },
+    "method": "POST",
+    "path": "crm/deals",
+    "body": {
+      "Name": "Fixture"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_deal",
+      "deal_uid": "p123",
+      "name": "Fixture"
+    },
+    "method": "PUT",
+    "path": "crm/deals/p123",
+    "body": {
+      "Name": "Fixture"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_deal",
+      "deal_uid": "p123"
+    },
+    "method": "DELETE",
+    "path": "crm/deals/p123"
+  },
+  {
+    "config": {
+      "operation": "list_email_lists"
+    },
+    "method": "GET",
+    "path": "email/lists",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_plans"
+    },
+    "method": "GET",
+    "path": "billing/plans",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_subscriptions"
+    },
+    "method": "GET",
+    "path": "billing/subscriptions",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "billing/invoices",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_email_list",
+      "email_list_uid": "list1"
+    },
+    "method": "GET",
+    "path": "email/lists/list1"
+  },
+  {
+    "config": {
+      "operation": "list_email_subscribers",
+      "email_list_uid": "list1"
+    },
+    "method": "GET",
+    "path": "email/lists/list1/subscriptions",
+    "query": {
+      "limit": "25",
+      "offset": "0"
+    }
+  },
+  {
+    "config": {
+      "operation": "subscribe_person",
+      "email_list_uid": "list1",
+      "person_uid": "p123"
+    },
+    "method": "POST",
+    "path": "email/lists/list1/subscriptions",
+    "body": {
+      "Person": {
+        "Uid": "p123"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "unsubscribe_person",
+      "email_list_uid": "list1",
+      "subscription_uid": "sub1"
+    },
+    "method": "DELETE",
+    "path": "email/lists/list1/subscriptions/sub1"
+  },
+  {
+    "config": {
+      "operation": "get_plan",
+      "plan_uid": "plan1"
+    },
+    "method": "GET",
+    "path": "billing/plans/plan1"
+  }
+]
