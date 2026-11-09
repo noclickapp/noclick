@@ -1,0 +1,256 @@
+{
+  "source": "https://rest.method.me/specs/v1/spec.json",
+  "responses": {
+    "GET /api/v1/files": [
+      {
+        "id": "6bdfe238-82b7-4dc1-965c-0972c2748ba7",
+        "filename": "report.pdf",
+        "fileExtension": "pdf",
+        "size": 216363,
+        "createdBy": "MethodSupport MethodSupport",
+        "modifiedBy": "MethodSupport MethodSupport",
+        "createdDate": "2026-11-09T08:13:17.3731526Z",
+        "lastModifiedDate": "2026-11-09T08:13:17.3731527Z",
+        "tenantId": 1,
+        "links": null
+      },
+      {
+        "id": "f5ad86d9-9563-4218-93fa-b12fea4899e2",
+        "filename": "profile.pdf",
+        "fileExtension": "pdf",
+        "size": 25000,
+        "createdBy": "MethodSupport MethodSupport",
+        "modifiedBy": "MethodSupport MethodSupport",
+        "createdDate": "2026-11-09T08:13:17.3731539Z",
+        "lastModifiedDate": "2026-11-09T08:13:17.373154Z",
+        "tenantId": 1,
+        "links": null
+      }
+    ],
+    "POST /api/v1/files": {
+      "id": "0fad01ee-dc2e-4b95-b051-ace9176c888a",
+      "filename": "report.pdf",
+      "fileExtension": "pdf",
+      "size": 216363,
+      "createdBy": "MethodSupport MethodSupport",
+      "modifiedBy": "MethodSupport MethodSupport",
+      "createdDate": "2026-11-09T08:13:17.3767283Z",
+      "lastModifiedDate": "2026-11-09T08:13:17.3767284Z",
+      "tenantId": 1,
+      "links": null
+    },
+    "GET /api/v1/tables": {
+      "count": 6,
+      "value": [
+        {
+          "name": "Activity",
+          "source": "Method",
+          "canCreate": true,
+          "canUpdate": true,
+          "canDelete": true
+        },
+        {
+          "name": "Contacts",
+          "source": "Method",
+          "canCreate": true,
+          "canUpdate": true,
+          "canDelete": true
+        },
+        {
+          "name": "Customer",
+          "source": "QuickBooks",
+          "canCreate": true,
+          "canUpdate": true,
+          "canDelete": true
+        },
+        {
+          "name": "Invoice",
+          "source": "QuickBooks",
+          "canCreate": true,
+          "canUpdate": true,
+          "canDelete": true
+        },
+        {
+          "name": "Company",
+          "source": "QuickBooks",
+          "canCreate": false,
+          "canUpdate": false,
+          "canDelete": false
+        },
+        {
+          "name": "Shoes",
+          "source": "Custom",
+          "canCreate": true,
+          "canUpdate": true,
+          "canDelete": true
+        }
+      ]
+    },
+    "GET /api/v1/tables/{table}/fields": {
+      "name": "Invoice",
+      "source": "QuickBooks",
+      "canCreate": true,
+      "canUpdate": true,
+      "canDelete": true,
+      "fields": [
+        {
+          "name": "ARAccount",
+          "type": "DropDown",
+          "description": "Accounts receivable account for this transaction.",
+          "required": false,
+          "unique": false,
+          "creatable": true,
+          "mutable": true,
+          "maxSize": null,
+          "defaultValue": null,
+          "references": "Account",
+          "referencesField": "FullName",
+          "source": "QuickBooks"
+        },
+        {
+          "name": "Customer",
+          "type": "DropDown",
+          "description": "The customer this invoice is billed to.",
+          "required": true,
+          "unique": false,
+          "creatable": true,
+          "mutable": true,
+          "maxSize": null,
+          "defaultValue": null,
+          "references": "Customer",
+          "referencesField": "Name",
+          "source": "QuickBooks"
+        },
+        {
+          "name": "Customer_RecordID",
+          "type": "DropDown",
+          "description": null,
+          "required": true,
+          "unique": false,
+          "creatable": true,
+          "mutable": true,
+          "maxSize": null,
+          "defaultValue": null,
+          "references": "Customer",
+          "referencesField": "Name",
+          "source": "Method"
+        },
+        {
+          "name": "DueDate",
+          "type": "DateTime",
+          "description": "Date payment is due.",
+          "required": false,
+          "unique": false,
+          "creatable": true,
+          "mutable": true,
+          "maxSize": null,
+          "defaultValue": null,
+          "references": null,
+          "referencesField": null,
+          "source": "QuickBooks"
+        },
+        {
+          "name": "Memo",
+          "type": "Text",
+          "description": null,
+          "required": false,
+          "unique": false,
+          "creatable": true,
+          "mutable": true,
+          "maxSize": 4095,
+          "defaultValue": null,
+          "references": null,
+          "referencesField": null,
+          "source": "QuickBooks"
+        },
+        {
+          "name": "RefNumber",
+          "type": "Text",
+          "description": "Invoice number.",
+          "required": false,
+          "unique": true,
+          "creatable": true,
+          "mutable": true,
+          "maxSize": 21,
+          "defaultValue": null,
+          "references": null,
+          "referencesField": null,
+          "source": "QuickBooks"
+        },
+        {
+          "name": "TotalAmount",
+          "type": "Money",
+          "description": "Total of all line items, including tax.",
+          "required": false,
+          "unique": false,
+          "creatable": false,
+          "mutable": false,
+          "maxSize": null,
+          "defaultValue": null,
+          "references": null,
+          "referencesField": null,
+          "source": "QuickBooks"
+        }
+      ]
+    },
+    "GET /api/v1/tables/{table}/{recordId}": {
+      "RecordID": 5,
+      "Email": "david@landscaping.com",
+      "FirstName": "David",
+      "IsOptOutOfBilling": false,
+      "IsOptOutOfMarketing": false,
+      "LastName": "Henderson",
+      "Name": "David Henderson",
+      "Note": null,
+      "Phone": "(111)111-1111",
+      "PortalPassword": null,
+      "PortalUserName": null,
+      "SpecialType": "Contact",
+      "Title": null,
+      "Mobile": "",
+      "FaceBookUserName": null,
+      "LinkedInPublicUserName": null,
+      "TwitterUserName": null,
+      "Website": null,
+      "AltPhone": "",
+      "Pager": null,
+      "TagList": "Personas",
+      "InstagramUserName": null,
+      "LastModifiedDate": "2019-04-20T19:29:11.877",
+      "Entity": "Landscaping Services",
+      "Entity_RecordID": 280,
+      "AccountNumber": null,
+      "Balance": 36000.0,
+      "BillAddressAddr1": "Landscaping Services",
+      "BillAddressAddr2": "12 N Jackson St",
+      "BillAddressAddr3": null,
+      "BillAddressAddr4": null,
+      "BillAddressAddr5": null,
+      "BillAddressCity": "San Jose",
+      "BillAddressCountry": "USA",
+      "BillAddressNote": null,
+      "IsEntityActive": true,
+      "TenantID": 1
+    },
+    "GET /api/v1/tables/{table}": {
+      "count": 5,
+      "nextLink": "https://rest.method.me/v1/tables/Contacts?skip=2&top=2&select=RecordID,FirstName,LastName,Phone,Email&filter=FirstName eq 'Amy'&orderby=RecordID desc",
+      "value": [
+        {
+          "recordId": 1,
+          "firstName": "Amy",
+          "lastName": "Crenshaw",
+          "phone": "111-222-3333",
+          "email": "amy.c@gmail.com"
+        },
+        {
+          "recordId": 1,
+          "firstName": "Amy",
+          "lastName": "Shaw",
+          "phone": "111-000-1234",
+          "email": "amy_shaw@gmail.com"
+        }
+      ]
+    }
+  }
+}
