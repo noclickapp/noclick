@@ -14,6 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 export const GenesisCloudNode: NodeDefinition = {
     type: 'automation-genesiscloud',
     label: 'Genesis Cloud',
+    category: 'cloud-hosting',
     description: 'Read existing instance inventory and selected instance metadata',
     keywords: ['genesiscloud', 'genesis cloud', 'cloud', 'instance', 'inventory', 'compute'],
     Icon: OfficialBrandIcon,
