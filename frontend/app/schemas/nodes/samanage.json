@@ -1,0 +1,1555 @@
+{
+  "$defs": {
+    "SamanageCreateChangeConfig": {
+      "additionalProperties": false,
+      "description": "Create change in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "create_change",
+          "default": "create_change",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "change_type": {
+          "title": "Change Type",
+          "type": "integer"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "requester_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requester Email"
+        },
+        "assignee_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Email"
+        },
+        "change_plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Change Plan"
+        },
+        "rollback_plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rollback Plan"
+        },
+        "test_plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test Plan"
+        },
+        "planned_start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planned Start At"
+        },
+        "planned_end_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planned End At"
+        }
+      },
+      "required": [
+        "name",
+        "change_type"
+      ],
+      "title": "SamanageCreateChangeConfig",
+      "type": "object"
+    },
+    "SamanageCreateIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Create incident in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "create_incident",
+          "default": "create_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "state_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Id"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        },
+        "requester_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requester Email"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id"
+        },
+        "tag_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag List"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SamanageCreateIncidentConfig",
+      "type": "object"
+    },
+    "SamanageCreateProblemConfig": {
+      "additionalProperties": false,
+      "description": "Create problem in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "create_problem",
+          "default": "create_problem",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "requester_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requester Email"
+        },
+        "assignee_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Email"
+        },
+        "root_cause": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Root Cause"
+        },
+        "symptoms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symptoms"
+        },
+        "workaround": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workaround"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SamanageCreateProblemConfig",
+      "type": "object"
+    },
+    "SamanageCreateSolutionConfig": {
+      "additionalProperties": false,
+      "description": "Create solution in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "create_solution",
+          "default": "create_solution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "tag_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag List"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SamanageCreateSolutionConfig",
+      "type": "object"
+    },
+    "SamanageCreateUserConfig": {
+      "additionalProperties": false,
+      "description": "Create user in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Phone"
+        },
+        "disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disabled"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "title": "SamanageCreateUserConfig",
+      "type": "object"
+    },
+    "SamanageGetChangeConfig": {
+      "additionalProperties": false,
+      "description": "Get change in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "get_change",
+          "default": "get_change",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "change_id": {
+          "title": "Change ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change_id"
+      ],
+      "title": "SamanageGetChangeConfig",
+      "type": "object"
+    },
+    "SamanageGetIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Get incident in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "get_incident",
+          "default": "get_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "SamanageGetIncidentConfig",
+      "type": "object"
+    },
+    "SamanageGetProblemConfig": {
+      "additionalProperties": false,
+      "description": "Get problem in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "get_problem",
+          "default": "get_problem",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "problem_id": {
+          "title": "Problem ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "problem_id"
+      ],
+      "title": "SamanageGetProblemConfig",
+      "type": "object"
+    },
+    "SamanageGetSolutionConfig": {
+      "additionalProperties": false,
+      "description": "Get solution in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "get_solution",
+          "default": "get_solution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "solution_id": {
+          "title": "Solution ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "solution_id"
+      ],
+      "title": "SamanageGetSolutionConfig",
+      "type": "object"
+    },
+    "SamanageGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get user in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SamanageGetUserConfig",
+      "type": "object"
+    },
+    "SamanageListChangeConfig": {
+      "additionalProperties": false,
+      "description": "List changes in SolarWinds Service Desk.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; request next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Maximum records on this page. One request per execution.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_changes",
+          "default": "list_changes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SamanageListChangeConfig",
+      "type": "object"
+    },
+    "SamanageListIncidentConfig": {
+      "additionalProperties": false,
+      "description": "List incidents in SolarWinds Service Desk.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; request next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Maximum records on this page. One request per execution.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_incidents",
+          "default": "list_incidents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SamanageListIncidentConfig",
+      "type": "object"
+    },
+    "SamanageListProblemConfig": {
+      "additionalProperties": false,
+      "description": "List problems in SolarWinds Service Desk.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; request next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Maximum records on this page. One request per execution.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_problems",
+          "default": "list_problems",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SamanageListProblemConfig",
+      "type": "object"
+    },
+    "SamanageListSolutionConfig": {
+      "additionalProperties": false,
+      "description": "List solutions in SolarWinds Service Desk.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; request next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Maximum records on this page. One request per execution.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_solutions",
+          "default": "list_solutions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SamanageListSolutionConfig",
+      "type": "object"
+    },
+    "SamanageListUserConfig": {
+      "additionalProperties": false,
+      "description": "List users in SolarWinds Service Desk.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; request next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "Maximum records on this page. One request per execution.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SamanageListUserConfig",
+      "type": "object"
+    },
+    "SamanageTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "samanage_api_token",
+          "default": "samanage_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "US, Europe, or Asia Pacific / Japan.",
+          "enum": [
+            "us",
+            "eu",
+            "apj"
+          ],
+          "title": "Account region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "SolarWinds Service Desk API Token",
+      "type": "object",
+      "x-credential-instructions": "In SolarWinds Service Desk, open Setup > Users & Groups > Users, select your user, and copy an API token. An administrator can generate a token. Paste only the token and select your account's region. Your user's permissions apply to every operation.",
+      "x-credential-url": "https://documentation.solarwinds.com/en/success_center/swsd/content/completeguidetoswsd/token-authentication-for-api-integration.htm"
+    },
+    "SamanageUpdateChangeConfig": {
+      "additionalProperties": false,
+      "description": "Update change in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "update_change",
+          "default": "update_change",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "change_id": {
+          "title": "Change ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "change_type": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Change Type"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "requester_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requester Email"
+        },
+        "assignee_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Email"
+        },
+        "change_plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Change Plan"
+        },
+        "rollback_plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rollback Plan"
+        },
+        "test_plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test Plan"
+        },
+        "planned_start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planned Start At"
+        },
+        "planned_end_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planned End At"
+        }
+      },
+      "required": [
+        "change_id"
+      ],
+      "title": "SamanageUpdateChangeConfig",
+      "type": "object"
+    },
+    "SamanageUpdateIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Update incident in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "update_incident",
+          "default": "update_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "state_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Id"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        },
+        "requester_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requester Email"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id"
+        },
+        "tag_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag List"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "SamanageUpdateIncidentConfig",
+      "type": "object"
+    },
+    "SamanageUpdateProblemConfig": {
+      "additionalProperties": false,
+      "description": "Update problem in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "update_problem",
+          "default": "update_problem",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "problem_id": {
+          "title": "Problem ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "requester_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requester Email"
+        },
+        "assignee_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Email"
+        },
+        "root_cause": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Root Cause"
+        },
+        "symptoms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symptoms"
+        },
+        "workaround": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workaround"
+        }
+      },
+      "required": [
+        "problem_id"
+      ],
+      "title": "SamanageUpdateProblemConfig",
+      "type": "object"
+    },
+    "SamanageUpdateSolutionConfig": {
+      "additionalProperties": false,
+      "description": "Update solution in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "update_solution",
+          "default": "update_solution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "solution_id": {
+          "title": "Solution ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "tag_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag List"
+        }
+      },
+      "required": [
+        "solution_id"
+      ],
+      "title": "SamanageUpdateSolutionConfig",
+      "type": "object"
+    },
+    "SamanageUpdateUserConfig": {
+      "additionalProperties": false,
+      "description": "Update user in SolarWinds Service Desk.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Phone"
+        },
+        "disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disabled"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SamanageUpdateUserConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_change": "#/$defs/SamanageCreateChangeConfig",
+          "create_incident": "#/$defs/SamanageCreateIncidentConfig",
+          "create_problem": "#/$defs/SamanageCreateProblemConfig",
+          "create_solution": "#/$defs/SamanageCreateSolutionConfig",
+          "create_user": "#/$defs/SamanageCreateUserConfig",
+          "get_change": "#/$defs/SamanageGetChangeConfig",
+          "get_incident": "#/$defs/SamanageGetIncidentConfig",
+          "get_problem": "#/$defs/SamanageGetProblemConfig",
+          "get_solution": "#/$defs/SamanageGetSolutionConfig",
+          "get_user": "#/$defs/SamanageGetUserConfig",
+          "list_changes": "#/$defs/SamanageListChangeConfig",
+          "list_incidents": "#/$defs/SamanageListIncidentConfig",
+          "list_problems": "#/$defs/SamanageListProblemConfig",
+          "list_solutions": "#/$defs/SamanageListSolutionConfig",
+          "list_users": "#/$defs/SamanageListUserConfig",
+          "update_change": "#/$defs/SamanageUpdateChangeConfig",
+          "update_incident": "#/$defs/SamanageUpdateIncidentConfig",
+          "update_problem": "#/$defs/SamanageUpdateProblemConfig",
+          "update_solution": "#/$defs/SamanageUpdateSolutionConfig",
+          "update_user": "#/$defs/SamanageUpdateUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SamanageListIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageGetIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageCreateIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageUpdateIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageListUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageListSolutionConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageGetSolutionConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageCreateSolutionConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageUpdateSolutionConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageListProblemConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageGetProblemConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageCreateProblemConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageUpdateProblemConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageListChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageGetChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageCreateChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/SamanageUpdateChangeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SamanageTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Samanage Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
