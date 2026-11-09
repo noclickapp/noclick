@@ -8,7 +8,7 @@ import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMo
 
 /** Something moved in the account's channels: new messages, one message's reactions, a channel itself, or a workspace. */
 export interface ChannelChange {
-    kind: 'message' | 'reaction' | 'channel' | 'workspace';
+    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace';
     channelId?: string;
     workspaceId?: string;
     messageId?: string;
