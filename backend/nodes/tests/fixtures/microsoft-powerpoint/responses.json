@@ -1,0 +1,17 @@
+{
+  "account": {"id": "user1", "displayName": "Fixture Account", "mail": "fixture@example.test"},
+  "drive": {"id": "drive1", "driveType": "business", "owner": {"user": {"displayName": "Fixture Account"}}},
+  "folder": {"id": "folder1", "name": "root", "folder": {"childCount": 3}},
+  "presentation": {"id": "deck1", "name": "Quarterly Review.pptx", "file": {"mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"}, "parentReference": {"driveId": "drive1", "id": "folder1"}},
+  "children": {"value": [
+    {"id": "deck1", "name": "Quarterly Review.pptx", "file": {"mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"}},
+    {"id": "notes1", "name": "notes.docx", "file": {}},
+    {"id": "folder2", "name": "folder.pptx", "folder": {}}
+  ], "@odata.nextLink": "https://graph.microsoft.com/v1.0/drives/drive1/items/folder1/children?$skiptoken=next"},
+  "preview": {"getUrl": "https://tenant.sharepoint.com/preview/deck1"},
+  "permission": {"id": "perm1", "roles": ["read"], "link": {"type": "view", "scope": "organization", "webUrl": "https://tenant.sharepoint.com/s/deck1"}},
+  "permissions": {"value": [{"id": "perm1", "roles": ["read"]}]},
+  "version": {"id": "1.0", "size": 1024, "lastModifiedDateTime": "2026-01-01T12:00:00Z"},
+  "versions": {"value": [{"id": "1.0", "size": 1024}]},
+  "thumbnails": {"value": [{"id": "0", "small": {"url": "https://tenant.sharepoint.com/thumb/deck1", "width": 96, "height": 72}}]}
+}

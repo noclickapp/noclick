@@ -1,0 +1,353 @@
+{
+  "GET /me": {
+    "body": {
+      "businessPhones": [
+        "+1 425 555 0109"
+      ],
+      "displayName": "Adele Vance",
+      "givenName": "Adele",
+      "jobTitle": "Retail Manager",
+      "mail": "AdeleV@contoso.com",
+      "mobilePhone": "+1 425 555 0109",
+      "officeLocation": "18/2111",
+      "preferredLanguage": "en-US",
+      "surname": "Vance",
+      "userPrincipalName": "AdeleV@contoso.com",
+      "id": "87d349ed-44d7-43e1-9a83-5f2406dee5bd"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-get.md"
+  },
+  "GET /me/drive": {
+    "body": {
+      "id": "b!t18F8ybsHUq1z3LTz8xvZqP8zaSWjkFNhsME-Fepo75dTf9vQKfeRblBZjoSQrd7",
+      "driveType": "business",
+      "owner": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Ryan Gregg"
+        }
+      },
+      "quota": {
+        "deleted": 256938,
+        "remaining": 1099447353539,
+        "state": "normal",
+        "total": 1099511627776
+      }
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/drive-get.md"
+  },
+  "GET /drives/{drive-id}/root": {
+    "body": {
+      "createdBy": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Ryan Gregg"
+        }
+      },
+      "createdDateTime": "2016-03-21T20:01:37Z",
+      "cTag": "\"c:{86EB4C8E-D20D-46B9-AD41-23B8868DDA8A},0\"",
+      "eTag": "\"{86EB4C8E-D20D-46B9-AD41-23B8868DDA8A},1\"",
+      "folder": {
+        "childCount": 120
+      },
+      "id": "01NKDM7HMOJTVYMDOSXFDK2QJDXCDI3WUK",
+      "lastModifiedBy": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Ryan Gregg"
+        }
+      },
+      "lastModifiedDateTime": "2016-03-21T20:01:37Z",
+      "name": "OneDrive",
+      "root": {},
+      "size": 157286400,
+      "webUrl": "https://contoso-my.sharepoint.com/personal/rgregg_contoso_com/Documents"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-get.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}/children": {
+    "body": {
+      "value": [
+        {
+          "name": "myfile.jpg",
+          "size": 2048,
+          "file": {}
+        },
+        {
+          "name": "Documents",
+          "folder": {
+            "childCount": 4
+          }
+        },
+        {
+          "name": "Photos",
+          "folder": {
+            "childCount": 203
+          }
+        },
+        {
+          "name": "my sheet(1).xlsx",
+          "size": 197
+        }
+      ],
+      "@odata.nextLink": "https://..."
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-list-children.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}": {
+    "body": {
+      "createdBy": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Ryan Gregg"
+        }
+      },
+      "createdDateTime": "2016-03-21T20:01:37Z",
+      "cTag": "\"c:{86EB4C8E-D20D-46B9-AD41-23B8868DDA8A},0\"",
+      "eTag": "\"{86EB4C8E-D20D-46B9-AD41-23B8868DDA8A},1\"",
+      "folder": {
+        "childCount": 120
+      },
+      "id": "01NKDM7HMOJTVYMDOSXFDK2QJDXCDI3WUK",
+      "lastModifiedBy": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Ryan Gregg"
+        }
+      },
+      "lastModifiedDateTime": "2016-03-21T20:01:37Z",
+      "name": "OneDrive",
+      "root": {},
+      "size": 157286400,
+      "webUrl": "https://contoso-my.sharepoint.com/personal/rgregg_contoso_com/Documents"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-get.md"
+  },
+  "PATCH /drives/{drive-id}/items/{driveItem-id}": {
+    "body": {
+      "id": "01NKDM7HMOJTVYMDOSXFDK2QJDXCDI3WUK",
+      "name": "new-file-name.docx",
+      "file": {}
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-update.md"
+  },
+  "POST /drives/{drive-id}/items/{driveItem-id}/preview": {
+    "body": {
+      "getUrl": "https://www.onedrive.com/embed?foo=bar&bar=baz",
+      "postParameters": "param1=value&param2=another%20value",
+      "postUrl": "https://www.onedrive.com/embed_by_post"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-preview.md"
+  },
+  "POST /drives/{drive-id}/items/{driveItem-id}/createLink": {
+    "body": {
+      "id": "123ABC",
+      "roles": [
+        "read"
+      ],
+      "link": {
+        "type": "embed",
+        "webHtml": "<IFRAME src=\"https://onedrive.live.com/...\"></IFRAME>",
+        "webUrl": "https://onedrive.live.com/...",
+        "application": {
+          "id": "1234",
+          "displayName": "Sample Application"
+        }
+      }
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-createlink.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}/permissions": {
+    "body": {
+      "value": [
+        {
+          "id": "1",
+          "roles": [
+            "write"
+          ],
+          "link": {
+            "webUrl": "https://onedrive.live.com/redir?resid=5D33DD65C6932946!70859&authkey=!AL7N1QAfSWcjNU8&ithint=folder%2cgif",
+            "type": "edit"
+          }
+        },
+        {
+          "id": "2",
+          "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
+          "roles": [
+            "write"
+          ],
+          "grantedTo": {
+            "user": {
+              "id": "5D33DD65C6932946",
+              "displayName": "Robin Danielsen"
+            }
+          },
+          "grantedToV2": {
+            "user": {
+              "id": "5D33DD65C6932946",
+              "displayName": "Robin Danielsen"
+            },
+            "siteUser": {
+              "id": "1",
+              "displayName": "Robin Danielsen",
+              "loginName": "Robin Danielsen"
+            }
+          },
+          "inheritedFrom": {
+            "driveId": "1234567890ABD",
+            "id": "1234567890ABC!123",
+            "path": "/drive/root:/Documents"
+          }
+        },
+        {
+          "id": "3",
+          "roles": [
+            "write"
+          ],
+          "link": {
+            "webUrl": "https://onedrive.live.com/redir?resid=5D33DD65C6932946!70859&authkey=!AL7N1QAfSWcjNU8&ithint=folder%2cgif",
+            "type": "edit",
+            "application": {
+              "id": "12345",
+              "displayName": "Contoso Time Manager"
+            }
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-list-permissions.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}": {
+    "body": {
+      "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
+      "grantedTo": {
+        "user": {
+          "displayName": "Robin Danielsen",
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12"
+        }
+      },
+      "grantedToV2": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Robin Danielsen"
+        },
+        "siteUser": {
+          "id": "1",
+          "displayName": "Robin Danielsen",
+          "loginName": "Robin Danielsen"
+        }
+      },
+      "id": "1",
+      "roles": [
+        "write"
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/permission-get.md"
+  },
+  "PATCH /drives/{drive-id}/items/{driveItem-id}/permissions/{permission-id}": {
+    "body": {
+      "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
+      "grantedTo": {
+        "user": {
+          "displayName": "Robin Danielsen",
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12"
+        }
+      },
+      "grantedToV2": {
+        "user": {
+          "id": "efee1b77-fb3b-4f65-99d6-274c11914d12",
+          "displayName": "Robin Danielsen"
+        },
+        "siteUser": {
+          "id": "1",
+          "displayName": "Robin Danielsen",
+          "loginName": "Robin Danielsen"
+        }
+      },
+      "id": "1",
+      "roles": [
+        "read"
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/permission-update.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}/versions": {
+    "body": {
+      "value": [
+        {
+          "id": "3.0",
+          "lastModifiedBy": {
+            "user": {
+              "id": "CE251278-EF9E-4FE5-833C-1D89EEAE68E0",
+              "displayName": "Ryan Gregg"
+            }
+          },
+          "lastModifiedDateTime": "2017-09-14T12:34:53.912Z",
+          "size": 123
+        },
+        {
+          "id": "2.0",
+          "lastModifiedBy": {
+            "user": {
+              "id": "CE251278-EF9E-4FE5-833C-1D89EEAE68E0",
+              "displayName": "Ryan Gregg"
+            }
+          },
+          "lastModifiedDateTime": "2017-09-11T10:21:03.000Z",
+          "size": 62
+        },
+        {
+          "id": "1.0",
+          "lastModifiedBy": {
+            "user": {
+              "id": "CE251278-EF9E-4FE5-833C-1D89EEAE68E0",
+              "displayName": "Ryan Gregg"
+            }
+          },
+          "lastModifiedDateTime": "2017-09-10T15:20:01.125Z",
+          "size": 16
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-list-versions.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}/versions/{driveItemVersion-id}": {
+    "body": {
+      "id": "D4990684-58CE-4FAB-9B87-D6C49E74F298",
+      "lastModifiedBy": {
+        "user": {
+          "id": "CE251278-EF9E-4FE5-833C-1D89EEAE68E0",
+          "displayName": "Iheanetu Olamma"
+        }
+      },
+      "lastModifiedDateTime": "2017-09-14T12:34:53.912Z",
+      "size": 123
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitemversion-get.md"
+  },
+  "GET /drives/{drive-id}/items/{driveItem-id}/thumbnails": {
+    "body": {
+      "value": [
+        {
+          "id": "0",
+          "small": {
+            "height": 64,
+            "width": 96,
+            "url": "https://sn3302files..."
+          },
+          "medium": {
+            "height": 117,
+            "width": 176,
+            "url": "https://sn3302files..."
+          },
+          "large": {
+            "height": 533,
+            "width": 800,
+            "url": "https://sn3302files..."
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/driveitem-list-thumbnails.md"
+  }
+}
