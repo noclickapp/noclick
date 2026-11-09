@@ -1,0 +1,1047 @@
+{
+  "$defs": {
+    "AddChannelMember": {
+      "additionalProperties": false,
+      "description": "Add one user to a channel.",
+      "properties": {
+        "operation": {
+          "const": "add_channel_member",
+          "default": "add_channel_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id",
+        "user_id"
+      ],
+      "title": "AddChannelMember",
+      "type": "object"
+    },
+    "AddReaction": {
+      "additionalProperties": false,
+      "description": "React to a post as the supplied authenticated user ID.",
+      "properties": {
+        "operation": {
+          "const": "add_reaction",
+          "default": "add_reaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "emoji_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_+-]+$",
+          "title": "Emoji Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "post_id",
+        "emoji_name"
+      ],
+      "title": "AddReaction",
+      "type": "object"
+    },
+    "CreateChannel": {
+      "additionalProperties": false,
+      "description": "Create a public or private channel.",
+      "properties": {
+        "operation": {
+          "const": "create_channel",
+          "default": "create_channel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Team Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 64,
+          "minLength": 2,
+          "pattern": "^[a-z0-9][a-z0-9_-]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "O",
+          "description": "O: public; P: private.",
+          "enum": [
+            "O",
+            "P"
+          ],
+          "title": "Channel visibility",
+          "type": "string"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header"
+        }
+      },
+      "required": [
+        "team_id",
+        "name",
+        "display_name"
+      ],
+      "title": "CreateChannel",
+      "type": "object"
+    },
+    "CreateDirectChannel": {
+      "additionalProperties": false,
+      "description": "Create or retrieve the direct channel between two users.",
+      "properties": {
+        "operation": {
+          "const": "create_direct_channel",
+          "default": "create_direct_channel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "First User Id",
+          "type": "string"
+        },
+        "second_user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Second User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "first_user_id",
+        "second_user_id"
+      ],
+      "title": "CreateDirectChannel",
+      "type": "object"
+    },
+    "CreatePost": {
+      "additionalProperties": false,
+      "description": "Send a Markdown message or reply in a channel.",
+      "properties": {
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 16383,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "root_id": {
+          "anyOf": [
+            {
+              "description": "Mattermost 26-character resource ID.",
+              "pattern": "^[a-z0-9]{26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Root message ID when replying to a thread.",
+          "title": "Root Id"
+        },
+        "file_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "Mattermost 26-character resource ID.",
+                "pattern": "^[a-z0-9]{26}$",
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of files already uploaded to this server.",
+          "title": "File Ids"
+        }
+      },
+      "required": [
+        "channel_id",
+        "message"
+      ],
+      "title": "CreatePost",
+      "type": "object"
+    },
+    "DeletePost": {
+      "additionalProperties": false,
+      "description": "Delete a message (the server may retain it for compliance).",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "DeletePost",
+      "type": "object"
+    },
+    "GetChannel": {
+      "additionalProperties": false,
+      "description": "Read a channel.",
+      "properties": {
+        "operation": {
+          "const": "get_channel",
+          "default": "get_channel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "GetChannel",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Read the authenticated account to verify the connection.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetPost": {
+      "additionalProperties": false,
+      "description": "Read one message.",
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "GetPost",
+      "type": "object"
+    },
+    "GetThread": {
+      "additionalProperties": false,
+      "description": "Read a thread in one API response, with an optional continuation post.",
+      "properties": {
+        "operation": {
+          "const": "get_thread",
+          "default": "get_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "per_page": {
+          "default": 60,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "from_post": {
+          "anyOf": [
+            {
+              "description": "Mattermost 26-character resource ID.",
+              "pattern": "^[a-z0-9]{26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Post"
+        },
+        "direction": {
+          "default": "up",
+          "enum": [
+            "up",
+            "down"
+          ],
+          "title": "Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "GetThread",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Read a user profile.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "GetUserByUsername": {
+      "additionalProperties": false,
+      "description": "Find a user by their exact username.",
+      "properties": {
+        "operation": {
+          "const": "get_user_by_username",
+          "default": "get_user_by_username",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9._-]+$",
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "GetUserByUsername",
+      "type": "object"
+    },
+    "ListChannelMembers": {
+      "additionalProperties": false,
+      "description": "Read one page of channel memberships.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page; this operation reads one page only.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 60,
+          "description": "Maximum results requested for this page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_channel_members",
+          "default": "list_channel_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "ListChannelMembers",
+      "type": "object"
+    },
+    "ListMyChannels": {
+      "additionalProperties": false,
+      "description": "List the authenticated user\u2019s channels in a team.",
+      "properties": {
+        "operation": {
+          "const": "list_my_channels",
+          "default": "list_my_channels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ListMyChannels",
+      "type": "object"
+    },
+    "ListMyTeams": {
+      "additionalProperties": false,
+      "description": "List teams the authenticated user belongs to.",
+      "properties": {
+        "operation": {
+          "const": "list_my_teams",
+          "default": "list_my_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListMyTeams",
+      "type": "object"
+    },
+    "ListPosts": {
+      "additionalProperties": false,
+      "description": "Read one page of messages in a channel, newest first.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page; this operation reads one page only.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 60,
+          "description": "Maximum results requested for this page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "ListPosts",
+      "type": "object"
+    },
+    "ListPublicChannels": {
+      "additionalProperties": false,
+      "description": "Read one page of public channels in a team.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page; this operation reads one page only.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 60,
+          "description": "Maximum results requested for this page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_public_channels",
+          "default": "list_public_channels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ListPublicChannels",
+      "type": "object"
+    },
+    "ListReactions": {
+      "additionalProperties": false,
+      "description": "List reactions on a post.",
+      "properties": {
+        "operation": {
+          "const": "list_reactions",
+          "default": "list_reactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "ListReactions",
+      "type": "object"
+    },
+    "MattermostTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mattermost_token",
+          "default": "mattermost_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "Public HTTPS deployment URL, e.g. https://chat.example.com. Include a deployment subpath if used; omit /api/v4.",
+          "title": "Server URL",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "server_url",
+        "access_token"
+      ],
+      "title": "Mattermost Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Enter your public HTTPS Mattermost server URL (including its deployment subpath, if any) and paste a personal access token from Profile > Security > Personal Access Tokens. Your administrator must enable token creation. Use a non-admin account with access to the teams and channels you automate. NoClick checks the token by reading your current user profile; individual operations still require the corresponding server permissions.",
+      "x-credential-url": "https://docs.mattermost.com/developers/integrate/reference/personal-access-token"
+    },
+    "PinPost": {
+      "additionalProperties": false,
+      "description": "Pin a message to its channel.",
+      "properties": {
+        "operation": {
+          "const": "pin_post",
+          "default": "pin_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "PinPost",
+      "type": "object"
+    },
+    "RemoveChannelMember": {
+      "additionalProperties": false,
+      "description": "Remove a user from a channel.",
+      "properties": {
+        "operation": {
+          "const": "remove_channel_member",
+          "default": "remove_channel_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id",
+        "user_id"
+      ],
+      "title": "RemoveChannelMember",
+      "type": "object"
+    },
+    "RemoveReaction": {
+      "additionalProperties": false,
+      "description": "Remove the supplied user\u2019s reaction (permissions apply).",
+      "properties": {
+        "operation": {
+          "const": "remove_reaction",
+          "default": "remove_reaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "emoji_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_+-]+$",
+          "title": "Emoji Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "post_id",
+        "emoji_name"
+      ],
+      "title": "RemoveReaction",
+      "type": "object"
+    },
+    "SearchPosts": {
+      "additionalProperties": false,
+      "description": "Search team messages; page controls require Elasticsearch on the server.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page; this operation reads one page only.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 60,
+          "description": "Maximum results requested for this page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_posts",
+          "default": "search_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Team Id",
+          "type": "string"
+        },
+        "terms": {
+          "description": "Mattermost search syntax, e.g. in:town-square release",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Terms",
+          "type": "string"
+        },
+        "is_or_search": {
+          "default": false,
+          "title": "Is Or Search",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "team_id",
+        "terms"
+      ],
+      "title": "SearchPosts",
+      "type": "object"
+    },
+    "UnpinPost": {
+      "additionalProperties": false,
+      "description": "Unpin a message from its channel.",
+      "properties": {
+        "operation": {
+          "const": "unpin_post",
+          "default": "unpin_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "UnpinPost",
+      "type": "object"
+    },
+    "UpdateChannel": {
+      "additionalProperties": false,
+      "description": "Update only the supplied channel fields.",
+      "properties": {
+        "operation": {
+          "const": "update_channel",
+          "default": "update_channel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "UpdateChannel",
+      "type": "object"
+    },
+    "UpdatePost": {
+      "additionalProperties": false,
+      "description": "Patch the message text while preserving other fields.",
+      "properties": {
+        "operation": {
+          "const": "update_post",
+          "default": "update_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Mattermost 26-character resource ID.",
+          "pattern": "^[a-z0-9]{26}$",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 16383,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id",
+        "message"
+      ],
+      "title": "UpdatePost",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_channel_member": "#/$defs/AddChannelMember",
+          "add_reaction": "#/$defs/AddReaction",
+          "create_channel": "#/$defs/CreateChannel",
+          "create_direct_channel": "#/$defs/CreateDirectChannel",
+          "create_post": "#/$defs/CreatePost",
+          "delete_post": "#/$defs/DeletePost",
+          "get_channel": "#/$defs/GetChannel",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_post": "#/$defs/GetPost",
+          "get_thread": "#/$defs/GetThread",
+          "get_user": "#/$defs/GetUser",
+          "get_user_by_username": "#/$defs/GetUserByUsername",
+          "list_channel_members": "#/$defs/ListChannelMembers",
+          "list_my_channels": "#/$defs/ListMyChannels",
+          "list_my_teams": "#/$defs/ListMyTeams",
+          "list_posts": "#/$defs/ListPosts",
+          "list_public_channels": "#/$defs/ListPublicChannels",
+          "list_reactions": "#/$defs/ListReactions",
+          "pin_post": "#/$defs/PinPost",
+          "remove_channel_member": "#/$defs/RemoveChannelMember",
+          "remove_reaction": "#/$defs/RemoveReaction",
+          "search_posts": "#/$defs/SearchPosts",
+          "unpin_post": "#/$defs/UnpinPost",
+          "update_channel": "#/$defs/UpdateChannel",
+          "update_post": "#/$defs/UpdatePost"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/GetUserByUsername"
+        },
+        {
+          "$ref": "#/$defs/ListMyTeams"
+        },
+        {
+          "$ref": "#/$defs/ListPublicChannels"
+        },
+        {
+          "$ref": "#/$defs/ListMyChannels"
+        },
+        {
+          "$ref": "#/$defs/GetChannel"
+        },
+        {
+          "$ref": "#/$defs/CreateChannel"
+        },
+        {
+          "$ref": "#/$defs/UpdateChannel"
+        },
+        {
+          "$ref": "#/$defs/CreateDirectChannel"
+        },
+        {
+          "$ref": "#/$defs/ListChannelMembers"
+        },
+        {
+          "$ref": "#/$defs/AddChannelMember"
+        },
+        {
+          "$ref": "#/$defs/RemoveChannelMember"
+        },
+        {
+          "$ref": "#/$defs/ListPosts"
+        },
+        {
+          "$ref": "#/$defs/CreatePost"
+        },
+        {
+          "$ref": "#/$defs/GetPost"
+        },
+        {
+          "$ref": "#/$defs/UpdatePost"
+        },
+        {
+          "$ref": "#/$defs/DeletePost"
+        },
+        {
+          "$ref": "#/$defs/GetThread"
+        },
+        {
+          "$ref": "#/$defs/SearchPosts"
+        },
+        {
+          "$ref": "#/$defs/AddReaction"
+        },
+        {
+          "$ref": "#/$defs/RemoveReaction"
+        },
+        {
+          "$ref": "#/$defs/ListReactions"
+        },
+        {
+          "$ref": "#/$defs/PinPost"
+        },
+        {
+          "$ref": "#/$defs/UnpinPost"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MattermostTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mattermost Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
