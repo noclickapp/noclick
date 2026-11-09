@@ -1,0 +1,1105 @@
+{
+  "$defs": {
+    "WebcrawlerapiApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "webcrawlerapi_api_key",
+          "default": "webcrawlerapi_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Webcrawlerapi API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Webcrawlerapi API key from the dashboard's API key section. NoClick sends it as a Bearer token to api.webcrawlerapi.com. Crawls, scrapes, agents and feed runs use your provider credits.",
+      "x-credential-url": "https://dash.webcrawlerapi.com/"
+    },
+    "WebcrawlerapiCancelJobConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_job",
+          "default": "cancel_job",
+          "title": "Cancel Crawl Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawls",
+          "x-display-name": "Cancel Crawl Job",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "WebcrawlerapiCancelJobConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiCheckConnectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Check Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Check Connection",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WebcrawlerapiCheckConnectionConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiCreateCrawlConfig": {
+      "properties": {
+        "output_formats": {
+          "default": "markdown",
+          "description": "Comma-separated formats: markdown, cleaned, html, links.",
+          "title": "Output formats",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Website URL",
+          "type": "string"
+        },
+        "items_limit": {
+          "default": 10,
+          "minimum": 1,
+          "title": "Page limit",
+          "type": "integer"
+        },
+        "max_depth": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum crawl depth"
+        },
+        "main_content_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extract main content only"
+        },
+        "respect_robots_txt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Respect robots.txt"
+        },
+        "whitelist_regexp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include URL pattern"
+        },
+        "blacklist_regexp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude URL pattern"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completion webhook URL"
+        },
+        "operation": {
+          "const": "create_crawl",
+          "default": "create_crawl",
+          "title": "Create Crawl",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawls",
+          "x-display-name": "Create Crawl",
+          "x-is-trigger": false
+        },
+        "max_age": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum cache age (seconds)"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "WebcrawlerapiCreateCrawlConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiCreateFeedConfig": {
+      "properties": {
+        "url": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Website URL",
+          "type": "string"
+        },
+        "items_limit": {
+          "default": 10,
+          "minimum": 1,
+          "title": "Page limit",
+          "type": "integer"
+        },
+        "max_depth": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum crawl depth"
+        },
+        "main_content_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extract main content only"
+        },
+        "respect_robots_txt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Respect robots.txt"
+        },
+        "whitelist_regexp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include URL pattern"
+        },
+        "blacklist_regexp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude URL pattern"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completion webhook URL"
+        },
+        "operation": {
+          "const": "create_feed",
+          "default": "create_feed",
+          "title": "Create Website Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Create Website Feed",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feed name"
+        },
+        "output_format": {
+          "default": "markdown",
+          "enum": [
+            "markdown",
+            "cleaned",
+            "html"
+          ],
+          "title": "Output format",
+          "type": "string"
+        },
+        "include_errors": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include errored pages"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "WebcrawlerapiCreateFeedConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiCreateScrapeConfig": {
+      "description": "Always enqueue asynchronously; retrieve the result with Get Scrape.",
+      "properties": {
+        "output_formats": {
+          "default": "markdown",
+          "description": "Comma-separated formats: markdown, cleaned, html, links.",
+          "title": "Output formats",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Website URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_scrape",
+          "default": "create_scrape",
+          "title": "Create Async Scrape",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Create Async Scrape",
+          "x-is-trigger": false
+        },
+        "main_content_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extract main content only"
+        },
+        "respect_robots_txt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Respect robots.txt"
+        },
+        "max_age": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum cache age (seconds)"
+        },
+        "clean_selectors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "CSS selectors to remove"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction prompt"
+        },
+        "response_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response JSON schema",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "WebcrawlerapiCreateScrapeConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiDeleteFeedConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_feed",
+          "default": "delete_feed",
+          "title": "Delete Feed Permanently",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Delete Feed Permanently",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiDeleteFeedConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiExtractMarkdownConfig": {
+      "properties": {
+        "url": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Website URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "extract_markdown",
+          "default": "extract_markdown",
+          "title": "Extract Clean Markdown",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Extract Clean Markdown",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "WebcrawlerapiExtractMarkdownConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetAgentJobConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_agent_job",
+          "default": "get_agent_job",
+          "title": "Get Agent Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Get Agent Job",
+          "x-is-trigger": false
+        },
+        "agent_job_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_job_id"
+      ],
+      "title": "WebcrawlerapiGetAgentJobConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetFeedConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_feed",
+          "default": "get_feed",
+          "title": "Get Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Get Feed",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiGetFeedConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetFeedJsonConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Read one page; increment Page to fetch more entries.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_feed_json",
+          "default": "get_feed_json",
+          "title": "Get JSON Feed Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Get JSON Feed Page",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiGetFeedJsonConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetJobConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Crawl Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawls",
+          "x-display-name": "Get Crawl Job",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "WebcrawlerapiGetJobConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetJobUrlsConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job_urls",
+          "default": "get_job_urls",
+          "title": "Get Discovered URLs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawls",
+          "x-display-name": "Get Discovered URLs",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "WebcrawlerapiGetJobUrlsConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetScrapeConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_scrape",
+          "default": "get_scrape",
+          "title": "Get Scrape Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Get Scrape Result",
+          "x-is-trigger": false
+        },
+        "scrape_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Scrape ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scrape_id"
+      ],
+      "title": "WebcrawlerapiGetScrapeConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiGetUsageConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Get Organization Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Organization Usage",
+          "x-is-trigger": false
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "From date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "To date"
+        },
+        "include_daily": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include daily breakdown"
+        }
+      },
+      "title": "WebcrawlerapiGetUsageConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiListAgentJobsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_agent_jobs",
+          "default": "list_agent_jobs",
+          "title": "List Agent Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "List Agent Jobs",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Read one page; advance the offset to fetch more jobs.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "WebcrawlerapiListAgentJobsConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiListFeedsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_feeds",
+          "default": "list_feeds",
+          "title": "List Feeds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "List Feeds",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WebcrawlerapiListFeedsConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiPauseFeedConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_feed",
+          "default": "pause_feed",
+          "title": "Pause Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Pause Feed",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiPauseFeedConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiResendFeedWebhookConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resend_feed_webhook",
+          "default": "resend_feed_webhook",
+          "title": "Resend Feed Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Resend Feed Webhook",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiResendFeedWebhookConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiResendJobWebhookConfig": {
+      "properties": {
+        "job_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resend_job_webhook",
+          "default": "resend_job_webhook",
+          "title": "Resend Crawl Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawls",
+          "x-display-name": "Resend Crawl Webhook",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "WebcrawlerapiResendJobWebhookConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiResumeFeedConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resume_feed",
+          "default": "resume_feed",
+          "title": "Resume Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Resume Feed",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiResumeFeedConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiRunAgentConfig": {
+      "properties": {
+        "operation": {
+          "const": "run_agent",
+          "default": "run_agent",
+          "title": "Run Crawling Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Run Crawling Agent",
+          "x-is-trigger": false
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Task",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "max_spend_usd": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum spend (USD)",
+          "type": "number"
+        },
+        "urls": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One HTTP or HTTPS URL per line.",
+          "title": "Seed URLs",
+          "ui:widget": "textarea"
+        },
+        "seed_urls_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Use only seed URLs"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output JSON schema",
+          "ui:widget": "textarea"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "max_age": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum cache age (seconds)"
+        }
+      },
+      "required": [
+        "prompt",
+        "max_spend_usd"
+      ],
+      "title": "WebcrawlerapiRunAgentConfig",
+      "type": "object"
+    },
+    "WebcrawlerapiRunFeedConfig": {
+      "properties": {
+        "feed_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "run_feed",
+          "default": "run_feed",
+          "title": "Run Feed Now",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feeds",
+          "x-display-name": "Run Feed Now",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "WebcrawlerapiRunFeedConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_job": "#/$defs/WebcrawlerapiCancelJobConfig",
+          "check_connection": "#/$defs/WebcrawlerapiCheckConnectionConfig",
+          "create_crawl": "#/$defs/WebcrawlerapiCreateCrawlConfig",
+          "create_feed": "#/$defs/WebcrawlerapiCreateFeedConfig",
+          "create_scrape": "#/$defs/WebcrawlerapiCreateScrapeConfig",
+          "delete_feed": "#/$defs/WebcrawlerapiDeleteFeedConfig",
+          "extract_markdown": "#/$defs/WebcrawlerapiExtractMarkdownConfig",
+          "get_agent_job": "#/$defs/WebcrawlerapiGetAgentJobConfig",
+          "get_feed": "#/$defs/WebcrawlerapiGetFeedConfig",
+          "get_feed_json": "#/$defs/WebcrawlerapiGetFeedJsonConfig",
+          "get_job": "#/$defs/WebcrawlerapiGetJobConfig",
+          "get_job_urls": "#/$defs/WebcrawlerapiGetJobUrlsConfig",
+          "get_scrape": "#/$defs/WebcrawlerapiGetScrapeConfig",
+          "get_usage": "#/$defs/WebcrawlerapiGetUsageConfig",
+          "list_agent_jobs": "#/$defs/WebcrawlerapiListAgentJobsConfig",
+          "list_feeds": "#/$defs/WebcrawlerapiListFeedsConfig",
+          "pause_feed": "#/$defs/WebcrawlerapiPauseFeedConfig",
+          "resend_feed_webhook": "#/$defs/WebcrawlerapiResendFeedWebhookConfig",
+          "resend_job_webhook": "#/$defs/WebcrawlerapiResendJobWebhookConfig",
+          "resume_feed": "#/$defs/WebcrawlerapiResumeFeedConfig",
+          "run_agent": "#/$defs/WebcrawlerapiRunAgentConfig",
+          "run_feed": "#/$defs/WebcrawlerapiRunFeedConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WebcrawlerapiCheckConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiExtractMarkdownConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiCreateCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiCancelJobConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetJobUrlsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiResendJobWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiCreateScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiRunAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetAgentJobConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiListAgentJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiCreateFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiDeleteFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetFeedJsonConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiPauseFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiResumeFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiRunFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiResendFeedWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiListFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebcrawlerapiGetUsageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WebcrawlerapiApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Webcrawlerapi Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

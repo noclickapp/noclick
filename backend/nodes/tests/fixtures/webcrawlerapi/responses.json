@@ -1,0 +1,337 @@
+{
+  "extract_markdown": {
+    "body": {
+      "success": true,
+      "markdown": "# Some Article\n\nThis is the cleaned main content of the page..."
+    },
+    "source": "https://webcrawlerapi.com/docs/markdown-cleaning"
+  },
+  "create_crawl": {
+    "body": {
+      "id": "23b81e21-c672-4402-a886-303f18de9555"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/crawl"
+  },
+  "get_job": {
+    "body": {
+      "id": "abb39f29-087e-4714-aa05-15537be12f90",
+      "org_id": "cm48ww9kw00019rv7bsyfko1d",
+      "url": "https://books.toscrape.com/",
+      "output_formats": [
+        "markdown"
+      ],
+      "whitelist_regexp": ".*category.*",
+      "blacklist_regexp": "",
+      "items_limit": 10,
+      "max_depth": 2,
+      "created_at": "2024-12-15T10:26:13.893Z",
+      "finished_at": "2024-12-15T10:26:37.118Z",
+      "updated_at": "2024-12-15T10:26:37.118Z",
+      "webhook_url": "",
+      "status": "done",
+      "job_items": [
+        {
+          "id": "a46f3117-f97a-4ca2-a434-6cfdcd022b72",
+          "job_id": "abb39f29-087e-4714-aa05-15537be12f90",
+          "original_url": "https://books.toscrape.com/catalogue/category/books/travel_2/index.html",
+          "page_status_code": 200,
+          "markdown_content_url": "https://data.webcrawlerapi.com/markdown/books.toscrape.com/https___books_toscrape_com_catalogue_category_books_travel_2_index_html",
+          "status": "done",
+          "title": "All products | Books to Scrape - Sandbox",
+          "last_error": "",
+          "created_at": "2024-12-15T10:26:17.941Z",
+          "updated_at": "2024-12-15T10:26:23.915Z",
+          "cost": 0.002,
+          "referred_url": "https://books.toscrape.com/"
+        }
+      ]
+    },
+    "source": "https://webcrawlerapi.com/docs/api/job"
+  },
+  "cancel_job": {
+    "body": {
+      "message": "Job cancelled"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/cancel"
+  },
+  "create_scrape": {
+    "body": {
+      "id": "b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1"
+    },
+    "source": "https://webcrawlerapi.com/docs/async-requests"
+  },
+  "get_scrape": {
+    "body": {
+      "success": true,
+      "status": "done",
+      "markdown": "# Example Page\n\nContent here...",
+      "page_status_code": 200,
+      "page_title": "Example Page Title"
+    },
+    "source": "https://webcrawlerapi.com/docs/async-requests"
+  },
+  "run_agent": {
+    "body": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "status": "done",
+      "data": {
+        "customers": [
+          "Coinbase",
+          "Anaconda",
+          "Anthropic",
+          "AT&T",
+          "Browserbase",
+          "Fidelity",
+          "Cognition",
+          "Decagon",
+          "Dub",
+          "Kalshi",
+          "HubSpot",
+          "Loops",
+          "Lovable",
+          "Meter",
+          "Metronome",
+          "Laravel",
+          "Mirage",
+          "Ollama",
+          "PayPal",
+          "Perplexity",
+          "Layers",
+          "Pinecone",
+          "Planetscale",
+          "Replit",
+          "Resend",
+          "Zapier",
+          "Together AI",
+          "Vercel",
+          "Worldcoin",
+          "X"
+        ]
+      }
+    },
+    "source": "https://webcrawlerapi.com/docs/crawling-agent"
+  },
+  "get_agent_job": {
+    "body": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "status": "done",
+      "data": {
+        "customers": [
+          "Coinbase",
+          "Anaconda",
+          "Anthropic",
+          "AT&T",
+          "Browserbase",
+          "Fidelity",
+          "Cognition",
+          "Decagon",
+          "Dub",
+          "Kalshi",
+          "HubSpot",
+          "Loops",
+          "Lovable",
+          "Meter",
+          "Metronome",
+          "Laravel",
+          "Mirage",
+          "Ollama",
+          "PayPal",
+          "Perplexity",
+          "Layers",
+          "Pinecone",
+          "Planetscale",
+          "Replit",
+          "Resend",
+          "Zapier",
+          "Together AI",
+          "Vercel",
+          "Worldcoin",
+          "X"
+        ]
+      }
+    },
+    "source": "https://webcrawlerapi.com/docs/crawling-agent"
+  },
+  "create_feed": {
+    "body": {
+      "id": "2hGdKxPqR5mNvL3wYzT8j",
+      "url": "https://example.com/blog",
+      "name": "Example Blog Feed",
+      "output_format": "markdown",
+      "items_limit": 20,
+      "status": "active",
+      "next_run_at": "2024-01-02T12:00:00Z",
+      "webhook_url": "https://yourserver.com/webhook",
+      "created_at": "2024-01-01T12:00:00Z"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-create"
+  },
+  "get_feed": {
+    "body": {
+      "id": "5a153807-5fb0-4e31-a404-d9447cbc3e63",
+      "url": "https://webcrawlerapi.com/changelog",
+      "output_format": "markdown",
+      "items_limit": 1,
+      "status": "active",
+      "next_run_at": "2025-12-27T13:47:38.148Z",
+      "last_run_at": "2025-12-26T13:47:38.148Z",
+      "webhook_url": "https://webhook.site/20073d34-735d-41e3-b7cf-3e776b88ebe7",
+      "webhook_status": 200,
+      "created_at": "2025-12-26T13:46:48.773Z",
+      "recent_runs": [
+        {
+          "id": "96585c01-9d2e-48b4-825a-bf9daee70570",
+          "status": "done",
+          "pages_crawled": 1,
+          "pages_changed": 0,
+          "pages_new": 1,
+          "pages_unavailable": 0,
+          "pages_errors": 0,
+          "cost_usd": 0.002,
+          "started_at": "2025-12-26T13:47:38.022Z",
+          "finished_at": "2025-12-26T13:48:37.95Z"
+        }
+      ]
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-get"
+  },
+  "delete_feed": {
+    "body": {
+      "id": "abc123",
+      "status": "canceled",
+      "message": "Feed canceled successfully"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-manage"
+  },
+  "get_feed_json": {
+    "body": {
+      "version": "https://jsonfeed.org/version/1.1",
+      "title": "WebCrawlerAPI Feed: example.com",
+      "home_page_url": "https://example.com/blog",
+      "feed_url": "https://api.webcrawlerapi.com/v2/feed/abc123/json",
+      "description": "Change tracking feed for example.com",
+      "authors": [
+        {
+          "name": "WebCrawlerAPI",
+          "url": "https://webcrawlerapi.com"
+        }
+      ],
+      "items": [
+        {
+          "id": "item123",
+          "url": "https://example.com/blog/web-scraping-guide",
+          "title": "Getting Started with Web Scraping",
+          "summary": "New page discovered",
+          "date_modified": "2024-01-01T12:05:00Z",
+          "tags": [
+            "new"
+          ],
+          "_webcrawlerapi": {
+            "change_type": "new",
+            "page_status_code": 200,
+            "content_url": "https://cdn.webcrawlerapi.com/content/...",
+            "page_size": 45678
+          }
+        },
+        {
+          "id": "item456",
+          "url": "https://example.com/docs/api",
+          "title": "API Documentation",
+          "summary": "Page content has changed",
+          "date_modified": "2024-01-01T12:05:00Z",
+          "tags": [
+            "changed"
+          ],
+          "_webcrawlerapi": {
+            "change_type": "changed",
+            "page_status_code": 200,
+            "content_url": "https://cdn.webcrawlerapi.com/content/...",
+            "page_size": 23456
+          }
+        }
+      ]
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-json"
+  },
+  "pause_feed": {
+    "body": {
+      "id": "abc123",
+      "status": "paused",
+      "message": "Feed paused successfully"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-manage"
+  },
+  "resume_feed": {
+    "body": {
+      "id": "abc123",
+      "status": "active",
+      "next_run_at": "2024-01-02T12:00:00Z",
+      "message": "Feed resumed successfully"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-manage"
+  },
+  "run_feed": {
+    "body": {
+      "id": "run_xyz789",
+      "job_id": "job_abc123",
+      "status": "in_progress",
+      "message": "Feed run triggered successfully"
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-manage"
+  },
+  "resend_feed_webhook": {
+    "body": {
+      "success": true,
+      "message": "Webhook resent successfully",
+      "webhook_url": "https://yourserver.com/webhook",
+      "status_code": 200
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-manage"
+  },
+  "list_feeds": {
+    "body": {
+      "feeds": [
+        {
+          "id": "5a153807-5fb0-4e31-a404-d9447cbc3e63",
+          "url": "https://webcrawlerapi.com/changelog",
+          "output_format": "markdown",
+          "items_limit": 1,
+          "status": "active",
+          "next_run_at": "2025-12-27T13:47:38.148Z",
+          "last_run_at": "2025-12-26T13:47:38.148Z",
+          "webhook_url": "https://webhook.site/20073d34-735d-41e3-b7cf-3e776b88ebe7",
+          "created_at": "2025-12-26T13:46:48.773Z"
+        },
+        {
+          "id": "e3b74cdf-75bb-4c3e-8713-d9ac999012c7",
+          "url": "https://webcrawlerapi.com/blog",
+          "output_format": "markdown",
+          "items_limit": 10,
+          "status": "active",
+          "next_run_at": "2025-12-27T13:47:37.331Z",
+          "last_run_at": "2025-12-26T13:47:37.331Z",
+          "webhook_url": "https://webhook.site/20073d34-735d-41e3-b7cf-3e776b88ebe7",
+          "created_at": "2025-12-26T13:46:40.119Z"
+        }
+      ]
+    },
+    "source": "https://webcrawlerapi.com/docs/api/feed/feed-list"
+  },
+  "list_agent_jobs": {
+    "body": {
+      "items": [
+        {
+          "id": "ar_abc123",
+          "status": "done",
+          "prompt": "Extract product names, prices, and descriptions",
+          "model": "openai/gpt-5.4-mini",
+          "balance_used_usd": 0.03,
+          "success": true,
+          "created_at": "2025-01-01T00:00:00Z"
+        }
+      ],
+      "total": 1
+    },
+    "source": "https://webcrawlerapi.com/docs/api/agent/agent-jobs"
+  }
+}
