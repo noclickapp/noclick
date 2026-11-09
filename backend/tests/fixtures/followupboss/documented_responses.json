@@ -1,0 +1,352 @@
+{
+  "GET /people/{id}": {
+    "body": {
+      "id": 14412,
+      "created": "2016-03-31T16:42:27Z",
+      "updated": "2016-11-17T03:44:00Z",
+      "createdVia": "API",
+      "lastActivity": "2016-11-17T05:01:02Z",
+      "name": "William Riker",
+      "firstName": "William",
+      "lastName": "Riker",
+      "prequalified": false,
+      "stage": "Lead",
+      "stageId": 2,
+      "source": "<unspecified>",
+      "sourceUrl": "",
+      "contacted": 1,
+      "price": 310000,
+      "assignedLenderId": null,
+      "assignedLenderName": null,
+      "assignedUserId": 1,
+      "assignedTo": "Gerald Leenerts",
+      "collaborators": [
+        {
+          "id": 1,
+          "name": "Gerald Leenerts",
+          "assigned": true,
+          "role": "Broker"
+        }
+      ],
+      "tags": [
+        "star trek"
+      ],
+      "emails": [
+        {
+          "value": "example@example.com",
+          "type": "home",
+          "isPrimary": 1,
+          "status": "Valid"
+        },
+        {
+          "value": "mobile@example.com",
+          "type": "work",
+          "isPrimary": 0,
+          "status": "Valid"
+        }
+      ],
+      "phones": [
+        {
+          "value": "2345678901",
+          "type": "home",
+          "isPrimary": 1,
+          "status": "Invalid"
+        },
+        {
+          "value": "2345678902",
+          "type": "mobile",
+          "isPrimary": 0,
+          "status": "Not Validated"
+        }
+      ],
+      "addresses": [],
+      "picture": {
+        "small": "http://vignette1.wikia.nocookie.net/memoryalpha/images/4/4f/Riker_orders_Worf_to_fire_on_the_Borg_cube.jpg/revision/latest?cb=20130213024734&path-prefix=en"
+      },
+      "timeframeId": 1
+    },
+    "source": "https://docs.followupboss.com/reference/people-id-get"
+  },
+  "GET /stages": {
+    "body": {
+      "_metadata": {
+        "collection": "stages",
+        "offset": 0,
+        "limit": 20,
+        "total": 8
+      },
+      "stages": [
+        {
+          "id": 1,
+          "name": "Contact",
+          "orderWeight": 1000,
+          "isProtected": false,
+          "peopleCount": 16
+        },
+        {
+          "id": 5,
+          "name": "Buyer",
+          "orderWeight": 2000,
+          "isProtected": false,
+          "peopleCount": 40
+        },
+        {
+          "id": 2,
+          "name": "Lead",
+          "orderWeight": 3000,
+          "isProtected": true,
+          "peopleCount": 12077
+        },
+        {
+          "id": 4,
+          "name": "Nurture",
+          "orderWeight": 4000,
+          "isProtected": false,
+          "peopleCount": 66
+        },
+        {
+          "id": 8,
+          "name": "Closed",
+          "orderWeight": 5000,
+          "isProtected": true,
+          "peopleCount": 15
+        },
+        {
+          "id": 9,
+          "name": "Past Client",
+          "orderWeight": 6000,
+          "isProtected": false,
+          "peopleCount": 98
+        },
+        {
+          "id": 10,
+          "name": "Sphere",
+          "orderWeight": 7000,
+          "isProtected": false,
+          "peopleCount": 17
+        },
+        {
+          "id": 11,
+          "name": "Trash",
+          "orderWeight": 8000,
+          "isProtected": true,
+          "peopleCount": 892
+        }
+      ]
+    },
+    "source": "https://docs.followupboss.com/reference/stages-get"
+  },
+  "GET /tasks/{id}": {
+    "body": {
+      "id": 4066,
+      "created": "2016-12-07T15:50:47Z",
+      "updated": "2016-12-07T15:50:47Z",
+      "completed": null,
+      "createdBy": "Gerald Leenerts",
+      "updatedBy": "Gerald Leenerts",
+      "personId": 15013,
+      "AssignedTo": "Gerald Leenerts",
+      "assignedUserId": 1,
+      "name": "Follow Up",
+      "type": "Follow Up",
+      "isCompleted": 0,
+      "dueDate": null,
+      "dueDateTime": null,
+      "person": {
+        "id": 15013,
+        "name": "William Riker"
+      }
+    },
+    "source": "https://docs.followupboss.com/reference/tasks-id-get"
+  },
+  "GET /tasks": {
+    "body": {
+      "_metadata": {
+        "collection": "tasks",
+        "offset": 0,
+        "limit": 1,
+        "total": 126
+      },
+      "tasks": [
+        {
+          "id": 4066,
+          "created": "2016-12-07T15:50:47Z",
+          "updated": "2016-12-07T15:50:47Z",
+          "completed": "2017-01-24T17:20:49Z",
+          "createdBy": "Gerald Leenerts",
+          "updatedBy": "Gerald Leenerts",
+          "personId": 15013,
+          "AssignedTo": "Gerald Leenerts",
+          "assignedUserId": 1,
+          "name": "Follow Up",
+          "type": "Follow Up",
+          "isCompleted": 1,
+          "dueDate": "2017-01-31",
+          "dueDateTime": "2017-01-31T21:00:00Z",
+          "externalTaskLink": null,
+          "externalCalendarId": null,
+          "remindSecondsBefore": null
+        }
+      ]
+    },
+    "source": "https://docs.followupboss.com/reference/tasks-get"
+  },
+  "GET /notes/{id}": {
+    "body": {
+      "id": 12345,
+      "created": "2024-01-01T00:00:00Z",
+      "updated": "2024-01-01T00:00:00Z",
+      "createdById": 1,
+      "updatedById": 1,
+      "createdBy": "Mark Hamill",
+      "updatedBy": "Mark Hamill",
+      "personId": 15,
+      "showContent": true,
+      "subject": "",
+      "body": "Hello team!",
+      "type": "",
+      "isHtml": false,
+      "actionPlanId": null,
+      "isExternal": false,
+      "systemId": 1,
+      "systemName": "My System",
+      "replies": [
+        {
+          "id": 100,
+          "refId": 12345,
+          "refType": "Note",
+          "createdById": 1,
+          "createdBy": "Mark Hamill",
+          "created": "2024-01-01T00:00:00Z",
+          "updated": "2024-01-01T00:00:00Z",
+          "body": "Hello world!",
+          "starred": false,
+          "reactions": {
+            "👍": [
+              5
+            ],
+            "👾": [
+              2
+            ]
+          }
+        },
+        {
+          "id": 107,
+          "refId": 12345,
+          "refType": "Note",
+          "createdById": 2,
+          "createdBy": "Carrie Fisher",
+          "created": "2024-01-02T00:00:00Z",
+          "updated": "2024-01-02T00:00:00Z",
+          "body": "Greetings!",
+          "starred": false,
+          "reactions": {
+            "😁": [
+              4,
+              1,
+              3
+            ],
+            "👋": [
+              1
+            ]
+          }
+        }
+      ],
+      "reactions": {
+        "🗼": [
+          3
+        ]
+      }
+    },
+    "source": "https://docs.followupboss.com/reference/notes-id-get"
+  },
+  "PUT /notes/{id}": {
+    "body": {
+      "id": 1819,
+      "created": "2014-06-19T18:32:26Z",
+      "updated": "2014-06-19T18:32:26Z",
+      "createdBy": "Agent White",
+      "updatedBy": "Agent White",
+      "personId": 12235,
+      "subject": "Some note subject",
+      "body": "Plans to sell within the next three months.",
+      "type": "",
+      "isHtml": 0
+    },
+    "source": "https://docs.followupboss.com/reference/notes-id-put"
+  },
+  "GET /people": {
+    "body": {
+      "_metadata": {
+        "collection": "people",
+        "offset": 0,
+        "limit": 10,
+        "total": 35
+      },
+      "people": [
+        {
+          "id": 10763,
+          "created": "2013-10-31T23:04:30Z",
+          "updated": "2014-06-27T13:11:23Z",
+          "createdVia": "API",
+          "lastActivity": "2014-06-27T13:11:23Z",
+          "name": "Tom Minch",
+          "firstName": "Tom",
+          "lastName": "Minch",
+          "stage": "Lead",
+          "source": "MyAwesomeWebsite.com",
+          "sourceUrl": "",
+          "contacted": 0,
+          "price": 500000,
+          "timeframeId": 1,
+          "assignedLenderId": null,
+          "assignedLenderName": null,
+          "assignedUserId": 8,
+          "assignedTo": "Agent White",
+          "collaborators": [
+            {
+              "id": 8,
+              "name": "Tom Minch",
+              "assigned": true,
+              "role": "Broker"
+            }
+          ],
+          "tags": [
+            "Los Angeles",
+            "90003",
+            "2014 May"
+          ],
+          "emails": [
+            {
+              "value": "tom.minch@example.com",
+              "type": "home",
+              "isPrimary": 1,
+              "status": "Valid"
+            }
+          ],
+          "phones": [
+            {
+              "type": "home",
+              "value": "555-555-1234",
+              "status": "Invalid"
+            }
+          ],
+          "addresses": [
+            {
+              "type": "work",
+              "street": "322 S Broadway",
+              "city": "Los Angeles",
+              "state": "CA",
+              "code": "90003",
+              "country": "United States"
+            }
+          ],
+          "picture": {
+            "small": "https://example.com/pictures/89615e1a7fe.jpg"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.followupboss.com/reference/people-get"
+  }
+}
