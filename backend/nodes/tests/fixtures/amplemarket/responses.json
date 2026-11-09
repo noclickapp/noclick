@@ -1,0 +1,1377 @@
+{
+  "get_account_info": {
+    "method": "GET",
+    "path": "/account-info",
+    "status": 200,
+    "body": {
+      "id": "01a01a7d-8f7c-717f-b774-a2e72c25d2dd",
+      "name": "Test Account 120"
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/users",
+    "status": 200,
+    "body": {
+      "users": [
+        {
+          "id": "01a0f678-035a-791d-af11-526db7cd8bda",
+          "name": "Example User",
+          "email": "user@example.com",
+          "status": "active",
+          "role": "sales_rep",
+          "mailboxes": [
+            {
+              "id": "01a0f678-0393-7783-ab6b-bec9e97b5714",
+              "email": "mailbox@example.com"
+            }
+          ],
+          "linkedin_connected": true
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/users?page[size]=20"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "find_person": {
+    "method": "GET",
+    "path": "/people/find",
+    "status": 200,
+    "body": {
+      "id": "01a01a7d-47a2-7ea2-97f4-7de094bad9e1",
+      "object": "person",
+      "name": "Jonh Doe",
+      "first_name": "Jonh",
+      "last_name": "Doe",
+      "linkedin_url": "https://www.linkedin.com/in/person-1",
+      "title": "Founder and CEO",
+      "headline": "CEO @ Company",
+      "about": null,
+      "current_position_start_date": "2022-05-01",
+      "current_position_description": null,
+      "image_url": "https://example.com/resource",
+      "location": "San Francisco, California, United States",
+      "location_details": {
+        "city": "San Francisco",
+        "state": "California",
+        "country": "United States",
+        "lat": 37.7749,
+        "long": -122.4194
+      },
+      "experiences": [
+        {
+          "object": "experience",
+          "title": "CEO",
+          "company_name": "A Company",
+          "company_linkedin_url": "https://www.linkedin.com/company/company-1",
+          "description": null,
+          "start_date": "2024-08-01",
+          "end_date": null
+        }
+      ],
+      "educations": [
+        {
+          "object": "education",
+          "degree": "BSc",
+          "field_of_study": "Computer Science",
+          "school_name": "MIT",
+          "school_linkedin_url": "https://www.linkedin.com/school/mit",
+          "start_date": "2020-08-01",
+          "end_date": "2024-08-01"
+        }
+      ],
+      "languages": [
+        {
+          "object": "language",
+          "language": "Portuguese",
+          "iso_code": "por",
+          "proficiency": "Native or bilingual proficiency"
+        },
+        {
+          "object": "language",
+          "language": "English",
+          "iso_code": "eng",
+          "proficiency": "Professional working proficiency"
+        },
+        {
+          "object": "language",
+          "language": "Spanish",
+          "iso_code": "spa",
+          "proficiency": null
+        }
+      ],
+      "linkedin_presence": "none",
+      "company": {
+        "id": "01a01a7d-4767-7ff4-a6a4-ac73bdcfd019",
+        "object": "company",
+        "name": "A Company",
+        "website": "https://company.com",
+        "linkedin_url": "https://www.linkedin.com/company/company-1",
+        "keywords": [
+          "sales",
+          "ai sales",
+          "sales engagement"
+        ],
+        "estimated_number_of_employees": 500,
+        "size": "201-500 employees",
+        "industry": "Software Development",
+        "logo_url": "https://assets.amplemarket.com/avatars/company/01a01a7d-4767-7ff4-a6a4-ac73bdcfd019",
+        "location": "San Francisco, California, United States",
+        "location_details": {
+          "city": "San Francisco",
+          "state": "California",
+          "country": "United States",
+          "postal_code": "94103",
+          "lat": 37.7749,
+          "long": -122.4194
+        },
+        "locations": [],
+        "overview": "Circle Health is a group of hospitals in the UK",
+        "followers": 0,
+        "linkedin_presence": "none",
+        "founded_year": 1995,
+        "traffic_rank": 50,
+        "sic_codes": [
+          1,
+          2,
+          3
+        ],
+        "naics_codes": [
+          5112,
+          511,
+          51
+        ],
+        "type": "Privately Held",
+        "total_funding": 0,
+        "latest_funding_stage": "series_b",
+        "latest_funding_date": "2019-11-02",
+        "funding_events": [
+          {
+            "date": "2019-11-02",
+            "type": "Series B",
+            "investors": [],
+            "amount": 40000000,
+            "currency": null,
+            "amount_usd": null
+          }
+        ],
+        "is_b2b": true,
+        "is_b2c": false,
+        "technologies": [],
+        "department_headcount": {
+          "consulting": 31420,
+          "design": 5312,
+          "education": 9063,
+          "engineering_technical": 167805,
+          "finance": 31894,
+          "human_resources": 33265,
+          "information_technology": 94657,
+          "legal": 41863,
+          "marketing": 38192,
+          "medical_health": 11440,
+          "operations": 198127,
+          "product": 11077,
+          "revenue": 75777,
+          "senior_leadership": 1933
+        },
+        "job_function_headcount": {
+          "finance": {
+            "accounting": 12824,
+            "finance": 12197,
+            "financial_planning_analysis": 2468,
+            "financial_reporting": 250,
+            "financial_risk": 886,
+            "financial_strategy": 91,
+            "financial_systems": 11,
+            "internal_audit_control": 850,
+            "investor_relations": 129,
+            "mergers_acquisitions": 259,
+            "real_estate_finance": 117,
+            "shared_services": 56,
+            "sourcing_procurement": 3767,
+            "tax": 822,
+            "treasury": 179
+          },
+          "legal": {
+            "acquisitions": 8,
+            "compliance": 4921,
+            "contracts": 206,
+            "corporate_secretary": 217,
+            "ediscovery": 57,
+            "ethics": 1070,
+            "governance": 66,
+            "governmental_affairs_regulatory_law": 518,
+            "intellectual_property_patent": 63,
+            "labor_employment": 96,
+            "lawyer_attorney": 2014,
+            "legal": 31969,
+            "legal_counsel": 879,
+            "legal_operations": 3777,
+            "litigation": 89,
+            "privacy": 198
+          },
+          "revenue": {
+            "account_management": 16253,
+            "business_development": 10633,
+            "channel_sales": 618,
+            "customer_retention_development": 1746,
+            "customer_success": 15253,
+            "field_outside_sales": 5375,
+            "inside_sales": 3475,
+            "partnerships": 380,
+            "revenue_operations": 26,
+            "sales": 43809,
+            "sales_enablement": 26,
+            "sales_engineering": 135,
+            "sales_operations": 254,
+            "sales_training": 465
+          },
+          "engineering_technical": {
+            "artificial_intelligence_machine_learning": 4466,
+            "bioengineering_biometrics": 2,
+            "business_intelligence": 6811,
+            "chemical_engineering": 3014,
+            "cloud_mobility": 1144,
+            "data_science": 9589,
+            "devops": 502,
+            "digital_transformation": 13,
+            "emerging_technology_innovation": 576,
+            "engineering_technical": 37540,
+            "industrial_engineering": 1242,
+            "mechanic": 1037,
+            "mobile_development": 3282,
+            "project_management": 4923,
+            "research_development": 10123,
+            "scrum_master_agile_coach": 173,
+            "software_development": 57246,
+            "support_technical_services": 8328,
+            "technician": 7999,
+            "technology_operations": 64,
+            "test_quality_assurance": 6722,
+            "ui_ux": 458,
+            "web_development": 2551
+          },
+          "operations": {
+            "call_center": 2095,
+            "construction": 2338,
+            "corporate_strategy": 1194,
+            "customer_service_support": 21434,
+            "enterprise_resource_planning": 389,
+            "facilities_management": 18036,
+            "leasing": 33,
+            "logistics": 75145,
+            "office_operations": 32304,
+            "operations": 27241,
+            "physical_security": 3280,
+            "project_development": 695,
+            "quality_management": 1801,
+            "real_estate": 961,
+            "safety": 2794,
+            "store_operations": 26641,
+            "supply_chain": 2728
+          },
+          "senior_leadership": {
+            "executive": 348,
+            "finance_executive": 71,
+            "founder": 1128,
+            "human_resources_executive": 3,
+            "information_technology_executive": 35,
+            "legal_executive": 2,
+            "marketing_executive": 314,
+            "medical_health_executive": 3,
+            "operations_executive": 32,
+            "sales_executive": 2
+          },
+          "medical_health": {
+            "anesthesiology": 33,
+            "chiropractics": 64,
+            "clinical_systems": 91,
+            "dentistry": 480,
+            "dermatology": 6,
+            "doctors_physicians": 1214,
+            "epidemiology": 1,
+            "first_responder": 504,
+            "medical_administration": 767,
+            "medical_education_training": 19,
+            "medical_research": 92,
+            "medicine": 1202,
+            "neurology": 1,
+            "nursing": 2053,
+            "nutrition_dietetics": 94,
+            "obstetrics_gynecology": 50,
+            "oncology": 3,
+            "ophthalmology": 11,
+            "optometry": 46,
+            "orthopedics": 14,
+            "pathology": 15,
+            "pediatrics": 20,
+            "pharmacy": 873,
+            "physical_therapy": 342,
+            "psychiatry": 383,
+            "psychology": 663,
+            "public_health": 803,
+            "radiology": 215,
+            "social_work": 2495
+          },
+          "information_technology": {
+            "application_development": 37630,
+            "business_service_management_itsm": 1710,
+            "collaboration_web_app": 281,
+            "data_center": 597,
+            "data_warehouse": 2090,
+            "database_administration": 309,
+            "ecommerce_development": 285,
+            "enterprise_architecture": 784,
+            "help_desk_desktop_services": 4164,
+            "hr_financial_erp_systems": 807,
+            "information_security": 1742,
+            "information_technology": 9139,
+            "infrastructure": 2254,
+            "it_asset_management": 100,
+            "it_audit_it_compliance": 50,
+            "it_operations": 6941,
+            "it_procurement": 866,
+            "it_strategy": 439,
+            "it_training": 51,
+            "networking": 1528,
+            "project_program_management": 15780,
+            "quality_assurance": 8126,
+            "retail_store_systems": 1042,
+            "servers": 984,
+            "storage_disaster_recovery": 111,
+            "telecommunications": 186,
+            "virtualization": 915
+          },
+          "education": {
+            "principal": 458,
+            "professor": 694,
+            "superintendent": 28,
+            "teacher": 7885
+          },
+          "marketing": {
+            "advertising": 3032,
+            "brand_management": 2504,
+            "content_marketing": 2641,
+            "customer_experience": 812,
+            "customer_marketing": 8,
+            "demand_generation": 507,
+            "digital_marketing": 1640,
+            "ecommerce_marketing": 1121,
+            "event_marketing": 125,
+            "field_marketing": 740,
+            "lead_generation": 2937,
+            "marketing": 18980,
+            "marketing_analytics_insights": 716,
+            "marketing_communications": 496,
+            "marketing_operations": 71,
+            "product_marketing": 1319,
+            "public_relations": 972,
+            "search_engine_optimization_pay_per_click": 974,
+            "social_media_marketing": 1411,
+            "strategic_communications": 709,
+            "technical_marketing": 5
+          },
+          "consulting": {
+            "consultant": 31420
+          },
+          "human_resources": {
+            "compensation_benefits": 908,
+            "culture_diversity_inclusion": 182,
+            "employee_labor_relations": 1147,
+            "health_safety": 1087,
+            "hr_business_partner": 3332,
+            "human_resource_information_system": 1321,
+            "human_resources": 13884,
+            "learning_development": 7386,
+            "organizational_development": 154,
+            "people_operations": 10,
+            "recruiting_talent_acquisition": 5764,
+            "talent_management": 911,
+            "workforce_management": 571
+          },
+          "design": {
+            "graphic_visual_brand_design": 3707,
+            "product_or_ui_ux_design": 2364
+          },
+          "product": {
+            "product_development": 266,
+            "product_management": 10811
+          }
+        },
+        "estimated_revenue": "$1M-$10M"
+      },
+      "gender": "male"
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "find_company": {
+    "method": "GET",
+    "path": "/companies/find",
+    "status": 200,
+    "body": {
+      "id": "01a01a7c-f766-7211-b764-773f94de89e3",
+      "object": "company",
+      "name": "A Company",
+      "website": "https://company.com",
+      "linkedin_url": "https://www.linkedin.com/company/company-1",
+      "keywords": [
+        "sales",
+        "ai sales",
+        "sales engagement"
+      ],
+      "estimated_number_of_employees": 500,
+      "size": "201-500 employees",
+      "industry": "Software Development",
+      "logo_url": "https://assets.amplemarket.com/avatars/company/01a01a7c-f766-7211-b764-773f94de89e3",
+      "location": "San Francisco, California, United States",
+      "location_details": {
+        "city": "San Francisco",
+        "state": "California",
+        "country": "United States",
+        "postal_code": "94103",
+        "lat": 37.7749,
+        "long": -122.4194
+      },
+      "locations": [
+        {
+          "is_primary": true,
+          "address": "123 Main St, San Francisco, CA 94103, United States",
+          "country": "United States",
+          "state": "California",
+          "city": "San Francisco",
+          "postal_code": "94103"
+        },
+        {
+          "is_primary": false,
+          "address": "456 Broadway, New York, NY 10001, United States",
+          "country": "United States",
+          "state": "New York",
+          "city": "New York",
+          "postal_code": "10001"
+        }
+      ],
+      "overview": "We're an AI company.",
+      "followers": 300,
+      "linkedin_presence": "limited",
+      "founded_year": 1995,
+      "traffic_rank": 50,
+      "sic_codes": [
+        1,
+        2,
+        3
+      ],
+      "naics_codes": [
+        5112,
+        511,
+        51
+      ],
+      "type": "Privately Held",
+      "total_funding": 0,
+      "latest_funding_stage": "series_b",
+      "latest_funding_date": "2019-11-02",
+      "funding_events": [
+        {
+          "date": "2019-11-02",
+          "type": "Series B",
+          "investors": [],
+          "amount": 40000000,
+          "currency": null,
+          "amount_usd": null
+        }
+      ],
+      "is_b2b": true,
+      "is_b2c": false,
+      "technologies": [],
+      "department_headcount": {
+        "consulting": 31420,
+        "design": 5312,
+        "education": 9063,
+        "engineering_technical": 167805,
+        "finance": 31894,
+        "human_resources": 33265,
+        "information_technology": 94657,
+        "legal": 41863,
+        "marketing": 38192,
+        "medical_health": 11440,
+        "operations": 198127,
+        "product": 11077,
+        "revenue": 75777,
+        "senior_leadership": 1933
+      },
+      "job_function_headcount": {
+        "finance": {
+          "accounting": 12824,
+          "finance": 12197,
+          "financial_planning_analysis": 2468,
+          "financial_reporting": 250,
+          "financial_risk": 886,
+          "financial_strategy": 91,
+          "financial_systems": 11,
+          "internal_audit_control": 850,
+          "investor_relations": 129,
+          "mergers_acquisitions": 259,
+          "real_estate_finance": 117,
+          "shared_services": 56,
+          "sourcing_procurement": 3767,
+          "tax": 822,
+          "treasury": 179
+        },
+        "legal": {
+          "acquisitions": 8,
+          "compliance": 4921,
+          "contracts": 206,
+          "corporate_secretary": 217,
+          "ediscovery": 57,
+          "ethics": 1070,
+          "governance": 66,
+          "governmental_affairs_regulatory_law": 518,
+          "intellectual_property_patent": 63,
+          "labor_employment": 96,
+          "lawyer_attorney": 2014,
+          "legal": 31969,
+          "legal_counsel": 879,
+          "legal_operations": 3777,
+          "litigation": 89,
+          "privacy": 198
+        },
+        "revenue": {
+          "account_management": 16253,
+          "business_development": 10633,
+          "channel_sales": 618,
+          "customer_retention_development": 1746,
+          "customer_success": 15253,
+          "field_outside_sales": 5375,
+          "inside_sales": 3475,
+          "partnerships": 380,
+          "revenue_operations": 26,
+          "sales": 43809,
+          "sales_enablement": 26,
+          "sales_engineering": 135,
+          "sales_operations": 254,
+          "sales_training": 465
+        },
+        "engineering_technical": {
+          "artificial_intelligence_machine_learning": 4466,
+          "bioengineering_biometrics": 2,
+          "business_intelligence": 6811,
+          "chemical_engineering": 3014,
+          "cloud_mobility": 1144,
+          "data_science": 9589,
+          "devops": 502,
+          "digital_transformation": 13,
+          "emerging_technology_innovation": 576,
+          "engineering_technical": 37540,
+          "industrial_engineering": 1242,
+          "mechanic": 1037,
+          "mobile_development": 3282,
+          "project_management": 4923,
+          "research_development": 10123,
+          "scrum_master_agile_coach": 173,
+          "software_development": 57246,
+          "support_technical_services": 8328,
+          "technician": 7999,
+          "technology_operations": 64,
+          "test_quality_assurance": 6722,
+          "ui_ux": 458,
+          "web_development": 2551
+        },
+        "operations": {
+          "call_center": 2095,
+          "construction": 2338,
+          "corporate_strategy": 1194,
+          "customer_service_support": 21434,
+          "enterprise_resource_planning": 389,
+          "facilities_management": 18036,
+          "leasing": 33,
+          "logistics": 75145,
+          "office_operations": 32304,
+          "operations": 27241,
+          "physical_security": 3280,
+          "project_development": 695,
+          "quality_management": 1801,
+          "real_estate": 961,
+          "safety": 2794,
+          "store_operations": 26641,
+          "supply_chain": 2728
+        },
+        "senior_leadership": {
+          "executive": 348,
+          "finance_executive": 71,
+          "founder": 1128,
+          "human_resources_executive": 3,
+          "information_technology_executive": 35,
+          "legal_executive": 2,
+          "marketing_executive": 314,
+          "medical_health_executive": 3,
+          "operations_executive": 32,
+          "sales_executive": 2
+        },
+        "medical_health": {
+          "anesthesiology": 33,
+          "chiropractics": 64,
+          "clinical_systems": 91,
+          "dentistry": 480,
+          "dermatology": 6,
+          "doctors_physicians": 1214,
+          "epidemiology": 1,
+          "first_responder": 504,
+          "medical_administration": 767,
+          "medical_education_training": 19,
+          "medical_research": 92,
+          "medicine": 1202,
+          "neurology": 1,
+          "nursing": 2053,
+          "nutrition_dietetics": 94,
+          "obstetrics_gynecology": 50,
+          "oncology": 3,
+          "ophthalmology": 11,
+          "optometry": 46,
+          "orthopedics": 14,
+          "pathology": 15,
+          "pediatrics": 20,
+          "pharmacy": 873,
+          "physical_therapy": 342,
+          "psychiatry": 383,
+          "psychology": 663,
+          "public_health": 803,
+          "radiology": 215,
+          "social_work": 2495
+        },
+        "information_technology": {
+          "application_development": 37630,
+          "business_service_management_itsm": 1710,
+          "collaboration_web_app": 281,
+          "data_center": 597,
+          "data_warehouse": 2090,
+          "database_administration": 309,
+          "ecommerce_development": 285,
+          "enterprise_architecture": 784,
+          "help_desk_desktop_services": 4164,
+          "hr_financial_erp_systems": 807,
+          "information_security": 1742,
+          "information_technology": 9139,
+          "infrastructure": 2254,
+          "it_asset_management": 100,
+          "it_audit_it_compliance": 50,
+          "it_operations": 6941,
+          "it_procurement": 866,
+          "it_strategy": 439,
+          "it_training": 51,
+          "networking": 1528,
+          "project_program_management": 15780,
+          "quality_assurance": 8126,
+          "retail_store_systems": 1042,
+          "servers": 984,
+          "storage_disaster_recovery": 111,
+          "telecommunications": 186,
+          "virtualization": 915
+        },
+        "education": {
+          "principal": 458,
+          "professor": 694,
+          "superintendent": 28,
+          "teacher": 7885
+        },
+        "marketing": {
+          "advertising": 3032,
+          "brand_management": 2504,
+          "content_marketing": 2641,
+          "customer_experience": 812,
+          "customer_marketing": 8,
+          "demand_generation": 507,
+          "digital_marketing": 1640,
+          "ecommerce_marketing": 1121,
+          "event_marketing": 125,
+          "field_marketing": 740,
+          "lead_generation": 2937,
+          "marketing": 18980,
+          "marketing_analytics_insights": 716,
+          "marketing_communications": 496,
+          "marketing_operations": 71,
+          "product_marketing": 1319,
+          "public_relations": 972,
+          "search_engine_optimization_pay_per_click": 974,
+          "social_media_marketing": 1411,
+          "strategic_communications": 709,
+          "technical_marketing": 5
+        },
+        "consulting": {
+          "consultant": 31420
+        },
+        "human_resources": {
+          "compensation_benefits": 908,
+          "culture_diversity_inclusion": 182,
+          "employee_labor_relations": 1147,
+          "health_safety": 1087,
+          "hr_business_partner": 3332,
+          "human_resource_information_system": 1321,
+          "human_resources": 13884,
+          "learning_development": 7386,
+          "organizational_development": 154,
+          "people_operations": 10,
+          "recruiting_talent_acquisition": 5764,
+          "talent_management": 911,
+          "workforce_management": 571
+        },
+        "design": {
+          "graphic_visual_brand_design": 3707,
+          "product_or_ui_ux_design": 2364
+        },
+        "product": {
+          "product_development": 266,
+          "product_management": 10811
+        }
+      },
+      "estimated_revenue": "$1M-$10M"
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_lead_lists": {
+    "method": "GET",
+    "path": "/lead-lists",
+    "status": 200,
+    "body": {
+      "lead_lists": [
+        {
+          "id": "01a01a7d-26be-7c30-b0de-d191662ac881",
+          "name": "Sample list 1",
+          "status": "completed",
+          "url": "https://localhost:3000/dashboard/lead_lists/01a01a7d-26be-7c30-b0de-d191662ac881",
+          "shared": false,
+          "visible": true,
+          "owner": "admin@example.com",
+          "type": "linkedin",
+          "created_at": "2026-08-19T14:46:44Z",
+          "updated_at": "2026-08-19T14:46:44Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/lead-lists?page[size]=20"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "create_lead_list": {
+    "method": "POST",
+    "path": "/lead-lists",
+    "status": 202,
+    "body": {
+      "id": "01a01a7d-2a6e-701d-b42d-3cd2bb4fe156",
+      "object": "lead_list",
+      "name": "my list",
+      "status": "queued",
+      "url": "https://localhost:3000/dashboard/lead_lists/01a01a7d-2a6e-701d-b42d-3cd2bb4fe156",
+      "shared": true,
+      "visible": false,
+      "owner": "admin@example.com",
+      "type": "linkedin",
+      "created_at": "2026-08-19T14:46:45Z",
+      "updated_at": "2026-08-19T14:46:45Z",
+      "options": {
+        "reveal_phone_numbers": false,
+        "validate_email": true,
+        "enrich": true
+      },
+      "leads": [],
+      "_links": {
+        "self": {
+          "href": "/lead-lists/01a01a7d-2a6e-701d-b42d-3cd2bb4fe156"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "get_lead_list": {
+    "method": "GET",
+    "path": "/lead-lists/{id}",
+    "status": 200,
+    "body": {
+      "id": "01a01a7d-3184-76da-983c-fc7f66d11d6c",
+      "object": "lead_list",
+      "name": "my list",
+      "status": "processing",
+      "url": "https://localhost:3000/dashboard/lead_lists/01a01a7d-3184-76da-983c-fc7f66d11d6c",
+      "shared": true,
+      "visible": false,
+      "owner": "admin@example.com",
+      "type": "linkedin",
+      "created_at": "2026-08-19T14:46:47Z",
+      "updated_at": "2026-08-19T14:46:47Z",
+      "options": {
+        "reveal_phone_numbers": true,
+        "validate_email": true,
+        "enrich": true
+      },
+      "leads": [],
+      "_links": {
+        "self": {
+          "href": "/lead-lists/01a01a7d-3184-76da-983c-fc7f66d11d6c"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "add_leads_to_list": {
+    "method": "POST",
+    "path": "/lead-lists/{id}/leads",
+    "status": 202,
+    "body": {
+      "total": 1,
+      "total_added_to_lead_list": 1
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_contacts": {
+    "method": "GET",
+    "path": "/contacts",
+    "status": 200,
+    "body": {
+      "contacts": [
+        {
+          "id": "01a01a7d-73a8-7f62-8cb3-aa7b5d927d9a",
+          "name": "John Doe",
+          "first_name": "John",
+          "last_name": "Doe",
+          "linkedin_url": "https://linkedin.com/in/john-doe",
+          "email": "john.doe@example.com",
+          "time_zone": "Europe/Lisbon",
+          "location": "Lisbon, Lisbon, Portugal",
+          "title": "Software Engineer",
+          "company_domain": "amplemarket.com",
+          "company_name": "Amplemarket",
+          "owner": "user@example.com",
+          "created_at": "2026-08-19T14:47:04Z",
+          "last_contacted_at": "2026-08-17T14:47:04Z",
+          "phone_numbers": [
+            {
+              "id": "01a01a7d-7166-7c6e-9768-9dd40c5a585c",
+              "object": "phone_number",
+              "number": "+1 639-300-0002",
+              "type": "mobile",
+              "source": "amplemarket",
+              "is_wrong_number": false,
+              "kind": "mobile"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "create_contact": {
+    "method": "POST",
+    "path": "/contacts",
+    "status": 201,
+    "body": {
+      "id": "01a01a7d-764c-7504-89b7-186ab393cca2",
+      "name": "Jane Doe",
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "linkedin_url": null,
+      "email": "new-contact@example.com",
+      "time_zone": null,
+      "location": null,
+      "title": "CEO",
+      "company_domain": "amplemarket.com",
+      "company_name": "Amplemarket",
+      "owner": null,
+      "created_at": "2026-08-19T14:47:03Z",
+      "last_contacted_at": null,
+      "phone_numbers": [],
+      "recent_activity": []
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/contacts/{id}",
+    "status": 200,
+    "body": {
+      "id": "01a01a7d-73a8-7f62-8cb3-aa7b5d927d9a",
+      "name": "John Doe",
+      "first_name": "John",
+      "last_name": "Doe",
+      "linkedin_url": "https://linkedin.com/in/john-doe",
+      "email": "john.doe@example.com",
+      "time_zone": "Europe/Lisbon",
+      "location": "Lisbon, Lisbon, Portugal",
+      "title": "Software Engineer",
+      "company_domain": "amplemarket.com",
+      "company_name": "Amplemarket",
+      "owner": "user@example.com",
+      "created_at": "2026-08-19T14:47:04Z",
+      "last_contacted_at": "2026-08-17T14:47:04Z",
+      "phone_numbers": [
+        {
+          "id": "01a01a7d-7166-7c6e-9768-9dd40c5a585c",
+          "object": "phone_number",
+          "number": "+1 639-300-0002",
+          "type": "mobile",
+          "source": "amplemarket",
+          "is_wrong_number": false,
+          "kind": "mobile"
+        }
+      ],
+      "recent_activity": [
+        {
+          "event_at": "2026-08-19T14:47:03Z",
+          "event_type": "completed_without_reply",
+          "sequence_id": "b026f38bb2881327da047d9126adcc9a3312ff12",
+          "sequence_type": "sequence",
+          "sequence_name": "A sequence"
+        },
+        {
+          "event_at": "2026-08-18T13:35:03Z",
+          "event_type": "added_to_sequence",
+          "sequence_id": "b026f38bb2881327da047d9126adcc9a3312ff12",
+          "sequence_type": "sequence",
+          "sequence_name": "A sequence"
+        }
+      ]
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "get_contact_by_email": {
+    "method": "GET",
+    "path": "/contacts/email/{email}",
+    "status": 200,
+    "body": {
+      "id": "01a01a7d-73a8-7f62-8cb3-aa7b5d927d9a",
+      "name": "John Doe",
+      "first_name": "John",
+      "last_name": "Doe",
+      "linkedin_url": "https://linkedin.com/in/john-doe",
+      "email": "john.doe@example.com",
+      "time_zone": "Europe/Lisbon",
+      "location": "Lisbon, Lisbon, Portugal",
+      "title": "Software Engineer",
+      "company_domain": "amplemarket.com",
+      "company_name": "Amplemarket",
+      "owner": "user@example.com",
+      "created_at": "2026-08-19T14:47:04Z",
+      "last_contacted_at": "2026-08-17T14:47:04Z",
+      "phone_numbers": [
+        {
+          "id": "01a01a7d-7166-7c6e-9768-9dd40c5a585c",
+          "object": "phone_number",
+          "number": "+1 639-300-0002",
+          "type": "mobile",
+          "source": "amplemarket",
+          "is_wrong_number": false,
+          "kind": "mobile"
+        }
+      ],
+      "recent_activity": [
+        {
+          "event_at": "2026-08-19T14:47:03Z",
+          "event_type": "completed_without_reply",
+          "sequence_id": "b026f38bb2881327da047d9126adcc9a3312ff12",
+          "sequence_type": "sequence",
+          "sequence_name": "A sequence"
+        },
+        {
+          "event_at": "2026-08-18T13:35:03Z",
+          "event_type": "added_to_sequence",
+          "sequence_id": "b026f38bb2881327da047d9126adcc9a3312ff12",
+          "sequence_type": "sequence",
+          "sequence_name": "A sequence"
+        }
+      ]
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_accounts": {
+    "method": "GET",
+    "path": "/accounts",
+    "status": 200,
+    "body": {
+      "accounts": [
+        {
+          "id": "pub_123",
+          "name": "Acme Corp",
+          "website": "acme.com",
+          "linkedin_url": "https://linkedin.com/company/acme",
+          "owner_email": "owner@example.com",
+          "last_contacted_at": null,
+          "last_engaged_at": null
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/accounts?page[size]=10"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "get_account": {
+    "method": "GET",
+    "path": "/accounts/{id}",
+    "status": 200,
+    "body": {
+      "id": "pub_123",
+      "name": "Acme Corp",
+      "domain": "acme.com",
+      "linkedin_url": null,
+      "description": null,
+      "industry": "Technology",
+      "size": "51-200",
+      "founded_year": null,
+      "image_url": null,
+      "location": {
+        "city": "San Francisco",
+        "state": null,
+        "country": "US"
+      },
+      "owner": null,
+      "tags": [],
+      "insights": null,
+      "insights_generated_at": null,
+      "insights_status": "unavailable",
+      "engagement": {
+        "contacts_count": 0,
+        "active_contacts_count": 0,
+        "interested_contacts_count": 0,
+        "first_contacted_at": null,
+        "last_contacted_at": null,
+        "last_engaged_at": null,
+        "emails_sent": 0,
+        "emails_received": 0,
+        "linkedin_sent": 0,
+        "linkedin_received": 0,
+        "calls_made": 0,
+        "calls_received": 0,
+        "meetings": 0
+      },
+      "crm": null,
+      "opportunities": null,
+      "custom_fields": {},
+      "research_status": "completed",
+      "latest_completed_research": {
+        "relevance": "high",
+        "summary": "Acme Corp is growing its outbound team after a Series B, and its VP of Sales asked for a demo last week.",
+        "generated_at": "2026-09-02T10:00:00Z",
+        "signals": [
+          {
+            "category": "funding",
+            "title": "Raised a $40M Series B",
+            "description": "Acme Corp raised a $40M Series B to expand its sales team.",
+            "occurred_at": "2026-08-28",
+            "sources": [
+              {
+                "source_type": "news",
+                "title": "Acme Corp raises $40M Series B",
+                "url": "https://techcrunch.com/2026/08/28/acme-corp-series-b",
+                "job_opening_id": null,
+                "contact_id": null
+              }
+            ]
+          },
+          {
+            "category": "hiring",
+            "title": "Hiring Sales Development Representatives",
+            "description": "Acme Corp opened five SDR roles in the last month.",
+            "occurred_at": "2026-08-30",
+            "sources": [
+              {
+                "source_type": "job_opening",
+                "title": "Sales Development Representative",
+                "url": "https://app.amplemarket.com/dashboard/accounts/pub_123?tab=jobs&job_opening_id=123456789",
+                "job_opening_id": "123456789",
+                "contact_id": null
+              }
+            ]
+          },
+          {
+            "category": "first_party_intelligence",
+            "title": "Demo requested",
+            "description": "The VP of Sales replied to a sequence email asking for a demo.",
+            "occurred_at": "2026-09-01",
+            "sources": [
+              {
+                "source_type": "contact_activity",
+                "title": "Inbound email from Maya Chen",
+                "url": "https://app.amplemarket.com/dashboard/contacts/0b9f4c1e-7d2a-4b8e-9a51-3c6d2e8f1a47?tab=activity",
+                "job_opening_id": null,
+                "contact_id": "0b9f4c1e-7d2a-4b8e-9a51-3c6d2e8f1a47"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_sequences": {
+    "method": "GET",
+    "path": "/sequences",
+    "status": 200,
+    "body": {
+      "sequences": [
+        {
+          "id": "b0fc2a17ac412554ba82f8d4f92f22c0821228a6",
+          "name": "Sample sequence",
+          "status": "active",
+          "priority": "normal",
+          "url": "https://localhost:3000/dashboard/sequences/b0fc2a17ac412554ba82f8d4f92f22c0821228a6",
+          "tags": [],
+          "dynamic_fields_used": [
+            "first_name",
+            "company_name"
+          ],
+          "created_by_user_id": "01a01a7d-8696-7e0d-ad53-abbebad80990",
+          "created_by_user_email": "foo-96@email.com",
+          "created_at": "2026-08-19T14:47:10Z",
+          "updated_at": "2026-08-19T14:47:10Z"
+        },
+        {
+          "id": "13261c66143af59134b708a2153210f3af82ea0c",
+          "name": "A sequence",
+          "status": "active",
+          "priority": "normal",
+          "url": "https://localhost:3000/dashboard/sequences/13261c66143af59134b708a2153210f3af82ea0c",
+          "tags": [],
+          "dynamic_fields_used": [],
+          "created_by_user_id": "01a01a7d-8696-7e0d-ad53-abbebad80990",
+          "created_by_user_email": "foo-96@email.com",
+          "created_at": "2026-08-19T14:47:09Z",
+          "updated_at": "2026-08-19T14:47:09Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/sequences?page[size]=20"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "add_leads_to_sequence": {
+    "method": "POST",
+    "path": "/sequences/{id}/leads",
+    "status": 200,
+    "body": {
+      "total": 1,
+      "total_added_to_sequence": 1,
+      "duplicate_emails": [],
+      "duplicate_linkedin_urls": [],
+      "in_exclusion_list_and_skipped": [],
+      "recently_contacted_and_skipped": [],
+      "already_in_sequence_and_skipped": [],
+      "in_other_draft_sequences_and_skipped": [],
+      "in_other_active_sequences_and_skipped": []
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_tasks": {
+    "method": "GET",
+    "path": "/tasks",
+    "status": 200,
+    "body": {
+      "tasks": [
+        {
+          "id": "01a01a7d-7f9d-71d2-bb1d-76c07ccff28d",
+          "automatic": false,
+          "type": "phone_call",
+          "status": "scheduled",
+          "due_on": "2026-08-19T12:47:07Z",
+          "finished_on": null,
+          "notes": "custom task notes",
+          "sequence_key": null,
+          "sequence_name": null,
+          "user_id": "01a01a7d-7da0-7b3b-a953-b1bfa551a383",
+          "user_email": "user@example.com",
+          "contact": {
+            "id": "0aa16187-1ce3-450d-9d7a-895cef65dbb3",
+            "name": "John Doe",
+            "email": "user@example.com"
+          }
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/tasks?page[size]=20&status=due&user_id=01a01a7d-7da0-7b3b-a953-b1bfa551a383"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_excluded_emails": {
+    "method": "GET",
+    "path": "/excluded-emails",
+    "status": 200,
+    "body": {
+      "excluded_emails": [
+        {
+          "email": "someone@domain.com",
+          "source": "amplemarket",
+          "date_added": "2026-08-19T14:46:18.172Z",
+          "excluded_reason": "api",
+          "excluded_reasons": [
+            "api"
+          ]
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/excluded-emails?page[size]=2000"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "create_email_exclusions": {
+    "method": "POST",
+    "path": "/excluded-emails",
+    "status": 200,
+    "body": {
+      "existing@domain.com": "duplicated",
+      "new@domain.com": "success"
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "delete_email_exclusions": {
+    "method": "DELETE",
+    "path": "/excluded-emails",
+    "status": 200,
+    "body": {
+      "existing@domain.com": "success",
+      "existing_from_crm@domain.com": "unsupported",
+      "unexistent@domain.com": "not_found"
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "list_calls": {
+    "method": "GET",
+    "path": "/calls",
+    "status": 200,
+    "body": {
+      "calls": [
+        {
+          "id": "01a08646-88f2-7928-8ad4-fc1dacb96fe1",
+          "disposition_id": null,
+          "disposition_name": null,
+          "duration": null,
+          "external": true,
+          "direction": "outgoing",
+          "start_date": "2026-09-09T13:05:04Z",
+          "from": "+351999999999",
+          "to": "+351888888888",
+          "notes": null,
+          "recording_url": "https://recordings.example.com/abc123.mp3",
+          "task_id": null,
+          "user_id": "01a08646-8723-795e-b1fe-43a93bf23ac7",
+          "user_email": "user@example.com",
+          "human": false,
+          "answered": null,
+          "contact": null,
+          "transcription": null,
+          "transcript": []
+        },
+        {
+          "id": "01a08646-88a6-7723-bad9-27a80fac27ed",
+          "disposition_id": null,
+          "disposition_name": null,
+          "duration": null,
+          "external": false,
+          "direction": "outgoing",
+          "start_date": "2026-09-09T13:05:04Z",
+          "from": "+351999999999",
+          "to": "+351888888888",
+          "notes": null,
+          "recording_url": null,
+          "task_id": null,
+          "user_id": "01a08646-8723-795e-b1fe-43a93bf23ac7",
+          "user_email": "user@example.com",
+          "human": false,
+          "answered": null,
+          "contact": null,
+          "transcription": null,
+          "transcript": []
+        },
+        {
+          "id": "01a08646-883e-738f-ad88-f94b9f04e74a",
+          "disposition_id": null,
+          "disposition_name": null,
+          "duration": null,
+          "external": false,
+          "direction": "outgoing",
+          "start_date": "2026-09-09T13:05:04Z",
+          "from": "+351999999999",
+          "to": "+351888888888",
+          "notes": null,
+          "recording_url": null,
+          "task_id": null,
+          "user_id": "01a08646-8723-795e-b1fe-43a93bf23ac7",
+          "user_email": "user@example.com",
+          "human": false,
+          "answered": null,
+          "contact": null,
+          "transcription": null,
+          "transcript": []
+        },
+        {
+          "id": "01a08646-87e5-72b7-8edd-8e8f94ecf1b8",
+          "disposition_id": null,
+          "disposition_name": null,
+          "duration": null,
+          "external": false,
+          "direction": "outgoing",
+          "start_date": "2026-09-09T13:05:04Z",
+          "from": "+351999999999",
+          "to": "+351888888888",
+          "notes": null,
+          "recording_url": null,
+          "task_id": null,
+          "user_id": "01a08646-8723-795e-b1fe-43a93bf23ac7",
+          "user_email": "user@example.com",
+          "human": false,
+          "answered": null,
+          "contact": null,
+          "transcription": null,
+          "transcript": []
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/calls?page[size]=20"
+        }
+      }
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  },
+  "log_call": {
+    "method": "POST",
+    "path": "/calls",
+    "status": 201,
+    "body": {
+      "id": "01a08646-856e-72b7-9bc3-829b4c880ac4",
+      "disposition_id": "01a08646-833c-7428-ab8a-9d7d369cd02a",
+      "disposition_name": "custom disposition",
+      "duration": 5,
+      "external": true,
+      "direction": "outgoing",
+      "start_date": "2026-09-09T13:06:03Z",
+      "from": "+1 123456789",
+      "to": "+1 123456789",
+      "notes": null,
+      "recording_url": "https://recordings.example.com/abc123.mp3",
+      "task_id": "01a08646-84ec-72e2-bf65-6d6a643931e8",
+      "user_id": "01a08646-8497-70c6-aaca-ff7a450538b1",
+      "user_email": "user@example.com",
+      "human": false,
+      "answered": true,
+      "contact": null,
+      "transcription": null,
+      "transcript": []
+    },
+    "source": "https://api.amplemarket.com/api-docs/v1/swagger.yaml"
+  }
+}
