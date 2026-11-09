@@ -1,0 +1,140 @@
+{
+  "Account": {
+    "id": 5678,
+    "firstname": "Sam",
+    "surname": "Taylor",
+    "full_name": "Sam Taylor",
+    "email": "sam@example.com",
+    "mobile": "61412345678",
+    "settings": {
+      "timezone": "Australia/Sydney",
+      "allow_contact_duplicates": false,
+      "allow_sms_duplicates": false,
+      "email_reply": true,
+      "email_to_sms_enabled": false
+    }
+  },
+  "Template": {
+    "id": 1234,
+    "user": 5678,
+    "name": "Appointment Reminder",
+    "message": "Hi {{firstname}}, reminder of your appointment tomorrow.",
+    "subject": null,
+    "replies": true,
+    "sender_id": "SHARED_NUMBER",
+    "updated": "2024-03-11T02:14:07Z",
+    "created": "2024-02-02T23:51:19Z"
+  },
+  "Group": {
+    "id": 512,
+    "name": "Customers",
+    "status": true,
+    "group_email": "group-512@example.com",
+    "is_global": false,
+    "updated": "2024-03-11T02:14:07Z",
+    "created": "2024-02-02T23:51:19Z"
+  },
+  "Contact": {
+    "id": 4040,
+    "user": 5678,
+    "firstname": "Sam",
+    "surname": "Taylor",
+    "email": "sam@example.com",
+    "number": "+61412345678",
+    "metadata": null,
+    "groups": [
+      {
+        "id": 512,
+        "name": "Customers"
+      }
+    ],
+    "updated": "2024-03-11T02:14:07Z",
+    "created": "2024-02-02T23:51:19Z"
+  },
+  "Optout": {
+    "id": 12345,
+    "user": 5678,
+    "number": "+61412345678",
+    "method": "reply",
+    "opt_out_list": {
+      "id": 1,
+      "name": "Default Opt-Out List",
+      "is_default": true
+    },
+    "updated": "2024-03-11T02:14:07.000000Z",
+    "created": "2024-03-11T02:14:07.000000Z"
+  },
+  "OptoutList": {
+    "id": 2,
+    "name": "Marketing Opt-Outs",
+    "is_default": false,
+    "opt_out_count": 89,
+    "created_at": "2024-03-10T14:30:22.000000Z",
+    "updated_at": "2024-03-15T09:45:18.000000Z"
+  },
+  "SenderId": {
+    "type": "dedicated",
+    "type_description": "Dedicated",
+    "sender_id": "61491570159",
+    "label": "61491570159 (Virtual Number)",
+    "enabled": true,
+    "default": true,
+    "acma_unverified": false,
+    "verify_url": null
+  },
+  "Inbound": {
+    "id": 1350660,
+    "content": "Yes, see you then",
+    "number": "61412345678",
+    "received_by_number": "61491570159",
+    "new": false,
+    "optout": false,
+    "channel": null,
+    "media_urls": [],
+    "updated": "2024-03-11T02:14:07.000000Z",
+    "created": "2024-03-11T02:14:07.000000Z",
+    "contact": null,
+    "message": null
+  },
+  "SendResult": {
+    "meta": {
+      "totalParts": 1,
+      "totalMessages": 1,
+      "totalCredits": 1,
+      "scheduledMessages": 0
+    },
+    "messages": [
+      {
+        "status": "VALID",
+        "ulid": "01hrq7v3c8w9m2k5t6y4x0z1ab",
+        "to": "61412345678",
+        "from": "SHARED_NUMBER",
+        "body": "Hi Sam, your order has shipped.",
+        "campaign": "API Campaign (2024-03-11)",
+        "reference": "order-1042",
+        "metadata": {
+          "order_id": 1042
+        },
+        "date": null,
+        "meta": {
+          "size": 31,
+          "parts": 1,
+          "is_unicode": false,
+          "is_mms": false,
+          "cost": 1,
+          "country": "AU"
+        }
+      }
+    ],
+    "errors": [
+      {
+        "status": "ERROR",
+        "error_code": "INVALID_RECIPIENT",
+        "error_help": "Recipient number is invalid or could not be parsed.",
+        "to": "04123",
+        "from": "SHARED_NUMBER",
+        "body": "Hi Sam, your order has shipped."
+      }
+    ]
+  }
+}
