@@ -1,0 +1,14 @@
+{
+  "provider": "quickbase",
+  "ready": true,
+  "blocking": [],
+  "advisory": [],
+  "stats": {
+    "operations": 20,
+    "skipped": 0,
+    "request_ok": 20,
+    "authored_parser_ok": 3,
+    "generated_only": 17,
+    "local_ok": 0
+  }
+}

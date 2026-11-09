@@ -1,0 +1,1096 @@
+{
+  "$defs": {
+    "CreateApp": {
+      "additionalProperties": false,
+      "description": "Create an app; optionally assign it to this token.",
+      "properties": {
+        "operation": {
+          "const": "create_app",
+          "default": "create_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "assign_token": {
+          "default": false,
+          "description": "Assign the newly created app to the user token.",
+          "title": "Assign Token",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateApp",
+      "type": "object"
+    },
+    "CreateField": {
+      "additionalProperties": false,
+      "description": "Create a field using one of the documented field types.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "field_type": {
+          "enum": [
+            "text",
+            "text-multiple-choice",
+            "text-multi-line",
+            "rich-text",
+            "numeric",
+            "currency",
+            "rating",
+            "percent",
+            "multitext",
+            "email",
+            "url",
+            "duration",
+            "date",
+            "datetime",
+            "timestamp",
+            "timeofday",
+            "checkbox",
+            "user",
+            "multiuser",
+            "address",
+            "phone",
+            "file"
+          ],
+          "title": "Field Type",
+          "type": "string"
+        },
+        "field_help": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Help"
+        }
+      },
+      "required": [
+        "table_id",
+        "label",
+        "field_type"
+      ],
+      "title": "CreateField",
+      "type": "object"
+    },
+    "CreateTable": {
+      "additionalProperties": false,
+      "description": "Create a named table in an app.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "single_record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Single Record Name"
+        },
+        "plural_record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plural Record Name"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTable",
+      "type": "object"
+    },
+    "DeleteRecords": {
+      "additionalProperties": false,
+      "description": "Delete only records matching the supplied query or record IDs.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_records",
+          "default": "delete_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "where": {
+          "description": "Explicit Quickbase query filter or JSON array of record IDs, for example [1, 2, 3]. A matching-all filter deletes all records.",
+          "title": "Where",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_id",
+        "where"
+      ],
+      "title": "DeleteRecords",
+      "type": "object"
+    },
+    "GetApp": {
+      "additionalProperties": false,
+      "description": "Read an app's metadata and name.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_app",
+          "default": "get_app",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetApp",
+      "type": "object"
+    },
+    "GetField": {
+      "additionalProperties": false,
+      "description": "Read one field definition.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "field_id": {
+          "exclusiveMinimum": 0,
+          "title": "Field Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "include_field_perms": {
+          "default": false,
+          "title": "Include Field Perms",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "table_id",
+        "field_id"
+      ],
+      "title": "GetField",
+      "type": "object"
+    },
+    "GetReport": {
+      "additionalProperties": false,
+      "description": "Read a saved report definition.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "report_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Report Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_id",
+        "report_id"
+      ],
+      "title": "GetReport",
+      "type": "object"
+    },
+    "GetTable": {
+      "additionalProperties": false,
+      "description": "Read a table's metadata in its parent app.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "GetTable",
+      "type": "object"
+    },
+    "ListAppEvents": {
+      "additionalProperties": false,
+      "description": "List webhooks, notifications and other app events.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "list_app_events",
+          "default": "list_app_events",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAppEvents",
+      "type": "object"
+    },
+    "ListFieldUsage": {
+      "additionalProperties": false,
+      "description": "Read report, form and other usage of a table's fields.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_field_usage",
+          "default": "list_field_usage",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "top": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Top",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "ListFieldUsage",
+      "type": "object"
+    },
+    "ListFields": {
+      "additionalProperties": false,
+      "description": "Read field definitions, optionally including field permissions.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "Operation",
+          "type": "string"
+        },
+        "include_field_perms": {
+          "default": false,
+          "title": "Include Field Perms",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "ListFields",
+      "type": "object"
+    },
+    "ListReports": {
+      "additionalProperties": false,
+      "description": "List saved reports for a table.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_reports",
+          "default": "list_reports",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "ListReports",
+      "type": "object"
+    },
+    "ListTables": {
+      "additionalProperties": false,
+      "description": "List the tables in an app.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTables",
+      "type": "object"
+    },
+    "QueryRecords": {
+      "additionalProperties": false,
+      "description": "Query one page of records using Quickbase filters and field IDs.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "query_records",
+          "default": "query_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Quickbase query filter or JSON array of record IDs, for example [1, 2, 3].",
+          "title": "Where"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of field IDs, for example [1, 2, 3].",
+          "title": "Select fields (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array, for example [{\"fieldId\": 4, \"order\": \"ASC\"}].",
+          "title": "Sort by (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "top": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Top",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "QueryRecords",
+      "type": "object"
+    },
+    "QuickbaseUserTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "quickbase_user_token",
+          "default": "quickbase_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "User token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "realm_hostname": {
+          "description": "Your realm hostname, for example demo.quickbase.com, without https:// or a path.",
+          "title": "Realm hostname",
+          "type": "string"
+        },
+        "app_id": {
+          "description": "An existing app assigned to this token. Find its ID in the app URL after /db/.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Connection app ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_token",
+        "realm_hostname",
+        "app_id"
+      ],
+      "title": "Quickbase User Token",
+      "type": "object",
+      "x-credential-instructions": "Create a user token in My preferences > My user information > Manage my user tokens, and assign it to the apps you need. Paste the token without QB-USER-TOKEN. Enter your realm hostname and an app ID the token can read; NoClick reads that app to check the connection. App access and your Quickbase permissions determine which operations are allowed.",
+      "x-credential-url": "https://help.quickbase.com/docs/create-and-use-user-tokens"
+    },
+    "RunFormula": {
+      "additionalProperties": false,
+      "description": "Evaluate a Quickbase formula, optionally against a record.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "run_formula",
+          "default": "run_formula",
+          "title": "Operation",
+          "type": "string"
+        },
+        "formula": {
+          "minLength": 1,
+          "title": "Formula",
+          "type": "string"
+        },
+        "record_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Record Id"
+        }
+      },
+      "required": [
+        "table_id",
+        "formula"
+      ],
+      "title": "RunFormula",
+      "type": "object"
+    },
+    "RunReport": {
+      "additionalProperties": false,
+      "description": "Run one page of a saved report.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "report_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Report Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "run_report",
+          "default": "run_report",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "top": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Top",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "table_id",
+        "report_id"
+      ],
+      "title": "RunReport",
+      "type": "object"
+    },
+    "UpdateApp": {
+      "additionalProperties": false,
+      "description": "Update an app's name or description.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "update_app",
+          "default": "update_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "title": "UpdateApp",
+      "type": "object"
+    },
+    "UpdateField": {
+      "additionalProperties": false,
+      "description": "Update a field's label or help text.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "field_id": {
+          "exclusiveMinimum": 0,
+          "title": "Field Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "field_help": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Help"
+        }
+      },
+      "required": [
+        "table_id",
+        "field_id"
+      ],
+      "title": "UpdateField",
+      "type": "object"
+    },
+    "UpdateTable": {
+      "additionalProperties": false,
+      "description": "Update a table's name, description or record labels.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App ID. Defaults to the connection app ID.",
+          "title": "App Id"
+        },
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_table",
+          "default": "update_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "single_record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Single Record Name"
+        },
+        "plural_record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plural Record Name"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "UpdateTable",
+      "type": "object"
+    },
+    "UpsertRecords": {
+      "additionalProperties": false,
+      "description": "Insert or update records; supply the key field to update existing rows.",
+      "properties": {
+        "table_id": {
+          "description": "Table database ID from its Quickbase URL.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_]+$",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upsert_records",
+          "default": "upsert_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "description": "JSON array of records keyed by field ID, for example [{\"6\":{\"value\":\"This is my text\"}}].",
+          "title": "Records (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "merge_field_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Merge Field Id"
+        },
+        "fields_to_return": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of field IDs, for example [6, 7].",
+          "title": "Fields to return (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "table_id",
+        "data"
+      ],
+      "title": "UpsertRecords",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_app": "#/$defs/CreateApp",
+          "create_field": "#/$defs/CreateField",
+          "create_table": "#/$defs/CreateTable",
+          "delete_records": "#/$defs/DeleteRecords",
+          "get_app": "#/$defs/GetApp",
+          "get_field": "#/$defs/GetField",
+          "get_report": "#/$defs/GetReport",
+          "get_table": "#/$defs/GetTable",
+          "list_app_events": "#/$defs/ListAppEvents",
+          "list_field_usage": "#/$defs/ListFieldUsage",
+          "list_fields": "#/$defs/ListFields",
+          "list_reports": "#/$defs/ListReports",
+          "list_tables": "#/$defs/ListTables",
+          "query_records": "#/$defs/QueryRecords",
+          "run_formula": "#/$defs/RunFormula",
+          "run_report": "#/$defs/RunReport",
+          "update_app": "#/$defs/UpdateApp",
+          "update_field": "#/$defs/UpdateField",
+          "update_table": "#/$defs/UpdateTable",
+          "upsert_records": "#/$defs/UpsertRecords"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetApp"
+        },
+        {
+          "$ref": "#/$defs/CreateApp"
+        },
+        {
+          "$ref": "#/$defs/UpdateApp"
+        },
+        {
+          "$ref": "#/$defs/ListAppEvents"
+        },
+        {
+          "$ref": "#/$defs/ListTables"
+        },
+        {
+          "$ref": "#/$defs/CreateTable"
+        },
+        {
+          "$ref": "#/$defs/GetTable"
+        },
+        {
+          "$ref": "#/$defs/UpdateTable"
+        },
+        {
+          "$ref": "#/$defs/ListReports"
+        },
+        {
+          "$ref": "#/$defs/GetReport"
+        },
+        {
+          "$ref": "#/$defs/RunReport"
+        },
+        {
+          "$ref": "#/$defs/ListFields"
+        },
+        {
+          "$ref": "#/$defs/GetField"
+        },
+        {
+          "$ref": "#/$defs/CreateField"
+        },
+        {
+          "$ref": "#/$defs/UpdateField"
+        },
+        {
+          "$ref": "#/$defs/ListFieldUsage"
+        },
+        {
+          "$ref": "#/$defs/RunFormula"
+        },
+        {
+          "$ref": "#/$defs/UpsertRecords"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecords"
+        },
+        {
+          "$ref": "#/$defs/QueryRecords"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuickbaseUserTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Quickbase Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

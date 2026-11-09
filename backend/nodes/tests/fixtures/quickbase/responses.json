@@ -1,0 +1,765 @@
+{
+  "source": "https://developer.quickbase.com/qb-openapi-v3.json",
+  "responses": {
+    "get_app": {
+      "ancestorId": "bqhskthaq",
+      "created": "2020-03-27T18:34:12Z",
+      "dateFormat": "MM-DD-YYYY",
+      "description": "My testing app",
+      "hasEveryoneOnTheInternet": true,
+      "memoryInfo": {
+        "estMemory": 1.0,
+        "estMemoryInclDependentApps": 2.0
+      },
+      "id": "bpqe82s1",
+      "name": "Testing App",
+      "securityProperties": {
+        "allowClone": false,
+        "allowExport": false,
+        "enableAppTokens": false,
+        "hideFromPublic": false,
+        "mustBeRealmApproved": true,
+        "useIPFilter": true
+      },
+      "timeZone": "(UTC-08:00) Pacific Time (US & Canada)",
+      "updated": "2020-04-03T19:12:20Z",
+      "dataClassification": "Confidential"
+    },
+    "create_app": {
+      "created": "2020-03-27T18:34:12Z",
+      "dateFormat": "MM-DD-YYYY",
+      "description": "My testing app",
+      "hasEveryoneOnTheInternet": true,
+      "id": "bpqe82s1",
+      "memoryInfo": {
+        "estMemory": 1.0,
+        "estMemoryInclDependentApps": 2.0
+      },
+      "name": "Testing App",
+      "securityProperties": {
+        "allowClone": false,
+        "allowExport": false,
+        "enableAppTokens": false,
+        "hideFromPublic": false,
+        "mustBeRealmApproved": true,
+        "useIPFilter": true
+      },
+      "timeZone": "(UTC-08:00) Pacific Time (US & Canada)",
+      "updated": "2020-04-03T19:12:20Z",
+      "dataClassification": "Confidential"
+    },
+    "update_app": {
+      "ancestorId": "bqhskthaq",
+      "created": "2020-03-27T18:34:12Z",
+      "dateFormat": "MM-DD-YYYY",
+      "description": "My testing app",
+      "hasEveryoneOnTheInternet": true,
+      "memoryInfo": {
+        "estMemory": 1.0,
+        "estMemoryInclDependentApps": 2.0
+      },
+      "id": "bpqe82s1",
+      "name": "Testing App",
+      "securityProperties": {
+        "allowClone": false,
+        "allowExport": false,
+        "enableAppTokens": false,
+        "hideFromPublic": false,
+        "mustBeRealmApproved": true,
+        "useIPFilter": true
+      },
+      "timeZone": "(UTC-08:00) Pacific Time (US & Canada)",
+      "updated": "2020-04-03T19:12:20Z",
+      "dataClassification": "Confidential"
+    },
+    "list_app_events": [
+      {
+        "type": "qb-action",
+        "owner": {
+          "email": "jsmith@quickbase.com",
+          "id": "123456.ab1s",
+          "name": "Juliet Smith",
+          "userName": "jsmith"
+        },
+        "isActive": true,
+        "tableId": "bqwriv8bw",
+        "name": "Quick Base Action"
+      },
+      {
+        "type": "webhook",
+        "owner": {
+          "email": "tanderson@quickbase.com",
+          "id": "654321.ab1s",
+          "name": "Thomas A. Anderson",
+          "userName": "tanderson"
+        },
+        "isActive": false,
+        "tableId": "bqwriv8bw",
+        "name": "Webhook"
+      },
+      {
+        "type": "email-notification",
+        "owner": {
+          "email": "jsmith@quickbase.com",
+          "id": "123456.ab1s",
+          "name": "Juliet Smith",
+          "userName": "jsmith"
+        },
+        "isActive": false,
+        "tableId": "bqwriv8bw",
+        "name": "Notification"
+      },
+      {
+        "type": "subscription",
+        "owner": {
+          "email": "tanderson@quickbase.com",
+          "id": "654321.ab1s",
+          "name": "Thomas A. Anderson",
+          "userName": "tanderson"
+        },
+        "isActive": true,
+        "tableId": "bqwriv8bw",
+        "name": "Subscription"
+      },
+      {
+        "type": "reminder",
+        "owner": {
+          "email": "jsmith@quickbase.com",
+          "id": "123456.ab1s",
+          "name": "Juliet Smith",
+          "userName": "jsmith"
+        },
+        "isActive": true,
+        "tableId": "bqwriv8bw",
+        "name": "Reminder"
+      },
+      {
+        "type": "automation",
+        "owner": {
+          "email": "tanderson@quickbase.com",
+          "id": "654321.ab1s",
+          "name": "Thomas A. Anderson",
+          "userName": "tanderson"
+        },
+        "isActive": true,
+        "tableId": "bqwriv8bw",
+        "url": "https://realm.quickbase.com/ui/automation/qb/db/bqwria893/automations/70eecab9-634f-42d9-9037-9340a1a9e8ce"
+      }
+    ],
+    "list_tables": [
+      {
+        "name": "Example Table #0",
+        "created": "2020-03-27T18:34:40.000Z",
+        "updated": "2020-04-03T19:12:40.000Z",
+        "alias": "_dbid_example_table_#0",
+        "description": "Table zero as an example.",
+        "id": "bpqe82s1",
+        "nextRecordId": 1,
+        "nextFieldId": 1,
+        "defaultSortFieldId": 2,
+        "defaultSortOrder": "ASC",
+        "keyFieldId": 3,
+        "singleRecordName": "Example Record",
+        "pluralRecordName": "Example Records",
+        "sizeLimit": "150 MB",
+        "spaceUsed": "17 MB",
+        "spaceRemaining": "133 MB"
+      },
+      {
+        "name": "Example Table #2",
+        "created": "2020-03-27T18:34:40.000Z",
+        "updated": "2020-04-03T19:12:40.000Z",
+        "alias": "_dbid_example_table_#2",
+        "description": "Table two as an example.",
+        "id": "bpqe82z1",
+        "nextRecordId": 10,
+        "nextFieldId": 111,
+        "defaultSortFieldId": 12,
+        "defaultSortOrder": "DESC",
+        "keyFieldId": 33,
+        "singleRecordName": "Another Record",
+        "pluralRecordName": "More Records",
+        "sizeLimit": "150 MB",
+        "spaceUsed": "22 MB",
+        "spaceRemaining": "128 MB"
+      }
+    ],
+    "create_table": {
+      "name": "Example Table",
+      "created": "2020-03-27T18:34:40.000Z",
+      "updated": "2020-04-03T19:12:40.000Z",
+      "alias": "_dbid_example_table",
+      "description": "Table as an example.",
+      "id": "bpqe82s0",
+      "nextRecordId": 1,
+      "nextFieldId": 1,
+      "defaultSortFieldId": 2,
+      "defaultSortOrder": "ASC",
+      "keyFieldId": 3,
+      "singleRecordName": "Example Record",
+      "pluralRecordName": "Example Records",
+      "sizeLimit": "150 MB",
+      "spaceUsed": "17 MB",
+      "spaceRemaining": "133 MB"
+    },
+    "get_table": {
+      "name": "Example Table",
+      "created": "2020-03-27T18:34:40.000Z",
+      "updated": "2020-04-03T19:12:40.000Z",
+      "alias": "_dbid_example_table",
+      "description": "Table as an example.",
+      "id": "bpqe82s0",
+      "nextRecordId": 1,
+      "nextFieldId": 1,
+      "defaultSortFieldId": 2,
+      "defaultSortOrder": "ASC",
+      "keyFieldId": 3,
+      "singleRecordName": "Example Record",
+      "pluralRecordName": "Example Records",
+      "sizeLimit": "150 MB",
+      "spaceUsed": "17 MB",
+      "spaceRemaining": "133 MB"
+    },
+    "update_table": {
+      "name": "Example Table",
+      "created": "2020-03-27T18:34:40.000Z",
+      "updated": "2020-04-03T19:12:40.000Z",
+      "alias": "_dbid_example_table",
+      "description": "Table as an example.",
+      "id": "bpqe82s0",
+      "nextRecordId": 1,
+      "nextFieldId": 1,
+      "defaultSortFieldId": 2,
+      "defaultSortOrder": "ASC",
+      "keyFieldId": 3,
+      "singleRecordName": "Example Record",
+      "pluralRecordName": "Example Records",
+      "sizeLimit": "150 MB",
+      "spaceUsed": "17 MB",
+      "spaceRemaining": "133 MB"
+    },
+    "list_reports": [
+      {
+        "id": "5",
+        "name": "table-report",
+        "type": "table",
+        "description": "This is Table report.",
+        "query": {
+          "tableId": "bpweef42b",
+          "filter": "{6.CT.'FilterByThisValue'}",
+          "formulaFields": [
+            {
+              "id": -100,
+              "label": "NumericField",
+              "fieldType": "numeric",
+              "formula": "1+1",
+              "decimalPrecision": 4
+            }
+          ],
+          "fields": [
+            7
+          ],
+          "sortBy": [
+            {
+              "fieldId": 28,
+              "order": "ASC"
+            },
+            {
+              "fieldId": 3,
+              "order": "ASC"
+            }
+          ],
+          "groupBy": [
+            {
+              "fieldId": 3,
+              "grouping": "equal-values"
+            }
+          ]
+        },
+        "properties": {
+          "displayOnlyNewOrChangedRecords": true,
+          "columnProperties": [
+            {
+              "fieldId": -100,
+              "labelOverride": "Numeric Field Label"
+            }
+          ]
+        },
+        "usedLast": "2020-09-20T20:23:00.000Z",
+        "usedCount": 7
+      }
+    ],
+    "get_report": {
+      "id": "5",
+      "name": "table-report",
+      "type": "table",
+      "description": "This is Table report.",
+      "query": {
+        "tableId": "bpweef42b",
+        "filter": "{6.CT.'FilterByThisValue'}",
+        "formulaFields": [
+          {
+            "id": -100,
+            "label": "NumericField",
+            "fieldType": "numeric",
+            "formula": "1+1",
+            "decimalPrecision": 4
+          }
+        ],
+        "fields": [
+          7
+        ],
+        "sortBy": [
+          {
+            "fieldId": 28,
+            "order": "ASC"
+          },
+          {
+            "fieldId": 3,
+            "order": "ASC"
+          }
+        ],
+        "groupBy": [
+          {
+            "fieldId": 3,
+            "grouping": "equal-values"
+          }
+        ]
+      },
+      "properties": {
+        "displayOnlyNewOrChangedRecords": true,
+        "columnProperties": [
+          {
+            "fieldId": -100,
+            "labelOverride": "Numeric Field Label"
+          }
+        ]
+      },
+      "usedLast": "2020-09-20T20:23:00.000Z",
+      "usedCount": 7
+    },
+    "run_report": {
+      "data": [
+        {
+          "6": {
+            "value": "Jamie Stein"
+          },
+          "7": {
+            "value": 10
+          },
+          "8": {
+            "value": "2019-12-18T08:00:00Z"
+          }
+        }
+      ],
+      "fields": [
+        {
+          "id": 6,
+          "label": "Full Name",
+          "type": "text"
+        },
+        {
+          "id": 7,
+          "label": "Amount",
+          "labelOverride": "Total Amount",
+          "type": "numeric"
+        },
+        {
+          "id": 8,
+          "label": "Date time",
+          "type": "date time"
+        }
+      ],
+      "metadata": {
+        "totalRecords": 10,
+        "numRecords": 1,
+        "numFields": 3,
+        "skip": 0,
+        "top": 1
+      }
+    },
+    "list_fields": [
+      {
+        "id": 1,
+        "label": "Field1",
+        "fieldType": "text",
+        "noWrap": false,
+        "bold": false,
+        "required": false,
+        "appearsByDefault": false,
+        "findEnabled": false,
+        "unique": false,
+        "doesDataCopy": false,
+        "fieldHelp": "field help",
+        "audited": false,
+        "properties": {
+          "primaryKey": false,
+          "foreignKey": false,
+          "numLines": 1,
+          "maxLength": 0,
+          "appendOnly": false,
+          "allowHTML": false,
+          "allowMentions": false,
+          "sortAsGiven": false,
+          "carryChoices": true,
+          "allowNewChoices": false,
+          "formula": "",
+          "defaultValue": ""
+        },
+        "permissions": [
+          {
+            "permissionType": "View",
+            "role": "Viewer",
+            "roleId": 10
+          },
+          {
+            "permissionType": "None",
+            "role": "Participant",
+            "roleId": 11
+          },
+          {
+            "permissionType": "Modify",
+            "role": "Administrator",
+            "roleId": 12
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "label": "Numeric Field",
+        "fieldType": "numeric",
+        "appearsByDefault": true,
+        "audited": false,
+        "bold": false,
+        "fieldHelp": "This is a numeric field",
+        "findEnabled": false,
+        "addToForms": true,
+        "properties": {
+          "numberFormat": 3,
+          "decimalPlaces": 2,
+          "doesAverage": true,
+          "doesTotal": true,
+          "blankIsZero": true
+        },
+        "permissions": [
+          {
+            "role": "Viewer",
+            "permissionType": "View",
+            "roleId": 10
+          },
+          {
+            "role": "Participant",
+            "permissionType": "Modify",
+            "roleId": 11
+          },
+          {
+            "role": "Administrator",
+            "permissionType": "Modify",
+            "roleId": 12
+          }
+        ]
+      }
+    ],
+    "get_field": {
+      "id": 123,
+      "label": "Field1",
+      "fieldType": "text",
+      "mode": "",
+      "noWrap": false,
+      "bold": false,
+      "required": false,
+      "appearsByDefault": false,
+      "findEnabled": false,
+      "unique": false,
+      "doesDataCopy": false,
+      "fieldHelp": "field help",
+      "audited": false,
+      "properties": {
+        "primaryKey": false,
+        "foreignKey": false,
+        "numLines": 1,
+        "maxLength": 0,
+        "appendOnly": false,
+        "allowHTML": false,
+        "allowMentions": false,
+        "sortAsGiven": false,
+        "carryChoices": true,
+        "allowNewChoices": false,
+        "formula": "",
+        "defaultValue": ""
+      },
+      "permissions": [
+        {
+          "permissionType": "View",
+          "role": "Viewer",
+          "roleId": 10
+        },
+        {
+          "permissionType": "None",
+          "role": "Participant",
+          "roleId": 11
+        },
+        {
+          "permissionType": "Modify",
+          "role": "Administrator",
+          "roleId": 12
+        }
+      ]
+    },
+    "create_field": {
+      "id": 123,
+      "label": "Field1",
+      "fieldType": "text",
+      "mode": "",
+      "noWrap": false,
+      "bold": false,
+      "required": false,
+      "appearsByDefault": false,
+      "findEnabled": false,
+      "unique": false,
+      "doesDataCopy": false,
+      "fieldHelp": "field help",
+      "audited": false,
+      "properties": {
+        "primaryKey": false,
+        "foreignKey": false,
+        "numLines": 1,
+        "maxLength": 0,
+        "appendOnly": false,
+        "allowHTML": false,
+        "allowMentions": false,
+        "sortAsGiven": false,
+        "carryChoices": true,
+        "allowNewChoices": false,
+        "formula": "",
+        "defaultValue": ""
+      },
+      "permissions": [
+        {
+          "permissionType": "View",
+          "role": "Viewer",
+          "roleId": 10
+        },
+        {
+          "permissionType": "None",
+          "role": "Participant",
+          "roleId": 11
+        },
+        {
+          "permissionType": "Modify",
+          "role": "Administrator",
+          "roleId": 12
+        }
+      ]
+    },
+    "update_field": {
+      "id": 123,
+      "label": "Field1",
+      "fieldType": "text",
+      "mode": "",
+      "noWrap": false,
+      "bold": false,
+      "required": false,
+      "appearsByDefault": false,
+      "findEnabled": false,
+      "unique": false,
+      "doesDataCopy": false,
+      "fieldHelp": "field help",
+      "audited": false,
+      "properties": {
+        "primaryKey": false,
+        "foreignKey": false,
+        "numLines": 1,
+        "maxLength": 0,
+        "appendOnly": false,
+        "allowHTML": false,
+        "allowMentions": false,
+        "sortAsGiven": false,
+        "carryChoices": true,
+        "allowNewChoices": false,
+        "formula": "",
+        "defaultValue": ""
+      },
+      "permissions": [
+        {
+          "permissionType": "View",
+          "role": "Viewer",
+          "roleId": 10
+        },
+        {
+          "permissionType": "None",
+          "role": "Participant",
+          "roleId": 11
+        },
+        {
+          "permissionType": "Modify",
+          "role": "Administrator",
+          "roleId": 12
+        }
+      ]
+    },
+    "list_field_usage": [
+      {
+        "field": {
+          "id": 6,
+          "name": "name",
+          "type": "Text"
+        },
+        "usage": {
+          "actions": {
+            "count": 0
+          },
+          "appHomePages": {
+            "count": 0
+          },
+          "dashboards": {
+            "count": 2
+          },
+          "defaultReports": {
+            "count": 1
+          },
+          "exactForms": {
+            "count": 0
+          },
+          "fields": {
+            "count": 0
+          },
+          "forms": {
+            "count": 1
+          },
+          "notifications": {
+            "count": 0
+          },
+          "personalReports": {
+            "count": 0
+          },
+          "pipelines": {
+            "count": 1
+          },
+          "relationships": {
+            "count": 0
+          },
+          "reminders": {
+            "count": 0
+          },
+          "reports": {
+            "count": 2
+          },
+          "roles": {
+            "count": 2
+          },
+          "tableImports": {
+            "count": 3
+          },
+          "tableRules": {
+            "count": 1
+          },
+          "webhooks": {
+            "count": 0
+          }
+        }
+      }
+    ],
+    "run_formula": {
+      "result": "30"
+    },
+    "upsert_records": {
+      "data": [
+        {
+          "3": {
+            "value": 1
+          },
+          "6": {
+            "value": "Updating this record"
+          },
+          "7": {
+            "value": 10
+          },
+          "8": {
+            "value": "2019-12-18T08:00:00.000Z"
+          }
+        },
+        {
+          "3": {
+            "value": 11
+          },
+          "6": {
+            "value": "This is my text"
+          },
+          "7": {
+            "value": 15
+          },
+          "8": {
+            "value": "2019-12-19T08:00:00.000Z"
+          }
+        },
+        {
+          "3": {
+            "value": 12
+          },
+          "6": {
+            "value": "This is my other text"
+          },
+          "7": {
+            "value": 20
+          },
+          "8": {
+            "value": "2019-12-20T08:00:00.000Z"
+          }
+        }
+      ],
+      "metadata": {
+        "createdRecordIds": [
+          11,
+          12
+        ],
+        "totalNumberOfRecordsProcessed": 3,
+        "unchangedRecordIds": [],
+        "updatedRecordIds": [
+          1
+        ]
+      }
+    },
+    "delete_records": {
+      "numberDeleted": 1
+    },
+    "query_records": {
+      "data": [
+        {
+          "6": {
+            "value": "Andre Harris"
+          },
+          "7": {
+            "value": 10
+          },
+          "8": {
+            "value": "2019-12-18T08:00:00Z"
+          }
+        }
+      ],
+      "fields": [
+        {
+          "id": 6,
+          "label": "Full Name",
+          "type": "text"
+        },
+        {
+          "id": 7,
+          "label": "Amount",
+          "type": "numeric"
+        },
+        {
+          "id": 8,
+          "label": "Date time",
+          "type": "date time"
+        }
+      ],
+      "metadata": {
+        "totalRecords": 10,
+        "numRecords": 1,
+        "numFields": 3,
+        "skip": 0
+      }
+    }
+  }
+}

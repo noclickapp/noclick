@@ -1,0 +1,23 @@
+{
+  "upsert_records": {
+    "config": {
+      "operation": "upsert_records",
+      "table_id": "bck7gp3q2",
+      "data": "[{\"6\": {\"value\": \"This is my text\"}, \"7\": {\"value\": 10}, \"8\": {\"value\": \"2019-12-18T08:00:00.000Z\"}, \"9\": {\"value\": [\"a\", \"b\"]}, \"10\": {\"value\": true}, \"11\": {\"value\": \"user@quickbase.com\"}, \"12\": {\"value\": \"www.quickbase.com\"}, \"13\": {\"value\": [{\"id\": \"123456.ab1s\"}, {\"id\": \"254789.mkgp\"}, {\"id\": \"789654.vc2s\"}]}}]",
+      "fields_to_return": "[6, 7, 8, 9, 10, 11, 12, 13]"
+    },
+    "source": "https://developer.quickbase.com/qb-openapi-v3.json"
+  },
+  "query_records": {
+    "config": {
+      "operation": "query_records",
+      "table_id": "bck7gp3q2",
+      "select": "[1, 2, 3]",
+      "where": "{1.CT.'hello'}",
+      "sort_by": "[{\"fieldId\": 4, \"order\": \"ASC\"}, {\"fieldId\": 5, \"order\": \"ASC\"}]",
+      "skip": 0,
+      "top": 0
+    },
+    "source": "https://developer.quickbase.com/qb-openapi-v3.json"
+  }
+}
