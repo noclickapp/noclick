@@ -1,0 +1,15 @@
+{
+  "first": "cursor-1",
+  "last": "cursor-2",
+  "order": "ASCENDING",
+  "count": 1,
+  "hasNextPage": true,
+  "items": [{
+    "id": "42",
+    "title": "Prepare report",
+    "completed": false,
+    "estimateMinutes": 30,
+    "extendedProperties": {},
+    "sortOrder": 1
+  }]
+}
