@@ -1,0 +1,21 @@
+{
+  "credits_remaining": 41250,
+  "period": {
+    "start": "2026-09-14T07:01:00.000Z",
+    "credits_used": 8750
+  },
+  "next_refill": {
+    "at": "2026-10-14T07:01:00.000Z",
+    "credits": 50000
+  },
+  "auto_topup": {
+    "enabled": true,
+    "credits_used_this_period": 0,
+    "monthly_budget_credits": 100000
+  },
+  "key_metadata": {
+    "credits_consumed": 0,
+    "credits_remaining": 41250
+  },
+  "request_id": "3f1c2a6e-8b4d-4c1e-9f0a-2d7b5e6c8a91"
+}
