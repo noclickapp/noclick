@@ -1,0 +1,1202 @@
+{
+  "$defs": {
+    "TinyURLAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "tinyurl_api_token",
+          "default": "tinyurl_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "TinyURL API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in TinyURL API Settings, then paste it here. Give it permission to read your links and perform the actions you need. NoClick sends it as a Bearer token to api.tinyurl.com. Analytics and editing features depend on your TinyURL plan.",
+      "x-credential-url": "https://tinyurl.com/app/settings/api"
+    },
+    "TinyURLAnalyticsSharingConfig": {
+      "additionalProperties": false,
+      "description": "Make a link's analytics public or private.",
+      "properties": {
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_analytics_sharing",
+          "default": "set_analytics_sharing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public": {
+          "title": "Public",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "alias",
+        "public"
+      ],
+      "title": "TinyURLAnalyticsSharingConfig",
+      "type": "object"
+    },
+    "TinyURLAnalyticsStatusConfig": {
+      "additionalProperties": false,
+      "description": "Enable or disable click analytics collection for a link.",
+      "properties": {
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_analytics_status",
+          "default": "set_analytics_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "alias",
+        "enabled"
+      ],
+      "title": "TinyURLAnalyticsStatusConfig",
+      "type": "object"
+    },
+    "TinyURLArchiveConfig": {
+      "additionalProperties": false,
+      "description": "Toggle the archive state of an existing link (the provider endpoint toggles).",
+      "properties": {
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "toggle_archive",
+          "default": "toggle_archive",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "TinyURLArchiveConfig",
+      "type": "object"
+    },
+    "TinyURLChangeConfig": {
+      "additionalProperties": false,
+      "description": "Change the destination of an existing short link.",
+      "properties": {
+        "url": {
+          "description": "The destination URL to shorten",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "change_destination",
+          "default": "change_destination",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url",
+        "alias"
+      ],
+      "title": "TinyURLChangeConfig",
+      "type": "object"
+    },
+    "TinyURLCountConfig": {
+      "additionalProperties": false,
+      "description": "Count available or archived links, optionally filtered by date or search.",
+      "properties": {
+        "type": {
+          "default": "available",
+          "enum": [
+            "available",
+            "archived"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only links created after this datetime",
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only links created before this datetime",
+          "title": "To"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "pattern": "^(alias|tag):",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search using alias:custom-alias or tag:tag-name",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "count_links",
+          "default": "count_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TinyURLCountConfig",
+      "type": "object"
+    },
+    "TinyURLCreateConfig": {
+      "additionalProperties": false,
+      "description": "Shorten a destination URL, optionally choosing a domain, alias and tags.",
+      "properties": {
+        "url": {
+          "description": "The destination URL to shorten",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_link",
+          "default": "create_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "default": "tinyurl.com",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 5,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alias"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 45,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration datetime; explicitly set null for no expiration",
+          "title": "Expires At"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "TinyURLCreateConfig",
+      "type": "object"
+    },
+    "TinyURLDeleteConfig": {
+      "additionalProperties": false,
+      "description": "Delete an existing short link.",
+      "properties": {
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_link",
+          "default": "delete_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "TinyURLDeleteConfig",
+      "type": "object"
+    },
+    "TinyURLGeneralAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read browser, operating system and device analytics.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "general_analytics",
+          "default": "general_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLGeneralAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLGetConfig": {
+      "additionalProperties": false,
+      "description": "Read a short link and its destination and click metadata.",
+      "properties": {
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_link",
+          "default": "get_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "TinyURLGetConfig",
+      "type": "object"
+    },
+    "TinyURLHourAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read click popularity by hour.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "hour_analytics",
+          "default": "hour_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLHourAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLLanguageAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read top visitor languages.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "language_analytics",
+          "default": "language_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLLanguageAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLListConfig": {
+      "additionalProperties": false,
+      "description": "Read the provider's list response for available or archived links.",
+      "properties": {
+        "type": {
+          "default": "available",
+          "enum": [
+            "available",
+            "archived"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only links created after this datetime",
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only links created before this datetime",
+          "title": "To"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "pattern": "^(alias|tag):",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search using alias:custom-alias or tag:tag-name",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TinyURLListConfig",
+      "type": "object"
+    },
+    "TinyURLLocationAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read visitor country or regional analytics.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "location_analytics",
+          "default": "location_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "world",
+          "description": "world for countries, or a country ISO alpha-2 code",
+          "pattern": "^(world|[A-Za-z]{2})$",
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLLocationAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLRawAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read raw click analytics logs.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "raw_analytics",
+          "default": "raw_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLRawAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLSourceAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read top traffic sources.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "source_analytics",
+          "default": "source_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLSourceAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLTimelineAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read click counts over time.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "timeline_analytics",
+          "default": "timeline_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "minute",
+                "hour",
+                "day",
+                "week",
+                "month"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval",
+          "enum": [
+            "minute",
+            "hour",
+            "day",
+            "week",
+            "month"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLTimelineAnalyticsConfig",
+      "type": "object"
+    },
+    "TinyURLUpdateConfig": {
+      "additionalProperties": false,
+      "description": "Change a link's alias, domain, tags, expiration or analytics setting.",
+      "properties": {
+        "domain": {
+          "default": "tinyurl.com",
+          "description": "TinyURL domain or your branded domain, without https://",
+          "maxLength": 253,
+          "title": "Domain",
+          "type": "string"
+        },
+        "alias": {
+          "description": "The existing short link alias",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_link",
+          "default": "update_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "new_domain": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Domain"
+        },
+        "new_alias": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Alias"
+        },
+        "new_stats": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Stats"
+        },
+        "new_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 45,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Tags"
+        },
+        "new_expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration datetime or duration; explicitly set null for no expiration",
+          "title": "New Expires At"
+        },
+        "new_description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Description"
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "TinyURLUpdateConfig",
+      "type": "object"
+    },
+    "TinyURLWeekdayAnalyticsConfig": {
+      "additionalProperties": false,
+      "description": "Read click popularity by weekday.",
+      "properties": {
+        "from": {
+          "description": "Report start datetime, e.g. 2021-08-10T10:00:00-0800",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report end datetime; omitted uses the current time",
+          "title": "To"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a full short link, e.g. tinyurl.com/myalias",
+          "title": "Alias"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "operation": {
+          "const": "weekday_analytics",
+          "default": "weekday_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "TinyURLWeekdayAnalyticsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "change_destination": "#/$defs/TinyURLChangeConfig",
+          "count_links": "#/$defs/TinyURLCountConfig",
+          "create_link": "#/$defs/TinyURLCreateConfig",
+          "delete_link": "#/$defs/TinyURLDeleteConfig",
+          "general_analytics": "#/$defs/TinyURLGeneralAnalyticsConfig",
+          "get_link": "#/$defs/TinyURLGetConfig",
+          "hour_analytics": "#/$defs/TinyURLHourAnalyticsConfig",
+          "language_analytics": "#/$defs/TinyURLLanguageAnalyticsConfig",
+          "list_links": "#/$defs/TinyURLListConfig",
+          "location_analytics": "#/$defs/TinyURLLocationAnalyticsConfig",
+          "raw_analytics": "#/$defs/TinyURLRawAnalyticsConfig",
+          "set_analytics_sharing": "#/$defs/TinyURLAnalyticsSharingConfig",
+          "set_analytics_status": "#/$defs/TinyURLAnalyticsStatusConfig",
+          "source_analytics": "#/$defs/TinyURLSourceAnalyticsConfig",
+          "timeline_analytics": "#/$defs/TinyURLTimelineAnalyticsConfig",
+          "toggle_archive": "#/$defs/TinyURLArchiveConfig",
+          "update_link": "#/$defs/TinyURLUpdateConfig",
+          "weekday_analytics": "#/$defs/TinyURLWeekdayAnalyticsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TinyURLCreateConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLGetConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLListConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLCountConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLArchiveConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLAnalyticsStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLAnalyticsSharingConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLRawAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLTimelineAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLGeneralAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLWeekdayAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLHourAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLSourceAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLLanguageAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TinyURLLocationAnalyticsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TinyURLAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tinyurl Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
