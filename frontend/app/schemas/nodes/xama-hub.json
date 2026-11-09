@@ -1,0 +1,1087 @@
+{
+  "$defs": {
+    "CancelOnboardingReport": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_onboarding_report",
+          "default": "cancel_onboarding_report",
+          "title": "Cancel Onboarding Report",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "CancelOnboardingReport",
+      "type": "object"
+    },
+    "CreateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date of Birth"
+        },
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Account Name",
+          "type": "string"
+        },
+        "account_type": {
+          "enum": [
+            "COMPANY",
+            "INDIVIDUAL",
+            "UNKNOWN"
+          ],
+          "title": "Account Type",
+          "type": "string"
+        },
+        "reg_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Registration Number"
+        },
+        "suppress_notifications": {
+          "default": false,
+          "description": "Ask Xama to suppress creation notifications.",
+          "title": "Suppress Notifications",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "name",
+        "account_type"
+      ],
+      "title": "CreateAccount",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date of Birth"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suppress_notifications": {
+          "default": false,
+          "description": "Ask Xama to suppress creation notifications.",
+          "title": "Suppress Notifications",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "account_id"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateRiskAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_risk_assessment",
+          "default": "create_risk_assessment",
+          "description": "Creates an assessment in progress. Xama requires a known account type and no other open assessment.",
+          "title": "Create Risk Assessment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Questionnaire Template ID"
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "enum": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Level",
+          "enum": [
+            "LOW",
+            "NORMAL",
+            "HIGH"
+          ],
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "prepared_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prepared By"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "CreateRiskAssessment",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "description": "Deletes the contact in Xama Hub.",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetAmlReport": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_aml_report",
+          "default": "get_aml_report",
+          "title": "Get AML Report",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "GetAmlReport",
+      "type": "object"
+    },
+    "GetClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Tenant Client",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetClient",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetOnboardingReport": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_onboarding_report",
+          "default": "get_onboarding_report",
+          "title": "Get Onboarding Report",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "GetOnboardingReport",
+      "type": "object"
+    },
+    "GetRiskAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_risk_assessment",
+          "default": "get_risk_assessment",
+          "title": "Get Risk Assessment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "risk_assessment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Risk Assessment ID",
+          "type": "string"
+        },
+        "with_data": {
+          "default": true,
+          "title": "Include Related Data",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "account_id",
+        "risk_assessment_id"
+      ],
+      "title": "GetRiskAssessment",
+      "type": "object"
+    },
+    "InitiateAmlReport": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "initiate_aml_report",
+          "default": "initiate_aml_report",
+          "description": "Starts an AML lookup; may consume Xama credits. Completion is asynchronous.",
+          "title": "Initiate AML Report",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "trigger_lookup": {
+          "default": true,
+          "title": "Trigger Lookup",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "InitiateAmlReport",
+      "type": "object"
+    },
+    "InitiateOnboardingReport": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "initiate_onboarding_report",
+          "default": "initiate_onboarding_report",
+          "description": "Starts onboarding using Xama's configured defaults; may email the contact and consume credits. Completion is asynchronous.",
+          "title": "Initiate Onboarding Report",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "trigger_lookup": {
+          "default": true,
+          "title": "Trigger Lookup",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "InitiateOnboardingReport",
+      "type": "object"
+    },
+    "ListAccountContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_account_contacts",
+          "default": "list_account_contacts",
+          "title": "List Account Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ListAccountContacts",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Tenant Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Tenant Documents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListRiskAssessments": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_risk_assessments",
+          "default": "list_risk_assessments",
+          "title": "List Risk Assessments",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ListRiskAssessments",
+      "type": "object"
+    },
+    "PatchAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "patch_account",
+          "default": "patch_account",
+          "title": "Set Account Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived At"
+        }
+      },
+      "required": [
+        "account_id",
+        "status"
+      ],
+      "title": "PatchAccount",
+      "type": "object"
+    },
+    "PatchContact": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "patch_contact",
+          "default": "patch_contact",
+          "title": "Set Contact Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived At"
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id",
+        "status"
+      ],
+      "title": "PatchContact",
+      "type": "object"
+    },
+    "ReplaceContact": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date of Birth"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "replace_contact",
+          "default": "replace_contact",
+          "description": "Full replacement. Omitted optional contact details may be cleared by Xama.",
+          "title": "Replace Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "account_id",
+        "contact_id"
+      ],
+      "title": "ReplaceContact",
+      "type": "object"
+    },
+    "XamaHubBearerTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "xama_hub_bearer_token",
+          "default": "xama_hub_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tenant ID",
+          "type": "string"
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "access_token"
+      ],
+      "title": "Xama Hub Bearer Token",
+      "type": "object",
+      "x-credential-instructions": "Obtain an access token using your Open API Application ID and Secret as described in Xama's authentication guide. Paste the access_token without the Bearer prefix. Tokens expire; replace this token when Xama rejects it. Tenant ID is your Xama Hub client identifier, different from the OAuth Application ID.",
+      "x-credential-url": "https://platform.xamatech.com/portal/hub/settings/apps/open-api",
+      "x-help-url": "https://apidocs.xamatech.com/guides/authentication/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_onboarding_report": "#/$defs/CancelOnboardingReport",
+          "create_account": "#/$defs/CreateAccount",
+          "create_contact": "#/$defs/CreateContact",
+          "create_risk_assessment": "#/$defs/CreateRiskAssessment",
+          "delete_contact": "#/$defs/DeleteContact",
+          "get_account": "#/$defs/GetAccount",
+          "get_aml_report": "#/$defs/GetAmlReport",
+          "get_client": "#/$defs/GetClient",
+          "get_contact": "#/$defs/GetContact",
+          "get_onboarding_report": "#/$defs/GetOnboardingReport",
+          "get_risk_assessment": "#/$defs/GetRiskAssessment",
+          "initiate_aml_report": "#/$defs/InitiateAmlReport",
+          "initiate_onboarding_report": "#/$defs/InitiateOnboardingReport",
+          "list_account_contacts": "#/$defs/ListAccountContacts",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_risk_assessments": "#/$defs/ListRiskAssessments",
+          "patch_account": "#/$defs/PatchAccount",
+          "patch_contact": "#/$defs/PatchContact",
+          "replace_contact": "#/$defs/ReplaceContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetClient"
+        },
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/CreateAccount"
+        },
+        {
+          "$ref": "#/$defs/PatchAccount"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/ListAccountContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/ReplaceContact"
+        },
+        {
+          "$ref": "#/$defs/PatchContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/GetAmlReport"
+        },
+        {
+          "$ref": "#/$defs/InitiateAmlReport"
+        },
+        {
+          "$ref": "#/$defs/GetOnboardingReport"
+        },
+        {
+          "$ref": "#/$defs/InitiateOnboardingReport"
+        },
+        {
+          "$ref": "#/$defs/CancelOnboardingReport"
+        },
+        {
+          "$ref": "#/$defs/ListRiskAssessments"
+        },
+        {
+          "$ref": "#/$defs/GetRiskAssessment"
+        },
+        {
+          "$ref": "#/$defs/CreateRiskAssessment"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/XamaHubBearerTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Xama-hub Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
