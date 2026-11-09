@@ -1,0 +1,263 @@
+{
+  "list_inboxes": {
+    "method": "GET",
+    "path": "/inboxes",
+    "status": 200,
+    "body": {
+      "data": {
+        "results": [
+          {
+            "id": "101",
+            "display_name": "Customer Support",
+            "channel_type": "email",
+            "email": "info@example.com",
+            "inbox_type": "user",
+            "is_authorised": false,
+            "source_user": {
+              "id": "12323",
+              "email": "source@example.com"
+            },
+            "created_at": 1709036168,
+            "updated_at": 1709036168
+          }
+        ],
+        "pagination": {
+          "next_page": "Gygskjhgkjythjjhkgjhgsdf="
+        }
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/list-all-the-inboxes"
+  },
+  "get_inbox": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}",
+    "status": 200,
+    "body": {
+      "data": {
+        "id": "101",
+        "display_name": "Customer Support",
+        "channel_type": "email",
+        "email": "info@example.com",
+        "inbox_type": "user",
+        "is_authorised": false,
+        "source_user": {
+          "id": "12323",
+          "email": "source@example.com"
+        },
+        "created_at": 1709036168,
+        "updated_at": 1709036168
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/get-an-inbox-by-id"
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}/users",
+    "status": 200,
+    "body": {
+      "data": {
+        "results": [
+          {
+            "id": "456342",
+            "first_name": "Phoebe",
+            "last_name": "Buffay",
+            "email": "p.buffay@friends.com",
+            "phone_number": "+19876543444",
+            "is_joined": false
+          }
+        ],
+        "pagination": {
+          "next_page": "Gygskjhgkjythjjhkgjhgsdf="
+        }
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/get-all-users-in-the-inbox"
+  },
+  "search_users": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}/users/search",
+    "status": 200,
+    "body": {
+      "data": {
+        "results": [
+          {
+            "id": "456342",
+            "first_name": "Phoebe",
+            "last_name": "Buffay",
+            "email": "p.buffay@friends.com",
+            "phone_number": "+19876543444",
+            "is_joined": false
+          }
+        ],
+        "pagination": {
+          "next_page": "Gygskjhgkjythjjhkgjhgsdf="
+        }
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/search-users-in-the-inbox"
+  },
+  "list_tags": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}/tags",
+    "status": 200,
+    "body": {
+      "data": {
+        "results": [
+          {
+            "id": "56789",
+            "name": "Priority",
+            "color_code": "#ce93d8",
+            "type": "user",
+            "created_at": 1708945347
+          }
+        ],
+        "pagination": {
+          "next_page": "Gygskjhgkjythjjhkgjhgsdf="
+        }
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/get-tags-in-the-inbox"
+  },
+  "create_tag": {
+    "method": "POST",
+    "path": "/inboxes/{inbox_id}/tags",
+    "status": 200,
+    "body": {
+      "data": {
+        "tag_id": 784268,
+        "name": "Property 123",
+        "color_hexcode": "#64b5f6",
+        "background_hexcode": "#f2f4f5",
+        "smid": 284967,
+        "description": "Sales pipeline conversations"
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/create-tags-in-the-inbox"
+  },
+  "search_tags": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}/tags/search",
+    "status": 200,
+    "body": {
+      "data": {
+        "results": [
+          {
+            "id": "56789",
+            "name": "Priority",
+            "color_code": "#ce93d8",
+            "type": "user",
+            "created_at": 1708945347
+          }
+        ],
+        "pagination": {
+          "next_page": "Gygskjhgkjythjjhkgjhgsdf="
+        }
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/inbox/search-tags-in-the-inbox"
+  },
+  "list_conversations": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}/conversations",
+    "status": 200,
+    "body": {
+      "data": {
+        "results": [
+          {
+            "id": 538706170,
+            "assignee": {
+              "assignee_type": "user",
+              "assignee_id": 1028399
+            },
+            "status": "open",
+            "tag_ids": [],
+            "gmail_thread_id": "19cfee91188070f8",
+            "private_permalink": "https://v2.hiverhq.com/permalinks/pvt/201c00fa",
+            "public_permalink": "https://v2.hiverhq.com/permalinks/pub/42a83f80581842e683c0f827a090cdca40c1334f"
+          }
+        ],
+        "pagination": {
+          "next_page": "eyJjdXJzb3IiOiJleUpuYldGcGJIVnVhWFJmYVdRaU9qVXpOek16TWpJeE9Dd2lYM0J2YVc1MGMxUnZUbVY0ZEVsMFpXMXpJanAwY25WbGZRIiwic29ydF9vcmRlciI6ImRlc2MiLCJzb3J0X2J5IjoiaWQifQ=="
+        }
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/conversations/get-conversations-in-the-inbox"
+  },
+  "get_conversation": {
+    "method": "GET",
+    "path": "/inboxes/{inbox_id}/conversations/{conversation_id}",
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "538706170",
+          "assignee": {
+            "assignee_type": "user",
+            "assignee_id": 1028399
+          },
+          "status": "open",
+          "tag_ids": [],
+          "gmail_thread_id": "19cfee91188070f8",
+          "private_permalink": "https://v2.hiverhq.com/permalinks/pvt/201c00fa",
+          "public_permalink": "https://v2.hiverhq.com/permalinks/pub/42a83f80581842e683c0f827a090cdca40c1334f",
+          "message_ids": [
+            {
+              "hiver_message_id": 834466048,
+              "gmail_message_id": "19cfee91188070f8"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/conversations/get-a-conversation-in-the-inbox"
+  },
+  "update_conversation": {
+    "method": "PATCH",
+    "path": "/inboxes/{inbox_id}/conversations/{conversation_id}",
+    "status": 204,
+    "body": null,
+    "source": "https://developer.hiverhq.com/hiver-api/conversations/update-conversation-in-the-inbox"
+  },
+  "create_shared_draft": {
+    "method": "POST",
+    "path": "/inboxes/{inbox_id}/conversations/shared-drafts",
+    "status": 200,
+    "body": {
+      "data": {
+        "id": 1234,
+        "shared_draft_id": 123,
+        "reply_to_message_id": 123456
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/conversations/update-conversation-in-the-inbox-copy"
+  },
+  "create_note": {
+    "method": "POST",
+    "path": "/inboxes/{inboxId}/conversations/{conversationId}/notes",
+    "status": 201,
+    "body": {
+      "data": {
+        "id": "35042650",
+        "conversation_id": "573741352",
+        "content": "cc @arvindhiver for review",
+        "author": {
+          "id": "540349",
+          "email": "author@grexit.com"
+        },
+        "mentions": [
+          "arvind.hiver@gmail.com"
+        ],
+        "parent_note_id": "14510",
+        "attachments": [
+          {
+            "id": "a833291b-66f0-4716-8eee-a0dba4a9f0fa",
+            "file_name": "invoice.pdf",
+            "file_type": "pdf"
+          }
+        ],
+        "created_at": "2026-07-21T14:24:22.000000Z"
+      }
+    },
+    "source": "https://developer.hiverhq.com/hiver-api/conversations/create-note-on-conversation"
+  }
+}

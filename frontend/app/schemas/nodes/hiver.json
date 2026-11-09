@@ -1,0 +1,684 @@
+{
+  "$defs": {
+    "CreateNote": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "conversation_id": {
+          "description": "Hiver conversation ID or Gmail thread ID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "user_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when the Gmail thread ID belongs to an individual user's mailbox.",
+          "title": "User Email"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "content": {
+          "description": "Note text or supported HTML. For mentions, include each teammate's bare email here too.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "mentions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Teammate email addresses to mention.",
+          "title": "Mentions"
+        },
+        "notify_all": {
+          "default": false,
+          "description": "Notify every inbox member.",
+          "title": "Notify All",
+          "type": "boolean"
+        },
+        "parent_note_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Note Id"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "conversation_id",
+        "content"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "CreateSharedDraft": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_shared_draft",
+          "default": "create_shared_draft",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "description": "Shared draft email body.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "gmail_message_id": {
+          "anyOf": [
+            {
+              "maxLength": 998,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source user's Gmail message ID, or global SMTP Message-ID. Required unless Hiver message ID is supplied.",
+          "title": "Gmail Message Id"
+        },
+        "hiver_message_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hiver Message Id"
+        },
+        "reply_type": {
+          "default": "reply",
+          "maxLength": 50,
+          "title": "Reply Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "body"
+      ],
+      "title": "CreateSharedDraft",
+      "type": "object"
+    },
+    "CreateTag": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color_hexcode": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color Hexcode"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "GetConversation": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "conversation_id": {
+          "description": "Hiver conversation ID or Gmail thread ID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "user_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when the Gmail thread ID belongs to an individual user's mailbox.",
+          "title": "User Email"
+        },
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "conversation_id"
+      ],
+      "title": "GetConversation",
+      "type": "object"
+    },
+    "GetInbox": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_inbox",
+          "default": "get_inbox",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "GetInbox",
+      "type": "object"
+    },
+    "HiverAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hiver_api_key",
+          "default": "hiver_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Hiver API Key",
+      "type": "object",
+      "x-credential-instructions": "In Hiver's Admin Panel, open Integrations \u2192 Developer APIs, create and enable an API key, then paste it here. Hiver API keys have admin access. NoClick verifies the key by listing your inboxes.",
+      "x-credential-url": "https://help.hiverhq.com/apps-and-integrations/hiver-api"
+    },
+    "ListConversations": {
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Results per page, from 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy data.pagination.next_page from the previous result. Omit for the first page.",
+          "title": "Next Page"
+        },
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "ListConversations",
+      "type": "object"
+    },
+    "ListInboxes": {
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Results per page, from 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy data.pagination.next_page from the previous result. Omit for the first page.",
+          "title": "Next Page"
+        },
+        "operation": {
+          "const": "list_inboxes",
+          "default": "list_inboxes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListInboxes",
+      "type": "object"
+    },
+    "ListTags": {
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Results per page, from 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy data.pagination.next_page from the previous result. Omit for the first page.",
+          "title": "Next Page"
+        },
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListUsers": {
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Results per page, from 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_page": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy data.pagination.next_page from the previous result. Omit for the first page.",
+          "title": "Next Page"
+        },
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "SearchTags": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_tags",
+          "default": "search_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "name"
+      ],
+      "title": "SearchTags",
+      "type": "object"
+    },
+    "SearchUsers": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_users",
+          "default": "search_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Exact email address to search for.",
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "email"
+      ],
+      "title": "SearchUsers",
+      "type": "object"
+    },
+    "UpdateConversation": {
+      "properties": {
+        "inbox_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Inbox ID",
+          "type": "string"
+        },
+        "conversation_id": {
+          "description": "Hiver conversation ID or Gmail thread ID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "user_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when the Gmail thread ID belongs to an individual user's mailbox.",
+          "title": "User Email"
+        },
+        "operation": {
+          "const": "update_conversation",
+          "default": "update_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status_name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hiver status name, for example open or closed.",
+          "title": "Status Name"
+        },
+        "assignee_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email of the inbox member to assign.",
+          "title": "Assignee Email"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "conversation_id"
+      ],
+      "title": "UpdateConversation",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_note": "#/$defs/CreateNote",
+          "create_shared_draft": "#/$defs/CreateSharedDraft",
+          "create_tag": "#/$defs/CreateTag",
+          "get_conversation": "#/$defs/GetConversation",
+          "get_inbox": "#/$defs/GetInbox",
+          "list_conversations": "#/$defs/ListConversations",
+          "list_inboxes": "#/$defs/ListInboxes",
+          "list_tags": "#/$defs/ListTags",
+          "list_users": "#/$defs/ListUsers",
+          "search_tags": "#/$defs/SearchTags",
+          "search_users": "#/$defs/SearchUsers",
+          "update_conversation": "#/$defs/UpdateConversation"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInboxes"
+        },
+        {
+          "$ref": "#/$defs/GetInbox"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/SearchUsers"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/SearchTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/ListConversations"
+        },
+        {
+          "$ref": "#/$defs/GetConversation"
+        },
+        {
+          "$ref": "#/$defs/UpdateConversation"
+        },
+        {
+          "$ref": "#/$defs/CreateSharedDraft"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HiverAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hiver Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
