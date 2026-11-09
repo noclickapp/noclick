@@ -1,0 +1,1115 @@
+{
+  "$defs": {
+    "KickAcceptRedemptionsConfig": {
+      "additionalProperties": false,
+      "description": "Accept Channel Reward Redemptions. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "accept_redemptions",
+          "default": "accept_redemptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Accept Redemptions",
+          "x-is-trigger": false
+        },
+        "ids": {
+          "description": "List of redemption IDs to accept. A maximum of 25 redemptions can be accepted per request. IDs must be unique.",
+          "items": {
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "KickAcceptRedemptionsConfig",
+      "type": "object"
+    },
+    "KickBanUserConfig": {
+      "additionalProperties": false,
+      "description": "Post Moderation Bans. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "ban_user",
+          "default": "ban_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Ban User",
+          "x-is-trigger": false
+        },
+        "broadcaster_user_id": {
+          "minimum": 1,
+          "title": "Broadcaster User Id",
+          "type": "integer"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "maximum": 10080,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "To ban a user, don't include this field. To put a user in a timeout, include the timeout period in minutes.",
+          "title": "Duration"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcaster_user_id",
+        "user_id"
+      ],
+      "title": "KickBanUserConfig",
+      "type": "object"
+    },
+    "KickCreateRewardConfig": {
+      "additionalProperties": false,
+      "description": "Create Channel Reward. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "create_reward",
+          "default": "create_reward",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Reward",
+          "x-is-trigger": false
+        },
+        "background_color": {
+          "default": "#00e701",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Background Color",
+          "type": "string"
+        },
+        "cost": {
+          "minimum": 1,
+          "title": "Cost",
+          "type": "integer"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "is_enabled": {
+          "default": true,
+          "title": "Is Enabled",
+          "type": "boolean"
+        },
+        "is_user_input_required": {
+          "default": false,
+          "title": "Is User Input Required",
+          "type": "boolean"
+        },
+        "should_redemptions_skip_request_queue": {
+          "default": false,
+          "title": "Should Redemptions Skip Request Queue",
+          "type": "boolean"
+        },
+        "title": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cost",
+        "title"
+      ],
+      "title": "KickCreateRewardConfig",
+      "type": "object"
+    },
+    "KickDeleteMessageConfig": {
+      "additionalProperties": false,
+      "description": "Delete Chat Message. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "Message ID",
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "KickDeleteMessageConfig",
+      "type": "object"
+    },
+    "KickDeleteRewardConfig": {
+      "additionalProperties": false,
+      "description": "Delete Channel Reward. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "delete_reward",
+          "default": "delete_reward",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Reward",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Reward ID",
+          "minLength": 1,
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KickDeleteRewardConfig",
+      "type": "object"
+    },
+    "KickGetCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Get Category. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "description": "Category ID",
+          "minimum": 1,
+          "title": "Category Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "KickGetCategoryConfig",
+      "type": "object"
+    },
+    "KickGetChannelsConfig": {
+      "additionalProperties": false,
+      "description": "Get Channels. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "get_channels",
+          "default": "get_channels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Channels",
+          "x-is-trigger": false
+        },
+        "broadcaster_user_id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Broadcaster User IDs (cannot be used with slug)",
+          "title": "Broadcaster User Id"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 25,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Channel slugs (cannot be used with broadcaster_user_id)",
+          "title": "Slug"
+        }
+      },
+      "title": "KickGetChannelsConfig",
+      "type": "object"
+    },
+    "KickGetLeaderboardConfig": {
+      "additionalProperties": false,
+      "description": "Get KICKs Leaderboard. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "get_leaderboard",
+          "default": "get_leaderboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Leaderboard",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 10,
+          "description": "The number of entries from the top of the leaderboard to return. For example, 10 will fetch the top 10 entries.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Top",
+          "type": "integer"
+        }
+      },
+      "title": "KickGetLeaderboardConfig",
+      "type": "object"
+    },
+    "KickGetLivestreamStatsConfig": {
+      "additionalProperties": false,
+      "description": "Get Livestreams Stats. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "get_livestream_stats",
+          "default": "get_livestream_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Livestream Stats",
+          "x-is-trigger": false
+        }
+      },
+      "title": "KickGetLivestreamStatsConfig",
+      "type": "object"
+    },
+    "KickGetUsersConfig": {
+      "additionalProperties": false,
+      "description": "Get Users. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "get_users",
+          "default": "get_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Users",
+          "x-is-trigger": false
+        },
+        "id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User IDs",
+          "title": "Id"
+        }
+      },
+      "title": "KickGetUsersConfig",
+      "type": "object"
+    },
+    "KickListLivestreamsConfig": {
+      "additionalProperties": false,
+      "description": "Get Livestreams. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "list_livestreams",
+          "default": "list_livestreams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Livestreams",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 25,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for livestreams in a specific category. A maximum of 25 category IDs can be provided.",
+          "title": "Category Id"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 25,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for livestreams in a specific language. Language code must be a valid BCP 47 language tag. A maximum of 25 languages can be provided.",
+          "title": "Language Code"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Limit the number of results per page",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "KickListLivestreamsConfig",
+      "type": "object"
+    },
+    "KickListRedemptionsConfig": {
+      "additionalProperties": false,
+      "description": "Get Channel Reward Redemptions. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "list_redemptions",
+          "default": "list_redemptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Redemptions",
+          "x-is-trigger": false
+        },
+        "reward_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally provide a reward ID to list redemptions for that specific reward.",
+          "title": "Reward Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "accepted",
+                "rejected"
+              ],
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally provide a specific status to filter by. Defaults to pending.",
+          "title": "Status",
+          "enum": [
+            "pending",
+            "accepted",
+            "rejected"
+          ],
+          "x-enum-searchable": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally provide a list of redemption IDs to filter by. You cannot provide any other filters if you filter by redemption IDs.",
+          "title": "Id"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally provide a cursor to paginate through the results.",
+          "title": "Cursor"
+        }
+      },
+      "title": "KickListRedemptionsConfig",
+      "type": "object"
+    },
+    "KickListRewardsConfig": {
+      "additionalProperties": false,
+      "description": "Get Channel Rewards. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "list_rewards",
+          "default": "list_rewards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Rewards",
+          "x-is-trigger": false
+        }
+      },
+      "title": "KickListRewardsConfig",
+      "type": "object"
+    },
+    "KickListUserLivestreamsConfig": {
+      "additionalProperties": false,
+      "description": "Get Livestreams for Users. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "list_user_livestreams",
+          "default": "list_user_livestreams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List User Livestreams",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "Broadcaster User IDs. A maximum of 100 user IDs can be provided.",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Id",
+          "type": "array"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "KickListUserLivestreamsConfig",
+      "type": "object"
+    },
+    "KickOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kick_oauth",
+          "default": "kick_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Granted Scopes"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Kick OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Kick account, or paste an existing user access token with the required scopes. Refresh token and expiry are optional when connecting by hand.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://kick.com/settings/developer",
+      "x-oauth-provider": "kick",
+      "x-oauth-scopes": [
+        "channel:read",
+        "channel:rewards:read",
+        "channel:rewards:write",
+        "channel:write",
+        "chat:write",
+        "kicks:read",
+        "moderation:ban",
+        "moderation:chat_message:manage",
+        "user:read"
+      ]
+    },
+    "KickRejectRedemptionsConfig": {
+      "additionalProperties": false,
+      "description": "Reject Channel Reward Redemptions. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "reject_redemptions",
+          "default": "reject_redemptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Reject Redemptions",
+          "x-is-trigger": false
+        },
+        "ids": {
+          "description": "List of redemption IDs to reject. A maximum of 25 redemptions can be rejected per request. IDs must be unique.",
+          "items": {
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "KickRejectRedemptionsConfig",
+      "type": "object"
+    },
+    "KickSearchCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "Get Categories. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "search_categories",
+          "default": "search_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Categories",
+          "x-is-trigger": false
+        },
+        "q": {
+          "description": "Search query",
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page (defaults to 1 if not provided)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "KickSearchCategoriesConfig",
+      "type": "object"
+    },
+    "KickSendMessageConfig": {
+      "additionalProperties": false,
+      "description": "Post Chat Message. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send Message",
+          "x-is-trigger": false
+        },
+        "broadcaster_user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Broadcaster User Id"
+        },
+        "content": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "reply_to_message_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To Message Id"
+        },
+        "type": {
+          "enum": [
+            "user",
+            "bot"
+          ],
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content",
+        "type"
+      ],
+      "title": "KickSendMessageConfig",
+      "type": "object"
+    },
+    "KickUnbanUserConfig": {
+      "additionalProperties": false,
+      "description": "Delete Moderation Bans. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "unban_user",
+          "default": "unban_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Unban User",
+          "x-is-trigger": false
+        },
+        "broadcaster_user_id": {
+          "minimum": 1,
+          "title": "Broadcaster User Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcaster_user_id",
+        "user_id"
+      ],
+      "title": "KickUnbanUserConfig",
+      "type": "object"
+    },
+    "KickUpdateChannelConfig": {
+      "additionalProperties": false,
+      "description": "Patch Channels. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "update_channel",
+          "default": "update_channel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Channel",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Id"
+        },
+        "custom_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Tags"
+        },
+        "stream_title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stream Title"
+        }
+      },
+      "title": "KickUpdateChannelConfig",
+      "type": "object"
+    },
+    "KickUpdateRewardConfig": {
+      "additionalProperties": false,
+      "description": "Update Channel Reward. Returns the provider response.",
+      "properties": {
+        "operation": {
+          "const": "update_reward",
+          "default": "update_reward",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Reward",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Reward ID",
+          "minLength": 1,
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "background_color": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Background Color"
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "is_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Enabled"
+        },
+        "is_paused": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Paused"
+        },
+        "is_user_input_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is User Input Required"
+        },
+        "should_redemptions_skip_request_queue": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Should Redemptions Skip Request Queue"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KickUpdateRewardConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "accept_redemptions": "#/$defs/KickAcceptRedemptionsConfig",
+          "ban_user": "#/$defs/KickBanUserConfig",
+          "create_reward": "#/$defs/KickCreateRewardConfig",
+          "delete_message": "#/$defs/KickDeleteMessageConfig",
+          "delete_reward": "#/$defs/KickDeleteRewardConfig",
+          "get_category": "#/$defs/KickGetCategoryConfig",
+          "get_channels": "#/$defs/KickGetChannelsConfig",
+          "get_leaderboard": "#/$defs/KickGetLeaderboardConfig",
+          "get_livestream_stats": "#/$defs/KickGetLivestreamStatsConfig",
+          "get_users": "#/$defs/KickGetUsersConfig",
+          "list_livestreams": "#/$defs/KickListLivestreamsConfig",
+          "list_redemptions": "#/$defs/KickListRedemptionsConfig",
+          "list_rewards": "#/$defs/KickListRewardsConfig",
+          "list_user_livestreams": "#/$defs/KickListUserLivestreamsConfig",
+          "reject_redemptions": "#/$defs/KickRejectRedemptionsConfig",
+          "search_categories": "#/$defs/KickSearchCategoriesConfig",
+          "send_message": "#/$defs/KickSendMessageConfig",
+          "unban_user": "#/$defs/KickUnbanUserConfig",
+          "update_channel": "#/$defs/KickUpdateChannelConfig",
+          "update_reward": "#/$defs/KickUpdateRewardConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KickGetUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/KickSearchCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/KickGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/KickGetChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickUpdateChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/KickListRewardsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickCreateRewardConfig"
+        },
+        {
+          "$ref": "#/$defs/KickUpdateRewardConfig"
+        },
+        {
+          "$ref": "#/$defs/KickDeleteRewardConfig"
+        },
+        {
+          "$ref": "#/$defs/KickListRedemptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickAcceptRedemptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickRejectRedemptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/KickDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/KickListLivestreamsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickGetLivestreamStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickListUserLivestreamsConfig"
+        },
+        {
+          "$ref": "#/$defs/KickBanUserConfig"
+        },
+        {
+          "$ref": "#/$defs/KickUnbanUserConfig"
+        },
+        {
+          "$ref": "#/$defs/KickGetLeaderboardConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KickOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kick Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
