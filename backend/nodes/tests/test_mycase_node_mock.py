@@ -140,6 +140,6 @@ def test_mycase_declared_oauth_and_scope_contract():
     assert OAUTH_PROVIDER.token_url == "https://auth.mycase.com/tokens"
     assert OAUTH_PROVIDER.identity_url == module.BASE + "/v1/me"
     assert OAUTH_PROVIDER.token_format == "json"
-    assert set(MYCASE_SCOPES) == set(module.OPERATIONS)
+    assert set(MYCASE_SCOPES) == set(module.OPERATIONS) | set(module.POLL_RESOURCES)
     assert not MYCASE_SCOPES.declared_scopes()
     assert module.MyCaseOAuthCredential(access_token="real-pasted-token").credential_type == "mycase_oauth"

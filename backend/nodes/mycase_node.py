@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator, 
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.mycase import MYCASE_SCOPES
 from utils.ssrf import SSRFError, guarded_async_client
@@ -281,7 +282,44 @@ class MyCaseListInvoices(_Page):
     operation: Literal["list_invoices"] = Field("list_invoices", json_schema_extra={"ui:hidden": True})
 
 
-MyCaseConfig = Annotated[Union[MyCaseGetCurrentUser, MyCaseListClients, MyCaseGetClient, MyCaseCreateClient, MyCaseUpdateClient, MyCaseListLeads, MyCaseGetLead, MyCaseCreateLead, MyCaseUpdateLead, MyCaseListCases, MyCaseGetCase, MyCaseCreateCase, MyCaseUpdateCase, MyCaseListTasks, MyCaseCreateTask, MyCaseUpdateTask, MyCaseListCaseNotes, MyCaseCreateCaseNote, MyCaseGetNote, MyCaseListTimeEntries, MyCaseCreateTimeEntry, MyCaseGetTimeEntry, MyCaseListEvents, MyCaseCreateEvent, MyCaseListInvoices], Field(discriminator="operation")]
+class _MyCasePoll(PollTriggerConfigBase):
+    model_config = ConfigDict(hide_input_in_errors=True)
+    updated_after: Optional[datetime] = Field(None, title="Updated after", description="Optionally watch records created or updated on or after this time. Existing records are baselined when the trigger is armed.")
+
+
+class MyCaseClientChanged(_MyCasePoll):
+    """Poll the documented client list for new record versions."""
+    operation: Literal["on_new_or_updated_client"] = Field("on_new_or_updated_client", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "New or Updated Client",
+    })
+
+
+class MyCaseLeadChanged(_MyCasePoll):
+    """Poll the documented lead list for new record versions."""
+    operation: Literal["on_new_or_updated_lead"] = Field("on_new_or_updated_lead", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "New or Updated Lead",
+    })
+
+
+class MyCaseCaseChanged(_MyCasePoll):
+    """Poll the documented case list for new record versions."""
+    operation: Literal["on_new_or_updated_case"] = Field("on_new_or_updated_case", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "New or Updated Case",
+    })
+
+
+class MyCaseTaskChanged(_MyCasePoll):
+    """Poll the documented task list for new record versions."""
+    operation: Literal["on_new_or_updated_task"] = Field("on_new_or_updated_task", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "New or Updated Task",
+    })
+
+
+MyCaseConfig = Annotated[Union[MyCaseClientChanged, MyCaseLeadChanged, MyCaseCaseChanged, MyCaseTaskChanged, MyCaseGetCurrentUser, MyCaseListClients, MyCaseGetClient, MyCaseCreateClient, MyCaseUpdateClient, MyCaseListLeads, MyCaseGetLead, MyCaseCreateLead, MyCaseUpdateLead, MyCaseListCases, MyCaseGetCase, MyCaseCreateCase, MyCaseUpdateCase, MyCaseListTasks, MyCaseCreateTask, MyCaseUpdateTask, MyCaseListCaseNotes, MyCaseCreateCaseNote, MyCaseGetNote, MyCaseListTimeEntries, MyCaseCreateTimeEntry, MyCaseGetTimeEntry, MyCaseListEvents, MyCaseCreateEvent, MyCaseListInvoices], Field(discriminator="operation")]
 
 
 class MyCaseFullConfig(NodeConfig[MyCaseConfig, MyCaseOAuthCredential]):
@@ -330,7 +368,15 @@ def _redact(value, secrets):
     return value
 
 
-class MyCaseNode(WorkflowNode):
+POLL_RESOURCES = {
+    "on_new_or_updated_client": "clients",
+    "on_new_or_updated_lead": "leads",
+    "on_new_or_updated_case": "cases",
+    "on_new_or_updated_task": "tasks",
+}
+
+
+class MyCaseNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-mycase"
     scope_registry = MYCASE_SCOPES
     connection_evidence = ConnectionEvidence(identity_operation="get_current_user", noun="account")
@@ -345,6 +391,63 @@ class MyCaseNode(WorkflowNode):
         from nodes.oauth.mycase_oauth import refresh_access_token
         return await freshen_oauth_credential(credential_data, pool=pool, user_id=user_id,
             credential_id=credential_id, refresh=refresh_access_token, provider="mycase")
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        resource = POLL_RESOURCES.get(output.get("operation"))
+        if not resource:
+            return super().resolve_agent_event(output)
+        records = output.get("data") or []
+        if not records:
+            return None
+        lines = [f"MyCase: {len(records)} new or updated {resource}."]
+        for record in records[:50]:
+            if resource in {"clients", "leads"}:
+                name = " ".join(str(record.get(key) or "") for key in ("first_name", "last_name")).strip()
+                detail = record.get("email") or ""
+            else:
+                name = record.get("name") or ""
+                detail = record.get("description") or ""
+            lines.append(f"{name} (ID {record['id']}, updated {record['updated_at']}): {detail}"[:2000])
+        if len(records) > 50:
+            lines.append("More changed records are available in the trigger output.")
+        return {"text": "\n".join(lines)[:20000], "conversation_key": None}
+
+    async def _poll_records(self, token, op):
+        # The provider's FilterUpdatedAfter and response schemas document these fields.
+        # Read all pages before recording seen versions: failed or oversized polls must retry intact.
+        path = "/v1/" + POLL_RESOURCES[op.operation]
+        params = {"page_size": 1000}
+        if op.updated_after is not None:
+            params["filter[updated_after]"] = op.updated_after.isoformat()
+        records, tokens = [], set()
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            for _ in range(10):
+                response = await client.get(BASE + path, params=params,
+                    headers={"Authorization": "Bearer " + token, "Accept": "application/json"})
+                response.raise_for_status()
+                if len(response.content) > 10_000_000 or "json" not in response.headers.get("content-type", "").lower():
+                    raise ValueError("Expected bounded JSON from MyCase")
+                page = response.json()
+                if not isinstance(page, list) or any(
+                    not isinstance(row, dict) or row.get("id") is None or not row.get("updated_at")
+                    for row in page
+                ):
+                    raise ValueError("Expected MyCase records with IDs and update times")
+                records.extend(page)
+                if len(records) > 10000:
+                    raise ValueError("MyCase poll exceeds 10,000 records; set Updated after to narrow the scope")
+                cursor = self._next_page(response, path, params.get("page_token"))
+                if cursor is None:
+                    break
+                if cursor in tokens:
+                    raise ValueError("MyCase returned a repeated pagination token")
+                tokens.add(cursor)
+                params["page_token"] = cursor
+            else:
+                raise ValueError("MyCase poll exceeds ten pages; set Updated after to narrow the scope")
+        fresh = await self._filter_unseen(records, lambda row: f"{row['id']}:{row['updated_at']}")
+        return {"status": "success", "operation": op.operation, "data": fresh, "changed_count": len(fresh)}
 
     @staticmethod
     def _request_parts(op):
@@ -387,7 +490,8 @@ class MyCaseNode(WorkflowNode):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a MyCase account")
         op, credential = self.config.config, self.config.credentials
-        method, path, params, body = self._request_parts(op)
+        polling = isinstance(op, _MyCasePoll)
+        method, path, params, body = ("GET", "", {}, None) if polling else self._request_parts(op)
         writing = method != "GET"
         from nodes.core.oauth_refresh import ensure_fresh_oauth_token
         from nodes.oauth.mycase_oauth import refresh_access_token
@@ -399,6 +503,8 @@ class MyCaseNode(WorkflowNode):
                 setattr(credential, key, raw[key])
         secrets = (token, credential.access_token, credential.refresh_token)
         try:
+            if polling:
+                return _redact(await self._poll_records(token, op), secrets)
             async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
                 response = await client.request(method, BASE + path, params=params,
                     headers={"Authorization": "Bearer " + token, "Accept": "application/json"},

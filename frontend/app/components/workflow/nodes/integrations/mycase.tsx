@@ -13,7 +13,7 @@ MyCaseIcon.displayName = 'MyCaseIcon';
 export const MyCaseNode: NodeDefinition = {
     type: 'automation-mycase',
     label: 'MyCase',
-    description: 'Manage legal cases, clients, leads, tasks, notes, time and events',
+    description: 'Watch for new or updated cases, clients, leads and tasks; manage your legal practice',
     category: 'industry',
     Icon: MyCaseIcon,
     iconColor: '',

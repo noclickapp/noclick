@@ -1,0 +1,443 @@
+{
+  "client": {
+    "source": "https://stoplight.io/api/v1/projects/mycaseapi/mycase-api-documentation/nodes/components/schemas/ClientResponse.json",
+    "schema": {
+      "title": "ClientResponse",
+      "x-stoplight": {
+        "id": "qd2emajzo0o96"
+      },
+      "type": "object",
+      "x-internal": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique ID of the client."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the client."
+        },
+        "first_name": {
+          "type": "string",
+          "description": "The first name of the client."
+        },
+        "middle_initial": {
+          "type": "string",
+          "description": "[DEPRECATED] This field has been replaced by the `middle_name` field for consistency. Please use the `middle_name` field instead. Use of both fields will result in an error.",
+          "deprecated": true
+        },
+        "middle_name": {
+          "type": "string",
+          "description": "The middle name of the client."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The last name of the client. "
+        },
+        "address": {
+          "$ref": "./AddressNestedResponse.json"
+        },
+        "cell_phone_number": {
+          "description": "The clients cell phone number.",
+          "type": "string"
+        },
+        "work_phone_number": {
+          "description": "The clients work phone number.",
+          "type": "string"
+        },
+        "home_phone_number": {
+          "type": "string",
+          "description": "The clients home phone number."
+        },
+        "fax_phone_number": {
+          "type": "string",
+          "description": "The clients fax phone number."
+        },
+        "contact_group": {
+          "type": "string",
+          "description": "The client's contact group. This has been deprecated. Please use the `people_group` field instead.",
+          "deprecated": true
+        },
+        "people_group": {
+          "type": "object",
+          "description": "The people group associated with this client.",
+          "properties": {
+            "id": {
+              "type": "integer"
+            }
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Any additional information associated to a particular client. It is seen by other firm members but is not visible to the individual client. "
+        },
+        "birthdate": {
+          "type": "string",
+          "description": "The clients date of birth in ISO-8601 date format."
+        },
+        "archived": {
+          "type": "boolean",
+          "description": "A True or False to let you know if the client has been archived and is no longer available for use."
+        },
+        "cases": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Any cases associated with the client, can be one or multiple.",
+          "items": {
+            "$ref": "./CaseNestedResponse.json"
+          }
+        },
+        "custom_field_values": {
+          "type": "array",
+          "items": {
+            "$ref": "./CustomFieldValueResponse.json"
+          }
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "When the client was last updated."
+        },
+        "created_at": {
+          "type": "string",
+          "description": "When the client was created."
+        }
+      }
+    }
+  },
+  "lead": {
+    "source": "https://stoplight.io/api/v1/projects/mycaseapi/mycase-api-documentation/nodes/components/schemas/LeadResponse.json",
+    "schema": {
+      "title": "LeadResponse",
+      "x-stoplight": {
+        "id": "6ntz9l26hmzil"
+      },
+      "type": "object",
+      "x-internal": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique ID of the lead."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the lead."
+        },
+        "first_name": {
+          "type": "string",
+          "description": "The first name of the lead."
+        },
+        "middle_initial": {
+          "type": "string",
+          "description": "The middle name (or initial) of the lead."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The last name of the lead. "
+        },
+        "address": {
+          "$ref": "./AddressNestedResponse.json"
+        },
+        "cell_phone_number": {
+          "description": "The leads cell phone number.",
+          "type": "string"
+        },
+        "work_phone_number": {
+          "description": "The leads work phone number.",
+          "type": "string"
+        },
+        "home_phone_number": {
+          "type": "string",
+          "description": "The leads home phone number."
+        },
+        "lead_details": {
+          "type": "string",
+          "description": "Any additional information associated to a particular lead. It is seen by other firm members but is not visible to the individual lead. "
+        },
+        "birthdate": {
+          "type": "string",
+          "description": "The leads date of birth in ISO-8601 date format."
+        },
+        "drivers_license_number": {
+          "type": "string",
+          "description": "The leads drivers license number."
+        },
+        "drivers_license_state": {
+          "type": "string",
+          "description": "The leads drivers license state."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the lead."
+        },
+        "approved": {
+          "type": "boolean",
+          "description": "Whether or not this lead is approved."
+        },
+        "referral_source": {
+          "type": "string",
+          "description": "Deprecated. Please use the `referral_source_reference` field instead.",
+          "deprecated": true
+        },
+        "referral_source_reference": {
+          "type": "object",
+          "description": "The referral source associated with this lead.",
+          "properties": {
+            "id": {
+              "type": "integer"
+            }
+          }
+        },
+        "referred_by": {
+          "type": "object",
+          "description": "If the lead was referred by another client or company in the system you would use this object. ",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The ID of the existing client or company in mycase."
+            }
+          }
+        },
+        "custom_field_values": {
+          "type": "array",
+          "items": {
+            "$ref": "./CustomFieldValueResponse.json"
+          }
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "When the lead was last updated."
+        },
+        "created_at": {
+          "type": "string",
+          "description": "When the lead was created."
+        }
+      }
+    }
+  },
+  "case": {
+    "source": "https://stoplight.io/api/v1/projects/mycaseapi/mycase-api-documentation/nodes/components/schemas/CaseResponse.json",
+    "schema": {
+      "title": "CaseResponse",
+      "type": "object",
+      "x-internal": false,
+      "properties": {
+        "id": {
+          "type": "number",
+          "description": "A unique identifier for the case."
+        },
+        "name": {
+          "type": "string",
+          "description": "\nName of the case."
+        },
+        "case_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The case number of the case."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the case."
+        },
+        "opened_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The date the case was opened in ISO 8601 date format."
+        },
+        "closed_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The date the case was closed in ISO 8601 date format."
+        },
+        "sol_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The statue of limitations date for the case  in ISO 8601 date format."
+        },
+        "practice_area": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The case practice area, as defined in MyCase. "
+        },
+        "case_stage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The stage the case is currently in, as defined in MyCase."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the case. One of `open` or `closed`."
+        },
+        "outstanding_balance": {
+          "type": "number",
+          "description": "The outstanding balance of this case."
+        },
+        "billing_contact": {
+          "type": "object",
+          "description": "The billing contact for this case.",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The ID of the client or company assigned as the billing contact for this case."
+            }
+          }
+        },
+        "billing_type": {
+          "type": "string",
+          "description": "The billing method for this case. One of `\"\" | \"hourly\" | \"contingency\" | \"flat\" | \"mixed\" | \"pro_bono\"`."
+        },
+        "contacts": {
+          "description": "[DEPRECATED] This field has been replaced by the `clients` field for consistency. Please use the `clients` field instead. Use of both fields will result in an error.",
+          "deprecated": true
+        },
+        "clients": {
+          "description": "Any clients associated with the case. By default, each resource will only be returned with an `id` field. To specify more fields to be returned, please see the `field` query parameters.",
+          "type": "array",
+          "items": {
+            "$ref": "./ClientNestedResponse.json"
+          }
+        },
+        "companies": {
+          "description": "Any companies associated with the case.",
+          "type": "array",
+          "items": {
+            "$ref": "./CompanyNestedResponse.json"
+          }
+        },
+        "staff": {
+          "type": "array",
+          "description": "Any firm members associated to the case.",
+          "items": {
+            "$ref": "./StaffNestedResponse.json"
+          }
+        },
+        "custom_field_values": {
+          "type": "array",
+          "items": {
+            "$ref": "./CustomFieldValueResponse.json"
+          }
+        },
+        "office": {
+          "type": "object",
+          "description": "The office associated to the case.",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The ID of the office."
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the office."
+            },
+            "fax_phone": {
+              "type": "string",
+              "description": "The fax phone number of the office."
+            },
+            "main_phone": {
+              "type": "string",
+              "description": "The main phone number of the office."
+            },
+            "address": {
+              "$ref": "./AddressNestedResponse.json"
+            },
+            "updated_at": {
+              "type": "string",
+              "description": "The date the office was updated in ISO 8601 date/time format."
+            },
+            "created_at": {
+              "type": "string",
+              "description": "The date the office was created in ISO 8601 date/time format."
+            }
+          }
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "The date the case was updated in ISO 8601 date/time format. "
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date the case was created in ISO 8601 date/time format. "
+        }
+      }
+    }
+  },
+  "task": {
+    "source": "https://stoplight.io/api/v1/projects/mycaseapi/mycase-api-documentation/nodes/components/schemas/TaskResponse.json",
+    "schema": {
+      "title": "EventResponse",
+      "x-stoplight": {
+        "id": "2puc8lvh7n2kr"
+      },
+      "type": "object",
+      "x-internal": false,
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of this task."
+        },
+        "description": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string",
+          "description": "The priority of this task. One of (Low | Medium | High)"
+        },
+        "due_date": {
+          "type": "string",
+          "description": "The due date of this task in ISO 8601 date format."
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Whether or not this task is completed."
+        },
+        "case": {
+          "type": [
+            "object"
+          ],
+          "description": "The case associated with this task, if there is one.",
+          "properties": {
+            "id": {
+              "type": "integer"
+            }
+          }
+        },
+        "staff": {
+          "type": "array",
+          "description": "All staff associated with this task.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "completed_at": {
+          "type": "string",
+          "description": "Null if the task has not been completed."
+        }
+      }
+    }
+  }
+}

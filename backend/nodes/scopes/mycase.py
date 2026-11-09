@@ -10,6 +10,10 @@ from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 MYCASE_SCOPES = ScopeRegistry(
     provider="mycase",
     requirements={name: ScopeRequirement(scopes=()) for name in (
+        'on_new_or_updated_client',
+        'on_new_or_updated_lead',
+        'on_new_or_updated_case',
+        'on_new_or_updated_task',
         'get_current_user',
         'list_clients',
         'get_client',
