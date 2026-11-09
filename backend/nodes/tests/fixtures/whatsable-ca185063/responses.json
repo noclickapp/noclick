@@ -1,0 +1,277 @@
+{
+  "source": "https://api.whatsable.app/v1/openapi.json",
+  "examples": {
+    "Me": {
+      "object": "me",
+      "organization": {
+        "id": "cm2v8a1b20000qz8h1a2b3c4d",
+        "name": "Acme Store"
+      },
+      "api_key": {
+        "id": "cm2v8a1b20001qz8h5e6f7g8h",
+        "name": "Make - orders",
+        "mode": "live",
+        "scopes": [
+          "*"
+        ],
+        "default_number_id": "cm2v8a1b20002qz8h9i0j1k2l",
+        "number_access": "selected",
+        "number_ids": [
+          "cm2v8a1b20002qz8h9i0j1k2l",
+          "cm2v8a1b20003qz8h3m4n5o6p"
+        ]
+      },
+      "plan_active": true,
+      "plan": {
+        "name": "Pro",
+        "family": "pro",
+        "free_tier": false,
+        "status": "active",
+        "contact_limit": 1000,
+        "features": [
+          "inbox",
+          "templates",
+          "broadcasts",
+          "pipedrive",
+          "monday",
+          "ai",
+          "integrations",
+          "analytics",
+          "team",
+          "transcription"
+        ]
+      }
+    },
+    "Number": {
+      "object": "number",
+      "id": "cm2v8a1b20002qz8h9i0j1k2l",
+      "phone": "+15551234567",
+      "display_name": "Acme Store",
+      "phone_number_id": "1234567890",
+      "waba_id": "9876543210",
+      "status": "active",
+      "is_default_for_key": true,
+      "created_at": "2026-09-01T12:00:00Z"
+    },
+    "Template": {
+      "object": "template",
+      "id": "cm2v8t1a00001qz8habcd1234",
+      "name": "order_shipped",
+      "display_name": "Order shipped",
+      "language": "en_US",
+      "category": "utility",
+      "status": "approved",
+      "rejected_reason": null,
+      "waba_id": "9876543210",
+      "body": "Hi {{1}}, your order {{2}} is on its way.",
+      "parameter_format": "positional",
+      "variables": [
+        {
+          "key": "header_image",
+          "component": "header",
+          "type": "image",
+          "required": true,
+          "example": null
+        },
+        {
+          "key": "1",
+          "component": "body",
+          "type": "text",
+          "required": true,
+          "example": "Ana"
+        },
+        {
+          "key": "2",
+          "component": "body",
+          "type": "text",
+          "required": true,
+          "example": "#1042"
+        },
+        {
+          "key": "button_0",
+          "component": "button",
+          "type": "text",
+          "required": true,
+          "example": "1042"
+        }
+      ],
+      "buttons": [
+        {
+          "type": "url",
+          "text": "Track",
+          "url": "https://acme.example/t/{{1}}",
+          "phone": null
+        }
+      ],
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-02T08:00:00Z"
+    },
+    "Message": {
+      "object": "message",
+      "id": "cm2v8m1a00001qz8h0p1q2r3s",
+      "conversation_id": "cm2v8c1a00001qz8h4t5u6v7w",
+      "contact_id": "cm2v8k1a00001qz8h8x9y0z1a",
+      "number_id": "cm2v8a1b20002qz8h9i0j1k2l",
+      "direction": "outbound",
+      "type": "template",
+      "status": "sent",
+      "sent_by": "api",
+      "to": {
+        "phone": "+5491155550000",
+        "wa_user_id": null,
+        "username": null
+      },
+      "from": null,
+      "text": "Hi Ana, your order #1042 is on its way.",
+      "template": {
+        "id": "cm2v8t1a00001qz8habcd1234",
+        "name": "order_shipped",
+        "language": "en_US"
+      },
+      "media": null,
+      "whatsapp_message_id": "wamid.HBgMNTQ5MTE1NTU1MDAwMBUCABEYEjQ",
+      "error": null,
+      "created_at": "2026-10-20T19:51:21Z",
+      "delivered_at": null,
+      "read_at": null,
+      "edited_at": null,
+      "deleted_at": null,
+      "referral": null,
+      "button_reply": null,
+      "unverified_figures": [],
+      "figures_checked_at": null,
+      "reply_to": null,
+      "reactions": []
+    },
+    "Conversation": {
+      "object": "conversation",
+      "id": "cm2v8c1a00001qz8h4t5u6v7w",
+      "number_id": "cm2v8a1b20002qz8h9i0j1k2l",
+      "contact_id": "cm2v8k1a00001qz8h8x9y0z1a",
+      "contact_name": "Ana P\u00e9rez",
+      "last_message_preview": "Is my order ready?",
+      "last_message_at": "2026-10-20T19:51:21Z",
+      "last_inbound_at": "2026-10-20T19:51:21Z",
+      "last_outbound_at": "2026-10-20T18:00:00Z",
+      "awaiting_reply": true,
+      "window_expires_at": "2026-10-21T19:51:21Z",
+      "window_open": true,
+      "unread_count": 2,
+      "marked_unread": false,
+      "figures_to_check": 0,
+      "ai": {
+        "bot_id": "cm2v8b1a00001qz8h3j4k5l6m",
+        "status": "active"
+      },
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-10-20T19:51:21Z"
+    },
+    "TimelineEntry": {
+      "object": "timeline_entry",
+      "id": "dec_cm2v8d1a00001qz8h6n7o8p9q",
+      "type": "ai_decision",
+      "at": "2026-10-28T13:40:12Z",
+      "actor": {
+        "type": "ai_bot",
+        "id": "cm2v8b1a00001qz8h3j4k5l6m",
+        "name": "Sales"
+      },
+      "ai_decision": {
+        "trigger": "reply",
+        "outcome": "replied",
+        "reason_code": null,
+        "reasoning": "Asked for the Pro price, which is in the knowledge.",
+        "labels": [
+          {
+            "action": "add",
+            "label_id": "cm2v8l1a00001qz8h2b3c4d5e",
+            "name": "Lead",
+            "outcome": "applied"
+          }
+        ],
+        "files": [],
+        "message_id": "cm2v8m1a00001qz8h0p1q2r3s",
+        "attempt": null,
+        "decided_at": "2026-10-28T13:40:05Z"
+      }
+    },
+    "ConversationNote": {
+      "object": "conversation_note",
+      "id": "cm2v8n1a00001qz8h7k8l9m0n",
+      "conversation_id": "cm2v8c1a00001qz8h4f5g6h7i",
+      "body": "Asked for the invoice again; call back Monday.",
+      "author": {
+        "type": "api_key",
+        "id": "cm2v8k1a00001qz8h1a2b3c4d",
+        "name": "Claude"
+      },
+      "created_at": "2026-11-04T12:00:00Z"
+    },
+    "ScheduledMessage": {
+      "object": "scheduled_message",
+      "id": "cm2v8s1a00001qz8h6f7g8h9i",
+      "status": "pending",
+      "send_at": "2026-10-22T12:00:00Z",
+      "time_zone": "America/Argentina/Buenos_Aires",
+      "conversation_id": "cm2v8c1a00001qz8h4t5u6v7w",
+      "contact_id": "cm2v8k1a00001qz8h8x9y0z1a",
+      "number_id": "cm2v8a1b20002qz8h9i0j1k2l",
+      "type": "template",
+      "text": null,
+      "template": {
+        "id": "cm2v8t1a00001qz8habcd1234",
+        "name": "order_shipped",
+        "language": "en_US"
+      },
+      "media": null,
+      "message_id": null,
+      "suppressed_reason": null,
+      "error": null,
+      "send_if": {
+        "no_reply": "since_last_message",
+        "labels": null
+      },
+      "created_by": "api",
+      "created_at": "2026-10-20T19:51:21Z",
+      "updated_at": "2026-10-20T19:51:21Z"
+    },
+    "Contact": {
+      "object": "contact",
+      "id": "cm2v8k1a00001qz8h8x9y0z1a",
+      "phone": "+5491155550000",
+      "wa_user_id": null,
+      "username": null,
+      "name": "Ana P\u00e9rez",
+      "note": null,
+      "automation_note": null,
+      "labels": [
+        {
+          "id": "cm2v8l1a00001qz8h2b3c4d5e",
+          "name": "VIP"
+        }
+      ],
+      "conversations": [
+        {
+          "id": "cm2v8c1a00001qz8h4t5u6v7w",
+          "number_id": "cm2v8a1b20002qz8h9i0j1k2l"
+        }
+      ],
+      "follow_ups": "on",
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-10-20T19:51:21Z"
+    },
+    "Label": {
+      "object": "label",
+      "id": "cm2v8l1a00001qz8h2b3c4d5e",
+      "name": "VIP",
+      "color": "label-2",
+      "description": "Customers with more than five orders",
+      "keywords": [
+        "vip"
+      ],
+      "number_ids": [],
+      "created_at": "2026-09-01T12:00:00Z",
+      "updated_at": "2026-09-01T12:00:00Z"
+    }
+  }
+}
