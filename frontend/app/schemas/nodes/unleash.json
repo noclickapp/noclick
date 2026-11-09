@@ -1,0 +1,1569 @@
+{
+  "$defs": {
+    "UnleashArchiveFeatureConfig": {
+      "additionalProperties": false,
+      "description": "Archive a feature flag; this removes it from SDK evaluation.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "archive_feature",
+          "default": "archive_feature",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name"
+      ],
+      "title": "UnleashArchiveFeatureConfig",
+      "type": "object"
+    },
+    "UnleashConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "contextName": {
+          "minLength": 1,
+          "title": "Contextname",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "NOT_IN",
+            "IN",
+            "STR_ENDS_WITH",
+            "STR_STARTS_WITH",
+            "STR_CONTAINS",
+            "NUM_EQ",
+            "NUM_GT",
+            "NUM_GTE",
+            "NUM_LT",
+            "NUM_LTE",
+            "DATE_AFTER",
+            "DATE_BEFORE",
+            "SEMVER_EQ",
+            "SEMVER_GT",
+            "SEMVER_LT",
+            "SEMVER_GTE",
+            "SEMVER_LTE",
+            "REGEX",
+            "IN_CIDR"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Values"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "caseInsensitive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caseinsensitive"
+        },
+        "inverted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inverted"
+        }
+      },
+      "required": [
+        "contextName",
+        "operator"
+      ],
+      "title": "UnleashConstraint",
+      "type": "object"
+    },
+    "UnleashCreateFeatureConfig": {
+      "additionalProperties": false,
+      "description": "Create a feature flag in a project.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_feature",
+          "default": "create_feature",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "experiment",
+                "kill-switch",
+                "release",
+                "operational",
+                "permission",
+                "sunset"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "experiment",
+            "kill-switch",
+            "release",
+            "operational",
+            "permission",
+            "sunset"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "impressionData": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Impressiondata"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "UnleashCreateFeatureConfig",
+      "type": "object"
+    },
+    "UnleashCreateSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Create a reusable targeting segment.",
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "constraints": {
+          "description": "Complete constraint list; an empty list matches all contexts.",
+          "items": {
+            "$ref": "#/$defs/UnleashConstraint"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project ID, or omit for a global segment.",
+          "title": "Project"
+        },
+        "operation": {
+          "const": "create_segment",
+          "default": "create_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "constraints"
+      ],
+      "title": "UnleashCreateSegmentConfig",
+      "type": "object"
+    },
+    "UnleashCreateStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Add an activation strategy to a flag environment.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disabled"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Strategy parameters, e.g. {\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"checkout\"} for flexibleRollout.",
+          "title": "Parameters"
+        },
+        "constraints": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UnleashConstraint"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraints"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_strategy",
+          "default": "create_strategy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Strategy type, e.g. flexibleRollout.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment",
+        "name"
+      ],
+      "title": "UnleashCreateStrategyConfig",
+      "type": "object"
+    },
+    "UnleashDeleteSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Delete a targeting segment; fails if still referenced.",
+      "properties": {
+        "segment_id": {
+          "minimum": 1,
+          "title": "Segment",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "segment_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_segment",
+          "default": "delete_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "UnleashDeleteSegmentConfig",
+      "type": "object"
+    },
+    "UnleashDeleteStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Remove an activation strategy from a flag environment.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "strategy_id": {
+          "description": "ID of an existing strategy configuration, not its strategy type name.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Strategy ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_strategy",
+          "default": "delete_strategy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment",
+        "strategy_id"
+      ],
+      "title": "UnleashDeleteStrategyConfig",
+      "type": "object"
+    },
+    "UnleashDisableFeatureConfig": {
+      "additionalProperties": false,
+      "description": "Disable a flag in the selected environment.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "disable_feature",
+          "default": "disable_feature",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment"
+      ],
+      "title": "UnleashDisableFeatureConfig",
+      "type": "object"
+    },
+    "UnleashEnableFeatureConfig": {
+      "additionalProperties": false,
+      "description": "Enable a flag in the selected environment.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "enable_feature",
+          "default": "enable_feature",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment"
+      ],
+      "title": "UnleashEnableFeatureConfig",
+      "type": "object"
+    },
+    "UnleashGetEnvironmentConfig": {
+      "additionalProperties": false,
+      "description": "Read an environment by name.",
+      "properties": {
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "environment"
+      ],
+      "title": "UnleashGetEnvironmentConfig",
+      "type": "object"
+    },
+    "UnleashGetFeatureConfig": {
+      "additionalProperties": false,
+      "description": "Get a flag and its configuration.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "get_feature",
+          "default": "get_feature",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name"
+      ],
+      "title": "UnleashGetFeatureConfig",
+      "type": "object"
+    },
+    "UnleashGetFeatureEnvironmentConfig": {
+      "additionalProperties": false,
+      "description": "Get flag configuration for an environment.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_feature_environment",
+          "default": "get_feature_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment"
+      ],
+      "title": "UnleashGetFeatureEnvironmentConfig",
+      "type": "object"
+    },
+    "UnleashGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Get a project overview.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "UnleashGetProjectConfig",
+      "type": "object"
+    },
+    "UnleashGetSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Read a reusable targeting segment.",
+      "properties": {
+        "segment_id": {
+          "minimum": 1,
+          "title": "Segment",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "segment_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_segment",
+          "default": "get_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "UnleashGetSegmentConfig",
+      "type": "object"
+    },
+    "UnleashGetStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Read one activation strategy configuration.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "strategy_id": {
+          "description": "ID of an existing strategy configuration, not its strategy type name.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Strategy ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_strategy",
+          "default": "get_strategy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment",
+        "strategy_id"
+      ],
+      "title": "UnleashGetStrategyConfig",
+      "type": "object"
+    },
+    "UnleashListEnvironmentsConfig": {
+      "additionalProperties": false,
+      "description": "List configured environments.",
+      "properties": {
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UnleashListEnvironmentsConfig",
+      "type": "object"
+    },
+    "UnleashListFeaturesConfig": {
+      "additionalProperties": false,
+      "description": "List feature flags in a project.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_features",
+          "default": "list_features",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "UnleashListFeaturesConfig",
+      "type": "object"
+    },
+    "UnleashListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List projects visible to this token.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        }
+      },
+      "title": "UnleashListProjectsConfig",
+      "type": "object"
+    },
+    "UnleashListSegmentsConfig": {
+      "additionalProperties": false,
+      "description": "List reusable targeting segments.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UnleashListSegmentsConfig",
+      "type": "object"
+    },
+    "UnleashListStrategiesConfig": {
+      "additionalProperties": false,
+      "description": "List activation strategies for a flag environment.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_strategies",
+          "default": "list_strategies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment"
+      ],
+      "title": "UnleashListStrategiesConfig",
+      "type": "object"
+    },
+    "UnleashListVariantsConfig": {
+      "additionalProperties": false,
+      "description": "Read flag variants for an environment.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_variants",
+          "default": "list_variants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment"
+      ],
+      "title": "UnleashListVariantsConfig",
+      "type": "object"
+    },
+    "UnleashTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "unleash_token",
+          "default": "unleash_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_url": {
+          "description": "Public HTTPS base URL before /api, e.g. https://example.app.unleash-hosted.com. A self-hosted path prefix is supported.",
+          "title": "Instance URL",
+          "type": "string"
+        },
+        "api_token": {
+          "description": "Paste the complete personal access or service account token, without a Bearer prefix.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "instance_url",
+        "api_token"
+      ],
+      "title": "Unleash Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Unleash, open Profile > View profile settings > Personal API tokens and create a token. Paste it with your instance base URL. Service account tokens also work. Permissions follow the token's user or service account; allow project reads to verify the connection, and the write permissions needed by your workflow. Backend and frontend SDK tokens cannot manage flags.",
+      "x-credential-url": "https://docs.getunleash.io/concepts/api-tokens-and-client-keys"
+    },
+    "UnleashUpdateFeatureConfig": {
+      "additionalProperties": false,
+      "description": "Update supplied flag metadata fields.",
+      "properties": {
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "update_feature",
+          "default": "update_feature",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "experiment",
+                "kill-switch",
+                "release",
+                "operational",
+                "permission",
+                "sunset"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "experiment",
+            "kill-switch",
+            "release",
+            "operational",
+            "permission",
+            "sunset"
+          ],
+          "x-enum-searchable": true
+        },
+        "stale": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stale"
+        },
+        "impressionData": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Impressiondata"
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name"
+      ],
+      "title": "UnleashUpdateFeatureConfig",
+      "type": "object"
+    },
+    "UnleashUpdateSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Replace a segment name and constraints.",
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "constraints": {
+          "description": "Complete constraint list; an empty list matches all contexts.",
+          "items": {
+            "$ref": "#/$defs/UnleashConstraint"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project ID, or omit for a global segment.",
+          "title": "Project"
+        },
+        "segment_id": {
+          "minimum": 1,
+          "title": "Segment",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "segment_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_segment",
+          "default": "update_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "constraints",
+        "segment_id"
+      ],
+      "title": "UnleashUpdateSegmentConfig",
+      "type": "object"
+    },
+    "UnleashUpdateStrategyConfig": {
+      "additionalProperties": false,
+      "description": "Update supplied strategy configuration fields.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disabled"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Strategy parameters, e.g. {\"rollout\":\"50\",\"stickiness\":\"default\",\"groupId\":\"checkout\"} for flexibleRollout.",
+          "title": "Parameters"
+        },
+        "constraints": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UnleashConstraint"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraints"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "project_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "feature_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Feature flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "project_id"
+            ],
+            "field_name": "feature_name",
+            "searchable": true
+          }
+        },
+        "environment": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "strategy_id": {
+          "description": "ID of an existing strategy configuration, not its strategy type name.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Strategy ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_strategy",
+          "default": "update_strategy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_name",
+        "environment",
+        "strategy_id"
+      ],
+      "title": "UnleashUpdateStrategyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_feature": "#/$defs/UnleashArchiveFeatureConfig",
+          "create_feature": "#/$defs/UnleashCreateFeatureConfig",
+          "create_segment": "#/$defs/UnleashCreateSegmentConfig",
+          "create_strategy": "#/$defs/UnleashCreateStrategyConfig",
+          "delete_segment": "#/$defs/UnleashDeleteSegmentConfig",
+          "delete_strategy": "#/$defs/UnleashDeleteStrategyConfig",
+          "disable_feature": "#/$defs/UnleashDisableFeatureConfig",
+          "enable_feature": "#/$defs/UnleashEnableFeatureConfig",
+          "get_environment": "#/$defs/UnleashGetEnvironmentConfig",
+          "get_feature": "#/$defs/UnleashGetFeatureConfig",
+          "get_feature_environment": "#/$defs/UnleashGetFeatureEnvironmentConfig",
+          "get_project": "#/$defs/UnleashGetProjectConfig",
+          "get_segment": "#/$defs/UnleashGetSegmentConfig",
+          "get_strategy": "#/$defs/UnleashGetStrategyConfig",
+          "list_environments": "#/$defs/UnleashListEnvironmentsConfig",
+          "list_features": "#/$defs/UnleashListFeaturesConfig",
+          "list_projects": "#/$defs/UnleashListProjectsConfig",
+          "list_segments": "#/$defs/UnleashListSegmentsConfig",
+          "list_strategies": "#/$defs/UnleashListStrategiesConfig",
+          "list_variants": "#/$defs/UnleashListVariantsConfig",
+          "update_feature": "#/$defs/UnleashUpdateFeatureConfig",
+          "update_segment": "#/$defs/UnleashUpdateSegmentConfig",
+          "update_strategy": "#/$defs/UnleashUpdateStrategyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UnleashListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashListFeaturesConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashGetFeatureConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashCreateFeatureConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashUpdateFeatureConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashArchiveFeatureConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashGetFeatureEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashEnableFeatureConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashDisableFeatureConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashListStrategiesConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashGetStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashCreateStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashUpdateStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashDeleteStrategyConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashListVariantsConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashListEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashGetEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashGetSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashCreateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashUpdateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UnleashDeleteSegmentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UnleashTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Unleash Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
