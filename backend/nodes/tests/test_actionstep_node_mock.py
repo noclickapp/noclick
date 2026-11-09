@@ -71,7 +71,8 @@ async def test_actionstep_each_operation_uses_one_documented_route(monkeypatch, 
         data = {"id": 3, "name": "Test"}
         body = {resource: data if single or method == "POST" else [data]}
         if operation.startswith("list_"):
-            body["meta"] = {"paging": {resource: {"page": 1, "pageSize": 50, "nextPage": 2}}}
+            body["meta"] = {"paging": {resource: {"page": 1, "pageSize": 50,
+                "nextPage": "https://ap-southeast-2.actionstep.com/api/rest/" + resource + "?page=2"}}}
         return httpx.Response(200, json=body)
     requests = intercept(monkeypatch, reply)
     result = await node(config(operation)).execute({})
@@ -124,10 +125,25 @@ async def test_actionstep_rejection_does_not_expose_upstream_tokens(monkeypatch,
 @pytest.mark.asyncio
 async def test_actionstep_list_filters_and_nonadvancing_pagination(monkeypatch):
     requests = intercept(monkeypatch, lambda _: httpx.Response(200, json={"tasks": [],
-        "meta": {"paging": {"tasks": {"page": 2, "nextPage": 2}}}}))
+        "meta": {"paging": {"tasks": {"page": 2, "nextPage": "https://ap-southeast-2.actionstep.com/api/rest/tasks?page=2"}}}}))
     result = await node({"operation": "list_tasks", "page": 2, "matter_id": 34}).execute({})
     assert dict(requests[0].url.params) == {"page": "2", "pageSize": "50", "action_eq": "34"}
     assert result["status"] == "error"
+
+
+@pytest.mark.parametrize("value", [2, "https://evil.example/api/rest/tasks?page=3",
+    "https://ap-southeast-2.actionstep.com/api/rest/participants?page=3",
+    "https://ap-southeast-2.actionstep.com/api/rest/tasks?page=3&page=4",
+    "https://ap-southeast-2.actionstep.com/api/rest/tasks?page=1000001"])
+def test_actionstep_continuation_refuses_wrong_origin_resource_or_page(value):
+    with pytest.raises(ValueError):
+        native.ActionstepNode._next_page(value, origin="https://ap-southeast-2.actionstep.com", resource="tasks", current=2)
+
+
+def test_actionstep_contract_continuation_url_and_documented_terminal_null():
+    kwargs = {"origin": "https://ap-southeast-2.actionstep.com", "resource": "tasks", "current": 2}
+    assert native.ActionstepNode._next_page("https://ap-southeast-2.actionstep.com/api/rest/tasks?page=3", **kwargs) == 3
+    assert native.ActionstepNode._next_page(None, **kwargs) is None
 
 
 @pytest.mark.parametrize("endpoint", ["https://evil.example/api/", "https://ap-southeast-2.actionstep.com.evil.example/api/",

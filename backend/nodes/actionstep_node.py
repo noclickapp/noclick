@@ -5,6 +5,7 @@ API Responses pages. Regional origins come only from the OAuth token response.
 """
 from datetime import datetime
 from typing import Annotated, Literal, Optional, Union
+from urllib.parse import parse_qs, urlsplit
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
@@ -166,6 +167,26 @@ class ActionstepNode(WorkflowNode):
             raise ValueError("Actionstep returned a different resource ID")
         return data
 
+    @staticmethod
+    def _next_page(value, *, origin, resource, current):
+        if value is None:
+            return None
+        if not isinstance(value, str) or len(value) > 8192 or any(ord(c) <= 32 or ord(c) == 127 for c in value):
+            raise ValueError("Actionstep returned an invalid continuation URL")
+        parsed = urlsplit(value)
+        if (parsed.scheme != "https" or parsed.netloc != urlsplit(origin).netloc
+                or parsed.path != "/api/rest/" + resource or parsed.fragment):
+            raise ValueError("Actionstep pagination changed the regional resource")
+        pages = parse_qs(parsed.query, keep_blank_values=True).get("page", [])
+        if len(pages) != 1 or not pages[0].isascii() or not pages[0].isdecimal():
+            raise ValueError("Actionstep continuation has no single page number")
+        page = int(pages[0])
+        if not current < page <= 1000000:
+            raise ValueError("Actionstep pagination did not advance")
+        # Never follow provider links: return only the page number so the next
+        # invocation retains its selected filters and page size.
+        return page
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect an Actionstep account")
@@ -212,9 +233,7 @@ class ActionstepNode(WorkflowNode):
                 paging = payload.get("meta", {}).get("paging", {}).get(resource)
                 if not isinstance(paging, dict) or "nextPage" not in paging or type(paging.get("page")) is not int or paging["page"] != op.page:
                     raise ValueError("Actionstep pagination metadata is missing or mismatched")
-                following = paging.get("nextPage")
-                if following is not None and (type(following) is not int or following <= op.page):
-                    raise ValueError("Actionstep pagination did not advance")
+                following = self._next_page(paging["nextPage"], origin=origin, resource=resource, current=op.page)
                 result.update(next_page=following, has_more=following is not None, pagination=paging)
             if method != "GET":
                 result["write_acknowledged"] = True
