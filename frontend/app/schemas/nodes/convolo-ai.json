@@ -1,0 +1,1016 @@
+{
+  "$defs": {
+    "AddContact": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_contact",
+          "default": "add_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "description": "Map exact column names from List Project Columns to values. Include the project's main phone column; unknown names and empty values are silently dropped by Brightcall.",
+          "minProperties": 1,
+          "title": "Contact",
+          "type": "object"
+        },
+        "add_duplicates": {
+          "default": false,
+          "title": "Add Duplicates",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "contact"
+      ],
+      "title": "AddContact",
+      "type": "object"
+    },
+    "ContactValue": {
+      "additionalProperties": false,
+      "properties": {
+        "columnId": {
+          "minimum": 1,
+          "title": "Column ID",
+          "type": "integer"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "columnId",
+        "value"
+      ],
+      "title": "ContactValue",
+      "type": "object"
+    },
+    "ConvoloAiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "convolo_ai_api_key",
+          "default": "convolo_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Convolo Ai API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Brightcall Dialer API key. For connection evidence allow dialer.projects:read. Allow dialer.contacts:read/write, dialer.ai-agent:read/write, dialer.numbers:read and dialer.ai:read for the operations you use. NoClick sends the key in the api-key header only to api.dialer.brightcall.ai.",
+      "x-credential-url": "https://app.brightcall.ai/"
+    },
+    "GetAiAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_ai_agent",
+          "default": "get_ai_agent",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetAiAgent",
+      "type": "object"
+    },
+    "GetAiAgentCall": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_ai_agent_call",
+          "default": "get_ai_agent_call",
+          "title": "Operation",
+          "type": "string"
+        },
+        "call_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Call Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "call_id"
+      ],
+      "title": "GetAiAgentCall",
+      "type": "object"
+    },
+    "GetAiAgentVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "version_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Version Id",
+          "type": "string"
+        },
+        "before": {
+          "default": false,
+          "title": "Before",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_ai_agent_version",
+          "default": "get_ai_agent_version",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "version_id"
+      ],
+      "title": "GetAiAgentVersion",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GreetingChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default"
+        },
+        "inbound": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inbound"
+        },
+        "outbound": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outbound"
+        },
+        "delaySeconds": {
+          "anyOf": [
+            {
+              "maximum": 60,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delayseconds"
+        }
+      },
+      "title": "GreetingChanges",
+      "type": "object"
+    },
+    "ListAiAgentCalls": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_ai_agent_calls",
+          "default": "list_ai_agent_calls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextCursor from the previous response.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListAiAgentCalls",
+      "type": "object"
+    },
+    "ListAiAgentHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_ai_agent_history",
+          "default": "list_ai_agent_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListAiAgentHistory",
+      "type": "object"
+    },
+    "ListAiAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_ai_agents",
+          "default": "list_ai_agents",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAiAgents",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to read the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "ready",
+                "paused",
+                "finished",
+                "failed",
+                "called"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "ready",
+            "paused",
+            "finished",
+            "failed",
+            "called"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListInboundCallTrees": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_inbound_call_trees",
+          "default": "list_inbound_call_trees",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListInboundCallTrees",
+      "type": "object"
+    },
+    "ListNumbers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to read the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_numbers",
+          "default": "list_numbers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListNumbers",
+      "type": "object"
+    },
+    "ListOutboundCallTrees": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_outbound_call_trees",
+          "default": "list_outbound_call_trees",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListOutboundCallTrees",
+      "type": "object"
+    },
+    "ListProjectColumns": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_project_columns",
+          "default": "list_project_columns",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListProjectColumns",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per run; increment to read the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "archive": {
+          "anyOf": [
+            {
+              "enum": [
+                "archived",
+                "nonArchived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archive",
+          "enum": [
+            "archived",
+            "nonArchived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "PromptChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "script": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Script"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "knowledgeBase": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Knowledgebase"
+        },
+        "personalityStart": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Personalitystart"
+        },
+        "personalityEnd": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Personalityend"
+        }
+      },
+      "title": "PromptChanges",
+      "type": "object"
+    },
+    "RevertAiAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "version_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Version Id",
+          "type": "string"
+        },
+        "before": {
+          "default": false,
+          "title": "Before",
+          "type": "boolean"
+        },
+        "version": {
+          "description": "Current version returned by Get AI Agent. A stale version is rejected without saving.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without saving.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        },
+        "operation": {
+          "const": "revert_ai_agent",
+          "default": "revert_ai_agent",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "version_id",
+        "version"
+      ],
+      "title": "RevertAiAgent",
+      "type": "object"
+    },
+    "SetProjectAutoplay": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "set_project_autoplay",
+          "default": "set_project_autoplay",
+          "title": "Operation",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Start or stop automatic calling. Starting stops other projects using the same AI agent.",
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "enabled"
+      ],
+      "title": "SetProjectAutoplay",
+      "type": "object"
+    },
+    "UpdateAiAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "version": {
+          "description": "Current version returned by Get AI Agent. A stale version is rejected without saving.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without saving.",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        },
+        "operation": {
+          "const": "update_ai_agent",
+          "default": "update_ai_agent",
+          "title": "Operation",
+          "type": "string"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PromptChanges"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "greeting": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GreetingChanges"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "voice": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voice"
+        }
+      },
+      "required": [
+        "project_id",
+        "version"
+      ],
+      "title": "UpdateAiAgent",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Brightcall Dialer project ID",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_data": {
+          "description": "Column IDs and values to update.",
+          "items": {
+            "$ref": "#/$defs/ContactValue"
+          },
+          "minItems": 1,
+          "title": "Contact Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "contact_id",
+        "contact_data"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact": "#/$defs/AddContact",
+          "get_ai_agent": "#/$defs/GetAiAgent",
+          "get_ai_agent_call": "#/$defs/GetAiAgentCall",
+          "get_ai_agent_version": "#/$defs/GetAiAgentVersion",
+          "get_contact": "#/$defs/GetContact",
+          "get_project": "#/$defs/GetProject",
+          "list_ai_agent_calls": "#/$defs/ListAiAgentCalls",
+          "list_ai_agent_history": "#/$defs/ListAiAgentHistory",
+          "list_ai_agents": "#/$defs/ListAiAgents",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_inbound_call_trees": "#/$defs/ListInboundCallTrees",
+          "list_numbers": "#/$defs/ListNumbers",
+          "list_outbound_call_trees": "#/$defs/ListOutboundCallTrees",
+          "list_project_columns": "#/$defs/ListProjectColumns",
+          "list_projects": "#/$defs/ListProjects",
+          "revert_ai_agent": "#/$defs/RevertAiAgent",
+          "set_project_autoplay": "#/$defs/SetProjectAutoplay",
+          "update_ai_agent": "#/$defs/UpdateAiAgent",
+          "update_contact": "#/$defs/UpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/ListProjectColumns"
+        },
+        {
+          "$ref": "#/$defs/AddContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListAiAgents"
+        },
+        {
+          "$ref": "#/$defs/GetAiAgent"
+        },
+        {
+          "$ref": "#/$defs/UpdateAiAgent"
+        },
+        {
+          "$ref": "#/$defs/ListAiAgentHistory"
+        },
+        {
+          "$ref": "#/$defs/GetAiAgentVersion"
+        },
+        {
+          "$ref": "#/$defs/RevertAiAgent"
+        },
+        {
+          "$ref": "#/$defs/ListAiAgentCalls"
+        },
+        {
+          "$ref": "#/$defs/GetAiAgentCall"
+        },
+        {
+          "$ref": "#/$defs/ListNumbers"
+        },
+        {
+          "$ref": "#/$defs/ListInboundCallTrees"
+        },
+        {
+          "$ref": "#/$defs/ListOutboundCallTrees"
+        },
+        {
+          "$ref": "#/$defs/SetProjectAutoplay"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConvoloAiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Convolo-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "operation": "get_project",
+    "classification": "d",
+    "source_url": "https://api.dialer.brightcall.ai/convolo-external-api-json",
+    "description": "The current published response description enumerates numeric project types 1 (DEFAULT), 2 (POWER_DIALER), 3 (SYNCED), 4 (AI_AGENT), 5 (DONT_CALL), and its enum contains those numbers, but the same required field declares type string. No JSON value satisfies both constraints. The node keeps the provider's project payload unchanged.",
+    "schema_pointer": "#/components/schemas/ProjectByIdGetResponseV2Dto/properties/project/properties/type",
+    "additional_defects": "Full response generation also encounters object-typed fields with the string example any, and a string-typed lastCall.state with a numeric enum. The pinned contract and current official document contain these contradictions. The node does not reinterpret these fields or change the contract."
+  }
+]
