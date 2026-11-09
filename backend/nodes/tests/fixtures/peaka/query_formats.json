@@ -1,0 +1,80 @@
+{
+  "CELL_TYPED": {
+    "columns": [
+      {
+        "catalogName": "peaka",
+        "schemaName": "query",
+        "tableName": "samplequery",
+        "columnName": "event"
+      },
+      {
+        "catalogName": "peaka",
+        "schemaName": "query",
+        "tableName": "samplequery",
+        "columnName": "distinct_id"
+      }
+    ],
+    "data": [
+      [
+        {
+          "name": "event",
+          "displayName": "event",
+          "dataType": "varchar",
+          "order": 0,
+          "value": "$mp_web_page_view"
+        },
+        {
+          "name": "distinct_id",
+          "displayName": "distinct_id",
+          "dataType": "varchar",
+          "order": 1,
+          "value": "$device:916806fd-8a6c-425b-b5f9-b76b5d6f9d55"
+        }
+      ]
+    ]
+  },
+  "SIMPLE": {
+    "columns": [
+      {
+        "catalogName": "peaka",
+        "schemaName": "query",
+        "tableName": "samplequery",
+        "columnName": "event"
+      },
+      {
+        "catalogName": "peaka",
+        "schemaName": "query",
+        "tableName": "samplequery",
+        "columnName": "distinct_id"
+      }
+    ],
+    "data": [
+      {
+        "event": "$mp_web_page_view",
+        "distinct_id": "$device:916806fd-8a6c-425b-b5f9-b76b5d6f9d55"
+      }
+    ]
+  },
+  "COMPACT": {
+    "columns": [
+      {
+        "catalogName": "peaka",
+        "schemaName": "query",
+        "tableName": "samplequery",
+        "columnName": "event"
+      },
+      {
+        "catalogName": "peaka",
+        "schemaName": "query",
+        "tableName": "samplequery",
+        "columnName": "distinct_id"
+      }
+    ],
+    "data": [
+      [
+        "$mp_web_page_view",
+        "$device:916806fd-8a6c-425b-b5f9-b76b5d6f9d55"
+      ]
+    ]
+  }
+}
