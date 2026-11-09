@@ -1,5 +1,6 @@
 """Exercise all published routes using provider response examples."""
 import json
+import importlib.util
 from pathlib import Path
 from unittest.mock import AsyncMock
 
@@ -115,3 +116,17 @@ def test_manual_credential():
     for key in ["Bearer invalid", "https://example.com/key", "key\nheader"]:
         with pytest.raises((ValidationError, ValueError)):
             node.SalesQLAPIKeyCredential(api_key=key)
+
+
+def test_salesql_published_fixtures_contain_no_real_shaped_credentials():
+    """Public documentation's transient signed URLs must not become secrets in Git."""
+    root = Path(__file__).resolve().parents[3]
+    # The open tree materializes this same scanner under scripts/.
+    scanner = next(path for path in (root / "oss/scan_real_secrets.py",
+        root / "scripts/scan_real_secrets.py") if path.is_file())
+    spec = importlib.util.spec_from_file_location("salesql_fixture_secret_scan", scanner)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    fixture = Path(__file__).parent / "fixtures/salesql/published_examples.json"
+    findings = module.find_secrets(fixture.read_bytes())
+    assert not findings, {name: len(values) for name, values in findings.items()}
