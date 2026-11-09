@@ -1,0 +1,24 @@
+{
+  "credits": 12500,
+  "breakdown": [
+    {
+      "purchase_kind": "Subscription",
+      "allocated_units": 10000,
+      "remaining_units": 8500,
+      "expiry_date": 1735689600
+    },
+    {
+      "purchase_kind": "Top-up",
+      "allocated_units": 5000,
+      "remaining_units": 4000,
+      "expiry_date": 1743465600
+    }
+  ],
+  "active_subscription": {
+    "id": "SUB_PRO",
+    "display_name": "Pro",
+    "credits": 10000,
+    "created_at": 1704067200
+  },
+  "allow_usage": true
+}

@@ -1,0 +1,1773 @@
+{
+  "$defs": {
+    "OlostepAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "olostep_api_key",
+          "default": "olostep_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Olostep API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Olostep dashboard and paste it here. NoClick sends it as a bearer token to api.olostep.com. The credit balance read checks access without spending credits.",
+      "x-credential-url": "https://www.olostep.com/dashboard/"
+    },
+    "OlostepCreateAnswerConfig": {
+      "additionalProperties": false,
+      "description": "Create Answer",
+      "properties": {
+        "operation": {
+          "const": "create_answer",
+          "default": "create_answer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task": {
+          "description": "The task to be performed.",
+          "minLength": 1,
+          "title": "Task",
+          "type": "string"
+        },
+        "json_format": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The desired output JSON object with empty values as a schema, or simply describe the data you want as a string.",
+          "title": "Json Format"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateAnswerStorage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how long this answer's stored files (its result file and the pages fetched to build it) are retained. When omitted, they are kept for 7 days. The value in effect is returned in the response as storage.expires_in. See the Storage section in the feature docs. An invalid value returns 400 with code invalid_storage_expires_in."
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "title": "OlostepCreateAnswerConfig",
+      "type": "object"
+    },
+    "OlostepCreateAnswerStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "expires_in": {
+          "anyOf": [
+            {
+              "enum": [
+                "7d",
+                "10d",
+                "30d",
+                "60d",
+                "90d",
+                "180d",
+                "365d",
+                "never"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to keep the stored files. 7d is the default, never retains them indefinitely. Omitting expires_in inside storage also means 7d.",
+          "title": "Expires In",
+          "enum": [
+            "7d",
+            "10d",
+            "30d",
+            "60d",
+            "90d",
+            "180d",
+            "365d",
+            "never"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OlostepCreateAnswerStorage",
+      "type": "object"
+    },
+    "OlostepCreateBatchConfig": {
+      "additionalProperties": false,
+      "description": "Start a new batch",
+      "properties": {
+        "operation": {
+          "const": "create_batch",
+          "default": "create_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items": {
+          "description": "Array of items to be processed in the batch.",
+          "items": {
+            "$ref": "#/$defs/OlostepCreateBatchItemsItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country for the batch execution. Provide in ISO 3166-1 alpha-2 codes like US(USA), IN(India), etc",
+          "title": "Country"
+        },
+        "parser": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateBatchParser"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can use this parameter to specify the parser to use. Parsers are useful to extract structured content from web pages. Olostep has a few parsers built in for most common web pages, and you can also create your own parsers."
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "webhook": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^https?://[^/\\s]+",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS URL to receive a POST request when the batch completes. Must be a publicly accessible URL using `http://` or `https://` protocol. Cannot point to localhost or private IP addresses. See [Webhooks](/api-reference/common/webhooks) for payload format and retry behavior.",
+          "title": "Webhook"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "OlostepCreateBatchConfig",
+      "type": "object"
+    },
+    "OlostepCreateBatchItemsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "custom_id": {
+          "description": "An internal unique identifier for the url.",
+          "minLength": 1,
+          "title": "Custom Id",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL of the item.",
+          "minLength": 1,
+          "pattern": "^https?://[^/\\s]+",
+          "title": "Url",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item-level metadata. Attach key-value pairs to individual items for tracking, filtering, or correlation with your internal systems.",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "custom_id",
+        "url"
+      ],
+      "title": "OlostepCreateBatchItemsItem",
+      "type": "object"
+    },
+    "OlostepCreateBatchParser": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Parser to be used for the batch.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OlostepCreateBatchParser",
+      "type": "object"
+    },
+    "OlostepCreateCrawlConfig": {
+      "additionalProperties": false,
+      "description": "Start a new crawl",
+      "properties": {
+        "operation": {
+          "const": "create_crawl",
+          "default": "create_crawl",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_url": {
+          "description": "The starting point of the crawl.",
+          "minLength": 1,
+          "title": "Start Url",
+          "type": "string"
+        },
+        "max_pages": {
+          "description": "Maximum number of pages to crawl. Recommended for most use cases like crawling an entire website.",
+          "title": "Max Pages",
+          "type": "number"
+        },
+        "max_depth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum depth of the crawl. Useful to extract only up to n-degree of links.",
+          "title": "Max Depth"
+        },
+        "include_urls": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL path patterns to include in the crawl using glob syntax.\n\nDefaults to `/**` which includes all URLs. Use patterns like `/blog/**` to crawl specific sections (e.g., only blog pages), `/products/*.html` for product pages, or multiple patterns for different sections. Supports standard glob features like * (any characters) and ** (recursive matching).",
+          "title": "Include Urls"
+        },
+        "exclude_urls": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL path names in glob pattern to exclude. For example: `/careers/**`. Excluded URLs will supersede included URLs.",
+          "title": "Exclude Urls"
+        },
+        "include_external": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Crawl first-degree external links.",
+          "title": "Include External"
+        },
+        "include_subdomain": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include subdomains of the website. `false` by default.",
+          "title": "Include Subdomain"
+        },
+        "follow_robots_txt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to respect robots.txt rules. If set to `false`, the crawler will scrape the website regardless of robots.txt disallow directives. `true` by default.",
+          "title": "Follow Robots Txt"
+        },
+        "webhook": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^https?://[^/\\s]+",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS URL to receive a POST request when the crawl completes. Must be a publicly accessible URL using `http://` or `https://` protocol. Cannot point to localhost or private IP addresses. See [Webhooks](/api-reference/common/webhooks) for payload format and retry behavior.",
+          "title": "Webhook"
+        },
+        "scrape_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateCrawlScrapeOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls what each individual page scrape requests from the Olostep API. All fields are optional."
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateCrawlStorage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how long this crawl's stored files (its crawled pages) are retained. When omitted, they are kept for 7 days. The value in effect is returned in the response as storage.expires_in. See the Storage section in the feature docs. An invalid value returns 400 with code invalid_storage_expires_in."
+        }
+      },
+      "required": [
+        "start_url",
+        "max_pages"
+      ],
+      "title": "OlostepCreateCrawlConfig",
+      "type": "object"
+    },
+    "OlostepCreateCrawlScrapeOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "formats": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "html",
+                  "markdown",
+                  "text",
+                  "json",
+                  "screenshot"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output formats to request for each scraped page. Defaults to `[\"html\", \"markdown\"]` when omitted. `html` is always included automatically. `json` is automatically added when a `parser` is provided. Note: `raw_pdf` is not supported \u2014 PDFs cannot be crawled.",
+          "title": "Formats"
+        },
+        "parser": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parser name to run on each page and produce structured `json` output (e.g. `\"@olostep/extract-emails\"`). Automatically adds `json` to `formats` when set.",
+          "title": "Parser"
+        }
+      },
+      "title": "OlostepCreateCrawlScrapeOptions",
+      "type": "object"
+    },
+    "OlostepCreateCrawlStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "expires_in": {
+          "anyOf": [
+            {
+              "enum": [
+                "7d",
+                "10d",
+                "30d",
+                "60d",
+                "90d",
+                "180d",
+                "365d",
+                "never"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to keep the stored files. 7d is the default, never retains them indefinitely. Omitting expires_in inside storage also means 7d.",
+          "title": "Expires In",
+          "enum": [
+            "7d",
+            "10d",
+            "30d",
+            "60d",
+            "90d",
+            "180d",
+            "365d",
+            "never"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OlostepCreateCrawlStorage",
+      "type": "object"
+    },
+    "OlostepCreateMapConfig": {
+      "additionalProperties": false,
+      "description": "Get all the urls on a certain website",
+      "properties": {
+        "operation": {
+          "const": "create_map",
+          "default": "create_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The URL of the website for which you want the links",
+          "minLength": 1,
+          "pattern": "^https?://[^/\\s]+",
+          "title": "Url",
+          "type": "string"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional search query to sort the links by search relevance.",
+          "title": "Search Query"
+        },
+        "top_n": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional number to limit to only top n links for a search query.",
+          "title": "Top N"
+        },
+        "include_subdomain": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include subdomains of the given URL. `true` by default.",
+          "title": "Include Subdomain"
+        },
+        "include_urls": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL path patterns to include using glob syntax. For example: `/blog/**` to only include blog URLs. Only URLs matching these patterns will be returned.",
+          "title": "Include Urls"
+        },
+        "exclude_urls": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL path patterns to exclude using glob syntax. For example: `/careers/**`. Excluded URLs will supersede included URLs.",
+          "title": "Exclude Urls"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL: Pagination cursor from a previous response. When provided, returns the next set of URLs from where the previous request left off due to response size limit.",
+          "title": "Cursor"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateMapStorage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how long this map's stored files (its result and the pages scraped during discovery) are retained. When omitted, they are kept for 7 days. The value in effect is returned in the response as storage.expires_in. See the Storage section in the feature docs. An invalid value returns 400 with code invalid_storage_expires_in."
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "OlostepCreateMapConfig",
+      "type": "object"
+    },
+    "OlostepCreateMapStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "expires_in": {
+          "anyOf": [
+            {
+              "enum": [
+                "7d",
+                "10d",
+                "30d",
+                "60d",
+                "90d",
+                "180d",
+                "365d",
+                "never"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to keep the stored files. 7d is the default, never retains them indefinitely. Omitting expires_in inside storage also means 7d.",
+          "title": "Expires In",
+          "enum": [
+            "7d",
+            "10d",
+            "30d",
+            "60d",
+            "90d",
+            "180d",
+            "365d",
+            "never"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OlostepCreateMapStorage",
+      "type": "object"
+    },
+    "OlostepCreateScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Create Schedule",
+      "properties": {
+        "operation": {
+          "const": "create_schedule",
+          "default": "create_schedule",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "method": {
+          "description": "HTTP method for the scheduled API call. Must be either GET or POST.",
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "endpoint": {
+          "description": "The endpoint URL to call when the schedule executes. For POST requests with Olostep endpoints, you can use short form (e.g., 'v1/scrapes', 'v1/batches', 'v1/crawls', 'v1/maps', 'v1/answers') which will be automatically prefixed with 'https://api.olostep.com/'. For other endpoints, provide the full URL.",
+          "minLength": 1,
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The payload to send with the API call. Can contain any JSON structure you need. For GET requests, this is typically empty. For POST requests, this should contain the data you want to send to the endpoint.",
+          "title": "Payload"
+        },
+        "cron_expression": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cron expression in 6 fields format (minute hour day month day-of-week year) for recurring schedules. Required for recurring schedules. Mutually exclusive with execute_at and text.",
+          "title": "Cron Expression"
+        },
+        "execute_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 datetime string for one-time schedule execution. Must be a valid future datetime. Required for one-time schedules. Mutually exclusive with cron_expression.",
+          "title": "Execute At"
+        },
+        "expression_timezone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone identifier (e.g., 'UTC', 'America/New_York', 'Europe/London') for the schedule. Required for recurring schedules, optional for one-time schedules. When using natural language text, this defaults to 'UTC'.",
+          "title": "Expression Timezone"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Natural language text to automatically generate a cron expression. The system will convert your text into a valid cron expression. Examples: 'every 3 minutes', 'every day at 10am', 'every Monday at 9am'. Mutually exclusive with cron_expression and execute_at. When used, expression_timezone defaults to 'UTC'.",
+          "title": "Text"
+        }
+      },
+      "required": [
+        "method",
+        "endpoint"
+      ],
+      "title": "OlostepCreateScheduleConfig",
+      "type": "object"
+    },
+    "OlostepCreateScrapeConfig": {
+      "additionalProperties": false,
+      "description": "Initiate a web page scrape",
+      "properties": {
+        "operation": {
+          "const": "create_scrape",
+          "default": "create_scrape",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url_to_scrape": {
+          "description": "The URL to start scraping from.",
+          "minLength": 1,
+          "pattern": "^https?://[^/\\s]+",
+          "title": "Url To Scrape",
+          "type": "string"
+        },
+        "formats": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "html",
+                  "markdown",
+                  "text",
+                  "json",
+                  "raw_pdf",
+                  "screenshot"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Formats in which you want the content.",
+          "title": "Formats"
+        },
+        "wait_before_scraping": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time to wait in milliseconds before starting the scraping.",
+          "title": "Wait Before Scraping"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Residential country to load the request from.\n\nSupported values are:\n- US (United States)\n- CA (Canada)\n- IT (Italy)\n- IN (India)\n- GB (England)\n- JP (Japan)\n- MX (Mexico)\n- AU (Australia)\n- ID (Indonesia)\n- UA (UAE)\n- RU (Russia)\n- RANDOM\n\nSome operations, like scraping Google Search and Google News, support all countries.",
+          "title": "Country"
+        },
+        "transformer": {
+          "anyOf": [
+            {
+              "enum": [
+                "postlight",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the HTML transformer to use, if any. Postlight's Mercury Parser library is used to remove ads and other unwanted content from the scraped content.",
+          "title": "Transformer",
+          "enum": [
+            "postlight",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "remove_images": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Option to remove images from the scraped content. Defaults to false.",
+          "title": "Remove Images"
+        },
+        "parser": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateScrapeParser"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When defining json as a format, you can use this parameter to specify the parser to use. Parsers are useful to extract structured content from web pages. Olostep has a few parsers built in for most common web pages, and you can also create your own parsers."
+        },
+        "llm_extract": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateScrapeLlmExtract"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_age": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum acceptable age of cached content, in seconds. When a matching scrape already exists and is newer than max_age seconds, Olostep returns the stored result instead of launching a new browser scrape. Defaults to 0 (always scrape fresh). In the dashboard playground, the default is 86400 (24 hours). The maximum allowed value is 604800 (7 days). See the Caching section in the Scrapes feature docs for details.",
+          "title": "Max Age"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateScrapeStorage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how long this scrape's result is retained. When omitted, results are kept for about 7 days. The result, hosted URLs, and GET /v1/scrapes/{scrape_id} stay available for the retention window. This is separate from max_age, which controls cache freshness. See the Storage section in the Scrapes feature docs for details."
+        }
+      },
+      "required": [
+        "url_to_scrape"
+      ],
+      "title": "OlostepCreateScrapeConfig",
+      "type": "object"
+    },
+    "OlostepCreateScrapeLlmExtract": {
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON Schema for the extracted data. The top level must be an object schema, e.g. {\"type\": \"object\", \"properties\": {\"title\": {\"type\": \"string\"}}}.",
+          "title": "Schema"
+        }
+      },
+      "title": "OlostepCreateScrapeLlmExtract",
+      "type": "object"
+    },
+    "OlostepCreateScrapeParser": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "ID of the parser to use.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OlostepCreateScrapeParser",
+      "type": "object"
+    },
+    "OlostepCreateScrapeStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "expires_in": {
+          "description": "How long to keep the scrape result. never retains it indefinitely. Required when storage is sent. Omit storage entirely for the default of about 7 days.",
+          "enum": [
+            "10d",
+            "30d",
+            "60d",
+            "90d",
+            "180d",
+            "365d",
+            "never"
+          ],
+          "title": "Expires In",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expires_in"
+      ],
+      "title": "OlostepCreateScrapeStorage",
+      "type": "object"
+    },
+    "OlostepCreateSearchConfig": {
+      "additionalProperties": false,
+      "description": "Create Search",
+      "properties": {
+        "operation": {
+          "const": "create_search",
+          "default": "create_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "The search query in natural language.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 25,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of links to return after deduplication.",
+          "title": "Limit"
+        },
+        "include_domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict results to these domains. Bare hosts only \u2014 leading `http(s)://` and trailing slashes are stripped automatically.",
+          "title": "Include Domains"
+        },
+        "exclude_domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude results from these domains. Bare hosts only \u2014 leading `http(s)://` and trailing slashes are stripped automatically.",
+          "title": "Exclude Domains"
+        },
+        "fast_mode": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request a direct, low-latency search using your query verbatim. Default mode performs a broader search pass for wider result coverage.",
+          "title": "Fast Mode"
+        },
+        "scrape_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateSearchScrapeOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OlostepCreateSearchStorage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how long this search's stored files (its file and any scraped link content) are retained. When omitted, they are kept for 7 days. The value in effect is returned in the response as storage.expires_in. See the Storage section in the feature docs. An invalid value returns 400 with code invalid_storage_expires_in."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OlostepCreateSearchConfig",
+      "type": "object"
+    },
+    "OlostepCreateSearchScrapeOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "formats": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "html",
+                  "markdown"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output formats to request for each scraped page. Defaults to ['markdown'] when omitted. For now only 'html' and 'markdown' are supported on /v1/searches.",
+          "title": "Formats"
+        },
+        "remove_css_selectors": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Option to remove certain CSS selectors from the content. Forwarded to /v1/scrapes. Defaults to 'default' which strips ['nav','footer','script','style','noscript','svg',[role=alert],[role=banner],[role=dialog],[role=alertdialog],[role=region][aria-label*=skip i],[aria-modal=true]]. Pass 'none' to disable, or a JSON-stringified array of selectors to remove.",
+          "title": "Remove Css Selectors"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 60,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wallclock budget in seconds for the entire scrape phase. After this elapses, the search returns with whatever links are available \u2014 content fields will be null for any links that hadn't finished scraping.",
+          "title": "Timeout"
+        }
+      },
+      "title": "OlostepCreateSearchScrapeOptions",
+      "type": "object"
+    },
+    "OlostepCreateSearchStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "expires_in": {
+          "anyOf": [
+            {
+              "enum": [
+                "7d",
+                "10d",
+                "30d",
+                "60d",
+                "90d",
+                "180d",
+                "365d",
+                "never"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to keep the stored files. 7d is the default, never retains them indefinitely. Omitting expires_in inside storage also means 7d.",
+          "title": "Expires In",
+          "enum": [
+            "7d",
+            "10d",
+            "30d",
+            "60d",
+            "90d",
+            "180d",
+            "365d",
+            "never"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OlostepCreateSearchStorage",
+      "type": "object"
+    },
+    "OlostepDeleteScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Delete Schedule",
+      "properties": {
+        "operation": {
+          "const": "delete_schedule",
+          "default": "delete_schedule",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schedule_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^schedule_",
+          "title": "Schedule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "OlostepDeleteScheduleConfig",
+      "type": "object"
+    },
+    "OlostepGetAnswerConfig": {
+      "additionalProperties": false,
+      "description": "Get Answer",
+      "properties": {
+        "operation": {
+          "const": "get_answer",
+          "default": "get_answer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "answer_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Answer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "answer_id"
+      ],
+      "title": "OlostepGetAnswerConfig",
+      "type": "object"
+    },
+    "OlostepGetBatchConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve batch information",
+      "properties": {
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "OlostepGetBatchConfig",
+      "type": "object"
+    },
+    "OlostepGetCrawlConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve crawl information",
+      "properties": {
+        "operation": {
+          "const": "get_crawl",
+          "default": "get_crawl",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "crawl_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Crawl Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "OlostepGetCrawlConfig",
+      "type": "object"
+    },
+    "OlostepGetCreditInfoConfig": {
+      "additionalProperties": false,
+      "description": "Get credit info",
+      "properties": {
+        "operation": {
+          "const": "get_credit_info",
+          "default": "get_credit_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OlostepGetCreditInfoConfig",
+      "type": "object"
+    },
+    "OlostepGetMapConfig": {
+      "additionalProperties": false,
+      "description": "Get Map",
+      "properties": {
+        "operation": {
+          "const": "get_map",
+          "default": "get_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "map_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Map Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "OlostepGetMapConfig",
+      "type": "object"
+    },
+    "OlostepGetScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Get Schedule",
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schedule_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^schedule_",
+          "title": "Schedule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "OlostepGetScheduleConfig",
+      "type": "object"
+    },
+    "OlostepGetScrapeConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve scrape result",
+      "properties": {
+        "operation": {
+          "const": "get_scrape",
+          "default": "get_scrape",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrape_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Scrape Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scrape_id"
+      ],
+      "title": "OlostepGetScrapeConfig",
+      "type": "object"
+    },
+    "OlostepGetSearchConfig": {
+      "additionalProperties": false,
+      "description": "Get Search",
+      "properties": {
+        "operation": {
+          "const": "get_search",
+          "default": "get_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Search Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search_id"
+      ],
+      "title": "OlostepGetSearchConfig",
+      "type": "object"
+    },
+    "OlostepListBatchItemsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve completed or failed items list optionally with content for a specific batch",
+      "properties": {
+        "operation": {
+          "const": "list_batch_items",
+          "default": "list_batch_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "completed",
+                "failed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "completed",
+            "failed"
+          ],
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "OlostepListBatchItemsConfig",
+      "type": "object"
+    },
+    "OlostepListCrawlPagesConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve list of crawled pages optionally with content",
+      "properties": {
+        "operation": {
+          "const": "list_crawl_pages",
+          "default": "list_crawl_pages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "crawl_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Crawl Id",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "formats": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "html",
+                  "markdown"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Formats"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "OlostepListCrawlPagesConfig",
+      "type": "object"
+    },
+    "OlostepListRecentBatchesConfig": {
+      "additionalProperties": false,
+      "description": "List recent batches",
+      "properties": {
+        "operation": {
+          "const": "list_recent_batches",
+          "default": "list_recent_batches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "title": "OlostepListRecentBatchesConfig",
+      "type": "object"
+    },
+    "OlostepListSchedulesConfig": {
+      "additionalProperties": false,
+      "description": "List Schedules",
+      "properties": {
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Deleted",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OlostepListSchedulesConfig",
+      "type": "object"
+    },
+    "OlostepUpdateBatchMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Update batch metadata",
+      "properties": {
+        "operation": {
+          "const": "update_batch_metadata",
+          "default": "update_batch_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "batch_id",
+        "metadata"
+      ],
+      "title": "OlostepUpdateBatchMetadataConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_answer": "#/$defs/OlostepCreateAnswerConfig",
+          "create_batch": "#/$defs/OlostepCreateBatchConfig",
+          "create_crawl": "#/$defs/OlostepCreateCrawlConfig",
+          "create_map": "#/$defs/OlostepCreateMapConfig",
+          "create_schedule": "#/$defs/OlostepCreateScheduleConfig",
+          "create_scrape": "#/$defs/OlostepCreateScrapeConfig",
+          "create_search": "#/$defs/OlostepCreateSearchConfig",
+          "delete_schedule": "#/$defs/OlostepDeleteScheduleConfig",
+          "get_answer": "#/$defs/OlostepGetAnswerConfig",
+          "get_batch": "#/$defs/OlostepGetBatchConfig",
+          "get_crawl": "#/$defs/OlostepGetCrawlConfig",
+          "get_credit_info": "#/$defs/OlostepGetCreditInfoConfig",
+          "get_map": "#/$defs/OlostepGetMapConfig",
+          "get_schedule": "#/$defs/OlostepGetScheduleConfig",
+          "get_scrape": "#/$defs/OlostepGetScrapeConfig",
+          "get_search": "#/$defs/OlostepGetSearchConfig",
+          "list_batch_items": "#/$defs/OlostepListBatchItemsConfig",
+          "list_crawl_pages": "#/$defs/OlostepListCrawlPagesConfig",
+          "list_recent_batches": "#/$defs/OlostepListRecentBatchesConfig",
+          "list_schedules": "#/$defs/OlostepListSchedulesConfig",
+          "update_batch_metadata": "#/$defs/OlostepUpdateBatchMetadataConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OlostepCreateScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepListRecentBatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepCreateBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepUpdateBatchMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepListBatchItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepCreateCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepListCrawlPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepCreateMapConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetMapConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepCreateAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepCreateSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepCreateScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepListSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepDeleteScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/OlostepGetCreditInfoConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OlostepAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Olostep Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
