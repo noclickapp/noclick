@@ -1,0 +1,1007 @@
+{
+  "$defs": {
+    "CheckRcsCapabilities": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_rcs_capabilities",
+          "default": "check_rcs_capabilities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sender": {
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        },
+        "phone_numbers": {
+          "description": "E.164 numbers without a leading plus.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Phone Numbers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sender",
+        "phone_numbers"
+      ],
+      "title": "CheckRcsCapabilities",
+      "type": "object"
+    },
+    "CreateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "description": "Public HTTPS destination accepting JSON POST events.",
+          "pattern": "^https://[^\\s]+$",
+          "title": "Url",
+          "type": "string"
+        },
+        "rate_limit": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate Limit"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WebhookFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "title": "CreateWebhook",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "GetMMS": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_mms",
+          "default": "get_mms",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetMMS",
+      "type": "object"
+    },
+    "GetRcsMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_rcs_message",
+          "default": "get_rcs_message",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetRcsMessage",
+      "type": "object"
+    },
+    "GetSMS": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sms",
+          "default": "get_sms",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSMS",
+      "type": "object"
+    },
+    "GetWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetWebhook",
+      "type": "object"
+    },
+    "GetWhatsappMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_whatsapp_message",
+          "default": "get_whatsapp_message",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetWhatsappMessage",
+      "type": "object"
+    },
+    "KudosityAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kudosity_api_key",
+          "default": "kudosity_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Kudosity API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Kudosity account, open Settings and scroll to API Settings. Copy your Messaging API key and paste it here. NoClick sends it in x-api-key to api.transmitmessage.com. Legacy TransmitSMS API keys and secrets use a different API.",
+      "x-credential-url": "https://developers.kudosity.com/reference/authentication"
+    },
+    "ListRcsMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "One page only. Use meta.pagination.next_cursor from the previous response.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "direction": {
+          "default": "next",
+          "enum": [
+            "next",
+            "prev"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "date_range": {
+          "default": "all",
+          "enum": [
+            "last_week",
+            "last_thirty",
+            "last_month",
+            "all"
+          ],
+          "title": "Date Range",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_rcs_messages",
+          "default": "list_rcs_messages",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRcsMessages",
+      "type": "object"
+    },
+    "ListWebhooks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWebhooks",
+      "type": "object"
+    },
+    "ListWhatsappMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "One page only. Use meta.pagination.next_cursor from the previous response.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "direction": {
+          "default": "next",
+          "enum": [
+            "next",
+            "prev"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "date_range": {
+          "default": "all",
+          "enum": [
+            "last_week",
+            "last_thirty",
+            "last_month",
+            "all"
+          ],
+          "title": "Date Range",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_whatsapp_messages",
+          "default": "list_whatsapp_messages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign Id"
+        }
+      },
+      "title": "ListWhatsappMessages",
+      "type": "object"
+    },
+    "ListWhatsappTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_whatsapp_templates",
+          "default": "list_whatsapp_templates",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED",
+                "PAUSED",
+                "DISABLED",
+                "FLAGGED",
+                "LOCKED",
+                "ARCHIVED",
+                "IN_APPEAL",
+                "LIMIT_EXCEEDED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "PENDING",
+            "APPROVED",
+            "REJECTED",
+            "PAUSED",
+            "DISABLED",
+            "FLAGGED",
+            "LOCKED",
+            "ARCHIVED",
+            "IN_APPEAL",
+            "LIMIT_EXCEEDED"
+          ],
+          "x-enum-searchable": true
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "MARKETING",
+                "UTILITY",
+                "AUTHENTICATION"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "enum": [
+            "MARKETING",
+            "UTILITY",
+            "AUTHENTICATION"
+          ],
+          "x-enum-searchable": true
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListWhatsappTemplates",
+      "type": "object"
+    },
+    "SendMMS": {
+      "additionalProperties": false,
+      "properties": {
+        "sender": {
+          "description": "Sender registered on your account; RCS uses an agent ID.",
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "Opted-in recipient in international phone format.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "message_ref": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Ref"
+        },
+        "operation": {
+          "const": "send_mms",
+          "default": "send_mms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "content_urls": {
+          "description": "One public media URL up to 400 KB. MMS currently supports Australian recipients only.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "title": "Content Urls",
+          "type": "array"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "pattern": "^[\\x00-\\x7F]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "track_links": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Track Links"
+        }
+      },
+      "required": [
+        "sender",
+        "recipient",
+        "content_urls"
+      ],
+      "title": "SendMMS",
+      "type": "object"
+    },
+    "SendRcsMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "sender": {
+          "description": "Sender registered on your account; RCS uses an agent ID.",
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "Opted-in recipient in international phone format.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "message_ref": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Ref"
+        },
+        "operation": {
+          "const": "send_rcs_message",
+          "default": "send_rcs_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message": {
+          "description": "RCS text message; sending may incur provider charges.",
+          "maxLength": 3072,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sender",
+        "recipient",
+        "message"
+      ],
+      "title": "SendRcsMessage",
+      "type": "object"
+    },
+    "SendSMS": {
+      "additionalProperties": false,
+      "properties": {
+        "sender": {
+          "description": "Sender registered on your account; RCS uses an agent ID.",
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "Opted-in recipient in international phone format.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "message_ref": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Ref"
+        },
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message": {
+          "description": "Sending may incur provider charges. API acceptance does not prove delivery.",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "track_links": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Track Links"
+        }
+      },
+      "required": [
+        "sender",
+        "recipient",
+        "message"
+      ],
+      "title": "SendSMS",
+      "type": "object"
+    },
+    "SendWhatsappMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "sender": {
+          "description": "Sender registered on your account; RCS uses an agent ID.",
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "Opted-in recipient in international phone format.",
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "message_ref": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Ref"
+        },
+        "operation": {
+          "const": "send_whatsapp_message",
+          "default": "send_whatsapp_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "template_name": {
+          "description": "An approved positional text template registered on this account.",
+          "minLength": 1,
+          "title": "Template Name",
+          "type": "string"
+        },
+        "parameters": {
+          "description": "Ordered text values for the template's body variables.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Parameters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sender",
+        "recipient",
+        "template_name"
+      ],
+      "title": "SendWhatsappMessage",
+      "type": "object"
+    },
+    "UpdateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Copy the message or webhook UUID from a previous operation.",
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "description": "Public HTTPS destination accepting JSON POST events.",
+          "pattern": "^https://[^\\s]+$",
+          "title": "Url",
+          "type": "string"
+        },
+        "rate_limit": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate Limit"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WebhookFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "url"
+      ],
+      "title": "UpdateWebhook",
+      "type": "object"
+    },
+    "WebhookFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "event_type": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "LINK_HIT",
+                  "OPT_OUT",
+                  "MMS_STATUS",
+                  "SMS_INBOUND",
+                  "SMS_STATUS",
+                  "MMS_INBOUND",
+                  "WHATSAPP_STATUS",
+                  "WHATSAPP_INBOUND",
+                  "RCS_STATUS",
+                  "RCS_INBOUND",
+                  "PAYMENT_SUCCEEDED",
+                  "PAYMENT_FAILED",
+                  "SENDER_REGISTRATION_STATUS",
+                  "SENDER_COMPLIANCE_STATUS"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Type"
+        },
+        "sender": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sender"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "message_ref": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Ref"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign Id"
+        }
+      },
+      "title": "WebhookFilter",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_rcs_capabilities": "#/$defs/CheckRcsCapabilities",
+          "create_webhook": "#/$defs/CreateWebhook",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "get_mms": "#/$defs/GetMMS",
+          "get_rcs_message": "#/$defs/GetRcsMessage",
+          "get_sms": "#/$defs/GetSMS",
+          "get_webhook": "#/$defs/GetWebhook",
+          "get_whatsapp_message": "#/$defs/GetWhatsappMessage",
+          "list_rcs_messages": "#/$defs/ListRcsMessages",
+          "list_webhooks": "#/$defs/ListWebhooks",
+          "list_whatsapp_messages": "#/$defs/ListWhatsappMessages",
+          "list_whatsapp_templates": "#/$defs/ListWhatsappTemplates",
+          "send_mms": "#/$defs/SendMMS",
+          "send_rcs_message": "#/$defs/SendRcsMessage",
+          "send_sms": "#/$defs/SendSMS",
+          "send_whatsapp_message": "#/$defs/SendWhatsappMessage",
+          "update_webhook": "#/$defs/UpdateWebhook"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListWhatsappMessages"
+        },
+        {
+          "$ref": "#/$defs/GetWhatsappMessage"
+        },
+        {
+          "$ref": "#/$defs/SendWhatsappMessage"
+        },
+        {
+          "$ref": "#/$defs/ListWhatsappTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListRcsMessages"
+        },
+        {
+          "$ref": "#/$defs/GetRcsMessage"
+        },
+        {
+          "$ref": "#/$defs/SendRcsMessage"
+        },
+        {
+          "$ref": "#/$defs/CheckRcsCapabilities"
+        },
+        {
+          "$ref": "#/$defs/GetSMS"
+        },
+        {
+          "$ref": "#/$defs/SendSMS"
+        },
+        {
+          "$ref": "#/$defs/GetMMS"
+        },
+        {
+          "$ref": "#/$defs/SendMMS"
+        },
+        {
+          "$ref": "#/$defs/ListWebhooks"
+        },
+        {
+          "$ref": "#/$defs/GetWebhook"
+        },
+        {
+          "$ref": "#/$defs/CreateWebhook"
+        },
+        {
+          "$ref": "#/$defs/UpdateWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KudosityAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kudosity Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
