@@ -1,0 +1,1581 @@
+{
+  "$defs": {
+    "AddCandidatesToJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_candidates_to_job",
+          "default": "add_candidates_to_job",
+          "title": "Add Candidates To Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Job id",
+          "type": "integer"
+        },
+        "candidate_ids": {
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Candidate ids",
+          "type": "array"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "job_id",
+        "candidate_ids"
+      ],
+      "title": "AddCandidatesToJob",
+      "type": "object"
+    },
+    "CreateCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_candidate",
+          "default": "create_candidate",
+          "title": "Create Candidate",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        }
+      },
+      "title": "CreateCandidate",
+      "type": "object"
+    },
+    "CreateCandidateNote": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_candidate_note",
+          "default": "create_candidate_note",
+          "title": "Create Candidate Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Candidate id",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 65535,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "note_type": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note type"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "created_by_integration": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created by integration"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "text"
+      ],
+      "title": "CreateCandidateNote",
+      "type": "object"
+    },
+    "CreateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Create Company",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        },
+        "owner_user_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner user id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCompany",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company id"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        }
+      },
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Create Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_title": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Job title",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact id"
+        },
+        "job_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job description"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        },
+        "owner_user_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner user id"
+        },
+        "number_of_jobs": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number of jobs"
+        }
+      },
+      "required": [
+        "job_title"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "GetCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_candidate",
+          "default": "get_candidate",
+          "title": "Get Candidate",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Candidate id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "GetCandidate",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get Company",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Company id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Contact id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Job id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetPlacement": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_placement",
+          "default": "get_placement",
+          "title": "Get Placement",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "placement_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Placement id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "placement_id"
+      ],
+      "title": "GetPlacement",
+      "type": "object"
+    },
+    "JobAdderOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "jobadder_oauth",
+          "default": "jobadder_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp including timezone.",
+          "title": "Token expiry"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "JobAdder OAuth",
+      "type": "object",
+      "x-credential-instructions": "Sign in with JobAdder using a registered developer application. To connect manually, paste an existing OAuth access token; optionally provide its refresh token and ISO 8601 expiry. API keys are not supported.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.jobadder.com/",
+      "x-oauth-provider": "jobadder",
+      "x-oauth-scopes": [
+        "offline_access",
+        "read",
+        "read_candidate",
+        "read_candidate_note",
+        "read_company",
+        "read_contact",
+        "read_job",
+        "read_jobapplication",
+        "read_note",
+        "read_placement",
+        "read_user",
+        "write",
+        "write_candidate",
+        "write_candidate_note",
+        "write_company",
+        "write_contact",
+        "write_job",
+        "write_jobapplication",
+        "write_note"
+      ]
+    },
+    "ListCandidateNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_candidate_notes",
+          "default": "list_candidate_notes",
+          "title": "List Candidate Notes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Candidate id",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "ListCandidateNotes",
+      "type": "object"
+    },
+    "ListCandidates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_candidates",
+          "default": "list_candidates",
+          "title": "List Candidates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListCandidates",
+      "type": "object"
+    },
+    "ListCompanies": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List Companies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListCompanies",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListJobApplications": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_job_applications",
+          "default": "list_job_applications",
+          "title": "List Job Applications",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Job id",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobApplications",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job title"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListPlacements": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_placements",
+          "default": "list_placements",
+          "title": "List Placements",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "description": "First result index; use next_offset from the previous page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListPlacements",
+      "type": "object"
+    },
+    "UpdateCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_candidate",
+          "default": "update_candidate",
+          "title": "Update Candidate",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "candidate_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Candidate id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        }
+      },
+      "required": [
+        "candidate_id"
+      ],
+      "title": "UpdateCandidate",
+      "type": "object"
+    },
+    "UpdateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Update Company",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Company id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        },
+        "owner_user_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner user id"
+        }
+      },
+      "required": [
+        "company_id",
+        "name"
+      ],
+      "title": "UpdateCompany",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Contact id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company id"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Update Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Job id",
+          "type": "integer"
+        },
+        "job_title": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Job title",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact id"
+        },
+        "job_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job description"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status id"
+        },
+        "owner_user_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner user id"
+        },
+        "number_of_jobs": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number of jobs"
+        }
+      },
+      "required": [
+        "job_id",
+        "job_title"
+      ],
+      "title": "UpdateJob",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_candidates_to_job": "#/$defs/AddCandidatesToJob",
+          "create_candidate": "#/$defs/CreateCandidate",
+          "create_candidate_note": "#/$defs/CreateCandidateNote",
+          "create_company": "#/$defs/CreateCompany",
+          "create_contact": "#/$defs/CreateContact",
+          "create_job": "#/$defs/CreateJob",
+          "get_candidate": "#/$defs/GetCandidate",
+          "get_company": "#/$defs/GetCompany",
+          "get_contact": "#/$defs/GetContact",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_job": "#/$defs/GetJob",
+          "get_placement": "#/$defs/GetPlacement",
+          "list_candidate_notes": "#/$defs/ListCandidateNotes",
+          "list_candidates": "#/$defs/ListCandidates",
+          "list_companies": "#/$defs/ListCompanies",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_job_applications": "#/$defs/ListJobApplications",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_placements": "#/$defs/ListPlacements",
+          "update_candidate": "#/$defs/UpdateCandidate",
+          "update_company": "#/$defs/UpdateCompany",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_job": "#/$defs/UpdateJob"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListCandidates"
+        },
+        {
+          "$ref": "#/$defs/GetCandidate"
+        },
+        {
+          "$ref": "#/$defs/CreateCandidate"
+        },
+        {
+          "$ref": "#/$defs/UpdateCandidate"
+        },
+        {
+          "$ref": "#/$defs/ListCompanies"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/CreateCompany"
+        },
+        {
+          "$ref": "#/$defs/UpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/UpdateJob"
+        },
+        {
+          "$ref": "#/$defs/ListPlacements"
+        },
+        {
+          "$ref": "#/$defs/GetPlacement"
+        },
+        {
+          "$ref": "#/$defs/ListCandidateNotes"
+        },
+        {
+          "$ref": "#/$defs/CreateCandidateNote"
+        },
+        {
+          "$ref": "#/$defs/ListJobApplications"
+        },
+        {
+          "$ref": "#/$defs/AddCandidatesToJob"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobAdderOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Jobadder Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
