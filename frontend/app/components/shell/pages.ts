@@ -1,6 +1,6 @@
 // The app shell's navigation: one list the sidebar, the command palette and the
 // "G <key>" shortcuts all read, so a page is named and ordered in one place.
-import { Hash, Layers, MessageCircle, Plug, Settings, Workflow, type LucideIcon } from 'lucide-react';
+import { BriefcaseBusiness, Layers, MessageCircle, Plug, Settings, Workflow, type LucideIcon } from 'lucide-react';
 import type { DashboardTab } from '~/lib/navigation';
 
 export interface ShellPage {
@@ -15,7 +15,7 @@ export interface ShellPage {
 
 export const SHELL_PAGES: readonly ShellPage[] = [
     { id: 'chat', label: 'Chat', icon: MessageCircle, keywords: 'home coordinator noclick assistant ask' },
-    { id: 'channels', label: 'Channels', icon: Hash, keywords: 'agents groups talk conversations team' },
+    { id: 'work', label: 'Work', icon: BriefcaseBusiness, keywords: 'channels spaces agents people team dms threads talk conversations' },
     { id: 'flow', label: 'Automations', icon: Workflow, keywords: 'workflows flows browser canvas build' },
     { id: 'connections', label: 'Connections', icon: Plug, keywords: 'credentials accounts integrations oauth keys' },
     { id: 'resources', label: 'Resources', icon: Layers, keywords: 'owned purchases inventory' },

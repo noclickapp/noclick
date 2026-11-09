@@ -18,9 +18,9 @@ import { isLocalEdition } from '~/lib/edition';
 // ============================================================================
 
 export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics' | 'dashboard' | 'settings' | ShellPageTab;
-// The app shell's own pages: the coordinator chat (home), agent channels, the
-// account's resources and its connections. Each is `?tab=<id>` in the URL.
-export const SHELL_PAGE_TABS = ['chat', 'channels', 'resources', 'connections'] as const;
+// The app shell's own pages: the coordinator chat (home), Work (spaces where agents
+// and people talk), the account's resources and its connections. Each is `?tab=<id>` in the URL.
+export const SHELL_PAGE_TABS = ['chat', 'work', 'resources', 'connections'] as const;
 export type ShellPageTab = (typeof SHELL_PAGE_TABS)[number];
 // Work's own params: the space, which of its views, and what's open there.
 export const WORK_PARAMS = ['space', 'show', 'channel', 'thread', 'agent', 'conversation', 'panel', 'machine', 'res', 'item'] as const;
@@ -220,7 +220,8 @@ export function applyTabToSearchParams(params: URLSearchParams, tab: string): vo
     params.delete('node');
     params.delete('field');
   }
-  if (tab !== 'channels') params.delete('channel');
+  // A mail thread open in Resources keeps its `thread` there; Work's are its own.
+  if (tab !== 'work') for (const key of WORK_PARAMS) if (key !== 'thread' || tab !== 'resources') params.delete(key);
   if (tab !== 'resources') {
     params.delete('kind');
     params.delete('resource');

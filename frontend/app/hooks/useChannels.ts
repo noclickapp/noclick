@@ -7,7 +7,7 @@
 // the message the server keeps; your reaction flips at once and settles too.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { seatMembers } from '~/components/shell/channels/model';
-import type { ChannelChange, ChannelsTransport } from '~/components/shell/channels/platform';
+import type { ChannelChange, ChannelsTransport } from '~/components/shell/channels/transport';
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelReaction, ChannelWorkspace } from '~/components/shell/channels/types';
 
 /** How often the lists and the open channel are read again when no change arrived. */

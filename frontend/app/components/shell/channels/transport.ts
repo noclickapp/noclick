@@ -1,14 +1,11 @@
-// The seam Channels reads and writes through: the hosted service serves the
-// account's channels and workspaces from its platform API and follows them
-// live. A deployment registers a Provider (lazy, so nothing loads until
-// Channels opens) that renders the context below around the page; without one
-// the page says Channels aren't available here.
-import { createContext, Suspense, useContext, type ComponentType, type ReactNode } from 'react';
+// What a channel page reads and writes through: the hosted Work page serves the
+// account's channels and workspaces from its platform API and follows them live
+// (cloud/lib/channels/transport.ts); a test hands in its own.
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelSchedule, ChannelWorkspace } from './types';
 
 /** Something moved in the account's channels: new messages, one message's reactions, a channel itself, or a workspace. */
 export interface ChannelChange {
-    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace';
+    kind: 'message' | 'reaction' | 'channel' | 'workspace';
     channelId?: string;
     workspaceId?: string;
     messageId?: string;
@@ -57,39 +54,4 @@ export interface ChannelsTransport {
     markRead(channelId: string): Promise<void>;
     /** Follow changes as they happen; returns the way to stop. */
     subscribe(listener: (change: ChannelChange) => void): () => void;
-}
-
-export interface PlatformChannels {
-    transport: ChannelsTransport;
-    /** Where to make an agent, when you have none to add. */
-    agentsHref: string;
-}
-
-/** What the registered Provider renders around Channels. */
-export const PlatformChannelsContext = createContext<PlatformChannels | null>(null);
-
-let Provider: ComponentType<{ children: ReactNode }> | null = null;
-
-/** The deployment's channels: a Provider that renders the context around its children. */
-export function registerPlatformChannels(provider: ComponentType<{ children: ReactNode }>): void {
-    Provider = provider;
-}
-
-export function hasPlatformChannels(): boolean {
-    return Provider !== null;
-}
-
-/** The registered platform's channels inside `PlatformChannelsBoundary`, else null. */
-export function usePlatformChannels(): PlatformChannels | null {
-    return useContext(PlatformChannelsContext);
-}
-
-/** Wraps Channels in the registered Provider, showing `fallback` while it loads. */
-export function PlatformChannelsBoundary({ fallback, children }: { fallback: ReactNode; children: ReactNode }) {
-    if (!Provider) return <>{children}</>;
-    return (
-        <Suspense fallback={fallback}>
-            <Provider>{children}</Provider>
-        </Suspense>
-    );
 }

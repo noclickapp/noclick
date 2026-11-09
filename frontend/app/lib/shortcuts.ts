@@ -27,7 +27,7 @@ const shellOnly = (shortcut: LeaderShortcut): LeaderShortcut[] => (SHELL ? [shor
 export const GOTO_DESTINATIONS: LeaderShortcut[] = [
     { key: 'h', label: 'Chat', commandId: 'nav:chat', run: () => navigateToTab('chat') },
     { key: 'w', label: SHELL ? 'Automations' : 'Workflows', commandId: 'nav:workflows', run: goToWorkflows },
-    ...shellOnly({ key: 'l', label: 'Channels', commandId: 'nav:channels', run: () => navigateToTab('channels') }),
+    ...shellOnly({ key: 'l', label: 'Work', commandId: 'nav:work', run: () => navigateToTab('work') }),
     ...(SHELL ? [] : [{ key: 'd', label: 'Dashboard', commandId: 'nav:dashboard', run: () => navigateToDashboard() }]),
     ...shellOnly({ key: 'r', label: 'Resources', commandId: 'nav:resources', run: () => navigateToTab('resources') }),
     ...(SHELL ? [] : [{ key: 'i', label: 'Needs you (inbox)', commandId: 'nav:attention', run: () => navigateToDashboard('attention') }]),

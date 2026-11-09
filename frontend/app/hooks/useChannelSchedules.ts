@@ -1,7 +1,7 @@
 // The schedules that post in an open channel, read when it opens and again when the channel itself changes (a
 // `channel` change through the transport). Empty until read; a read that fails leaves them unsaid rather than wrong.
 import { useEffect, useState } from 'react';
-import type { ChannelsTransport } from '~/components/shell/channels/platform';
+import type { ChannelsTransport } from '~/components/shell/channels/transport';
 import type { ChannelSchedule } from '~/components/shell/channels/types';
 
 export function useChannelSchedules(transport: ChannelsTransport, channelId: string | null): ChannelSchedule[] {
