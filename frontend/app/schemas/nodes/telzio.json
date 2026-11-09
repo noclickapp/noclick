@@ -1,0 +1,1021 @@
+{
+  "$defs": {
+    "TelzioCreateCommentConfig": {
+      "additionalProperties": false,
+      "description": "Add a comment to a Telzio item.",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 3000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "text"
+      ],
+      "title": "TelzioCreateCommentConfig",
+      "type": "object"
+    },
+    "TelzioCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create a phonebook contact, optionally linked to an organization.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        }
+      },
+      "required": [
+        "contact_name"
+      ],
+      "title": "TelzioCreateContactConfig",
+      "type": "object"
+    },
+    "TelzioCreateSmsConversationConfig": {
+      "additionalProperties": false,
+      "description": "Start a new SMS conversation by sending a text message from a Telzio number.",
+      "properties": {
+        "operation": {
+          "const": "create_sms_conversation",
+          "default": "create_sms_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Number Id",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "Recipient phone number",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Recipient",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 750,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "number_id",
+        "recipient",
+        "text"
+      ],
+      "title": "TelzioCreateSmsConversationConfig",
+      "type": "object"
+    },
+    "TelzioCreateTagConfig": {
+      "additionalProperties": false,
+      "description": "Create a tag for the connected account.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TelzioCreateTagConfig",
+      "type": "object"
+    },
+    "TelzioDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete a phonebook contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "TelzioDeleteContactConfig",
+      "type": "object"
+    },
+    "TelzioGetCallConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the details of a call.",
+      "properties": {
+        "operation": {
+          "const": "get_call",
+          "default": "get_call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "call_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Call Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "call_id"
+      ],
+      "title": "TelzioGetCallConfig",
+      "type": "object"
+    },
+    "TelzioGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a contact and its phonebook endpoints.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "TelzioGetContactConfig",
+      "type": "object"
+    },
+    "TelzioGetConversationConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a conversation and its details.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "TelzioGetConversationConfig",
+      "type": "object"
+    },
+    "TelzioGetQueueConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a call queue, including its agents and waiting calls.",
+      "properties": {
+        "operation": {
+          "const": "get_queue",
+          "default": "get_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "queue_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Queue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queue_id"
+      ],
+      "title": "TelzioGetQueueConfig",
+      "type": "object"
+    },
+    "TelzioGetRecordingConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve recording details without downloading audio.",
+      "properties": {
+        "operation": {
+          "const": "get_recording",
+          "default": "get_recording",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recording_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Recording Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "TelzioGetRecordingConfig",
+      "type": "object"
+    },
+    "TelzioGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a user by user ID, username or extension.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TelzioGetUserConfig",
+      "type": "object"
+    },
+    "TelzioGetVoicemailConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a voicemail assigned to the connected user.",
+      "properties": {
+        "operation": {
+          "const": "get_voicemail",
+          "default": "get_voicemail",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "voicemail_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Voicemail Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "voicemail_id"
+      ],
+      "title": "TelzioGetVoicemailConfig",
+      "type": "object"
+    },
+    "TelzioListCommentsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of comments on a call, voicemail or other Telzio item.",
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Before"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "TelzioListCommentsConfig",
+      "type": "object"
+    },
+    "TelzioListConversationItemsConfig": {
+      "additionalProperties": false,
+      "description": "List the first page of items in a conversation. Returns the oldest message ID; cursor paging is not exposed for this operation.",
+      "properties": {
+        "operation": {
+          "const": "list_conversation_items",
+          "default": "list_conversation_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "TelzioListConversationItemsConfig",
+      "type": "object"
+    },
+    "TelzioListConversationsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of conversations, including each conversation's most recent item.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Before"
+        }
+      },
+      "title": "TelzioListConversationsConfig",
+      "type": "object"
+    },
+    "TelzioListQueuesConfig": {
+      "additionalProperties": false,
+      "description": "List call queues the connected user can access.",
+      "properties": {
+        "operation": {
+          "const": "list_queues",
+          "default": "list_queues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TelzioListQueuesConfig",
+      "type": "object"
+    },
+    "TelzioListRecentCallsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of the connected user's recent calls.",
+      "properties": {
+        "operation": {
+          "const": "list_recent_calls",
+          "default": "list_recent_calls",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Before"
+        }
+      },
+      "title": "TelzioListRecentCallsConfig",
+      "type": "object"
+    },
+    "TelzioListRecordingsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of recordings the connected user can access.",
+      "properties": {
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Before"
+        }
+      },
+      "title": "TelzioListRecordingsConfig",
+      "type": "object"
+    },
+    "TelzioListTagsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of tags associated with the connected account.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Before"
+        }
+      },
+      "title": "TelzioListTagsConfig",
+      "type": "object"
+    },
+    "TelzioListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users on the connected account, with optional search and a page cursor.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting Page Id"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        }
+      },
+      "title": "TelzioListUsersConfig",
+      "type": "object"
+    },
+    "TelzioListVoicemailsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of the connected user's available voicemails.",
+      "properties": {
+        "operation": {
+          "const": "list_voicemails",
+          "default": "list_voicemails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ending Before"
+        }
+      },
+      "title": "TelzioListVoicemailsConfig",
+      "type": "object"
+    },
+    "TelzioSearchPhonebookConfig": {
+      "additionalProperties": false,
+      "description": "Search contacts and organizations by name, or list them when no search is supplied.",
+      "properties": {
+        "operation": {
+          "const": "search_phonebook",
+          "default": "search_phonebook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "entity_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "contact",
+                "organization"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity Type",
+          "enum": [
+            "contact",
+            "organization"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "TelzioSearchPhonebookConfig",
+      "type": "object"
+    },
+    "TelzioSendSmsConfig": {
+      "additionalProperties": false,
+      "description": "Send a text message in an existing SMS conversation.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "text"
+      ],
+      "title": "TelzioSendSmsConfig",
+      "type": "object"
+    },
+    "TelzioTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "telzio_token",
+          "default": "telzio_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "title": "Telzio Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Telzio claims_token, returned by Telzio's POST /v3/auth. Telzio documents this token for Bearer authorization on subsequent requests. Paste only the token, without Bearer. When it expires, replace it with a new token obtained from Telzio. NoClick does not sign in or renew tokens for you.",
+      "x-credential-url": "https://api.telzio.com/swagger/v3/swagger.json"
+    },
+    "TelzioUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Rename a phonebook contact and optionally change its organization.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        }
+      },
+      "required": [
+        "contact_id",
+        "contact_name"
+      ],
+      "title": "TelzioUpdateContactConfig",
+      "type": "object"
+    },
+    "TelzioUpdateVoicemailConfig": {
+      "additionalProperties": false,
+      "description": "Mark a voicemail as listened or unlistened.",
+      "properties": {
+        "operation": {
+          "const": "update_voicemail",
+          "default": "update_voicemail",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "voicemail_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Voicemail Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "unlistened",
+            "listened"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "voicemail_id",
+        "status"
+      ],
+      "title": "TelzioUpdateVoicemailConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/TelzioCreateCommentConfig",
+          "create_contact": "#/$defs/TelzioCreateContactConfig",
+          "create_sms_conversation": "#/$defs/TelzioCreateSmsConversationConfig",
+          "create_tag": "#/$defs/TelzioCreateTagConfig",
+          "delete_contact": "#/$defs/TelzioDeleteContactConfig",
+          "get_call": "#/$defs/TelzioGetCallConfig",
+          "get_contact": "#/$defs/TelzioGetContactConfig",
+          "get_conversation": "#/$defs/TelzioGetConversationConfig",
+          "get_queue": "#/$defs/TelzioGetQueueConfig",
+          "get_recording": "#/$defs/TelzioGetRecordingConfig",
+          "get_user": "#/$defs/TelzioGetUserConfig",
+          "get_voicemail": "#/$defs/TelzioGetVoicemailConfig",
+          "list_comments": "#/$defs/TelzioListCommentsConfig",
+          "list_conversation_items": "#/$defs/TelzioListConversationItemsConfig",
+          "list_conversations": "#/$defs/TelzioListConversationsConfig",
+          "list_queues": "#/$defs/TelzioListQueuesConfig",
+          "list_recent_calls": "#/$defs/TelzioListRecentCallsConfig",
+          "list_recordings": "#/$defs/TelzioListRecordingsConfig",
+          "list_tags": "#/$defs/TelzioListTagsConfig",
+          "list_users": "#/$defs/TelzioListUsersConfig",
+          "list_voicemails": "#/$defs/TelzioListVoicemailsConfig",
+          "search_phonebook": "#/$defs/TelzioSearchPhonebookConfig",
+          "send_sms": "#/$defs/TelzioSendSmsConfig",
+          "update_contact": "#/$defs/TelzioUpdateContactConfig",
+          "update_voicemail": "#/$defs/TelzioUpdateVoicemailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TelzioListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListRecentCallsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetCallConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListConversationItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioCreateSmsConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioSearchPhonebookConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListQueuesConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListVoicemailsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioGetVoicemailConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioUpdateVoicemailConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelzioCreateTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TelzioTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Telzio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
