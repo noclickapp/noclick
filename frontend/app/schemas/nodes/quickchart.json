@@ -1,0 +1,1935 @@
+{
+  "$defs": {
+    "BatchQR": {
+      "additionalProperties": false,
+      "description": "Render up to 1000 QR codes into a ZIP archive.",
+      "properties": {
+        "operation": {
+          "const": "batch_qr",
+          "default": "batch_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qrCodes": {
+          "items": {
+            "$ref": "#/$defs/_BatchQR"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "QR Codes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "qrCodes"
+      ],
+      "title": "BatchQR",
+      "type": "object"
+    },
+    "BuildQRURL": {
+      "additionalProperties": false,
+      "description": "Build one public QR image URL without rendering it.",
+      "properties": {
+        "text": {
+          "description": "Text or URL to encode.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg",
+            "jpg",
+            "jpeg",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "size": {
+          "default": 150,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 4,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "ecLevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "L",
+                "M",
+                "Q",
+                "H"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eclevel",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ],
+          "x-enum-searchable": true
+        },
+        "dark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dark"
+        },
+        "light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Light"
+        },
+        "dotStyle": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "dot",
+                "dots",
+                "round",
+                "circle",
+                "rounded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dotstyle",
+          "enum": [
+            "square",
+            "dot",
+            "dots",
+            "round",
+            "circle",
+            "rounded"
+          ],
+          "x-enum-searchable": true
+        },
+        "centerImageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimageurl"
+        },
+        "centerImageSizeRatio": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimagesizeratio"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "captionFontFamily": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontfamily"
+        },
+        "captionFontSize": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontsize"
+        },
+        "captionFontColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontcolor"
+        },
+        "operation": {
+          "const": "build_qr_url",
+          "default": "build_qr_url",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "BuildQRURL",
+      "type": "object"
+    },
+    "BuildQRURLs": {
+      "additionalProperties": false,
+      "description": "Build QR image URLs in input order without rendering them.",
+      "properties": {
+        "operation": {
+          "const": "build_qr_urls",
+          "default": "build_qr_urls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qrCodes": {
+          "items": {
+            "$ref": "#/$defs/_QR"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "QR Codes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "qrCodes"
+      ],
+      "title": "BuildQRURLs",
+      "type": "object"
+    },
+    "CheckConnection": {
+      "additionalProperties": false,
+      "description": "Check key recognition using a non-persistent QR render.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateChartURL": {
+      "additionalProperties": false,
+      "description": "Save a chart and return a reusable short URL; the saved chart retains the API key.",
+      "properties": {
+        "chart": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Chart.js configuration object or JavaScript object string.",
+          "title": "Chart"
+        },
+        "width": {
+          "default": 500,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 300,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "devicePixelRatio": {
+          "default": 2,
+          "exclusiveMinimum": 0,
+          "maximum": 2,
+          "title": "Device Pixel Ratio",
+          "type": "number"
+        },
+        "backgroundColor": {
+          "default": "transparent",
+          "title": "Background Color",
+          "type": "string"
+        },
+        "version": {
+          "default": "2",
+          "enum": [
+            "2",
+            "3",
+            "4"
+          ],
+          "title": "Version",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "jpg",
+            "jpeg",
+            "webp",
+            "svg",
+            "pdf",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_chart_url",
+          "default": "create_chart_url",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chart"
+      ],
+      "title": "CreateChartURL",
+      "type": "object"
+    },
+    "GenerateChartConfig": {
+      "additionalProperties": false,
+      "description": "Generate a Chart.js configuration and saved URLs from a description.",
+      "properties": {
+        "operation": {
+          "const": "generate_chart_config",
+          "default": "generate_chart_config",
+          "title": "Operation",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "width": {
+          "default": 500,
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 300,
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "backgroundColor": {
+          "default": "transparent",
+          "title": "Backgroundcolor",
+          "type": "string"
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "title": "GenerateChartConfig",
+      "type": "object"
+    },
+    "QuickChartAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "quickchart_api_key",
+          "default": "quickchart_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "QuickChart API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your QuickChart API key. The connection check renders a small QR code and checks QuickChart's verified-key response header. QuickChart has no account identity endpoint.",
+      "x-credential-url": "https://quickchart.io/documentation/authentication/"
+    },
+    "ReadQR": {
+      "additionalProperties": false,
+      "description": "Decode a QR code from a public image URL.",
+      "properties": {
+        "operation": {
+          "const": "read_qr",
+          "default": "read_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "QR Image URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ReadQR",
+      "type": "object"
+    },
+    "RenderBarcode": {
+      "additionalProperties": false,
+      "description": "Render a barcode such as code128, ean13 or datamatrix.",
+      "properties": {
+        "operation": {
+          "const": "render_barcode",
+          "default": "render_barcode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Barcode Type",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "scale": {
+          "default": 1,
+          "title": "Scale",
+          "type": "integer"
+        },
+        "includeText": {
+          "default": false,
+          "title": "Includetext",
+          "type": "boolean"
+        },
+        "useMillimeters": {
+          "default": false,
+          "title": "Usemillimeters",
+          "type": "boolean"
+        },
+        "rotate": {
+          "default": "N",
+          "enum": [
+            "N",
+            "R",
+            "L",
+            "I"
+          ],
+          "title": "Rotate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "title": "RenderBarcode",
+      "type": "object"
+    },
+    "RenderChart": {
+      "additionalProperties": false,
+      "description": "Render a Chart.js chart as an image or PDF.",
+      "properties": {
+        "chart": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Chart.js configuration object or JavaScript object string.",
+          "title": "Chart"
+        },
+        "width": {
+          "default": 500,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 300,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "devicePixelRatio": {
+          "default": 2,
+          "exclusiveMinimum": 0,
+          "maximum": 2,
+          "title": "Device Pixel Ratio",
+          "type": "number"
+        },
+        "backgroundColor": {
+          "default": "transparent",
+          "title": "Background Color",
+          "type": "string"
+        },
+        "version": {
+          "default": "2",
+          "enum": [
+            "2",
+            "3",
+            "4"
+          ],
+          "title": "Version",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "jpg",
+            "jpeg",
+            "webp",
+            "svg",
+            "pdf",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "operation": {
+          "const": "render_chart",
+          "default": "render_chart",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chart"
+      ],
+      "title": "RenderChart",
+      "type": "object"
+    },
+    "RenderDiagram": {
+      "additionalProperties": false,
+      "description": "Render a Graphviz DOT diagram.",
+      "properties": {
+        "operation": {
+          "const": "render_diagram",
+          "default": "render_diagram",
+          "title": "Operation",
+          "type": "string"
+        },
+        "graph": {
+          "description": "Graphviz DOT source, for example graph{a--b}.",
+          "minLength": 1,
+          "title": "Graph",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "engine": {
+          "default": "dot",
+          "enum": [
+            "dot",
+            "neato",
+            "fdp",
+            "sfdp",
+            "twopi",
+            "circo",
+            "osage",
+            "patchwork"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        }
+      },
+      "required": [
+        "graph"
+      ],
+      "title": "RenderDiagram",
+      "type": "object"
+    },
+    "RenderQR": {
+      "additionalProperties": false,
+      "description": "Render a customized QR code.",
+      "properties": {
+        "text": {
+          "description": "Text or URL to encode.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg",
+            "jpg",
+            "jpeg",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "size": {
+          "default": 150,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 4,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "ecLevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "L",
+                "M",
+                "Q",
+                "H"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eclevel",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ],
+          "x-enum-searchable": true
+        },
+        "dark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dark"
+        },
+        "light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Light"
+        },
+        "dotStyle": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "dot",
+                "dots",
+                "round",
+                "circle",
+                "rounded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dotstyle",
+          "enum": [
+            "square",
+            "dot",
+            "dots",
+            "round",
+            "circle",
+            "rounded"
+          ],
+          "x-enum-searchable": true
+        },
+        "centerImageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimageurl"
+        },
+        "centerImageSizeRatio": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimagesizeratio"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "captionFontFamily": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontfamily"
+        },
+        "captionFontSize": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontsize"
+        },
+        "captionFontColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontcolor"
+        },
+        "operation": {
+          "const": "render_qr",
+          "default": "render_qr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "RenderQR",
+      "type": "object"
+    },
+    "RenderTable": {
+      "additionalProperties": false,
+      "description": "Render table columns and rows to PNG.",
+      "properties": {
+        "operation": {
+          "const": "render_table",
+          "default": "render_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Table definition with columns and dataSource, optionally title.",
+          "title": "Data"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Table rendering options.",
+          "title": "Options"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "RenderTable",
+      "type": "object"
+    },
+    "RenderWordCloud": {
+      "additionalProperties": false,
+      "description": "Render a word cloud from text or a weighted word list.",
+      "properties": {
+        "operation": {
+          "const": "render_word_cloud",
+          "default": "render_word_cloud",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "width": {
+          "default": 600,
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 600,
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "backgroundColor": {
+          "default": "transparent",
+          "title": "Backgroundcolor",
+          "type": "string"
+        },
+        "fontFamily": {
+          "default": "serif",
+          "title": "Fontfamily",
+          "type": "string"
+        },
+        "fontScale": {
+          "default": 25,
+          "title": "Fontscale",
+          "type": "number"
+        },
+        "scale": {
+          "default": "linear",
+          "enum": [
+            "linear",
+            "sqrt",
+            "log"
+          ],
+          "title": "Scale",
+          "type": "string"
+        },
+        "rotation": {
+          "default": 20,
+          "title": "Rotation",
+          "type": "number"
+        },
+        "maxNumWords": {
+          "default": 200,
+          "minimum": 1,
+          "title": "Maxnumwords",
+          "type": "integer"
+        },
+        "minWordLength": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Minwordlength",
+          "type": "integer"
+        },
+        "colors": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Colors"
+        },
+        "removeStopwords": {
+          "default": false,
+          "title": "Removestopwords",
+          "type": "boolean"
+        },
+        "cleanWords": {
+          "default": true,
+          "title": "Cleanwords",
+          "type": "boolean"
+        },
+        "language": {
+          "default": "en",
+          "title": "Language",
+          "type": "string"
+        },
+        "useWordList": {
+          "default": false,
+          "title": "Usewordlist",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "RenderWordCloud",
+      "type": "object"
+    },
+    "ValidateChart": {
+      "additionalProperties": false,
+      "description": "Validate a chart and return structured errors and warnings.",
+      "properties": {
+        "chart": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Chart.js configuration object or JavaScript object string.",
+          "title": "Chart"
+        },
+        "width": {
+          "default": 500,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 300,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "devicePixelRatio": {
+          "default": 2,
+          "exclusiveMinimum": 0,
+          "maximum": 2,
+          "title": "Device Pixel Ratio",
+          "type": "number"
+        },
+        "backgroundColor": {
+          "default": "transparent",
+          "title": "Background Color",
+          "type": "string"
+        },
+        "version": {
+          "default": "2",
+          "enum": [
+            "2",
+            "3",
+            "4"
+          ],
+          "title": "Version",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "jpg",
+            "jpeg",
+            "webp",
+            "svg",
+            "pdf",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_chart",
+          "default": "validate_chart",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chart"
+      ],
+      "title": "ValidateChart",
+      "type": "object"
+    },
+    "ValidateQR": {
+      "additionalProperties": false,
+      "description": "Validate a QR request and return structured errors and warnings.",
+      "properties": {
+        "text": {
+          "description": "Text or URL to encode.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg",
+            "jpg",
+            "jpeg",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "size": {
+          "default": 150,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 4,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "ecLevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "L",
+                "M",
+                "Q",
+                "H"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eclevel",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ],
+          "x-enum-searchable": true
+        },
+        "dark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dark"
+        },
+        "light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Light"
+        },
+        "dotStyle": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "dot",
+                "dots",
+                "round",
+                "circle",
+                "rounded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dotstyle",
+          "enum": [
+            "square",
+            "dot",
+            "dots",
+            "round",
+            "circle",
+            "rounded"
+          ],
+          "x-enum-searchable": true
+        },
+        "centerImageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimageurl"
+        },
+        "centerImageSizeRatio": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimagesizeratio"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "captionFontFamily": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontfamily"
+        },
+        "captionFontSize": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontsize"
+        },
+        "captionFontColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontcolor"
+        },
+        "operation": {
+          "const": "validate_qr",
+          "default": "validate_qr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "ValidateQR",
+      "type": "object"
+    },
+    "WatermarkImage": {
+      "additionalProperties": false,
+      "description": "Overlay a watermark on a publicly accessible image.",
+      "properties": {
+        "operation": {
+          "const": "watermark_image",
+          "default": "watermark_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mainImageUrl": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Main Image URL",
+          "type": "string"
+        },
+        "markImageUrl": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Watermark Image URL",
+          "type": "string"
+        },
+        "opacity": {
+          "default": 1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Opacity",
+          "type": "number"
+        },
+        "position": {
+          "default": "bottomRight",
+          "enum": [
+            "topLeft",
+            "topMiddle",
+            "topRight",
+            "middleLeft",
+            "center",
+            "middleRight",
+            "bottomLeft",
+            "bottomMiddle",
+            "bottomRight"
+          ],
+          "title": "Position",
+          "type": "string"
+        },
+        "margin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Margin"
+        },
+        "markRatio": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markratio"
+        },
+        "imageWidth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imagewidth"
+        },
+        "imageHeight": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imageheight"
+        },
+        "markWidth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markwidth"
+        },
+        "markHeight": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markheight"
+        }
+      },
+      "required": [
+        "mainImageUrl",
+        "markImageUrl"
+      ],
+      "title": "WatermarkImage",
+      "type": "object"
+    },
+    "_BatchQR": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "description": "Text or URL to encode.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg",
+            "jpg",
+            "jpeg"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "size": {
+          "default": 150,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 4,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "ecLevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "L",
+                "M",
+                "Q",
+                "H"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eclevel",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ],
+          "x-enum-searchable": true
+        },
+        "dark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dark"
+        },
+        "light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Light"
+        },
+        "dotStyle": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "dot",
+                "dots",
+                "round",
+                "circle",
+                "rounded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dotstyle",
+          "enum": [
+            "square",
+            "dot",
+            "dots",
+            "round",
+            "circle",
+            "rounded"
+          ],
+          "x-enum-searchable": true
+        },
+        "centerImageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimageurl"
+        },
+        "centerImageSizeRatio": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimagesizeratio"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "captionFontFamily": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontfamily"
+        },
+        "captionFontSize": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontsize"
+        },
+        "captionFontColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontcolor"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "_BatchQR",
+      "type": "object"
+    },
+    "_QR": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "description": "Text or URL to encode.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "svg",
+            "jpg",
+            "jpeg",
+            "base64"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "size": {
+          "default": 150,
+          "maximum": 3000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 4,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "ecLevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "L",
+                "M",
+                "Q",
+                "H"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eclevel",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ],
+          "x-enum-searchable": true
+        },
+        "dark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dark"
+        },
+        "light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Light"
+        },
+        "dotStyle": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "dot",
+                "dots",
+                "round",
+                "circle",
+                "rounded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dotstyle",
+          "enum": [
+            "square",
+            "dot",
+            "dots",
+            "round",
+            "circle",
+            "rounded"
+          ],
+          "x-enum-searchable": true
+        },
+        "centerImageUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimageurl"
+        },
+        "centerImageSizeRatio": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Centerimagesizeratio"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "captionFontFamily": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontfamily"
+        },
+        "captionFontSize": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontsize"
+        },
+        "captionFontColor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captionfontcolor"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "_QR",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "batch_qr": "#/$defs/BatchQR",
+          "build_qr_url": "#/$defs/BuildQRURL",
+          "build_qr_urls": "#/$defs/BuildQRURLs",
+          "check_connection": "#/$defs/CheckConnection",
+          "create_chart_url": "#/$defs/CreateChartURL",
+          "generate_chart_config": "#/$defs/GenerateChartConfig",
+          "read_qr": "#/$defs/ReadQR",
+          "render_barcode": "#/$defs/RenderBarcode",
+          "render_chart": "#/$defs/RenderChart",
+          "render_diagram": "#/$defs/RenderDiagram",
+          "render_qr": "#/$defs/RenderQR",
+          "render_table": "#/$defs/RenderTable",
+          "render_word_cloud": "#/$defs/RenderWordCloud",
+          "validate_chart": "#/$defs/ValidateChart",
+          "validate_qr": "#/$defs/ValidateQR",
+          "watermark_image": "#/$defs/WatermarkImage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/RenderChart"
+        },
+        {
+          "$ref": "#/$defs/CreateChartURL"
+        },
+        {
+          "$ref": "#/$defs/ValidateChart"
+        },
+        {
+          "$ref": "#/$defs/RenderWordCloud"
+        },
+        {
+          "$ref": "#/$defs/RenderTable"
+        },
+        {
+          "$ref": "#/$defs/WatermarkImage"
+        },
+        {
+          "$ref": "#/$defs/RenderDiagram"
+        },
+        {
+          "$ref": "#/$defs/RenderQR"
+        },
+        {
+          "$ref": "#/$defs/ValidateQR"
+        },
+        {
+          "$ref": "#/$defs/BuildQRURL"
+        },
+        {
+          "$ref": "#/$defs/BuildQRURLs"
+        },
+        {
+          "$ref": "#/$defs/BatchQR"
+        },
+        {
+          "$ref": "#/$defs/RenderBarcode"
+        },
+        {
+          "$ref": "#/$defs/ReadQR"
+        },
+        {
+          "$ref": "#/$defs/GenerateChartConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuickChartAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Quickchart Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
