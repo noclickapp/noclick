@@ -1,0 +1,378 @@
+{
+  "source": "https://raw.githubusercontent.com/vast-ai/docs/main/api-reference/openapi.yaml",
+  "description": "Independent wire expectations and illustrative responses for all 22 operations. No live credentials or provider calls.",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_current_user"
+      },
+      "method": "GET",
+      "path": "/api/v0/users/current",
+      "body": null,
+      "query": {},
+      "response": {
+        "id": 456,
+        "email": "user@example.com",
+        "balance": 10.0
+      }
+    },
+    {
+      "config": {
+        "operation": "list_instances",
+        "after_token": "next-page"
+      },
+      "method": "GET",
+      "path": "/api/v1/instances",
+      "body": null,
+      "query": {
+        "limit": "25",
+        "after_token": "next-page"
+      },
+      "response": {
+        "success": true,
+        "instances": [],
+        "next_token": null
+      }
+    },
+    {
+      "config": {
+        "operation": "get_instance",
+        "instance_id": 1234
+      },
+      "method": "GET",
+      "path": "/api/v0/instances/1234",
+      "body": null,
+      "query": {},
+      "response": {
+        "instances": {
+          "id": 1234,
+          "actual_status": "running"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "create_instance",
+        "offer_id": 1234567,
+        "image": "vastai/base-image:@vastai-automatic-tag",
+        "disk": 20,
+        "target_state": "stopped"
+      },
+      "method": "PUT",
+      "path": "/api/v0/asks/1234567",
+      "body": {
+        "image": "vastai/base-image:@vastai-automatic-tag",
+        "disk": 20,
+        "target_state": "stopped"
+      },
+      "query": {},
+      "response": {
+        "success": true,
+        "new_contract": 1234568
+      }
+    },
+    {
+      "config": {
+        "operation": "manage_instance",
+        "instance_id": 1234,
+        "state": "stopped",
+        "label": "My ML Training Job"
+      },
+      "method": "PUT",
+      "path": "/api/v0/instances/1234",
+      "body": {
+        "state": "stopped",
+        "label": "My ML Training Job"
+      },
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "destroy_instance",
+        "instance_id": 1234
+      },
+      "method": "DELETE",
+      "path": "/api/v0/instances/1234",
+      "body": null,
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "reboot_instance",
+        "instance_id": 1234
+      },
+      "method": "PUT",
+      "path": "/api/v0/instances/reboot/1234",
+      "body": null,
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "recycle_instance",
+        "instance_id": 1234
+      },
+      "method": "PUT",
+      "path": "/api/v0/instances/recycle/1234",
+      "body": null,
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "change_bid",
+        "instance_id": 1234,
+        "price": 0.17
+      },
+      "method": "PUT",
+      "path": "/api/v0/instances/bid_price/1234",
+      "body": {
+        "client_id": "me",
+        "price": 0.17
+      },
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "request_logs",
+        "instance_id": 1234,
+        "daemon_logs": true,
+        "filter": "error"
+      },
+      "method": "PUT",
+      "path": "/api/v0/instances/request_logs/1234",
+      "body": {
+        "tail": "1000",
+        "daemon_logs": "true",
+        "filter": "error"
+      },
+      "query": {},
+      "response": {
+        "success": true,
+        "result_url": "https://s3.amazonaws.com/vast.ai/instance_logs/example.log"
+      }
+    },
+    {
+      "config": {
+        "operation": "search_offers",
+        "gpu_name": "RTX_4090",
+        "min_gpus": 4,
+        "max_hourly_price": 0.5,
+        "min_gpu_ram": 24000,
+        "min_reliability": 0.99
+      },
+      "method": "POST",
+      "path": "/api/v0/bundles",
+      "body": {
+        "limit": 100,
+        "type": "ondemand",
+        "verified": {
+          "eq": true
+        },
+        "rentable": {
+          "eq": true
+        },
+        "gpu_name": {
+          "eq": "RTX_4090"
+        },
+        "num_gpus": {
+          "gte": 4
+        },
+        "dph_total": {
+          "lte": 0.5
+        },
+        "gpu_ram": {
+          "gte": 24000
+        },
+        "reliability": {
+          "gte": 0.99
+        }
+      },
+      "query": {},
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "config": {
+        "operation": "list_volumes"
+      },
+      "method": "GET",
+      "path": "/api/v0/volumes",
+      "body": null,
+      "query": {},
+      "response": {
+        "volumes": []
+      }
+    },
+    {
+      "config": {
+        "operation": "search_volumes"
+      },
+      "method": "POST",
+      "path": "/api/v0/volumes/search",
+      "body": {
+        "limit": 64
+      },
+      "query": {},
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "config": {
+        "operation": "rent_volume",
+        "volume_offer_id": 420
+      },
+      "method": "PUT",
+      "path": "/api/v0/volumes",
+      "body": {
+        "id": 420,
+        "size": 15
+      },
+      "query": {},
+      "response": {
+        "success": true,
+        "volume_name": "V.20118481"
+      }
+    },
+    {
+      "config": {
+        "operation": "delete_volume",
+        "volume_id": 100
+      },
+      "method": "DELETE",
+      "path": "/api/v0/volumes",
+      "body": {
+        "id": 100
+      },
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "list_invoices",
+        "start_time": 1767225600,
+        "end_time": 1769903999
+      },
+      "method": "GET",
+      "path": "/api/v1/invoices",
+      "body": null,
+      "query": {
+        "limit": "100",
+        "select_filters": "{\"when\": {\"gte\": 1767225600, \"lte\": 1769903999}}"
+      },
+      "response": {
+        "success": true,
+        "results": [],
+        "next_token": null
+      }
+    },
+    {
+      "config": {
+        "operation": "list_charges",
+        "start_time": 1767225600,
+        "end_time": 1769903999
+      },
+      "method": "GET",
+      "path": "/api/v0/charges",
+      "body": null,
+      "query": {
+        "limit": "100",
+        "select_filters": "{\"day\": {\"gte\": 1767225600, \"lte\": 1769903999}}"
+      },
+      "response": {
+        "success": true,
+        "results": [],
+        "next_token": null
+      }
+    },
+    {
+      "config": {
+        "operation": "list_ssh_keys"
+      },
+      "method": "GET",
+      "path": "/api/v0/ssh",
+      "body": null,
+      "query": {},
+      "response": []
+    },
+    {
+      "config": {
+        "operation": "create_ssh_key",
+        "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..."
+      },
+      "method": "POST",
+      "path": "/api/v0/ssh",
+      "body": {
+        "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..."
+      },
+      "query": {},
+      "response": {
+        "success": true,
+        "key": {
+          "id": 123,
+          "user_id": 456
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "delete_ssh_key",
+        "ssh_key_id": 123
+      },
+      "method": "DELETE",
+      "path": "/api/v0/ssh/123",
+      "body": null,
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "attach_ssh_key",
+        "instance_id": 1234,
+        "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAA..."
+      },
+      "method": "POST",
+      "path": "/api/v0/instances/1234/ssh",
+      "body": {
+        "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAA..."
+      },
+      "query": {},
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "config": {
+        "operation": "detach_ssh_key",
+        "instance_id": 99999,
+        "ssh_key_id": 12345
+      },
+      "method": "DELETE",
+      "path": "/api/v0/instances/99999/ssh/12345",
+      "body": null,
+      "query": {},
+      "response": {
+        "success": true
+      }
+    }
+  ]
+}
