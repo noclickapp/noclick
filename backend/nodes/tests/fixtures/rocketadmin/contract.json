@@ -1,0 +1,31 @@
+{
+  "source_url": "https://app.rocketadmin.com/api/docs-json",
+  "version": "1.0",
+  "sha256": "42c45815607f4c22b215b81c2818fd3a4455e88292929a710f55c6eb68019bde",
+  "spec_defects": [
+    {
+      "kind": "provider_spec_contradiction",
+      "description": "All ten selected operations declare security [{\"bearer\": []}], but components.securitySchemes defines only api_key (x-api-key) and cookie. Request validation raises KeyError: bearer. The node correctly supplies x-api-key; provider API+ docs and the authentication middleware explicitly support it.",
+      "docs": [
+        "https://docs.rocketadmin.com/api-reference/table-pure-crud-operations-controller-create-row",
+        "https://docs.rocketadmin.com/api-reference/table-pure-crud-operations-controller-get-rows",
+        "https://github.com/rocket-admin/rocketadmin/blob/e8f9e0d457487b09679d5f95e51ae332521dc3db/backend/src/authorization/auth-with-api.middleware.ts",
+        "https://github.com/rocket-admin/rocketadmin/blob/e8f9e0d457487b09679d5f95e51ae332521dc3db/backend/src/entities/connection/connection.module.ts",
+        "https://github.com/rocket-admin/rocketadmin/blob/e8f9e0d457487b09679d5f95e51ae332521dc3db/backend/src/entities/table/table-pure-crud-operations/table-pure-crud-operations.module.ts"
+      ],
+      "contract": "https://app.rocketadmin.com/api/docs-json",
+      "operations": [
+        "list_connections",
+        "list_tables",
+        "list_tables_with_categories",
+        "get_table_structure",
+        "get_table_structure_uncached",
+        "list_rows",
+        "get_row",
+        "create_row",
+        "update_row",
+        "delete_row"
+      ]
+    }
+  ]
+}
