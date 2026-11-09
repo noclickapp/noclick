@@ -1,0 +1,7 @@
+{
+  "description": "Synthetic HelloAsso account data for offline tests. No real account or provider response was captured.",
+  "contract": "https://api.helloasso.com/v5/swagger/public/swagger.json",
+  "fixtures": [
+    "organizations.json"
+  ]
+}

@@ -1,0 +1,2158 @@
+{
+  "$defs": {
+    "CheckoutBody": {
+      "additionalProperties": false,
+      "properties": {
+        "totalAmount": {
+          "description": "Total amount in cents. This single-payment checkout requires totalAmount = initialAmount.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Totalamount",
+          "type": "integer"
+        },
+        "initialAmount": {
+          "description": "Initial payment in cents.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Initialamount",
+          "type": "integer"
+        },
+        "itemName": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Itemname",
+          "type": "string"
+        },
+        "backUrl": {
+          "minLength": 1,
+          "title": "Backurl",
+          "type": "string"
+        },
+        "errorUrl": {
+          "minLength": 1,
+          "title": "Errorurl",
+          "type": "string"
+        },
+        "returnUrl": {
+          "minLength": 1,
+          "title": "Returnurl",
+          "type": "string"
+        },
+        "containsDonation": {
+          "title": "Containsdonation",
+          "type": "boolean"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "totalAmount",
+        "initialAmount",
+        "itemName",
+        "backUrl",
+        "errorUrl",
+        "returnUrl",
+        "containsDonation"
+      ],
+      "title": "CheckoutBody",
+      "type": "object"
+    },
+    "EventBody": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tierList": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/EventTier"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tierlist"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enddate"
+        },
+        "saleStartDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Salestartdate"
+        },
+        "saleEndDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Saleenddate"
+        },
+        "privateTitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privatetitle"
+        },
+        "generateTickets": {
+          "default": false,
+          "description": "Ask HelloAsso to issue and email tickets to participants.",
+          "title": "Generatetickets",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "EventBody",
+      "type": "object"
+    },
+    "EventTier": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "price": {
+          "default": 0,
+          "description": "Price in cents.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Price",
+          "type": "integer"
+        }
+      },
+      "title": "EventTier",
+      "type": "object"
+    },
+    "FormStateBody": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "Public",
+            "Private",
+            "Draft",
+            "Deleted",
+            "Disabled"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "FormStateBody",
+      "type": "object"
+    },
+    "HelloAssoAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "helloasso_access_token",
+          "default": "helloasso_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "HelloAsso Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing HelloAsso access_token without the Bearer prefix. Access tokens expire after 30 minutes: replace an expired token here. NoClick does not request or refresh tokens. Organization clients can access their own organization; partner tokens need authorization for private organization data. Enable AccessPublicData for the connection check and the privileges and roles required by each operation.",
+      "x-credential-url": "https://dev.helloasso.com/reference/obtenir-un-access_token"
+    },
+    "HelloAssoCancelOrderConfig": {
+      "description": "Cancels future payments for an order, no refunds will be given.",
+      "properties": {
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "The order identifier.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "HelloAssoCancelOrderConfig",
+      "type": "object"
+    },
+    "HelloAssoCreateCheckoutIntentConfig": {
+      "description": "Init a checkout.",
+      "properties": {
+        "operation": {
+          "const": "create_checkout_intent",
+          "default": "create_checkout_intent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/CheckoutBody",
+          "description": "HelloAsso request body."
+        }
+      },
+      "required": [
+        "organization_slug",
+        "body"
+      ],
+      "title": "HelloAssoCreateCheckoutIntentConfig",
+      "type": "object"
+    },
+    "HelloAssoCreateEventConfig": {
+      "description": "Create a simplified event for an Organism",
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization Slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "const": "Event",
+          "default": "Event",
+          "description": "The form type to create - only Event type is supported",
+          "title": "Form Type",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/EventBody",
+          "description": "HelloAsso request body."
+        }
+      },
+      "required": [
+        "organization_slug",
+        "body"
+      ],
+      "title": "HelloAssoCreateEventConfig",
+      "type": "object"
+    },
+    "HelloAssoGetCheckoutIntentConfig": {
+      "description": "Retrieve a checkout intent, with the order if the payment has been authorized.",
+      "properties": {
+        "operation": {
+          "const": "get_checkout_intent",
+          "default": "get_checkout_intent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "checkout_intent_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Checkout Intent Id",
+          "type": "integer"
+        },
+        "with_failed_refund_operation": {
+          "default": false,
+          "title": "With Failed Refund Operation",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "checkout_intent_id"
+      ],
+      "title": "HelloAssoGetCheckoutIntentConfig",
+      "type": "object"
+    },
+    "HelloAssoGetFormConfig": {
+      "description": "Get detailed public data about a specific form",
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "enum": [
+            "CrowdFunding",
+            "Membership",
+            "Event",
+            "Donation",
+            "PaymentForm",
+            "Checkout",
+            "Shop"
+          ],
+          "title": "Form Type",
+          "type": "string"
+        },
+        "form_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Form Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "form_type",
+        "form_slug"
+      ],
+      "title": "HelloAssoGetFormConfig",
+      "type": "object"
+    },
+    "HelloAssoGetFormStatsConfig": {
+      "description": "Get Stats for the form",
+      "properties": {
+        "operation": {
+          "const": "get_form_stats",
+          "default": "get_form_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Form Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "enum": [
+            "CrowdFunding",
+            "Membership",
+            "Event",
+            "Donation",
+            "PaymentForm",
+            "Checkout",
+            "Shop"
+          ],
+          "title": "Form Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "form_slug",
+        "form_type"
+      ],
+      "title": "HelloAssoGetFormStatsConfig",
+      "type": "object"
+    },
+    "HelloAssoGetItemConfig": {
+      "description": "Get the detail of an item contained in an order",
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_id": {
+          "description": "The item ID",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Item Id",
+          "type": "integer"
+        },
+        "with_details": {
+          "default": false,
+          "description": "Set to true to return CustomFields and Options",
+          "title": "With Details",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "HelloAssoGetItemConfig",
+      "type": "object"
+    },
+    "HelloAssoGetOrderConfig": {
+      "description": "Get detailed information about a specific order",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "The order ID",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "with_form_data": {
+          "default": false,
+          "description": "Set to true to include form data in the response",
+          "title": "With Form Data",
+          "type": "boolean"
+        },
+        "check_payments_refund_eligibility": {
+          "default": false,
+          "description": "Set to true to check if payments are eligible to refund or not",
+          "title": "Check Payments Refund Eligibility",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "HelloAssoGetOrderConfig",
+      "type": "object"
+    },
+    "HelloAssoGetOrganizationConfig": {
+      "description": "Get Organization details",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization Slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "HelloAssoGetOrganizationConfig",
+      "type": "object"
+    },
+    "HelloAssoGetPaymentConfig": {
+      "description": "Get detailed information about a specific payment.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "description": "The payment identifier.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Payment Id",
+          "type": "integer"
+        },
+        "with_failed_refund_operation": {
+          "default": false,
+          "description": "True to retrieve the refund operation in the states 'ABORTED', 'CANCELED', 'ERROR', 'REFUSED'.",
+          "title": "With Failed Refund Operation",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "HelloAssoGetPaymentConfig",
+      "type": "object"
+    },
+    "HelloAssoListFormItemsConfig": {
+      "description": "Get a list of items \"sold\" in a form",
+      "properties": {
+        "operation": {
+          "const": "list_form_items",
+          "default": "list_form_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_slug": {
+          "description": "The form slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Form Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "description": "The form type CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop",
+          "enum": [
+            "CrowdFunding",
+            "Membership",
+            "Event",
+            "Donation",
+            "PaymentForm",
+            "Checkout",
+            "Shop"
+          ],
+          "title": "Form Type",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Date Filter",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date Filter (exclusive)",
+          "title": "To Date"
+        },
+        "user_search_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results on user or payer first name, last name or email",
+          "title": "User Search Key"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        },
+        "tier_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Donation",
+                  "Payment",
+                  "Registration",
+                  "Membership",
+                  "MonthlyDonation",
+                  "MonthlyPayment",
+                  "OfflineDonation",
+                  "Contribution",
+                  "Bonus",
+                  "Product",
+                  "Insurance"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of tiers",
+          "title": "Tier Types"
+        },
+        "item_states": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Waiting",
+                  "Processed",
+                  "Registered",
+                  "Deleted",
+                  "Unknown",
+                  "Canceled",
+                  "Refused",
+                  "Abandoned"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The item states\n\nAvailable values:\n* `Processed` - The item is paid and is valid\n* `Registered` - The item has been registered manually by the organization and is valid\n* `Unknown`\n* `Canceled` - The item has been canceled, and is no longer valid",
+          "title": "Item States"
+        },
+        "tier_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of a tier",
+          "title": "Tier Name"
+        },
+        "with_details": {
+          "default": false,
+          "description": "Set to true to return CustomFields and Options",
+          "title": "With Details",
+          "type": "boolean"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort forms items by ascending or descending order. Default is descending",
+          "title": "Sort Order",
+          "enum": [
+            "Asc",
+            "Desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "enum": [
+                "Date",
+                "UpdateDate",
+                "CreationDate"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort forms items by a specific field (Date or UpdateDate). Default is date",
+          "title": "Sort Field",
+          "enum": [
+            "Date",
+            "UpdateDate",
+            "CreationDate"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_slug",
+        "form_slug",
+        "form_type"
+      ],
+      "title": "HelloAssoListFormItemsConfig",
+      "type": "object"
+    },
+    "HelloAssoListFormOrdersConfig": {
+      "description": "Get form orders",
+      "properties": {
+        "operation": {
+          "const": "list_form_orders",
+          "default": "list_form_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_slug": {
+          "description": "The form slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Form Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "description": "The form type CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop",
+          "enum": [
+            "CrowdFunding",
+            "Membership",
+            "Event",
+            "Donation",
+            "PaymentForm",
+            "Checkout",
+            "Shop"
+          ],
+          "title": "Form Type",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Date Filter",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date Filter (exclusive)",
+          "title": "To Date"
+        },
+        "user_search_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results on user or payer first name, last name or email",
+          "title": "User Search Key"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        },
+        "with_details": {
+          "default": false,
+          "description": "Set to true to return CustomFields",
+          "title": "With Details",
+          "type": "boolean"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort forms orders by ascending or descending order. Default is descending",
+          "title": "Sort Order",
+          "enum": [
+            "Asc",
+            "Desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_slug",
+        "form_slug",
+        "form_type"
+      ],
+      "title": "HelloAssoListFormOrdersConfig",
+      "type": "object"
+    },
+    "HelloAssoListFormPaymentsConfig": {
+      "description": "Get information about payments made in a specific form",
+      "properties": {
+        "operation": {
+          "const": "list_form_payments",
+          "default": "list_form_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_slug": {
+          "description": "The form slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Form Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "description": "The form type CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop",
+          "enum": [
+            "CrowdFunding",
+            "Membership",
+            "Event",
+            "Donation",
+            "PaymentForm",
+            "Checkout",
+            "Shop"
+          ],
+          "title": "Form Type",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Date Filter",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date Filter (exclusive)",
+          "title": "To Date"
+        },
+        "user_search_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results on user or payer first name, last name or email",
+          "title": "User Search Key"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        },
+        "states": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Pending",
+                  "Authorized",
+                  "Refused",
+                  "Unknown",
+                  "Registered",
+                  "Error",
+                  "Refunded",
+                  "Refunding",
+                  "Waiting",
+                  "Canceled",
+                  "Contested",
+                  "WaitingBankValidation",
+                  "WaitingBankWithdraw",
+                  "Abandoned",
+                  "WaitingAuthentication",
+                  "AuthorizedPreprod",
+                  "Corrected",
+                  "Deleted",
+                  "Inconsistent",
+                  "NoDonation",
+                  "Init"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by states of payments\n\nAvailable values:\n* `Pending` - A payment scheduled at a later date, not yet processed.\n* `Authorized` - The payment has been authorized, validated, processed.\n* `Refused` - The payment has been refused by the bank.\n* `Unknown`\n* `Registered` - Represents a payment made offline.\n            Probably for an item of type\n* `Refunded` - The payment has been refunded.\n* `Refunding` - The payment is being refunded.\n* `Contested` - Payment has been contested by the contributor\n* `WaitingBankValidation` - The payment is pending validation from the bank (used by SEPA direct debit).",
+          "title": "States"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort payments by ascending or descending order. Default is descending",
+          "title": "Sort Order",
+          "enum": [
+            "Asc",
+            "Desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "enum": [
+                "Date",
+                "UpdateDate",
+                "CreationDate"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort payments by a specific field (Date or UpdateDate). Default is date",
+          "title": "Sort Field",
+          "enum": [
+            "Date",
+            "UpdateDate",
+            "CreationDate"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_slug",
+        "form_slug",
+        "form_type"
+      ],
+      "title": "HelloAssoListFormPaymentsConfig",
+      "type": "object"
+    },
+    "HelloAssoListFormTypesConfig": {
+      "description": "Get a list of formTypes for an organization",
+      "properties": {
+        "operation": {
+          "const": "list_form_types",
+          "default": "list_form_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization Slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "states": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Public",
+                  "Private",
+                  "Draft",
+                  "Deleted",
+                  "Disabled"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of Form States to filter with. If none specified, it won't filter results.\n\nAvailable values:\n* `Public` - The form is publicly visible and findable on search engines\n* `Private` - The form is visible only with the URL, you cannot find it on search engines\n* `Draft` - The form is not yet published but visible if you have admin rights\n* `Disabled` - The form is disabled and can be reenabled by changing state to public or private",
+          "title": "States"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "HelloAssoListFormTypesConfig",
+      "type": "object"
+    },
+    "HelloAssoListFormsConfig": {
+      "description": "Get the forms of a specific organization",
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization Slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "states": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Public",
+                  "Private",
+                  "Draft",
+                  "Deleted",
+                  "Disabled"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "States to filter\n\nAvailable values:\n* `Public` - The form is publicly visible and findable on search engines\n* `Private` - The form is visible only with the URL, you cannot find it on search engines\n* `Draft` - The form is not yet published but visible if you have admin rights\n* `Disabled` - The form is disabled and can be reenabled by changing state to public or private",
+          "title": "States"
+        },
+        "form_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "CrowdFunding",
+                  "Membership",
+                  "Event",
+                  "Donation",
+                  "PaymentForm",
+                  "Checkout",
+                  "Shop"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Types to filter",
+          "title": "Form Types"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "HelloAssoListFormsConfig",
+      "type": "object"
+    },
+    "HelloAssoListMyOrganizationsConfig": {
+      "description": "Get my organizations",
+      "properties": {
+        "operation": {
+          "const": "list_my_organizations",
+          "default": "list_my_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HelloAssoListMyOrganizationsConfig",
+      "type": "object"
+    },
+    "HelloAssoListOrganizationItemsConfig": {
+      "description": "Get a list of items sold by an organization",
+      "properties": {
+        "operation": {
+          "const": "list_organization_items",
+          "default": "list_organization_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Date Filter",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date Filter (exclusive)",
+          "title": "To Date"
+        },
+        "user_search_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results on user or payer first name, last name or email",
+          "title": "User Search Key"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        },
+        "tier_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Donation",
+                  "Payment",
+                  "Registration",
+                  "Membership",
+                  "MonthlyDonation",
+                  "MonthlyPayment",
+                  "OfflineDonation",
+                  "Contribution",
+                  "Bonus",
+                  "Product",
+                  "Insurance"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of tiers Donation, Payment, Registration, Membership, MonthlyDonation, MonthlyPayment, OfflineDonation, Contribution, Bonus",
+          "title": "Tier Types"
+        },
+        "item_states": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Waiting",
+                  "Processed",
+                  "Registered",
+                  "Deleted",
+                  "Unknown",
+                  "Canceled",
+                  "Refused",
+                  "Abandoned"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The item states\n\nAvailable values:\n* `Processed` - The item is paid and is valid\n* `Registered` - The item has been registered manually by the organization and is valid\n* `Unknown`\n* `Canceled` - The item has been canceled, and is no longer valid",
+          "title": "Item States"
+        },
+        "tier_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of a tier",
+          "title": "Tier Name"
+        },
+        "with_details": {
+          "default": false,
+          "description": "Set to true to return CustomFields and Options",
+          "title": "With Details",
+          "type": "boolean"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort organizations items by ascending or descending order. Default is descending",
+          "title": "Sort Order",
+          "enum": [
+            "Asc",
+            "Desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "enum": [
+                "Date",
+                "UpdateDate",
+                "CreationDate"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort organizations items by a specific field (Date or UpdateDate). Default is date",
+          "title": "Sort Field",
+          "enum": [
+            "Date",
+            "UpdateDate",
+            "CreationDate"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "HelloAssoListOrganizationItemsConfig",
+      "type": "object"
+    },
+    "HelloAssoListOrganizationOrdersConfig": {
+      "description": "Get a list of orders within a specific organization",
+      "properties": {
+        "operation": {
+          "const": "list_organization_orders",
+          "default": "list_organization_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Date Filter",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date Filter (exclusive)",
+          "title": "To Date"
+        },
+        "user_search_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results on user or payer first name, last name or email",
+          "title": "User Search Key"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        },
+        "form_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "CrowdFunding",
+                  "Membership",
+                  "Event",
+                  "Donation",
+                  "PaymentForm",
+                  "Checkout",
+                  "Shop"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of the form CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop",
+          "title": "Form Types"
+        },
+        "with_details": {
+          "default": false,
+          "description": "Set to true to return CustomFields",
+          "title": "With Details",
+          "type": "boolean"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort organizations orders by ascending or descending order. Default is descending",
+          "title": "Sort Order",
+          "enum": [
+            "Asc",
+            "Desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "HelloAssoListOrganizationOrdersConfig",
+      "type": "object"
+    },
+    "HelloAssoListOrganizationPaymentsConfig": {
+      "description": "Get information about payments made to a specific organization",
+      "properties": {
+        "operation": {
+          "const": "list_organization_payments",
+          "default": "list_organization_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "description": "The organization Slug",
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Date Filter",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End Date Filter (exclusive)",
+          "title": "To Date"
+        },
+        "user_search_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results on user or payer first name, last name or email",
+          "title": "User Search Key"
+        },
+        "page_index": {
+          "default": 1,
+          "description": "The page of results to retrieve",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Index",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "The number of items per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation Token from which we wish to retrieve results",
+          "title": "Continuation Token"
+        },
+        "states": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Pending",
+                  "Authorized",
+                  "Refused",
+                  "Unknown",
+                  "Registered",
+                  "Error",
+                  "Refunded",
+                  "Refunding",
+                  "Waiting",
+                  "Canceled",
+                  "Contested",
+                  "WaitingBankValidation",
+                  "WaitingBankWithdraw",
+                  "Abandoned",
+                  "WaitingAuthentication",
+                  "AuthorizedPreprod",
+                  "Corrected",
+                  "Deleted",
+                  "Inconsistent",
+                  "NoDonation",
+                  "Init"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The payment states\n\nAvailable values:\n* `Pending` - A payment scheduled at a later date, not yet processed.\n* `Authorized` - The payment has been authorized, validated, processed.\n* `Refused` - The payment has been refused by the bank.\n* `Unknown`\n* `Registered` - Represents a payment made offline.\n            Probably for an item of type\n* `Refunded` - The payment has been refunded.\n* `Refunding` - The payment is being refunded.\n* `Contested` - Payment has been contested by the contributor\n* `WaitingBankValidation` - The payment is pending validation from the bank (used by SEPA direct debit).",
+          "title": "States"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort payments by ascending or descending order. Default is descending",
+          "title": "Sort Order",
+          "enum": [
+            "Asc",
+            "Desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "enum": [
+                "Date",
+                "UpdateDate",
+                "CreationDate"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort payments by a specific field (Date or UpdateDate). Default is date",
+          "title": "Sort Field",
+          "enum": [
+            "Date",
+            "UpdateDate",
+            "CreationDate"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "HelloAssoListOrganizationPaymentsConfig",
+      "type": "object"
+    },
+    "HelloAssoRefundPaymentConfig": {
+      "description": "Refund a payment.",
+      "properties": {
+        "operation": {
+          "const": "refund_payment",
+          "default": "refund_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "description": "The payment identifier.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Payment Id",
+          "type": "integer"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The comment about this refund.",
+          "title": "Comment"
+        },
+        "cancel_order": {
+          "default": false,
+          "description": "Whether the future payments and linked items of this order must be canceled (possible only if the payment is fully refunded)",
+          "title": "Cancel Order",
+          "type": "boolean"
+        },
+        "send_refund_mail": {
+          "default": true,
+          "description": "Whether a refund mail must be sent or not.",
+          "title": "Send Refund Mail",
+          "type": "boolean"
+        },
+        "amount": {
+          "default": 0,
+          "description": "The amount in cents to refund. Enter this amount only for a partial refund for stripe. If not filled in then the entire payment is refunded",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "x_mfa_access_authorization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must be filled only if AuthorizationErrors.MFA.AccessTokenRequired error code was returned previously.",
+          "title": "X Mfa Access Authorization",
+          "ui:widget": "password"
+        },
+        "x_mfa_sms_access_authorization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must be filled only if AuthorizationErrors.MFA.AccessOtpSmsRequired error code was returned previously.",
+          "title": "X Mfa Sms Access Authorization",
+          "ui:widget": "password"
+        },
+        "x_mfa_password_authorization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must be filled only if AuthorizationErrors.MFA.AccessPasswordTokenRequired error code was returned previously.",
+          "title": "X Mfa Password Authorization",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "HelloAssoRefundPaymentConfig",
+      "type": "object"
+    },
+    "HelloAssoUpdateFormStateConfig": {
+      "description": "Update a form state",
+      "properties": {
+        "operation": {
+          "const": "update_form_state",
+          "default": "update_form_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "form_slug": {
+          "maxLength": 250,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Form Slug",
+          "type": "string"
+        },
+        "form_type": {
+          "enum": [
+            "CrowdFunding",
+            "Membership",
+            "Event",
+            "Donation",
+            "PaymentForm",
+            "Checkout",
+            "Shop"
+          ],
+          "title": "Form Type",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/FormStateBody",
+          "description": "HelloAsso request body."
+        }
+      },
+      "required": [
+        "organization_slug",
+        "form_slug",
+        "form_type",
+        "body"
+      ],
+      "title": "HelloAssoUpdateFormStateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_order": "#/$defs/HelloAssoCancelOrderConfig",
+          "create_checkout_intent": "#/$defs/HelloAssoCreateCheckoutIntentConfig",
+          "create_event": "#/$defs/HelloAssoCreateEventConfig",
+          "get_checkout_intent": "#/$defs/HelloAssoGetCheckoutIntentConfig",
+          "get_form": "#/$defs/HelloAssoGetFormConfig",
+          "get_form_stats": "#/$defs/HelloAssoGetFormStatsConfig",
+          "get_item": "#/$defs/HelloAssoGetItemConfig",
+          "get_order": "#/$defs/HelloAssoGetOrderConfig",
+          "get_organization": "#/$defs/HelloAssoGetOrganizationConfig",
+          "get_payment": "#/$defs/HelloAssoGetPaymentConfig",
+          "list_form_items": "#/$defs/HelloAssoListFormItemsConfig",
+          "list_form_orders": "#/$defs/HelloAssoListFormOrdersConfig",
+          "list_form_payments": "#/$defs/HelloAssoListFormPaymentsConfig",
+          "list_form_types": "#/$defs/HelloAssoListFormTypesConfig",
+          "list_forms": "#/$defs/HelloAssoListFormsConfig",
+          "list_my_organizations": "#/$defs/HelloAssoListMyOrganizationsConfig",
+          "list_organization_items": "#/$defs/HelloAssoListOrganizationItemsConfig",
+          "list_organization_orders": "#/$defs/HelloAssoListOrganizationOrdersConfig",
+          "list_organization_payments": "#/$defs/HelloAssoListOrganizationPaymentsConfig",
+          "refund_payment": "#/$defs/HelloAssoRefundPaymentConfig",
+          "update_form_state": "#/$defs/HelloAssoUpdateFormStateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HelloAssoListMyOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListFormTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetFormStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListOrganizationOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListFormOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListOrganizationPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListFormPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListOrganizationItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoListFormItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoGetCheckoutIntentConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoCreateCheckoutIntentConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoUpdateFormStateConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoCancelOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/HelloAssoRefundPaymentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HelloAssoAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Helloasso Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
