@@ -1,0 +1,17 @@
+{
+  "source": "https://www.memelord.com/hackers/docs#tools-api",
+  "body": {
+    "success": true,
+    "prompt": "developers fixing bugs at 3am",
+    "total_generated": 2,
+    "results": [{
+      "success": true,
+      "url": "https://…/meme.png",
+      "expires_in": "7 days",
+      "template_name": "This Is Fine",
+      "template_id": "…",
+      "caption_slots": [{"slot": 1, "text": "it's 3am and the build is green"}],
+      "edit_handle": "0f1c…"
+    }]
+  }
+}
