@@ -1,0 +1,542 @@
+{
+  "$defs": {
+    "GetAlgorithm": {
+      "additionalProperties": false,
+      "description": "Get the coins and hardware supporting one algorithm.",
+      "properties": {
+        "slug": {
+          "description": "Stable resource slug from the matching list operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_algorithm",
+          "default": "get_algorithm",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetAlgorithm",
+      "type": "object"
+    },
+    "GetCoin": {
+      "additionalProperties": false,
+      "description": "Get one coin's identity, market, network and supply data.",
+      "properties": {
+        "slug": {
+          "description": "Stable resource slug from the matching list operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_coin",
+          "default": "get_coin",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetCoin",
+      "type": "object"
+    },
+    "GetCoinHistory": {
+      "additionalProperties": false,
+      "description": "Read a page of historical network snapshots, newest first.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Up to 100 points; Free plan capped at 20.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset. Increase explicitly to read another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "slug": {
+          "description": "Stable resource slug from the matching list operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_coin_history",
+          "default": "get_coin_history",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetCoinHistory",
+      "type": "object"
+    },
+    "GetHardware": {
+      "additionalProperties": false,
+      "description": "Get one device's identity and manufacturer specifications.",
+      "properties": {
+        "slug": {
+          "description": "Stable resource slug from the matching list operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_hardware",
+          "default": "get_hardware",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetHardware",
+      "type": "object"
+    },
+    "GetPool": {
+      "additionalProperties": false,
+      "description": "Get a pool's per-coin fees, payout schemes and minimum payouts.",
+      "properties": {
+        "slug": {
+          "description": "Stable resource slug from the matching list operation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_pool",
+          "default": "get_pool",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetPool",
+      "type": "object"
+    },
+    "GetProfitability": {
+      "additionalProperties": false,
+      "description": "Rank mining opportunities using a hardware preset or manual hashrate.",
+      "properties": {
+        "operation": {
+          "const": "get_profitability",
+          "default": "get_profitability",
+          "title": "Operation",
+          "type": "string"
+        },
+        "hardware": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hardware slug for preset mode.",
+          "title": "Hardware"
+        },
+        "hashrate": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Manual hashrate in H/s; supply algorithm as well.",
+          "title": "Hashrate"
+        },
+        "algorithm": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Algorithm slug for manual mode.",
+          "title": "Algorithm"
+        },
+        "power": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Manual power draw in watts.",
+          "title": "Power"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "electricity": {
+          "default": 0.1,
+          "description": "Electricity price in USD/kWh.",
+          "minimum": 0,
+          "title": "Electricity",
+          "type": "number"
+        },
+        "poolFee": {
+          "anyOf": [
+            {
+              "maximum": 0.2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fee fraction, for example 0.01 for 1%.",
+          "title": "Pool Fee"
+        },
+        "verifiedOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verified Only"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "window": {
+          "default": "current",
+          "enum": [
+            "current",
+            "6h",
+            "24h",
+            "3d"
+          ],
+          "title": "Window",
+          "type": "string"
+        }
+      },
+      "title": "GetProfitability",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise"
+    },
+    "ListAlgorithms": {
+      "additionalProperties": false,
+      "description": "List mining algorithms with coin and benchmark counts.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Rows per request, capped by your Minerstat plan (20 / 500 / 1000).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset. Increase explicitly to read another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_algorithms",
+          "default": "list_algorithms",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAlgorithms",
+      "type": "object"
+    },
+    "ListCoins": {
+      "additionalProperties": false,
+      "description": "List mineable coins with market prices, network metrics and freshness.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Rows per request, capped by your Minerstat plan (20 / 500 / 1000).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset. Increase explicitly to read another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_coins",
+          "default": "list_coins",
+          "title": "Operation",
+          "type": "string"
+        },
+        "algorithm": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Algorithm slug, for example scrypt.",
+          "title": "Algorithm"
+        },
+        "verified": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only coins with confidence at least 70 when true.",
+          "title": "Verified"
+        }
+      },
+      "title": "ListCoins",
+      "type": "object"
+    },
+    "ListHardware": {
+      "additionalProperties": false,
+      "description": "List mining hardware with type, power and release date.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Rows per request, capped by your Minerstat plan (20 / 500 / 1000).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset. Increase explicitly to read another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_hardware",
+          "default": "list_hardware",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASIC",
+                "GPU",
+                "CPU",
+                "FPGA"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "ASIC",
+            "GPU",
+            "CPU",
+            "FPGA"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListHardware",
+      "type": "object"
+    },
+    "ListPools": {
+      "additionalProperties": false,
+      "description": "List mining pools, fees and liveness information.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Rows per request, capped by your Minerstat plan (20 / 500 / 1000).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset. Increase explicitly to read another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_pools",
+          "default": "list_pools",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPools",
+      "type": "object"
+    },
+    "MinerstatAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "minerstat_api_key",
+          "default": "minerstat_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Minerstat API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Minerstat Developers and paste it here. Free keys support the catalog reads with up to 20 rows; profitability requires Enterprise. A successful catalog read proves API-key reachability, not account identity.",
+      "x-credential-url": "https://minerstat.com/developers"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_algorithm": "#/$defs/GetAlgorithm",
+          "get_coin": "#/$defs/GetCoin",
+          "get_coin_history": "#/$defs/GetCoinHistory",
+          "get_hardware": "#/$defs/GetHardware",
+          "get_pool": "#/$defs/GetPool",
+          "get_profitability": "#/$defs/GetProfitability",
+          "list_algorithms": "#/$defs/ListAlgorithms",
+          "list_coins": "#/$defs/ListCoins",
+          "list_hardware": "#/$defs/ListHardware",
+          "list_pools": "#/$defs/ListPools"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCoins"
+        },
+        {
+          "$ref": "#/$defs/GetCoin"
+        },
+        {
+          "$ref": "#/$defs/GetCoinHistory"
+        },
+        {
+          "$ref": "#/$defs/ListHardware"
+        },
+        {
+          "$ref": "#/$defs/GetHardware"
+        },
+        {
+          "$ref": "#/$defs/ListAlgorithms"
+        },
+        {
+          "$ref": "#/$defs/GetAlgorithm"
+        },
+        {
+          "$ref": "#/$defs/ListPools"
+        },
+        {
+          "$ref": "#/$defs/GetPool"
+        },
+        {
+          "$ref": "#/$defs/GetProfitability"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MinerstatAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Minerstat Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
