@@ -1,0 +1,7 @@
+{
+  "source": "https://pbf2.api.sellercloud.com/rest/swagger/docs/v1",
+  "description": "Synthetic schema-shaped records for the pinned Swagger v1 response types; not live recordings or provider examples.",
+  "orders": {"Items": [{"ID": 123, "FirstName": "Test", "LastName": "Customer", "CompanyName": "Test Company", "GrandTotal": 25.5, "LastUpdated": "2026-11-09T12:00:00Z"}], "TotalResults": 1},
+  "inventory": {"Items": [{"ID": "TEST-SKU", "ProductName": "Test product", "PhysicalQty": 5, "LastModifiedDate": "2026-11-09T12:00:00Z"}], "TotalResults": 1},
+  "companies": {"Items": [{"ID": 1, "CompanyName": "Test Company"}], "TotalResults": 1}
+}
