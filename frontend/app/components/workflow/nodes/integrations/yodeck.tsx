@@ -20,6 +20,7 @@ export const YodeckIcon = ({ className, style }: SVGProps<SVGSVGElement>) => (
 export const YodeckNode: NodeDefinition = {
   type: 'automation-yodeck',
   label: 'Yodeck',
+  category: 'media',
   description: 'Read workspace, folder, playlist and screen metadata',
   Icon: OfficialBrandIcon,
   iconColor: '',
