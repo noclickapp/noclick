@@ -1,0 +1,1931 @@
+{
+  "$defs": {
+    "ContactNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note"
+      ],
+      "title": "ContactNote",
+      "type": "object"
+    },
+    "JustCallAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "justcall_api_key",
+          "default": "justcall_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "JustCall API Key",
+      "type": "object",
+      "x-credential-instructions": "In JustCall, open your profile \u2192 APIs and Webhooks and copy your existing API key and secret. Paste each separately below. API access requires a JustCall Team plan or above. NoClick checks the account by reading its users.",
+      "x-credential-url": "https://developer.justcall.io/reference/authentication"
+    },
+    "JustCallCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "across_team": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Choose to add a contact for all agents or only for the account owner. true: Add contact for all agents false: Add contact for account owner (Default)",
+          "title": "Across Team"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Address of the contact",
+          "title": "Address"
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the agent_id to create contact only for a specific agent. All contacts are by default always available to the account owner along with respective agents(if any)",
+          "title": "Agent Id"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company with which the contact is associated",
+          "title": "Company"
+        },
+        "contact_number": {
+          "description": "Phone number of the contact",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Contact Number",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email id of the contact",
+          "title": "Email"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assign an extension to the contact",
+          "title": "Extension"
+        },
+        "first_name": {
+          "description": "First name of the contact",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name of the contact",
+          "title": "Last Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information added for the contact in JustCall",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "contact_number",
+        "first_name"
+      ],
+      "title": "JustCallCreateContactConfig",
+      "type": "object"
+    },
+    "JustCallCreateTagConfig": {
+      "additionalProperties": false,
+      "description": "Create a tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the id of an agent to associate the tag with. Fetch the id of the agent using the \u2018List all users\u2019.",
+          "title": "Agent Id"
+        },
+        "color_code": {
+          "description": "Add a hex color code to provide a color for the tag",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "title": "Color Code",
+          "type": "string"
+        },
+        "name": {
+          "description": "Enter a name for the tag.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "color_code",
+        "name"
+      ],
+      "title": "JustCallCreateTagConfig",
+      "type": "object"
+    },
+    "JustCallDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique id of the contact as generated by JustCall. Sending the \u2018id\u2019 will only delete the contact for the specific agent with whom this contact id is associated.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallDeleteContactConfig",
+      "type": "object"
+    },
+    "JustCallDeleteTagConfig": {
+      "additionalProperties": false,
+      "description": "Delete a tag.",
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique id of the tag as generated by JustCall.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallDeleteTagConfig",
+      "type": "object"
+    },
+    "JustCallGetCallConfig": {
+      "additionalProperties": false,
+      "description": "Get a call.",
+      "properties": {
+        "operation": {
+          "const": "get_call",
+          "default": "get_call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fetch_ai_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set fetch_ai_data to true to fetch coaching data by Justcall AI. Default entry is false.",
+          "title": "Fetch Ai Data"
+        },
+        "fetch_queue_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set fetch_queue_data to true to fetch queue data like callback time, callback status, callback wait duration, etc. Default entry is false.",
+          "title": "Fetch Queue Data"
+        },
+        "id": {
+          "description": "A unique identifier for the call generated by JustCall. This can be either the numeric Call ID or the alphanumeric Call SID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetCallConfig",
+      "type": "object"
+    },
+    "JustCallGetCallJourneyConfig": {
+      "additionalProperties": false,
+      "description": "Get call journey.",
+      "properties": {
+        "operation": {
+          "const": "get_call_journey",
+          "default": "get_call_journey",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "A unique identifier for the call generated by JustCall. This can be either the numeric Call ID or the alphanumeric Call SID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetCallJourneyConfig",
+      "type": "object"
+    },
+    "JustCallGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get a contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique id of the contact as generated by JustCall.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetContactConfig",
+      "type": "object"
+    },
+    "JustCallGetPhoneNumberConfig": {
+      "additionalProperties": false,
+      "description": "Get a phone number.",
+      "properties": {
+        "operation": {
+          "const": "get_phone_number",
+          "default": "get_phone_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Enter the unique id of the phone number as generated by JustCall.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetPhoneNumberConfig",
+      "type": "object"
+    },
+    "JustCallGetTagConfig": {
+      "additionalProperties": false,
+      "description": "Get a tag.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique id of the tag as generated by JustCall.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetTagConfig",
+      "type": "object"
+    },
+    "JustCallGetTextConfig": {
+      "additionalProperties": false,
+      "description": "Get a text.",
+      "properties": {
+        "operation": {
+          "const": "get_text",
+          "default": "get_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the SMS",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetTextConfig",
+      "type": "object"
+    },
+    "JustCallGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get a user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique Id of the agent (JustCall user)",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallGetUserConfig",
+      "type": "object"
+    },
+    "JustCallListCallsConfig": {
+      "additionalProperties": false,
+      "description": "List all calls.",
+      "properties": {
+        "operation": {
+          "const": "list_calls",
+          "default": "list_calls",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the agent for whom the calls are to be fetched. Agent ID can be accessed using List all users API .",
+          "title": "Agent Id"
+        },
+        "call_direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "Incoming",
+                "Outgoing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the direction of calls (incoming/outgoing) to be fetched",
+          "title": "Call Direction",
+          "enum": [
+            "Incoming",
+            "Outgoing"
+          ],
+          "x-enum-searchable": true
+        },
+        "call_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "OUTGOING_ANSWERED",
+                "OUTGOING_UNANSWERED",
+                "OUTGOING_BUSY",
+                "OUTGOING_FAILED",
+                "OUTGOING_RESTRICTED",
+                "OUTGOING_BLOCKED",
+                "OUTGOING_CANCELLED",
+                "INCOMING_ANSWERED",
+                "INCOMING_BUSY",
+                "INCOMING_FAILED",
+                "INCOMING_MISSED",
+                "INCOMING_ABANDONED",
+                "INCOMING_VOICEMAIL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the type of calls (answered, unanswered, missed, voicemail, abandoned) that need to be fetched.",
+          "title": "Call Type",
+          "enum": [
+            "OUTGOING_ANSWERED",
+            "OUTGOING_UNANSWERED",
+            "OUTGOING_BUSY",
+            "OUTGOING_FAILED",
+            "OUTGOING_RESTRICTED",
+            "OUTGOING_BLOCKED",
+            "OUTGOING_CANCELLED",
+            "INCOMING_ANSWERED",
+            "INCOMING_BUSY",
+            "INCOMING_FAILED",
+            "INCOMING_MISSED",
+            "INCOMING_ABANDONED",
+            "INCOMING_VOICEMAIL"
+          ],
+          "x-enum-searchable": true
+        },
+        "contact_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of the contact for which calls are to be fetched. Important: Please provide a valid contact number with country code.",
+          "title": "Contact Number"
+        },
+        "fetch_ai_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set fetch_ai_data to true to fetch coaching data by Justcall AI. Default entry is false.",
+          "title": "Fetch Ai Data"
+        },
+        "fetch_queue_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set fetch_queue_data to true to fetch queue data like callback time, callback status, callback wait duration, etc. Default entry is false.",
+          "title": "Fetch Queue Data"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Datetime in yyyy-mm-dd hh:mm:ss or yyyy-mm-dd format starting from when the calls are to be fetched in user's timezone .",
+          "title": "From Datetime"
+        },
+        "ivr_digit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the IVR digit the calls routed through which need to be filtered (optional) Note: call_direction and call_type filter won't work in case you send ivr_digit.",
+          "title": "Ivr Digit"
+        },
+        "justcall_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JustCall number for which the calls are to be fetched.",
+          "title": "Justcall Number"
+        },
+        "last_call_id_fetched": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the last call fetched in the previous query. This Id ensures that you won't receive any duplicate data when using the 'next_page_link' parameter.",
+          "title": "Last Call Id Fetched"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in which the calls list should appear based on the 'sort' parameter selected above",
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for which calls are to be fetched Fetch one page; pass the next page number explicitly. Returned continuation links are not followed.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of calls to be fetched per page. Default value is 20 and maximum value is 100.",
+          "title": "Per Page"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "id",
+                "datetime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select a parameter to sort the order of calls. By default we apply sorting on id field.",
+          "title": "Sort",
+          "enum": [
+            "id",
+            "datetime"
+          ],
+          "x-enum-searchable": true
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Datetime in yyyy-mm-dd hh:mm:ss or yyyy-mm-dd format till when the calls are to be fetched in user's timezone .",
+          "title": "To Datetime"
+        }
+      },
+      "title": "JustCallListCallsConfig",
+      "type": "object"
+    },
+    "JustCallListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List all contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "across_team": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send 'true' to fetch all contacts for all the agents from your JustCall account. Default value will be 'false'.",
+          "title": "Across Team"
+        },
+        "contact_number": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number of the contact",
+          "title": "Contact Number"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name of the contact",
+          "title": "First Name"
+        },
+        "last_contact_id_fetched": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the last contact fetched in the previous query. This Id ensures that you won't receive any duplicate data when using the `next_page_link` parameter.",
+          "title": "Last Contact Id Fetched"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name of the contact",
+          "title": "Last Name"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in which the contacts list should appear based on the \u2018id\u2019 of the contact. Recently added contacts are represented by larger \u2018id\u2019 values. Defaults to DESC (descending order).",
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for which contacts are to be fetched. Page number \u20180\u2019 indicates first page containing records. Fetch one page; pass the next page number explicitly. Returned continuation links are not followed.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of contacts to be fetched per page. Default value is 50 and maximum value is 500.",
+          "title": "Per Page"
+        }
+      },
+      "title": "JustCallListContactsConfig",
+      "type": "object"
+    },
+    "JustCallListPhoneNumbersConfig": {
+      "additionalProperties": false,
+      "description": "List all phone numbers.",
+      "properties": {
+        "operation": {
+          "const": "list_phone_numbers",
+          "default": "list_phone_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "availability_setting": {
+          "anyOf": [
+            {
+              "enum": [
+                "Always Open",
+                "Always Closed",
+                "Custom Hours"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get a list of phone numbers set to the same type of Business Hours setting in JustCall. Filter using the following options: Always Open, Always Closed, Custom Hours",
+          "title": "Availability Setting",
+          "enum": [
+            "Always Open",
+            "Always Closed",
+            "Custom Hours"
+          ],
+          "x-enum-searchable": true
+        },
+        "capabilities": {
+          "anyOf": [
+            {
+              "enum": [
+                "call",
+                "sms",
+                "mms"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter numbers based on the capabilities out of the following:call, sms, mms",
+          "title": "Capabilities",
+          "enum": [
+            "call",
+            "sms",
+            "mms"
+          ],
+          "x-enum-searchable": true
+        },
+        "justcall_line_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for the number details using the name of the JustCall phone line set by you for this number",
+          "title": "Justcall Line Name"
+        },
+        "number_owner_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for all the numbers owned by an agent",
+          "title": "Number Owner Id"
+        },
+        "number_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "mobile",
+                "toll_free"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter phone numbers based on the type of the number from the following option: local, mobile, toll_free",
+          "title": "Number Type",
+          "enum": [
+            "local",
+            "mobile",
+            "toll_free"
+          ],
+          "x-enum-searchable": true
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in which the phone number records should appear",
+          "title": "Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for which phone number records are to be fetched Fetch one page; pass the next page number explicitly. Returned continuation links are not followed.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Count of phone number records to be fetched per page. Default value is 30 and maximum value is 100.",
+          "title": "Per Page"
+        },
+        "shared_agent_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for all the numbers shared with an agent",
+          "title": "Shared Agent Id"
+        },
+        "shared_group_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for all the numbers shared with group",
+          "title": "Shared Group Id"
+        }
+      },
+      "title": "JustCallListPhoneNumbersConfig",
+      "type": "object"
+    },
+    "JustCallListTagsConfig": {
+      "additionalProperties": false,
+      "description": "List all tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in which the tags should appear based on the tag id.",
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for which tags are to be fetched. Fetch one page; pass the next page number explicitly. Returned continuation links are not followed.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of tags to be fetched per page. Default value is 30 and maximum value is 100.",
+          "title": "Per Page"
+        }
+      },
+      "title": "JustCallListTagsConfig",
+      "type": "object"
+    },
+    "JustCallListTextsConfig": {
+      "additionalProperties": false,
+      "description": "List all texts.",
+      "properties": {
+        "operation": {
+          "const": "list_texts",
+          "default": "list_texts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_number": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of the contact for which SMS are to be fetched. Please follow the E.164 number format.",
+          "title": "Contact Number"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Datetime in yyyy-mm-dd hh:mm:ss or yyyy-mm-dd format starting from when the sms are to be fetched in user's timezone .",
+          "title": "From Datetime"
+        },
+        "justcall_number": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JustCall number for which the SMS are to be fetched. Please follow the E.164 number format.",
+          "title": "Justcall Number"
+        },
+        "last_sms_id_fetched": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the last SMS fetched in the previous query. This Id ensures that you won't receive any duplicate data when using the 'next_page_link' parameter.",
+          "title": "Last Sms Id Fetched"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in which the SMS list should appear based on the 'sort' parameter selected above.",
+          "title": "Order"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for which SMS are to be fetched Fetch one page; pass the next page number explicitly. Returned continuation links are not followed.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of SMS to be fetched per page. Default value is 20 and maximum value is 100.",
+          "title": "Per Page"
+        },
+        "sms_content": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords of the content of SMS",
+          "title": "Sms Content"
+        },
+        "sms_direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "incoming",
+                "outgoing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "To fetch data only for incoming SMS or for outgoing SMS",
+          "title": "Sms Direction",
+          "enum": [
+            "incoming",
+            "outgoing"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "id",
+                "datetime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "By default we apply sorting on id field.",
+          "title": "Sort",
+          "enum": [
+            "id",
+            "datetime"
+          ],
+          "x-enum-searchable": true
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Datetime in yyyy-mm-dd hh:mm:ss or yyyy-mm-dd format till when the sms are to be fetched in user's timezone .",
+          "title": "To Datetime"
+        }
+      },
+      "title": "JustCallListTextsConfig",
+      "type": "object"
+    },
+    "JustCallListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List all users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "available": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use available=true to get only those agents that are available as per their working hours in JustCall. By default, we will provide data for all agents irrespective of their availability.",
+          "title": "Available"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter agents using the email associated with their JustCall account.",
+          "title": "Email"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter agents based on the User Groups they belong to in JustCall.",
+          "title": "Group Id"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in which the user records should appear based on the agent_id",
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number for which user records are to be fetched Fetch one page; pass the next page number explicitly. Returned continuation links are not followed.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of user records to be fetched per page. Default value is 50 and maximum value is 100.",
+          "title": "Per Page"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter agents based on the role they are assigned in JustCall.",
+          "title": "Role"
+        }
+      },
+      "title": "JustCallListUsersConfig",
+      "type": "object"
+    },
+    "JustCallSendSmsConfig": {
+      "additionalProperties": false,
+      "description": "Send SMS/MMS.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "description": "Enter the content to be sent in the SMS. Maximum character limit for message is 1600.",
+          "maxLength": 1600,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "contact_number": {
+          "description": "Number of the contact with country code to which SMS is to be sent. Please follow the E.164 number format.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Contact Number",
+          "type": "string"
+        },
+        "justcall_number": {
+          "description": "JustCall number using which the SMS is to be sent. Please follow the E.164 number format (+141555XXXXX).",
+          "maxLength": 2000,
+          "minLength": 1,
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Justcall Number",
+          "type": "string"
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If any media files need to be sent, add comma-separated URL links to media_url (Maximum 10 public links of the media having MIME type mentioned below & should not exceed the cumulative size of 5 MB. Allowed mime type : image/jpeg, image/gif, image/x-png, image/png, image/vnd.wap.wbmp, image/x-bmp, audio/amr, audio/x-amr, audio/x-wav, audio/midi, audio/mid, audio/x-midi, audio/sp-midi, audio/rmf, audio/x-rmf, audio/x-beatnik-rmf, audio/basic, audio/mp3, video/3gpp, video/mp4, application/mp4, image/mp4, text/mp4, audio/mp4, text/vcard, text/csv, text/rtf, text/richtext, text/calendar, text/directory, application/pdf)",
+          "title": "Media Url"
+        },
+        "restrict_once": {
+          "anyOf": [
+            {
+              "enum": [
+                "Yes",
+                "No"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set value to Yes to prevent the SMS from being sent to the same receiver in 24 hours. Default value is set to No and allows same SMS to be sent multiple times in 24 hours to the same contact.",
+          "title": "Restrict Once",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "x-enum-searchable": true
+        },
+        "schedule_at": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the date and time (YYYY-MM-DD HH:mm:ss) at which the SMS is to be sent. In case no value is sent, the SMS will be sent out immediately when the API call is made.",
+          "title": "Schedule At"
+        }
+      },
+      "required": [
+        "body",
+        "contact_number",
+        "justcall_number"
+      ],
+      "title": "JustCallSendSmsConfig",
+      "type": "object"
+    },
+    "JustCallUpdateCallConfig": {
+      "additionalProperties": false,
+      "description": "Update a call.",
+      "properties": {
+        "operation": {
+          "const": "update_call",
+          "default": "update_call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "A unique identifier for the call generated by JustCall. This can be either the numeric Call ID or the alphanumeric Call SID.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "disposition_code": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add or update the disposition code for a call. The code must already be present in your JustCall account. Expected format example - if your list title is \u2018Sales\u2019 and your code is \u2018Follow Up\u2019 then your input in disposition field should be \u2018Sales: Follow Up\u2019.",
+          "title": "Disposition Code"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add a note or replace the existing note for a call here. If a note already exists for a call, it will be replaced with the new note. The previous content will be erased.",
+          "title": "Notes"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "multipleOf": 0.5,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the rating for a call. Please note that ratings should be from 0 to 5 and can contain a 0.5 decimal. Ratings like 2.5, 4.5 are allowed, while ratings like 2.3, 4.6 are not allowed.",
+          "title": "Rating"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallUpdateCallConfig",
+      "type": "object"
+    },
+    "JustCallUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "across_team": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Choose to update a contact for all agents or only for the account owner. True: Update contact for all agents. False: Update contact for account owner (Default). Action across entire team only works when sent with contact_number.",
+          "title": "Across Team"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Address of the contact",
+          "title": "Address"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company with which the contact is associated",
+          "title": "Company"
+        },
+        "contact_number": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number of the contact. If 'contact_number' is sent but 'id' is not sent, the number will be used for searching. If sent with 'id', it will be used to update the primary number of the contact found via 'id'.",
+          "title": "Contact Number"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email id of the contact",
+          "title": "Email"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assign an extension to the contact",
+          "title": "Extension"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name of the contact",
+          "title": "First Name"
+        },
+        "id": {
+          "description": "Unique id of the contact as generated by JustCall. Sending the 'id' will only update the contact for the specific agent with whom this contact id is associated.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name of the contact",
+          "title": "Last Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactNote"
+              },
+              "maxItems": 100,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add more details for the contact in notes to reference later. You can send an array of objects here like: [{ note: \"This is note 1\" }, { note: \"This is note 2\" }]",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JustCallUpdateContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/JustCallCreateContactConfig",
+          "create_tag": "#/$defs/JustCallCreateTagConfig",
+          "delete_contact": "#/$defs/JustCallDeleteContactConfig",
+          "delete_tag": "#/$defs/JustCallDeleteTagConfig",
+          "get_call": "#/$defs/JustCallGetCallConfig",
+          "get_call_journey": "#/$defs/JustCallGetCallJourneyConfig",
+          "get_contact": "#/$defs/JustCallGetContactConfig",
+          "get_phone_number": "#/$defs/JustCallGetPhoneNumberConfig",
+          "get_tag": "#/$defs/JustCallGetTagConfig",
+          "get_text": "#/$defs/JustCallGetTextConfig",
+          "get_user": "#/$defs/JustCallGetUserConfig",
+          "list_calls": "#/$defs/JustCallListCallsConfig",
+          "list_contacts": "#/$defs/JustCallListContactsConfig",
+          "list_phone_numbers": "#/$defs/JustCallListPhoneNumbersConfig",
+          "list_tags": "#/$defs/JustCallListTagsConfig",
+          "list_texts": "#/$defs/JustCallListTextsConfig",
+          "list_users": "#/$defs/JustCallListUsersConfig",
+          "send_sms": "#/$defs/JustCallSendSmsConfig",
+          "update_call": "#/$defs/JustCallUpdateCallConfig",
+          "update_contact": "#/$defs/JustCallUpdateContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/JustCallListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallListCallsConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetCallConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallUpdateCallConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetCallJourneyConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallListPhoneNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetPhoneNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallListTextsConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetTextConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallGetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/JustCallDeleteTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JustCallAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Justcall Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
