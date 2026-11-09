@@ -1,0 +1,1676 @@
+{
+  "$defs": {
+    "CreatePurchaseOrderStatus": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "status_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Status Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hex Color"
+        },
+        "operation": {
+          "const": "create_purchase_order_status",
+          "default": "create_purchase_order_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Create Purchase Order Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "status_name"
+      ],
+      "title": "CreatePurchaseOrderStatus",
+      "type": "object"
+    },
+    "DeletePurchaseOrderStatus": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "operation": {
+          "const": "delete_purchase_order_status",
+          "default": "delete_purchase_order_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Delete Purchase Order Status",
+          "x-is-trigger": false
+        },
+        "status_id": {
+          "description": "Custom status ID; built-in status 0 cannot be deleted.",
+          "minimum": 1,
+          "title": "Status Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "status_id"
+      ],
+      "title": "DeletePurchaseOrderStatus",
+      "type": "object"
+    },
+    "GetGrnMetadata": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "operation": {
+          "const": "get_grn_metadata",
+          "default": "get_grn_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goods Received Notes",
+          "x-display-name": "List GRN Suppliers",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetGrnMetadata",
+      "type": "object"
+    },
+    "GetPurchaseOrderSettings": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "operation": {
+          "const": "get_purchase_order_settings",
+          "default": "get_purchase_order_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Get Purchase Order Settings",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetPurchaseOrderSettings",
+      "type": "object"
+    },
+    "GetPurchaseOrderStats": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Number Contains"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 25,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Status Names"
+        },
+        "payment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "partial paid",
+                "unpaid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Status",
+          "enum": [
+            "paid",
+            "partial paid",
+            "unpaid"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Name"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manufacturer"
+        },
+        "order_dates": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "date",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two store-calendar dates: start then end, inclusive.",
+          "title": "Order Dates"
+        },
+        "operation": {
+          "const": "get_purchase_order_stats",
+          "default": "get_purchase_order_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Get Purchase Order Totals",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetPurchaseOrderStats",
+      "type": "object"
+    },
+    "ListGoodsReceivedNotes": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "grn_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GRN Number Contains"
+        },
+        "po_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Number Contains"
+        },
+        "pb_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Bill Number Contains"
+        },
+        "grn_created_dates": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "date",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two received dates in store time: start then end, inclusive.",
+          "title": "Grn Created Dates"
+        },
+        "operation": {
+          "const": "list_goods_received_notes",
+          "default": "list_goods_received_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goods Received Notes",
+          "x-display-name": "List Goods Received Notes",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pagesize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "sort_column": {
+          "default": "created_date",
+          "enum": [
+            "grn_id",
+            "po_id",
+            "pb_id",
+            "created_date",
+            "amount"
+          ],
+          "title": "Sort Column",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "title": "ListGoodsReceivedNotes",
+      "type": "object"
+    },
+    "ListPurchaseOrderStatuses": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "operation": {
+          "const": "list_purchase_order_statuses",
+          "default": "list_purchase_order_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "List Purchase Order Statuses",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pagesize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListPurchaseOrderStatuses",
+      "type": "object"
+    },
+    "ListPurchaseOrders": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Number Contains"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 25,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Status Names"
+        },
+        "payment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "partial paid",
+                "unpaid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Status",
+          "enum": [
+            "paid",
+            "partial paid",
+            "unpaid"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Name"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manufacturer"
+        },
+        "order_dates": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "date",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two store-calendar dates: start then end, inclusive.",
+          "title": "Order Dates"
+        },
+        "operation": {
+          "const": "list_purchase_orders",
+          "default": "list_purchase_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "List Purchase Orders",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pagesize": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "sort_column": {
+          "default": "id",
+          "enum": [
+            "id",
+            "order_id",
+            "order_date",
+            "status",
+            "total",
+            "amount_paid",
+            "due_amount",
+            "vendor_name",
+            "creator_name"
+          ],
+          "title": "Sort Column",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "title": "ListPurchaseOrders",
+      "type": "object"
+    },
+    "ListSupplierPurchaseOrders": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "operation": {
+          "const": "list_supplier_purchase_orders",
+          "default": "list_supplier_purchase_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "List Supplier Open Purchase Orders",
+          "x-is-trigger": false
+        },
+        "supplier_id": {
+          "minimum": 1,
+          "title": "Supplier ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "supplier_id"
+      ],
+      "title": "ListSupplierPurchaseOrders",
+      "type": "object"
+    },
+    "OnGrnChanged": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "grn_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GRN Number Contains"
+        },
+        "po_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Number Contains"
+        },
+        "pb_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Bill Number Contains"
+        },
+        "grn_created_dates": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "date",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two received dates in store time: start then end, inclusive.",
+          "title": "Grn Created Dates"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_goods_received_note",
+          "default": "on_new_or_updated_goods_received_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Goods Received Note",
+          "x-is-trigger": true
+        },
+        "window_size": {
+          "default": 100,
+          "description": "Watch the newest 100 matching GRNs by received date (or a smaller window). First poll baselines existing metadata. Later polls emit new or changed records still in this window; older GRNs and intermediate changes between polls are not observed.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Window Size",
+          "type": "integer"
+        }
+      },
+      "title": "OnGrnChanged",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnPurchaseOrderChanged": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Number Contains"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 25,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "PO Status Names"
+        },
+        "payment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "partial paid",
+                "unpaid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Status",
+          "enum": [
+            "paid",
+            "partial paid",
+            "unpaid"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Name"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manufacturer"
+        },
+        "order_dates": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "date",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two store-calendar dates: start then end, inclusive.",
+          "title": "Order Dates"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_purchase_order",
+          "default": "on_new_or_updated_purchase_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Purchase Order",
+          "x-is-trigger": true
+        },
+        "window_size": {
+          "default": 100,
+          "description": "Watch the newest 100 matching purchase orders by order date (or a smaller window). First poll baselines existing metadata. Later polls emit new or changed records still in this window; older orders and intermediate changes between polls are not observed. Use date/supplier filters to choose the watched scope.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Window Size",
+          "type": "integer"
+        }
+      },
+      "title": "OnPurchaseOrderChanged",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "RepairDeskAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "repairdesk_api_key",
+          "default": "repairdesk_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "RepairDesk API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in RepairDesk Settings \u2192 Store \u2192 API Access \u2192 API Tokens. Grant Purchase Orders View for reads and polls, and Purchase Orders Update for status writes (Delete for deletion). Paste the token itself. Legacy store API keys are not accepted by v2. Tokens act on their issuing store unless an operation selects another store in the same business. Replace expired tokens in RepairDesk.",
+      "x-credential-url": "https://api-docs.repairdesk.co/"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "UpdatePurchaseOrderStatus": {
+      "properties": {
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's store. Another store must belong to the same business.",
+          "title": "Store ID"
+        },
+        "status_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Status Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hex Color"
+        },
+        "operation": {
+          "const": "update_purchase_order_status",
+          "default": "update_purchase_order_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Update Purchase Order Status",
+          "x-is-trigger": false
+        },
+        "status_id": {
+          "description": "Custom status ID; built-in status 0 cannot be edited.",
+          "minimum": 1,
+          "title": "Status Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "status_name",
+        "status_id"
+      ],
+      "title": "UpdatePurchaseOrderStatus",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_purchase_order_status": "#/$defs/CreatePurchaseOrderStatus",
+          "delete_purchase_order_status": "#/$defs/DeletePurchaseOrderStatus",
+          "get_grn_metadata": "#/$defs/GetGrnMetadata",
+          "get_purchase_order_settings": "#/$defs/GetPurchaseOrderSettings",
+          "get_purchase_order_stats": "#/$defs/GetPurchaseOrderStats",
+          "list_goods_received_notes": "#/$defs/ListGoodsReceivedNotes",
+          "list_purchase_order_statuses": "#/$defs/ListPurchaseOrderStatuses",
+          "list_purchase_orders": "#/$defs/ListPurchaseOrders",
+          "list_supplier_purchase_orders": "#/$defs/ListSupplierPurchaseOrders",
+          "on_new_or_updated_goods_received_note": "#/$defs/OnGrnChanged",
+          "on_new_or_updated_purchase_order": "#/$defs/OnPurchaseOrderChanged",
+          "update_purchase_order_status": "#/$defs/UpdatePurchaseOrderStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListPurchaseOrders"
+        },
+        {
+          "$ref": "#/$defs/GetPurchaseOrderStats"
+        },
+        {
+          "$ref": "#/$defs/ListSupplierPurchaseOrders"
+        },
+        {
+          "$ref": "#/$defs/ListPurchaseOrderStatuses"
+        },
+        {
+          "$ref": "#/$defs/CreatePurchaseOrderStatus"
+        },
+        {
+          "$ref": "#/$defs/UpdatePurchaseOrderStatus"
+        },
+        {
+          "$ref": "#/$defs/DeletePurchaseOrderStatus"
+        },
+        {
+          "$ref": "#/$defs/GetPurchaseOrderSettings"
+        },
+        {
+          "$ref": "#/$defs/ListGoodsReceivedNotes"
+        },
+        {
+          "$ref": "#/$defs/GetGrnMetadata"
+        },
+        {
+          "$ref": "#/$defs/OnPurchaseOrderChanged"
+        },
+        {
+          "$ref": "#/$defs/OnGrnChanged"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepairDeskAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Repairdesk Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List RepairDesk purchase orders",
+    "Watch for new or changed goods received notes",
+    "Create a purchase order status"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
