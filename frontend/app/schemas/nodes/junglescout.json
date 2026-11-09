@@ -1,0 +1,1305 @@
+{
+  "$defs": {
+    "HistoricalSearchVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "marketplace": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "uk",
+                "de",
+                "in",
+                "ca",
+                "fr",
+                "it",
+                "es",
+                "mx",
+                "jp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amazon marketplace country code; defaults to the connected key marketplace.",
+          "title": "Marketplace",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "x-enum-searchable": true
+        },
+        "start_date": {
+          "description": "Start of period, YYYY-MM-DD.",
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End of period, YYYY-MM-DD; before today.",
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_historical_search_volume",
+          "default": "get_historical_search_volume",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date",
+        "keyword"
+      ],
+      "title": "HistoricalSearchVolume",
+      "type": "object"
+    },
+    "JunglescoutAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "junglescout_api_key",
+          "default": "junglescout_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "marketplace": {
+          "default": "us",
+          "description": "Default Amazon marketplace permitted for this key; also used for the connection check.",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "title": "Marketplace",
+          "type": "string"
+        },
+        "key_name": {
+          "description": "Name paired with your API key.",
+          "minLength": 1,
+          "title": "Key name",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "key_name",
+        "api_key"
+      ],
+      "title": "Jungle Scout API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the key name and API key from your Jungle Scout API account. NoClick sends Authorization: key_name:api_key. A product query uses API credits and proves key acceptance, not account identity.",
+      "x-credential-url": "https://developer.junglescout.com/"
+    },
+    "KeywordsByAsin": {
+      "additionalProperties": false,
+      "properties": {
+        "marketplace": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "uk",
+                "de",
+                "in",
+                "ca",
+                "fr",
+                "it",
+                "es",
+                "mx",
+                "jp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amazon marketplace country code; defaults to the connected key marketplace.",
+          "title": "Marketplace",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "x-enum-searchable": true
+        },
+        "page_size": {
+          "default": 50,
+          "description": "Results in this page; maximum 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque page cursor returned by the previous request. Keep the same filters.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_keywords_by_asin",
+          "default": "list_keywords_by_asin",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "default": "-monthly_search_volume_exact",
+          "enum": [
+            "name",
+            "-name",
+            "dominant_category",
+            "-dominant_category",
+            "monthly_trend",
+            "-monthly_trend",
+            "quarterly_trend",
+            "-quarterly_trend",
+            "monthly_search_volume_exact",
+            "-monthly_search_volume_exact",
+            "monthly_search_volume_broad",
+            "-monthly_search_volume_broad",
+            "recommended_promotions",
+            "-recommended_promotions",
+            "sp_brand_ad_bid",
+            "-sp_brand_ad_bid",
+            "ppc_bid_broad",
+            "-ppc_bid_broad",
+            "ppc_bid_exact",
+            "-ppc_bid_exact",
+            "ease_of_ranking_score",
+            "-ease_of_ranking_score",
+            "relevancy_score",
+            "-relevancy_score",
+            "organic_product_count",
+            "-organic_product_count"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "asins": {
+          "description": "Array of up to 10 ASINs. If querying multiple ASINs, all comparison data points will be referenced to the first ASIN in the array",
+          "items": {
+            "pattern": "^[A-Z0-9]{10}$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Asins",
+          "type": "array"
+        },
+        "include_variants": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include (or exclude) ASIN variants when returning related keywords. Can result in many more keyword results. Default is `true`",
+          "title": "Include Variants"
+        },
+        "min_monthly_search_volume_exact": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum exact match monthly search volume",
+          "title": "Min Monthly Search Volume Exact"
+        },
+        "max_monthly_search_volume_exact": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum exact match monthly search volume",
+          "title": "Max Monthly Search Volume Exact"
+        },
+        "min_monthly_search_volume_broad": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum broad match monthly search volume",
+          "title": "Min Monthly Search Volume Broad"
+        },
+        "max_monthly_search_volume_broad": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum broad match monthly search volume",
+          "title": "Max Monthly Search Volume Broad"
+        },
+        "min_word_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum word count",
+          "title": "Min Word Count"
+        },
+        "max_word_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum word count",
+          "title": "Max Word Count"
+        },
+        "min_organic_product_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum organic product count",
+          "title": "Min Organic Product Count"
+        },
+        "max_organic_product_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum organic product count",
+          "title": "Max Organic Product Count"
+        }
+      },
+      "required": [
+        "asins"
+      ],
+      "title": "KeywordsByAsin",
+      "type": "object"
+    },
+    "KeywordsByKeyword": {
+      "additionalProperties": false,
+      "properties": {
+        "marketplace": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "uk",
+                "de",
+                "in",
+                "ca",
+                "fr",
+                "it",
+                "es",
+                "mx",
+                "jp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amazon marketplace country code; defaults to the connected key marketplace.",
+          "title": "Marketplace",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "x-enum-searchable": true
+        },
+        "page_size": {
+          "default": 50,
+          "description": "Results in this page; maximum 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque page cursor returned by the previous request. Keep the same filters.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_keywords_by_keyword",
+          "default": "list_keywords_by_keyword",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "default": "-monthly_search_volume_exact",
+          "enum": [
+            "name",
+            "-name",
+            "dominant_category",
+            "-dominant_category",
+            "monthly_trend",
+            "-monthly_trend",
+            "quarterly_trend",
+            "-quarterly_trend",
+            "monthly_search_volume_exact",
+            "-monthly_search_volume_exact",
+            "monthly_search_volume_broad",
+            "-monthly_search_volume_broad",
+            "recommended_promotions",
+            "-recommended_promotions",
+            "sp_brand_ad_bid",
+            "-sp_brand_ad_bid",
+            "ppc_bid_broad",
+            "-ppc_bid_broad",
+            "ppc_bid_exact",
+            "-ppc_bid_exact",
+            "ease_of_ranking_score",
+            "-ease_of_ranking_score",
+            "relevancy_score",
+            "-relevancy_score",
+            "organic_product_count",
+            "-organic_product_count"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "search_terms": {
+          "description": "Keyword or phrase to perform a search against",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Search Terms",
+          "type": "array"
+        },
+        "min_monthly_search_volume_exact": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum exact match monthly search volume",
+          "title": "Min Monthly Search Volume Exact"
+        },
+        "max_monthly_search_volume_exact": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum exact match monthly search volume",
+          "title": "Max Monthly Search Volume Exact"
+        },
+        "min_monthly_search_volume_broad": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum broad match monthly search volume",
+          "title": "Min Monthly Search Volume Broad"
+        },
+        "max_monthly_search_volume_broad": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum broad match monthly search volume",
+          "title": "Max Monthly Search Volume Broad"
+        },
+        "min_word_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum word count",
+          "title": "Min Word Count"
+        },
+        "max_word_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum word count",
+          "title": "Max Word Count"
+        },
+        "min_organic_product_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by minimum organic product count",
+          "title": "Min Organic Product Count"
+        },
+        "max_organic_product_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by maximum organic product count",
+          "title": "Max Organic Product Count"
+        }
+      },
+      "required": [
+        "search_terms"
+      ],
+      "title": "KeywordsByKeyword",
+      "type": "object"
+    },
+    "Products": {
+      "additionalProperties": false,
+      "properties": {
+        "marketplace": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "uk",
+                "de",
+                "in",
+                "ca",
+                "fr",
+                "it",
+                "es",
+                "mx",
+                "jp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amazon marketplace country code; defaults to the connected key marketplace.",
+          "title": "Marketplace",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "x-enum-searchable": true
+        },
+        "page_size": {
+          "default": 50,
+          "description": "Results in this page; maximum 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque page cursor returned by the previous request. Keep the same filters.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "default": "name",
+          "enum": [
+            "name",
+            "-name",
+            "category",
+            "-category",
+            "revenue",
+            "-revenue",
+            "sales",
+            "-sales",
+            "price",
+            "-price",
+            "rank",
+            "-rank",
+            "reviews",
+            "-reviews",
+            "lqs",
+            "-lqs",
+            "sellers",
+            "-sellers"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "product_tiers": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "oversize",
+                  "standard"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by product tier",
+          "title": "Product Tiers"
+        },
+        "seller_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "amz",
+                  "fba",
+                  "fbm"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by seller type (e.g. amz for Amazon, fba for fulfillment by amazon, fbm for fulfillment by merchant)",
+          "title": "Seller Types"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "include_keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 50,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by title keywords or by ASINs to include",
+          "title": "Include Keywords"
+        },
+        "exclude_keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 50,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by title keywords or by ASINs to exclude",
+          "title": "Exclude Keywords"
+        },
+        "exclude_top_brands": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to exclude top brands",
+          "title": "Exclude Top Brands"
+        },
+        "exclude_unavailable_products": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to exclude unavailable products",
+          "title": "Exclude Unavailable Products"
+        },
+        "min_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum price",
+          "title": "Min Price"
+        },
+        "max_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum price",
+          "title": "Max Price"
+        },
+        "min_net": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum price less FBA fees",
+          "title": "Min Net"
+        },
+        "max_net": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum price less FBA fees",
+          "title": "Max Net"
+        },
+        "min_rank": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum best seller rank",
+          "title": "Min Rank"
+        },
+        "max_rank": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum best seller rank",
+          "title": "Max Rank"
+        },
+        "min_sales": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum monthly estimated sales",
+          "title": "Min Sales"
+        },
+        "max_sales": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum monthly estimated sales",
+          "title": "Max Sales"
+        },
+        "min_revenue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum monthly estimated revenue",
+          "title": "Min Revenue"
+        },
+        "max_revenue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum monthly estimated revenue",
+          "title": "Max Revenue"
+        },
+        "min_reviews": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of reviews",
+          "title": "Min Reviews"
+        },
+        "max_reviews": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of reviews",
+          "title": "Max Reviews"
+        },
+        "min_rating": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum star rating (1 to 5)",
+          "title": "Min Rating"
+        },
+        "max_rating": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum star rating (1 to 5)",
+          "title": "Max Rating"
+        },
+        "min_weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum weight (in lbs)",
+          "title": "Min Weight"
+        },
+        "max_weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum weight (in lbs)",
+          "title": "Max Weight"
+        },
+        "min_sellers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of sellers (total of FBA, FBM, AMZ sellers)",
+          "title": "Min Sellers"
+        },
+        "max_sellers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of sellers (total of FBA, FBM, AMZ sellers)",
+          "title": "Max Sellers"
+        },
+        "min_lqs": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum LQS. A grade based off an in-house algorithm factoring in the quality of title, bullet points, photos, and description.",
+          "title": "Min Lqs"
+        },
+        "max_lqs": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum LQS. A grade based off an in-house algorithm factoring in the quality of title, bullet points, photos, and description.",
+          "title": "Max Lqs"
+        },
+        "min_updated_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum updated_at date for a product in format YYYY-MM-DD.",
+          "title": "Min Updated At"
+        },
+        "max_updated_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum updated_at date for a product in format YYYY-MM-DD.",
+          "title": "Max Updated At"
+        }
+      },
+      "title": "Products",
+      "type": "object"
+    },
+    "SalesEstimates": {
+      "additionalProperties": false,
+      "properties": {
+        "marketplace": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "uk",
+                "de",
+                "in",
+                "ca",
+                "fr",
+                "it",
+                "es",
+                "mx",
+                "jp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amazon marketplace country code; defaults to the connected key marketplace.",
+          "title": "Marketplace",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "x-enum-searchable": true
+        },
+        "start_date": {
+          "description": "Start of period, YYYY-MM-DD.",
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End of period, YYYY-MM-DD; before today.",
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sales_estimates",
+          "default": "get_sales_estimates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "asin": {
+          "pattern": "^[A-Z0-9]{10}$",
+          "title": "Asin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date",
+        "asin"
+      ],
+      "title": "SalesEstimates",
+      "type": "object"
+    },
+    "ShareOfVoice": {
+      "additionalProperties": false,
+      "properties": {
+        "marketplace": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "uk",
+                "de",
+                "in",
+                "ca",
+                "fr",
+                "it",
+                "es",
+                "mx",
+                "jp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Amazon marketplace country code; defaults to the connected key marketplace.",
+          "title": "Marketplace",
+          "enum": [
+            "us",
+            "uk",
+            "de",
+            "in",
+            "ca",
+            "fr",
+            "it",
+            "es",
+            "mx",
+            "jp"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "get_share_of_voice",
+          "default": "get_share_of_voice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "title": "ShareOfVoice",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_historical_search_volume": "#/$defs/HistoricalSearchVolume",
+          "get_sales_estimates": "#/$defs/SalesEstimates",
+          "get_share_of_voice": "#/$defs/ShareOfVoice",
+          "list_keywords_by_asin": "#/$defs/KeywordsByAsin",
+          "list_keywords_by_keyword": "#/$defs/KeywordsByKeyword",
+          "list_products": "#/$defs/Products"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KeywordsByAsin"
+        },
+        {
+          "$ref": "#/$defs/KeywordsByKeyword"
+        },
+        {
+          "$ref": "#/$defs/HistoricalSearchVolume"
+        },
+        {
+          "$ref": "#/$defs/Products"
+        },
+        {
+          "$ref": "#/$defs/SalesEstimates"
+        },
+        {
+          "$ref": "#/$defs/ShareOfVoice"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JunglescoutAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Junglescout Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
