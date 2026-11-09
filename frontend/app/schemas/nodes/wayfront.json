@@ -1,0 +1,1442 @@
+{
+  "$defs": {
+    "WayfrontCreateClient": {
+      "additionalProperties": false,
+      "description": "Create client.",
+      "properties": {
+        "name_f": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "name_l": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "optin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicit marketing consent; omitted by default.",
+          "title": "Optin"
+        },
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "WayfrontCreateClient",
+      "type": "object"
+    },
+    "WayfrontCreateCompany": {
+      "additionalProperties": false,
+      "description": "Create company.",
+      "properties": {
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner User Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WayfrontCreateCompany",
+      "type": "object"
+    },
+    "WayfrontCreateOrder": {
+      "additionalProperties": false,
+      "description": "Create order.",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Id"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "WayfrontCreateOrder",
+      "type": "object"
+    },
+    "WayfrontCreateOrderMessage": {
+      "additionalProperties": false,
+      "description": "Create order message.",
+      "properties": {
+        "operation": {
+          "const": "create_order_message",
+          "default": "create_order_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "Wayfront order number, such as E4A269FC.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 50000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "staff_only": {
+          "default": false,
+          "description": "Whether this is an internal staff message.",
+          "title": "Staff Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "order_id",
+        "message"
+      ],
+      "title": "WayfrontCreateOrderMessage",
+      "type": "object"
+    },
+    "WayfrontCreateOrderTask": {
+      "additionalProperties": false,
+      "description": "Create order task.",
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "employee_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Ids"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Public"
+        },
+        "for_client": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "For Client"
+        },
+        "deadline": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hours after previous task or order creation.",
+          "title": "Deadline"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 due date and time; mutually exclusive with deadline.",
+          "title": "Due At"
+        },
+        "operation": {
+          "const": "create_order_task",
+          "default": "create_order_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "Wayfront order number, such as E4A269FC.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "order_id"
+      ],
+      "title": "WayfrontCreateOrderTask",
+      "type": "object"
+    },
+    "WayfrontDeleteTask": {
+      "additionalProperties": false,
+      "description": "Delete task.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "minimum": 1,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "WayfrontDeleteTask",
+      "type": "object"
+    },
+    "WayfrontGetClient": {
+      "additionalProperties": false,
+      "description": "Get client.",
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "WayfrontGetClient",
+      "type": "object"
+    },
+    "WayfrontGetCompany": {
+      "additionalProperties": false,
+      "description": "Get company.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "WayfrontGetCompany",
+      "type": "object"
+    },
+    "WayfrontGetInvoice": {
+      "additionalProperties": false,
+      "description": "Get invoice.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Wayfront invoice number.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "WayfrontGetInvoice",
+      "type": "object"
+    },
+    "WayfrontGetOrder": {
+      "additionalProperties": false,
+      "description": "Get order.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "Wayfront order number, such as E4A269FC.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "WayfrontGetOrder",
+      "type": "object"
+    },
+    "WayfrontGetService": {
+      "additionalProperties": false,
+      "description": "Get service.",
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "minimum": 1,
+          "title": "Service Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "WayfrontGetService",
+      "type": "object"
+    },
+    "WayfrontGetSubscription": {
+      "additionalProperties": false,
+      "description": "Get subscription.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "WayfrontGetSubscription",
+      "type": "object"
+    },
+    "WayfrontListClients": {
+      "additionalProperties": false,
+      "description": "List clients.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListClients",
+      "type": "object"
+    },
+    "WayfrontListCompanies": {
+      "additionalProperties": false,
+      "description": "List companies.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListCompanies",
+      "type": "object"
+    },
+    "WayfrontListInvoices": {
+      "additionalProperties": false,
+      "description": "List invoices.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListInvoices",
+      "type": "object"
+    },
+    "WayfrontListOrderMessages": {
+      "additionalProperties": false,
+      "description": "List order messages.",
+      "properties": {
+        "operation": {
+          "const": "list_order_messages",
+          "default": "list_order_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "Wayfront order number, such as E4A269FC.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "WayfrontListOrderMessages",
+      "type": "object"
+    },
+    "WayfrontListOrderTasks": {
+      "additionalProperties": false,
+      "description": "List order tasks.",
+      "properties": {
+        "operation": {
+          "const": "list_order_tasks",
+          "default": "list_order_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "Wayfront order number, such as E4A269FC.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "WayfrontListOrderTasks",
+      "type": "object"
+    },
+    "WayfrontListOrders": {
+      "additionalProperties": false,
+      "description": "List orders.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListOrders",
+      "type": "object"
+    },
+    "WayfrontListServices": {
+      "additionalProperties": false,
+      "description": "List services.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListServices",
+      "type": "object"
+    },
+    "WayfrontListSubscriptions": {
+      "additionalProperties": false,
+      "description": "List subscriptions.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListSubscriptions",
+      "type": "object"
+    },
+    "WayfrontListTeam": {
+      "additionalProperties": false,
+      "description": "List team.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Items per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented field:direction sort, for example id:desc.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_team",
+          "default": "list_team",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WayfrontListTeam",
+      "type": "object"
+    },
+    "WayfrontTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "wayfront_api_token",
+          "default": "wayfront_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_url": {
+          "description": "Your HTTPS workspace origin, such as https://example.wayfront.com.",
+          "title": "Workspace URL",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "workspace_url",
+        "api_token"
+      ],
+      "title": "Wayfront API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Wayfront workspace URL and existing API bearer token. Use a token with permission for your chosen operations. Listing clients verifies access to workspace data; it does not verify write permissions.",
+      "x-credential-url": "https://wayfront.com/docs/api"
+    },
+    "WayfrontUpdateClient": {
+      "additionalProperties": false,
+      "description": "Update client.",
+      "properties": {
+        "name_f": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "name_l": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "optin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicit marketing consent; omitted by default.",
+          "title": "Optin"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "WayfrontUpdateClient",
+      "type": "object"
+    },
+    "WayfrontUpdateCompany": {
+      "additionalProperties": false,
+      "description": "Update company.",
+      "properties": {
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner User Id"
+        },
+        "company_id": {
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "company_id"
+      ],
+      "title": "WayfrontUpdateCompany",
+      "type": "object"
+    },
+    "WayfrontUpdateOrder": {
+      "additionalProperties": false,
+      "description": "Update order.",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Id"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "operation": {
+          "const": "update_order",
+          "default": "update_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "description": "Wayfront order number, such as E4A269FC.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "WayfrontUpdateOrder",
+      "type": "object"
+    },
+    "WayfrontUpdateTask": {
+      "additionalProperties": false,
+      "description": "Update task.",
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "employee_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Ids"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Public"
+        },
+        "for_client": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "For Client"
+        },
+        "deadline": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hours after previous task or order creation.",
+          "title": "Deadline"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 due date and time; mutually exclusive with deadline.",
+          "title": "Due At"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "minimum": 1,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "task_id"
+      ],
+      "title": "WayfrontUpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/WayfrontCreateClient",
+          "create_company": "#/$defs/WayfrontCreateCompany",
+          "create_order": "#/$defs/WayfrontCreateOrder",
+          "create_order_message": "#/$defs/WayfrontCreateOrderMessage",
+          "create_order_task": "#/$defs/WayfrontCreateOrderTask",
+          "delete_task": "#/$defs/WayfrontDeleteTask",
+          "get_client": "#/$defs/WayfrontGetClient",
+          "get_company": "#/$defs/WayfrontGetCompany",
+          "get_invoice": "#/$defs/WayfrontGetInvoice",
+          "get_order": "#/$defs/WayfrontGetOrder",
+          "get_service": "#/$defs/WayfrontGetService",
+          "get_subscription": "#/$defs/WayfrontGetSubscription",
+          "list_clients": "#/$defs/WayfrontListClients",
+          "list_companies": "#/$defs/WayfrontListCompanies",
+          "list_invoices": "#/$defs/WayfrontListInvoices",
+          "list_order_messages": "#/$defs/WayfrontListOrderMessages",
+          "list_order_tasks": "#/$defs/WayfrontListOrderTasks",
+          "list_orders": "#/$defs/WayfrontListOrders",
+          "list_services": "#/$defs/WayfrontListServices",
+          "list_subscriptions": "#/$defs/WayfrontListSubscriptions",
+          "list_team": "#/$defs/WayfrontListTeam",
+          "update_client": "#/$defs/WayfrontUpdateClient",
+          "update_company": "#/$defs/WayfrontUpdateCompany",
+          "update_order": "#/$defs/WayfrontUpdateOrder",
+          "update_task": "#/$defs/WayfrontUpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WayfrontListClients"
+        },
+        {
+          "$ref": "#/$defs/WayfrontGetClient"
+        },
+        {
+          "$ref": "#/$defs/WayfrontCreateClient"
+        },
+        {
+          "$ref": "#/$defs/WayfrontUpdateClient"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListCompanies"
+        },
+        {
+          "$ref": "#/$defs/WayfrontGetCompany"
+        },
+        {
+          "$ref": "#/$defs/WayfrontCreateCompany"
+        },
+        {
+          "$ref": "#/$defs/WayfrontUpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListOrders"
+        },
+        {
+          "$ref": "#/$defs/WayfrontGetOrder"
+        },
+        {
+          "$ref": "#/$defs/WayfrontCreateOrder"
+        },
+        {
+          "$ref": "#/$defs/WayfrontUpdateOrder"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListOrderTasks"
+        },
+        {
+          "$ref": "#/$defs/WayfrontCreateOrderTask"
+        },
+        {
+          "$ref": "#/$defs/WayfrontUpdateTask"
+        },
+        {
+          "$ref": "#/$defs/WayfrontDeleteTask"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListOrderMessages"
+        },
+        {
+          "$ref": "#/$defs/WayfrontCreateOrderMessage"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListServices"
+        },
+        {
+          "$ref": "#/$defs/WayfrontGetService"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListInvoices"
+        },
+        {
+          "$ref": "#/$defs/WayfrontGetInvoice"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/WayfrontGetSubscription"
+        },
+        {
+          "$ref": "#/$defs/WayfrontListTeam"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WayfrontTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wayfront Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
