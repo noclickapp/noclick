@@ -9,7 +9,9 @@ turn over turn. This package turns one harness's store into another's:
 
 - ``ir``        — the harness-independent ``Thread``, its skeleton, the drop vocabulary
 - ``formats``   — one ``ThreadFormat`` per harness (``claude_code``, ``codex``), in a registry
-- ``engine``    — ``read_thread`` / ``translate`` / ``move_thread`` with the read-back verdict and manifests
+- ``engine``    — ``read_thread`` / ``translate`` / ``move_thread`` with the read-back verdict and manifests;
+                  ``copy_thread`` (``cut``) for a fork or a revert on the same harness
+- ``undo``      — a revert's files put back from its edits' diffs
 - ``fallback``  — the carried-context block for a thread that could not move
 - ``__main__``  — ``move`` / ``inspect`` / ``formats`` commands (what runs inside a sandbox)
 
@@ -20,7 +22,9 @@ conversation row names, version pins, reporting — lives in
 ``nodes/agent/session_interchange.py``.
 """
 
-from .engine import Fidelity, InterchangeResult, inspect_store, move_thread, parse_verdict, read_thread, translate
+from .engine import (
+    Fidelity, InterchangeResult, copy_thread, cut, inspect_store, move_thread, parse_verdict, read_thread, translate,
+)
 from .fallback import carried_context, turns_from_projection, with_carried_context
 from .formats import FORMATS, REASONS, InterchangeError, ThreadFormat, describe_formats, format_for
 from .ir import (
@@ -31,6 +35,7 @@ from .ir import (
 __all__ = [
     "ACCEPTED_DROP_PREFIXES", "Event", "FORMATS", "Fidelity", "INTERCHANGE_VERSION", "InterchangeError",
     "InterchangeResult", "Provenance", "REASONS", "Skeleton", "StoreRef", "TargetIdentity", "Thread", "ThreadFormat",
-    "carried_context", "classify_drops", "describe_formats", "format_for", "inspect_store", "move_thread",
+    "carried_context", "classify_drops", "copy_thread", "cut", "describe_formats", "format_for", "inspect_store",
+    "move_thread",
     "parse_verdict", "read_thread", "skeleton_of", "translate", "turns_from_projection", "with_carried_context",
 ]

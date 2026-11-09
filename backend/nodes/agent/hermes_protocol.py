@@ -18,6 +18,8 @@ class HermesClient:
     def __init__(self, base_url, api_key, session_id, *, model='', provider='', instructions=''):
         self.base_url, self.api_key, self.session_id = base_url, api_key, session_id
         self.model, self.provider, self.instructions = model, provider, instructions
+        # Per run: its reasoning effort and fast mode (``model_options``: reasoning_effort, fast).
+        self.model_options = {}
         self.active = None
         self.failure = None
         self.inputs = {}
@@ -52,6 +54,8 @@ class HermesClient:
             body['model'] = self.model
         if self.provider:
             body['provider'] = self.provider
+        if self.model_options:
+            body['model_options'] = dict(self.model_options)
         result = self.request('POST', '/v1/runs', body, request_id=str(uuid.uuid4()))
         self.active, self.inputs = result['run_id'], dict(inputs)
         self.last_activity = time.time()

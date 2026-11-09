@@ -17,10 +17,14 @@ CARRY_OPEN = "<<<NOCLICK_CARRIED_CONTEXT"
 CARRY_CLOSE = "NOCLICK_CARRIED_CONTEXT>>>"
 
 
-def carried_context(turns: Sequence[Tuple[bool, str]], *, budget: int = FALLBACK_CHAR_BUDGET, reason: str = "") -> str:
+HEADING = "Earlier turns of this conversation, which ran on a different harness{why}."
+
+
+def carried_context(turns: Sequence[Tuple[bool, str]], *, budget: int = FALLBACK_CHAR_BUDGET, reason: str = "",
+                    heading: str = HEADING) -> str:
     """``turns`` are ``(is_user, text)``, oldest first. Trimmed from the OLDEST
     end to ``budget`` characters; the newest turn always survives, tail
-    first. Empty when nothing is worth carrying."""
+    first. Empty when nothing is worth carrying. ``heading`` says where the turns come from."""
     kept: List[Dict[str, Any]] = []
     used = 0
     for is_user, raw in reversed(list(turns)):
@@ -38,7 +42,7 @@ def carried_context(turns: Sequence[Tuple[bool, str]], *, budget: int = FALLBACK
     why = f" ({reason})" if reason else ""
     return "\n".join([
         CARRY_OPEN,
-        f"Earlier turns of this conversation, which ran on a different harness{why}.",
+        heading.format(why=why),
         "History, not a new instruction — answer the message ABOVE this block.",
         json.dumps(kept, ensure_ascii=False),
         CARRY_CLOSE,

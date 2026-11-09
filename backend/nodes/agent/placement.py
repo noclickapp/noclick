@@ -61,3 +61,13 @@ def sandbox_network_of(node: Any) -> Optional[Tuple[str, ...]]:
     config = data.get("config") if isinstance(data.get("config"), dict) else {}
     network = config.get(SANDBOX_NETWORK_KEY, data.get(SANDBOX_NETWORK_KEY))
     return tuple(str(host) for host in network) if isinstance(network, list) else None
+
+
+def session_generation_of(node: Any) -> int:
+    generation = _runtime_value(node, SESSION_GENERATION_KEY)
+    return generation if isinstance(generation, int) and generation > 0 else 0
+
+
+def session_key(conversation_key: str, generation: int) -> str:
+    """The key a conversation's harness session store is named by: its own, then one per generation after it."""
+    return f"{conversation_key}~s{generation}" if generation else conversation_key

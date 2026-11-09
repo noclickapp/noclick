@@ -30,7 +30,8 @@ its harness's own commands (``{name, arguments}``) rather than a message: it's
 delivered as that command alone, with none of what a message carries composed in,
 and kept on its persisted message as ``command``. ``TURN_PERMISSION_MODE_KEY`` is the conversation's permission
 mode for a coding harness (``approval-required``, ``auto-accept-edits``, ``auto``, ``full-access``), delivered with
-its message: a person answers what the harness asks."""
+its message: a person answers what the harness asks. ``TURN_EFFORT_KEY`` and ``TURN_SPEED_KEY`` are how hard and how
+fast the turn's model works (the conversation's, else its agent's)."""
 
 from __future__ import annotations
 
@@ -54,6 +55,8 @@ TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 TURN_EMPTY_ANSWER_KEY = "_turnEmptyAnswer"
 TURN_COMMAND_KEY = "_turnCommand"
 TURN_PERMISSION_MODE_KEY = "_turnPermissionMode"
+TURN_EFFORT_KEY = "_turnEffort"
+TURN_SPEED_KEY = "_turnSpeed"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
 
@@ -120,6 +123,16 @@ def turn_command_of(node_config: Any) -> Optional[Dict[str, str]]:
 def turn_permission_mode_of(node_config: Any) -> Optional[str]:
     """The conversation's permission mode, when a platform bound one (a person answers what the harness asks)."""
     return _text(node_config, TURN_PERMISSION_MODE_KEY)
+
+
+def turn_effort_of(node_config: Any) -> Optional[str]:
+    """The reasoning effort the turn's model calls run at, when a platform set one (its harness's own word)."""
+    return _text(node_config, TURN_EFFORT_KEY)
+
+
+def turn_speed_of(node_config: Any) -> Optional[str]:
+    """``fast`` when a platform runs the turn in its harness's fast mode."""
+    return _text(node_config, TURN_SPEED_KEY)
 
 
 def turn_trigger_of(node_config: Any) -> Optional[Dict[str, Any]]:

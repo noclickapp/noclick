@@ -54,6 +54,8 @@ REASONS: Dict[str, str] = {
     "readback_failed": "the written store could not be read back through the target's reader",
     "readback_mismatch": "the written store reads back with a different skeleton than the source",
     "translator_crashed": "the move raised outside its own vocabulary — a bug",
+    "not_same_harness": "a copy (a fork, a revert) stays on its harness; across harnesses it is a move",
+    "cut_not_found": "no user message of the thread is where the conversation went back to",
 }
 
 

@@ -22,7 +22,9 @@ from typing import Any, Dict, List, Optional
 
 from .formats import InterchangeError, Written, format_for, write_new_file
 from .formats.sqlite_compat import Error as SqliteError
-from .ir import INTERCHANGE_VERSION, Skeleton, StoreRef, TargetIdentity, Thread, classify_drops, skeleton_of
+from .ir import (
+    INTERCHANGE_VERSION, MESSAGE, USER, Skeleton, StoreRef, TargetIdentity, Thread, classify_drops, skeleton_of,
+)
 
 MANIFEST_DIR = ".nc_interchange"
 
@@ -128,6 +130,43 @@ def move_thread(source: StoreRef, target: StoreRef, identity: Optional[TargetIde
     return result
 
 
+def _plain(text: Optional[str]) -> str:
+    return " ".join((text or "").split())
+
+
+def cut(thread: Thread, *, before: Optional[str] = None, turns: Optional[int] = None) -> Thread:
+    """``thread`` up to the user message a conversation went back to: the last one holding ``before`` (a person's
+    words, which a harness's message holds among what NoClick composed around them), else the one after ``turns``
+    user messages. Neither given: the whole thread. Raises ``cut_not_found`` when neither finds a place."""
+    users = [i for i, e in enumerate(thread.events) if e.kind == MESSAGE and e.role == USER and e.text]
+    end: Optional[int] = None
+    wanted = _plain(before)
+    if wanted:
+        end = next((i for i in reversed(users) if wanted in _plain(thread.events[i].text)), None)
+    if end is None and turns is not None:
+        end = users[turns] if turns < len(users) else len(thread.events)
+    if end is None:
+        if wanted or turns is not None:
+            raise InterchangeError("cut_not_found", "no user message of the thread is where the conversation went back to")
+        return thread
+    return Thread(harness=thread.harness, source=thread.source, session_id=thread.session_id, cwd=thread.cwd,
+                  started_at=thread.started_at, cli_version=thread.cli_version, model=thread.model,
+                  events=thread.events[:end], records=thread.records, sha256=thread.sha256, dropped=thread.dropped)
+
+
+def copy_thread(source: StoreRef, target: StoreRef, identity: Optional[TargetIdentity] = None, *,
+                before: Optional[str] = None, turns: Optional[int] = None) -> InterchangeResult:
+    """A conversation forked, or gone back to an earlier message: ``source``'s thread, cut (``cut``), written into
+    ``target``'s empty store of the same harness and pointed at, so its runner resumes the cut thread natively."""
+    if source.harness != target.harness:
+        raise InterchangeError("not_same_harness", f"{source.harness} into {target.harness} is a move")
+    result = translate(cut(read_thread(source), before=before, turns=turns), target, identity)
+    if target.pointer is not None:
+        target.pointer.parent.mkdir(parents=True, exist_ok=True)
+        target.pointer.write_text(result.session_id)
+    return result
+
+
 def inspect_store(store: StoreRef) -> Dict[str, Any]:
     """What ``store`` holds for this conversation — for debugging a move
     from either end without moving anything."""
@@ -170,4 +209,5 @@ def parse_verdict(stdout: str) -> Dict[str, Any]:
     return {"ok": False, "reason": "translator_crashed", "detail": f"no verdict in output: {stdout[-500:]!r}"}
 
 
-__all__ = ["Fidelity", "InterchangeResult", "MANIFEST_DIR", "inspect_store", "move_thread", "parse_verdict", "read_thread", "translate"]
+__all__ = ["Fidelity", "InterchangeResult", "MANIFEST_DIR", "copy_thread", "cut", "inspect_store", "move_thread",
+           "parse_verdict", "read_thread", "translate"]

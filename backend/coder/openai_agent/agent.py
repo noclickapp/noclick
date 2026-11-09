@@ -384,6 +384,7 @@ class Agent:
         limits: Optional[TurnLimits] = None,
         so_far: Optional[TurnSoFar] = None,
         first_call_effort: Optional[str] = None,
+        effort: Optional[str] = None,
         empty_answer: Optional[str] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
@@ -426,6 +427,11 @@ class Agent:
             shell=shell,
         )
         agent._build_sdk_agent()
+        if effort:
+            # Every model call of the run reasons at ``effort`` (a conversation's, else its agent's), where the
+            # model takes one; a waited-on first call's own effort still leads.
+            agent._sdk_agent.model_settings = _with_effort(agent._sdk_agent.model_settings, config.llm.model,
+                                                           effort) or agent._sdk_agent.model_settings
         agent._build_billing_hooks()
         # ``call_model_input_filter`` replaces the run's input shaping whole (the coordinator's compactor);
         # ``context_filter`` (a ``compaction.Compactor``) runs after the product's steering.
