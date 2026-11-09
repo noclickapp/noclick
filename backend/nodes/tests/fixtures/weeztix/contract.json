@@ -1,0 +1,32 @@
+{
+  "file": "openapi.json",
+  "sha256": "5d5240813bdffa80cd56c7a93ed57a3d0234c63fb806098e274701eed473bd28",
+  "version": "3.0.0",
+  "source_url": "https://eventix-docs.s3.eu-west-1.amazonaws.com/dashboard",
+  "node_type": "automation-weeztix",
+  "conformance": {
+    "checked": 22,
+    "passed": 19,
+    "only_blocking_items": "Three documented provider OpenAPI path-template defects; see spec_defects. No request-body or parser failures. No live-account verification performed."
+  },
+  "spec_defects": [
+    {
+      "operation": "list_events",
+      "kind": "d",
+      "source": "https://docs.weeztix.com/api/dashboard/get-events/",
+      "detail": "Published collection path is /event/{type?}, with parameter named type (default normal). The pinned OpenAPI template names type? instead of type and overlaps /event/{guid}, so openapi-core validates /event/normal as a UUID lookup. Node sends the documented collection filter."
+    },
+    {
+      "operation": "list_locations",
+      "kind": "d",
+      "source": "https://docs.weeztix.com/api/dashboard/get-event-locations/",
+      "detail": "Published collection path is /location/{type?}, with parameter named type (default normal). The malformed optional template overlaps /location/{guid}; openapi-core validates /location/normal as a UUID lookup. Node sends the documented collection filter."
+    },
+    {
+      "operation": "list_event_tickets",
+      "kind": "d",
+      "source": "https://docs.weeztix.com/api/dashboard/get-event-tickets/",
+      "detail": "Published route is /event/:guid/ticket/{type?}. Pinned contract uses /event/{guid}/ticket/{type?} but declares type, not type?, and omits a guid parameter declaration. Node substitutes the event GUID and normal filter as documented; validator cannot resolve type."
+    }
+  ]
+}
