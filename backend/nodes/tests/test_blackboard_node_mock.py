@@ -151,3 +151,120 @@ def test_manual_credential_default_and_custom_institution_domain():
 def test_config_rejects_invalid_inputs(config):
     with pytest.raises(ValueError):
         node(config)
+
+
+POLL_CONTRACT = json.loads((Path(__file__).parent / "fixtures/blackboard/poll_contract.json").read_text())
+POLL_ROWS = {
+    "on_new_user": {"id": "_123_1", "userName": "jsmith", "name": {"given": "John", "family": "Smith"}},
+    "on_new_or_updated_course": {"id": "_123_1", "courseId": "math101", "name": "Mathematics", "modified": "2026-11-01T00:00:00Z"},
+    "on_new_membership": {"id": "_789_1", "userId": "_456_1", "courseId": "_123_1", "courseRoleId": "Student"},
+    "on_new_or_updated_announcement": {"id": "_123_1", "title": "Welcome", "creatorUserId": "_456_1", "body": POLL_CONTRACT["schemas"]["on_new_or_updated_announcement"]["properties"]["body"]["example"], "modified": "2026-11-01T00:00:00Z"},
+}
+
+
+def poll_node(operation, state, course_id="_123_1"):
+    config = {"operation": operation}
+    if operation in {"on_new_membership", "on_new_or_updated_announcement"}:
+        config["course_id"] = course_id
+    instance = node(config)
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    instance._update_node_state = update
+    return instance
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", POLL_ROWS)
+async def test_poll_baselines_emits_new_items_once_and_shapes_agent_turn(monkeypatch, operation):
+    # Fields follow the pinned Learn 4001.4.0 response schemas; IDs are synthetic.
+    state, rows = {}, [dict(POLL_ROWS[operation])]
+    calls = transport(monkeypatch, lambda req: httpx.Response(200, json={"results": rows}))
+    instance = poll_node(operation, state)
+    assert (await instance.execute({}))["count"] == 0
+    assert instance.trigger_produced_no_event({})
+    new = {**rows[0], "id": "_999_1", "userId": "_999_1"} if operation == "on_new_membership" else {**rows[0], "id": "_999_1"}
+    rows.append(new)
+    output = await instance.execute({})
+    assert output["items"] == [new] and output["count"] == 1
+    assert instance.trigger_emitted_event(output)
+    event = instance.resolve_agent_event(output)
+    assert "Blackboard" in event["text"] and "_999_1" in event["text"]
+    if "course_id" in output:
+        assert "courseId=_123_1" in event["text"]
+    assert (await instance.execute({}))["count"] == 0
+    action, sort, _, _ = native.POLL_OPERATIONS[operation]
+    assert calls[0].url.path == native.OPERATIONS[action][1].format(course_id="_123_1")
+    assert dict(calls[0].url.params) == {"limit": "100", "offset": "0", "sort": sort + "(desc)"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["on_new_or_updated_course", "on_new_or_updated_announcement"])
+async def test_poll_detects_updated_record_once(monkeypatch, operation):
+    state, row = {}, dict(POLL_ROWS[operation])
+    transport(monkeypatch, lambda req: httpx.Response(200, json={"results": [row]}))
+    instance = poll_node(operation, state)
+    await instance.execute({})
+    row["modified"] = "2026-11-02T00:00:00Z"
+    assert (await instance.execute({}))["items"] == [row]
+    assert (await instance.execute({}))["count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_poll_paginates_on_bound_origin_and_does_not_follow_next_url(monkeypatch):
+    def respond(req):
+        if req.url.params["offset"] == "0":
+            return httpx.Response(200, json={"results": [POLL_ROWS["on_new_user"]], "paging": {"nextPage": "https://untrusted.example/steal"}})
+        return httpx.Response(200, json={"results": [{"id": "_999_1", "userName": "second"}]})
+    calls = transport(monkeypatch, respond)
+    output = await poll_node("on_new_user", {"seen_ids": []}).execute({})
+    assert output["count"] == 2
+    assert [r.url.params["offset"] for r in calls] == ["0", "100"]
+    assert all(r.url.host == "school.blackboard.com" for r in calls)
+
+
+@pytest.mark.asyncio
+async def test_poll_repoint_baselines_new_course(monkeypatch):
+    state = {}
+    transport(monkeypatch, lambda req: httpx.Response(200, json={"results": [POLL_ROWS["on_new_membership"]]}))
+    await poll_node("on_new_membership", state).execute({})
+    output = await poll_node("on_new_membership", state, course_id="_999_1").execute({})
+    assert output["count"] == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", [[], {}, {"results": {}}, {"results": ["bad"]}])
+async def test_poll_rejects_invalid_list_without_advancing_state(monkeypatch, payload):
+    state = {}
+    transport(monkeypatch, lambda req: httpx.Response(200, json=payload))
+    with pytest.raises(ValueError, match="invalid list"):
+        await poll_node("on_new_user", state).execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_poll_fails_at_page_cap_without_advancing_state(monkeypatch):
+    state = {}
+    calls = transport(monkeypatch, lambda req: httpx.Response(200, json={"results": [POLL_ROWS["on_new_user"]], "paging": {"nextPage": "?offset=100"}}))
+    with pytest.raises(ValueError, match="5,000"):
+        await poll_node("on_new_user", state).execute({})
+    assert len(calls) == 50 and state == {}
+
+
+def test_poll_operations_are_trigger_operations():
+    schema = native.BlackboardNode.get_config_schema()
+    for name in ("OnNewUser", "OnNewOrUpdatedCourse", "OnNewMembership", "OnNewOrUpdatedAnnouncement"):
+        assert schema["$defs"][name]["properties"]["operation"]["x-is-trigger"] is True
+    with pytest.raises(ValidationError):
+        native.OnNewMembership(course_id="../bad")
+
+
+@pytest.mark.parametrize("operation", POLL_ROWS)
+def test_poll_rows_match_the_pinned_provider_response_schema(operation):
+    import jsonschema
+    jsonschema.validate(POLL_ROWS[operation], POLL_CONTRACT["schemas"][operation])

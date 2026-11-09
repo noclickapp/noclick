@@ -2,7 +2,8 @@
 
 Use an existing, site-bound bearer token. Tokens normally expire after one hour;
 this manual credential deliberately does not create or renew an application token.
-Each operation makes exactly one request. List operations return one offset page.
+Action operations make one request. Poll triggers scan up to 5,000 records and
+baseline existing records before emitting new items or modifications.
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, 
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -224,9 +226,47 @@ class DeleteAnnouncement(_Input):
     announcement_id: str
 
 
+class _Poll(PollTriggerConfigBase, _Input):
+    model_config = ConfigDict(extra="forbid", json_schema_extra={
+        "x-requires-webhook": True,
+        "description": "Polls up to 5,000 visible records. Existing records form a baseline; only later changes start runs. Requires a valid Blackboard access token; replace it when it expires.",
+    })
+
+
+class OnNewUser(_Poll):
+    operation: Literal["on_new_user"] = Field("on_new_user", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New User"})
+
+
+class OnNewOrUpdatedCourse(_Poll):
+    operation: Literal["on_new_or_updated_course"] = Field("on_new_or_updated_course", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Course"})
+
+
+class OnNewMembership(_Poll):
+    operation: Literal["on_new_membership"] = Field("on_new_membership", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Enrollment"})
+    course_id: str = Field(..., title="Course ID")
+
+
+class OnNewOrUpdatedAnnouncement(_Poll):
+    operation: Literal["on_new_or_updated_announcement"] = Field("on_new_or_updated_announcement", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Announcement"})
+    course_id: str = Field(..., title="Course ID")
+
+
+POLL_OPERATIONS = {
+    "on_new_user": ("list_users", "created", "id", False),
+    "on_new_or_updated_course": ("list_courses", "modified", "id", True),
+    "on_new_membership": ("list_memberships", "created", "userId", False),
+    "on_new_or_updated_announcement": ("list_announcements", "modified", "id", True),
+}
+
+
 BlackboardConfig = Annotated[Union[ListUsers, GetUser, ListCourses, GetCourse, CreateCourse, UpdateCourse,
     ListMemberships, GetMembership, CreateMembership, UpdateMembership, DeleteMembership,
-    ListAnnouncements, GetAnnouncement, CreateAnnouncement, UpdateAnnouncement, DeleteAnnouncement], Field(discriminator="operation")]
+    ListAnnouncements, GetAnnouncement, CreateAnnouncement, UpdateAnnouncement, DeleteAnnouncement,
+    OnNewUser, OnNewOrUpdatedCourse, OnNewMembership, OnNewOrUpdatedAnnouncement], Field(discriminator="operation")]
 
 
 class BlackboardNodeConfig(NodeConfig[BlackboardConfig, BlackboardAccessTokenCredential]):
@@ -243,7 +283,7 @@ def _redact(value, token):
     return value
 
 
-class BlackboardNode(WorkflowNode):
+class BlackboardNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-blackboard"
     connection_evidence = ConnectionEvidence(noun="courses", operation="list_courses", label_keys=("name", "courseId", "id"))
 
@@ -255,6 +295,8 @@ class BlackboardNode(WorkflowNode):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Blackboard site and access token")
         op, cred = self.config.config, self.config.credentials
+        if op.operation in POLL_OPERATIONS:
+            return await self._poll(op, cred)
         method, template, expected = OPERATIONS[op.operation]
         path = template.format(**{k: quote(getattr(op, k), safe="") for k in ("course_id", "user_id", "announcement_id") if "{" + k + "}" in template})
         params, body = {}, None
@@ -270,6 +312,23 @@ class BlackboardNode(WorkflowNode):
                     body[wire] = getattr(op, field)
             if getattr(op, "available", None) is not None:
                 body["availability"] = {"available": op.available}
+        data = await self._request(cred, method, path, params, body, expected)
+        if expected == 204:
+            output = {"status": "success", "operation": op.operation, "http_status": expected, "deletion_acknowledged": True}
+        else:
+            try:
+                if not isinstance(data, dict):
+                    raise ValueError()
+                if op.operation.startswith("list_") and (not isinstance(data.get("results"), list) or any(not isinstance(row, dict) for row in data["results"])):
+                    raise ValueError()
+            except ValueError:
+                raise ValueError("Blackboard returned an invalid JSON response" + ("; write outcome unverified" if method != "GET" else "")) from None
+            output = {"status": "success", "operation": op.operation, "http_status": expected, "data": data}
+        output = _redact(output, cred.access_token)
+        await self.emit(output)
+        return output
+
+    async def _request(self, cred, method, path, params, body=None, expected=200):
         try:
             async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(method, cred.site_url + path, params=params,
@@ -287,17 +346,73 @@ class BlackboardNode(WorkflowNode):
                 pass
             raise ValueError(_redact(f"Blackboard HTTP {response.status_code}" + message + ("; write outcome unverified" if method != "GET" else ""), cred.access_token))
         if expected == 204:
-            output = {"status": "success", "operation": op.operation, "http_status": expected, "deletion_acknowledged": True}
+            return None
+        try:
+            return response.json()
+        except ValueError:
+            raise ValueError("Blackboard returned an invalid JSON response" + ("; write outcome unverified" if method != "GET" else "")) from None
+
+    async def _poll(self, op, cred):
+        action, sort, id_field, updated = POLL_OPERATIONS[op.operation]
+        path = OPERATIONS[action][1].format(course_id=quote(getattr(op, "course_id", ""), safe=""))
+        rows = []
+        for offset in range(0, 5000, 100):
+            data = await self._request(cred, "GET", path, {"limit": 100, "offset": offset, "sort": sort + "(desc)"})
+            if not isinstance(data, dict) or not isinstance(data.get("results"), list) or any(not isinstance(row, dict) for row in data["results"]):
+                raise ValueError("Blackboard returned an invalid list response")
+            rows.extend(data["results"])
+            paging = data.get("paging")
+            if not isinstance(paging, dict) or not paging.get("nextPage"):
+                break
         else:
-            try:
-                data = response.json()
-                if not isinstance(data, dict):
-                    raise ValueError()
-                if op.operation.startswith("list_") and (not isinstance(data.get("results"), list) or any(not isinstance(row, dict) for row in data["results"])):
-                    raise ValueError()
-            except ValueError:
-                raise ValueError("Blackboard returned an invalid JSON response" + ("; write outcome unverified" if method != "GET" else "")) from None
-            output = {"status": "success", "operation": op.operation, "http_status": expected, "data": data}
+            raise ValueError("Blackboard poll exceeds 5,000 records; reduce the watched scope")
+
+        def identity(row):
+            key = row.get(id_field)
+            if not key:
+                return None
+            return str(key) + (":" + str(row.get("modified") or "") if updated else "")
+
+        fresh = await self._filter_unseen(rows, identity)
+        output = {"status": "success", "operation": op.operation, "items": fresh, "count": len(fresh)}
+        if hasattr(op, "course_id"):
+            output["course_id"] = op.course_id
         output = _redact(output, cred.access_token)
         await self.emit(output)
         return output
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in POLL_OPERATIONS or not output.get("items"):
+            return None
+        noun = {
+            "on_new_user": "New user",
+            "on_new_membership": "New enrollment",
+            "on_new_or_updated_course": "New or updated course",
+            "on_new_or_updated_announcement": "New or updated announcement",
+        }[operation]
+        lines = []
+        for row in output["items"][:20]:
+            if operation == "on_new_user":
+                name = row.get("name") or {}
+                label = " ".join(str(name.get(k) or "") for k in ("given", "family")).strip() or row.get("userName") or row.get("id")
+                fields = ("id", "userName")
+            elif operation == "on_new_membership":
+                label = row.get("userId")
+                fields = ("id", "userId", "courseId", "courseRoleId")
+            elif operation == "on_new_or_updated_course":
+                label = row.get("name") or row.get("courseId") or row.get("id")
+                fields = ("id", "courseId", "modified")
+            else:
+                label = row.get("title") or row.get("id")
+                fields = ("id", "creatorUserId", "modified")
+            ids = {k: row[k] for k in fields if row.get(k)}
+            if output.get("course_id"):
+                ids["courseId"] = output["course_id"]
+            lines.append(f"{noun}: {str(label)[:300]}. " + ", ".join(f"{k}={v}" for k, v in ids.items()))
+            if operation == "on_new_or_updated_announcement" and row.get("body"):
+                lines.append(str(row["body"])[:2000])
+        return {"text": "Blackboard Learn\n" + "\n".join(lines),
+                "title": "Blackboard: " + noun,
+                "conversation_key": "blackboard:" + str(output.get("course_id") or operation)}

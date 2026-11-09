@@ -14,7 +14,7 @@ BlackboardIcon.displayName = 'BlackboardIcon';
 export const BlackboardNode: NodeDefinition = {
     type: 'automation-blackboard',
     label: 'Blackboard',
-    description: 'Read users and manage courses, memberships and announcements in Blackboard Learn',
+    description: 'Start workflows from new users, enrollments, courses and announcements, and manage Blackboard Learn',
     category: 'courses',
     Icon: BlackboardIcon,
     iconColor: '',
