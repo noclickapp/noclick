@@ -1,0 +1,1176 @@
+[
+  {
+    "operation": "list_creditors",
+    "config": {
+      "operation": "list_creditors"
+    },
+    "method": "GET",
+    "path": "/creditors",
+    "resource": "creditors",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": null,
+          "after": null
+        },
+        "limit": 50
+      },
+      "creditors": [
+        {
+          "id": "CR123",
+          "created_at": "2017-02-16T12:34:56.000Z",
+          "name": "Acme",
+          "address_line1": null,
+          "address_line2": null,
+          "address_line3": null,
+          "city": null,
+          "region": null,
+          "postal_code": null,
+          "country_code": "GB",
+          "creditor_type": "company",
+          "logo_url": null,
+          "scheme_identifiers": [],
+          "verification_status": "successful",
+          "can_create_refunds": false,
+          "fx_payout_currency": null,
+          "mandate_imports_enabled": false,
+          "custom_payment_pages_enabled": true,
+          "merchant_responsible_for_notifications": true,
+          "bank_reference_prefix": "ACME",
+          "links": {}
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/creditor",
+    "status": 200
+  },
+  {
+    "operation": "list_customers",
+    "config": {
+      "operation": "list_customers",
+      "after": "CU123"
+    },
+    "method": "GET",
+    "path": "/customers",
+    "resource": "customers",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": "CU000",
+          "after": "CU456"
+        },
+        "limit": 50
+      },
+      "customers": [
+        {
+          "id": "CU123",
+          "created_at": "2014-05-08T17:01:06.000Z",
+          "email": "user@example.com",
+          "given_name": "Frank",
+          "family_name": "Osborne",
+          "address_line1": "27 Acer Road",
+          "address_line2": "Apt 2",
+          "address_line3": null,
+          "city": "London",
+          "region": null,
+          "postal_code": "E8 3GX",
+          "country_code": "GB",
+          "language": "en",
+          "metadata": {
+            "salesforce_id": "ABCD1234"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/customer",
+    "status": 200
+  },
+  {
+    "operation": "get_customer",
+    "config": {
+      "operation": "get_customer",
+      "customer_id": "CU123"
+    },
+    "method": "GET",
+    "path": "/customers/CU123",
+    "resource": "customers",
+    "response": {
+      "customers": {
+        "id": "CU123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "email": "user@example.com",
+        "given_name": "Frank",
+        "family_name": "Osborne",
+        "address_line1": "27 Acer Road",
+        "address_line2": "Apt 2",
+        "address_line3": null,
+        "city": "London",
+        "region": null,
+        "postal_code": "E8 3GX",
+        "country_code": "GB",
+        "language": "en",
+        "phone_number": null,
+        "swedish_identity_number": null,
+        "danish_identity_number": null,
+        "metadata": {
+          "salesforce_id": "ABCD1234"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/customer",
+    "status": 200
+  },
+  {
+    "operation": "list_customer_bank_accounts",
+    "config": {
+      "operation": "list_customer_bank_accounts"
+    },
+    "method": "GET",
+    "path": "/customer_bank_accounts",
+    "resource": "customer_bank_accounts",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": null,
+          "after": null
+        },
+        "limit": 50
+      },
+      "customer_bank_accounts": [
+        {
+          "id": "BA123",
+          "created_at": "2014-05-08T17:01:06.001Z",
+          "account_holder_name": "Frank Osborne",
+          "account_number_ending": "11",
+          "account_type": null,
+          "country_code": "GB",
+          "currency": "GBP",
+          "bank_name": "BARCLAYS BANK PLC",
+          "metadata": {},
+          "enabled": true,
+          "links": {
+            "customer": "CU123"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/customer-bank-account",
+    "status": 200
+  },
+  {
+    "operation": "get_customer_bank_account",
+    "config": {
+      "operation": "get_customer_bank_account",
+      "customer_bank_account_id": "BA123"
+    },
+    "method": "GET",
+    "path": "/customer_bank_accounts/BA123",
+    "resource": "customer_bank_accounts",
+    "response": {
+      "customer_bank_accounts": {
+        "id": "BA123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "account_number_ending": "11",
+        "account_holder_name": "Frank Osborne",
+        "account_type": null,
+        "country_code": "GB",
+        "currency": "GBP",
+        "bank_name": "BARCLAYS BANK PLC",
+        "metadata": {},
+        "enabled": true,
+        "links": {
+          "customer": "CU123"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/customer-bank-account",
+    "status": 200
+  },
+  {
+    "operation": "list_mandates",
+    "config": {
+      "operation": "list_mandates"
+    },
+    "method": "GET",
+    "path": "/mandates",
+    "resource": "mandates",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": null,
+          "after": null
+        },
+        "limit": 50
+      },
+      "mandates": [
+        {
+          "id": "MD123",
+          "created_at": "2014-05-08T17:01:06.000Z",
+          "reference": "REF-123",
+          "status": "pending_submission",
+          "scheme": "bacs",
+          "next_possible_charge_date": "2014-11-10",
+          "metadata": {
+            "contract": "ABCD1234"
+          },
+          "links": {
+            "customer_bank_account": "BA123",
+            "creditor": "CR123",
+            "customer": "CU123"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/mandate",
+    "status": 200
+  },
+  {
+    "operation": "get_mandate",
+    "config": {
+      "operation": "get_mandate",
+      "mandate_id": "MD123"
+    },
+    "method": "GET",
+    "path": "/mandates/MD123",
+    "resource": "mandates",
+    "response": {
+      "mandates": {
+        "id": "MD123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "reference": "REF-123",
+        "status": "pending_submission",
+        "scheme": "bacs",
+        "next_possible_charge_date": "2014-11-10",
+        "metadata": {
+          "contract": "ABCD1234"
+        },
+        "links": {
+          "customer_bank_account": "BA123",
+          "creditor": "CR123",
+          "customer": "CU123"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/mandate",
+    "status": 200
+  },
+  {
+    "operation": "list_payments",
+    "config": {
+      "operation": "list_payments"
+    },
+    "method": "GET",
+    "path": "/payments",
+    "resource": "payments",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": null,
+          "after": null
+        },
+        "limit": 50
+      },
+      "payments": [
+        {
+          "id": "PM123",
+          "created_at": "2014-05-08T17:01:06.000Z",
+          "charge_date": "2014-05-15",
+          "amount": 100,
+          "description": null,
+          "currency": "GBP",
+          "status": "pending_submission",
+          "reference": "WINEBOX001",
+          "metadata": {
+            "order_dispatch_date": "2014-05-22"
+          },
+          "amount_refunded": 0,
+          "fx": {
+            "fx_currency": "EUR",
+            "fx_amount": null,
+            "exchange_rate": null,
+            "estimated_exchange_rate": "1.1234567890"
+          },
+          "links": {
+            "mandate": "MD123",
+            "creditor": "CR123"
+          },
+          "retry_if_possible": false,
+          "scheme": "bacs"
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payment",
+    "status": 200
+  },
+  {
+    "operation": "get_payment",
+    "config": {
+      "operation": "get_payment",
+      "payment_id": "PM123"
+    },
+    "method": "GET",
+    "path": "/payments/PM123",
+    "resource": "payments",
+    "response": {
+      "payments": {
+        "id": "PM123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "charge_date": "2014-05-15",
+        "amount": 100,
+        "description": null,
+        "currency": "GBP",
+        "status": "pending_submission",
+        "reference": "WINEBOX001",
+        "metadata": {
+          "order_dispatch_date": "2014-05-22"
+        },
+        "amount_refunded": 0,
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "links": {
+          "mandate": "MD123",
+          "creditor": "CR123"
+        },
+        "retry_if_possible": false,
+        "scheme": "bacs"
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payment",
+    "status": 200
+  },
+  {
+    "operation": "list_subscriptions",
+    "config": {
+      "operation": "list_subscriptions"
+    },
+    "method": "GET",
+    "path": "/subscriptions",
+    "resource": "subscriptions",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": null,
+          "after": null
+        },
+        "limit": 50
+      },
+      "subscriptions": [
+        {
+          "id": "SB123",
+          "created_at": "2014-10-20T17:01:06.000Z",
+          "amount": 2500,
+          "currency": "GBP",
+          "status": "active",
+          "name": "Monthly Magazine",
+          "start_date": "2014-11-03",
+          "end_date": null,
+          "interval": 1,
+          "interval_unit": "monthly",
+          "day_of_month": 1,
+          "month": null,
+          "payment_reference": null,
+          "earliest_charge_date_after_resume": null,
+          "parent_plan_paused": false,
+          "upcoming_payments": [
+            {
+              "charge_date": "2014-11-03",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2014-12-01",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-01-02",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-02-02",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-03-02",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-04-01",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-05-01",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-06-01",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-07-01",
+              "amount": 2500
+            },
+            {
+              "charge_date": "2015-08-03",
+              "amount": 2500
+            }
+          ],
+          "metadata": {
+            "order_no": "ABCD1234"
+          },
+          "links": {
+            "mandate": "MA123"
+          },
+          "retry_if_possible": false
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/subscription",
+    "status": 200
+  },
+  {
+    "operation": "get_subscription",
+    "config": {
+      "operation": "get_subscription",
+      "subscription_id": "SB123"
+    },
+    "method": "GET",
+    "path": "/subscriptions/SB123",
+    "resource": "subscriptions",
+    "response": {
+      "subscriptions": {
+        "id": "SB123",
+        "created_at": "2014-10-20T17:01:06.000Z",
+        "amount": 2500,
+        "currency": "GBP",
+        "status": "active",
+        "name": "Monthly Magazine",
+        "start_date": "2014-11-03",
+        "end_date": null,
+        "interval": 1,
+        "interval_unit": "monthly",
+        "day_of_month": 1,
+        "month": null,
+        "payment_reference": null,
+        "earliest_charge_date_after_resume": null,
+        "parent_plan_paused": false,
+        "upcoming_payments": [
+          {
+            "charge_date": "2014-11-03",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2014-12-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-01-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-02-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-03-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-04-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-05-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-06-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-07-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-08-03",
+            "amount": 2500
+          }
+        ],
+        "metadata": {
+          "order_no": "ABCD1234"
+        },
+        "links": {
+          "mandate": "MA123"
+        },
+        "retry_if_possible": false
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/subscription",
+    "status": 200
+  },
+  {
+    "operation": "list_refunds",
+    "config": {
+      "operation": "list_refunds"
+    },
+    "method": "GET",
+    "path": "/refunds",
+    "resource": "refunds",
+    "response": {
+      "meta": {
+        "cursors": {
+          "before": null,
+          "after": null
+        },
+        "limit": 50
+      },
+      "refunds": [
+        {
+          "id": "RF123",
+          "created_at": "2014-05-08T17:01:06.000Z",
+          "amount": 100,
+          "currency": "GBP",
+          "reference": "Acme refund",
+          "fx": {
+            "fx_currency": "EUR",
+            "fx_amount": null,
+            "exchange_rate": null,
+            "estimated_exchange_rate": "1.1234567890"
+          },
+          "status": "created",
+          "metadata": {
+            "reason": "late failure"
+          },
+          "links": {
+            "payment": "PM123"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/refund",
+    "status": 200
+  },
+  {
+    "operation": "get_refund",
+    "config": {
+      "operation": "get_refund",
+      "refund_id": "RF123"
+    },
+    "method": "GET",
+    "path": "/refunds/RF123",
+    "resource": "refunds",
+    "response": {
+      "refunds": {
+        "id": "RF123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "amount": 100,
+        "currency": "GBP",
+        "reference": "Acme refund",
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "status": "created",
+        "metadata": {
+          "reason": "late failure"
+        },
+        "links": {
+          "payment": "PM123"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/refund",
+    "status": 200
+  },
+  {
+    "operation": "list_payouts",
+    "config": {
+      "operation": "list_payouts"
+    },
+    "method": "GET",
+    "path": "/payouts",
+    "resource": "payouts",
+    "response": {
+      "payouts": [
+        {
+          "id": "PO123",
+          "amount": 1000,
+          "arrival_date": "2014-06-27",
+          "deducted_fees": 10,
+          "currency": "GBP",
+          "created_at": "2014-06-20T13:23:34.000Z",
+          "payout_type": "merchant",
+          "reference": "ref-1",
+          "status": "pending",
+          "fx": {
+            "fx_currency": "EUR",
+            "fx_amount": null,
+            "exchange_rate": null,
+            "estimated_exchange_rate": "1.11667"
+          },
+          "tax_currency": "GBP",
+          "metadata": {
+            "key": "value"
+          },
+          "links": {
+            "creditor_bank_account": "BA123",
+            "creditor": "CR123"
+          }
+        }
+      ],
+      "meta": {
+        "cursors": {
+          "after": null,
+          "before": null
+        },
+        "limit": 50
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payout",
+    "status": 200
+  },
+  {
+    "operation": "get_payout",
+    "config": {
+      "operation": "get_payout",
+      "payout_id": "PO123"
+    },
+    "method": "GET",
+    "path": "/payouts/PO123",
+    "resource": "payouts",
+    "response": {
+      "payouts": {
+        "id": "PO123",
+        "amount": 1000,
+        "arrival_date": "2014-06-27",
+        "deducted_fees": 10,
+        "currency": "GBP",
+        "created_at": "2014-06-20T13:23:34.000Z",
+        "payout_type": "merchant",
+        "reference": "ref-1",
+        "status": "pending",
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.11667"
+        },
+        "tax_currency": "GBP",
+        "metadata": {
+          "key": "value"
+        },
+        "links": {
+          "creditor_bank_account": "BA123",
+          "creditor": "CR123"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payout",
+    "status": 200
+  },
+  {
+    "operation": "update_customer",
+    "config": {
+      "operation": "update_customer",
+      "customer_id": "CU123",
+      "email": "updated_user@example.com",
+      "given_name": "Jenny",
+      "family_name": "Osborne",
+      "metadata": {
+        "salesforce_id": "EFGH5678"
+      }
+    },
+    "method": "PUT",
+    "path": "/customers/CU123",
+    "resource": "customers",
+    "response": {
+      "customers": {
+        "id": "CU123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "email": "updated_user@example.com",
+        "given_name": "Frank",
+        "family_name": "Osborne",
+        "address_line1": "29 Acer Road",
+        "address_line2": "Apt 3",
+        "address_line3": "Block 4",
+        "city": "London",
+        "region": null,
+        "postal_code": "E8 3GX",
+        "country_code": "GB",
+        "language": "en",
+        "phone_number": null,
+        "swedish_identity_number": null,
+        "danish_identity_number": null,
+        "metadata": {
+          "salesforce_id": "EFGH5678"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/customer",
+    "status": 200
+  },
+  {
+    "operation": "create_payment",
+    "config": {
+      "operation": "create_payment",
+      "amount": 100,
+      "currency": "GBP",
+      "charge_date": "2014-05-19",
+      "reference": "WINEBOX001",
+      "metadata": {
+        "order_dispatch_date": "2014-05-22"
+      },
+      "mandate_id": "MD123",
+      "idempotency_key": "gocardless-create_payment-example"
+    },
+    "method": "POST",
+    "path": "/payments",
+    "resource": "payments",
+    "response": {
+      "payments": {
+        "id": "PM123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "charge_date": "2014-05-21",
+        "amount": 100,
+        "description": null,
+        "currency": "GBP",
+        "status": "pending_submission",
+        "reference": "WINEBOX001",
+        "metadata": {
+          "order_dispatch_date": "2014-05-22"
+        },
+        "amount_refunded": 0,
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "links": {
+          "mandate": "MD123",
+          "creditor": "CR123"
+        },
+        "retry_if_possible": false,
+        "scheme": "bacs"
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payment",
+    "status": 201
+  },
+  {
+    "operation": "update_payment",
+    "config": {
+      "operation": "update_payment",
+      "payment_id": "PM123",
+      "metadata": {
+        "key": "value"
+      }
+    },
+    "method": "PUT",
+    "path": "/payments/PM123",
+    "resource": "payments",
+    "response": {
+      "payments": {
+        "id": "PM123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "charge_date": "2014-05-15",
+        "amount": 100,
+        "description": null,
+        "currency": "GBP",
+        "status": "pending_submission",
+        "reference": "WINEBOX001",
+        "metadata": {
+          "key": "value"
+        },
+        "amount_refunded": 0,
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "links": {
+          "mandate": "MD123",
+          "creditor": "CR123"
+        },
+        "retry_if_possible": false,
+        "scheme": "bacs"
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payment",
+    "status": 200
+  },
+  {
+    "operation": "create_subscription",
+    "config": {
+      "operation": "create_subscription",
+      "amount": 2500,
+      "currency": "GBP",
+      "name": "Monthly Magazine",
+      "interval_unit": "monthly",
+      "metadata": {
+        "order_no": "ABCD1234"
+      },
+      "mandate_id": "MA123",
+      "idempotency_key": "gocardless-create_subscription-example"
+    },
+    "method": "POST",
+    "path": "/subscriptions",
+    "resource": "subscriptions",
+    "response": {
+      "subscriptions": {
+        "id": "SB123",
+        "created_at": "2014-10-20T17:01:06.000Z",
+        "amount": 2500,
+        "currency": "GBP",
+        "status": "active",
+        "name": "Monthly Magazine",
+        "start_date": "2014-11-03",
+        "end_date": null,
+        "interval": 1,
+        "interval_unit": "monthly",
+        "day_of_month": 1,
+        "month": null,
+        "payment_reference": null,
+        "app_fee": null,
+        "earliest_charge_date_after_resume": null,
+        "upcoming_payments": [
+          {
+            "charge_date": "2014-11-03",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2014-12-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-01-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-02-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-03-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-04-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-05-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-06-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-07-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-08-03",
+            "amount": 2500
+          }
+        ],
+        "metadata": {
+          "order_no": "ABCD1234"
+        },
+        "links": {
+          "mandate": "MA123"
+        },
+        "retry_if_possible": false
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/subscription",
+    "status": 201
+  },
+  {
+    "operation": "update_subscription",
+    "config": {
+      "operation": "update_subscription",
+      "subscription_id": "SB123",
+      "name": "New name",
+      "metadata": {
+        "order_no": "ABCD4321"
+      }
+    },
+    "method": "PUT",
+    "path": "/subscriptions/SB123",
+    "resource": "subscriptions",
+    "response": {
+      "subscriptions": {
+        "id": "SB123",
+        "created_at": "2014-10-20T17:01:06.000Z",
+        "amount": 2500,
+        "currency": "GBP",
+        "status": "active",
+        "name": "New name",
+        "start_date": "2014-11-03",
+        "end_date": null,
+        "interval": 1,
+        "interval_unit": "monthly",
+        "day_of_month": 1,
+        "month": null,
+        "payment_reference": null,
+        "earliest_charge_date_after_resume": null,
+        "parent_plan_paused": false,
+        "upcoming_payments": [
+          {
+            "charge_date": "2014-11-03",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2014-12-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-01-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-02-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-03-02",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-04-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-05-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-06-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-07-01",
+            "amount": 2500
+          },
+          {
+            "charge_date": "2015-08-03",
+            "amount": 2500
+          }
+        ],
+        "metadata": {
+          "order_no": "ABCD4321"
+        },
+        "links": {
+          "mandate": "MA123"
+        },
+        "retry_if_possible": false
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/subscription",
+    "status": 200
+  },
+  {
+    "operation": "create_refund",
+    "config": {
+      "operation": "create_refund",
+      "amount": 100,
+      "total_amount_confirmation": 150,
+      "reference": "Acme refund",
+      "metadata": {
+        "reason": "late delivery"
+      },
+      "payment_id": "PM123",
+      "idempotency_key": "gocardless-create_refund-example"
+    },
+    "method": "POST",
+    "path": "/refunds",
+    "resource": "refunds",
+    "response": {
+      "refunds": {
+        "id": "RF123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "amount": 100,
+        "currency": "GBP",
+        "reference": "Acme refund",
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "status": "created",
+        "metadata": {
+          "reason": "late delivery"
+        },
+        "links": {
+          "payment": "PM123"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/refund",
+    "status": 201
+  },
+  {
+    "operation": "cancel_mandate",
+    "config": {
+      "operation": "cancel_mandate",
+      "mandate_id": "MD123",
+      "metadata": {}
+    },
+    "method": "POST",
+    "path": "/mandates/MD123/actions/cancel",
+    "resource": "mandates",
+    "response": {
+      "mandates": {
+        "id": "MD123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "reference": "REF-123",
+        "status": "cancelled",
+        "scheme": "bacs",
+        "next_possible_charge_date": null,
+        "metadata": {
+          "contract": "ABCD1234"
+        },
+        "links": {
+          "customer_bank_account": "BA123",
+          "creditor": "CR123",
+          "customer": "CU123"
+        }
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/mandate",
+    "status": 200
+  },
+  {
+    "operation": "cancel_payment",
+    "config": {
+      "operation": "cancel_payment",
+      "payment_id": "PM123",
+      "metadata": {
+        "ticket_id": "TK123"
+      }
+    },
+    "method": "POST",
+    "path": "/payments/PM123/actions/cancel",
+    "resource": "payments",
+    "response": {
+      "payments": {
+        "id": "PM123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "charge_date": "2014-05-21",
+        "amount": 100,
+        "description": null,
+        "currency": "GBP",
+        "status": "cancelled",
+        "reference": "WINEBOX001",
+        "metadata": {
+          "order_dispatch_date": "2014-05-22"
+        },
+        "amount_refunded": 0,
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "links": {
+          "mandate": "MD123",
+          "creditor": "CR123"
+        },
+        "retry_if_possible": false,
+        "scheme": "bacs"
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payment",
+    "status": 200
+  },
+  {
+    "operation": "cancel_subscription",
+    "config": {
+      "operation": "cancel_subscription",
+      "subscription_id": "SB123"
+    },
+    "method": "POST",
+    "path": "/subscriptions/SB123/actions/cancel",
+    "resource": "subscriptions",
+    "response": {
+      "subscriptions": {
+        "id": "SB123",
+        "created_at": "2014-10-20T17:01:06.000Z",
+        "amount": 2500,
+        "currency": "GBP",
+        "status": "cancelled",
+        "name": "Monthly Magazine",
+        "start_date": "2014-11-03",
+        "end_date": null,
+        "interval": 1,
+        "interval_unit": "monthly",
+        "day_of_month": 1,
+        "month": null,
+        "payment_reference": null,
+        "earliest_charge_date_after_resume": null,
+        "parent_plan_paused": false,
+        "upcoming_payments": [],
+        "metadata": {
+          "order_no": "ABCD1234"
+        },
+        "links": {
+          "mandate": "MA123"
+        },
+        "retry_if_possible": false
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/subscription",
+    "status": 200
+  },
+  {
+    "operation": "retry_payment",
+    "config": {
+      "operation": "retry_payment",
+      "payment_id": "PM123",
+      "metadata": {
+        "reason": "Customer request"
+      }
+    },
+    "method": "POST",
+    "path": "/payments/PM123/actions/retry",
+    "resource": "payments",
+    "response": {
+      "payments": {
+        "id": "PM123",
+        "created_at": "2014-05-08T17:01:06.000Z",
+        "charge_date": "2014-05-21",
+        "amount": 100,
+        "description": null,
+        "currency": "GBP",
+        "status": "submitted",
+        "reference": "WINEBOX001",
+        "metadata": {
+          "order_dispatch_date": "2014-05-22"
+        },
+        "amount_refunded": 0,
+        "fx": {
+          "fx_currency": "EUR",
+          "fx_amount": null,
+          "exchange_rate": null,
+          "estimated_exchange_rate": "1.1234567890"
+        },
+        "links": {
+          "mandate": "MD123",
+          "creditor": "CR123"
+        },
+        "retry_if_possible": false,
+        "scheme": "bacs"
+      }
+    },
+    "source": "https://docs.gocardless.com/docs/api-reference/payment",
+    "status": 200
+  }
+]

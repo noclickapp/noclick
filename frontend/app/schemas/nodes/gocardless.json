@@ -1,0 +1,1524 @@
+{
+  "$defs": {
+    "CancelMandateConfig": {
+      "additionalProperties": false,
+      "description": "Cancel this mandate; this changes live collections in the Live environment.",
+      "properties": {
+        "operation": {
+          "const": "cancel_mandate",
+          "default": "cancel_mandate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mandate_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mandate Id",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "mandate_id"
+      ],
+      "title": "CancelMandateConfig",
+      "type": "object"
+    },
+    "CancelPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Cancel this payment; this changes live collections in the Live environment.",
+      "properties": {
+        "operation": {
+          "const": "cancel_payment",
+          "default": "cancel_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payment Id",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "CancelPaymentConfig",
+      "type": "object"
+    },
+    "CancelSubscriptionConfig": {
+      "additionalProperties": false,
+      "description": "Cancel this subscription; this changes live collections in the Live environment.",
+      "properties": {
+        "operation": {
+          "const": "cancel_subscription",
+          "default": "cancel_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "CancelSubscriptionConfig",
+      "type": "object"
+    },
+    "CreatePaymentConfig": {
+      "additionalProperties": false,
+      "description": "Create payment.",
+      "properties": {
+        "operation": {
+          "const": "create_payment",
+          "default": "create_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mandate_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mandate Id",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount in minor currency units (pence/cents), not whole currency units.",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "currency": {
+          "enum": [
+            "AUD",
+            "CAD",
+            "DKK",
+            "EUR",
+            "GBP",
+            "NZD",
+            "SEK",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "charge_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Charge Date"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "idempotency_key": {
+          "description": "Unique stable key for this intended payment. Reuse it when retrying the same request.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Idempotency Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mandate_id",
+        "amount",
+        "currency",
+        "idempotency_key"
+      ],
+      "title": "CreatePaymentConfig",
+      "type": "object"
+    },
+    "CreateRefundConfig": {
+      "additionalProperties": false,
+      "description": "Create refund.",
+      "properties": {
+        "operation": {
+          "const": "create_refund",
+          "default": "create_refund",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payment Id",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount in minor currency units (pence/cents), not whole currency units.",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "total_amount_confirmation": {
+          "description": "Expected sum of existing refunds plus this refund, in minor units.",
+          "exclusiveMinimum": 0,
+          "title": "Total Amount Confirmation",
+          "type": "integer"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "idempotency_key": {
+          "description": "Unique stable key for this intended refund; reuse for the same request.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Idempotency Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id",
+        "amount",
+        "total_amount_confirmation",
+        "idempotency_key"
+      ],
+      "title": "CreateRefundConfig",
+      "type": "object"
+    },
+    "CreateSubscriptionConfig": {
+      "additionalProperties": false,
+      "description": "Create subscription.",
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mandate_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mandate Id",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount in minor currency units (pence/cents), not whole currency units.",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "currency": {
+          "enum": [
+            "AUD",
+            "CAD",
+            "DKK",
+            "EUR",
+            "GBP",
+            "NZD",
+            "SEK",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "interval_unit": {
+          "enum": [
+            "weekly",
+            "monthly",
+            "yearly"
+          ],
+          "title": "Interval Unit",
+          "type": "string"
+        },
+        "interval": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Interval",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Count"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "idempotency_key": {
+          "description": "Unique stable key for this intended subscription; reuse for the same request.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Idempotency Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mandate_id",
+        "amount",
+        "currency",
+        "interval_unit",
+        "idempotency_key"
+      ],
+      "title": "CreateSubscriptionConfig",
+      "type": "object"
+    },
+    "GetCustomerBankAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get customer bank account.",
+      "properties": {
+        "operation": {
+          "const": "get_customer_bank_account",
+          "default": "get_customer_bank_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_bank_account_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Customer Bank Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_bank_account_id"
+      ],
+      "title": "GetCustomerBankAccountConfig",
+      "type": "object"
+    },
+    "GetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Get customer.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomerConfig",
+      "type": "object"
+    },
+    "GetMandateConfig": {
+      "additionalProperties": false,
+      "description": "Get mandate.",
+      "properties": {
+        "operation": {
+          "const": "get_mandate",
+          "default": "get_mandate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mandate_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mandate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mandate_id"
+      ],
+      "title": "GetMandateConfig",
+      "type": "object"
+    },
+    "GetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Get payment.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "GetPaymentConfig",
+      "type": "object"
+    },
+    "GetPayoutConfig": {
+      "additionalProperties": false,
+      "description": "Get payout.",
+      "properties": {
+        "operation": {
+          "const": "get_payout",
+          "default": "get_payout",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payout_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payout Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payout_id"
+      ],
+      "title": "GetPayoutConfig",
+      "type": "object"
+    },
+    "GetRefundConfig": {
+      "additionalProperties": false,
+      "description": "Get refund.",
+      "properties": {
+        "operation": {
+          "const": "get_refund",
+          "default": "get_refund",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "refund_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Refund Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "refund_id"
+      ],
+      "title": "GetRefundConfig",
+      "type": "object"
+    },
+    "GetSubscriptionConfig": {
+      "additionalProperties": false,
+      "description": "Get subscription.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "GetSubscriptionConfig",
+      "type": "object"
+    },
+    "GoCardlessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "gocardless_access_token",
+          "default": "gocardless_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "live",
+          "enum": [
+            "live",
+            "sandbox"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "GoCardless Access Token",
+      "type": "object",
+      "x-credential-instructions": "In your GoCardless dashboard, open Developers, then Create access token. Paste the token only. Choose the matching Live or Sandbox environment. Read-write access is required for writes; read-only tokens can run reads. Live writes can move real money or cancel collections.",
+      "x-credential-url": "https://manage.gocardless.com/developers/access-tokens"
+    },
+    "ListCreditorsConfig": {
+      "additionalProperties": false,
+      "description": "List creditors.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_creditors",
+          "default": "list_creditors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCreditorsConfig",
+      "type": "object"
+    },
+    "ListCustomerBankAccountsConfig": {
+      "additionalProperties": false,
+      "description": "List customer bank accounts.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_customer_bank_accounts",
+          "default": "list_customer_bank_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        }
+      },
+      "title": "ListCustomerBankAccountsConfig",
+      "type": "object"
+    },
+    "ListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List customers.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCustomersConfig",
+      "type": "object"
+    },
+    "ListMandatesConfig": {
+      "additionalProperties": false,
+      "description": "List mandates.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_mandates",
+          "default": "list_mandates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        }
+      },
+      "title": "ListMandatesConfig",
+      "type": "object"
+    },
+    "ListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "List payments.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        },
+        "mandate": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mandate"
+        }
+      },
+      "title": "ListPaymentsConfig",
+      "type": "object"
+    },
+    "ListPayoutsConfig": {
+      "additionalProperties": false,
+      "description": "List payouts.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_payouts",
+          "default": "list_payouts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPayoutsConfig",
+      "type": "object"
+    },
+    "ListRefundsConfig": {
+      "additionalProperties": false,
+      "description": "List refunds.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_refunds",
+          "default": "list_refunds",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment"
+        }
+      },
+      "title": "ListRefundsConfig",
+      "type": "object"
+    },
+    "ListSubscriptionsConfig": {
+      "additionalProperties": false,
+      "description": "List subscriptions.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from meta.cursors.after; each call reads one page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        },
+        "mandate": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mandate"
+        }
+      },
+      "title": "ListSubscriptionsConfig",
+      "type": "object"
+    },
+    "RetryPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Retry a failed payment; GoCardless decides eligibility. Never automatically retried by NoClick.",
+      "properties": {
+        "operation": {
+          "const": "retry_payment",
+          "default": "retry_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payment Id",
+          "type": "string"
+        },
+        "charge_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Charge Date"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "RetryPaymentConfig",
+      "type": "object"
+    },
+    "UpdateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Update customer.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "given_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Given Name"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Name"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "address_line1": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line1"
+        },
+        "address_line2": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "UpdateCustomerConfig",
+      "type": "object"
+    },
+    "UpdatePaymentConfig": {
+      "additionalProperties": false,
+      "description": "Update payment.",
+      "properties": {
+        "operation": {
+          "const": "update_payment",
+          "default": "update_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payment Id",
+          "type": "string"
+        },
+        "retry_if_possible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry If Possible"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "UpdatePaymentConfig",
+      "type": "object"
+    },
+    "UpdateSubscriptionConfig": {
+      "additionalProperties": false,
+      "description": "Update subscription.",
+      "properties": {
+        "operation": {
+          "const": "update_subscription",
+          "default": "update_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "description": "Amount in minor currency units (pence/cents), not whole currency units.",
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "payment_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Reference"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "UpdateSubscriptionConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_mandate": "#/$defs/CancelMandateConfig",
+          "cancel_payment": "#/$defs/CancelPaymentConfig",
+          "cancel_subscription": "#/$defs/CancelSubscriptionConfig",
+          "create_payment": "#/$defs/CreatePaymentConfig",
+          "create_refund": "#/$defs/CreateRefundConfig",
+          "create_subscription": "#/$defs/CreateSubscriptionConfig",
+          "get_customer": "#/$defs/GetCustomerConfig",
+          "get_customer_bank_account": "#/$defs/GetCustomerBankAccountConfig",
+          "get_mandate": "#/$defs/GetMandateConfig",
+          "get_payment": "#/$defs/GetPaymentConfig",
+          "get_payout": "#/$defs/GetPayoutConfig",
+          "get_refund": "#/$defs/GetRefundConfig",
+          "get_subscription": "#/$defs/GetSubscriptionConfig",
+          "list_creditors": "#/$defs/ListCreditorsConfig",
+          "list_customer_bank_accounts": "#/$defs/ListCustomerBankAccountsConfig",
+          "list_customers": "#/$defs/ListCustomersConfig",
+          "list_mandates": "#/$defs/ListMandatesConfig",
+          "list_payments": "#/$defs/ListPaymentsConfig",
+          "list_payouts": "#/$defs/ListPayoutsConfig",
+          "list_refunds": "#/$defs/ListRefundsConfig",
+          "list_subscriptions": "#/$defs/ListSubscriptionsConfig",
+          "retry_payment": "#/$defs/RetryPaymentConfig",
+          "update_customer": "#/$defs/UpdateCustomerConfig",
+          "update_payment": "#/$defs/UpdatePaymentConfig",
+          "update_subscription": "#/$defs/UpdateSubscriptionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCreditorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerBankAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCustomerBankAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMandatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMandateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListRefundsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetRefundConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPayoutsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPayoutConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/CreatePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdatePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateRefundConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelMandateConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/RetryPaymentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoCardlessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gocardless Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
