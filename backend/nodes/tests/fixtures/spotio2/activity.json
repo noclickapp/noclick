@@ -1,0 +1,37 @@
+{
+  "id": "1",
+  "verified": true,
+  "mobileId": "8asf111f",
+  "leadId": "61143732f5bd3ab20f9c67d1",
+  "dataObjectId": "61143732f5bd3ab20f9c67d1",
+  "type": "note",
+  "done": false,
+  "activityLat": 38.19502,
+  "activityLng": -113.90625,
+  "leadLat": 38.19502,
+  "leadLng": -113.90625,
+  "transition": {
+    "fromStageId": "1",
+    "toStageId": "1"
+  },
+  "isNote": true,
+  "ownerChanged": {
+    "previousLeadOwnerId": "4082",
+    "newLeadOwnerId": "5000",
+    "previousDataObjectOwnerId": "4082",
+    "newDataObjectOwnerId": "5000"
+  },
+  "resultId": "2",
+  "direction": "in",
+  "email": "spotio@spotio.com",
+  "reference": "dsfoso123sadp",
+  "isRead": false,
+  "activityTemplateId": "a6vhAo3FG7t1",
+  "ownerId": "1",
+  "title": "Knock the door",
+  "notes": "My notes",
+  "date": "2026-11-09T11:35:27.7625515+00:00",
+  "duration": 15,
+  "durationSeconds": 900,
+  "allDay": false
+}
