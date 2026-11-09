@@ -125,7 +125,7 @@ from nodes.scopes.bookeo import BOOKEO_SCOPES
 
 
 class BookeoOAuthCredential(BaseModel):
-    credential_type: Literal["bookeo_oauth"] = Field(..., json_schema_extra={"ui:hidden": True})
+    credential_type: Literal["bookeo_oauth"] = Field("bookeo_oauth", json_schema_extra={"ui:hidden": True})
     access_token: str = Field(min_length=1, max_length=4096, repr=False, json_schema_extra={"ui:widget": "password"})
     refresh_token: str | None = Field(None, repr=False, json_schema_extra={"ui:widget": "password"})
     expires_at: str | None = None
