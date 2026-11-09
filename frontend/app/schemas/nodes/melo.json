@@ -1,0 +1,2307 @@
+{
+  "$defs": {
+    "MeloAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "melo_api_key",
+          "default": "melo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Melo API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Melo (Stream Estate) console, open API Keys and create an API key. Paste the key here. NoClick checks the connection by listing your saved searches.",
+      "x-credential-url": "https://stream.estate/console"
+    },
+    "MeloCreateSearchConfig": {
+      "additionalProperties": false,
+      "description": "Create a search.",
+      "properties": {
+        "operation": {
+          "const": "create_search",
+          "default": "create_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bedroomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of bedrooms in the property.",
+          "title": "Bedroommin"
+        },
+        "bedroomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of bedrooms in the property.",
+          "title": "Bedroommax"
+        },
+        "budgetMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum budget for the property.",
+          "title": "Budgetmax"
+        },
+        "budgetMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum budget for the property.",
+          "title": "Budgetmin"
+        },
+        "endpointRecipient": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS webhook that receives `match` payloads whenever a property satisfies the search. Requires `notificationEnabled=true`.",
+          "title": "Endpointrecipient"
+        },
+        "eventEndpoint": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS webhook that receives advert `event` payloads (price changes, expirations, etc.). Requires `notificationEnabled=true` and at least one entry in `subscribedEvents`.",
+          "title": "Eventendpoint"
+        },
+        "furnished": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the property is furnished or not.",
+          "title": "Furnished"
+        },
+        "includedCities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Included cities. Use the location autocomplete endpoint to get the desired city IRIs.",
+          "title": "Includedcities"
+        },
+        "includedDepartments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Included departments. Use the location autocomplete endpoint to get the desired department IRIs.",
+          "title": "Includeddepartments"
+        },
+        "includedZipcodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Included zipcodes.",
+          "title": "Includedzipcodes"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude of the center point used for radial filtering. Provide together with `lon`.",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude of the center point used for radial filtering. Provide together with `lat`.",
+          "title": "Lon"
+        },
+        "notificationEnabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enables delivery of matches and events either by webhook (`endpointRecipient`, `eventEndpoint`) or by email (`notificationRecipient`).",
+          "title": "Notificationenabled"
+        },
+        "notificationRecipient": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address that receives alert summaries when `notificationEnabled=true`.",
+          "title": "Notificationrecipient"
+        },
+        "propertyTypes": {
+          "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`.",
+          "items": {
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Propertytypes",
+          "type": "array"
+        },
+        "publisherTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  0,
+                  1
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of publisher. Individual `0`, Professional `1`.",
+          "title": "Publishertypes"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distance in kilometers around the provided `lat`/`lon`.",
+          "title": "Radius"
+        },
+        "roomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of rooms.",
+          "title": "Roommin"
+        },
+        "roomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of rooms.",
+          "title": "Roommax"
+        },
+        "subscribedEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "ad.update.price",
+                  "ad.update.surface",
+                  "ad.update.pictures",
+                  "ad.update.expired",
+                  "property.ad.create",
+                  "property.ad.update"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event codes you want to receive on the `eventEndpoint`.",
+          "title": "Subscribedevents"
+        },
+        "surfaceMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum property surface area.",
+          "title": "Surfacemax"
+        },
+        "surfaceMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum property surface area.",
+          "title": "Surfacemin"
+        },
+        "title": {
+          "description": "Title of the created search.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "transactionType": {
+          "description": "Type of transaction. Sell `0`, Rent `1`.",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Transactiontype",
+          "type": "integer"
+        },
+        "withCoherentPrice": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price coherence filter. `true` returns adverts whose price passes our coherence checks; `false` returns adverts flagged as incoherent \u2014 both also include adverts whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`.",
+          "title": "Withcoherentprice"
+        },
+        "withVirtualTour": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the property includes a virtual tour.",
+          "title": "Withvirtualtour"
+        }
+      },
+      "required": [
+        "propertyTypes",
+        "title",
+        "transactionType"
+      ],
+      "title": "MeloCreateSearchConfig",
+      "type": "object"
+    },
+    "MeloDeleteSearchConfig": {
+      "additionalProperties": false,
+      "description": "Delete a search.",
+      "properties": {
+        "operation": {
+          "const": "delete_search",
+          "default": "delete_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the selected search",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MeloDeleteSearchConfig",
+      "type": "object"
+    },
+    "MeloGetPricePerMeterConfig": {
+      "additionalProperties": false,
+      "description": "Price per meter evolution.",
+      "properties": {
+        "operation": {
+          "const": "get_price_per_meter",
+          "default": "get_price_per_meter",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "aggregationInterval": {
+          "anyOf": [
+            {
+              "enum": [
+                "month",
+                "year"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date histogram granularity for time series.",
+          "title": "Aggregationinterval",
+          "enum": [
+            "month",
+            "year"
+          ],
+          "x-enum-searchable": true
+        },
+        "bedroomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of bedrooms in the property.",
+          "title": "Bedroommin"
+        },
+        "bedroomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of bedrooms in the property.",
+          "title": "Bedroommax"
+        },
+        "budgetMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum budget for the property.",
+          "title": "Budgetmin"
+        },
+        "budgetMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum budget for the property.",
+          "title": "Budgetmax"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date from which the property is created \u2014 inclusive.",
+          "title": "Fromdate"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date until which the property is created \u2014 inclusive. Example: `toDate=2021-05-07 12:42:42`",
+          "title": "Todate"
+        },
+        "fromUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date from which the property is updated \u2014 inclusive.",
+          "title": "Fromupdatedat"
+        },
+        "toUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date until which the property is updated \u2014 inclusive.",
+          "title": "Toupdatedat"
+        },
+        "furnished": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for furnished properties.",
+          "title": "Furnished"
+        },
+        "includedCities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Located in given cities. Example: `includedCities[]=/cities/30953`. Use the location autocomplete endpoint to get the desired city IRIs.",
+          "title": "Includedcities"
+        },
+        "includedDepartments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Located in given departments. Example: `includedDepartments[]=/departments/77`. Use the location autocomplete endpoint to get the desired department IRIs.",
+          "title": "Includeddepartments"
+        },
+        "includedZipcodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Located in given zipcodes. Example: `includedZipcodes[]=75017&includedZipcodes[]=75018`",
+          "title": "Includedzipcodes"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude. Will work if latitude exists in the property. Example: `lat=48.864716`",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude. Will work if longitude exists in the property. Example: `lon=2.349014`",
+          "title": "Lon"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distance expressed in kilometers. Will work if latitude & longitude parameters are also set. Example: `radius=20`, `radius=0.5`",
+          "title": "Radius"
+        },
+        "propertyTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Example: `propertyTypes[]=0&propertyTypes[]=1`",
+          "title": "Propertytypes"
+        },
+        "publisherTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  0,
+                  1
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of publisher. Individual `0`, Professional `1`.",
+          "title": "Publishertypes"
+        },
+        "roomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum rooms of the property.",
+          "title": "Roommin"
+        },
+        "roomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum rooms of the property.",
+          "title": "Roommax"
+        },
+        "surfaceMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Greater than or equal to given surface.",
+          "title": "Surfacemin"
+        },
+        "surfaceMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower than or equal to given surface.",
+          "title": "Surfacemax"
+        },
+        "transactionType": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of transaction. Sell `0`, Rent `1`.",
+          "title": "Transactiontype"
+        },
+        "withCoherentPrice": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price coherence filter. `true` returns properties whose price passes our coherence checks; `false` returns properties flagged as incoherent \u2014 both also include properties whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`.",
+          "title": "Withcoherentprice"
+        },
+        "withVirtualTour": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Having a virtual tour video link.",
+          "title": "Withvirtualtour"
+        },
+        "expired": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for expired properties.",
+          "title": "Expired"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The collection page number.",
+          "title": "Page"
+        },
+        "itemsPerPage": {
+          "anyOf": [
+            {
+              "maximum": 30,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items per page. Max is `30`.",
+          "title": "Itemsperpage"
+        }
+      },
+      "title": "MeloGetPricePerMeterConfig",
+      "type": "object"
+    },
+    "MeloGetPropertyConfig": {
+      "additionalProperties": false,
+      "description": "Get a property.",
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the selected property",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MeloGetPropertyConfig",
+      "type": "object"
+    },
+    "MeloGetSearchConfig": {
+      "additionalProperties": false,
+      "description": "Get a search.",
+      "properties": {
+        "operation": {
+          "const": "get_search",
+          "default": "get_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the selected search",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MeloGetSearchConfig",
+      "type": "object"
+    },
+    "MeloListCitiesConfig": {
+      "additionalProperties": false,
+      "description": "List cities.",
+      "properties": {
+        "operation": {
+          "const": "list_cities",
+          "default": "list_cities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "excludeGroupedCities": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to exclude cities that have grouped cities under them.",
+          "title": "Excludegroupedcities"
+        },
+        "insee": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by INSEE code.",
+          "title": "Insee"
+        },
+        "libelle": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by city label/display name.",
+          "title": "Libelle"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by city name.",
+          "title": "Name"
+        },
+        "order[name]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort by name.",
+          "title": "Order[Name]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The collection page number.",
+          "title": "Page"
+        },
+        "zipcode": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by zipcode.",
+          "title": "Zipcode"
+        }
+      },
+      "title": "MeloListCitiesConfig",
+      "type": "object"
+    },
+    "MeloListLocationsConfig": {
+      "additionalProperties": false,
+      "description": "Location autocomplete.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query term to perform search.",
+          "title": "Query"
+        },
+        "excludedCitiesIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude cities using their IRI.",
+          "title": "Excludedcitiesids"
+        },
+        "excludedDepartmentsIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude departments using their IRI.",
+          "title": "Excludeddepartmentsids"
+        }
+      },
+      "title": "MeloListLocationsConfig",
+      "type": "object"
+    },
+    "MeloListPointsOfInterestConfig": {
+      "additionalProperties": false,
+      "description": "Points of interest.",
+      "properties": {
+        "operation": {
+          "const": "list_points_of_interest",
+          "default": "list_points_of_interest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "facilities": {
+          "description": "Category of points of interest. Current available categories are `kindergarten`, `school`, `restaurant`, `hospital`, `parking`. Example: `facilities[]=kindergarten&facilities[]=school`",
+          "items": {
+            "enum": [
+              "kindergarten",
+              "school",
+              "restaurant",
+              "hospital",
+              "parking"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Facilities",
+          "type": "array"
+        },
+        "lat": {
+          "description": "Latitude.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        },
+        "radius": {
+          "description": "Distance expressed in kilometers.",
+          "exclusiveMinimum": 0,
+          "title": "Radius",
+          "type": "number"
+        }
+      },
+      "required": [
+        "facilities",
+        "lat",
+        "lon",
+        "radius"
+      ],
+      "title": "MeloListPointsOfInterestConfig",
+      "type": "object"
+    },
+    "MeloListPropertiesConfig": {
+      "additionalProperties": false,
+      "description": "List properties.",
+      "properties": {
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bedroomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of bedrooms in the property.",
+          "title": "Bedroommin"
+        },
+        "bedroomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of bedrooms in the property.",
+          "title": "Bedroommax"
+        },
+        "budgetMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum budget for the property.",
+          "title": "Budgetmin"
+        },
+        "budgetMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum budget for the property.",
+          "title": "Budgetmax"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date from which the property is created \u2014 inclusive.",
+          "title": "Fromdate"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date until which the property is created \u2014 inclusive. Example: `toDate=2021-05-07 12:42:42`",
+          "title": "Todate"
+        },
+        "fromUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date from which the property is updated \u2014 inclusive.",
+          "title": "Fromupdatedat"
+        },
+        "toUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date until which the property is updated \u2014 inclusive.",
+          "title": "Toupdatedat"
+        },
+        "furnished": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for furnished properties.",
+          "title": "Furnished"
+        },
+        "includedCities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Located in given cities. Example: `includedCities[]=/cities/30953`. Use the location autocomplete endpoint to get the desired city IRIs.",
+          "title": "Includedcities"
+        },
+        "includedDepartments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Located in given departments. Example: `includedDepartments[]=/departments/77`. Use the location autocomplete endpoint to get the desired department IRIs.",
+          "title": "Includeddepartments"
+        },
+        "includedZipcodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Located in given zipcodes. Example: `includedZipcodes[]=75017&includedZipcodes[]=75018`",
+          "title": "Includedzipcodes"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude. Will work if latitude exists in the property. Example: `lat=48.864716`",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude. Will work if longitude exists in the property. Example: `lon=2.349014`",
+          "title": "Lon"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distance expressed in kilometers. Will work if latitude & longitude parameters are also set. Example: `radius=20`, `radius=0.5`",
+          "title": "Radius"
+        },
+        "propertyTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Example: `propertyTypes[]=0&propertyTypes[]=1`",
+          "title": "Propertytypes"
+        },
+        "publisherTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  0,
+                  1
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of publisher. Individual `0`, Professional `1`.",
+          "title": "Publishertypes"
+        },
+        "roomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum rooms of the property.",
+          "title": "Roommin"
+        },
+        "roomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum rooms of the property.",
+          "title": "Roommax"
+        },
+        "surfaceMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Greater than or equal to given surface.",
+          "title": "Surfacemin"
+        },
+        "surfaceMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower than or equal to given surface.",
+          "title": "Surfacemax"
+        },
+        "transactionType": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of transaction. Sell `0`, Rent `1`.",
+          "title": "Transactiontype"
+        },
+        "withCoherentPrice": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price coherence filter. `true` returns properties whose price passes our coherence checks; `false` returns properties flagged as incoherent \u2014 both also include properties whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`.",
+          "title": "Withcoherentprice"
+        },
+        "withVirtualTour": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Having a virtual tour video link.",
+          "title": "Withvirtualtour"
+        },
+        "expired": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to show properties that are expired. A property is considered expired when all its adverts are expired. Default is `null` which returns all properties no matter if they're expired or not.",
+          "title": "Expired"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The collection page number.",
+          "title": "Page"
+        },
+        "itemsPerPage": {
+          "anyOf": [
+            {
+              "maximum": 30,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items per page. Max is `30`.",
+          "title": "Itemsperpage"
+        }
+      },
+      "title": "MeloListPropertiesConfig",
+      "type": "object"
+    },
+    "MeloListSearchesConfig": {
+      "additionalProperties": false,
+      "description": "List searches.",
+      "properties": {
+        "operation": {
+          "const": "list_searches",
+          "default": "list_searches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "notificationEnabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter searches which have notifications enabled or not.",
+          "title": "Notificationenabled"
+        },
+        "order[title]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order searches by title.",
+          "title": "Order[Title]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The collection page number.",
+          "title": "Page"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title of the created search.",
+          "title": "Title"
+        }
+      },
+      "title": "MeloListSearchesConfig",
+      "type": "object"
+    },
+    "MeloListSimilarPropertiesConfig": {
+      "additionalProperties": false,
+      "description": "List similar properties.",
+      "properties": {
+        "operation": {
+          "const": "list_similar_properties",
+          "default": "list_similar_properties",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the selected property",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date from which the property is created \u2014 inclusive.",
+          "title": "Fromdate"
+        },
+        "order[createdAt]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order properties by creation date.",
+          "title": "Order[Createdat]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "order[updatedAt]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order properties by update date.",
+          "title": "Order[Updatedat]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "order[pricePerMeter]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order properties by price per meter.",
+          "title": "Order[Pricepermeter]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "order[price]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order properties by price.",
+          "title": "Order[Price]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "order[surface]": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order properties by surface.",
+          "title": "Order[Surface]",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The collection page number.",
+          "title": "Page"
+        },
+        "itemsPerPage": {
+          "anyOf": [
+            {
+              "maximum": 30,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items per page. Max is `30`.",
+          "title": "Itemsperpage"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MeloListSimilarPropertiesConfig",
+      "type": "object"
+    },
+    "MeloUpdateSearchConfig": {
+      "additionalProperties": false,
+      "description": "Update a search.",
+      "properties": {
+        "operation": {
+          "const": "update_search",
+          "default": "update_search",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the existing search",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "bedroomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of bedrooms in the property.",
+          "title": "Bedroommin"
+        },
+        "bedroomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of bedrooms in the property.",
+          "title": "Bedroommax"
+        },
+        "budgetMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum budget for the property.",
+          "title": "Budgetmax"
+        },
+        "budgetMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum budget for the property.",
+          "title": "Budgetmin"
+        },
+        "endpointRecipient": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS webhook that receives `match` payloads whenever a property satisfies the search. Requires `notificationEnabled=true`.",
+          "title": "Endpointrecipient"
+        },
+        "eventEndpoint": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS webhook that receives advert `event` payloads (price changes, expirations, etc.). Requires `notificationEnabled=true` and at least one entry in `subscribedEvents`.",
+          "title": "Eventendpoint"
+        },
+        "furnished": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the property is furnished or not.",
+          "title": "Furnished"
+        },
+        "includedCities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Included cities. Use the location autocomplete endpoint to get the desired city IRIs.",
+          "title": "Includedcities"
+        },
+        "includedDepartments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Included departments. Use the location autocomplete endpoint to get the desired department IRIs.",
+          "title": "Includeddepartments"
+        },
+        "includedZipcodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Included zipcodes.",
+          "title": "Includedzipcodes"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude of the center point used for radial filtering. Provide together with `lon`.",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude of the center point used for radial filtering. Provide together with `lat`.",
+          "title": "Lon"
+        },
+        "notificationEnabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enables delivery of matches and events either by webhook (`endpointRecipient`, `eventEndpoint`) or by email (`notificationRecipient`).",
+          "title": "Notificationenabled"
+        },
+        "notificationRecipient": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address that receives alert summaries when `notificationEnabled=true`.",
+          "title": "Notificationrecipient"
+        },
+        "propertyTypes": {
+          "description": "Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`.",
+          "items": {
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Propertytypes",
+          "type": "array"
+        },
+        "publisherTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  0,
+                  1
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of publisher. Individual `0`, Professional `1`.",
+          "title": "Publishertypes"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distance in kilometers around the provided `lat`/`lon`.",
+          "title": "Radius"
+        },
+        "roomMin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of rooms.",
+          "title": "Roommin"
+        },
+        "roomMax": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of rooms.",
+          "title": "Roommax"
+        },
+        "subscribedEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "ad.update.price",
+                  "ad.update.surface",
+                  "ad.update.pictures",
+                  "ad.update.expired",
+                  "property.ad.create",
+                  "property.ad.update"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event codes you want to receive on the `eventEndpoint`.",
+          "title": "Subscribedevents"
+        },
+        "surfaceMax": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum property surface area.",
+          "title": "Surfacemax"
+        },
+        "surfaceMin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum property surface area.",
+          "title": "Surfacemin"
+        },
+        "title": {
+          "description": "Title of the created search.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "transactionType": {
+          "description": "Type of transaction. Sell `0`, Rent `1`.",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Transactiontype",
+          "type": "integer"
+        },
+        "withCoherentPrice": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price coherence filter. `true` returns adverts whose price passes our coherence checks; `false` returns adverts flagged as incoherent \u2014 both also include adverts whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`.",
+          "title": "Withcoherentprice"
+        },
+        "withVirtualTour": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the property includes a virtual tour.",
+          "title": "Withvirtualtour"
+        }
+      },
+      "required": [
+        "id",
+        "propertyTypes",
+        "title",
+        "transactionType"
+      ],
+      "title": "MeloUpdateSearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_search": "#/$defs/MeloCreateSearchConfig",
+          "delete_search": "#/$defs/MeloDeleteSearchConfig",
+          "get_price_per_meter": "#/$defs/MeloGetPricePerMeterConfig",
+          "get_property": "#/$defs/MeloGetPropertyConfig",
+          "get_search": "#/$defs/MeloGetSearchConfig",
+          "list_cities": "#/$defs/MeloListCitiesConfig",
+          "list_locations": "#/$defs/MeloListLocationsConfig",
+          "list_points_of_interest": "#/$defs/MeloListPointsOfInterestConfig",
+          "list_properties": "#/$defs/MeloListPropertiesConfig",
+          "list_searches": "#/$defs/MeloListSearchesConfig",
+          "list_similar_properties": "#/$defs/MeloListSimilarPropertiesConfig",
+          "update_search": "#/$defs/MeloUpdateSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MeloListPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloGetPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloListSimilarPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloGetPricePerMeterConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloListPointsOfInterestConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloListCitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloListSearchesConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloGetSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloCreateSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloUpdateSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MeloDeleteSearchConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MeloAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Melo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

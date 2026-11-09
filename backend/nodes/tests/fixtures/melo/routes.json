@@ -1,0 +1,54 @@
+{
+  "source": "https://docs.stream.estate/api-reference/openapi.json",
+  "version": "1.0.0",
+  "routes": {
+    "list_properties": [
+      "GET",
+      "/documents/properties"
+    ],
+    "get_property": [
+      "GET",
+      "/documents/properties/{id}"
+    ],
+    "list_similar_properties": [
+      "GET",
+      "/documents/properties/{id}/similar-properties"
+    ],
+    "get_price_per_meter": [
+      "GET",
+      "/indicators/price_per_meter"
+    ],
+    "list_points_of_interest": [
+      "GET",
+      "/indicators/points_of_interest"
+    ],
+    "list_locations": [
+      "GET",
+      "/public/location-autocomplete"
+    ],
+    "list_cities": [
+      "GET",
+      "/cities"
+    ],
+    "list_searches": [
+      "GET",
+      "/searches"
+    ],
+    "get_search": [
+      "GET",
+      "/searches/{id}"
+    ],
+    "create_search": [
+      "POST",
+      "/searches"
+    ],
+    "update_search": [
+      "PUT",
+      "/searches/{id}"
+    ],
+    "delete_search": [
+      "DELETE",
+      "/searches/{id}"
+    ]
+  }
+}
