@@ -1,0 +1,566 @@
+{
+  "source": "https://api.teltel.io/v2/api.user.0d9ae995324f03f254d3da8d963d46b2.json",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_balance"
+      },
+      "method": "GET",
+      "path": "/account/balance",
+      "response": {
+        "data": [
+          {
+            "credit": -9.99,
+            "credit_limit": 200,
+            "balance": 190.01
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "list_users"
+      },
+      "method": "GET",
+      "path": "/users",
+      "response": {
+        "data": [
+          {
+            "id": 21312,
+            "name": "u8172616",
+            "realname": "John Doe",
+            "email": "john.doe@company.com",
+            "is_admin": true,
+            "internal_number": "111",
+            "state_id": 1,
+            "created_at": "2021-01-01 14:05:36",
+            "api_key": "5430d3df0f03f372f8b1941c8b329ed7ca0b7ab5a44130066f738a8420458fd11c0ae70c1a0bc07dca07b5148bbaa9167ce216d121bcaaa970d66ee0efca1b6a",
+            "display_name": "John Doe",
+            "devices_online": [
+              "77015443"
+            ],
+            "access_groups": [
+              102,
+              387,
+              132
+            ],
+            "relations": {
+              "devices": [
+                {
+                  "name": "44051254",
+                  "realname": "Floor 5, Room 2",
+                  "user_id": 21312,
+                  "domain_id": 3,
+                  "state_id": 1,
+                  "is_online": true,
+                  "connection": {
+                    "latency": 87,
+                    "reg_uri": {
+                      "actual": "104.248.101.248",
+                      "expected": "44051254.sip.%{DOMAIN}%"
+                    },
+                    "last_reg": {
+                      "human": "53 seconds ago",
+                      "time": "2021-01-01 14:05:36"
+                    },
+                    "ip": {
+                      "device": "187.122.34.44",
+                      "server": "104.248.101.248"
+                    },
+                    "server": {
+                      "location": "Frankfurt",
+                      "datacenter": "AWS"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "list_devices"
+      },
+      "method": "GET",
+      "path": "/devices",
+      "response": {
+        "data": [
+          {
+            "name": "44051254",
+            "realname": "Floor 5, Room 2",
+            "user_id": 21312,
+            "domain_id": 3,
+            "state_id": 1,
+            "is_online": true,
+            "connection": {
+              "latency": 87,
+              "reg_uri": {
+                "actual": "104.248.101.248",
+                "expected": "44051254.sip.%{DOMAIN}%"
+              },
+              "last_reg": {
+                "human": "53 seconds ago",
+                "time": "2021-01-01 14:05:36"
+              },
+              "ip": {
+                "device": "187.122.34.44",
+                "server": "104.248.101.248"
+              },
+              "server": {
+                "location": "Frankfurt",
+                "datacenter": "AWS"
+              }
+            },
+            "relations": {
+              "user": {
+                "id": 21312,
+                "name": "u8172616",
+                "realname": "John Doe",
+                "email": "john.doe@company.com"
+              },
+              "domain": {
+                "id": 3,
+                "domain": "sip.%{DOMAIN}%",
+                "domain_type": "static"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "list_calls"
+      },
+      "method": "GET",
+      "path": "/calls",
+      "response": {
+        "data": [
+          {
+            "call_id": "1632136720.2983796.44.41",
+            "starttime": "2021-09-20 14:18:44",
+            "stoptime": "2021-09-20 14:18:48",
+            "direction": "outbound",
+            "type": "standard",
+            "status": "answer",
+            "duration_sec": 4,
+            "waiting_sec": 7,
+            "handle_sec": 5,
+            "rate": 0.038,
+            "cost": 0.002533,
+            "caller": {
+              "number": "44124376",
+              "type": "sip",
+              "cid": "37161111111",
+              "dnid": "37126222222",
+              "user_id": 32123
+            },
+            "callee": {
+              "number": "37126222222",
+              "type": "phone",
+              "user_id": null
+            },
+            "extra_prefix": null,
+            "hangup_by": "sip",
+            "hangup_value": "12345678",
+            "call_flow": "|shortNumber^6666^1^d3b32372-ca9b-40b9-9942-43431decd791|changeprefix^1^1^473b9506-ac37-4a27-9361-1f1907cd01f7|calltoVoip^2^1^2f4cb260-1bb2-421b-a179-6ce4c7e92d17|",
+            "audio_url": "https://storage.%{DOMAIN}%/playaudio?uniqueid=zeShuaI1AndUJlE2bmmns0U0NFhPdmZFbzD4RGc1PSIsInZhbHVlIjoialBNdkMrbnRmR3FdG0YyVzhsTUhLdGw1amEwdDRVODgxQks3S3orbDFSQT0iLCJtYWMiOiJjZTEwOTE4NzExZTE2NWZkNTI1N2JjZTFjOWJlMjIwNDI5M2FlBsVhNWJiNjc2ZjU2ZTcxNmQwOWQyMmM0NDExIn0=",
+            "transfer": {
+              "direction": "internal",
+              "from_number": "9282341",
+              "to_number": "8172616",
+              "to_type": "9282341"
+            },
+            "transcripts": [
+              {
+                "id": "1f1bcca9-4ec2-6cdc-a743-fa1463ec7843",
+                "created_at": "2026-09-30 14:29:29",
+                "created_by": "teltel-1",
+                "text": "lorem ipsum"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "list_contacts"
+      },
+      "method": "GET",
+      "path": "/contacts",
+      "response": {
+        "data": [
+          {
+            "phone": "371212345678",
+            "group_id": "5",
+            "param_1": "Param 1",
+            "param_2": "Param 2",
+            "param_3": "Param 3",
+            "param_4": "Param 4",
+            "param_5": "Param 5"
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "get_contact",
+        "id": 13
+      },
+      "method": "GET",
+      "path": "/contacts/13",
+      "response": {
+        "data": {
+          "id": 13,
+          "group_id": 6,
+          "phone": "2621234567",
+          "param_1": "Lorem ipsum",
+          "param_2": 123,
+          "param_3": "28-04-2021",
+          "param_4": "Consectetur adipiscing",
+          "param_5": "Sit amet"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "create_contact",
+        "phone": "371212345678",
+        "group_id": "5"
+      },
+      "method": "POST",
+      "path": "/contacts",
+      "response": {
+        "data": {
+          "id": 981,
+          "phone": "37121234567"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "update_contact",
+        "id": 13,
+        "param_1": "Param 1"
+      },
+      "method": "PATCH",
+      "path": "/contacts/13",
+      "response": {
+        "meta": {
+          "updated": true
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "delete_contact",
+        "id": 13
+      },
+      "method": "DELETE",
+      "path": "/contacts/13",
+      "response": {
+        "meta": {
+          "deleted": true
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_contact_groups"
+      },
+      "method": "GET",
+      "path": "/contacts/groups",
+      "response": {
+        "data": [
+          {
+            "id": 13,
+            "name": "Contact group",
+            "total_contacts": 50,
+            "created": "2021-01-01 10:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "get_contact_group",
+        "id": 13
+      },
+      "method": "GET",
+      "path": "/contacts/groups/13",
+      "response": {
+        "data": {
+          "id": 13,
+          "name": "Contact group",
+          "total_contacts": 50,
+          "created": "2021-01-01 10:00:00"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "create_contact_group",
+        "name": "Group name"
+      },
+      "method": "POST",
+      "path": "/contacts/groups",
+      "response": {
+        "data": {
+          "id": 981,
+          "name": "Example name"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "update_contact_group",
+        "id": 13,
+        "name": "Group name"
+      },
+      "method": "PATCH",
+      "path": "/contacts/groups/13",
+      "response": {
+        "meta": {
+          "updated": true
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "delete_contact_group",
+        "id": 13
+      },
+      "method": "DELETE",
+      "path": "/contacts/groups/13",
+      "response": {
+        "meta": {
+          "deleted": true
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "send_sms",
+        "sender": "37126118199",
+        "to": "37126118198",
+        "message": "Praesent porttitor nulla vitae posuere."
+      },
+      "method": "POST",
+      "path": "/sms/text",
+      "response": {
+        "data": {
+          "id": "1832256"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_sms_reports"
+      },
+      "method": "GET",
+      "path": "/sms/reports",
+      "response": {
+        "data": [
+          {
+            "id": 1832256,
+            "from": "37126118199",
+            "to": "37126118198",
+            "country": {
+              "id": "109",
+              "name": "Latvia (Republic of)",
+              "iso": "lv",
+              "mcc": 247
+            },
+            "operator": {
+              "id": "33",
+              "name": "Tele2",
+              "iso": "lv",
+              "mcc": 247
+            },
+            "created_at": "2021-01-12 22:11:20",
+            "delivered": "2021-01-12 22:22:20",
+            "multipart": false,
+            "parts": 1,
+            "price": 0.05,
+            "sum": 0.05,
+            "state": "DONE",
+            "detailed_state": "Not delivered",
+            "message": "Aenean vulputate eleifend tellus. Aenean vulputate eleifend tellus.",
+            "campaign_id": 27,
+            "error_msg": "Flood message"
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "get_sms_report",
+        "id": 13
+      },
+      "method": "GET",
+      "path": "/sms/reports/13",
+      "response": {
+        "data": {
+          "id": 1832256,
+          "from": "37126118199",
+          "to": "37126118198",
+          "country": {
+            "id": "109",
+            "name": "Latvia (Republic of)",
+            "iso": "lv",
+            "mcc": 247
+          },
+          "operator": {
+            "id": "33",
+            "name": "Tele2",
+            "iso": "lv",
+            "mcc": 247
+          },
+          "created_at": "2021-01-12 22:11:20",
+          "delivered": "2021-01-12 22:22:20",
+          "multipart": false,
+          "parts": 1,
+          "price": 0.05,
+          "sum": 0.05,
+          "state": "DONE",
+          "detailed_state": "Not delivered",
+          "message": "Aenean vulputate eleifend tellus. Aenean vulputate eleifend tellus.",
+          "campaign_id": 27,
+          "error_msg": "Flood message"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_inbox_messages"
+      },
+      "method": "GET",
+      "path": "/sms/inbox/reports",
+      "response": {
+        "data": [
+          {
+            "id": 1832256,
+            "from": "37126118199",
+            "to": "37126118198",
+            "state": "DONE",
+            "received_at": "2021-01-12 22:11:20",
+            "message": "Aenean vulputate eleifend tellus. Aenean vulputate eleifend tellus.",
+            "error_msg": "Flood message",
+            "sms_handler_email": "my_sms_inbox@example.com",
+            "sms_handler_url": "https://www.example.io/sms/inbox"
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "get_inbox_message",
+        "id": 13
+      },
+      "method": "GET",
+      "path": "/sms/inbox/reports/13",
+      "response": {
+        "data": {
+          "id": 1832256,
+          "from": "37126118199",
+          "to": "37126118198",
+          "state": "DONE",
+          "received_at": "2021-01-12 22:11:20",
+          "message": "Aenean vulputate eleifend tellus. Aenean vulputate eleifend tellus.",
+          "error_msg": "Flood message",
+          "sms_handler_email": "my_sms_inbox@example.com",
+          "sms_handler_url": "https://www.example.io/sms/inbox"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_autodialers"
+      },
+      "method": "GET",
+      "path": "/autodialers",
+      "response": {
+        "data": [
+          {
+            "id": 781,
+            "name": "TEST",
+            "created_at": "2021-01-12 22:11:20",
+            "campaign_type": "PREDICTIVE",
+            "status": "RUNNING",
+            "caller_id": [
+              "37126118199",
+              "37126118198"
+            ],
+            "agents_users": [
+              1,
+              2,
+              3
+            ],
+            "agents_groups": [
+              1,
+              2,
+              3
+            ],
+            "predictive_increase_proc": 22,
+            "call_wait": 40,
+            "retry_count": 0,
+            "retry_interval": 35,
+            "call_interval": 40,
+            "call_to_agent_timeout": 5,
+            "agent_delay": 0,
+            "call_wait_signal": null,
+            "days": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "hours": [
+              10,
+              12,
+              [
+                14,
+                15
+              ],
+              [
+                17.5,
+                20.5
+              ],
+              [
+                23,
+                6.5
+              ]
+            ],
+            "customized_statuses": [
+              567,
+              568
+            ],
+            "schedule_start_date": "2021-01-01 00:00:00",
+            "schedule_end_date": "2022-12-01 23:59:59",
+            "call_if_dashboard": false,
+            "amd_enabled": true,
+            "amd_custom_enabled": true,
+            "amd_initial_silence": 2500,
+            "amd_greeting": 1500,
+            "amd_after_greeting_silence": 400,
+            "amd_total_analysis_time": 5000,
+            "amd_minimum_word_length": 100,
+            "amd_between_words_silence": 50,
+            "amd_maximum_number_of_words": 2,
+            "amd_silence_threshold": 256,
+            "amd_maximum_word_length": 5000,
+            "update_contact_on_outcall": false,
+            "update_contact_on_incall": false,
+            "disable_auto_stop": false,
+            "retry_criteria": "no_answer_contact",
+            "call_to_agent_strategy": "sim"
+          }
+        ]
+      }
+    }
+  ]
+}

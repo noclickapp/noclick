@@ -1,0 +1,1068 @@
+{
+  "$defs": {
+    "TeltelAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "teltel_api_key",
+          "default": "teltel_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Teltel API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Teltel user API key. NoClick sends it as the apikey query parameter to api.teltel.io over HTTPS. The connection check reads users in your account.",
+      "x-credential-url": "https://api.teltel.io/"
+    },
+    "TeltelCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "POST /contacts.",
+      "properties": {
+        "phone": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Group Id",
+          "type": "string"
+        },
+        "param_1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 1"
+        },
+        "param_2": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 2"
+        },
+        "param_3": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 3"
+        },
+        "param_4": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 4"
+        },
+        "param_5": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 5"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phone",
+        "group_id"
+      ],
+      "title": "TeltelCreateContactConfig",
+      "type": "object"
+    },
+    "TeltelCreateContactGroupConfig": {
+      "additionalProperties": false,
+      "description": "POST /contacts/groups.",
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_contact_group",
+          "default": "create_contact_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TeltelCreateContactGroupConfig",
+      "type": "object"
+    },
+    "TeltelDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "DELETE /contacts/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelDeleteContactConfig",
+      "type": "object"
+    },
+    "TeltelDeleteContactGroupConfig": {
+      "additionalProperties": false,
+      "description": "DELETE /contacts/groups/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact_group",
+          "default": "delete_contact_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelDeleteContactGroupConfig",
+      "type": "object"
+    },
+    "TeltelGetBalanceConfig": {
+      "additionalProperties": false,
+      "description": "GET /account/balance.",
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelGetBalanceConfig",
+      "type": "object"
+    },
+    "TeltelGetContactConfig": {
+      "additionalProperties": false,
+      "description": "GET /contacts/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelGetContactConfig",
+      "type": "object"
+    },
+    "TeltelGetContactGroupConfig": {
+      "additionalProperties": false,
+      "description": "GET /contacts/groups/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact_group",
+          "default": "get_contact_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelGetContactGroupConfig",
+      "type": "object"
+    },
+    "TeltelGetInboxMessageConfig": {
+      "additionalProperties": false,
+      "description": "GET /sms/inbox/reports/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_inbox_message",
+          "default": "get_inbox_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelGetInboxMessageConfig",
+      "type": "object"
+    },
+    "TeltelGetSmsReportConfig": {
+      "additionalProperties": false,
+      "description": "GET /sms/reports/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_sms_report",
+          "default": "get_sms_report",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelGetSmsReportConfig",
+      "type": "object"
+    },
+    "TeltelListAutodialersConfig": {
+      "additionalProperties": false,
+      "description": "GET /autodialers.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated documented response fields; omit for default fields.",
+          "title": "Fields"
+        },
+        "operation": {
+          "const": "list_autodialers",
+          "default": "list_autodialers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListAutodialersConfig",
+      "type": "object"
+    },
+    "TeltelListCallsConfig": {
+      "additionalProperties": false,
+      "description": "GET /calls.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 200000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA zone or GMT offset, e.g. Europe/Riga.",
+          "title": "Timezone"
+        },
+        "transcripts": {
+          "anyOf": [
+            {
+              "enum": [
+                "last",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcripts",
+          "enum": [
+            "last",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_calls",
+          "default": "list_calls",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListCallsConfig",
+      "type": "object"
+    },
+    "TeltelListContactGroupsConfig": {
+      "additionalProperties": false,
+      "description": "GET /contacts/groups.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated documented response fields; omit for default fields.",
+          "title": "Fields"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. No automatic pagination.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; the published contract caps this endpoint at 100.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated sorting fields; prefix with - for descending.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Teltel filter expression, as documented for this resource.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_contact_groups",
+          "default": "list_contact_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListContactGroupsConfig",
+      "type": "object"
+    },
+    "TeltelListContactsConfig": {
+      "additionalProperties": false,
+      "description": "GET /contacts.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated documented response fields; omit for default fields.",
+          "title": "Fields"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. No automatic pagination.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; the published contract caps this endpoint at 100.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated sorting fields; prefix with - for descending.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Teltel filter expression, as documented for this resource.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListContactsConfig",
+      "type": "object"
+    },
+    "TeltelListDevicesConfig": {
+      "additionalProperties": false,
+      "description": "GET /devices.",
+      "properties": {
+        "operation": {
+          "const": "list_devices",
+          "default": "list_devices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListDevicesConfig",
+      "type": "object"
+    },
+    "TeltelListInboxMessagesConfig": {
+      "additionalProperties": false,
+      "description": "GET /sms/inbox/reports.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated documented response fields; omit for default fields.",
+          "title": "Fields"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. No automatic pagination.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; the published contract caps this endpoint at 100.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated sorting fields; prefix with - for descending.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Teltel filter expression, as documented for this resource.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_inbox_messages",
+          "default": "list_inbox_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListInboxMessagesConfig",
+      "type": "object"
+    },
+    "TeltelListSmsReportsConfig": {
+      "additionalProperties": false,
+      "description": "GET /sms/reports.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated documented response fields; omit for default fields.",
+          "title": "Fields"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. No automatic pagination.",
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; the published contract caps this endpoint at 100.",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated sorting fields; prefix with - for descending.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Teltel filter expression, as documented for this resource.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_sms_reports",
+          "default": "list_sms_reports",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListSmsReportsConfig",
+      "type": "object"
+    },
+    "TeltelListUsersConfig": {
+      "additionalProperties": false,
+      "description": "GET /users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeltelListUsersConfig",
+      "type": "object"
+    },
+    "TeltelSendSmsConfig": {
+      "additionalProperties": false,
+      "description": "POST /sms/text.",
+      "properties": {
+        "sender": {
+          "description": "Verified DID or permitted sender ID; maps to Teltel's from field.",
+          "maxLength": 14,
+          "minLength": 3,
+          "title": "Sender",
+          "type": "string"
+        },
+        "to": {
+          "description": "Destination phone number in international format.",
+          "maxLength": 16,
+          "minLength": 3,
+          "pattern": "^\\+?[0-9]+$",
+          "title": "To",
+          "type": "string"
+        },
+        "message": {
+          "description": "SMS text; Unicode messages are limited to 70 characters.",
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "callback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery callback URL, true for account default, or false to disable.",
+          "title": "Callback"
+        },
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sender",
+        "to",
+        "message"
+      ],
+      "title": "TeltelSendSmsConfig",
+      "type": "object"
+    },
+    "TeltelUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "PATCH /contacts/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact group ID, sent as the documented string.",
+          "title": "Group Id"
+        },
+        "param_1": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 1"
+        },
+        "param_2": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 2"
+        },
+        "param_3": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 3"
+        },
+        "param_4": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 4"
+        },
+        "param_5": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param 5"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TeltelUpdateContactConfig",
+      "type": "object"
+    },
+    "TeltelUpdateContactGroupConfig": {
+      "additionalProperties": false,
+      "description": "PATCH /contacts/groups/{id}.",
+      "properties": {
+        "id": {
+          "description": "Teltel resource ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact_group",
+          "default": "update_contact_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "TeltelUpdateContactGroupConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/TeltelCreateContactConfig",
+          "create_contact_group": "#/$defs/TeltelCreateContactGroupConfig",
+          "delete_contact": "#/$defs/TeltelDeleteContactConfig",
+          "delete_contact_group": "#/$defs/TeltelDeleteContactGroupConfig",
+          "get_balance": "#/$defs/TeltelGetBalanceConfig",
+          "get_contact": "#/$defs/TeltelGetContactConfig",
+          "get_contact_group": "#/$defs/TeltelGetContactGroupConfig",
+          "get_inbox_message": "#/$defs/TeltelGetInboxMessageConfig",
+          "get_sms_report": "#/$defs/TeltelGetSmsReportConfig",
+          "list_autodialers": "#/$defs/TeltelListAutodialersConfig",
+          "list_calls": "#/$defs/TeltelListCallsConfig",
+          "list_contact_groups": "#/$defs/TeltelListContactGroupsConfig",
+          "list_contacts": "#/$defs/TeltelListContactsConfig",
+          "list_devices": "#/$defs/TeltelListDevicesConfig",
+          "list_inbox_messages": "#/$defs/TeltelListInboxMessagesConfig",
+          "list_sms_reports": "#/$defs/TeltelListSmsReportsConfig",
+          "list_users": "#/$defs/TeltelListUsersConfig",
+          "send_sms": "#/$defs/TeltelSendSmsConfig",
+          "update_contact": "#/$defs/TeltelUpdateContactConfig",
+          "update_contact_group": "#/$defs/TeltelUpdateContactGroupConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TeltelGetBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListDevicesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListCallsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListContactGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelGetContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelCreateContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelUpdateContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelDeleteContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListSmsReportsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelGetSmsReportConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListInboxMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelGetInboxMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeltelListAutodialersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TeltelAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Teltel Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
