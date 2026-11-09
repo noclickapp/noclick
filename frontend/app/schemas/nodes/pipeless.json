@@ -1,0 +1,5422 @@
+{
+  "$defs": {
+    "PipelessAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "pipeless_api_key",
+          "default": "pipeless_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "app_id": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "app_id",
+        "api_key"
+      ],
+      "title": "Pipeless API Key",
+      "type": "object",
+      "x-credential-instructions": "Open Account \u2192 Apps in Pipeless and copy your App ID and app API key. Paste the key without the Bearer prefix. Each app has its own key and graph database. NoClick checks the connection by reading recent events for that app.",
+      "x-credential-url": "https://pipeless.io/apps"
+    },
+    "PipelessCreateEventConfig": {
+      "description": "Create a single event.",
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "default": {
+              "start_object": {
+                "created_on": "2020-09-20T21:57:06",
+                "id": "Tim",
+                "type": "user"
+              },
+              "relationship": {
+                "created_on": "2020-09-28T09:31:18",
+                "type": "interestedIn"
+              },
+              "end_object": {
+                "created_on": "2020-06-03T15:40:22",
+                "id": "photography",
+                "type": "skill"
+              }
+            },
+            "description": "The event to be added.",
+            "properties": {
+              "start_object": {
+                "description": "An object to be written to your data. Only one object can exist for each type + id combo. If any of your write patterns provide an object that doesn't exist, it will be created. If the object already exists, the existing object will be used in your write operation, and if created_on or modified_on differ from the values already associated with the object, those values will be updated.",
+                "properties": {
+                  "id": {
+                    "description": "The id of your object. The id can be a string (up to 40 characters) containing any number, alpha character, spaces, or the following special characters: @-!#%^&()/+=;:'\"?<>\\][{}.,",
+                    "maxLength": 40,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": {
+                    "description": "The type of an object. Can be any one of our predefined types. Although it is flexible what object type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                    "enum": [
+                      "user",
+                      "product",
+                      "image",
+                      "comment",
+                      "article",
+                      "post",
+                      "video",
+                      "content",
+                      "tag",
+                      "category",
+                      "app",
+                      "book",
+                      "person",
+                      "skill",
+                      "job",
+                      "company",
+                      "account",
+                      "card",
+                      "country",
+                      "state",
+                      "film",
+                      "cart",
+                      "document",
+                      "project"
+                    ],
+                    "title": "",
+                    "type": "string",
+                    "x-examples": {}
+                  },
+                  "created_on": {
+                    "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, and the object needs to be created, this value will be set to the current UTC time.",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "modified_on": {
+                    "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, the value will be set to the same value as created_on.",
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "title": "",
+                "type": "object",
+                "x-examples": {}
+              },
+              "relationship": {
+                "description": "The relationship for your event.",
+                "properties": {
+                  "type": {
+                    "description": "The type of relationship for an event. Can be any one of our predefined types. Although it is flexible what relationship type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                    "enum": [
+                      "posted",
+                      "followed",
+                      "liked",
+                      "favorited",
+                      "saved",
+                      "unsaved",
+                      "disliked",
+                      "purchased",
+                      "commentedOn",
+                      "created",
+                      "viewed",
+                      "reported",
+                      "blocked",
+                      "deleted",
+                      "authored",
+                      "used",
+                      "dismissed",
+                      "loggedIn",
+                      "taggedWith",
+                      "categorizedIn",
+                      "interestedIn",
+                      "locatedIn",
+                      "readQuarter",
+                      "readHalf",
+                      "readAll",
+                      "subscribedTo",
+                      "subscribedFrom",
+                      "addedTo",
+                      "madeBy",
+                      "pausedOn",
+                      "updated",
+                      "enabled",
+                      "disabled"
+                    ],
+                    "title": "",
+                    "type": "string"
+                  },
+                  "created_on": {
+                    "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, and the relationship needs to be created, this value will be set to the current UTC time.",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "single": {
+                    "description": "Whether the relationship can be duplicated or not. If single is true (default), then a relationship of each type can only exist once between the same start and end objects. If false, a relationship of the same type can exist multiple times between the same start and end objects.",
+                    "title": "",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "title": "",
+                "type": "object"
+              },
+              "end_object": {
+                "description": "An object to be written to your data. Only one object can exist for each type + id combo. If any of your write patterns provide an object that doesn't exist, it will be created. If the object already exists, the existing object will be used in your write operation, and if created_on or modified_on differ from the values already associated with the object, those values will be updated.",
+                "properties": {
+                  "id": {
+                    "description": "The id of your object. The id can be a string (up to 40 characters) containing any number, alpha character, spaces, or the following special characters: @-!#%^&()/+=;:'\"?<>\\][{}.,",
+                    "maxLength": 40,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": {
+                    "description": "The type of an object. Can be any one of our predefined types. Although it is flexible what object type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                    "enum": [
+                      "user",
+                      "product",
+                      "image",
+                      "comment",
+                      "article",
+                      "post",
+                      "video",
+                      "content",
+                      "tag",
+                      "category",
+                      "app",
+                      "book",
+                      "person",
+                      "skill",
+                      "job",
+                      "company",
+                      "account",
+                      "card",
+                      "country",
+                      "state",
+                      "film",
+                      "cart",
+                      "document",
+                      "project"
+                    ],
+                    "title": "",
+                    "type": "string",
+                    "x-examples": {}
+                  },
+                  "created_on": {
+                    "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, and the object needs to be created, this value will be set to the current UTC time.",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "modified_on": {
+                    "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, the value will be set to the same value as created_on.",
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "title": "",
+                "type": "object",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "start_object",
+              "relationship",
+              "end_object"
+            ],
+            "type": "object"
+          },
+          "description": "The event to be added.",
+          "title": "Event",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "synchronous": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the event should be created asynchronously or synchronously. Default is false (asynchronous). On success, async will return 202 Accepted, sync will return 201 Created.",
+          "title": "Synchronous"
+        }
+      },
+      "required": [
+        "event"
+      ],
+      "title": "PipelessCreateEventConfig",
+      "type": "object"
+    },
+    "PipelessCreateEventsBatchConfig": {
+      "description": "Create up to 10 events in one API call.",
+      "properties": {
+        "operation": {
+          "const": "create_events_batch",
+          "default": "create_events_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "events": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The events to be added.",
+            "items": {
+              "description": "An individual event.",
+              "properties": {
+                "start_object": {
+                  "description": "An object to be written to your data. Only one object can exist for each type + id combo. If any of your write patterns provide an object that doesn't exist, it will be created. If the object already exists, the existing object will be used in your write operation, and if created_on or modified_on differ from the values already associated with the object, those values will be updated.",
+                  "properties": {
+                    "id": {
+                      "description": "The id of your object. The id can be a string (up to 40 characters) containing any number, alpha character, spaces, or the following special characters: @-!#%^&()/+=;:'\"?<>\\][{}.,",
+                      "maxLength": 40,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "The type of an object. Can be any one of our predefined types. Although it is flexible what object type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                      "enum": [
+                        "user",
+                        "product",
+                        "image",
+                        "comment",
+                        "article",
+                        "post",
+                        "video",
+                        "content",
+                        "tag",
+                        "category",
+                        "app",
+                        "book",
+                        "person",
+                        "skill",
+                        "job",
+                        "company",
+                        "account",
+                        "card",
+                        "country",
+                        "state",
+                        "film",
+                        "cart",
+                        "document",
+                        "project"
+                      ],
+                      "title": "",
+                      "type": "string",
+                      "x-examples": {}
+                    },
+                    "created_on": {
+                      "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, and the object needs to be created, this value will be set to the current UTC time.",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "modified_on": {
+                      "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, the value will be set to the same value as created_on.",
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "title": "",
+                  "type": "object",
+                  "x-examples": {}
+                },
+                "relationship": {
+                  "properties": {
+                    "type": {
+                      "description": "The type of relationship for an event. Can be any one of our predefined types. Although it is flexible what relationship type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                      "enum": [
+                        "posted",
+                        "followed",
+                        "liked",
+                        "favorited",
+                        "saved",
+                        "unsaved",
+                        "disliked",
+                        "purchased",
+                        "commentedOn",
+                        "created",
+                        "viewed",
+                        "reported",
+                        "blocked",
+                        "deleted",
+                        "authored",
+                        "used",
+                        "dismissed",
+                        "loggedIn",
+                        "taggedWith",
+                        "categorizedIn",
+                        "interestedIn",
+                        "locatedIn",
+                        "readQuarter",
+                        "readHalf",
+                        "readAll",
+                        "subscribedTo",
+                        "subscribedFrom",
+                        "addedTo",
+                        "madeBy",
+                        "pausedOn",
+                        "updated",
+                        "enabled",
+                        "disabled"
+                      ],
+                      "title": "",
+                      "type": "string"
+                    },
+                    "created_on": {
+                      "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, and the relationship needs to be created, this value will be set to the current UTC time.",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "single": {
+                      "description": "Whether the relationship can be duplicated or not. If single is true (default), then a relationship of each type can only exist once between the same start and end objects. If false, a relationship of the same type can exist multiple times between the same start and end objects.",
+                      "title": "",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "title": "",
+                  "type": "object"
+                },
+                "end_object": {
+                  "description": "An object to be written to your data. Only one object can exist for each type + id combo. If any of your write patterns provide an object that doesn't exist, it will be created. If the object already exists, the existing object will be used in your write operation, and if created_on or modified_on differ from the values already associated with the object, those values will be updated.",
+                  "properties": {
+                    "id": {
+                      "description": "The id of your object. The id can be a string (up to 40 characters) containing any number, alpha character, spaces, or the following special characters: @-!#%^&()/+=;:'\"?<>\\][{}.,",
+                      "maxLength": 40,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "The type of an object. Can be any one of our predefined types. Although it is flexible what object type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                      "enum": [
+                        "user",
+                        "product",
+                        "image",
+                        "comment",
+                        "article",
+                        "post",
+                        "video",
+                        "content",
+                        "tag",
+                        "category",
+                        "app",
+                        "book",
+                        "person",
+                        "skill",
+                        "job",
+                        "company",
+                        "account",
+                        "card",
+                        "country",
+                        "state",
+                        "film",
+                        "cart",
+                        "document",
+                        "project"
+                      ],
+                      "title": "",
+                      "type": "string",
+                      "x-examples": {}
+                    },
+                    "created_on": {
+                      "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, and the object needs to be created, this value will be set to the current UTC time.",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "modified_on": {
+                      "description": "An optional DateTime string in the format YYYY-MM-DDTHH:MM:SS in whatever timezone you use. If not set, the value will be set to the same value as created_on.",
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "title": "",
+                  "type": "object",
+                  "x-examples": {}
+                }
+              },
+              "required": [
+                "start_object",
+                "relationship",
+                "end_object"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "description": "The events to be added.",
+          "title": "Events",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "synchronous": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the events should be created asynchronously or synchronously. Default is false (asynchronous)",
+          "title": "Synchronous"
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "title": "PipelessCreateEventsBatchConfig",
+      "type": "object"
+    },
+    "PipelessDeleteEventConfig": {
+      "description": "Delete one or more events.",
+      "properties": {
+        "operation": {
+          "const": "delete_event",
+          "default": "delete_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "Details to specify which event(s) should be deleted. Only events that match all 3 event parts (start, relationship, end) will be deleted.",
+            "properties": {
+              "start_object": {
+                "properties": {
+                  "id": {
+                    "description": "id of the object you want to fetch.",
+                    "maxLength": 40,
+                    "minLength": 1,
+                    "title": "",
+                    "type": "string"
+                  },
+                  "type": {
+                    "description": "type of the object you want to fetch.",
+                    "enum": [
+                      "user",
+                      "product",
+                      "image",
+                      "comment",
+                      "article",
+                      "post",
+                      "video",
+                      "content",
+                      "tag",
+                      "category",
+                      "app",
+                      "book",
+                      "person",
+                      "skill",
+                      "job",
+                      "company",
+                      "account",
+                      "card",
+                      "country",
+                      "state",
+                      "film",
+                      "cart",
+                      "document",
+                      "project"
+                    ],
+                    "title": "",
+                    "type": "string",
+                    "x-examples": {}
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "title": "",
+                "type": "object"
+              },
+              "relationship": {
+                "description": "When specifying the relationship of the event(s) to delete, if you only specify a type, then all events starting at the start object and going to the end object of the specified type will be deleted. If a created_on datetime is specified too, then only events where the relationship matches the specified type and created_on will be deleted.",
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "posted",
+                      "followed",
+                      "liked",
+                      "favorited",
+                      "saved",
+                      "unsaved",
+                      "disliked",
+                      "purchased",
+                      "commentedOn",
+                      "created",
+                      "viewed",
+                      "reported",
+                      "blocked",
+                      "deleted",
+                      "authored",
+                      "used",
+                      "dismissed",
+                      "loggedIn",
+                      "taggedWith",
+                      "categorizedIn",
+                      "interestedIn",
+                      "locatedIn",
+                      "readQuarter",
+                      "readHalf",
+                      "readAll",
+                      "subscribedTo",
+                      "subscribedFrom",
+                      "addedTo",
+                      "madeBy",
+                      "pausedOn",
+                      "updated",
+                      "enabled",
+                      "disabled"
+                    ],
+                    "type": "string"
+                  },
+                  "created_on": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              "end_object": {
+                "properties": {
+                  "id": {
+                    "description": "id of the object you want to delete",
+                    "maxLength": 40,
+                    "minLength": 1,
+                    "title": "",
+                    "type": "string"
+                  },
+                  "type": {
+                    "description": "type of the object you want to fetch.",
+                    "enum": [
+                      "user",
+                      "product",
+                      "image",
+                      "comment",
+                      "article",
+                      "post",
+                      "video",
+                      "content",
+                      "tag",
+                      "category",
+                      "app",
+                      "book",
+                      "person",
+                      "skill",
+                      "job",
+                      "company",
+                      "account",
+                      "card",
+                      "country",
+                      "state",
+                      "film",
+                      "cart",
+                      "document",
+                      "project"
+                    ],
+                    "title": "",
+                    "type": "string",
+                    "x-examples": {}
+                  },
+                  "all": {
+                    "description": "If you want to delete all the relationships from the start object to the specified end object type (of any id), set this value to true. If true, the end object of the event will match any object of the specified type. Default value is false, meaning a specific id is required.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "title": "",
+                "type": "object"
+              }
+            },
+            "required": [
+              "start_object",
+              "relationship",
+              "end_object"
+            ],
+            "type": "object"
+          },
+          "description": "Details to specify which event(s) should be deleted. Only events that match all 3 event parts (start, relationship, end) will be deleted.",
+          "title": "Event",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "event"
+      ],
+      "title": "PipelessDeleteEventConfig",
+      "type": "object"
+    },
+    "PipelessDeleteObjectConfig": {
+      "description": "Delete a single object and all the relationships/events it's connected to.",
+      "properties": {
+        "operation": {
+          "const": "delete_object",
+          "default": "delete_object",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessDeleteObjectConfig",
+      "type": "object"
+    },
+    "PipelessEditObjectConfig": {
+      "description": "Edit the properties of an existing object.",
+      "properties": {
+        "operation": {
+          "const": "edit_object",
+          "default": "edit_object",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The existing object that is to be modified.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The existing object that is to be modified.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "new_props": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "New properties to be set for the object.",
+            "properties": {
+              "id": {
+                "description": "New id for the object. If not included, the current id will be kept.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "created_on": {
+                "description": "New created_on (in datetime format) for the object. If not included, the current value will be kept.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "modified_on": {
+                "description": "New modified_on (in datetime format) for the object. If not included, the current value will be kept.",
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "description": "New properties to be set for the object.",
+          "title": "New props",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "object",
+        "new_props"
+      ],
+      "title": "PipelessEditObjectConfig",
+      "type": "object"
+    },
+    "PipelessGetActivityActionsFeedConfig": {
+      "description": "Fetch the activity feed for a user (or any other object type). This activity feed format will return acted upon entities as the main result. Ex. one item per post, article, product, etc. Each single item has associated actions. Ex. product a product",
+      "properties": {
+        "operation": {
+          "const": "get_activity_actions_feed",
+          "default": "get_activity_actions_feed",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The object (ex. user) you want to fetch the activity feed for.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The object (ex. user) you want to fetch the activity feed for.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "follow_relationship_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the relationship types that represent the concept of \"following\" in your data. If none provided, by default the relationship type \"followed\" will be used.",
+            "items": {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the relationship types that represent the concept of \"following\" in your data. If none provided, by default the relationship type \"followed\" will be used.",
+          "title": "Follow relationship types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "follow_object_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the object types that can be followed in your dataset and that you want to be used for this activity feed. If none provided, by default any object type that is found based on the allowed follow_relationship_types will be used.",
+            "items": {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the object types that can be followed in your dataset and that you want to be used for this activity feed. If none provided, by default any object type that is found based on the allowed follow_relationship_types will be used.",
+          "title": "Follow object types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "event_relationship_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the relationship types of the actions you want to show up in the activity feed. If none provided, by default any relationships that are present in the resulting feed items will be returned.",
+            "items": {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the relationship types of the actions you want to show up in the activity feed. If none provided, by default any relationships that are present in the resulting feed items will be returned.",
+          "title": "Event relationship types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "event_object_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the object types that can appear as content in the feed. If none provided, any object type that results from the other settings will be shown in the feed.",
+            "items": {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the object types that can appear as content in the feed. If none provided, any object type that results from the other settings will be shown in the feed.",
+          "title": "Event object types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "exclude_self_object": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this value is false (the default), then the user you are fetching the feed for can appear in the feed results as an acting user (if the user follows themself) or action user (object that is being acted on by users the user follows). If set to true, the user the feed is being fetched for will not appear in the results.",
+          "title": "Exclude self object"
+        },
+        "allow_missing_object": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this value is false (the default), then trying to fetch an activity feed for a non-existent object will result in a 404 object not found error being returned. If this value is true, then in the case of a non-existent object, an empty activity feed will be returned with no error.",
+          "title": "Allow missing object"
+        },
+        "return_cursor_for_events": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This value defaults to false. When set to true, each returned event will contain an additional property called cursor, which contains the cursor value for that specific item. Just like end_cusror in page_info, any cursor value can be used in the before param to begin pagination after the specified cursor.",
+          "title": "Return cursor for events"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetActivityActionsFeedConfig",
+      "type": "object"
+    },
+    "PipelessGetActivityFeedConfig": {
+      "description": "Fetch the activity feed for a user (or any other object type). This activity feed format will return events in sequential descending order - there will be one activity item for each found action.",
+      "properties": {
+        "operation": {
+          "const": "get_activity_feed",
+          "default": "get_activity_feed",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The object (ex. user) you want to fetch the activity feed for.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The object (ex. user) you want to fetch the activity feed for.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "follow_relationship_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the relationship types that represent the concept of \"following\" in your data. If none provided, by default the relationship type \"followed\" will be used.",
+            "items": {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the relationship types that represent the concept of \"following\" in your data. If none provided, by default the relationship type \"followed\" will be used.",
+          "title": "Follow relationship types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "follow_object_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the object types that can be followed in your dataset and that you want to be used for this activity feed. If none provided, by default any object type that is found based on the allowed follow_relationship_types will be used.",
+            "items": {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the object types that can be followed in your dataset and that you want to be used for this activity feed. If none provided, by default any object type that is found based on the allowed follow_relationship_types will be used.",
+          "title": "Follow object types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "event_relationship_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the relationship types of the actions you want to show up in the activity feed. If none provided, by default any relationships that are present in the resulting feed items will be returned.",
+            "items": {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the relationship types of the actions you want to show up in the activity feed. If none provided, by default any relationships that are present in the resulting feed items will be returned.",
+          "title": "Event relationship types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "event_object_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of the object types that can appear as content in the feed. If none provided, any object type that results from the other settings will be shown in the feed.",
+            "items": {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "An array of the object types that can appear as content in the feed. If none provided, any object type that results from the other settings will be shown in the feed.",
+          "title": "Event object types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "exclude_self_object": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this value is false (the default), then the user you are fetching the feed for can appear in the feed results as an acting user (if the user follows themself) or action user (object that is being acted on by users the user follows). If set to true, the user the feed is being fetched for will not appear in the results.",
+          "title": "Exclude self object"
+        },
+        "allow_missing_object": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this value is false (the default), then trying to fetch an activity feed for a non-existent object will result in a 404 object not found error being returned. If this value is true, then in the case of a non-existent object, an empty activity feed will be returned with no error.",
+          "title": "Allow missing object"
+        },
+        "return_cursor_for_events": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This value defaults to false. When set to true, each returned event will contain an additional property called cursor, which contains the cursor value for that specific item. Just like end_cusror in page_info, any cursor value can be used in the before param to begin pagination after the specified cursor.",
+          "title": "Return cursor for events"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetActivityFeedConfig",
+      "type": "object"
+    },
+    "PipelessGetActivityOnObjectConfig": {
+      "description": "Get activity that has taken place on a target object.",
+      "properties": {
+        "operation": {
+          "const": "get_activity_on_object",
+          "default": "get_activity_on_object",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "Specify the id and type of the object that you want to fetch the activity for.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "Specify the id and type of the object that you want to fetch the activity for.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "relationship_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "Relationship types to include in the fetched activity (will include all by default)",
+            "items": {
+              "description": "The type of relationship for an event. Can be any one of our predefined types. Although it is flexible what relationship type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "title": "",
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "default": null,
+          "description": "Relationship types to include in the fetched activity (will include all by default)",
+          "title": "Relationship types",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "outgoing",
+                "incoming",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Direction of relationships to include in the acitivty on the specified object. If no direciton is speciifed, activity event relationships of both directions will be returned.",
+          "title": "Direction",
+          "enum": [
+            "outgoing",
+            "incoming",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "return_cursor_for_events": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This value defaults to false. When set to true, each returned event will contain an additional property called cursor, which contains the cursor value for that specific item. Just like end_cusror in page_info, any cursor value can be used in the before param to begin pagination after the specified cursor.",
+          "title": "Return cursor for events"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetActivityOnObjectConfig",
+      "type": "object"
+    },
+    "PipelessGetObjectConfig": {
+      "description": "Get basic info on a single object.",
+      "properties": {
+        "operation": {
+          "const": "get_object",
+          "default": "get_object",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetObjectConfig",
+      "type": "object"
+    },
+    "PipelessGetRecentEventsConfig": {
+      "description": "Get recent events that have been sent to the specified app.",
+      "properties": {
+        "operation": {
+          "const": "get_recent_events",
+          "default": "get_recent_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "title": "PipelessGetRecentEventsConfig",
+      "type": "object"
+    },
+    "PipelessGetRecommendedContentConfig": {
+      "description": "Gets recommeneded content for a given object (ex. recommended posts for a user based on their previous actions, collaborative filtering, and tags associated with the content they interacted with).",
+      "properties": {
+        "operation": {
+          "const": "get_recommended_content",
+          "default": "get_recommended_content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "content_object_type": {
+          "description": "The type of object that is being recommended.",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "title": "Content object type",
+          "type": "string"
+        },
+        "primary_positive_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The primary positive indicator a user can take on the content type that's being recommended. This should be the action a user can take that you consider most important to indicating that an object appeals to their tastes. If value is not provided, it will default to \"liked\".",
+          "title": "Primary positive relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "secondary_positive_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The secondary positive indicator a user can take on the content type that's being recommended. This should be the action a user can take that you consider to be important in indicating that an object appeals to their tastes. It will be weighted less than the primary positive relationship type, but still taken into account. If value is not provided, it will default to \"viewed\".",
+          "title": "Secondary positive relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "primary_negative_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The primary negative action a user can take on the content type. This should be the action a user can take that you consider to be important in indicating that an object does not appeal to their tastes. Content that the user marked with this type will not be returned in recommendation results. If value is not provided, it will default to \"disliked\".",
+          "title": "Primary negative relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tagged_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set this relationship to the relationship you use to set tags on the content that is being recommended. If a value is not provided, \"taggedWith\" will be used by default.",
+          "title": "Content tagged relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tag_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set this relationship to the object you use for tags on the content that is being recommended. If a value is not provided, \"tag\" will be used by default.",
+          "title": "Content tag object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "coldstart_tag_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "You can use this option to provide some ids of tags you want to contribute to coldstart recommendations if no real recommendations are yet available for a user. If you provide one or more tag ids for this field, trending content from those tags will be used as coldstart recommendations when personalized recommendations are not available.",
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "title": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "You can use this option to provide some ids of tags you want to contribute to coldstart recommendations if no real recommendations are yet available for a user. If you provide one or more tag ids for this field, trending content from those tags will be used as coldstart recommendations when personalized recommendations are not available.",
+          "title": "Coldstart tag ids",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "filter_tag_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "You can use this option to provide ids of tags that will be used to filter the returned recommended content. If any tag ids are specified in this value, then a piece of recommended content will only be returned if it is tagged (using specified content_tagged_relationship_type) with all of the tags provided in this option.",
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "title": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "You can use this option to provide ids of tags that will be used to filter the returned recommended content. If any tag ids are specified in this value, then a piece of recommended content will only be returned if it is tagged (using specified content_tagged_relationship_type) with all of the tags provided in this option.",
+          "title": "Filter tag ids",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "include_content_authors": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value is false. If set to true, an array called authors will be provided with each item, providing the authors of the recommended content. If this is set to true, then content_created_relationship_type must also be set.",
+          "title": "Include content authors"
+        },
+        "content_created_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A relationship type that represents a user creating content in your data. Required if include_content_authors or exclude_content_from_followed is set to true.",
+          "title": "Content created relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "exclude_content_from_followed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value is false. If set to true, content that was created by authors that the user follows will be excluded. If set to true, content_created_relationship_type must also be set.",
+          "title": "Exclude content from followed"
+        },
+        "followed_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A relationship type that represents a user following another user in your data. If exclude_content_from_followed is set to true and this value is not set, then it will default to followed.",
+          "title": "Followed relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "dismissed_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A relationship type that represents a user dismissing the recommendation of a piece of content in your data. If this param is not provided, it defaults to \"dismissed\".",
+          "title": "Dismissed relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object",
+        "content_object_type"
+      ],
+      "title": "PipelessGetRecommendedContentConfig",
+      "type": "object"
+    },
+    "PipelessGetRecommendedUsersToFollowConfig": {
+      "description": "For a given user (or any object type), get a list of recommended users for the target user to follow, based on their behavior/tastes.",
+      "properties": {
+        "operation": {
+          "const": "get_recommended_users_to_follow",
+          "default": "get_recommended_users_to_follow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "followed_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The relationship type in your data that is used to represent a user (or other type) following someone else. If this value is not provided, it will default to \"followed\".",
+          "title": "Followed relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_created_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A relationship type that represents a user creating content in your data. If no value is provided, this will default to \"posted\".",
+          "title": "Content created relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "positive_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The positive indicator a user can take on the content type that users can create. This should be the action a user can take that you consider most important to indicating that an object appeals to their tastes. If value is not provided, it will default to \"liked\".",
+          "title": "Positive relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tagged_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set this relationship to the relationship you use to set tags on the content that is created by users. If a value is not provided, \"taggedWith\" will be used by default.",
+          "title": "Content tagged relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of object that represents the content being created by users. If no value is provided, this defaults to \"post\".\n",
+          "title": "Content object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tag_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set this type to the object you use for tags on the content that is created by your users. If a value is not provided, \"tag\" will be used by default.",
+          "title": "Content tag object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "dismissed_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A relationship type that represents a user dismissing the recommendation of a piece of content in your data. If this param is not provided, it defaults to \"dismissed\".",
+          "title": "Dismissed relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "allow_missing_object": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this value is false (the default), then trying to fetch an activity feed for a non-existent object will result in a 404 object not found error being returned. If this value is true, then in the case of a non-existent object, an empty activity feed will be returned with no error.",
+          "title": "Allow missing object"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetRecommendedUsersToFollowConfig",
+      "type": "object"
+    },
+    "PipelessGetRelatedContentConfig": {
+      "description": "Gets related content objects based on a specific piece of content of any type.",
+      "properties": {
+        "operation": {
+          "const": "get_related_content",
+          "default": "get_related_content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The object you want to get related content for. All returned related content will be of the same type as this object.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The object you want to get related content for. All returned related content will be of the same type as this object.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "content_tagged_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The relationship type that represents content being tagged with a tag in your data. If not provided, then tags will not be considered in this algo.",
+          "title": "Content tagged relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tagged_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The object type that represents a tag in your data. If not provided, and content tagged relationship type was provided, this will default to \"tag\".",
+          "title": "Content tagged object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "positive_rel": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The relationship of a positive action that users (or whatever actor type) can take on the content type. If the value is not provided, then collabrative filtering will not be used in the algo.",
+          "title": "Positive rel",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "actor_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of the object that acts on the target content (ex. user). If this value is not provided, and positive rel is set, then this will default to \"user\".",
+          "title": "Actor object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetRelatedContentConfig",
+      "type": "object"
+    },
+    "PipelessGetRelatedTagsConfig": {
+      "description": "Gets related tags for a given tag (or any other object type, ex. category).",
+      "properties": {
+        "operation": {
+          "const": "get_related_tags",
+          "default": "get_related_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The object (ex. a tag, category, etc.) that you want to get related objects for. The related objects will be of the same type as this provided object.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The object (ex. a tag, category, etc.) that you want to get related objects for. The related objects will be of the same type as this provided object.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "content_object_type": {
+          "description": "The object type of the content associated to your tags. Ex. if the tags in your dataset are found on posts, then this value should be \"post\".",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "title": "Content object type",
+          "type": "string"
+        },
+        "content_tagged_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The relationship type that represents content being tagged in your set. If no value is provided, this will default to taggedWith.",
+          "title": "Content tagged relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "disregard_tag_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "Object ids that you want not to be included in the resulting tags (or whatever type target object is).",
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "title": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "Object ids that you want not to be included in the resulting tags (or whatever type target object is).",
+          "title": "Disregard tag ids",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "object",
+        "content_object_type"
+      ],
+      "title": "PipelessGetRelatedTagsConfig",
+      "type": "object"
+    },
+    "PipelessGetRelatedUsersConfig": {
+      "description": "Get related users based on a target user (or other type).",
+      "properties": {
+        "operation": {
+          "const": "get_related_users",
+          "default": "get_related_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The object (generally a user) that you want to get recommended items for. The returned items will be of the same type as this object.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The object (generally a user) that you want to get recommended items for. The returned items will be of the same type as this object.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "followed_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The relationship type used to represent a user following another user. If this value is not provided, then collabrative filtering will not be used for the algo.",
+          "title": "Followed relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tagged_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The relationship type that represents content (created by users) being tagged. If this value is not provided, then tag data will not be used for the algo.",
+          "title": "Content tagged relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tagged_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The object type that represents a tag for the content a user can publish. If this value is not set, and content tagged relationship type has been set, then this will default to \"tag\".",
+          "title": "Content tagged object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Object type of the content users publish. If this value is not set, and content tagged relationship type has been set, then this value will default to \"post\".",
+          "title": "Content object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_published_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Teh relationship type that represents a user publishing content. If this value is not set, and content tagged relationship type has been set, then this value will default to \"posted\".",
+          "title": "Content published relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "PipelessGetRelatedUsersConfig",
+      "type": "object"
+    },
+    "PipelessGetRelationshipCountsConfig": {
+      "description": "Get the counts of 1 or 2 relationships from/to a given object.",
+      "properties": {
+        "operation": {
+          "const": "get_relationship_counts",
+          "default": "get_relationship_counts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The object to get the incoming/outgoing relationship counts for.",
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "description": "The object to get the incoming/outgoing relationship counts for.",
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "relationships": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "An array of relationship types/directions and object types to get the counts for. You can specifiy one or two relationships to count.",
+            "items": {
+              "properties": {
+                "type": {
+                  "description": "The type of relationship for an event. Can be any one of our predefined types. Although it is flexible what relationship type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                  "enum": [
+                    "posted",
+                    "followed",
+                    "liked",
+                    "favorited",
+                    "saved",
+                    "unsaved",
+                    "disliked",
+                    "purchased",
+                    "commentedOn",
+                    "created",
+                    "viewed",
+                    "reported",
+                    "blocked",
+                    "deleted",
+                    "authored",
+                    "used",
+                    "dismissed",
+                    "loggedIn",
+                    "taggedWith",
+                    "categorizedIn",
+                    "interestedIn",
+                    "locatedIn",
+                    "readQuarter",
+                    "readHalf",
+                    "readAll",
+                    "subscribedTo",
+                    "subscribedFrom",
+                    "addedTo",
+                    "madeBy",
+                    "pausedOn",
+                    "updated",
+                    "enabled",
+                    "disabled"
+                  ],
+                  "title": "",
+                  "type": "string"
+                },
+                "direction": {
+                  "enum": [
+                    "incoming",
+                    "outgoing"
+                  ],
+                  "type": "string"
+                },
+                "other_object_type": {
+                  "description": "The type of an object. Can be any one of our predefined types. Although it is flexible what object type you use, as a best practice, we suggest you pick the one that relates best to the data you are representing. Doing this also allows specific algos to automatically work with their default settings.",
+                  "enum": [
+                    "user",
+                    "product",
+                    "image",
+                    "comment",
+                    "article",
+                    "post",
+                    "video",
+                    "content",
+                    "tag",
+                    "category",
+                    "app",
+                    "book",
+                    "person",
+                    "skill",
+                    "job",
+                    "company",
+                    "account",
+                    "card",
+                    "country",
+                    "state",
+                    "film",
+                    "cart",
+                    "document",
+                    "project"
+                  ],
+                  "title": "",
+                  "type": "string",
+                  "x-examples": {}
+                }
+              },
+              "required": [
+                "type",
+                "direction",
+                "other_object_type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "description": "An array of relationship types/directions and object types to get the counts for. You can specifiy one or two relationships to count.",
+          "title": "Relationships",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "object",
+        "relationships"
+      ],
+      "title": "PipelessGetRelationshipCountsConfig",
+      "type": "object"
+    },
+    "PipelessGetRelationshipExistsConfig": {
+      "description": "Determines if a given relationship of a specific type exists from the specified object to the specified end object.",
+      "properties": {
+        "operation": {
+          "const": "get_relationship_exists",
+          "default": "get_relationship_exists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "relationship_type": {
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "title": "Relationship type",
+          "type": "string"
+        },
+        "end_object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "End object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "object",
+        "relationship_type",
+        "end_object"
+      ],
+      "title": "PipelessGetRelationshipExistsConfig",
+      "type": "object"
+    },
+    "PipelessGetSortedContentConfig": {
+      "description": "Provide a set of content ids, and this algo will rank and sort the given ids based on the given user's previous actions, collaborative filtering, and tags associated with the content they interacted with.",
+      "properties": {
+        "operation": {
+          "const": "get_sorted_content",
+          "default": "get_sorted_content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "object": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "id": {
+                "description": "id of the object you want to fetch.",
+                "maxLength": 40,
+                "minLength": 1,
+                "title": "",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the object you want to fetch.",
+                "enum": [
+                  "user",
+                  "product",
+                  "image",
+                  "comment",
+                  "article",
+                  "post",
+                  "video",
+                  "content",
+                  "tag",
+                  "category",
+                  "app",
+                  "book",
+                  "person",
+                  "skill",
+                  "job",
+                  "company",
+                  "account",
+                  "card",
+                  "country",
+                  "state",
+                  "film",
+                  "cart",
+                  "document",
+                  "project"
+                ],
+                "title": "",
+                "type": "string",
+                "x-examples": {}
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "title": "",
+            "type": "object"
+          },
+          "title": "Object",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "content_object_type": {
+          "description": "The type of object that your content_ids (items to sort) are of.",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "title": "Content object type",
+          "type": "string"
+        },
+        "content_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "The ids of the content you want to sort. The ids must be for the type of content set in content_object_type.",
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "title": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "The ids of the content you want to sort. The ids must be for the type of content set in content_object_type.",
+          "title": "Content ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "primary_positive_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The primary positive indicator a user can take on the content type that's being recommended. This should be the action a user can take that you consider most important to indicating that an object appeals to their tastes. If value is not provided, it will default to \"liked\".",
+          "title": "Primary positive relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "secondary_positive_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The secondary positive indicator a user can take on the content type that's being recommended. This should be the action a user can take that you consider to be important in indicating that an object appeals to their tastes. It will be weighted less than the primary positive relationship type, but still taken into account. If value is not provided, it will default to \"viewed\".",
+          "title": "Secondary positive relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "primary_negative_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The primary negative action a user can take on the content type. This should be the action a user can take that you consider to be important in indicating that an object does not appeal to their tastes. Content that the user marked with this type will not be returned in recommendation results. If value is not provided, it will default to \"disliked\".",
+          "title": "Primary negative relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tagged_relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "posted",
+                "followed",
+                "liked",
+                "favorited",
+                "saved",
+                "unsaved",
+                "disliked",
+                "purchased",
+                "commentedOn",
+                "created",
+                "viewed",
+                "reported",
+                "blocked",
+                "deleted",
+                "authored",
+                "used",
+                "dismissed",
+                "loggedIn",
+                "taggedWith",
+                "categorizedIn",
+                "interestedIn",
+                "locatedIn",
+                "readQuarter",
+                "readHalf",
+                "readAll",
+                "subscribedTo",
+                "subscribedFrom",
+                "addedTo",
+                "madeBy",
+                "pausedOn",
+                "updated",
+                "enabled",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set this relationship to the relationship you use to set tags on the content that is being recommended. If a value is not provided, \"taggedWith\" will be used by default.",
+          "title": "Content tagged relationship type",
+          "enum": [
+            "posted",
+            "followed",
+            "liked",
+            "favorited",
+            "saved",
+            "unsaved",
+            "disliked",
+            "purchased",
+            "commentedOn",
+            "created",
+            "viewed",
+            "reported",
+            "blocked",
+            "deleted",
+            "authored",
+            "used",
+            "dismissed",
+            "loggedIn",
+            "taggedWith",
+            "categorizedIn",
+            "interestedIn",
+            "locatedIn",
+            "readQuarter",
+            "readHalf",
+            "readAll",
+            "subscribedTo",
+            "subscribedFrom",
+            "addedTo",
+            "madeBy",
+            "pausedOn",
+            "updated",
+            "enabled",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "content_tag_object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "product",
+                "image",
+                "comment",
+                "article",
+                "post",
+                "video",
+                "content",
+                "tag",
+                "category",
+                "app",
+                "book",
+                "person",
+                "skill",
+                "job",
+                "company",
+                "account",
+                "card",
+                "country",
+                "state",
+                "film",
+                "cart",
+                "document",
+                "project"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set this relationship to the object you use for tags on the content that is being recommended. If a value is not provided, \"tag\" will be used by default.",
+          "title": "Content tag object type",
+          "enum": [
+            "user",
+            "product",
+            "image",
+            "comment",
+            "article",
+            "post",
+            "video",
+            "content",
+            "tag",
+            "category",
+            "app",
+            "book",
+            "person",
+            "skill",
+            "job",
+            "company",
+            "account",
+            "card",
+            "country",
+            "state",
+            "film",
+            "cart",
+            "document",
+            "project"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object",
+        "content_object_type",
+        "content_ids"
+      ],
+      "title": "PipelessGetSortedContentConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event": "#/$defs/PipelessCreateEventConfig",
+          "create_events_batch": "#/$defs/PipelessCreateEventsBatchConfig",
+          "delete_event": "#/$defs/PipelessDeleteEventConfig",
+          "delete_object": "#/$defs/PipelessDeleteObjectConfig",
+          "edit_object": "#/$defs/PipelessEditObjectConfig",
+          "get_activity_actions_feed": "#/$defs/PipelessGetActivityActionsFeedConfig",
+          "get_activity_feed": "#/$defs/PipelessGetActivityFeedConfig",
+          "get_activity_on_object": "#/$defs/PipelessGetActivityOnObjectConfig",
+          "get_object": "#/$defs/PipelessGetObjectConfig",
+          "get_recent_events": "#/$defs/PipelessGetRecentEventsConfig",
+          "get_recommended_content": "#/$defs/PipelessGetRecommendedContentConfig",
+          "get_recommended_users_to_follow": "#/$defs/PipelessGetRecommendedUsersToFollowConfig",
+          "get_related_content": "#/$defs/PipelessGetRelatedContentConfig",
+          "get_related_tags": "#/$defs/PipelessGetRelatedTagsConfig",
+          "get_related_users": "#/$defs/PipelessGetRelatedUsersConfig",
+          "get_relationship_counts": "#/$defs/PipelessGetRelationshipCountsConfig",
+          "get_relationship_exists": "#/$defs/PipelessGetRelationshipExistsConfig",
+          "get_sorted_content": "#/$defs/PipelessGetSortedContentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PipelessCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessDeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessCreateEventsBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessDeleteObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessEditObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetActivityOnObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetActivityFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetActivityActionsFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRecentEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRecommendedContentConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetSortedContentConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRecommendedUsersToFollowConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRelatedTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRelatedContentConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRelatedUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRelationshipCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PipelessGetRelationshipExistsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PipelessAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pipeless Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
