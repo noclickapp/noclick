@@ -1,0 +1,432 @@
+[
+  {
+    "config": {
+      "operation": "get_account"
+    },
+    "method": "GET",
+    "path": "/v1/me",
+    "body": null,
+    "response": {
+      "key_id": "4Kx7Qm2Bv1LpZq8T",
+      "key_name": "Zapier",
+      "access_level": "ReadWrite",
+      "company_name": "Whitfield Property Group",
+      "estimate_label": "Bid"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "list_customers"
+    },
+    "method": "GET",
+    "path": "/v1/customers",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "cus_0000004Kx7Qm2Bv1LpZq8T"
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "get_customer",
+      "customer_id": "cus_0000004Kx7Qm2Bv1LpZq8T"
+    },
+    "method": "GET",
+    "path": "/v1/customers/cus_0000004Kx7Qm2Bv1LpZq8T",
+    "body": null,
+    "response": {
+      "id": "cus_0000004Kx7Qm2Bv1LpZq8T",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "create_customer",
+      "idempotency_key": "job-123",
+      "first_name": "Dana",
+      "last_name": "Whitfield"
+    },
+    "method": "POST",
+    "path": "/v1/customers",
+    "body": {
+      "first_name": "Dana",
+      "last_name": "Whitfield"
+    },
+    "response": {
+      "id": "cus_0000004Kx7Qm2Bv1LpZq8T",
+      "matched": false
+    },
+    "http_status": 201,
+    "headers": {
+      "Idempotency-Key": "job-123"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_customer",
+      "customer_id": "cus_0000004Kx7Qm2Bv1LpZq8T",
+      "if_match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "description": "Updated scope"
+    },
+    "method": "PATCH",
+    "path": "/v1/customers/cus_0000004Kx7Qm2Bv1LpZq8T",
+    "body": {
+      "description": "Updated scope"
+    },
+    "response": {
+      "id": "cus_0000004Kx7Qm2Bv1LpZq8T",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {
+      "If-Match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "config": {
+      "operation": "archive_customer",
+      "customer_id": "cus_0000004Kx7Qm2Bv1LpZq8T",
+      "if_match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "method": "POST",
+    "path": "/v1/customers/cus_0000004Kx7Qm2Bv1LpZq8T/archive",
+    "body": null,
+    "response": {
+      "id": "cus_0000004Kx7Qm2Bv1LpZq8T"
+    },
+    "http_status": 200,
+    "headers": {
+      "If-Match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "config": {
+      "operation": "unarchive_customer",
+      "customer_id": "cus_0000004Kx7Qm2Bv1LpZq8T",
+      "if_match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "method": "POST",
+    "path": "/v1/customers/cus_0000004Kx7Qm2Bv1LpZq8T/unarchive",
+    "body": null,
+    "response": {
+      "id": "cus_0000004Kx7Qm2Bv1LpZq8T"
+    },
+    "http_status": 200,
+    "headers": {
+      "If-Match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_projects"
+    },
+    "method": "GET",
+    "path": "/v1/projects",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw"
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "get_project",
+      "project_id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw"
+    },
+    "method": "GET",
+    "path": "/v1/projects/prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+    "body": null,
+    "response": {
+      "id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "create_project",
+      "idempotency_key": "job-123",
+      "name": "Whitfield kitchen remodel",
+      "status": "project_sold",
+      "customer_id": "cus_0000004Kx7Qm2Bv1LpZq8T"
+    },
+    "method": "POST",
+    "path": "/v1/projects",
+    "body": {
+      "name": "Whitfield kitchen remodel",
+      "status": "project_sold",
+      "customer_id": "cus_0000004Kx7Qm2Bv1LpZq8T"
+    },
+    "response": {
+      "id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw"
+    },
+    "http_status": 201,
+    "headers": {
+      "Idempotency-Key": "job-123"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_project",
+      "project_id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "if_match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "description": "Updated scope"
+    },
+    "method": "PATCH",
+    "path": "/v1/projects/prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+    "body": {
+      "description": "Updated scope"
+    },
+    "response": {
+      "id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {
+      "If-Match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_tasks"
+    },
+    "method": "GET",
+    "path": "/v1/tasks",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw"
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "get_task",
+      "task_id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw"
+    },
+    "method": "GET",
+    "path": "/v1/tasks/tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+    "body": null,
+    "response": {
+      "id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "create_task",
+      "idempotency_key": "job-123",
+      "name": "Frame the addition",
+      "task_type": "Task",
+      "project_id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw"
+    },
+    "method": "POST",
+    "path": "/v1/tasks",
+    "body": {
+      "name": "Frame the addition",
+      "task_type": "Task",
+      "project_id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw"
+    },
+    "response": {
+      "id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw"
+    },
+    "http_status": 201,
+    "headers": {
+      "Idempotency-Key": "job-123"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_task",
+      "task_id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "if_match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "description": "Updated scope"
+    },
+    "method": "PATCH",
+    "path": "/v1/tasks/tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+    "body": {
+      "description": "Updated scope"
+    },
+    "response": {
+      "id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {
+      "If-Match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "config": {
+      "operation": "complete_task",
+      "task_id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "completed": true,
+      "if_match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "method": "POST",
+    "path": "/v1/tasks/tsk_00000Nv8Rt3Zc6Hd1Mq4Xw/complete",
+    "body": {
+      "completed": true
+    },
+    "response": {
+      "id": "tsk_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {
+      "If-Match": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_estimates"
+    },
+    "method": "GET",
+    "path": "/v1/estimates",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "est_0000000000000000000000"
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "get_estimate",
+      "estimate_id": "est_0000000000000000000000"
+    },
+    "method": "GET",
+    "path": "/v1/estimates/est_0000000000000000000000",
+    "body": null,
+    "response": {
+      "id": "est_0000000000000000000000",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "/v1/invoices",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "inv_0000000000000000000000"
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "get_invoice",
+      "invoice_id": "inv_0000000000000000000000"
+    },
+    "method": "GET",
+    "path": "/v1/invoices/inv_0000000000000000000000",
+    "body": null,
+    "response": {
+      "id": "inv_0000000000000000000000",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "list_messages"
+    },
+    "method": "GET",
+    "path": "/v1/messages",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "msg_00000Hs5Yc2Mp9Tv4Kb7Rd"
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "get_message",
+      "message_id": "msg_00000Hs5Yc2Mp9Tv4Kb7Rd"
+    },
+    "method": "GET",
+    "path": "/v1/messages/msg_00000Hs5Yc2Mp9Tv4Kb7Rd",
+    "body": null,
+    "response": {
+      "id": "msg_00000Hs5Yc2Mp9Tv4Kb7Rd",
+      "version": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "http_status": 200,
+    "headers": {}
+  },
+  {
+    "config": {
+      "operation": "create_message",
+      "idempotency_key": "job-123",
+      "parent_type": "project",
+      "parent_id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "body": "Homeowner confirmed the demo date."
+    },
+    "method": "POST",
+    "path": "/v1/messages",
+    "body": {
+      "parent_type": "project",
+      "parent_id": "prj_00000Nv8Rt3Zc6Hd1Mq4Xw",
+      "body": "Homeowner confirmed the demo date."
+    },
+    "response": {
+      "id": "msg_00000Hs5Yc2Mp9Tv4Kb7Rd"
+    },
+    "http_status": 201,
+    "headers": {
+      "Idempotency-Key": "job-123"
+    }
+  }
+]

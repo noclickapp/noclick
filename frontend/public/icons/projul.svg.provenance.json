@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/projul.svg",
+  "source": "https://projul.com/images/logo/projul-logo.svg",
+  "license": "Official Projul brand mark used nominatively to identify the connected service; trademark rights remain with Projul.",
+  "sha256": "95cd9f5cb2f6f662ba0a11910408826f58c58aa0d92be38d55abcea25dcc10a8",
+  "modifications": "Removed trailing whitespace only; SVG artwork unchanged."
+}
