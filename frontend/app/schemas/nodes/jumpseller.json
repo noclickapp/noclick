@@ -1,0 +1,1526 @@
+{
+  "$defs": {
+    "CountProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "count_products",
+          "default": "count_products",
+          "title": "Count Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "CountProducts",
+      "type": "object"
+    },
+    "CreateCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_category",
+          "default": "create_category",
+          "title": "Create Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCategory",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "approved",
+                "pending",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "approved",
+            "pending",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "accepts_marketing": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Changes the customer's marketing consent when supplied.",
+          "title": "Accepts Marketing"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Create Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        },
+        "customer_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "products": {
+          "items": {
+            "$ref": "#/$defs/OrderLine"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Products",
+          "type": "array"
+        },
+        "status": {
+          "default": "Created",
+          "description": "Order creation can change inventory and trigger store notifications.",
+          "enum": [
+            "Created",
+            "Abandoned",
+            "Canceled",
+            "Pending Payment",
+            "Paid"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "shipping_method_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shipping Method Name"
+        },
+        "shipping_price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shipping Price"
+        },
+        "payment_method_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method Name"
+        },
+        "additional_information": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Information"
+        }
+      },
+      "required": [
+        "customer_id",
+        "products"
+      ],
+      "title": "CreateOrder",
+      "type": "object"
+    },
+    "CreateProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "price": {
+          "minimum": 0,
+          "title": "Price",
+          "type": "number"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "stock": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stock"
+        },
+        "stock_unlimited": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stock Unlimited"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "available",
+                "not-available",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "available",
+            "not-available",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "brand": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand"
+        },
+        "featured": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Featured"
+        },
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "name",
+        "price"
+      ],
+      "title": "CreateProduct",
+      "type": "object"
+    },
+    "DeleteProduct": {
+      "additionalProperties": false,
+      "description": "Permanently delete the selected product.",
+      "properties": {
+        "product_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_product",
+          "default": "delete_product",
+          "title": "Delete Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "DeleteProduct",
+      "type": "object"
+    },
+    "GetCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "category_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Category ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Get Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "GetCategory",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Order ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetStoreInfo": {
+      "additionalProperties": false,
+      "description": "Read store identity without exposing the webhook signing token.",
+      "properties": {
+        "operation": {
+          "const": "get_store_info",
+          "default": "get_store_info",
+          "title": "Get Store Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "GetStoreInfo",
+      "type": "object"
+    },
+    "JumpsellerAPICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "jumpseller_api_key",
+          "default": "jumpseller_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "login": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Login",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "authtoken": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Auth Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "login",
+        "authtoken"
+      ],
+      "title": "Jumpseller API Login and Token",
+      "type": "object",
+      "x-credential-instructions": "In your Jumpseller Admin Panel, open Account > Preferences > API and MCP. Copy the API Login, then use Show token and confirm your password to reveal the Auth Token. Both are required. NoClick sends them using HTTP Basic authentication only to api.jumpseller.com. Enable access to the resources your workflow uses.",
+      "x-credential-url": "https://jumpseller.com/support/api/"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "List Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number starting at 1. Each execution reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListLocations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "List Locations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ListLocations",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number starting at 1. Each execution reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        },
+        "status_filters": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated order statuses, for example paid,pending_payment.",
+          "title": "Status Filters"
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number starting at 1. Each execution reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "OrderLine": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        },
+        "variant_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant Id"
+        },
+        "qty": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Qty",
+          "type": "integer"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OrderLine",
+      "type": "object"
+    },
+    "SearchCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number starting at 1. Each execution reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_customers",
+          "default": "search_customers",
+          "title": "Search Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchCustomers",
+      "type": "object"
+    },
+    "SearchOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number starting at 1. Each execution reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_orders",
+          "default": "search_orders",
+          "title": "Search Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 3,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchOrders",
+      "type": "object"
+    },
+    "SearchProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number starting at 1. Each execution reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_products",
+          "default": "search_products",
+          "title": "Search Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "read"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "available",
+                "not-available",
+                "disabled",
+                "featured"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "available",
+            "not-available",
+            "disabled",
+            "featured"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchProducts",
+      "type": "object"
+    },
+    "UpdateCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "category_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Category ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_category",
+          "default": "update_category",
+          "title": "Update Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "permalink": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permalink"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "UpdateCategory",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "approved",
+                "pending",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "approved",
+            "pending",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "accepts_marketing": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Changes the customer's marketing consent when supplied.",
+          "title": "Accepts Marketing"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "customer_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdateOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Order ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_order",
+          "default": "update_order",
+          "title": "Update Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Abandoned",
+                "Canceled",
+                "Pending Payment",
+                "Paid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status changes may trigger store notifications and inventory effects.",
+          "title": "Status",
+          "enum": [
+            "Abandoned",
+            "Canceled",
+            "Pending Payment",
+            "Paid"
+          ],
+          "x-enum-searchable": true
+        },
+        "shipment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "requested",
+                "in_transit",
+                "delivered",
+                "failed",
+                "pickup_available",
+                "in_preparation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shipment Status",
+          "enum": [
+            "requested",
+            "in_transit",
+            "delivered",
+            "failed",
+            "pickup_available",
+            "in_preparation"
+          ],
+          "x-enum-searchable": true
+        },
+        "tracking_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking Number"
+        },
+        "tracking_company": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking Company"
+        },
+        "tracking_url": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking Url"
+        },
+        "additional_information": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Information"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "UpdateOrder",
+      "type": "object"
+    },
+    "UpdateProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "stock": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stock"
+        },
+        "stock_unlimited": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stock Unlimited"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "available",
+                "not-available",
+                "disabled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "available",
+            "not-available",
+            "disabled"
+          ],
+          "x-enum-searchable": true
+        },
+        "brand": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand"
+        },
+        "featured": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Featured"
+        },
+        "product_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Update Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "UpdateProduct",
+      "type": "object"
+    },
+    "UpdateStock": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_stock",
+          "default": "update_stock",
+          "title": "Update Stock",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-kind": "write"
+        },
+        "location_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "product_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product Id",
+          "type": "integer"
+        },
+        "variant_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant Id"
+        },
+        "stock": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Stock",
+          "type": "integer"
+        },
+        "stock_unlimited": {
+          "description": "Whether this stock location has unlimited inventory.",
+          "title": "Stock Unlimited",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "location_id",
+        "product_id",
+        "stock",
+        "stock_unlimited"
+      ],
+      "title": "UpdateStock",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "count_products": "#/$defs/CountProducts",
+          "create_category": "#/$defs/CreateCategory",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_order": "#/$defs/CreateOrder",
+          "create_product": "#/$defs/CreateProduct",
+          "delete_product": "#/$defs/DeleteProduct",
+          "get_category": "#/$defs/GetCategory",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_order": "#/$defs/GetOrder",
+          "get_product": "#/$defs/GetProduct",
+          "get_store_info": "#/$defs/GetStoreInfo",
+          "list_categories": "#/$defs/ListCategories",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_locations": "#/$defs/ListLocations",
+          "list_orders": "#/$defs/ListOrders",
+          "list_products": "#/$defs/ListProducts",
+          "search_customers": "#/$defs/SearchCustomers",
+          "search_orders": "#/$defs/SearchOrders",
+          "search_products": "#/$defs/SearchProducts",
+          "update_category": "#/$defs/UpdateCategory",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_order": "#/$defs/UpdateOrder",
+          "update_product": "#/$defs/UpdateProduct",
+          "update_stock": "#/$defs/UpdateStock"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetStoreInfo"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/SearchProducts"
+        },
+        {
+          "$ref": "#/$defs/CountProducts"
+        },
+        {
+          "$ref": "#/$defs/CreateProduct"
+        },
+        {
+          "$ref": "#/$defs/UpdateProduct"
+        },
+        {
+          "$ref": "#/$defs/DeleteProduct"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/SearchOrders"
+        },
+        {
+          "$ref": "#/$defs/CreateOrder"
+        },
+        {
+          "$ref": "#/$defs/UpdateOrder"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/SearchCustomers"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/GetCategory"
+        },
+        {
+          "$ref": "#/$defs/CreateCategory"
+        },
+        {
+          "$ref": "#/$defs/UpdateCategory"
+        },
+        {
+          "$ref": "#/$defs/ListLocations"
+        },
+        {
+          "$ref": "#/$defs/UpdateStock"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JumpsellerAPICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Jumpseller Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
