@@ -1,0 +1,1006 @@
+{
+  "$defs": {
+    "ConductorAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "conductor_api_key",
+          "default": "conductor_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Conductor API Key",
+      "type": "object",
+      "x-credential-instructions": "Create a user API key in Conductor, then paste it here without the Bearer prefix. Your Conductor account needs access to cloud workspaces and the projects you automate. NoClick checks the account with GET /me; individual project and write permissions may differ.",
+      "x-credential-url": "https://app.conductor.build/home/api-keys"
+    },
+    "ConductorArchiveSessionConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/sessions/{session_id}/archive.",
+      "properties": {
+        "operation": {
+          "const": "archive_session",
+          "default": "archive_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ConductorArchiveSessionConfig",
+      "type": "object"
+    },
+    "ConductorArchiveWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/workspaces/{workspace_id}/archive.",
+      "properties": {
+        "operation": {
+          "const": "archive_workspace",
+          "default": "archive_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ConductorArchiveWorkspaceConfig",
+      "type": "object"
+    },
+    "ConductorCancelSessionConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/sessions/{session_id}/cancel.",
+      "properties": {
+        "operation": {
+          "const": "cancel_session",
+          "default": "cancel_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ConductorCancelSessionConfig",
+      "type": "object"
+    },
+    "ConductorCreateSessionConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/sessions.",
+      "properties": {
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "agent": {
+          "description": "Agent must already have credentials connected in Conductor; its default model is used.",
+          "enum": [
+            "claude",
+            "codex",
+            "cursor",
+            "acp"
+          ],
+          "title": "Agent",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stable session ID for deduplicating a retried create.",
+          "title": "Session Id"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID for deduplicating an explicitly retried message. Reuse the same ID and text.",
+          "title": "Message Id"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional initial prompt. Inspect initialMessage before resending.",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "agent"
+      ],
+      "title": "ConductorCreateSessionConfig",
+      "type": "object"
+    },
+    "ConductorCreateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/workspaces.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional initial prompt. Inspect initialMessage before resending.",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ConductorCreateWorkspaceConfig",
+      "type": "object"
+    },
+    "ConductorGetIdentityConfig": {
+      "additionalProperties": false,
+      "description": "GET /me.",
+      "properties": {
+        "operation": {
+          "const": "get_identity",
+          "default": "get_identity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConductorGetIdentityConfig",
+      "type": "object"
+    },
+    "ConductorGetMessageConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/messages/{message_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "ConductorGetMessageConfig",
+      "type": "object"
+    },
+    "ConductorGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/projects/{project_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ConductorGetProjectConfig",
+      "type": "object"
+    },
+    "ConductorGetSessionConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/sessions/{session_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ConductorGetSessionConfig",
+      "type": "object"
+    },
+    "ConductorGetSessionStatusConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/sessions/{session_id}/status.",
+      "properties": {
+        "operation": {
+          "const": "get_session_status",
+          "default": "get_session_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ConductorGetSessionStatusConfig",
+      "type": "object"
+    },
+    "ConductorGetWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/workspaces/{workspace_id}.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ConductorGetWorkspaceConfig",
+      "type": "object"
+    },
+    "ConductorGetWorkspaceStatusConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/workspaces/{workspace_id}/status.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace_status",
+          "default": "get_workspace_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ConductorGetWorkspaceStatusConfig",
+      "type": "object"
+    },
+    "ConductorListFavoriteModelsConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/favorite-models.",
+      "properties": {
+        "operation": {
+          "const": "list_favorite_models",
+          "default": "list_favorite_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConductorListFavoriteModelsConfig",
+      "type": "object"
+    },
+    "ConductorListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/sessions/{session_id}/messages.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Number of records in this page. NoClick returns one page per run.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ConductorListMessagesConfig",
+      "type": "object"
+    },
+    "ConductorListProjectWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/projects/{project_id}/workspaces.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Number of records in this page. NoClick returns one page per run.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_project_workspaces",
+          "default": "list_project_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ConductorListProjectWorkspacesConfig",
+      "type": "object"
+    },
+    "ConductorListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/projects.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Number of records in this page. NoClick returns one page per run.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConductorListProjectsConfig",
+      "type": "object"
+    },
+    "ConductorListSessionsConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/workspaces/{workspace_id}/sessions.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Number of records in this page. NoClick returns one page per run.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Archived"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ConductorListSessionsConfig",
+      "type": "object"
+    },
+    "ConductorListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "GET /v0/workspaces.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Number of records in this page. NoClick returns one page per run.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the previous page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "creator": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "repo": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repo"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Archived"
+        }
+      },
+      "title": "ConductorListWorkspacesConfig",
+      "type": "object"
+    },
+    "ConductorRenameSessionConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/sessions/{session_id}/rename.",
+      "properties": {
+        "operation": {
+          "const": "rename_session",
+          "default": "rename_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "name"
+      ],
+      "title": "ConductorRenameSessionConfig",
+      "type": "object"
+    },
+    "ConductorRenameWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/workspaces/{workspace_id}/rename.",
+      "properties": {
+        "operation": {
+          "const": "rename_workspace",
+          "default": "rename_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "ConductorRenameWorkspaceConfig",
+      "type": "object"
+    },
+    "ConductorSendMessageConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/sessions/{session_id}/messages.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "message": {
+          "description": "Prompt sent to the coding agent; may be queued while the workspace starts.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID for deduplicating an explicitly retried message. Reuse the same ID and text.",
+          "title": "Message Id"
+        }
+      },
+      "required": [
+        "session_id",
+        "message"
+      ],
+      "title": "ConductorSendMessageConfig",
+      "type": "object"
+    },
+    "ConductorSleepWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/workspaces/{workspace_id}/sleep.",
+      "properties": {
+        "operation": {
+          "const": "sleep_workspace",
+          "default": "sleep_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ConductorSleepWorkspaceConfig",
+      "type": "object"
+    },
+    "ConductorUnarchiveSessionConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/sessions/{session_id}/unarchive.",
+      "properties": {
+        "operation": {
+          "const": "unarchive_session",
+          "default": "unarchive_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ConductorUnarchiveSessionConfig",
+      "type": "object"
+    },
+    "ConductorUnarchiveWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "POST /v0/workspaces/{workspace_id}/unarchive.",
+      "properties": {
+        "operation": {
+          "const": "unarchive_workspace",
+          "default": "unarchive_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ConductorUnarchiveWorkspaceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_session": "#/$defs/ConductorArchiveSessionConfig",
+          "archive_workspace": "#/$defs/ConductorArchiveWorkspaceConfig",
+          "cancel_session": "#/$defs/ConductorCancelSessionConfig",
+          "create_session": "#/$defs/ConductorCreateSessionConfig",
+          "create_workspace": "#/$defs/ConductorCreateWorkspaceConfig",
+          "get_identity": "#/$defs/ConductorGetIdentityConfig",
+          "get_message": "#/$defs/ConductorGetMessageConfig",
+          "get_project": "#/$defs/ConductorGetProjectConfig",
+          "get_session": "#/$defs/ConductorGetSessionConfig",
+          "get_session_status": "#/$defs/ConductorGetSessionStatusConfig",
+          "get_workspace": "#/$defs/ConductorGetWorkspaceConfig",
+          "get_workspace_status": "#/$defs/ConductorGetWorkspaceStatusConfig",
+          "list_favorite_models": "#/$defs/ConductorListFavoriteModelsConfig",
+          "list_messages": "#/$defs/ConductorListMessagesConfig",
+          "list_project_workspaces": "#/$defs/ConductorListProjectWorkspacesConfig",
+          "list_projects": "#/$defs/ConductorListProjectsConfig",
+          "list_sessions": "#/$defs/ConductorListSessionsConfig",
+          "list_workspaces": "#/$defs/ConductorListWorkspacesConfig",
+          "rename_session": "#/$defs/ConductorRenameSessionConfig",
+          "rename_workspace": "#/$defs/ConductorRenameWorkspaceConfig",
+          "send_message": "#/$defs/ConductorSendMessageConfig",
+          "sleep_workspace": "#/$defs/ConductorSleepWorkspaceConfig",
+          "unarchive_session": "#/$defs/ConductorUnarchiveSessionConfig",
+          "unarchive_workspace": "#/$defs/ConductorUnarchiveWorkspaceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConductorGetIdentityConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorListProjectWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorGetWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorRenameWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorArchiveWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorUnarchiveWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorSleepWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorListSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorCreateSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorGetSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorRenameSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorArchiveSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorUnarchiveSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorGetWorkspaceStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorGetSessionStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorCancelSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ConductorListFavoriteModelsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConductorAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Conductor Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
