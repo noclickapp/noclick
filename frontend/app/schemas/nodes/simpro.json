@@ -1,0 +1,1664 @@
+{
+  "$defs": {
+    "SimproAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "simpro_api_key",
+          "default": "simpro_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "build_url": {
+          "description": "Your HTTPS Simpro build, for example https://example.simprosuite.com or https://example.simprocloud.com.",
+          "title": "Build URL",
+          "type": "string"
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "build_url",
+        "api_key"
+      ],
+      "title": "Simpro API Key",
+      "type": "object",
+      "x-credential-instructions": "In Simpro, open System > Setup > API > Applications and request API Key access. Paste the access token from the key file and your build URL. The key's application permissions must allow the operations you use. Company listing verifies the connection.",
+      "x-credential-url": "https://developer.simprogroup.com/apidoc/#tag/API-key-workflow"
+    },
+    "SimproCreateCompanyCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create company customer with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_company_customer",
+          "default": "create_company_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_name": {
+          "minLength": 1,
+          "title": "Company Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        }
+      },
+      "required": [
+        "company_id",
+        "company_name"
+      ],
+      "title": "SimproCreateCompanyCustomerConfig",
+      "type": "object"
+    },
+    "SimproCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create contact with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "given_name": {
+          "minLength": 1,
+          "title": "Given Name",
+          "type": "string"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "work_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Phone"
+        },
+        "cell_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Phone"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        }
+      },
+      "required": [
+        "company_id",
+        "given_name"
+      ],
+      "title": "SimproCreateContactConfig",
+      "type": "object"
+    },
+    "SimproCreateJobConfig": {
+      "additionalProperties": false,
+      "description": "Create job with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_type": {
+          "enum": [
+            "Project",
+            "Service",
+            "Prepaid"
+          ],
+          "title": "Job Type",
+          "type": "string"
+        },
+        "site": {
+          "minimum": 1,
+          "title": "Site",
+          "type": "integer"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "Pending",
+                "Progress",
+                "Complete",
+                "Archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "Pending",
+            "Progress",
+            "Complete",
+            "Archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "job_type",
+        "site"
+      ],
+      "title": "SimproCreateJobConfig",
+      "type": "object"
+    },
+    "SimproCreateQuoteConfig": {
+      "additionalProperties": false,
+      "description": "Create quote with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_quote",
+          "default": "create_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "quote_type": {
+          "enum": [
+            "Project",
+            "Service",
+            "Prepaid"
+          ],
+          "title": "Quote Type",
+          "type": "string"
+        },
+        "customer": {
+          "minimum": 1,
+          "title": "Customer",
+          "type": "integer"
+        },
+        "site": {
+          "minimum": 1,
+          "title": "Site",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "InProgress",
+                "Complete",
+                "Approved"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "InProgress",
+            "Complete",
+            "Approved"
+          ],
+          "x-enum-searchable": true
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "quote_type",
+        "customer",
+        "site"
+      ],
+      "title": "SimproCreateQuoteConfig",
+      "type": "object"
+    },
+    "SimproCreateSiteConfig": {
+      "additionalProperties": false,
+      "description": "Create site with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_site",
+          "default": "create_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "public_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Notes"
+        },
+        "private_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Notes"
+        }
+      },
+      "required": [
+        "company_id",
+        "name"
+      ],
+      "title": "SimproCreateSiteConfig",
+      "type": "object"
+    },
+    "SimproGetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Get company with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproGetCompanyConfig",
+      "type": "object"
+    },
+    "SimproGetCompanyCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Get company customer with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company_customer",
+          "default": "get_company_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "customer_id"
+      ],
+      "title": "SimproGetCompanyCustomerConfig",
+      "type": "object"
+    },
+    "SimproGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get contact with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "contact_id"
+      ],
+      "title": "SimproGetContactConfig",
+      "type": "object"
+    },
+    "SimproGetInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Get invoice with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "minimum": 1,
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "invoice_id"
+      ],
+      "title": "SimproGetInvoiceConfig",
+      "type": "object"
+    },
+    "SimproGetJobConfig": {
+      "additionalProperties": false,
+      "description": "Get job with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "job_id"
+      ],
+      "title": "SimproGetJobConfig",
+      "type": "object"
+    },
+    "SimproGetQuoteConfig": {
+      "additionalProperties": false,
+      "description": "Get quote with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "quote_id": {
+          "minimum": 1,
+          "title": "Quote Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "quote_id"
+      ],
+      "title": "SimproGetQuoteConfig",
+      "type": "object"
+    },
+    "SimproGetSiteConfig": {
+      "additionalProperties": false,
+      "description": "Get site with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_site",
+          "default": "get_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_id": {
+          "minimum": 1,
+          "title": "Site Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "site_id"
+      ],
+      "title": "SimproGetSiteConfig",
+      "type": "object"
+    },
+    "SimproListCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "List companies with one Simpro API request.",
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SimproListCompaniesConfig",
+      "type": "object"
+    },
+    "SimproListCompanyCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List company customers with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_company_customers",
+          "default": "list_company_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListCompanyCustomersConfig",
+      "type": "object"
+    },
+    "SimproListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List contacts with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListContactsConfig",
+      "type": "object"
+    },
+    "SimproListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List customers with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListCustomersConfig",
+      "type": "object"
+    },
+    "SimproListInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List invoices with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListInvoicesConfig",
+      "type": "object"
+    },
+    "SimproListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List jobs with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListJobsConfig",
+      "type": "object"
+    },
+    "SimproListQuotesConfig": {
+      "additionalProperties": false,
+      "description": "List quotes with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_quotes",
+          "default": "list_quotes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListQuotesConfig",
+      "type": "object"
+    },
+    "SimproListSitesConfig": {
+      "additionalProperties": false,
+      "description": "List sites with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One-based page to fetch. Follow next_page in the output.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "description": "Maximum records in this page, up to 250.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SimproListSitesConfig",
+      "type": "object"
+    },
+    "SimproUpdateCompanyCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Update company customer with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_company_customer",
+          "default": "update_company_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        }
+      },
+      "required": [
+        "company_id",
+        "customer_id"
+      ],
+      "title": "SimproUpdateCompanyCustomerConfig",
+      "type": "object"
+    },
+    "SimproUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update contact with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "given_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Given Name"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "work_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Phone"
+        },
+        "cell_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Phone"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        }
+      },
+      "required": [
+        "company_id",
+        "contact_id"
+      ],
+      "title": "SimproUpdateContactConfig",
+      "type": "object"
+    },
+    "SimproUpdateJobConfig": {
+      "additionalProperties": false,
+      "description": "Update job with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "Pending",
+                "Progress",
+                "Complete",
+                "Archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "Pending",
+            "Progress",
+            "Complete",
+            "Archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "job_id"
+      ],
+      "title": "SimproUpdateJobConfig",
+      "type": "object"
+    },
+    "SimproUpdateQuoteConfig": {
+      "additionalProperties": false,
+      "description": "Update quote with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_quote",
+          "default": "update_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "quote_id": {
+          "minimum": 1,
+          "title": "Quote Id",
+          "type": "integer"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "InProgress",
+                "Complete",
+                "Approved"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "InProgress",
+            "Complete",
+            "Approved"
+          ],
+          "x-enum-searchable": true
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "quote_id"
+      ],
+      "title": "SimproUpdateQuoteConfig",
+      "type": "object"
+    },
+    "SimproUpdateSiteConfig": {
+      "additionalProperties": false,
+      "description": "Update site with one Simpro API request.",
+      "properties": {
+        "company_id": {
+          "description": "Company ID from List Companies; single-company builds use 0.",
+          "minimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_site",
+          "default": "update_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_id": {
+          "minimum": 1,
+          "title": "Site Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "public_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Notes"
+        },
+        "private_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Notes"
+        }
+      },
+      "required": [
+        "company_id",
+        "site_id"
+      ],
+      "title": "SimproUpdateSiteConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_company_customer": "#/$defs/SimproCreateCompanyCustomerConfig",
+          "create_contact": "#/$defs/SimproCreateContactConfig",
+          "create_job": "#/$defs/SimproCreateJobConfig",
+          "create_quote": "#/$defs/SimproCreateQuoteConfig",
+          "create_site": "#/$defs/SimproCreateSiteConfig",
+          "get_company": "#/$defs/SimproGetCompanyConfig",
+          "get_company_customer": "#/$defs/SimproGetCompanyCustomerConfig",
+          "get_contact": "#/$defs/SimproGetContactConfig",
+          "get_invoice": "#/$defs/SimproGetInvoiceConfig",
+          "get_job": "#/$defs/SimproGetJobConfig",
+          "get_quote": "#/$defs/SimproGetQuoteConfig",
+          "get_site": "#/$defs/SimproGetSiteConfig",
+          "list_companies": "#/$defs/SimproListCompaniesConfig",
+          "list_company_customers": "#/$defs/SimproListCompanyCustomersConfig",
+          "list_contacts": "#/$defs/SimproListContactsConfig",
+          "list_customers": "#/$defs/SimproListCustomersConfig",
+          "list_invoices": "#/$defs/SimproListInvoicesConfig",
+          "list_jobs": "#/$defs/SimproListJobsConfig",
+          "list_quotes": "#/$defs/SimproListQuotesConfig",
+          "list_sites": "#/$defs/SimproListSitesConfig",
+          "update_company_customer": "#/$defs/SimproUpdateCompanyCustomerConfig",
+          "update_contact": "#/$defs/SimproUpdateContactConfig",
+          "update_job": "#/$defs/SimproUpdateJobConfig",
+          "update_quote": "#/$defs/SimproUpdateQuoteConfig",
+          "update_site": "#/$defs/SimproUpdateSiteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SimproListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListCompanyCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetCompanyCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproCreateCompanyCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproUpdateCompanyCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListSitesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproCreateSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproUpdateSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproCreateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproUpdateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproCreateQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproUpdateQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimproGetInvoiceConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SimproAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Simpro Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
