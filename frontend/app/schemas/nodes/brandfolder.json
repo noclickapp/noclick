@@ -1,0 +1,1591 @@
+{
+  "$defs": {
+    "BrandfolderAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "brandfolder_api_key",
+          "default": "brandfolder_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Brandfolder API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Profile \u2192 Integrations in Brandfolder. Paste only the key. Requests use your Brandfolder permissions.",
+      "x-credential-url": "https://brandfolder.com/profile#integrations"
+    },
+    "BrandfolderAddAssetTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_asset_tags",
+          "default": "add_asset_tags",
+          "title": "Add Asset Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Add Asset Tags",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "tags_json": {
+          "maxLength": 100000,
+          "title": "Tags JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "asset_id",
+        "tags_json"
+      ],
+      "title": "BrandfolderAddAssetTagsConfig",
+      "type": "object"
+    },
+    "BrandfolderCreateAssetConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_asset",
+          "default": "create_asset",
+          "title": "Create Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Create Asset",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "section_key": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Section Key",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "approved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approved"
+        },
+        "availability_start": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability Start"
+        },
+        "availability_end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability End"
+        },
+        "thumbnail_url": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thumbnail Url"
+        },
+        "attachment_url": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Url"
+        },
+        "attachment_filename": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachment Filename"
+        }
+      },
+      "required": [
+        "brandfolder_id",
+        "name",
+        "section_key"
+      ],
+      "title": "BrandfolderCreateAssetConfig",
+      "type": "object"
+    },
+    "BrandfolderCreateCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "tagline": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tagline"
+        }
+      },
+      "required": [
+        "brandfolder_id",
+        "name"
+      ],
+      "title": "BrandfolderCreateCollectionConfig",
+      "type": "object"
+    },
+    "BrandfolderCreateLabelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Create Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Create Label",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_key": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Key"
+        }
+      },
+      "required": [
+        "brandfolder_id",
+        "name"
+      ],
+      "title": "BrandfolderCreateLabelConfig",
+      "type": "object"
+    },
+    "BrandfolderCreateSectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_section",
+          "default": "create_section",
+          "title": "Create Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sections",
+          "x-display-name": "Create Section",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "default_asset_type": {
+          "enum": [
+            "GenericFile",
+            "Color",
+            "Font",
+            "ExternalMedium",
+            "Person",
+            "Press",
+            "Text"
+          ],
+          "title": "Default Asset Type",
+          "type": "string"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        }
+      },
+      "required": [
+        "brandfolder_id",
+        "name",
+        "default_asset_type"
+      ],
+      "title": "BrandfolderCreateSectionConfig",
+      "type": "object"
+    },
+    "BrandfolderDeleteAssetConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_asset",
+          "default": "delete_asset",
+          "title": "Delete Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Delete Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "BrandfolderDeleteAssetConfig",
+      "type": "object"
+    },
+    "BrandfolderDeleteCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Delete Collection",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Collection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "BrandfolderDeleteCollectionConfig",
+      "type": "object"
+    },
+    "BrandfolderGetAssetConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "title": "Get Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "BrandfolderGetAssetConfig",
+      "type": "object"
+    },
+    "BrandfolderGetBrandfolderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_brandfolder",
+          "default": "get_brandfolder",
+          "title": "Get Brandfolder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brandfolders",
+          "x-display-name": "Get Brandfolder",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderGetBrandfolderConfig",
+      "type": "object"
+    },
+    "BrandfolderGetCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Get Collection",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "const": "asset_count",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "BrandfolderGetCollectionConfig",
+      "type": "object"
+    },
+    "BrandfolderGetLabelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_label",
+          "default": "get_label",
+          "title": "Get Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Get Label",
+          "x-is-trigger": false
+        },
+        "label_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Label ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label_id"
+      ],
+      "title": "BrandfolderGetLabelConfig",
+      "type": "object"
+    },
+    "BrandfolderGetSectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_section",
+          "default": "get_section",
+          "title": "Get Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sections",
+          "x-display-name": "Get Section",
+          "x-is-trigger": false
+        },
+        "section_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Section ID",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "section_id"
+      ],
+      "title": "BrandfolderGetSectionConfig",
+      "type": "object"
+    },
+    "BrandfolderListAssetCustomFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_asset_custom_fields",
+          "default": "list_asset_custom_fields",
+          "title": "List Asset Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "List Asset Custom Fields",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "BrandfolderListAssetCustomFieldsConfig",
+      "type": "object"
+    },
+    "BrandfolderListAssetTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_asset_tags",
+          "default": "list_asset_tags",
+          "title": "List Asset Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Asset Tags",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "BrandfolderListAssetTagsConfig",
+      "type": "object"
+    },
+    "BrandfolderListAssetsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "List Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Assets",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per": {
+          "anyOf": [
+            {
+              "maximum": 3000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderListAssetsConfig",
+      "type": "object"
+    },
+    "BrandfolderListBrandfoldersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_brandfolders",
+          "default": "list_brandfolders",
+          "title": "List Brandfolders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brandfolders",
+          "x-display-name": "List Brandfolders",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "title": "BrandfolderListBrandfoldersConfig",
+      "type": "object"
+    },
+    "BrandfolderListCollectionAssetsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_collection_assets",
+          "default": "list_collection_assets",
+          "title": "List Collection Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Collection Assets",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per": {
+          "anyOf": [
+            {
+              "maximum": 3000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "BrandfolderListCollectionAssetsConfig",
+      "type": "object"
+    },
+    "BrandfolderListCollectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderListCollectionsConfig",
+      "type": "object"
+    },
+    "BrandfolderListCustomFieldKeysConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_custom_field_keys",
+          "default": "list_custom_field_keys",
+          "title": "List Custom Field Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "List Custom Field Keys",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderListCustomFieldKeysConfig",
+      "type": "object"
+    },
+    "BrandfolderListLabelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "List Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "List Labels",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderListLabelsConfig",
+      "type": "object"
+    },
+    "BrandfolderListSectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sections",
+          "default": "list_sections",
+          "title": "List Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sections",
+          "x-display-name": "List Sections",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderListSectionsConfig",
+      "type": "object"
+    },
+    "BrandfolderListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderListTagsConfig",
+      "type": "object"
+    },
+    "BrandfolderOnAssetEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_asset_event",
+          "default": "on_asset_event",
+          "title": "On Asset Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Asset Event",
+          "x-is-trigger": true
+        },
+        "brandfolder_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Brandfolder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "brandfolder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "event_type": {
+          "default": "asset.create",
+          "description": "Created, updated (including ready for use), or deleted. Deliveries contain IDs, not asset content. Brandfolder does not document delivery signatures.",
+          "enum": [
+            "asset.create",
+            "asset.update",
+            "asset.delete"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "brandfolder_id"
+      ],
+      "title": "BrandfolderOnAssetEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BrandfolderUpdateAssetConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_asset",
+          "default": "update_asset",
+          "title": "Update Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Update Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "approved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approved"
+        },
+        "availability_start": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability Start"
+        },
+        "availability_end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability End"
+        },
+        "thumbnail_url": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thumbnail Url"
+        }
+      },
+      "required": [
+        "asset_id",
+        "name"
+      ],
+      "title": "BrandfolderUpdateAssetConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_asset_tags": "#/$defs/BrandfolderAddAssetTagsConfig",
+          "create_asset": "#/$defs/BrandfolderCreateAssetConfig",
+          "create_collection": "#/$defs/BrandfolderCreateCollectionConfig",
+          "create_label": "#/$defs/BrandfolderCreateLabelConfig",
+          "create_section": "#/$defs/BrandfolderCreateSectionConfig",
+          "delete_asset": "#/$defs/BrandfolderDeleteAssetConfig",
+          "delete_collection": "#/$defs/BrandfolderDeleteCollectionConfig",
+          "get_asset": "#/$defs/BrandfolderGetAssetConfig",
+          "get_brandfolder": "#/$defs/BrandfolderGetBrandfolderConfig",
+          "get_collection": "#/$defs/BrandfolderGetCollectionConfig",
+          "get_label": "#/$defs/BrandfolderGetLabelConfig",
+          "get_section": "#/$defs/BrandfolderGetSectionConfig",
+          "list_asset_custom_fields": "#/$defs/BrandfolderListAssetCustomFieldsConfig",
+          "list_asset_tags": "#/$defs/BrandfolderListAssetTagsConfig",
+          "list_assets": "#/$defs/BrandfolderListAssetsConfig",
+          "list_brandfolders": "#/$defs/BrandfolderListBrandfoldersConfig",
+          "list_collection_assets": "#/$defs/BrandfolderListCollectionAssetsConfig",
+          "list_collections": "#/$defs/BrandfolderListCollectionsConfig",
+          "list_custom_field_keys": "#/$defs/BrandfolderListCustomFieldKeysConfig",
+          "list_labels": "#/$defs/BrandfolderListLabelsConfig",
+          "list_sections": "#/$defs/BrandfolderListSectionsConfig",
+          "list_tags": "#/$defs/BrandfolderListTagsConfig",
+          "on_asset_event": "#/$defs/BrandfolderOnAssetEventConfig",
+          "update_asset": "#/$defs/BrandfolderUpdateAssetConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BrandfolderListBrandfoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderGetBrandfolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderGetSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderCreateSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListCollectionAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderCreateAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderUpdateAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderDeleteAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListAssetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderAddAssetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListCustomFieldKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListAssetCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderGetLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfolderOnAssetEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrandfolderAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Brandfolder Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find assets in my Brandfolder",
+    "Create an asset from a file URL",
+    "Tag this asset",
+    "Start when a Brandfolder asset is updated"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
