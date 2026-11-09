@@ -1,0 +1,917 @@
+{
+  "$defs": {
+    "AddContactTagConfig": {
+      "description": "Attach an existing tag to a contact.",
+      "properties": {
+        "operation": {
+          "const": "add_contact_tag",
+          "default": "add_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "AddContactTagConfig",
+      "type": "object"
+    },
+    "CloseConversationConfig": {
+      "description": "Close a conversation.",
+      "properties": {
+        "operation": {
+          "const": "close_conversation",
+          "default": "close_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "conversation_id": {
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "CloseConversationConfig",
+      "type": "object"
+    },
+    "CreateContactConfig": {
+      "description": "Create a contact from a phone number and optional profile fields.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "number": {
+          "minLength": 1,
+          "title": "Number",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "CreateContactConfig",
+      "type": "object"
+    },
+    "CreateContactNoteConfig": {
+      "description": "Add a note to a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_note",
+          "default": "create_contact_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "text"
+      ],
+      "title": "CreateContactNoteConfig",
+      "type": "object"
+    },
+    "CreateTagConfig": {
+      "description": "Create a tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "CreateTagConfig",
+      "type": "object"
+    },
+    "DeleteContactConfig": {
+      "description": "Delete a contact by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContactConfig",
+      "type": "object"
+    },
+    "GetContactConfig": {
+      "description": "Read a contact by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContactConfig",
+      "type": "object"
+    },
+    "GetConversationConfig": {
+      "description": "Read a conversation by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "conversation_id": {
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GetConversationConfig",
+      "type": "object"
+    },
+    "GetCurrentUserConfig": {
+      "description": "Read the current user's unread count.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCurrentUserConfig",
+      "type": "object"
+    },
+    "GetInboxConfig": {
+      "description": "Read an inbox by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_inbox",
+          "default": "get_inbox",
+          "title": "Operation",
+          "type": "string"
+        },
+        "team_id": {
+          "minimum": 1,
+          "title": "Team ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "GetInboxConfig",
+      "type": "object"
+    },
+    "GetTagConfig": {
+      "description": "Read a tag by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTagConfig",
+      "type": "object"
+    },
+    "ListContactsConfig": {
+      "description": "Read one page of contacts with optional search.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "length": {
+          "default": "10",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|100)$",
+          "title": "Length",
+          "type": "string"
+        },
+        "page": {
+          "default": "1",
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Page",
+          "type": "string"
+        }
+      },
+      "title": "ListContactsConfig",
+      "type": "object"
+    },
+    "ListConversationsConfig": {
+      "description": "Read a bounded page of conversations by status and optional search.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter": {
+          "default": "open",
+          "enum": [
+            "open",
+            "closed",
+            "unread",
+            "assigned",
+            "unassigned",
+            "outbound",
+            "optout",
+            "nocalls"
+          ],
+          "title": "Filter",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ListConversationsConfig",
+      "type": "object"
+    },
+    "ListInboxesConfig": {
+      "description": "List inboxes, optionally limited to your memberships.",
+      "properties": {
+        "operation": {
+          "const": "list_inboxes",
+          "default": "list_inboxes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "has_membership": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Has Membership"
+        }
+      },
+      "title": "ListInboxesConfig",
+      "type": "object"
+    },
+    "ListMessagesConfig": {
+      "description": "Read one page of conversation messages, preserving pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "conversation_id": {
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 15,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "only_scheduled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Scheduled"
+        },
+        "with_activity_logs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Activity Logs"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "ListMessagesConfig",
+      "type": "object"
+    },
+    "ListTagsConfig": {
+      "description": "Read one page of your account's tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "length": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        }
+      },
+      "title": "ListTagsConfig",
+      "type": "object"
+    },
+    "OpenConversationConfig": {
+      "description": "Reopen a conversation.",
+      "properties": {
+        "operation": {
+          "const": "open_conversation",
+          "default": "open_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "conversation_id": {
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "OpenConversationConfig",
+      "type": "object"
+    },
+    "RemoveContactTagConfig": {
+      "description": "Remove a tag from a contact.",
+      "properties": {
+        "operation": {
+          "const": "remove_contact_tag",
+          "default": "remove_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "RemoveContactTagConfig",
+      "type": "object"
+    },
+    "SalesmsgPersonalAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "salesmsg_personal_access_token",
+          "default": "salesmsg_personal_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Salesmsg Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Salesmsg Settings > Developer > Personal Access Tokens, create a token and paste it here. Allow contacts, conversations, messages and tags read/write, teams read and users read for the operations you use. The connection check reads your account's tags and requires tags:read.",
+      "x-credential-url": "https://app.salesmessage.com/settings/developer/access-tokens"
+    },
+    "SearchContactsConfig": {
+      "description": "Search contacts by a text term.",
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "term": {
+          "minLength": 1,
+          "title": "Term",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "term"
+      ],
+      "title": "SearchContactsConfig",
+      "type": "object"
+    },
+    "SendConversationSmsConfig": {
+      "description": "Send an SMS within an existing conversation.",
+      "properties": {
+        "operation": {
+          "const": "send_conversation_sms",
+          "default": "send_conversation_sms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "conversation_id": {
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "enable_quiet_hours": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Quiet Hours"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "message"
+      ],
+      "title": "SendConversationSmsConfig",
+      "type": "object"
+    },
+    "SendSmsConfig": {
+      "description": "Send an SMS to a phone number from an inbox, immediately or at a scheduled time.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "number": {
+          "description": "Recipient phone number, e.g. +12025550018.",
+          "minLength": 1,
+          "title": "Number",
+          "type": "string"
+        },
+        "team_id": {
+          "minimum": 1,
+          "title": "Inbox ID",
+          "type": "integer"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "send_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional scheduled send time with timezone.",
+          "title": "Send At"
+        }
+      },
+      "required": [
+        "number",
+        "team_id",
+        "message"
+      ],
+      "title": "SendSmsConfig",
+      "type": "object"
+    },
+    "UpdateContactConfig": {
+      "description": "Update the supplied profile fields of a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContactConfig",
+      "type": "object"
+    },
+    "UpdateTagConfig": {
+      "description": "Rename a tag.",
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "label": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "label"
+      ],
+      "title": "UpdateTagConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_tag": "#/$defs/AddContactTagConfig",
+          "close_conversation": "#/$defs/CloseConversationConfig",
+          "create_contact": "#/$defs/CreateContactConfig",
+          "create_contact_note": "#/$defs/CreateContactNoteConfig",
+          "create_tag": "#/$defs/CreateTagConfig",
+          "delete_contact": "#/$defs/DeleteContactConfig",
+          "get_contact": "#/$defs/GetContactConfig",
+          "get_conversation": "#/$defs/GetConversationConfig",
+          "get_current_user": "#/$defs/GetCurrentUserConfig",
+          "get_inbox": "#/$defs/GetInboxConfig",
+          "get_tag": "#/$defs/GetTagConfig",
+          "list_contacts": "#/$defs/ListContactsConfig",
+          "list_conversations": "#/$defs/ListConversationsConfig",
+          "list_inboxes": "#/$defs/ListInboxesConfig",
+          "list_messages": "#/$defs/ListMessagesConfig",
+          "list_tags": "#/$defs/ListTagsConfig",
+          "open_conversation": "#/$defs/OpenConversationConfig",
+          "remove_contact_tag": "#/$defs/RemoveContactTagConfig",
+          "search_contacts": "#/$defs/SearchContactsConfig",
+          "send_conversation_sms": "#/$defs/SendConversationSmsConfig",
+          "send_sms": "#/$defs/SendSmsConfig",
+          "update_contact": "#/$defs/UpdateContactConfig",
+          "update_tag": "#/$defs/UpdateTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AddContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInboxesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/ListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CloseConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/SendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendConversationSmsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SalesmsgPersonalAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Salesmsg Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
