@@ -1,0 +1,1421 @@
+{
+  "$defs": {
+    "CancelEvent": {
+      "additionalProperties": false,
+      "description": "Cancel an event, notifying its invitees (events:write).",
+      "properties": {
+        "event_id": {
+          "description": "uuid from a scheduled event, including the zg- prefix.",
+          "title": "Scheduled event ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_event",
+          "default": "cancel_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cancellationReason": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancellationreason"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "CancelEvent",
+      "type": "object"
+    },
+    "CancelInvitee": {
+      "additionalProperties": false,
+      "description": "Cancel just one invitee (events:write).",
+      "properties": {
+        "invitee_id": {
+          "description": "invitees[].uuid from the scheduled event, not the event ID.",
+          "title": "Invitee Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_invitee",
+          "default": "cancel_invitee",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cancellationReason": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancellationreason"
+        }
+      },
+      "required": [
+        "invitee_id"
+      ],
+      "title": "CancelInvitee",
+      "type": "object"
+    },
+    "CheckConnection": {
+      "additionalProperties": false,
+      "description": "Identify the token owner with the authenticated user's email.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateBooking": {
+      "additionalProperties": false,
+      "description": "Book a scheduling page (booking scope, paid plan). Check availability and required questions first; each execution creates a booking.",
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Operation",
+          "type": "string"
+        },
+        "eventTypeId": {
+          "description": "ID returned by List scheduling pages.",
+          "minLength": 1,
+          "title": "Eventtypeid",
+          "type": "string"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeZone": {
+          "title": "Timezone",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "guests": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guests"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "enum": [
+                "IN_PERSON",
+                "PHONE_CALL",
+                "CUSTOM",
+                "GOOGLE_MEET",
+                "MICROSOFT_TEAMS",
+                "MICROSOFT_SKYPE",
+                "ZOOM",
+                "WEBEX",
+                "DEMODESK",
+                "ALFAVIEW",
+                "WHATSAPP",
+                "WHEREBY",
+                "JITSI"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required if the page offers locations; use one it offers.",
+          "title": "Location",
+          "enum": [
+            "IN_PERSON",
+            "PHONE_CALL",
+            "CUSTOM",
+            "GOOGLE_MEET",
+            "MICROSOFT_TEAMS",
+            "MICROSOFT_SKYPE",
+            "ZOOM",
+            "WEBEX",
+            "DEMODESK",
+            "ALFAVIEW",
+            "WHATSAPP",
+            "WHEREBY",
+            "JITSI"
+          ],
+          "x-enum-searchable": true
+        },
+        "locationOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LocationOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "locationKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locationkey"
+        },
+        "question_answers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/QuestionAnswer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question Answers"
+        },
+        "customQueryParams": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customqueryparams"
+        },
+        "hostEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hostemail"
+        },
+        "hostSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hostslug"
+        }
+      },
+      "required": [
+        "eventTypeId",
+        "date",
+        "start",
+        "name",
+        "email",
+        "timeZone"
+      ],
+      "title": "CreateBooking",
+      "type": "object",
+      "x-requires-tier": "paid",
+      "x-tier-label": "Zeeg paid plan"
+    },
+    "CreateNote": {
+      "additionalProperties": false,
+      "description": "Attach an internal note to an event (notes:write); each execution creates a note.",
+      "properties": {
+        "event_id": {
+          "description": "uuid from a scheduled event, including the zg- prefix.",
+          "title": "Scheduled event ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "note"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "CreateSchedulingPage": {
+      "additionalProperties": false,
+      "description": "Create a one-on-one page with Zeeg's default 30-minute duration (event_types:write).",
+      "properties": {
+        "operation": {
+          "const": "create_scheduling_page",
+          "default": "create_scheduling_page",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "isActive": {
+          "default": false,
+          "description": "Create inactive by default; activate when the page is ready.",
+          "title": "Isactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateSchedulingPage",
+      "type": "object"
+    },
+    "DeleteNote": {
+      "additionalProperties": false,
+      "description": "Permanently delete a note (notes:write).",
+      "properties": {
+        "note_id": {
+          "description": "Numeric ID or short uuid of the note.",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "DeleteNote",
+      "type": "object"
+    },
+    "DuplicateSchedulingPage": {
+      "additionalProperties": false,
+      "description": "Create a new inactive copy; every execution creates another copy (event_types:write).",
+      "properties": {
+        "page_id": {
+          "description": "uuid returned by List scheduling pages.",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "duplicate_scheduling_page",
+          "default": "duplicate_scheduling_page",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "DuplicateSchedulingPage",
+      "type": "object"
+    },
+    "GetAvailability": {
+      "additionalProperties": false,
+      "description": "Read available booking slots (timetable scope and a paid Zeeg plan).",
+      "properties": {
+        "page_id": {
+          "description": "uuid returned by List scheduling pages.",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_availability",
+          "default": "get_availability",
+          "title": "Operation",
+          "type": "string"
+        },
+        "startDate": {
+          "format": "date",
+          "title": "Startdate",
+          "type": "string"
+        },
+        "endDate": {
+          "format": "date",
+          "title": "Enddate",
+          "type": "string"
+        },
+        "timeZone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "hostEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hostemail"
+        },
+        "hostSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hostslug"
+        },
+        "seats": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seats"
+        },
+        "locationKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locationkey"
+        }
+      },
+      "required": [
+        "page_id",
+        "startDate",
+        "endDate"
+      ],
+      "title": "GetAvailability",
+      "type": "object",
+      "x-requires-tier": "paid",
+      "x-tier-label": "Zeeg paid plan"
+    },
+    "GetDefaultSchedule": {
+      "additionalProperties": false,
+      "description": "Get a user's default availability schedule.",
+      "properties": {
+        "operation": {
+          "const": "get_default_schedule",
+          "default": "get_default_schedule",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "includeSchedulingPages": {
+          "default": false,
+          "title": "Includeschedulingpages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetDefaultSchedule",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "description": "Get one scheduled event.",
+      "properties": {
+        "event_id": {
+          "description": "uuid from a scheduled event, including the zg- prefix.",
+          "title": "Scheduled event ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetNote": {
+      "additionalProperties": false,
+      "description": "Read one internal note.",
+      "properties": {
+        "note_id": {
+          "description": "Numeric ID or short uuid of the note.",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "GetNote",
+      "type": "object"
+    },
+    "GetQuestions": {
+      "additionalProperties": false,
+      "description": "Read booking-form questions, including required question IDs.",
+      "properties": {
+        "page_id": {
+          "description": "uuid returned by List scheduling pages.",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_questions",
+          "default": "get_questions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "GetQuestions",
+      "type": "object"
+    },
+    "GetSchedulingPage": {
+      "additionalProperties": false,
+      "description": "Get scheduling-page details and booking requirements.",
+      "properties": {
+        "page_id": {
+          "description": "uuid returned by List scheduling pages.",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_scheduling_page",
+          "default": "get_scheduling_page",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "GetSchedulingPage",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "description": "List one page of scheduled events (events:read or events:write).",
+      "properties": {
+        "count": {
+          "default": 20,
+          "description": "Results per page. Pagination is returned unchanged; request the next page explicitly.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sort": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "confirmed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "confirmed",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        },
+        "minStartTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minstarttime"
+        },
+        "maxStartTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxstarttime"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "all",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "all includes the whole workspace; omitted means events you participate in.",
+          "title": "Scope"
+        },
+        "userSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userslug"
+        },
+        "hostEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hostemail"
+        },
+        "inviteeEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inviteeemail"
+        },
+        "teamSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Teamslug"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        },
+        "eventTypeId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eventtypeid"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "description": "List internal notes attached to an event (notes:read or notes:write).",
+      "properties": {
+        "event_id": {
+          "description": "uuid from a scheduled event, including the zg- prefix.",
+          "title": "Scheduled event ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListSchedules": {
+      "additionalProperties": false,
+      "description": "List a user's availability schedules (schedules:read or schedules:write).",
+      "properties": {
+        "count": {
+          "default": 20,
+          "description": "Results per page. Pagination is returned unchanged; request the next page explicitly.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "includeSchedulingPages": {
+          "default": false,
+          "title": "Includeschedulingpages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ListSchedules",
+      "type": "object"
+    },
+    "ListSchedulingPages": {
+      "additionalProperties": false,
+      "description": "List scheduling pages (event_types:read or event_types:write).",
+      "properties": {
+        "count": {
+          "default": 20,
+          "description": "Results per page. Pagination is returned unchanged; request the next page explicitly.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_scheduling_pages",
+          "default": "list_scheduling_pages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "userSlug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userslug"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "publicId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publicid"
+        }
+      },
+      "title": "ListSchedulingPages",
+      "type": "object"
+    },
+    "LocationOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "callType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calltype"
+        }
+      },
+      "title": "LocationOptions",
+      "type": "object"
+    },
+    "MarkNoShow": {
+      "additionalProperties": false,
+      "description": "Mark an invitee as a no-show (events:write).",
+      "properties": {
+        "invitee_id": {
+          "description": "invitees[].uuid from the scheduled event, not the event ID.",
+          "title": "Invitee Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_no_show",
+          "default": "mark_no_show",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invitee_id"
+      ],
+      "title": "MarkNoShow",
+      "type": "object"
+    },
+    "QuestionAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "question_id": {
+          "title": "Question Id",
+          "type": "integer"
+        },
+        "answer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Answer"
+        }
+      },
+      "required": [
+        "question_id",
+        "answer"
+      ],
+      "title": "QuestionAnswer",
+      "type": "object"
+    },
+    "RescheduleEvent": {
+      "additionalProperties": false,
+      "description": "Move a booking to an available time (events:write); check availability first.",
+      "properties": {
+        "event_id": {
+          "description": "uuid from a scheduled event, including the zg- prefix.",
+          "title": "Scheduled event ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reschedule_event",
+          "default": "reschedule_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "timeZone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "event_id",
+        "date",
+        "start"
+      ],
+      "title": "RescheduleEvent",
+      "type": "object"
+    },
+    "ToggleSchedulingPage": {
+      "additionalProperties": false,
+      "description": "Toggle active/inactive status; each execution reverses it (event_types:write).",
+      "properties": {
+        "page_id": {
+          "description": "uuid returned by List scheduling pages.",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "toggle_scheduling_page",
+          "default": "toggle_scheduling_page",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ToggleSchedulingPage",
+      "type": "object"
+    },
+    "UndoNoShow": {
+      "additionalProperties": false,
+      "description": "Withdraw a no-show marking (events:write).",
+      "properties": {
+        "invitee_id": {
+          "description": "invitees[].uuid from the scheduled event, not the event ID.",
+          "title": "Invitee Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "undo_no_show",
+          "default": "undo_no_show",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invitee_id"
+      ],
+      "title": "UndoNoShow",
+      "type": "object"
+    },
+    "UpdateNote": {
+      "additionalProperties": false,
+      "description": "Replace an internal note's content (notes:write).",
+      "properties": {
+        "note_id": {
+          "description": "Numeric ID or short uuid of the note.",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "note"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "UpdateSchedulingPage": {
+      "additionalProperties": false,
+      "description": "Edit page title, description or language (event_types:write). Omitted fields retain their values.",
+      "properties": {
+        "page_id": {
+          "description": "uuid returned by List scheduling pages.",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_scheduling_page",
+          "default": "update_scheduling_page",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "de",
+                "de-du",
+                "nl",
+                "fi",
+                "es",
+                "fr",
+                "pl",
+                "da",
+                "sv",
+                "it"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language",
+          "enum": [
+            "en",
+            "de",
+            "de-du",
+            "nl",
+            "fi",
+            "es",
+            "fr",
+            "pl",
+            "da",
+            "sv",
+            "it"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "UpdateSchedulingPage",
+      "type": "object"
+    },
+    "ZeegAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zeeg_api_token",
+          "default": "zeeg_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Zeeg API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in Zeeg Account Settings \u2192 API Access and paste it here. Enable events:read/write, event_types:read/write, schedules:read and notes:read/write for the operations you use. Availability needs timetable and booking needs booking; both require a paid Zeeg plan. The token is sent only to api.zeeg.me.",
+      "x-credential-url": "https://app.zeeg.me/account/settings/api-access"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_event": "#/$defs/CancelEvent",
+          "cancel_invitee": "#/$defs/CancelInvitee",
+          "check_connection": "#/$defs/CheckConnection",
+          "create_booking": "#/$defs/CreateBooking",
+          "create_note": "#/$defs/CreateNote",
+          "create_scheduling_page": "#/$defs/CreateSchedulingPage",
+          "delete_note": "#/$defs/DeleteNote",
+          "duplicate_scheduling_page": "#/$defs/DuplicateSchedulingPage",
+          "get_availability": "#/$defs/GetAvailability",
+          "get_default_schedule": "#/$defs/GetDefaultSchedule",
+          "get_event": "#/$defs/GetEvent",
+          "get_note": "#/$defs/GetNote",
+          "get_questions": "#/$defs/GetQuestions",
+          "get_scheduling_page": "#/$defs/GetSchedulingPage",
+          "list_events": "#/$defs/ListEvents",
+          "list_notes": "#/$defs/ListNotes",
+          "list_schedules": "#/$defs/ListSchedules",
+          "list_scheduling_pages": "#/$defs/ListSchedulingPages",
+          "mark_no_show": "#/$defs/MarkNoShow",
+          "reschedule_event": "#/$defs/RescheduleEvent",
+          "toggle_scheduling_page": "#/$defs/ToggleSchedulingPage",
+          "undo_no_show": "#/$defs/UndoNoShow",
+          "update_note": "#/$defs/UpdateNote",
+          "update_scheduling_page": "#/$defs/UpdateSchedulingPage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/CancelEvent"
+        },
+        {
+          "$ref": "#/$defs/RescheduleEvent"
+        },
+        {
+          "$ref": "#/$defs/CancelInvitee"
+        },
+        {
+          "$ref": "#/$defs/MarkNoShow"
+        },
+        {
+          "$ref": "#/$defs/UndoNoShow"
+        },
+        {
+          "$ref": "#/$defs/ListSchedulingPages"
+        },
+        {
+          "$ref": "#/$defs/GetSchedulingPage"
+        },
+        {
+          "$ref": "#/$defs/DuplicateSchedulingPage"
+        },
+        {
+          "$ref": "#/$defs/ToggleSchedulingPage"
+        },
+        {
+          "$ref": "#/$defs/GetQuestions"
+        },
+        {
+          "$ref": "#/$defs/GetAvailability"
+        },
+        {
+          "$ref": "#/$defs/CreateBooking"
+        },
+        {
+          "$ref": "#/$defs/ListSchedules"
+        },
+        {
+          "$ref": "#/$defs/GetDefaultSchedule"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/GetNote"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteNote"
+        },
+        {
+          "$ref": "#/$defs/CreateSchedulingPage"
+        },
+        {
+          "$ref": "#/$defs/UpdateSchedulingPage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZeegAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zeeg Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
