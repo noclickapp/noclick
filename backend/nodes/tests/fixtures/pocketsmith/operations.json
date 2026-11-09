@@ -1,0 +1,433 @@
+{
+  "source": "https://raw.githubusercontent.com/pocketsmith/api/master/openapi.json",
+  "description": "Provider request examples with synthetic minimal response data; not live account evidence.",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_me"
+      },
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "response": {
+        "id": 42,
+        "login": "synthetic-user",
+        "name": "Synthetic user"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_user",
+        "user_id": 42
+      },
+      "method": "GET",
+      "path": "/users/42",
+      "status": 200,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_accounts",
+        "user_id": 42
+      },
+      "method": "GET",
+      "path": "/users/42/accounts",
+      "status": 200,
+      "response": [
+        {
+          "id": 42,
+          "title": "Synthetic resource"
+        }
+      ]
+    },
+    {
+      "config": {
+        "operation": "list_transaction_accounts",
+        "user_id": 42
+      },
+      "method": "GET",
+      "path": "/users/42/transaction_accounts",
+      "status": 200,
+      "response": [
+        {
+          "id": 42,
+          "title": "Synthetic resource"
+        }
+      ]
+    },
+    {
+      "config": {
+        "operation": "list_categories",
+        "user_id": 42
+      },
+      "method": "GET",
+      "path": "/users/42/categories",
+      "status": 200,
+      "response": [
+        {
+          "id": 42,
+          "title": "Synthetic resource"
+        }
+      ]
+    },
+    {
+      "config": {
+        "operation": "list_labels",
+        "user_id": 42
+      },
+      "method": "GET",
+      "path": "/users/42/labels",
+      "status": 200,
+      "response": [
+        "craftbeer",
+        "bargains"
+      ]
+    },
+    {
+      "config": {
+        "operation": "list_saved_searches",
+        "user_id": 42
+      },
+      "method": "GET",
+      "path": "/users/42/saved_searches",
+      "status": 200,
+      "response": [
+        {
+          "id": 42,
+          "title": "Synthetic resource"
+        }
+      ]
+    },
+    {
+      "config": {
+        "operation": "get_account",
+        "account_id": 42
+      },
+      "method": "GET",
+      "path": "/accounts/42",
+      "status": 200,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_transaction_account",
+        "transaction_account_id": 42
+      },
+      "method": "GET",
+      "path": "/transaction_accounts/42",
+      "status": 200,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_transaction",
+        "transaction_id": 42
+      },
+      "method": "GET",
+      "path": "/transactions/42",
+      "status": 200,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_category",
+        "category_id": 42
+      },
+      "method": "GET",
+      "path": "/categories/42",
+      "status": 200,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_transaction_account",
+        "transaction_account_id": 42,
+        "starting_balance": 3547.45,
+        "starting_balance_date": "2015-03-15"
+      },
+      "method": "PUT",
+      "path": "/transaction_accounts/42",
+      "status": 200,
+      "body": {
+        "starting_balance": 3547.45,
+        "starting_balance_date": "2015-03-15"
+      },
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_transactions",
+        "user_id": 42,
+        "start_date": "2016-11-01",
+        "end_date": "2016-11-30",
+        "type": "debit",
+        "needs_review": 1,
+        "search": "Paypal"
+      },
+      "method": "GET",
+      "path": "/users/42/transactions",
+      "status": 200,
+      "query": {
+        "start_date": "2016-11-01",
+        "end_date": "2016-11-30",
+        "type": "debit",
+        "needs_review": "1",
+        "search": "Paypal",
+        "page": "1"
+      },
+      "response": [
+        {
+          "id": 42,
+          "amount": -11.5,
+          "labels": [
+            "lunch",
+            "mexican"
+          ]
+        }
+      ]
+    },
+    {
+      "config": {
+        "operation": "list_transaction_account_transactions",
+        "transaction_account_id": 42,
+        "start_date": "2016-11-01",
+        "end_date": "2016-11-30",
+        "type": "debit",
+        "needs_review": 1,
+        "search": "Paypal"
+      },
+      "method": "GET",
+      "path": "/transaction_accounts/42/transactions",
+      "status": 200,
+      "query": {
+        "start_date": "2016-11-01",
+        "end_date": "2016-11-30",
+        "type": "debit",
+        "needs_review": "1",
+        "search": "Paypal",
+        "page": "1"
+      },
+      "response": [
+        {
+          "id": 42,
+          "amount": -11.5,
+          "labels": [
+            "lunch",
+            "mexican"
+          ]
+        }
+      ]
+    },
+    {
+      "config": {
+        "operation": "create_transaction",
+        "transaction_account_id": 42,
+        "payee": "Tex Otago",
+        "amount": -11.5,
+        "date": "2018-02-27",
+        "is_transfer": false,
+        "labels": "lunch,mexican",
+        "category_id": 42,
+        "note": "I really enjoyed the loaded corn chips",
+        "needs_review": false
+      },
+      "method": "POST",
+      "path": "/transaction_accounts/42/transactions",
+      "status": 201,
+      "body": {
+        "payee": "Tex Otago",
+        "amount": -11.5,
+        "date": "2018-02-27",
+        "is_transfer": false,
+        "labels": "lunch,mexican",
+        "category_id": 42,
+        "note": "I really enjoyed the loaded corn chips",
+        "needs_review": false
+      },
+      "response": {
+        "id": 42,
+        "payee": "Tex Otago",
+        "amount": -11.5,
+        "date": "2018-02-27",
+        "is_transfer": false,
+        "category_id": 42,
+        "note": "I really enjoyed the loaded corn chips",
+        "needs_review": false,
+        "labels": [
+          "lunch",
+          "mexican"
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "update_transaction",
+        "transaction_id": 42,
+        "payee": "Bill",
+        "amount": -225,
+        "date": "2018-02-27",
+        "needs_review": false,
+        "labels": "foo,bar,baz"
+      },
+      "method": "PUT",
+      "path": "/transactions/42",
+      "status": 200,
+      "body": {
+        "payee": "Bill",
+        "amount": -225,
+        "date": "2018-02-27",
+        "needs_review": false,
+        "labels": "foo,bar,baz"
+      },
+      "response": {
+        "id": 42,
+        "payee": "Bill",
+        "amount": -225,
+        "date": "2018-02-27",
+        "needs_review": false,
+        "labels": [
+          "foo",
+          "bar",
+          "baz"
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "delete_transaction",
+        "transaction_id": 42
+      },
+      "method": "DELETE",
+      "path": "/transactions/42",
+      "status": 204,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "create_category",
+        "user_id": 42,
+        "title": "Food",
+        "colour": "#e0e7ff",
+        "is_transfer": false,
+        "is_bill": true,
+        "roll_up": false,
+        "refund_behaviour": "credits_are_refunds"
+      },
+      "method": "POST",
+      "path": "/users/42/categories",
+      "status": 201,
+      "body": {
+        "title": "Food",
+        "colour": "#e0e7ff",
+        "is_transfer": false,
+        "is_bill": true,
+        "roll_up": false,
+        "refund_behaviour": "credits_are_refunds"
+      },
+      "response": {
+        "id": 42,
+        "title": "Food",
+        "colour": "#e0e7ff",
+        "is_transfer": false,
+        "is_bill": true,
+        "roll_up": false,
+        "refund_behaviour": "credits_are_refunds"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_category",
+        "category_id": 42,
+        "title": "Food",
+        "colour": "#e0e7ff",
+        "is_transfer": false,
+        "is_bill": true,
+        "roll_up": false,
+        "refund_behaviour": "credits_are_refunds"
+      },
+      "method": "PUT",
+      "path": "/categories/42",
+      "status": 200,
+      "body": {
+        "title": "Food",
+        "colour": "#e0e7ff",
+        "is_transfer": false,
+        "is_bill": true,
+        "roll_up": false,
+        "refund_behaviour": "credits_are_refunds"
+      },
+      "response": {
+        "id": 42,
+        "title": "Food",
+        "colour": "#e0e7ff",
+        "is_transfer": false,
+        "is_bill": true,
+        "roll_up": false,
+        "refund_behaviour": "credits_are_refunds"
+      }
+    },
+    {
+      "config": {
+        "operation": "delete_category",
+        "category_id": 42
+      },
+      "method": "DELETE",
+      "path": "/categories/42",
+      "status": 204,
+      "response": {
+        "id": 42,
+        "name": "Synthetic account"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_budget_summary",
+        "user_id": 42,
+        "period": "weeks",
+        "interval": 2,
+        "start_date": "2016-11-01",
+        "end_date": "2016-11-30"
+      },
+      "method": "GET",
+      "path": "/users/42/budget_summary",
+      "status": 200,
+      "query": {
+        "period": "weeks",
+        "interval": "2",
+        "start_date": "2016-11-01",
+        "end_date": "2016-11-30"
+      },
+      "response": [
+        {
+          "income": {
+            "actual": 100
+          },
+          "expense": {
+            "actual": 50
+          }
+        }
+      ]
+    }
+  ]
+}
