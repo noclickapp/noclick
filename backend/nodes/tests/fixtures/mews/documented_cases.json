@@ -1,0 +1,1147 @@
+{
+  "get_configuration": {
+    "config": {},
+    "route": "configuration/get",
+    "response": {
+      "NowUtc": "2018-01-01T14:58:02Z",
+      "Enterprise": {
+        "Currencies": [
+          {
+            "Currency": "GBP",
+            "IsDefault": true,
+            "IsEnabled": true
+          },
+          {
+            "Currency": "USD",
+            "IsDefault": false,
+            "IsEnabled": true
+          }
+        ],
+        "AccountingConfiguration": {
+          "AdditionalTaxIdentifier": null,
+          "CompanyName": "Connector API Hotel",
+          "BankAccountNumber": "1234",
+          "BankName": "Random bank",
+          "Iban": "CZ7250517882393618329719",
+          "Bic": "GIBACZPY",
+          "SurchargeConfiguration": {
+            "SurchargeFees": {
+              "Amex": 3.0,
+              "DinersClub": 4.0
+            },
+            "SurchargeServiceId": "2b9b0143-3135-485b-8064-76c90d1be69e",
+            "SurchargeTaxCode": "US-HI-KA"
+          },
+          "EnabledExternalPaymentTypes": [
+            "Invoice",
+            "Cash",
+            "GiftCard"
+          ],
+          "Options": [
+            "ReceivableTrackingEnabled",
+            "GroupTaxesOnBill"
+          ]
+        },
+        "IsPortfolio": false,
+        "Id": "851df8c8-90f2-4c4a-8e01-a4fc46b25178",
+        "ExternalIdentifier": null,
+        "HoldingKey": "CA123",
+        "ChainId": "8ddea57b-6a5c-4eec-8c4c-24467dce118e",
+        "ChainName": "Connector API Chain",
+        "CreatedUtc": "2015-07-07T13:33:17Z",
+        "UpdatedUtc": "2015-07-07T13:33:17Z",
+        "Name": "Connector API Hotel",
+        "ShortName": null,
+        "TimeZoneIdentifier": "Europe/Budapest",
+        "LegalEnvironmentCode": "UK",
+        "AccommodationEnvironmentCode": null,
+        "AccountingEnvironmentCode": null,
+        "TaxEnvironmentCode": null,
+        "DefaultLanguageCode": "en-US",
+        "EditableHistoryInterval": "P0M7DT0H0M0S",
+        "AccountingEditableHistoryInterval": "P0M7DT0H0M0S",
+        "OperationalEditableHistoryInterval": "P0M5DT0H0M0S",
+        "BusinessDayClosingOffset": null,
+        "WebsiteUrl": "https://en.wikipedia.org/wiki/St._Vitus_Cathedral",
+        "Email": "charging-api@mews.li",
+        "Phone": "00000 123 456 789",
+        "LogoImageId": null,
+        "CoverImageId": null,
+        "Pricing": "Gross",
+        "TaxPrecision": null,
+        "AddressId": "c556f56e-713e-4102-9de5-0e853b5a8586",
+        "Address": {
+          "Id": "8c2c4371-5d42-40a9-b551-ab0b00d75076",
+          "Line1": "I.P. Pavlova 5",
+          "Line2": null,
+          "City": "Prague",
+          "PostalCode": "1200",
+          "CountryCode": "CZ",
+          "CountrySubdivisionCode": null,
+          "Latitude": 14.429645,
+          "Longitude": 50.075181
+        },
+        "GroupNames": [
+          "Connector API Group"
+        ],
+        "Subscription": {
+          "TaxIdentifier": "123456789 RC 0001"
+        }
+      },
+      "Service": {
+        "Id": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+        "EnterpriseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "IsActive": true,
+        "Name": "Accommodation",
+        "Names": {
+          "en-GB": "Accommodation"
+        },
+        "StartTime": "PT14H",
+        "EndTime": "PT12H",
+        "Options": {
+          "BillAsPackage": false
+        },
+        "Promotions": {
+          "BeforeCheckIn": false,
+          "AfterCheckIn": false,
+          "DuringStay": false,
+          "BeforeCheckOut": false,
+          "AfterCheckOut": false,
+          "DuringCheckOut": false
+        },
+        "Type": "Reservable",
+        "Ordering": 0,
+        "Data": null,
+        "ExternalIdentifier": null,
+        "CreatedUtc": "2023-10-01T11:48:57Z",
+        "UpdatedUtc": "2023-10-28T11:48:57Z"
+      },
+      "PaymentCardStorage": null,
+      "IsIdentityDocumentNumberRequired": true
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/configuration.md"
+  },
+  "list_customers": {
+    "config": {
+      "email": "j.smith@example.com",
+      "count": 10
+    },
+    "route": "customers/getAll",
+    "response": {
+      "Customers": [
+        {
+          "Id": "fadd5bb6-b428-45d5-94f8-fd0d89fece6d",
+          "ChainId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "Number": "12345",
+          "Title": "Mister",
+          "CustomTitleName": null,
+          "CustomTitleId": null,
+          "Sex": "Male",
+          "FirstName": "John",
+          "LastName": "Smith",
+          "SecondLastName": "Williams",
+          "NationalityCode": "US",
+          "PreferredLanguageCode": "en-GB",
+          "LanguageCode": "en-US",
+          "BirthDate": "1983-12-31",
+          "BirthCountryCode": null,
+          "BirthCountrySubdivisionCode": null,
+          "BirthPlace": "New York City, NY",
+          "Occupation": "Carpenter",
+          "Email": "j.smith@example.com",
+          "HasOtaEmail": false,
+          "Phone": "00420123456789",
+          "TaxIdentificationNumber": "123456789",
+          "LoyaltyCode": "LL810213",
+          "AccountingCode": "AC123",
+          "BillingCode": null,
+          "Notes": "",
+          "CarRegistrationNumber": "1A2 3456",
+          "DietaryRequirements": null,
+          "CreatedUtc": "2018-01-01T00:00:00Z",
+          "UpdatedUtc": "2018-01-02T00:00:00Z",
+          "Passport": null,
+          "IdentityCard": null,
+          "Visa": null,
+          "DriversLicense": null,
+          "Address": {
+            "Id": "f8495413-bf49-45dd-843c-44be7f365569",
+            "Line1": "Somerford Road Hello House/135",
+            "Line2": null,
+            "City": "Christchurch",
+            "PostalCode": "BH23 3PY",
+            "CountryCode": "GB",
+            "CountrySubdivisionCode": "GB-ENG",
+            "Latitude": null,
+            "Longitude": null
+          },
+          "AddressId": "f8495413-bf49-45dd-843c-44be7f365569",
+          "Classifications": [
+            "Returning"
+          ],
+          "Options": [
+            "SendMarketingEmails"
+          ],
+          "ItalianDestinationCode": null,
+          "ItalianFiscalCode": null,
+          "ItalianLotteryCode": null,
+          "CompanyId": "c6f5c82d-621a-4c8a-903b-1b0a9a23b71f",
+          "MergeTargetId": null,
+          "ActivityState": "Active",
+          "IsActive": true,
+          "PreferredSpaceFeatures": [
+            "OceanView"
+          ],
+          "CreatorProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+          "UpdaterProfileId": "122fc063-ec6e-4198-b8db-6b168a59ffae"
+        },
+        {
+          "Id": "35d4b117-4e60-44a3-9580-c582117eff98",
+          "ChainId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "Number": "573204",
+          "Title": null,
+          "CustomTitleName": "Sergeant",
+          "CustomTitleId": "9c6b3e2d-2a7f-4c1b-9e5a-3d8f6b2c1a4e",
+          "Sex": "Female",
+          "FirstName": "Eleanor",
+          "LastName": "Windsor",
+          "SecondLastName": null,
+          "NationalityCode": "GB",
+          "PreferredLanguageCode": "en-GB",
+          "LanguageCode": null,
+          "BirthDate": "1961-04-17",
+          "BirthCountryCode": null,
+          "BirthCountrySubdivisionCode": null,
+          "BirthPlace": null,
+          "Occupation": null,
+          "Email": "eleanor.windsor@example.com",
+          "HasOtaEmail": false,
+          "Phone": "+44 20 7946 0958",
+          "TaxIdentificationNumber": null,
+          "LoyaltyCode": null,
+          "AccountingCode": null,
+          "BillingCode": null,
+          "Notes": null,
+          "CarRegistrationNumber": null,
+          "DietaryRequirements": null,
+          "CreatedUtc": "2025-11-05T10:15:00Z",
+          "UpdatedUtc": "2026-02-20T08:30:00Z",
+          "Passport": null,
+          "IdentityCard": null,
+          "Visa": null,
+          "DriversLicense": null,
+          "Address": null,
+          "AddressId": null,
+          "Classifications": [
+            "VeryImportant",
+            "Returning"
+          ],
+          "Options": [],
+          "ItalianDestinationCode": null,
+          "ItalianFiscalCode": null,
+          "ItalianLotteryCode": null,
+          "CompanyId": null,
+          "MergeTargetId": null,
+          "ActivityState": "Active",
+          "IsActive": true,
+          "PreferredSpaceFeatures": [],
+          "CreatorProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+          "UpdaterProfileId": "122fc063-ec6e-4198-b8db-6b168a59ffae"
+        }
+      ],
+      "Documents": null,
+      "Cursor": "35d4b117-4e60-44a3-9580-c582117eff98"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/customers.md"
+  },
+  "search_customers": {
+    "config": {
+      "name": "Smith"
+    },
+    "route": "customers/search",
+    "response": {
+      "Customers": [
+        {
+          "Customer": {
+            "Id": "fadd5bb6-b428-45d5-94f8-fd0d89fece6d",
+            "ChainId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "Number": "12345",
+            "Title": "Mister",
+            "CustomTitleName": null,
+            "CustomTitleId": null,
+            "Sex": "Male",
+            "FirstName": "John",
+            "LastName": "Smith",
+            "SecondLastName": "Williams",
+            "NationalityCode": "US",
+            "PreferredLanguageCode": "en-GB",
+            "LanguageCode": "en-US",
+            "BirthDate": "1983-12-31",
+            "BirthCountryCode": null,
+            "BirthCountrySubdivisionCode": null,
+            "BirthPlace": "New York City, NY",
+            "Occupation": "Carpenter",
+            "Email": "j.smith@example.com",
+            "HasOtaEmail": false,
+            "Phone": "00420123456789",
+            "TaxIdentificationNumber": "123456789",
+            "LoyaltyCode": "LL810213",
+            "AccountingCode": "AC123",
+            "BillingCode": null,
+            "Notes": "",
+            "CarRegistrationNumber": "1A2 3456",
+            "DietaryRequirements": null,
+            "CreatedUtc": "2018-01-01T00:00:00Z",
+            "UpdatedUtc": "2018-01-02T00:00:00Z",
+            "Passport": null,
+            "IdentityCard": null,
+            "Visa": null,
+            "DriversLicense": null,
+            "Address": {
+              "Id": "f8495413-bf49-45dd-843c-44be7f365569",
+              "Line1": "Somerford Road Hello House/135",
+              "Line2": null,
+              "City": "Christchurch",
+              "PostalCode": "BH23 3PY",
+              "CountryCode": "GB",
+              "CountrySubdivisionCode": "GB-ENG",
+              "Latitude": null,
+              "Longitude": null
+            },
+            "AddressId": "f8495413-bf49-45dd-843c-44be7f365569",
+            "Classifications": [
+              "Returning"
+            ],
+            "Options": [
+              "SendMarketingEmails"
+            ],
+            "ItalianDestinationCode": null,
+            "ItalianFiscalCode": null,
+            "ItalianLotteryCode": null,
+            "CompanyId": "c6f5c82d-621a-4c8a-903b-1b0a9a23b71f",
+            "MergeTargetId": null,
+            "ActivityState": "Active",
+            "IsActive": true,
+            "PreferredSpaceFeatures": [
+              "OceanView"
+            ],
+            "CreatorProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+            "UpdaterProfileId": "122fc063-ec6e-4198-b8db-6b168a59ffae"
+          },
+          "Reservation": null
+        }
+      ],
+      "Documents": null
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/customers.md"
+  },
+  "create_customer": {
+    "config": {
+      "first_name": "Thea",
+      "last_name": "Carbone",
+      "email": "thea@quotidiano.example"
+    },
+    "route": "customers/add",
+    "response": {
+      "Id": "99b4f0af-9558-463b-8452-07a9bc414708",
+      "ChainId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "Number": "390881",
+      "Title": "Miss",
+      "CustomTitleName": null,
+      "CustomTitleId": null,
+      "Sex": null,
+      "FirstName": "Thea",
+      "LastName": "Carbone",
+      "SecondLastName": null,
+      "NationalityCode": null,
+      "PreferredLanguageCode": null,
+      "LanguageCode": null,
+      "BirthDate": "1985-09-30",
+      "BirthCountryCode": null,
+      "BirthCountrySubdivisionCode": null,
+      "BirthPlace": "Pescara (BI)",
+      "Occupation": "Giornalista",
+      "Email": "thea@quotidiano.example",
+      "HasOtaEmail": false,
+      "Phone": "+39 06 555 5555",
+      "TaxIdentificationNumber": "ZGNZLR17U72P554F",
+      "LoyaltyCode": null,
+      "AccountingCode": null,
+      "BillingCode": null,
+      "Notes": "Check-in notturno.",
+      "CarRegistrationNumber": "AA 111AA",
+      "DietaryRequirements": null,
+      "CreatedUtc": "2024-09-17T12:22:33Z",
+      "UpdatedUtc": "2024-10-12T09:45:00Z",
+      "Passport": null,
+      "IdentityCard": null,
+      "Visa": null,
+      "DriversLicense": null,
+      "Address": {
+        "Id": "81f62f08-26d5-408f-9b0d-d030957dc799",
+        "Line1": "Via Antimo 474 Piano 5",
+        "Line2": null,
+        "City": "Liborio laziale",
+        "PostalCode": "30228",
+        "CountryCode": "IT",
+        "CountrySubdivisionCode": "IT-65",
+        "Latitude": 28.56333,
+        "Longitude": -121.243143
+      },
+      "AddressId": "81f62f08-26d5-408f-9b0d-d030957dc799",
+      "Classifications": [
+        "Media",
+        "FriendOrFamily"
+      ],
+      "Options": [],
+      "ItalianDestinationCode": "7654321",
+      "ItalianFiscalCode": "ZGNZLR17U72P554F",
+      "ItalianLotteryCode": "AB12345",
+      "CompanyId": "f3b4f0af-9558-463b-8452-07a9bc414708",
+      "MergeTargetId": null,
+      "ActivityState": null,
+      "IsActive": true,
+      "PreferredSpaceFeatures": [
+        "LowerBed"
+      ],
+      "CreatorProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+      "UpdaterProfileId": "122fc063-ec6e-4198-b8db-6b168a59ffae"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/customers.md"
+  },
+  "update_customer": {
+    "config": {
+      "customer_id": "99b4f0af-9558-463b-8452-07a9bc414708",
+      "notes": "Check-in notturno."
+    },
+    "route": "customers/update",
+    "response": {
+      "Id": "99b4f0af-9558-463b-8452-07a9bc414708",
+      "ChainId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "Number": "390881",
+      "Title": "Miss",
+      "CustomTitleName": null,
+      "CustomTitleId": null,
+      "Sex": null,
+      "FirstName": "Thea",
+      "LastName": "Carbone",
+      "SecondLastName": null,
+      "NationalityCode": null,
+      "PreferredLanguageCode": null,
+      "LanguageCode": null,
+      "BirthDate": "1985-09-30",
+      "BirthCountryCode": null,
+      "BirthCountrySubdivisionCode": null,
+      "BirthPlace": "Pescara (BI)",
+      "Occupation": "Giornalista",
+      "Email": "thea@quotidiano.example",
+      "HasOtaEmail": false,
+      "Phone": "+39 06 555 5555",
+      "TaxIdentificationNumber": "ZGNZLR17U72P554F",
+      "LoyaltyCode": null,
+      "AccountingCode": null,
+      "BillingCode": null,
+      "Notes": "Check-in notturno.",
+      "CarRegistrationNumber": "AA 111AA",
+      "DietaryRequirements": null,
+      "CreatedUtc": "2024-09-17T12:22:33Z",
+      "UpdatedUtc": "2024-10-12T09:45:00Z",
+      "Passport": null,
+      "IdentityCard": null,
+      "Visa": null,
+      "DriversLicense": null,
+      "Address": {
+        "Id": "81f62f08-26d5-408f-9b0d-d030957dc799",
+        "Line1": "Via Antimo 474 Piano 5",
+        "Line2": null,
+        "City": "Liborio laziale",
+        "PostalCode": "30228",
+        "CountryCode": "IT",
+        "CountrySubdivisionCode": "IT-65",
+        "Latitude": 28.56333,
+        "Longitude": -121.243143
+      },
+      "AddressId": "81f62f08-26d5-408f-9b0d-d030957dc799",
+      "Classifications": [
+        "Media",
+        "FriendOrFamily"
+      ],
+      "Options": [],
+      "ItalianDestinationCode": "7654321",
+      "ItalianFiscalCode": "ZGNZLR17U72P554F",
+      "ItalianLotteryCode": "AB12345",
+      "CompanyId": "f3b4f0af-9558-463b-8452-07a9bc414708",
+      "MergeTargetId": null,
+      "ActivityState": null,
+      "IsActive": true,
+      "PreferredSpaceFeatures": [
+        "LowerBed"
+      ],
+      "CreatorProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+      "UpdaterProfileId": "122fc063-ec6e-4198-b8db-6b168a59ffae"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/customers.md"
+  },
+  "list_reservations": {
+    "config": {
+      "reservation_id": "0f515589-99b4-423d-b83a-b237009f0509",
+      "count": 10
+    },
+    "route": "reservations/getAll/2023-06-06",
+    "response": {
+      "Reservations": [
+        {
+          "Id": "0f515589-99b4-423d-b83a-b237009f0509",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "AccountId": "fadd5bb6-b428-45d5-94f8-fd0d89fece6d",
+          "AccountType": "Customer",
+          "CreatorProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+          "UpdaterProfileId": "3cd637ef-4728-47f9-8fb1-afb900c9cdcf",
+          "BookerId": "ebd507c5-6bfd-4ca9-96aa-ffed6fa94f72",
+          "Number": "52",
+          "State": "Confirmed",
+          "Origin": "Connector",
+          "CommanderOrigin": null,
+          "OriginDetails": null,
+          "CreatedUtc": "2023-03-23T16:00:00Z",
+          "UpdatedUtc": "2023-04-22T17:00:00Z",
+          "CancelledUtc": null,
+          "VoucherId": null,
+          "BusinessSegmentId": null,
+          "Options": {
+            "OwnerCheckedIn": true,
+            "AllCompanionsCheckedIn": true,
+            "AnyCompanionCheckedIn": true,
+            "ConnectorCheckIn": true
+          },
+          "RateId": "ed4b660b-19d0-434b-9360-a4de2ea42eda",
+          "CreditCardId": null,
+          "GroupId": "94843f6f-3be3-481b-a1c7-06458774c3df",
+          "RequestedResourceCategoryId": "773d5e42-de1e-43a0-9ce6-f940faf2303f",
+          "AssignedResourceId": "20e00c32-d561-4008-8609-82d8aa525714",
+          "AvailabilityBlockId": "5ee074b1-6c86-48e8-915f-c7aa4702086f",
+          "PartnerCompanyId": "c021013e-4930-4592-8e32-91b0b1fc9663",
+          "TravelAgencyId": "a793d381-65a2-4fa6-9514-00c4c5bfe607",
+          "AssignedResourceLocked": false,
+          "ChannelNumber": "TW48ZP",
+          "ChannelManagerNumber": "",
+          "CancellationReason": null,
+          "ReleasedUtc": null,
+          "StartUtc": "2023-04-23T14:00:00Z",
+          "EndUtc": "2023-04-25T12:00:00Z",
+          "ScheduledStartUtc": "2023-04-23T14:00:00Z",
+          "ActualStartUtc": null,
+          "ScheduledEndUtc": "2023-04-25T12:00:00Z",
+          "ActualEndUtc": null,
+          "Purpose": "Leisure",
+          "QrCodeData": "{\"Reservations\":[{\"Id\":\"0f515589-99b4-423d-b83a-b237009f0509\",\"GroupId\":\"94843f6f-3be3-481b-a1c7-06458774c3df\",\"CustomerId\":\"fadd5bb6-b428-45d5-94f8-fd0d89fece6d\"}]}",
+          "PersonCounts": [
+            {
+              "AgeCategoryId": "1f67644f-052d-4863-acdf-ae1600c60ca0",
+              "Count": 2
+            },
+            {
+              "AgeCategoryId": "ab58c939-be30-4a60-8f75-ae1600c60c9f",
+              "Count": 2
+            }
+          ]
+        }
+      ],
+      "Cursor": "0f515589-99b4-423d-b83a-b237009f0509"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/reservations.md"
+  },
+  "create_reservation": {
+    "config": {
+      "service_id": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+      "customer_id": "e465c031-fd99-4546-8c70-abcf0029c249",
+      "requested_category_id": "0a5da171-3663-4496-a61e-35ecbd78b9b1",
+      "rate_id": "a39a59fa-3a08-4822-bdd4-ab0b00e3d21f",
+      "age_category_id": "1f67644f-052d-4863-acdf-ae1600c60ca0",
+      "person_count": 2,
+      "start_utc": "2021-01-01T14:00:00Z",
+      "end_utc": "2021-01-03T10:00:00Z"
+    },
+    "route": "reservations/add",
+    "response": {
+      "Reservations": [
+        {
+          "Identifier": "1234",
+          "Reservation": {
+            "Id": "bfee2c44-1f84-4326-a862-5289598f6e2d",
+            "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+            "GroupId": "94843f6f-3be3-481b-a1c7-06458774c3df",
+            "Number": "52",
+            "ChannelManager": "",
+            "ChannelManagerGroupNumber": null,
+            "ChannelManagerNumber": null,
+            "ChannelNumber": null,
+            "State": "Processed",
+            "Origin": "Connector",
+            "CreatedUtc": "2016-02-20T14:58:02Z",
+            "UpdatedUtc": "2016-02-20T14:58:02Z",
+            "CancelledUtc": null,
+            "StartUtc": "2016-02-20T13:00:00Z",
+            "EndUtc": "2016-02-22T11:00:00Z",
+            "ReleasedUtc": null,
+            "RequestedCategoryId": "773d5e42-de1e-43a0-9ce6-f940faf2303f",
+            "AssignedResourceId": "20e00c32-d561-4008-8609-82d8aa525714",
+            "AssignedResourceLocked": false,
+            "BusinessSegmentId": null,
+            "CompanyId": null,
+            "TravelAgencyId": null,
+            "AvailabilityBlockId": null,
+            "RateId": "ed4b660b-19d0-434b-9360-a4de2ea42eda",
+            "VoucherId": null,
+            "CustomerId": "35d4b117-4e60-44a3-9580-c582117eff98",
+            "CompanionIds": [
+              "b22bf671-ccdf-40aa-a7e6-b20a4f91d79a"
+            ]
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/reservations.md"
+  },
+  "confirm_reservation": {
+    "config": {
+      "reservation_id": "9af9d8b0-43ae-414d-80a8-abc1012a2a59"
+    },
+    "route": "reservations/confirm",
+    "response": {
+      "ReservationIds": [
+        "5ca70705-cbb7-48c4-8cc4-abb900aa278c"
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/reservations.md"
+  },
+  "cancel_reservation": {
+    "config": {
+      "reservation_id": "5ca70705-cbb7-48c4-8cc4-abb900aa278c"
+    },
+    "route": "reservations/cancel",
+    "response": {
+      "ReservationIds": [
+        "5ca70705-cbb7-48c4-8cc4-abb900aa278c"
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/reservations.md"
+  },
+  "start_reservation": {
+    "config": {
+      "reservation_id": "e6ea708c-2a2a-412f-a152-b6c76ffad49b"
+    },
+    "route": "reservations/start",
+    "response": {},
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/reservations.md"
+  },
+  "process_reservation": {
+    "config": {
+      "reservation_id": "e6ea708c-2a2a-412f-a152-b6c76ffad49b"
+    },
+    "route": "reservations/process",
+    "response": {},
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/reservations.md"
+  },
+  "list_resources": {
+    "config": {
+      "resource_id": "20e00c32-d561-4008-8609-82d8aa525714",
+      "count": 100
+    },
+    "route": "resources/getAll",
+    "response": {
+      "Resources": [
+        {
+          "Id": "20e00c32-d561-4008-8609-82d8aa525714",
+          "EnterpriseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "IsActive": true,
+          "ParentResourceId": null,
+          "Name": "101",
+          "State": "Clean",
+          "Descriptions": {
+            "en-US": "Standard room with city view"
+          },
+          "CreatedUtc": "2023-01-15T10:30:00Z",
+          "UpdatedUtc": "2023-06-15T14:20:00Z",
+          "DeletedUtc": null,
+          "Data": {
+            "Discriminator": "Space",
+            "Value": {
+              "FloorNumber": "1",
+              "LocationNotes": "Building A, near elevator"
+            }
+          },
+          "ExternalNames": {
+            "en-US": "Room 101"
+          },
+          "Directions": {
+            "en-US": "Take elevator to first floor, turn right"
+          }
+        },
+        {
+          "Id": "1ec29188-01ca-4294-9983-fac59f85a448",
+          "EnterpriseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "IsActive": true,
+          "ParentResourceId": "20e00c32-d561-4008-8609-82d8aa525714",
+          "Name": "101A",
+          "State": "Inspected",
+          "Descriptions": {
+            "en-US": "Bed in room 101"
+          },
+          "CreatedUtc": "2023-01-15T10:35:00Z",
+          "UpdatedUtc": "2023-06-15T14:25:00Z",
+          "DeletedUtc": null,
+          "Data": {
+            "Discriminator": "Object",
+            "Value": {}
+          },
+          "ExternalNames": {
+            "en-US": "Bed A"
+          },
+          "Directions": {
+            "en-US": "Located in room 101"
+          }
+        },
+        {
+          "Id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "EnterpriseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "IsActive": true,
+          "ParentResourceId": null,
+          "Name": "Suite 1",
+          "State": "Dirty",
+          "Descriptions": {
+            "en-US": "Luxury suite with ocean view"
+          },
+          "CreatedUtc": "2023-02-01T09:00:00Z",
+          "UpdatedUtc": "2023-06-20T16:45:00Z",
+          "DeletedUtc": null,
+          "Data": {
+            "Discriminator": "Space",
+            "Value": {
+              "FloorNumber": "5",
+              "LocationNotes": "Penthouse level, private elevator access"
+            }
+          },
+          "ExternalNames": {
+            "en-US": "Presidential Suite"
+          },
+          "Directions": {
+            "en-US": "Private elevator to penthouse level"
+          }
+        }
+      ],
+      "ResourceCategories": null,
+      "ResourceCategoryAssignments": null,
+      "ResourceCategoryImageAssignments": null,
+      "ResourceFeatures": null,
+      "ResourceFeatureAssignments": null,
+      "Cursor": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/resources.md"
+  },
+  "update_resource": {
+    "config": {
+      "resource_id": "20e00c32-d561-4008-8609-82d8aa525714",
+      "state": "Inspected"
+    },
+    "route": "resources/update",
+    "response": {},
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/resources.md"
+  },
+  "list_tasks": {
+    "config": {
+      "task_id": "65cf1aac-bef2-4653-9350-ab2600af65af"
+    },
+    "route": "tasks/getAll",
+    "response": {
+      "Tasks": [
+        {
+          "Id": "b166fc93-c75a-438f-93b8-ab1e00a031ae",
+          "Name": "Test all",
+          "State": "Open",
+          "Description": "Task description",
+          "DepartmentId": "c28cfb42-a963-4195-ad26-ab1b009b6425",
+          "ServiceOrderId": "8d70f718-e19c-458d-8ddb-ab1b009b5487",
+          "CreatedUtc": "2019-12-09T09:43:14Z",
+          "DeadlineUtc": "2020-01-01T14:00:00Z",
+          "ClosedUtc": null
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/tasks.md"
+  },
+  "create_task": {
+    "config": {
+      "name": "Test",
+      "deadline_utc": "2016-01-01T14:00:00Z",
+      "description": "Task description"
+    },
+    "route": "tasks/add",
+    "response": {
+      "TaskId": "11bcf947-d629-4781-89f9-ab1800d5aa47"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/tasks.md"
+  },
+  "close_task": {
+    "config": {
+      "task_id": "a7f6f8a1-6a2c-4c4d-8b9f-3c8a6d2f1b7e"
+    },
+    "route": "tasks/close",
+    "response": {},
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/tasks.md"
+  },
+  "list_services": {
+    "config": {
+      "count": 10
+    },
+    "route": "services/getAll",
+    "response": {
+      "Services": [
+        {
+          "Id": "fc79a518-bc69-45b8-93bd-83326201bd14",
+          "EnterpriseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "CreatedUtc": "2023-10-01T11:48:57Z",
+          "UpdatedUtc": "2023-10-28T11:48:57Z",
+          "IsActive": true,
+          "Name": "Restaurant",
+          "Options": {
+            "BillAsPackage": false
+          },
+          "Data": {
+            "Discriminator": "Additional",
+            "Value": {
+              "Promotions": {
+                "BeforeCheckIn": false,
+                "AfterCheckIn": false,
+                "DuringStay": false,
+                "BeforeCheckOut": false,
+                "AfterCheckOut": false,
+                "DuringCheckOut": false
+              }
+            }
+          },
+          "ExternalIdentifier": "SVCE-Restaurant"
+        },
+        {
+          "Id": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "EnterpriseId": "4d0201db-36f5-428b-8d11-4f0a65e960cc",
+          "CreatedUtc": "2023-10-01T11:48:57Z",
+          "UpdatedUtc": "2023-10-28T11:48:57Z",
+          "IsActive": true,
+          "Name": "Accommodation",
+          "Options": {
+            "BillAsPackage": true
+          },
+          "Data": {
+            "Discriminator": "Bookable",
+            "Value": {
+              "StartOffset": "P0M0DT15H0M0S",
+              "EndOffset": "P0M0DT12H0M0S",
+              "OccupancyStartOffset": "P0M0DT15H0M0S",
+              "OccupancyEndOffset": "P0M0DT12H0M0S",
+              "TimeUnitPeriod": "Day"
+            }
+          },
+          "ExternalIdentifier": "SVCE-Accomm"
+        }
+      ],
+      "Cursor": "bd26d8db-86da-4f96-9efc-e5a4654a4a94"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/services.md"
+  },
+  "list_rates": {
+    "config": {
+      "service_id": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+      "count": 10
+    },
+    "route": "rates/getAll",
+    "response": {
+      "Rates": [
+        {
+          "BaseRateId": null,
+          "BusinessSegmentId": null,
+          "GroupId": "c8b866b3-be2e-4a47-9486-034318e9f393",
+          "Id": "ed4b660b-19d0-434b-9360-a4de2ea42eda",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "IsActive": true,
+          "IsEnabled": true,
+          "IsPublic": true,
+          "Name": "Fully Flexible",
+          "ShortName": "FF",
+          "ExternalNames": {
+            "en-US": "Long Stay Flexible Rate"
+          },
+          "ExternalIdentifier": "D001"
+        }
+      ],
+      "RateGroups": [
+        {
+          "Id": "c8b866b3-be2e-4a47-9486-034318e9f393",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "IsActive": true,
+          "Name": "Default",
+          "ExternalIdentifier": "RG001"
+        }
+      ],
+      "AvailabilityBlockAssignments": [
+        {
+          "RateId": "ed4b660b-19d0-434b-9360-a4de2ea42eda",
+          "AvailabilityBlockId": "12806ae8-9c15-44c7-9a44-afae01289928"
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/rates.md"
+  },
+  "list_products": {
+    "config": {
+      "service_id": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+      "count": 10
+    },
+    "route": "products/getAll",
+    "response": {
+      "Products": [
+        {
+          "Id": "198bc308-c1f2-4a1c-a827-c41d99d52f3d",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "CreatedUtc": "2023-10-01T11:48:57Z",
+          "UpdatedUtc": "2023-10-28T11:48:57Z",
+          "CategoryId": null,
+          "AccountingCategoryId": "6535e19e-1077-49d9-a338-67bf4ffecb14",
+          "IsActive": true,
+          "Names": {
+            "en-US": "Breakfast"
+          },
+          "ExternalNames": {
+            "en-US": "Breakfast"
+          },
+          "ShortNames": {
+            "en-US": "BFST"
+          },
+          "Descriptions": {
+            "en-US": "Nice continental breakfast."
+          },
+          "ChargingMode": "PerPersonPerTimeUnit",
+          "PostingMode": "Once",
+          "Options": {
+            "BillAsPackage": false
+          },
+          "Promotions": {
+            "BeforeCheckIn": false,
+            "AfterCheckIn": false,
+            "DuringStay": false,
+            "BeforeCheckOut": false,
+            "AfterCheckOut": false,
+            "DuringCheckOut": false
+          },
+          "Classifications": {
+            "Food": false,
+            "Beverage": false,
+            "Wellness": false,
+            "CityTax": false
+          },
+          "Price": {
+            "GrossValue": 25,
+            "Currency": "EUR",
+            "TaxValues": [
+              {
+                "Code": "FR-T"
+              }
+            ]
+          },
+          "ExternalIdentifier": "PROD-BFST-009"
+        }
+      ],
+      "CustomerProducts": [
+        {
+          "Id": "198bc308-c1f2-4a1c-a827-c41d99d52f3d",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "CreatedUtc": "2023-10-01T11:48:57Z",
+          "UpdatedUtc": "2023-10-28T11:48:57Z",
+          "CategoryId": null,
+          "AccountingCategoryId": "6535e19e-1077-49d9-a338-67bf4ffecb14",
+          "IsActive": true,
+          "Names": {
+            "en-US": "Breakfast"
+          },
+          "ExternalNames": {
+            "en-US": "Breakfast"
+          },
+          "ShortNames": {
+            "en-US": "BFST"
+          },
+          "Descriptions": {
+            "en-US": "Nice continental breakfast."
+          },
+          "ChargingMode": "PerPersonPerTimeUnit",
+          "PostingMode": "Once",
+          "Options": {
+            "BillAsPackage": false
+          },
+          "Promotions": {
+            "BeforeCheckIn": false,
+            "AfterCheckIn": false,
+            "DuringStay": false,
+            "BeforeCheckOut": false,
+            "AfterCheckOut": false,
+            "DuringCheckOut": false
+          },
+          "Classifications": {
+            "Food": false,
+            "Beverage": false,
+            "Wellness": false,
+            "CityTax": false
+          },
+          "Price": {
+            "GrossValue": 25,
+            "Currency": "EUR",
+            "TaxValues": [
+              {
+                "Code": "FR-T"
+              }
+            ]
+          },
+          "ExternalIdentifier": "PROD-BFST-009"
+        }
+      ],
+      "Cursor": "198bc308-c1f2-4a1c-a827-c41d99d52f3d"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/products.md"
+  },
+  "list_companies": {
+    "config": {
+      "count": 10
+    },
+    "route": "companies/getAll",
+    "response": {
+      "Companies": [
+        {
+          "Id": "a58ff7cb-77e3-495a-bd61-aecf00a3f19d",
+          "ChainId": "1df21f06-0cfc-4960-9c58-a3bf1261663e",
+          "Name": "Sample Company 1",
+          "IsActive": true,
+          "Number": 11,
+          "Identifier": null,
+          "TaxIdentifier": null,
+          "AdditionalTaxIdentifier": null,
+          "ElectronicInvoiceIdentifier": null,
+          "InvoiceDueInterval": "P2DT23H",
+          "AccountingCode": null,
+          "MotherCompanyId": null,
+          "CreatedUtc": "2022-07-11T09:56:54Z",
+          "UpdatedUtc": "2022-07-11T09:56:54Z",
+          "AddressId": "bab7441c-4b82-43bc-8001-ab0400a346ec",
+          "BillingCode": null,
+          "Iata": "PAO",
+          "Telephone": "111-222-333",
+          "InvoicingEmail": "sample1@mews.com",
+          "ContacPerson": "Sample Person 1",
+          "Contact": "Contact Info 1",
+          "Notes": "Note 1",
+          "Options": {
+            "Invoiceable": true,
+            "AddFeesToInvoices": true
+          },
+          "Department": "Sales",
+          "DunsNumber": "123456789",
+          "CreditRating": {
+            "Basic": "PaymentRequiredUpfront"
+          },
+          "ReferenceIdentifier": "da34b396-77e3-495a-bd61-aecf00a3f19d",
+          "WebsiteUrl": "https://www.mewssystems.com",
+          "ExternalIdentifier": "company0001"
+        },
+        {
+          "Id": "da34b396-41f7-47f6-8847-aecf00a3f19e",
+          "ChainId": "5fcd1933-22f2-40b9-84da-7db04cbecec2",
+          "Name": "Sample Company 2",
+          "IsActive": true,
+          "Number": 12,
+          "Identifier": null,
+          "TaxIdentifier": null,
+          "AdditionalTaxIdentifier": null,
+          "ElectronicInvoiceIdentifier": null,
+          "InvoiceDueInterval": "P2DT23H",
+          "AccountingCode": null,
+          "MotherCompanyId": null,
+          "CreatedUtc": "2022-07-11T09:56:54Z",
+          "UpdatedUtc": "2022-07-11T09:56:54Z",
+          "AddressId": null,
+          "BillingCode": null,
+          "Iata": "PAO",
+          "Telephone": "111-222-333",
+          "InvoicingEmail": "sample2@mews.com",
+          "ContacPerson": "Sample Person 2",
+          "Contact": "Contact Info 2",
+          "Notes": "Note 2",
+          "Options": {
+            "Invoiceable": true,
+            "AddFeesToInvoices": false
+          },
+          "Department": "Accounting",
+          "DunsNumber": "987654321",
+          "CreditRating": {
+            "Basic": "CreditOk"
+          },
+          "ReferenceIdentifier": "a58ff7cb-77e3-495a-bd61-aecf00a3f19d",
+          "WebsiteUrl": "https://www.mews.com",
+          "ExternalIdentifier": "company0002"
+        }
+      ],
+      "Cursor": "da34b396-41f7-47f6-8847-aecf00a3f19e"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/companies.md"
+  },
+  "list_age_categories": {
+    "config": {
+      "service_id": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+      "count": 10
+    },
+    "route": "ageCategories/getAll",
+    "response": {
+      "AgeCategories": [
+        {
+          "Id": "ab58c939-be30-4a60-8f75-ae1600c60c9f",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "MinimalAge": null,
+          "MaximalAge": null,
+          "Names": {
+            "cs-CZ": "Dosp\u011bl\u00ed",
+            "da-DK": "Voksne",
+            "de-CH": "Erwachsene",
+            "de-DE": "Erwachsene",
+            "el-GR": "\u0395\u03bd\u03ae\u03bb\u03b9\u03ba\u03bf\u03b9",
+            "en-GB": "Adults"
+          },
+          "ShortNames": null,
+          "CreatedUtc": "2023-10-01T11:48:57Z",
+          "UpdatedUtc": "2023-10-28T11:48:57Z",
+          "Classification": "Adult",
+          "IsActive": false,
+          "ExternalIdentifier": "Adult"
+        },
+        {
+          "Id": "fe568bbd-1ecb-4bb2-bf77-96c3698de20d",
+          "ServiceId": "bd26d8db-86da-4f96-9efc-e5a4654a4a94",
+          "MinimalAge": 0,
+          "MaximalAge": 18,
+          "Names": {
+            "cs-CZ": "D\u011bti",
+            "da-DK": "B\u00f8rn",
+            "de-CH": "Kinder",
+            "de-DE": "Kinder",
+            "el-GR": "\u03a0\u03b1\u03b9\u03b4\u03b9\u03ac",
+            "en-GB": "Children"
+          },
+          "ShortNames": null,
+          "CreatedUtc": "2023-10-01T11:48:57Z",
+          "UpdatedUtc": "2023-10-28T11:48:57Z",
+          "Classification": "Child",
+          "IsActive": false,
+          "ExternalIdentifier": null
+        }
+      ],
+      "Cursor": "0b9560fb-055d-47d3-a6d4-e579c44ca558"
+    },
+    "source": "https://raw.githubusercontent.com/MewsSystems/open-api-docs/343dfafe51ded10d0850acdae8c6a13f6be5c5f6/connector-api/operations/agecategories.md"
+  }
+}
