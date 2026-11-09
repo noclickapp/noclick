@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/agorapulse.svg",
+  "source": "https://api.agorapulse.com/docs/img/logo.svg",
+  "license": "Agorapulse trademark; official API documentation logo, used for provider identification.",
+  "sha256": "e282d44770fb771c25eecf4c55a668dd531bee66d99d6462ded3e364249ba81b"
+}

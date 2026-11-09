@@ -1,0 +1,2601 @@
+{
+  "$defs": {
+    "AgorapulseAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "agorapulse_api_key",
+          "default": "agorapulse_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Agorapulse API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Agorapulse API key. NoClick sends it in X-API-KEY to api.agorapulse.com. Your organizations provide connection evidence.",
+      "x-credential-url": "https://api.agorapulse.com/docs/"
+    },
+    "AgorapulseCreateCalendarNoteConfig": {
+      "additionalProperties": false,
+      "description": "Create a new calendar note.",
+      "properties": {
+        "operation": {
+          "const": "create_calendar_note",
+          "default": "create_calendar_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a new calendar note",
+          "x-method-kind": "write"
+        },
+        "organizationId": {
+          "description": "Organization identifier",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace identifier",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "title": {
+          "description": "Note title",
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note body content",
+          "title": "Body"
+        },
+        "color": {
+          "enum": [
+            "BLUE",
+            "RED",
+            "YELLOW",
+            "GREEN",
+            "PURPLE",
+            "PINK",
+            "ORANGE",
+            "MINT",
+            "CYAN",
+            "GREY"
+          ],
+          "title": "Color",
+          "type": "string"
+        },
+        "startDate": {
+          "description": "Note start date",
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "endDate": {
+          "description": "Note end date",
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "profileUids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of profile UIDs associated with the note. Optional on create, where omitting it attaches the note to no profile. Required on update, where [] detaches the note from every profile",
+          "title": "Profile Uids"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "title",
+        "color",
+        "startDate",
+        "endDate"
+      ],
+      "title": "AgorapulseCreateCalendarNoteConfig",
+      "type": "object"
+    },
+    "AgorapulseDeleteCalendarNoteConfig": {
+      "additionalProperties": false,
+      "description": "Delete a calendar note.",
+      "properties": {
+        "operation": {
+          "const": "delete_calendar_note",
+          "default": "delete_calendar_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete a calendar note",
+          "x-method-kind": "write"
+        },
+        "organizationId": {
+          "description": "Organization identifier",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace identifier",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "uid": {
+          "description": "Calendar note unique identifier",
+          "title": "Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "uid"
+      ],
+      "title": "AgorapulseDeleteCalendarNoteConfig",
+      "type": "object"
+    },
+    "AgorapulseGetInboxItemConfig": {
+      "additionalProperties": false,
+      "description": "Get item.",
+      "properties": {
+        "operation": {
+          "const": "get_inbox_item",
+          "default": "get_inbox_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get item",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "profileUid": {
+          "description": "Profile uid, as returned by the profiles endpoint",
+          "title": "Profile Uid",
+          "type": "string"
+        },
+        "itemId": {
+          "description": "Item id, as returned by the items endpoint. It also resolves the parentId and postId of an item, and the id an history event carries.",
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "profileUid",
+        "itemId"
+      ],
+      "title": "AgorapulseGetInboxItemConfig",
+      "type": "object"
+    },
+    "AgorapulseGetListeningEngagementConfig": {
+      "additionalProperties": false,
+      "description": "Get the search engagement.",
+      "properties": {
+        "operation": {
+          "const": "get_listening_engagement",
+          "default": "get_listening_engagement",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get the search engagement",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "searchId": {
+          "description": "Id of the listening search the metric is computed on",
+          "title": "Search Id",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published after this date (inclusive), ISO 8601. Defaults to the start of the day six days ago, so an unbounded request covers the last seven days.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published before this date (inclusive), ISO 8601. Defaults to the end of the current day.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "networks": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "FACEBOOK",
+                  "INSTAGRAM",
+                  "TWITTER",
+                  "LINKEDIN",
+                  "TIKTOK",
+                  "YOUTUBE",
+                  "REDDIT",
+                  "WEB_NEWS",
+                  "WEB_BLOG",
+                  "WEB_FORUM"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items from these social networks only",
+          "title": "Networks"
+        },
+        "sentiments": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE",
+                  "NEUTRAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items with these sentiments only",
+          "title": "Sentiments"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items whose extracted keywords include this one only, matched exactly and case-insensitively against the values the keywords endpoint returns. An unknown keyword returns an empty result. Items whose keyword extraction found no text or failed carry no keyword and are never counted.",
+          "title": "Keyword"
+        },
+        "competitors": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items that matched these competitors of a competitive search only. The names are the ones the searches endpoint returns; an unknown name, or a search that is not competitive, is rejected. An item matching two competitors is counted for both.",
+          "title": "Competitors"
+        },
+        "groupBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "DATE",
+                "NETWORK",
+                "COMPETITOR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dimension to break the metric down along. Omit it for the overall figure. DATE returns one group per period step and echoes the granularity, NETWORK one per social network, COMPETITOR one per competitor of a competitive search \u2014 and no total, since an item matching two competitors counts in both groups.",
+          "title": "Group By",
+          "enum": [
+            "DATE",
+            "NETWORK",
+            "COMPETITOR"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "searchId"
+      ],
+      "title": "AgorapulseGetListeningEngagementConfig",
+      "type": "object"
+    },
+    "AgorapulseGetListeningSentimentConfig": {
+      "additionalProperties": false,
+      "description": "Get the search sentiment.",
+      "properties": {
+        "operation": {
+          "const": "get_listening_sentiment",
+          "default": "get_listening_sentiment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get the search sentiment",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "searchId": {
+          "description": "Id of the listening search the metric is computed on",
+          "title": "Search Id",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published after this date (inclusive), ISO 8601. Defaults to the start of the day six days ago, so an unbounded request covers the last seven days.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published before this date (inclusive), ISO 8601. Defaults to the end of the current day.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "networks": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "FACEBOOK",
+                  "INSTAGRAM",
+                  "TWITTER",
+                  "LINKEDIN",
+                  "TIKTOK",
+                  "YOUTUBE",
+                  "REDDIT",
+                  "WEB_NEWS",
+                  "WEB_BLOG",
+                  "WEB_FORUM"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items from these social networks only",
+          "title": "Networks"
+        },
+        "sentiments": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE",
+                  "NEUTRAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items with these sentiments only",
+          "title": "Sentiments"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items whose extracted keywords include this one only, matched exactly and case-insensitively against the values the keywords endpoint returns. An unknown keyword returns an empty result. Items whose keyword extraction found no text or failed carry no keyword and are never counted.",
+          "title": "Keyword"
+        },
+        "competitors": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items that matched these competitors of a competitive search only. The names are the ones the searches endpoint returns; an unknown name, or a search that is not competitive, is rejected. An item matching two competitors is counted for both.",
+          "title": "Competitors"
+        },
+        "groupBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "DATE",
+                "NETWORK",
+                "COMPETITOR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dimension to break the metric down along. Omit it for the overall figure. DATE returns one group per period step and echoes the granularity, NETWORK one per social network, COMPETITOR one per competitor of a competitive search \u2014 and no total, since an item matching two competitors counts in both groups.",
+          "title": "Group By",
+          "enum": [
+            "DATE",
+            "NETWORK",
+            "COMPETITOR"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "searchId"
+      ],
+      "title": "AgorapulseGetListeningSentimentConfig",
+      "type": "object"
+    },
+    "AgorapulseGetListeningVolumeConfig": {
+      "additionalProperties": false,
+      "description": "Get the search volume.",
+      "properties": {
+        "operation": {
+          "const": "get_listening_volume",
+          "default": "get_listening_volume",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get the search volume",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "searchId": {
+          "description": "Id of the listening search the metric is computed on",
+          "title": "Search Id",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published after this date (inclusive), ISO 8601. Defaults to the start of the day six days ago, so an unbounded request covers the last seven days.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published before this date (inclusive), ISO 8601. Defaults to the end of the current day.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "networks": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "FACEBOOK",
+                  "INSTAGRAM",
+                  "TWITTER",
+                  "LINKEDIN",
+                  "TIKTOK",
+                  "YOUTUBE",
+                  "REDDIT",
+                  "WEB_NEWS",
+                  "WEB_BLOG",
+                  "WEB_FORUM"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items from these social networks only",
+          "title": "Networks"
+        },
+        "sentiments": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE",
+                  "NEUTRAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items with these sentiments only",
+          "title": "Sentiments"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items whose extracted keywords include this one only, matched exactly and case-insensitively against the values the keywords endpoint returns. An unknown keyword returns an empty result. Items whose keyword extraction found no text or failed carry no keyword and are never counted.",
+          "title": "Keyword"
+        },
+        "competitors": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items that matched these competitors of a competitive search only. The names are the ones the searches endpoint returns; an unknown name, or a search that is not competitive, is rejected. An item matching two competitors is counted for both.",
+          "title": "Competitors"
+        },
+        "groupBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "DATE",
+                "NETWORK",
+                "COMPETITOR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dimension to break the metric down along. Omit it for the overall figure. DATE returns one group per period step and echoes the granularity, NETWORK one per social network, COMPETITOR one per competitor of a competitive search \u2014 and no total, since an item matching two competitors counts in both groups.",
+          "title": "Group By",
+          "enum": [
+            "DATE",
+            "NETWORK",
+            "COMPETITOR"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "searchId"
+      ],
+      "title": "AgorapulseGetListeningVolumeConfig",
+      "type": "object"
+    },
+    "AgorapulseListCalendarNotesConfig": {
+      "additionalProperties": false,
+      "description": "Search calendar notes.",
+      "properties": {
+        "operation": {
+          "const": "list_calendar_notes",
+          "default": "list_calendar_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search calendar notes",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization identifier",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace identifier",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter notes after this date (ISO date)",
+          "format": "date",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter notes before this date (ISO date)",
+          "format": "date",
+          "title": "Until"
+        },
+        "profileUids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by profile UIDs",
+          "title": "Profile Uids"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId"
+      ],
+      "title": "AgorapulseListCalendarNotesConfig",
+      "type": "object"
+    },
+    "AgorapulseListConversationMessagesConfig": {
+      "additionalProperties": false,
+      "description": "Get conversation messages.",
+      "properties": {
+        "operation": {
+          "const": "list_conversation_messages",
+          "default": "list_conversation_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get conversation messages",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "profileUid": {
+          "description": "Profile uid, as returned by the profiles endpoint",
+          "title": "Profile Uid",
+          "type": "string"
+        },
+        "conversationId": {
+          "description": "Conversation id",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter messages created after this date (inclusive). ISO 8601 format.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter messages created before this date (inclusive). ISO 8601 format.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 25,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of messages to return per page. Must be between 1 and 25.",
+          "title": "Limit"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order for the results. ASC for ascending (oldest first), DESC for descending (newest first).",
+          "title": "Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "profileUid",
+        "conversationId"
+      ],
+      "title": "AgorapulseListConversationMessagesConfig",
+      "type": "object"
+    },
+    "AgorapulseListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List workspace menu groups.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List workspace menu groups",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "v": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "API version",
+          "title": "V"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId"
+      ],
+      "title": "AgorapulseListGroupsConfig",
+      "type": "object"
+    },
+    "AgorapulseListInboxItemsConfig": {
+      "additionalProperties": false,
+      "description": "Find items.",
+      "properties": {
+        "operation": {
+          "const": "list_inbox_items",
+          "default": "list_inbox_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find items",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "profileUids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set of profile UIDs to filter items, at least one is required. Only items from these profiles will be returned.",
+          "title": "Profile Uids"
+        },
+        "accountUids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deprecated: use profileUids instead, which takes precedence when both are provided.",
+          "title": "Account Uids"
+        },
+        "toReview": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items in the To review state: not yet marked reviewed by a team member. Unrelated to approval workflows.",
+          "title": "To Review"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items by labels. Only items with these labels will be returned.",
+          "title": "Labels"
+        },
+        "sentiments": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE",
+                  "NEUTRAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items by sentiment.",
+          "title": "Sentiments"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "ADS_COMMENT",
+                  "ORGANIC_COMMENT",
+                  "CONVERSATION",
+                  "MENTION",
+                  "RATING",
+                  "REEL_COMMENT",
+                  "STORY_MENTION_CONVERSATION",
+                  "PROFILE_COMMENT",
+                  "PROFILE_MESSAGE"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items by type/source. Specify the types of items to retrieve (e.g., organicComment, adsComment, conversation, ...). profileComment and profileMessage return what the profile itself replied, every other value returns incoming items; several values are combined as a union.",
+          "title": "Types"
+        },
+        "parentIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items by parent, taking the id of an item returned by this endpoint. Returns the children of these items: the comments of a post, the replies of a comment, the messages of a conversation.",
+          "title": "Parent Ids"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items created after this date (inclusive). ISO 8601 format.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter items created before this date (inclusive). ISO 8601 format.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 25,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of items to return per page. Must be between 1 and 25.",
+          "title": "Limit"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order for the results. ASC for ascending (oldest first), DESC for descending (newest first).",
+          "title": "Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId"
+      ],
+      "title": "AgorapulseListInboxItemsConfig",
+      "type": "object"
+    },
+    "AgorapulseListListeningItemsConfig": {
+      "additionalProperties": false,
+      "description": "Find items.",
+      "properties": {
+        "operation": {
+          "const": "list_listening_items",
+          "default": "list_listening_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find items",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "searchId": {
+          "description": "Id of the listening search whose items are returned",
+          "title": "Search Id",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return items published after this date (inclusive), ISO 8601. Defaults to the start of the day six days ago, so an unbounded request covers the last seven days.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return items published before this date (inclusive), ISO 8601. Defaults to the end of the current day.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "networks": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "FACEBOOK",
+                  "INSTAGRAM",
+                  "TWITTER",
+                  "LINKEDIN",
+                  "TIKTOK",
+                  "YOUTUBE",
+                  "REDDIT",
+                  "WEB_NEWS",
+                  "WEB_BLOG",
+                  "WEB_FORUM"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return items from these social networks only",
+          "title": "Networks"
+        },
+        "sentiments": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE",
+                  "NEUTRAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return items with these sentiments only",
+          "title": "Sentiments"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return the items whose extracted keywords include this one only, matched exactly and case-insensitively against the values the keywords endpoint returns. An unknown keyword returns an empty result. Items whose keyword extraction found no text or failed carry no keyword and are never returned.",
+          "title": "Keyword"
+        },
+        "competitors": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return the items that matched these competitors of a competitive search only. The names are the ones the searches endpoint returns; an unknown name, or a search that is not competitive, is rejected. An item matching two competitors is returned for both.",
+          "title": "Competitors"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset returned by the previous response, to read the next page",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 25,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of items to return per page. Must be between 1 and 25.",
+          "title": "Limit"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "DATE",
+                "ENGAGEMENT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field the items are sorted on. DATE for the publication date, ENGAGEMENT for the interactions the item collected.",
+          "title": "Order By",
+          "enum": [
+            "DATE",
+            "ENGAGEMENT"
+          ],
+          "x-enum-searchable": true
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction. DESC for the highest value first \u2014 the newest items, or the most engaging ones \u2014 ASC for the lowest.",
+          "title": "Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "searchId"
+      ],
+      "title": "AgorapulseListListeningItemsConfig",
+      "type": "object"
+    },
+    "AgorapulseListListeningKeywordsConfig": {
+      "additionalProperties": false,
+      "description": "Get the search keywords.",
+      "properties": {
+        "operation": {
+          "const": "list_listening_keywords",
+          "default": "list_listening_keywords",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get the search keywords",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "searchId": {
+          "description": "Id of the listening search whose keywords are returned",
+          "title": "Search Id",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published after this date (inclusive), ISO 8601. Defaults to the start of the day six days ago, so an unbounded request covers the last seven days.",
+          "format": "date-time",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items published before this date (inclusive), ISO 8601. Defaults to the end of the current day.",
+          "format": "date-time",
+          "title": "Until"
+        },
+        "networks": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "FACEBOOK",
+                  "INSTAGRAM",
+                  "TWITTER",
+                  "LINKEDIN",
+                  "TIKTOK",
+                  "YOUTUBE",
+                  "REDDIT",
+                  "WEB_NEWS",
+                  "WEB_BLOG",
+                  "WEB_FORUM"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items from these social networks only",
+          "title": "Networks"
+        },
+        "sentiments": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "POSITIVE",
+                  "NEGATIVE",
+                  "NEUTRAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items with these sentiments only, which is how to read what a search is complained about",
+          "title": "Sentiments"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items whose extracted keywords include this one only, matched exactly and case-insensitively. The keywords returned are then the ones mentioned alongside it.",
+          "title": "Keyword"
+        },
+        "competitors": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Take into account the items that matched these competitors of a competitive search only. The names are the ones the searches endpoint returns; an unknown name, or a search that is not competitive, is rejected.",
+          "title": "Competitors"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of keywords to return. Must be between 1 and 100.",
+          "title": "Size"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "searchId"
+      ],
+      "title": "AgorapulseListListeningKeywordsConfig",
+      "type": "object"
+    },
+    "AgorapulseListListeningSearchesConfig": {
+      "additionalProperties": false,
+      "description": "List searches.",
+      "properties": {
+        "operation": {
+          "const": "list_listening_searches",
+          "default": "list_listening_searches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List searches",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId"
+      ],
+      "title": "AgorapulseListListeningSearchesConfig",
+      "type": "object"
+    },
+    "AgorapulseListOrganizationsConfig": {
+      "additionalProperties": false,
+      "description": "Get manager organizations.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get manager organizations",
+          "x-method-kind": "read"
+        },
+        "v": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "API version",
+          "title": "V"
+        }
+      },
+      "title": "AgorapulseListOrganizationsConfig",
+      "type": "object"
+    },
+    "AgorapulseListProfilesConfig": {
+      "additionalProperties": false,
+      "description": "Get workspace profiles.",
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get workspace profiles",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "v": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "API version",
+          "title": "V"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId"
+      ],
+      "title": "AgorapulseListProfilesConfig",
+      "type": "object"
+    },
+    "AgorapulseListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "Get organization workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get organization workspaces",
+          "x-method-kind": "read"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "v": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "API version",
+          "title": "V"
+        }
+      },
+      "required": [
+        "organizationId"
+      ],
+      "title": "AgorapulseListWorkspacesConfig",
+      "type": "object"
+    },
+    "AgorapulseOnNewInboxItemConfig": {
+      "description": "Watch the newest 25 items per tick. Use a shorter schedule or narrower scope for busy feeds; existing items are baselined on activation.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_inbox_item",
+          "default": "on_new_inbox_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On New Inbox Item",
+          "x-is-trigger": true
+        },
+        "organizationId": {
+          "title": "Organization ID",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "title": "Workspace ID",
+          "type": "integer"
+        },
+        "profileUids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile IDs"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO 8601 publication-time lower bound.",
+          "format": "date-time",
+          "title": "Published Since"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId"
+      ],
+      "title": "AgorapulseOnNewInboxItemConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AgorapulseOnNewListeningItemConfig": {
+      "description": "Watch the newest 25 items per tick. Use a shorter schedule or narrower scope for busy feeds; existing items are baselined on activation.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_listening_item",
+          "default": "on_new_listening_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On New Listening Item",
+          "x-is-trigger": true
+        },
+        "organizationId": {
+          "title": "Organization ID",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "title": "Workspace ID",
+          "type": "integer"
+        },
+        "searchId": {
+          "minLength": 1,
+          "title": "Listening Search ID",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO 8601 publication-time lower bound.",
+          "format": "date-time",
+          "title": "Published Since"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "searchId"
+      ],
+      "title": "AgorapulseOnNewListeningItemConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AgorapulseReplyToItemConfig": {
+      "additionalProperties": false,
+      "description": "Reply to an item.",
+      "properties": {
+        "operation": {
+          "const": "reply_to_item",
+          "default": "reply_to_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Reply to an item",
+          "x-method-kind": "write"
+        },
+        "organizationId": {
+          "description": "Organization id",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace id",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "profileUid": {
+          "description": "Profile uid, as returned by the profiles endpoint",
+          "title": "Profile Uid",
+          "type": "string"
+        },
+        "itemId": {
+          "description": "The ID of the inbox item to reply to",
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "message": {
+          "description": "The content of the reply message",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "privateReply": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, sends a private message to the user instead of replying publicly to a public item (e.g., comment). The reply will be sent as a direct/private message. Supported by Facebook, Instagram, and Twitter.",
+          "title": "Private Reply"
+        },
+        "excludedUsers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of user IDs to exclude from mentions (Twitter-specific)",
+          "title": "Excluded Users"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "profileUid",
+        "itemId",
+        "message"
+      ],
+      "title": "AgorapulseReplyToItemConfig",
+      "type": "object"
+    },
+    "AgorapulseUpdateCalendarNoteConfig": {
+      "additionalProperties": false,
+      "description": "Update a calendar note.",
+      "properties": {
+        "operation": {
+          "const": "update_calendar_note",
+          "default": "update_calendar_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update a calendar note",
+          "x-method-kind": "write"
+        },
+        "organizationId": {
+          "description": "Organization identifier",
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "workspaceId": {
+          "description": "Workspace identifier",
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "uid": {
+          "description": "Calendar note unique identifier",
+          "title": "Uid",
+          "type": "string"
+        },
+        "title": {
+          "description": "Note title",
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note body content",
+          "title": "Body"
+        },
+        "color": {
+          "enum": [
+            "BLUE",
+            "RED",
+            "YELLOW",
+            "GREEN",
+            "PURPLE",
+            "PINK",
+            "ORANGE",
+            "MINT",
+            "CYAN",
+            "GREY"
+          ],
+          "title": "Color",
+          "type": "string"
+        },
+        "startDate": {
+          "description": "Note start date",
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "endDate": {
+          "description": "Note end date",
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "profileUids": {
+          "description": "List of profile UIDs associated with the note. Optional on create, where omitting it attaches the note to no profile. Required on update, where [] detaches the note from every profile",
+          "items": {
+            "type": "string"
+          },
+          "title": "Profile Uids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "organizationId",
+        "workspaceId",
+        "uid",
+        "title",
+        "color",
+        "startDate",
+        "endDate",
+        "profileUids"
+      ],
+      "title": "AgorapulseUpdateCalendarNoteConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_calendar_note": "#/$defs/AgorapulseCreateCalendarNoteConfig",
+          "delete_calendar_note": "#/$defs/AgorapulseDeleteCalendarNoteConfig",
+          "get_inbox_item": "#/$defs/AgorapulseGetInboxItemConfig",
+          "get_listening_engagement": "#/$defs/AgorapulseGetListeningEngagementConfig",
+          "get_listening_sentiment": "#/$defs/AgorapulseGetListeningSentimentConfig",
+          "get_listening_volume": "#/$defs/AgorapulseGetListeningVolumeConfig",
+          "list_calendar_notes": "#/$defs/AgorapulseListCalendarNotesConfig",
+          "list_conversation_messages": "#/$defs/AgorapulseListConversationMessagesConfig",
+          "list_groups": "#/$defs/AgorapulseListGroupsConfig",
+          "list_inbox_items": "#/$defs/AgorapulseListInboxItemsConfig",
+          "list_listening_items": "#/$defs/AgorapulseListListeningItemsConfig",
+          "list_listening_keywords": "#/$defs/AgorapulseListListeningKeywordsConfig",
+          "list_listening_searches": "#/$defs/AgorapulseListListeningSearchesConfig",
+          "list_organizations": "#/$defs/AgorapulseListOrganizationsConfig",
+          "list_profiles": "#/$defs/AgorapulseListProfilesConfig",
+          "list_workspaces": "#/$defs/AgorapulseListWorkspacesConfig",
+          "on_new_inbox_item": "#/$defs/AgorapulseOnNewInboxItemConfig",
+          "on_new_listening_item": "#/$defs/AgorapulseOnNewListeningItemConfig",
+          "reply_to_item": "#/$defs/AgorapulseReplyToItemConfig",
+          "update_calendar_note": "#/$defs/AgorapulseUpdateCalendarNoteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AgorapulseListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListCalendarNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseCreateCalendarNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseUpdateCalendarNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseDeleteCalendarNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListInboxItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListConversationMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseGetInboxItemConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseReplyToItemConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListListeningSearchesConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseGetListeningEngagementConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListListeningItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseListListeningKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseGetListeningSentimentConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseGetListeningVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseOnNewInboxItemConfig"
+        },
+        {
+          "$ref": "#/$defs/AgorapulseOnNewListeningItemConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AgorapulseAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Agorapulse Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
