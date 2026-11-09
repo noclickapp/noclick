@@ -1,0 +1,1460 @@
+{
+  "POST /object_detection": {
+    "body": {
+      "success": true,
+      "annotated_image": "https://jigsawstack-temp.b1e91a466694ad4af04df5d05ca12d93.r2.cloudflarestorage.com/temp/2633695d-7541-40bb-9f07-a77c992bd568.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=7b9a19349842b7b1a9e4c2e19f05b232%2F20250916%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250916T185227Z&X-Amz-Expires=604800&X-Amz-Signature=f2781a31a47e6c6154f07b99204ab4995da3dd0435f7b542567c8ba39adc60e5&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+      "objects": [
+        {
+          "bounds": {
+            "top_left": {
+              "x": 132,
+              "y": 54
+            },
+            "top_right": {
+              "x": 1389,
+              "y": 54
+            },
+            "bottom_left": {
+              "x": 132,
+              "y": 802
+            },
+            "bottom_right": {
+              "x": 1389,
+              "y": 802
+            },
+            "width": 1257,
+            "height": 748
+          },
+          "label": "TV"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 435,
+              "y": 674
+            },
+            "top_right": {
+              "x": 694,
+              "y": 674
+            },
+            "bottom_left": {
+              "x": 435,
+              "y": 1021
+            },
+            "bottom_right": {
+              "x": 694,
+              "y": 1021
+            },
+            "width": 259,
+            "height": 347
+          },
+          "label": "Hands_0"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 0,
+              "y": 627
+            },
+            "top_right": {
+              "x": 390,
+              "y": 627
+            },
+            "bottom_left": {
+              "x": 0,
+              "y": 994
+            },
+            "bottom_right": {
+              "x": 390,
+              "y": 994
+            },
+            "width": 390,
+            "height": 367
+          },
+          "label": "Hands_1"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 108,
+              "y": 667
+            },
+            "top_right": {
+              "x": 592,
+              "y": 667
+            },
+            "bottom_left": {
+              "x": 108,
+              "y": 919
+            },
+            "bottom_right": {
+              "x": 592,
+              "y": 919
+            },
+            "width": 484,
+            "height": 252
+          },
+          "label": "Controller"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 109,
+              "y": 669
+            },
+            "top_right": {
+              "x": 599,
+              "y": 669
+            },
+            "bottom_left": {
+              "x": 109,
+              "y": 921
+            },
+            "bottom_right": {
+              "x": 599,
+              "y": 921
+            },
+            "width": 490,
+            "height": 252
+          },
+          "label": "Wii"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 0,
+              "y": 781
+            },
+            "top_right": {
+              "x": 1440,
+              "y": 781
+            },
+            "bottom_left": {
+              "x": 0,
+              "y": 839
+            },
+            "bottom_right": {
+              "x": 1440,
+              "y": 839
+            },
+            "width": 1440,
+            "height": 58
+          },
+          "label": "Wires_0"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 0,
+              "y": 880
+            },
+            "top_right": {
+              "x": 1440,
+              "y": 880
+            },
+            "bottom_left": {
+              "x": 0,
+              "y": 1033
+            },
+            "bottom_right": {
+              "x": 1440,
+              "y": 1033
+            },
+            "width": 1440,
+            "height": 153
+          },
+          "label": "Wires_1"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 0,
+              "y": 93
+            },
+            "top_right": {
+              "x": 1440,
+              "y": 93
+            },
+            "bottom_left": {
+              "x": 0,
+              "y": 777
+            },
+            "bottom_right": {
+              "x": 1440,
+              "y": 777
+            },
+            "width": 1440,
+            "height": 684
+          },
+          "label": "Minecraft"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 0,
+              "y": 134
+            },
+            "top_right": {
+              "x": 1440,
+              "y": 134
+            },
+            "bottom_left": {
+              "x": 0,
+              "y": 708
+            },
+            "bottom_right": {
+              "x": 1440,
+              "y": 708
+            },
+            "width": 1440,
+            "height": 574
+          },
+          "label": "Castle"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1155,
+              "y": 390
+            },
+            "top_right": {
+              "x": 1302,
+              "y": 390
+            },
+            "bottom_left": {
+              "x": 1155,
+              "y": 482
+            },
+            "bottom_right": {
+              "x": 1302,
+              "y": 482
+            },
+            "width": 147,
+            "height": 92
+          },
+          "label": "Trees"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 407,
+              "y": 407
+            },
+            "top_right": {
+              "x": 506,
+              "y": 407
+            },
+            "bottom_left": {
+              "x": 407,
+              "y": 455
+            },
+            "bottom_right": {
+              "x": 506,
+              "y": 455
+            },
+            "width": 99,
+            "height": 48
+          },
+          "label": "Water"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1051,
+              "y": 564
+            },
+            "top_right": {
+              "x": 1161,
+              "y": 564
+            },
+            "bottom_left": {
+              "x": 1051,
+              "y": 609
+            },
+            "bottom_right": {
+              "x": 1161,
+              "y": 609
+            },
+            "width": 110,
+            "height": 45
+          },
+          "label": "Grass_0"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1206,
+              "y": 611
+            },
+            "top_right": {
+              "x": 1305,
+              "y": 611
+            },
+            "bottom_left": {
+              "x": 1206,
+              "y": 645
+            },
+            "bottom_right": {
+              "x": 1305,
+              "y": 645
+            },
+            "width": 99,
+            "height": 34
+          },
+          "label": "Grass_1"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1056,
+              "y": 515
+            },
+            "top_right": {
+              "x": 1119,
+              "y": 515
+            },
+            "bottom_left": {
+              "x": 1056,
+              "y": 545
+            },
+            "bottom_right": {
+              "x": 1119,
+              "y": 545
+            },
+            "width": 63,
+            "height": 30
+          },
+          "label": "Grass_2"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1111,
+              "y": 571
+            },
+            "top_right": {
+              "x": 1164,
+              "y": 571
+            },
+            "bottom_left": {
+              "x": 1111,
+              "y": 606
+            },
+            "bottom_right": {
+              "x": 1164,
+              "y": 606
+            },
+            "width": 53,
+            "height": 35
+          },
+          "label": "Grass_3"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1112,
+              "y": 583
+            },
+            "top_right": {
+              "x": 1157,
+              "y": 583
+            },
+            "bottom_left": {
+              "x": 1112,
+              "y": 608
+            },
+            "bottom_right": {
+              "x": 1157,
+              "y": 608
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_4"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1112,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1157,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1112,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1157,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_5"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1112,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1157,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1112,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1157,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_6"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1112,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1157,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1112,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1157,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_7"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1112,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1157,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1112,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1157,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_8"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1112,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1157,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1112,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1157,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_9"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1115,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1153,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1115,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1153,
+              "y": 605
+            },
+            "width": 38,
+            "height": 25
+          },
+          "label": "Grass_10"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1092,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1137,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1092,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1137,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_11"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 606
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 606
+            },
+            "width": 45,
+            "height": 26
+          },
+          "label": "Grass_12"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1050,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1095,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1050,
+              "y": 606
+            },
+            "bottom_right": {
+              "x": 1095,
+              "y": 606
+            },
+            "width": 45,
+            "height": 26
+          },
+          "label": "Grass_13"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 606
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 606
+            },
+            "width": 44,
+            "height": 26
+          },
+          "label": "Grass_14"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 606
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 606
+            },
+            "width": 44,
+            "height": 26
+          },
+          "label": "Grass_15"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_16"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_17"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_18"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_19"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_20"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_21"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1045,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1089,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1045,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1089,
+              "y": 605
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_22"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1050,
+              "y": 580
+            },
+            "top_right": {
+              "x": 1095,
+              "y": 580
+            },
+            "bottom_left": {
+              "x": 1050,
+              "y": 605
+            },
+            "bottom_right": {
+              "x": 1095,
+              "y": 605
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_23"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 584
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 584
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 609
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 609
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_24"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 610
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_25"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 610
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_26"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 610
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_27"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 610
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_28"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1064,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1109,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1064,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1109,
+              "y": 610
+            },
+            "width": 45,
+            "height": 25
+          },
+          "label": "Grass_29"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 610
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_30"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 610
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_31"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 610
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_32"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 610
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_33"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 585
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 585
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 610
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 610
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_34"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 586
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 586
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 611
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 611
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_35"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 586
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 586
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 611
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 611
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_36"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 589
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 589
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 614
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 614
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_37"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 24
+          },
+          "label": "Grass_38"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 594
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 594
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 25
+          },
+          "label": "Grass_39"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 24
+          },
+          "label": "Grass_40"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 24
+          },
+          "label": "Grass_41"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 24
+          },
+          "label": "Grass_42"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 24
+          },
+          "label": "Grass_43"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1066,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1110,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1066,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1110,
+              "y": 619
+            },
+            "width": 44,
+            "height": 24
+          },
+          "label": "Grass_44"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1069,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1107,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1069,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1107,
+              "y": 619
+            },
+            "width": 38,
+            "height": 24
+          },
+          "label": "Grass_45"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1069,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1107,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1069,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1107,
+              "y": 619
+            },
+            "width": 38,
+            "height": 24
+          },
+          "label": "Grass_46"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1069,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1107,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1069,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1107,
+              "y": 619
+            },
+            "width": 38,
+            "height": 24
+          },
+          "label": "Grass_47"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1069,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1107,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1069,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1107,
+              "y": 619
+            },
+            "width": 38,
+            "height": 24
+          },
+          "label": "Grass_48"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 1069,
+              "y": 595
+            },
+            "top_right": {
+              "x": 1107,
+              "y": 595
+            },
+            "bottom_left": {
+              "x": 1069,
+              "y": 619
+            },
+            "bottom_right": {
+              "x": 1107,
+              "y": 619
+            },
+            "width": 38,
+            "height": 24
+          },
+          "label": "Grass_49"
+        },
+        {
+          "bounds": {
+            "top_left": {
+              "x": 187,
+              "y": 126
+            },
+            "top_right": {
+              "x": 228,
+              "y": 126
+            },
+            "bottom_left": {
+              "x": 187,
+              "y": 197
+            },
+            "bottom_right": {
+              "x": 228,
+              "y": 197
+            },
+            "width": 41,
+            "height": 71
+          },
+          "label": "Character"
+        }
+      ],
+      "tags": [
+        "TV",
+        "Hands",
+        "Controller",
+        "Table",
+        "Console",
+        "Wii",
+        "Wires",
+        "Wall",
+        "Minecraft",
+        "Sky",
+        "Castle",
+        "Trees",
+        "Water",
+        "Grass",
+        "Character"
+      ],
+      "_usage": {
+        "input_tokens": 39,
+        "output_tokens": 2990,
+        "inference_time_tokens": 57445,
+        "total_tokens": 60474
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/ai/object-detection"
+  }
+}

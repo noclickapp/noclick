@@ -1,0 +1,31 @@
+{
+  "GET /web/search/suggest": {
+    "body": {
+      "success": true,
+      "suggestions": [
+        "what is the capital of california",
+        "what is the capital of canada",
+        "what is the capital of australia",
+        "what is the capital of texas",
+        "what is the capital of the united states",
+        "what is the capital of florida",
+        "what is the capital of brazil",
+        "what is the capital of new york",
+        "what is the capital of alaska",
+        "what is the capital of italy",
+        "what is the capital of japan",
+        "what is the capital gains tax rate",
+        "what is the capital of maine",
+        "what is the capital of illinois",
+        "what is the capital of turkey"
+      ],
+      "_usage": {
+        "input_tokens": 8,
+        "output_tokens": 134,
+        "inference_time_tokens": 250,
+        "total_tokens": 392
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/web/search-suggestions"
+  }
+}

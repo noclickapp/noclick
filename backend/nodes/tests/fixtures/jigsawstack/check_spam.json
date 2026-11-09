@@ -1,0 +1,18 @@
+{
+  "POST /validate/spam_check": {
+    "body": {
+      "success": true,
+      "check": {
+        "score": 0.95,
+        "is_spam": true
+      },
+      "_usage": {
+        "input_tokens": 20,
+        "output_tokens": 14,
+        "inference_time_tokens": 509,
+        "total_tokens": 543
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/validate/spam-check"
+  }
+}

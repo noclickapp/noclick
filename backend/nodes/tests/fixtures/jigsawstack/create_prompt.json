@@ -1,0 +1,16 @@
+{
+  "POST /prompt_engine": {
+    "body": {
+      "success": true,
+      "prompt_engine_id": "dea57da0-eea1-400f-b5df-2f6216a4c2b9",
+      "optimized_prompt": "Write a detailed and engaging story about {about}, including vivid descriptions, well-developed characters, and a clear beginning, middle, and end.",
+      "_usage": {
+        "input_tokens": 58,
+        "output_tokens": 61,
+        "inference_time_tokens": 1121,
+        "total_tokens": 1240
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/prompt-engine/create"
+  }
+}

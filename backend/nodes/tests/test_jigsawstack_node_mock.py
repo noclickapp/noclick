@@ -33,7 +33,13 @@ CASES = [
     ({"operation": "run_prompt", "id": ID, "input_values": {"text": "How to get started with JigsawStack?"}}, "POST", "/prompt_engine/{id}"),
     ({"operation": "delete_prompt", "id": ID}, "DELETE", "/prompt_engine/{id}"),
 ]
-FIXTURES = json.loads((Path(__file__).parent / "fixtures/jigsawstack/responses.json").read_text())
+# Keep complete published examples separately so each remains reviewable and
+# stays within the open export's per-blob repository-transport audit budget.
+FIXTURES = {
+    route: response
+    for fixture in sorted((Path(__file__).parent / "fixtures/jigsawstack").glob("*.json"))
+    for route, response in json.loads(fixture.read_text()).items()
+}
 
 
 @pytest.fixture
@@ -67,7 +73,7 @@ def node(config):
 async def test_jigsawstack_documented_response(config, method, path, transport):
     requests, responses = transport
     # Delete docs describe a boolean acknowledgement, without a JSON example.
-    payload = FIXTURES.get(method + " " + path, {"body": {"success": True}})["body"]
+    payload = {"success": True} if config["operation"] == "delete_prompt" else FIXTURES[method + " " + path]["body"]
     responses.append((200, payload))
     result = await node(config).execute({})
     assert result["success"] is True

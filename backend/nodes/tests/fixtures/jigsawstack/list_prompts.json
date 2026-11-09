@@ -1,0 +1,139 @@
+{
+  "GET /prompt_engine": {
+    "body": {
+      "success": true,
+      "prompt_engines": [
+        {
+          "id": "0317e3c5-b441-42de-9bce-19d76812e459",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-15T22:31:54.575163+00:00"
+        },
+        {
+          "id": "2fc1fa81-e7b4-4539-bc35-7a4349b61601",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-15T22:19:05.416393+00:00"
+        },
+        {
+          "id": "a4622068-2b84-47b3-a325-13c7a82ca393",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-10T18:34:27.004408+00:00"
+        },
+        {
+          "id": "5c3c2736-17e1-4536-9ccf-e8d72ca483f1",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T18:20:43.778267+00:00"
+        },
+        {
+          "id": "278515ab-23cb-4675-8041-614f0d268c68",
+          "prompt": "Tell me a story about {about}",
+          "inputs": null,
+          "return_prompt": null,
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T02:49:00.296775+00:00"
+        },
+        {
+          "id": "12ca390e-0eb6-4bf2-a727-67f2ef79cd39",
+          "prompt": "Tell me a story about {about}",
+          "inputs": null,
+          "return_prompt": null,
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T02:48:13.305085+00:00"
+        },
+        {
+          "id": "48ad4a83-82c9-4356-89f4-c48e43fa6b81",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T02:37:53.155681+00:00"
+        },
+        {
+          "id": "c62d8a22-d75c-4d9f-b4ee-5673f154be76",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T02:37:32.744933+00:00"
+        },
+        {
+          "id": "f2f3eb09-9754-4376-8824-c7231f3b2920",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T02:02:04.481774+00:00"
+        },
+        {
+          "id": "85e919c1-717b-4b4f-9d0d-2e91968c102d",
+          "prompt": "Tell me a story about {about}",
+          "inputs": [
+            {
+              "key": "about",
+              "optional": false
+            }
+          ],
+          "return_prompt": "Return the result in a markdown format",
+          "return_prompt_type": "string",
+          "created_at": "2025-09-09T01:58:32.641838+00:00"
+        }
+      ],
+      "page": 0,
+      "limit": 10,
+      "has_more": true,
+      "_usage": {
+        "input_tokens": 4,
+        "output_tokens": 650,
+        "inference_time_tokens": 151,
+        "total_tokens": 805
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/prompt-engine/list"
+  }
+}

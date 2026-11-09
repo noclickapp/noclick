@@ -1,0 +1,45 @@
+{
+  "POST /prompt_engine/{id}": {
+    "body": {
+      "success": true,
+      "result": {
+        "outline": [
+          {
+            "section": "Introduction to JigsawStack"
+          },
+          {
+            "section": "Prerequisites"
+          },
+          {
+            "section": "Installation and Setup"
+          },
+          {
+            "section": "Creating Your First Project"
+          },
+          {
+            "section": "Understanding the JigsawStack Architecture"
+          },
+          {
+            "section": "Basic JigsawStack Commands"
+          },
+          {
+            "section": "Exploring JigsawStack Features"
+          },
+          {
+            "section": "Troubleshooting Common Issues"
+          },
+          {
+            "section": "Next Steps and Resources"
+          }
+        ]
+      },
+      "_usage": {
+        "input_tokens": 17,
+        "output_tokens": 104,
+        "inference_time_tokens": 1681,
+        "total_tokens": 1802
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/prompt-engine/run"
+  }
+}

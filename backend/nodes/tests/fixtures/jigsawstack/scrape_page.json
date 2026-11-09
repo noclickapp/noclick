@@ -1,0 +1,5823 @@
+{
+  "POST /ai/scrape": {
+    "body": {
+      "success": true,
+      "page_position": 1,
+      "page_position_length": 1,
+      "context": {
+        "titles": [
+          "Waymo has received our pilot permit allowing for commercial operations at SFO (waymo.com)",
+          "Things you can do with a Software Defined Radio (2024) (blinry.org)",
+          "Adios Chicos, 25 Years of KDE (jriddell.org)",
+          "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History (koi.security)",
+          "Plugin System (iina.io)",
+          "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems (github.com/rowboatlabs)",
+          "A new experimental Google app for Windows (blog.google)",
+          "UTF-8 history (2003) (cat-v.org)",
+          "CIA Freedom of Information Act Electronic Reading Room (cia.gov)",
+          "Bertrand Russell to Oswald Mosley (1962) (lettersofnote.com)",
+          "I built my own phone because innovation is sad rn [video] (youtube.com)",
+          "Self Propagating NPM Malware (stepsecurity.io)",
+          "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy (code-detector.ai)",
+          "How Container Filesystem Works: Building a Docker-Like Container from Scratch (iximiuz.com)",
+          "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers (stochasticlifestyle.com)",
+          "Development of the MOS Technology 6502: A Historical Perspective (2022) (embeddedrelated.com)",
+          "Paper Folding Assembly Line [video] (youtube.com)",
+          "Scammed out of $130K via fake Google call, spoofed Google email and auth sync (bewildered.substack.com)",
+          "The Linux Process Journey [pdf] (thelearningjourneyebooks.com)",
+          "Generative AI as Seniority-Biased Technological Change (ssrn.com)",
+          "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig (popovicu.com)",
+          "Microsoft Favors Anthropic over OpenAI for Visual Studio Code (theverge.com)",
+          "60 years after Gemini, newly processed images reveal details (arstechnica.com)",
+          "Will I run Boston 2026? (getfast.ai)",
+          "Teen safety, freedom, and privacy (openai.com)",
+          "Java 25 officially released (openjdk.org)",
+          "Migrating to React Native's new architecture (shopify.engineering)",
+          "Robert Redford has died (nytimes.com)",
+          "Scientists uncover extreme life inside the Arctic ice (stanford.edu)",
+          "\"Your\" vs. \"My\" in user interfaces (adamsilver.io)"
+        ],
+        "points": [
+          "316 points",
+          "378 points",
+          "40 points",
+          "18 points",
+          "88 points",
+          "29 points",
+          "61 points",
+          "63 points",
+          "122 points",
+          "103 points",
+          "491 points",
+          "19 points",
+          "8 points",
+          "67 points",
+          "32 points",
+          "12 points",
+          "65 points",
+          "7 points",
+          "180 points",
+          "135 points",
+          "218 points",
+          "24 points",
+          "188 points",
+          "99 points",
+          "404 points",
+          "64 points",
+          "423 points",
+          "408 points",
+          "64 points",
+          "428 points"
+        ]
+      },
+      "selectors": {
+        "titles": [
+          "tr.athing.submission td.title span.titleline a",
+          "tr.athing.submission td.title span.titleline",
+          "tr.athing.submission > td.title + td.title span.titleline > a",
+          "#bigbox table tr.athing.submission td.title span.titleline a",
+          "table#hnmain tr.athing.submission td.title span.titleline a"
+        ],
+        "points": [
+          "tr + tr td.subtext span.score",
+          "tr td.subtext span.subline > span.score",
+          "tr.athing.submission + tr td.subtext span.score",
+          "table#hnmain td.subtext span.score",
+          "#bigbox td.subtext span.score"
+        ]
+      },
+      "meta": {},
+      "link": [
+        {
+          "href": "https://news.ycombinator.com",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/news",
+          "text": "Hacker News",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/newest",
+          "text": "new",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/front",
+          "text": "past",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/newcomments",
+          "text": "comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/ask",
+          "text": "ask",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/show",
+          "text": "show",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/jobs",
+          "text": "jobs",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/submit",
+          "text": "submit",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/login?goto=news",
+          "text": "login",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45264562&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://waymo.com/blog/#short-all-systems-go-at-sfo-waymo-has-received-our-pilot-permit",
+          "text": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=waymo.com",
+          "text": "waymo.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=ChrisArchitect",
+          "text": "ChrisArchitect",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264562",
+          "text": "2 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45264562&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264562",
+          "text": "202\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45262835&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://blinry.org/50-things-with-sdr/",
+          "text": "Things you can do with a Software Defined Radio (2024)",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=blinry.org",
+          "text": "blinry.org",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=mihau",
+          "text": "mihau",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45262835",
+          "text": "4 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45262835&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45262835",
+          "text": "75\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45265881&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://jriddell.org/2025/09/14/adios-chicos-25-years-of-kde/",
+          "text": "Adios Chicos, 25 Years of KDE",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=jriddell.org",
+          "text": "jriddell.org",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=thangqt",
+          "text": "thangqt",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265881",
+          "text": "28 minutes ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45265881&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265881",
+          "text": "6\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45265937&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.koi.security/blog/shai-hulud-npm-supply-chain-attack-crowdstrike-tinycolor",
+          "text": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=koi.security",
+          "text": "koi.security",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=chha",
+          "text": "chha",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265937",
+          "text": "24 minutes ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45265937&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265937",
+          "text": "1\u00a0comment",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45264190&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://iina.io/plugins/",
+          "text": "Plugin System",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=iina.io",
+          "text": "iina.io",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=xnhbx",
+          "text": "xnhbx",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264190",
+          "text": "2 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45264190&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264190",
+          "text": "19\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45264867&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://github.com/rowboatlabs/rowboat",
+          "text": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=github.com/rowboatlabs",
+          "text": "github.com/rowboatlabs",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=segmenta",
+          "text": "segmenta",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264867",
+          "text": "1 hour ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45264867&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264867",
+          "text": "16\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45263317&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://blog.google/products/search/google-app-windows-labs/",
+          "text": "A new experimental Google app for Windows",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=blog.google",
+          "text": "blog.google",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=meetpateltech",
+          "text": "meetpateltech",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45263317",
+          "text": "3 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45263317&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45263317",
+          "text": "97\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45230515&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://doc.cat-v.org/bell_labs/utf-8_history",
+          "text": "UTF-8 history (2003)",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=cat-v.org",
+          "text": "cat-v.org",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=mikecarlton",
+          "text": "mikecarlton",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45230515",
+          "text": "3 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45230515&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45230515",
+          "text": "17\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45261764&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.cia.gov/readingroom",
+          "text": "CIA Freedom of Information Act Electronic Reading Room",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=cia.gov",
+          "text": "cia.gov",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=bookofjoe",
+          "text": "bookofjoe",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261764",
+          "text": "5 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45261764&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261764",
+          "text": "23\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45264340&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://lettersofnote.com/2016/02/02/every-ounce-of-my-energy/",
+          "text": "Bertrand Russell to Oswald Mosley (1962)",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=lettersofnote.com",
+          "text": "lettersofnote.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=giraffe_lady",
+          "text": "giraffe_lady",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264340",
+          "text": "2 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45264340&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264340",
+          "text": "49\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45245050&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.youtube.com/watch?v=qy_9w_c2ub0",
+          "text": "I built my own phone because innovation is sad rn [video]",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=youtube.com",
+          "text": "youtube.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=Timothee",
+          "text": "Timothee",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45245050",
+          "text": "1 hour ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45245050&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45245050",
+          "text": "2\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45260741&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised",
+          "text": "Self Propagating NPM Malware",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=stepsecurity.io",
+          "text": "stepsecurity.io",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=jamesberthoty",
+          "text": "jamesberthoty",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45260741",
+          "text": "7 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45260741&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45260741",
+          "text": "379\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45265831&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://code-detector.ai/",
+          "text": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=code-detector.ai",
+          "text": "code-detector.ai",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=henryl",
+          "text": "henryl",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265831",
+          "text": "32 minutes ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45265831&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265831",
+          "text": "15\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45232426&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://labs.iximiuz.com/tutorials/container-filesystem-from-scratch",
+          "text": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=iximiuz.com",
+          "text": "iximiuz.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=lgunsch",
+          "text": "lgunsch",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45232426",
+          "text": "1 hour ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45232426&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45232426",
+          "text": "discuss",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45262151&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.stochasticlifestyle.com/implicit-ode-solvers-are-not-universally-more-robust-than-explicit-ode-solvers-or-why-no-ode-solver-is-best/",
+          "text": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=stochasticlifestyle.com",
+          "text": "stochasticlifestyle.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=cbolton",
+          "text": "cbolton",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45262151",
+          "text": "5 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45262151&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45262151",
+          "text": "21\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45263221&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.EmbeddedRelated.com/showarticle/1453.php",
+          "text": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=embeddedrelated.com",
+          "text": "embeddedrelated.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=jason_s",
+          "text": "jason_s",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45263221",
+          "text": "3 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45263221&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45263221",
+          "text": "5\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45161219&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.youtube.com/watch?v=XhUuhl9iWpQ",
+          "text": "Paper Folding Assembly Line [video]",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=youtube.com",
+          "text": "youtube.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=peteforde",
+          "text": "peteforde",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45161219",
+          "text": "1 hour ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45161219&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45161219",
+          "text": "1\u00a0comment",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45264726&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://bewildered.substack.com/p/i-was-scammed-out-of-130000-and-google",
+          "text": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=bewildered.substack.com",
+          "text": "bewildered.substack.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=davidscoville",
+          "text": "davidscoville",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264726",
+          "text": "2 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45264726&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264726",
+          "text": "116\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45265610&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://thelearningjourneyebooks.com/wp-content/uploads/2023/09/TheLinuxProcessJourney_v6_Sep2023.pdf",
+          "text": "The Linux Process Journey [pdf]",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=thelearningjourneyebooks.com",
+          "text": "thelearningjourneyebooks.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=maxmoehl",
+          "text": "maxmoehl",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265610",
+          "text": "49 minutes ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45265610&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45265610",
+          "text": "discuss",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45261930&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555",
+          "text": "Generative AI as Seniority-Biased Technological Change",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=ssrn.com",
+          "text": "ssrn.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=zeuch",
+          "text": "zeuch",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261930",
+          "text": "5 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45261930&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261930",
+          "text": "156\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45236479&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://popovicu.com/posts/writing-an-operating-system-kernel-from-scratch/",
+          "text": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=popovicu.com",
+          "text": "popovicu.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=popovicu",
+          "text": "popovicu",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45236479",
+          "text": "3 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45236479&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45236479",
+          "text": "1\u00a0comment",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45263063&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.theverge.com/report/778641/microsoft-visual-studio-code-anthropic-claude-4",
+          "text": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=theverge.com",
+          "text": "theverge.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=corvad",
+          "text": "corvad",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45263063",
+          "text": "4 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45263063&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45263063",
+          "text": "63\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45231614&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://arstechnica.com/space/2025/09/60-years-after-gemini-newly-processed-images-reveal-incredible-details/",
+          "text": "60 years after Gemini, newly processed images reveal details",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=arstechnica.com",
+          "text": "arstechnica.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=sohkamyung",
+          "text": "sohkamyung",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45231614",
+          "text": "12 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45231614&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45231614",
+          "text": "59\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45264094&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://getfast.ai/blogs/boston-2026",
+          "text": "Will I run Boston 2026?",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=getfast.ai",
+          "text": "getfast.ai",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=steadyelk",
+          "text": "steadyelk",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264094",
+          "text": "2 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45264094&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45264094",
+          "text": "24\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45261659&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://openai.com/index/teen-safety-freedom-and-privacy",
+          "text": "Teen safety, freedom, and privacy",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=openai.com",
+          "text": "openai.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=meetpateltech",
+          "text": "meetpateltech",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261659",
+          "text": "5 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45261659&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261659",
+          "text": "67\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45261946&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://mail.openjdk.org/pipermail/announce/2025-September/000360.html",
+          "text": "Java 25 officially released",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=openjdk.org",
+          "text": "openjdk.org",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=mkurz",
+          "text": "mkurz",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261946",
+          "text": "5 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45261946&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261946",
+          "text": "75\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45225217&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://shopify.engineering/react-native-new-architecture",
+          "text": "Migrating to React Native's new architecture",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=shopify.engineering",
+          "text": "shopify.engineering",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=vidyesh",
+          "text": "vidyesh",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45225217",
+          "text": "8 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45225217&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45225217",
+          "text": "59\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45261159&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://www.nytimes.com/2025/09/16/movies/robert-redford-dead.html",
+          "text": "Robert Redford has died",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=nytimes.com",
+          "text": "nytimes.com",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=uptown",
+          "text": "uptown",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261159",
+          "text": "6 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45261159&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45261159",
+          "text": "124\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45228231&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://news.stanford.edu/stories/2025/09/extreme-life-arctic-ice-diatoms-ecological-discovery",
+          "text": "Scientists uncover extreme life inside the Arctic ice",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=stanford.edu",
+          "text": "stanford.edu",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=hhs",
+          "text": "hhs",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45228231",
+          "text": "8 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45228231&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45228231",
+          "text": "23\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/vote?id=45257627&how=up&goto=news",
+          "text": "",
+          "type": "a"
+        },
+        {
+          "href": "https://adamsilver.io/blog/your-vs-my-in-user-interfaces/",
+          "text": "\"Your\" vs. \"My\" in user interfaces",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/from?site=adamsilver.io",
+          "text": "adamsilver.io",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/user?id=Twixes",
+          "text": "Twixes",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45257627",
+          "text": "15 hours ago",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/hide?id=45257627&goto=news",
+          "text": "hide",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/item?id=45257627",
+          "text": "207\u00a0comments",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/?p=2",
+          "text": "More",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/newsguidelines.html",
+          "text": "Guidelines",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/newsfaq.html",
+          "text": "FAQ",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/lists",
+          "text": "Lists",
+          "type": "a"
+        },
+        {
+          "href": "https://github.com/HackerNews/API",
+          "text": "API",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/security.html",
+          "text": "Security",
+          "type": "a"
+        },
+        {
+          "href": "https://www.ycombinator.com/legal/",
+          "text": "Legal",
+          "type": "a"
+        },
+        {
+          "href": "https://www.ycombinator.com/apply/",
+          "text": "Apply to YC",
+          "type": "a"
+        },
+        {
+          "href": "mailto:hn@ycombinator.com",
+          "text": "Contact",
+          "type": "a"
+        },
+        {
+          "href": "https://news.ycombinator.com/y18.svg",
+          "text": null,
+          "type": "img"
+        },
+        {
+          "href": "https://news.ycombinator.com/s.gif",
+          "text": null,
+          "type": "img"
+        }
+      ],
+      "data": [
+        {
+          "selector": "tr.athing.submission td.title span.titleline a",
+          "results": [
+            {
+              "html": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "text": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://waymo.com/blog/#short-all-systems-go-at-sfo-waymo-has-received-our-pilot-permit"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">waymo.com</span>",
+              "text": "waymo.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=waymo.com"
+                }
+              ]
+            },
+            {
+              "html": "Things you can do with a Software Defined Radio (2024)",
+              "text": "Things you can do with a Software Defined Radio (2024)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blinry.org/50-things-with-sdr/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">blinry.org</span>",
+              "text": "blinry.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=blinry.org"
+                }
+              ]
+            },
+            {
+              "html": "Adios Chicos, 25 Years of KDE",
+              "text": "Adios Chicos, 25 Years of KDE",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://jriddell.org/2025/09/14/adios-chicos-25-years-of-kde/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">jriddell.org</span>",
+              "text": "jriddell.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=jriddell.org"
+                }
+              ]
+            },
+            {
+              "html": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "text": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.koi.security/blog/shai-hulud-npm-supply-chain-attack-crowdstrike-tinycolor"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">koi.security</span>",
+              "text": "koi.security",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=koi.security"
+                }
+              ]
+            },
+            {
+              "html": "Plugin System",
+              "text": "Plugin System",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://iina.io/plugins/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">iina.io</span>",
+              "text": "iina.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=iina.io"
+                }
+              ]
+            },
+            {
+              "html": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "text": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://github.com/rowboatlabs/rowboat"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">github.com/rowboatlabs</span>",
+              "text": "github.com/rowboatlabs",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=github.com/rowboatlabs"
+                }
+              ]
+            },
+            {
+              "html": "A new experimental Google app for Windows",
+              "text": "A new experimental Google app for Windows",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blog.google/products/search/google-app-windows-labs/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">blog.google</span>",
+              "text": "blog.google",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=blog.google"
+                }
+              ]
+            },
+            {
+              "html": "UTF-8 history (2003)",
+              "text": "UTF-8 history (2003)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://doc.cat-v.org/bell_labs/utf-8_history"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">cat-v.org</span>",
+              "text": "cat-v.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=cat-v.org"
+                }
+              ]
+            },
+            {
+              "html": "CIA Freedom of Information Act Electronic Reading Room",
+              "text": "CIA Freedom of Information Act Electronic Reading Room",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.cia.gov/readingroom"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">cia.gov</span>",
+              "text": "cia.gov",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=cia.gov"
+                }
+              ]
+            },
+            {
+              "html": "Bertrand Russell to Oswald Mosley (1962)",
+              "text": "Bertrand Russell to Oswald Mosley (1962)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://lettersofnote.com/2016/02/02/every-ounce-of-my-energy/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">lettersofnote.com</span>",
+              "text": "lettersofnote.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=lettersofnote.com"
+                }
+              ]
+            },
+            {
+              "html": "I built my own phone because innovation is sad rn [video]",
+              "text": "I built my own phone because innovation is sad rn [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=qy_9w_c2ub0"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">youtube.com</span>",
+              "text": "youtube.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=youtube.com"
+                }
+              ]
+            },
+            {
+              "html": "Self Propagating NPM Malware",
+              "text": "Self Propagating NPM Malware",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stepsecurity.io</span>",
+              "text": "stepsecurity.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stepsecurity.io"
+                }
+              ]
+            },
+            {
+              "html": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "text": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://code-detector.ai/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">code-detector.ai</span>",
+              "text": "code-detector.ai",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=code-detector.ai"
+                }
+              ]
+            },
+            {
+              "html": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "text": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://labs.iximiuz.com/tutorials/container-filesystem-from-scratch"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">iximiuz.com</span>",
+              "text": "iximiuz.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=iximiuz.com"
+                }
+              ]
+            },
+            {
+              "html": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "text": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stochasticlifestyle.com/implicit-ode-solvers-are-not-universally-more-robust-than-explicit-ode-solvers-or-why-no-ode-solver-is-best/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stochasticlifestyle.com</span>",
+              "text": "stochasticlifestyle.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stochasticlifestyle.com"
+                }
+              ]
+            },
+            {
+              "html": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "text": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.EmbeddedRelated.com/showarticle/1453.php"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">embeddedrelated.com</span>",
+              "text": "embeddedrelated.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=embeddedrelated.com"
+                }
+              ]
+            },
+            {
+              "html": "Paper Folding Assembly Line [video]",
+              "text": "Paper Folding Assembly Line [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=XhUuhl9iWpQ"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">youtube.com</span>",
+              "text": "youtube.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=youtube.com"
+                }
+              ]
+            },
+            {
+              "html": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "text": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://bewildered.substack.com/p/i-was-scammed-out-of-130000-and-google"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">bewildered.substack.com</span>",
+              "text": "bewildered.substack.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=bewildered.substack.com"
+                }
+              ]
+            },
+            {
+              "html": "The Linux Process Journey [pdf]",
+              "text": "The Linux Process Journey [pdf]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://thelearningjourneyebooks.com/wp-content/uploads/2023/09/TheLinuxProcessJourney_v6_Sep2023.pdf"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">thelearningjourneyebooks.com</span>",
+              "text": "thelearningjourneyebooks.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=thelearningjourneyebooks.com"
+                }
+              ]
+            },
+            {
+              "html": "Generative AI as Seniority-Biased Technological Change",
+              "text": "Generative AI as Seniority-Biased Technological Change",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">ssrn.com</span>",
+              "text": "ssrn.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=ssrn.com"
+                }
+              ]
+            },
+            {
+              "html": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "text": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://popovicu.com/posts/writing-an-operating-system-kernel-from-scratch/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">popovicu.com</span>",
+              "text": "popovicu.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=popovicu.com"
+                }
+              ]
+            },
+            {
+              "html": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "text": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.theverge.com/report/778641/microsoft-visual-studio-code-anthropic-claude-4"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">theverge.com</span>",
+              "text": "theverge.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=theverge.com"
+                }
+              ]
+            },
+            {
+              "html": "60 years after Gemini, newly processed images reveal details",
+              "text": "60 years after Gemini, newly processed images reveal details",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://arstechnica.com/space/2025/09/60-years-after-gemini-newly-processed-images-reveal-incredible-details/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">arstechnica.com</span>",
+              "text": "arstechnica.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=arstechnica.com"
+                }
+              ]
+            },
+            {
+              "html": "Will I run Boston 2026?",
+              "text": "Will I run Boston 2026?",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://getfast.ai/blogs/boston-2026"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">getfast.ai</span>",
+              "text": "getfast.ai",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=getfast.ai"
+                }
+              ]
+            },
+            {
+              "html": "Teen safety, freedom, and privacy",
+              "text": "Teen safety, freedom, and privacy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://openai.com/index/teen-safety-freedom-and-privacy"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">openai.com</span>",
+              "text": "openai.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=openai.com"
+                }
+              ]
+            },
+            {
+              "html": "Java 25 officially released",
+              "text": "Java 25 officially released",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://mail.openjdk.org/pipermail/announce/2025-September/000360.html"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">openjdk.org</span>",
+              "text": "openjdk.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=openjdk.org"
+                }
+              ]
+            },
+            {
+              "html": "Migrating to React Native's new architecture",
+              "text": "Migrating to React Native's new architecture",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://shopify.engineering/react-native-new-architecture"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">shopify.engineering</span>",
+              "text": "shopify.engineering",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=shopify.engineering"
+                }
+              ]
+            },
+            {
+              "html": "Robert Redford has died",
+              "text": "Robert Redford has died",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.nytimes.com/2025/09/16/movies/robert-redford-dead.html"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">nytimes.com</span>",
+              "text": "nytimes.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=nytimes.com"
+                }
+              ]
+            },
+            {
+              "html": "Scientists uncover extreme life inside the Arctic ice",
+              "text": "Scientists uncover extreme life inside the Arctic ice",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://news.stanford.edu/stories/2025/09/extreme-life-arctic-ice-diatoms-ecological-discovery"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stanford.edu</span>",
+              "text": "stanford.edu",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stanford.edu"
+                }
+              ]
+            },
+            {
+              "html": "\"Your\" vs. \"My\" in user interfaces",
+              "text": "\"Your\" vs. \"My\" in user interfaces",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://adamsilver.io/blog/your-vs-my-in-user-interfaces/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">adamsilver.io</span>",
+              "text": "adamsilver.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=adamsilver.io"
+                }
+              ]
+            }
+          ],
+          "key": "titles"
+        },
+        {
+          "selector": "tr.athing.submission td.title span.titleline",
+          "results": [
+            {
+              "html": "<a href=\"https://waymo.com/blog/#short-all-systems-go-at-sfo-waymo-has-received-our-pilot-permit\">Waymo has received our pilot permit allowing for commercial operations at SFO</a><span class=\"sitebit comhead\"> (<a href=\"from?site=waymo.com\"><span class=\"sitestr\">waymo.com</span></a>)</span>",
+              "text": "Waymo has received our pilot permit allowing for commercial operations at SFO (waymo.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://blinry.org/50-things-with-sdr/\">Things you can do with a Software Defined Radio (2024)</a><span class=\"sitebit comhead\"> (<a href=\"from?site=blinry.org\"><span class=\"sitestr\">blinry.org</span></a>)</span>",
+              "text": "Things you can do with a Software Defined Radio (2024) (blinry.org)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://jriddell.org/2025/09/14/adios-chicos-25-years-of-kde/\">Adios Chicos, 25 Years of KDE</a><span class=\"sitebit comhead\"> (<a href=\"from?site=jriddell.org\"><span class=\"sitestr\">jriddell.org</span></a>)</span>",
+              "text": "Adios Chicos, 25 Years of KDE (jriddell.org)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.koi.security/blog/shai-hulud-npm-supply-chain-attack-crowdstrike-tinycolor\">Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History</a><span class=\"sitebit comhead\"> (<a href=\"from?site=koi.security\"><span class=\"sitestr\">koi.security</span></a>)</span>",
+              "text": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History (koi.security)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://iina.io/plugins/\">Plugin System</a><span class=\"sitebit comhead\"> (<a href=\"from?site=iina.io\"><span class=\"sitestr\">iina.io</span></a>)</span>",
+              "text": "Plugin System (iina.io)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://github.com/rowboatlabs/rowboat\">Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems</a><span class=\"sitebit comhead\"> (<a href=\"from?site=github.com/rowboatlabs\"><span class=\"sitestr\">github.com/rowboatlabs</span></a>)</span>",
+              "text": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems (github.com/rowboatlabs)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://blog.google/products/search/google-app-windows-labs/\">A new experimental Google app for Windows</a><span class=\"sitebit comhead\"> (<a href=\"from?site=blog.google\"><span class=\"sitestr\">blog.google</span></a>)</span>",
+              "text": "A new experimental Google app for Windows (blog.google)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://doc.cat-v.org/bell_labs/utf-8_history\">UTF-8 history (2003)</a><span class=\"sitebit comhead\"> (<a href=\"from?site=cat-v.org\"><span class=\"sitestr\">cat-v.org</span></a>)</span>",
+              "text": "UTF-8 history (2003) (cat-v.org)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.cia.gov/readingroom\">CIA Freedom of Information Act Electronic Reading Room</a><span class=\"sitebit comhead\"> (<a href=\"from?site=cia.gov\"><span class=\"sitestr\">cia.gov</span></a>)</span>",
+              "text": "CIA Freedom of Information Act Electronic Reading Room (cia.gov)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://lettersofnote.com/2016/02/02/every-ounce-of-my-energy/\">Bertrand Russell to Oswald Mosley (1962)</a><span class=\"sitebit comhead\"> (<a href=\"from?site=lettersofnote.com\"><span class=\"sitestr\">lettersofnote.com</span></a>)</span>",
+              "text": "Bertrand Russell to Oswald Mosley (1962) (lettersofnote.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.youtube.com/watch?v=qy_9w_c2ub0\">I built my own phone because innovation is sad rn [video]</a><span class=\"sitebit comhead\"> (<a href=\"from?site=youtube.com\"><span class=\"sitestr\">youtube.com</span></a>)</span>",
+              "text": "I built my own phone because innovation is sad rn [video] (youtube.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised\">Self Propagating NPM Malware</a><span class=\"sitebit comhead\"> (<a href=\"from?site=stepsecurity.io\"><span class=\"sitestr\">stepsecurity.io</span></a>)</span>",
+              "text": "Self Propagating NPM Malware (stepsecurity.io)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://code-detector.ai/\">Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy</a><span class=\"sitebit comhead\"> (<a href=\"from?site=code-detector.ai\"><span class=\"sitestr\">code-detector.ai</span></a>)</span>",
+              "text": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy (code-detector.ai)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://labs.iximiuz.com/tutorials/container-filesystem-from-scratch\">How Container Filesystem Works: Building a Docker-Like Container from Scratch</a><span class=\"sitebit comhead\"> (<a href=\"from?site=iximiuz.com\"><span class=\"sitestr\">iximiuz.com</span></a>)</span>",
+              "text": "How Container Filesystem Works: Building a Docker-Like Container from Scratch (iximiuz.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.stochasticlifestyle.com/implicit-ode-solvers-are-not-universally-more-robust-than-explicit-ode-solvers-or-why-no-ode-solver-is-best/\">Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers</a><span class=\"sitebit comhead\"> (<a href=\"from?site=stochasticlifestyle.com\"><span class=\"sitestr\">stochasticlifestyle.com</span></a>)</span>",
+              "text": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers (stochasticlifestyle.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.EmbeddedRelated.com/showarticle/1453.php\">Development of the MOS Technology 6502: A Historical Perspective (2022)</a><span class=\"sitebit comhead\"> (<a href=\"from?site=embeddedrelated.com\"><span class=\"sitestr\">embeddedrelated.com</span></a>)</span>",
+              "text": "Development of the MOS Technology 6502: A Historical Perspective (2022) (embeddedrelated.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.youtube.com/watch?v=XhUuhl9iWpQ\">Paper Folding Assembly Line [video]</a><span class=\"sitebit comhead\"> (<a href=\"from?site=youtube.com\"><span class=\"sitestr\">youtube.com</span></a>)</span>",
+              "text": "Paper Folding Assembly Line [video] (youtube.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://bewildered.substack.com/p/i-was-scammed-out-of-130000-and-google\">Scammed out of $130K via fake Google call, spoofed Google email and auth sync</a><span class=\"sitebit comhead\"> (<a href=\"from?site=bewildered.substack.com\"><span class=\"sitestr\">bewildered.substack.com</span></a>)</span>",
+              "text": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync (bewildered.substack.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://thelearningjourneyebooks.com/wp-content/uploads/2023/09/TheLinuxProcessJourney_v6_Sep2023.pdf\">The Linux Process Journey [pdf]</a><span class=\"sitebit comhead\"> (<a href=\"from?site=thelearningjourneyebooks.com\"><span class=\"sitestr\">thelearningjourneyebooks.com</span></a>)</span>",
+              "text": "The Linux Process Journey [pdf] (thelearningjourneyebooks.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555\">Generative AI as Seniority-Biased Technological Change</a><span class=\"sitebit comhead\"> (<a href=\"from?site=ssrn.com\"><span class=\"sitestr\">ssrn.com</span></a>)</span>",
+              "text": "Generative AI as Seniority-Biased Technological Change (ssrn.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://popovicu.com/posts/writing-an-operating-system-kernel-from-scratch/\">Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig</a><span class=\"sitebit comhead\"> (<a href=\"from?site=popovicu.com\"><span class=\"sitestr\">popovicu.com</span></a>)</span>",
+              "text": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig (popovicu.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.theverge.com/report/778641/microsoft-visual-studio-code-anthropic-claude-4\">Microsoft Favors Anthropic over OpenAI for Visual Studio Code</a><span class=\"sitebit comhead\"> (<a href=\"from?site=theverge.com\"><span class=\"sitestr\">theverge.com</span></a>)</span>",
+              "text": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code (theverge.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://arstechnica.com/space/2025/09/60-years-after-gemini-newly-processed-images-reveal-incredible-details/\">60 years after Gemini, newly processed images reveal details</a><span class=\"sitebit comhead\"> (<a href=\"from?site=arstechnica.com\"><span class=\"sitestr\">arstechnica.com</span></a>)</span>",
+              "text": "60 years after Gemini, newly processed images reveal details (arstechnica.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://getfast.ai/blogs/boston-2026\">Will I run Boston 2026?</a><span class=\"sitebit comhead\"> (<a href=\"from?site=getfast.ai\"><span class=\"sitestr\">getfast.ai</span></a>)</span>",
+              "text": "Will I run Boston 2026? (getfast.ai)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://openai.com/index/teen-safety-freedom-and-privacy\">Teen safety, freedom, and privacy</a><span class=\"sitebit comhead\"> (<a href=\"from?site=openai.com\"><span class=\"sitestr\">openai.com</span></a>)</span>",
+              "text": "Teen safety, freedom, and privacy (openai.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://mail.openjdk.org/pipermail/announce/2025-September/000360.html\">Java 25 officially released</a><span class=\"sitebit comhead\"> (<a href=\"from?site=openjdk.org\"><span class=\"sitestr\">openjdk.org</span></a>)</span>",
+              "text": "Java 25 officially released (openjdk.org)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://shopify.engineering/react-native-new-architecture\">Migrating to React Native's new architecture</a><span class=\"sitebit comhead\"> (<a href=\"from?site=shopify.engineering\"><span class=\"sitestr\">shopify.engineering</span></a>)</span>",
+              "text": "Migrating to React Native's new architecture (shopify.engineering)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://www.nytimes.com/2025/09/16/movies/robert-redford-dead.html\">Robert Redford has died</a><span class=\"sitebit comhead\"> (<a href=\"from?site=nytimes.com\"><span class=\"sitestr\">nytimes.com</span></a>)</span>",
+              "text": "Robert Redford has died (nytimes.com)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://news.stanford.edu/stories/2025/09/extreme-life-arctic-ice-diatoms-ecological-discovery\">Scientists uncover extreme life inside the Arctic ice</a><span class=\"sitebit comhead\"> (<a href=\"from?site=stanford.edu\"><span class=\"sitestr\">stanford.edu</span></a>)</span>",
+              "text": "Scientists uncover extreme life inside the Arctic ice (stanford.edu)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            },
+            {
+              "html": "<a href=\"https://adamsilver.io/blog/your-vs-my-in-user-interfaces/\">\"Your\" vs. \"My\" in user interfaces</a><span class=\"sitebit comhead\"> (<a href=\"from?site=adamsilver.io\"><span class=\"sitestr\">adamsilver.io</span></a>)</span>",
+              "text": "\"Your\" vs. \"My\" in user interfaces (adamsilver.io)",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "titleline"
+                }
+              ]
+            }
+          ],
+          "key": "titles"
+        },
+        {
+          "selector": "tr.athing.submission > td.title + td.title span.titleline > a",
+          "results": [
+            {
+              "html": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "text": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://waymo.com/blog/#short-all-systems-go-at-sfo-waymo-has-received-our-pilot-permit"
+                }
+              ]
+            },
+            {
+              "html": "Things you can do with a Software Defined Radio (2024)",
+              "text": "Things you can do with a Software Defined Radio (2024)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blinry.org/50-things-with-sdr/"
+                }
+              ]
+            },
+            {
+              "html": "Adios Chicos, 25 Years of KDE",
+              "text": "Adios Chicos, 25 Years of KDE",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://jriddell.org/2025/09/14/adios-chicos-25-years-of-kde/"
+                }
+              ]
+            },
+            {
+              "html": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "text": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.koi.security/blog/shai-hulud-npm-supply-chain-attack-crowdstrike-tinycolor"
+                }
+              ]
+            },
+            {
+              "html": "Plugin System",
+              "text": "Plugin System",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://iina.io/plugins/"
+                }
+              ]
+            },
+            {
+              "html": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "text": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://github.com/rowboatlabs/rowboat"
+                }
+              ]
+            },
+            {
+              "html": "A new experimental Google app for Windows",
+              "text": "A new experimental Google app for Windows",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blog.google/products/search/google-app-windows-labs/"
+                }
+              ]
+            },
+            {
+              "html": "UTF-8 history (2003)",
+              "text": "UTF-8 history (2003)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://doc.cat-v.org/bell_labs/utf-8_history"
+                }
+              ]
+            },
+            {
+              "html": "CIA Freedom of Information Act Electronic Reading Room",
+              "text": "CIA Freedom of Information Act Electronic Reading Room",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.cia.gov/readingroom"
+                }
+              ]
+            },
+            {
+              "html": "Bertrand Russell to Oswald Mosley (1962)",
+              "text": "Bertrand Russell to Oswald Mosley (1962)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://lettersofnote.com/2016/02/02/every-ounce-of-my-energy/"
+                }
+              ]
+            },
+            {
+              "html": "I built my own phone because innovation is sad rn [video]",
+              "text": "I built my own phone because innovation is sad rn [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=qy_9w_c2ub0"
+                }
+              ]
+            },
+            {
+              "html": "Self Propagating NPM Malware",
+              "text": "Self Propagating NPM Malware",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised"
+                }
+              ]
+            },
+            {
+              "html": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "text": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://code-detector.ai/"
+                }
+              ]
+            },
+            {
+              "html": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "text": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://labs.iximiuz.com/tutorials/container-filesystem-from-scratch"
+                }
+              ]
+            },
+            {
+              "html": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "text": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stochasticlifestyle.com/implicit-ode-solvers-are-not-universally-more-robust-than-explicit-ode-solvers-or-why-no-ode-solver-is-best/"
+                }
+              ]
+            },
+            {
+              "html": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "text": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.EmbeddedRelated.com/showarticle/1453.php"
+                }
+              ]
+            },
+            {
+              "html": "Paper Folding Assembly Line [video]",
+              "text": "Paper Folding Assembly Line [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=XhUuhl9iWpQ"
+                }
+              ]
+            },
+            {
+              "html": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "text": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://bewildered.substack.com/p/i-was-scammed-out-of-130000-and-google"
+                }
+              ]
+            },
+            {
+              "html": "The Linux Process Journey [pdf]",
+              "text": "The Linux Process Journey [pdf]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://thelearningjourneyebooks.com/wp-content/uploads/2023/09/TheLinuxProcessJourney_v6_Sep2023.pdf"
+                }
+              ]
+            },
+            {
+              "html": "Generative AI as Seniority-Biased Technological Change",
+              "text": "Generative AI as Seniority-Biased Technological Change",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555"
+                }
+              ]
+            },
+            {
+              "html": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "text": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://popovicu.com/posts/writing-an-operating-system-kernel-from-scratch/"
+                }
+              ]
+            },
+            {
+              "html": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "text": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.theverge.com/report/778641/microsoft-visual-studio-code-anthropic-claude-4"
+                }
+              ]
+            },
+            {
+              "html": "60 years after Gemini, newly processed images reveal details",
+              "text": "60 years after Gemini, newly processed images reveal details",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://arstechnica.com/space/2025/09/60-years-after-gemini-newly-processed-images-reveal-incredible-details/"
+                }
+              ]
+            },
+            {
+              "html": "Will I run Boston 2026?",
+              "text": "Will I run Boston 2026?",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://getfast.ai/blogs/boston-2026"
+                }
+              ]
+            },
+            {
+              "html": "Teen safety, freedom, and privacy",
+              "text": "Teen safety, freedom, and privacy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://openai.com/index/teen-safety-freedom-and-privacy"
+                }
+              ]
+            },
+            {
+              "html": "Java 25 officially released",
+              "text": "Java 25 officially released",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://mail.openjdk.org/pipermail/announce/2025-September/000360.html"
+                }
+              ]
+            },
+            {
+              "html": "Migrating to React Native's new architecture",
+              "text": "Migrating to React Native's new architecture",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://shopify.engineering/react-native-new-architecture"
+                }
+              ]
+            },
+            {
+              "html": "Robert Redford has died",
+              "text": "Robert Redford has died",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.nytimes.com/2025/09/16/movies/robert-redford-dead.html"
+                }
+              ]
+            },
+            {
+              "html": "Scientists uncover extreme life inside the Arctic ice",
+              "text": "Scientists uncover extreme life inside the Arctic ice",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://news.stanford.edu/stories/2025/09/extreme-life-arctic-ice-diatoms-ecological-discovery"
+                }
+              ]
+            },
+            {
+              "html": "\"Your\" vs. \"My\" in user interfaces",
+              "text": "\"Your\" vs. \"My\" in user interfaces",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://adamsilver.io/blog/your-vs-my-in-user-interfaces/"
+                }
+              ]
+            }
+          ],
+          "key": "titles"
+        },
+        {
+          "selector": "#bigbox table tr.athing.submission td.title span.titleline a",
+          "results": [
+            {
+              "html": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "text": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://waymo.com/blog/#short-all-systems-go-at-sfo-waymo-has-received-our-pilot-permit"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">waymo.com</span>",
+              "text": "waymo.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=waymo.com"
+                }
+              ]
+            },
+            {
+              "html": "Things you can do with a Software Defined Radio (2024)",
+              "text": "Things you can do with a Software Defined Radio (2024)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blinry.org/50-things-with-sdr/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">blinry.org</span>",
+              "text": "blinry.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=blinry.org"
+                }
+              ]
+            },
+            {
+              "html": "Adios Chicos, 25 Years of KDE",
+              "text": "Adios Chicos, 25 Years of KDE",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://jriddell.org/2025/09/14/adios-chicos-25-years-of-kde/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">jriddell.org</span>",
+              "text": "jriddell.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=jriddell.org"
+                }
+              ]
+            },
+            {
+              "html": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "text": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.koi.security/blog/shai-hulud-npm-supply-chain-attack-crowdstrike-tinycolor"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">koi.security</span>",
+              "text": "koi.security",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=koi.security"
+                }
+              ]
+            },
+            {
+              "html": "Plugin System",
+              "text": "Plugin System",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://iina.io/plugins/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">iina.io</span>",
+              "text": "iina.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=iina.io"
+                }
+              ]
+            },
+            {
+              "html": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "text": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://github.com/rowboatlabs/rowboat"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">github.com/rowboatlabs</span>",
+              "text": "github.com/rowboatlabs",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=github.com/rowboatlabs"
+                }
+              ]
+            },
+            {
+              "html": "A new experimental Google app for Windows",
+              "text": "A new experimental Google app for Windows",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blog.google/products/search/google-app-windows-labs/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">blog.google</span>",
+              "text": "blog.google",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=blog.google"
+                }
+              ]
+            },
+            {
+              "html": "UTF-8 history (2003)",
+              "text": "UTF-8 history (2003)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://doc.cat-v.org/bell_labs/utf-8_history"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">cat-v.org</span>",
+              "text": "cat-v.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=cat-v.org"
+                }
+              ]
+            },
+            {
+              "html": "CIA Freedom of Information Act Electronic Reading Room",
+              "text": "CIA Freedom of Information Act Electronic Reading Room",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.cia.gov/readingroom"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">cia.gov</span>",
+              "text": "cia.gov",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=cia.gov"
+                }
+              ]
+            },
+            {
+              "html": "Bertrand Russell to Oswald Mosley (1962)",
+              "text": "Bertrand Russell to Oswald Mosley (1962)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://lettersofnote.com/2016/02/02/every-ounce-of-my-energy/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">lettersofnote.com</span>",
+              "text": "lettersofnote.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=lettersofnote.com"
+                }
+              ]
+            },
+            {
+              "html": "I built my own phone because innovation is sad rn [video]",
+              "text": "I built my own phone because innovation is sad rn [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=qy_9w_c2ub0"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">youtube.com</span>",
+              "text": "youtube.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=youtube.com"
+                }
+              ]
+            },
+            {
+              "html": "Self Propagating NPM Malware",
+              "text": "Self Propagating NPM Malware",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stepsecurity.io</span>",
+              "text": "stepsecurity.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stepsecurity.io"
+                }
+              ]
+            },
+            {
+              "html": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "text": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://code-detector.ai/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">code-detector.ai</span>",
+              "text": "code-detector.ai",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=code-detector.ai"
+                }
+              ]
+            },
+            {
+              "html": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "text": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://labs.iximiuz.com/tutorials/container-filesystem-from-scratch"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">iximiuz.com</span>",
+              "text": "iximiuz.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=iximiuz.com"
+                }
+              ]
+            },
+            {
+              "html": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "text": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stochasticlifestyle.com/implicit-ode-solvers-are-not-universally-more-robust-than-explicit-ode-solvers-or-why-no-ode-solver-is-best/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stochasticlifestyle.com</span>",
+              "text": "stochasticlifestyle.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stochasticlifestyle.com"
+                }
+              ]
+            },
+            {
+              "html": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "text": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.EmbeddedRelated.com/showarticle/1453.php"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">embeddedrelated.com</span>",
+              "text": "embeddedrelated.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=embeddedrelated.com"
+                }
+              ]
+            },
+            {
+              "html": "Paper Folding Assembly Line [video]",
+              "text": "Paper Folding Assembly Line [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=XhUuhl9iWpQ"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">youtube.com</span>",
+              "text": "youtube.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=youtube.com"
+                }
+              ]
+            },
+            {
+              "html": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "text": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://bewildered.substack.com/p/i-was-scammed-out-of-130000-and-google"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">bewildered.substack.com</span>",
+              "text": "bewildered.substack.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=bewildered.substack.com"
+                }
+              ]
+            },
+            {
+              "html": "The Linux Process Journey [pdf]",
+              "text": "The Linux Process Journey [pdf]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://thelearningjourneyebooks.com/wp-content/uploads/2023/09/TheLinuxProcessJourney_v6_Sep2023.pdf"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">thelearningjourneyebooks.com</span>",
+              "text": "thelearningjourneyebooks.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=thelearningjourneyebooks.com"
+                }
+              ]
+            },
+            {
+              "html": "Generative AI as Seniority-Biased Technological Change",
+              "text": "Generative AI as Seniority-Biased Technological Change",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">ssrn.com</span>",
+              "text": "ssrn.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=ssrn.com"
+                }
+              ]
+            },
+            {
+              "html": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "text": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://popovicu.com/posts/writing-an-operating-system-kernel-from-scratch/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">popovicu.com</span>",
+              "text": "popovicu.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=popovicu.com"
+                }
+              ]
+            },
+            {
+              "html": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "text": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.theverge.com/report/778641/microsoft-visual-studio-code-anthropic-claude-4"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">theverge.com</span>",
+              "text": "theverge.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=theverge.com"
+                }
+              ]
+            },
+            {
+              "html": "60 years after Gemini, newly processed images reveal details",
+              "text": "60 years after Gemini, newly processed images reveal details",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://arstechnica.com/space/2025/09/60-years-after-gemini-newly-processed-images-reveal-incredible-details/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">arstechnica.com</span>",
+              "text": "arstechnica.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=arstechnica.com"
+                }
+              ]
+            },
+            {
+              "html": "Will I run Boston 2026?",
+              "text": "Will I run Boston 2026?",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://getfast.ai/blogs/boston-2026"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">getfast.ai</span>",
+              "text": "getfast.ai",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=getfast.ai"
+                }
+              ]
+            },
+            {
+              "html": "Teen safety, freedom, and privacy",
+              "text": "Teen safety, freedom, and privacy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://openai.com/index/teen-safety-freedom-and-privacy"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">openai.com</span>",
+              "text": "openai.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=openai.com"
+                }
+              ]
+            },
+            {
+              "html": "Java 25 officially released",
+              "text": "Java 25 officially released",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://mail.openjdk.org/pipermail/announce/2025-September/000360.html"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">openjdk.org</span>",
+              "text": "openjdk.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=openjdk.org"
+                }
+              ]
+            },
+            {
+              "html": "Migrating to React Native's new architecture",
+              "text": "Migrating to React Native's new architecture",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://shopify.engineering/react-native-new-architecture"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">shopify.engineering</span>",
+              "text": "shopify.engineering",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=shopify.engineering"
+                }
+              ]
+            },
+            {
+              "html": "Robert Redford has died",
+              "text": "Robert Redford has died",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.nytimes.com/2025/09/16/movies/robert-redford-dead.html"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">nytimes.com</span>",
+              "text": "nytimes.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=nytimes.com"
+                }
+              ]
+            },
+            {
+              "html": "Scientists uncover extreme life inside the Arctic ice",
+              "text": "Scientists uncover extreme life inside the Arctic ice",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://news.stanford.edu/stories/2025/09/extreme-life-arctic-ice-diatoms-ecological-discovery"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stanford.edu</span>",
+              "text": "stanford.edu",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stanford.edu"
+                }
+              ]
+            },
+            {
+              "html": "\"Your\" vs. \"My\" in user interfaces",
+              "text": "\"Your\" vs. \"My\" in user interfaces",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://adamsilver.io/blog/your-vs-my-in-user-interfaces/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">adamsilver.io</span>",
+              "text": "adamsilver.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=adamsilver.io"
+                }
+              ]
+            }
+          ],
+          "key": "titles"
+        },
+        {
+          "selector": "table#hnmain tr.athing.submission td.title span.titleline a",
+          "results": [
+            {
+              "html": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "text": "Waymo has received our pilot permit allowing for commercial operations at SFO",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://waymo.com/blog/#short-all-systems-go-at-sfo-waymo-has-received-our-pilot-permit"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">waymo.com</span>",
+              "text": "waymo.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=waymo.com"
+                }
+              ]
+            },
+            {
+              "html": "Things you can do with a Software Defined Radio (2024)",
+              "text": "Things you can do with a Software Defined Radio (2024)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blinry.org/50-things-with-sdr/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">blinry.org</span>",
+              "text": "blinry.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=blinry.org"
+                }
+              ]
+            },
+            {
+              "html": "Adios Chicos, 25 Years of KDE",
+              "text": "Adios Chicos, 25 Years of KDE",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://jriddell.org/2025/09/14/adios-chicos-25-years-of-kde/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">jriddell.org</span>",
+              "text": "jriddell.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=jriddell.org"
+                }
+              ]
+            },
+            {
+              "html": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "text": "Live Updates: Shai-Hulud, the Most Dangerous NPM Breach in History",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.koi.security/blog/shai-hulud-npm-supply-chain-attack-crowdstrike-tinycolor"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">koi.security</span>",
+              "text": "koi.security",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=koi.security"
+                }
+              ]
+            },
+            {
+              "html": "Plugin System",
+              "text": "Plugin System",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://iina.io/plugins/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">iina.io</span>",
+              "text": "iina.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=iina.io"
+                }
+              ]
+            },
+            {
+              "html": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "text": "Launch HN: Rowboat (YC S24) \u2013 Open-source IDE for multi-agent systems",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://github.com/rowboatlabs/rowboat"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">github.com/rowboatlabs</span>",
+              "text": "github.com/rowboatlabs",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=github.com/rowboatlabs"
+                }
+              ]
+            },
+            {
+              "html": "A new experimental Google app for Windows",
+              "text": "A new experimental Google app for Windows",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://blog.google/products/search/google-app-windows-labs/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">blog.google</span>",
+              "text": "blog.google",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=blog.google"
+                }
+              ]
+            },
+            {
+              "html": "UTF-8 history (2003)",
+              "text": "UTF-8 history (2003)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://doc.cat-v.org/bell_labs/utf-8_history"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">cat-v.org</span>",
+              "text": "cat-v.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=cat-v.org"
+                }
+              ]
+            },
+            {
+              "html": "CIA Freedom of Information Act Electronic Reading Room",
+              "text": "CIA Freedom of Information Act Electronic Reading Room",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.cia.gov/readingroom"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">cia.gov</span>",
+              "text": "cia.gov",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=cia.gov"
+                }
+              ]
+            },
+            {
+              "html": "Bertrand Russell to Oswald Mosley (1962)",
+              "text": "Bertrand Russell to Oswald Mosley (1962)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://lettersofnote.com/2016/02/02/every-ounce-of-my-energy/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">lettersofnote.com</span>",
+              "text": "lettersofnote.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=lettersofnote.com"
+                }
+              ]
+            },
+            {
+              "html": "I built my own phone because innovation is sad rn [video]",
+              "text": "I built my own phone because innovation is sad rn [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=qy_9w_c2ub0"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">youtube.com</span>",
+              "text": "youtube.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=youtube.com"
+                }
+              ]
+            },
+            {
+              "html": "Self Propagating NPM Malware",
+              "text": "Self Propagating NPM Malware",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stepsecurity.io</span>",
+              "text": "stepsecurity.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stepsecurity.io"
+                }
+              ]
+            },
+            {
+              "html": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "text": "Show HN: AI Code Detector \u2013 detect AI-generated code with 95% accuracy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://code-detector.ai/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">code-detector.ai</span>",
+              "text": "code-detector.ai",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=code-detector.ai"
+                }
+              ]
+            },
+            {
+              "html": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "text": "How Container Filesystem Works: Building a Docker-Like Container from Scratch",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://labs.iximiuz.com/tutorials/container-filesystem-from-scratch"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">iximiuz.com</span>",
+              "text": "iximiuz.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=iximiuz.com"
+                }
+              ]
+            },
+            {
+              "html": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "text": "Implicit ODE Solvers Are Not Universally More Robust Than Explicit ODE Solvers",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.stochasticlifestyle.com/implicit-ode-solvers-are-not-universally-more-robust-than-explicit-ode-solvers-or-why-no-ode-solver-is-best/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stochasticlifestyle.com</span>",
+              "text": "stochasticlifestyle.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stochasticlifestyle.com"
+                }
+              ]
+            },
+            {
+              "html": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "text": "Development of the MOS Technology 6502: A Historical Perspective (2022)",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.EmbeddedRelated.com/showarticle/1453.php"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">embeddedrelated.com</span>",
+              "text": "embeddedrelated.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=embeddedrelated.com"
+                }
+              ]
+            },
+            {
+              "html": "Paper Folding Assembly Line [video]",
+              "text": "Paper Folding Assembly Line [video]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.youtube.com/watch?v=XhUuhl9iWpQ"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">youtube.com</span>",
+              "text": "youtube.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=youtube.com"
+                }
+              ]
+            },
+            {
+              "html": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "text": "Scammed out of $130K via fake Google call, spoofed Google email and auth sync",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://bewildered.substack.com/p/i-was-scammed-out-of-130000-and-google"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">bewildered.substack.com</span>",
+              "text": "bewildered.substack.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=bewildered.substack.com"
+                }
+              ]
+            },
+            {
+              "html": "The Linux Process Journey [pdf]",
+              "text": "The Linux Process Journey [pdf]",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://thelearningjourneyebooks.com/wp-content/uploads/2023/09/TheLinuxProcessJourney_v6_Sep2023.pdf"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">thelearningjourneyebooks.com</span>",
+              "text": "thelearningjourneyebooks.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=thelearningjourneyebooks.com"
+                }
+              ]
+            },
+            {
+              "html": "Generative AI as Seniority-Biased Technological Change",
+              "text": "Generative AI as Seniority-Biased Technological Change",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5425555"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">ssrn.com</span>",
+              "text": "ssrn.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=ssrn.com"
+                }
+              ]
+            },
+            {
+              "html": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "text": "Writing an operating system kernel from scratch \u2013 RISC-V/OpenSBI/Zig",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://popovicu.com/posts/writing-an-operating-system-kernel-from-scratch/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">popovicu.com</span>",
+              "text": "popovicu.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=popovicu.com"
+                }
+              ]
+            },
+            {
+              "html": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "text": "Microsoft Favors Anthropic over OpenAI for Visual Studio Code",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.theverge.com/report/778641/microsoft-visual-studio-code-anthropic-claude-4"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">theverge.com</span>",
+              "text": "theverge.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=theverge.com"
+                }
+              ]
+            },
+            {
+              "html": "60 years after Gemini, newly processed images reveal details",
+              "text": "60 years after Gemini, newly processed images reveal details",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://arstechnica.com/space/2025/09/60-years-after-gemini-newly-processed-images-reveal-incredible-details/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">arstechnica.com</span>",
+              "text": "arstechnica.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=arstechnica.com"
+                }
+              ]
+            },
+            {
+              "html": "Will I run Boston 2026?",
+              "text": "Will I run Boston 2026?",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://getfast.ai/blogs/boston-2026"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">getfast.ai</span>",
+              "text": "getfast.ai",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=getfast.ai"
+                }
+              ]
+            },
+            {
+              "html": "Teen safety, freedom, and privacy",
+              "text": "Teen safety, freedom, and privacy",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://openai.com/index/teen-safety-freedom-and-privacy"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">openai.com</span>",
+              "text": "openai.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=openai.com"
+                }
+              ]
+            },
+            {
+              "html": "Java 25 officially released",
+              "text": "Java 25 officially released",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://mail.openjdk.org/pipermail/announce/2025-September/000360.html"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">openjdk.org</span>",
+              "text": "openjdk.org",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=openjdk.org"
+                }
+              ]
+            },
+            {
+              "html": "Migrating to React Native's new architecture",
+              "text": "Migrating to React Native's new architecture",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://shopify.engineering/react-native-new-architecture"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">shopify.engineering</span>",
+              "text": "shopify.engineering",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=shopify.engineering"
+                }
+              ]
+            },
+            {
+              "html": "Robert Redford has died",
+              "text": "Robert Redford has died",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://www.nytimes.com/2025/09/16/movies/robert-redford-dead.html"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">nytimes.com</span>",
+              "text": "nytimes.com",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=nytimes.com"
+                }
+              ]
+            },
+            {
+              "html": "Scientists uncover extreme life inside the Arctic ice",
+              "text": "Scientists uncover extreme life inside the Arctic ice",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://news.stanford.edu/stories/2025/09/extreme-life-arctic-ice-diatoms-ecological-discovery"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">stanford.edu</span>",
+              "text": "stanford.edu",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=stanford.edu"
+                }
+              ]
+            },
+            {
+              "html": "\"Your\" vs. \"My\" in user interfaces",
+              "text": "\"Your\" vs. \"My\" in user interfaces",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "https://adamsilver.io/blog/your-vs-my-in-user-interfaces/"
+                }
+              ]
+            },
+            {
+              "html": "<span class=\"sitestr\">adamsilver.io</span>",
+              "text": "adamsilver.io",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "from?site=adamsilver.io"
+                }
+              ]
+            }
+          ],
+          "key": "titles"
+        },
+        {
+          "selector": "tr + tr td.subtext span.score",
+          "results": [
+            {
+              "html": "316 points",
+              "text": "316 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264562"
+                }
+              ]
+            },
+            {
+              "html": "378 points",
+              "text": "378 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262835"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265881"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265937"
+                }
+              ]
+            },
+            {
+              "html": "88 points",
+              "text": "88 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264190"
+                }
+              ]
+            },
+            {
+              "html": "29 points",
+              "text": "29 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264867"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263317"
+                }
+              ]
+            },
+            {
+              "html": "63 points",
+              "text": "63 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45230515"
+                }
+              ]
+            },
+            {
+              "html": "122 points",
+              "text": "122 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261764"
+                }
+              ]
+            },
+            {
+              "html": "103 points",
+              "text": "103 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264340"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45245050"
+                }
+              ]
+            },
+            {
+              "html": "491 points",
+              "text": "491 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45260741"
+                }
+              ]
+            },
+            {
+              "html": "19 points",
+              "text": "19 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265831"
+                }
+              ]
+            },
+            {
+              "html": "8 points",
+              "text": "8 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45232426"
+                }
+              ]
+            },
+            {
+              "html": "67 points",
+              "text": "67 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262151"
+                }
+              ]
+            },
+            {
+              "html": "32 points",
+              "text": "32 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263221"
+                }
+              ]
+            },
+            {
+              "html": "12 points",
+              "text": "12 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45161219"
+                }
+              ]
+            },
+            {
+              "html": "65 points",
+              "text": "65 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264726"
+                }
+              ]
+            },
+            {
+              "html": "7 points",
+              "text": "7 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265610"
+                }
+              ]
+            },
+            {
+              "html": "180 points",
+              "text": "180 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261930"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45236479"
+                }
+              ]
+            },
+            {
+              "html": "135 points",
+              "text": "135 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263063"
+                }
+              ]
+            },
+            {
+              "html": "218 points",
+              "text": "218 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45231614"
+                }
+              ]
+            },
+            {
+              "html": "24 points",
+              "text": "24 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264094"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261659"
+                }
+              ]
+            },
+            {
+              "html": "188 points",
+              "text": "188 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261946"
+                }
+              ]
+            },
+            {
+              "html": "99 points",
+              "text": "99 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45225217"
+                }
+              ]
+            },
+            {
+              "html": "404 points",
+              "text": "404 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261159"
+                }
+              ]
+            },
+            {
+              "html": "64 points",
+              "text": "64 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45228231"
+                }
+              ]
+            },
+            {
+              "html": "423 points",
+              "text": "423 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45257627"
+                }
+              ]
+            }
+          ],
+          "key": "points"
+        },
+        {
+          "selector": "tr td.subtext span.subline > span.score",
+          "results": [
+            {
+              "html": "316 points",
+              "text": "316 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264562"
+                }
+              ]
+            },
+            {
+              "html": "378 points",
+              "text": "378 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262835"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265881"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265937"
+                }
+              ]
+            },
+            {
+              "html": "88 points",
+              "text": "88 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264190"
+                }
+              ]
+            },
+            {
+              "html": "29 points",
+              "text": "29 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264867"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263317"
+                }
+              ]
+            },
+            {
+              "html": "63 points",
+              "text": "63 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45230515"
+                }
+              ]
+            },
+            {
+              "html": "122 points",
+              "text": "122 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261764"
+                }
+              ]
+            },
+            {
+              "html": "103 points",
+              "text": "103 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264340"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45245050"
+                }
+              ]
+            },
+            {
+              "html": "491 points",
+              "text": "491 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45260741"
+                }
+              ]
+            },
+            {
+              "html": "19 points",
+              "text": "19 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265831"
+                }
+              ]
+            },
+            {
+              "html": "8 points",
+              "text": "8 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45232426"
+                }
+              ]
+            },
+            {
+              "html": "67 points",
+              "text": "67 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262151"
+                }
+              ]
+            },
+            {
+              "html": "32 points",
+              "text": "32 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263221"
+                }
+              ]
+            },
+            {
+              "html": "12 points",
+              "text": "12 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45161219"
+                }
+              ]
+            },
+            {
+              "html": "65 points",
+              "text": "65 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264726"
+                }
+              ]
+            },
+            {
+              "html": "7 points",
+              "text": "7 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265610"
+                }
+              ]
+            },
+            {
+              "html": "180 points",
+              "text": "180 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261930"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45236479"
+                }
+              ]
+            },
+            {
+              "html": "135 points",
+              "text": "135 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263063"
+                }
+              ]
+            },
+            {
+              "html": "218 points",
+              "text": "218 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45231614"
+                }
+              ]
+            },
+            {
+              "html": "24 points",
+              "text": "24 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264094"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261659"
+                }
+              ]
+            },
+            {
+              "html": "188 points",
+              "text": "188 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261946"
+                }
+              ]
+            },
+            {
+              "html": "99 points",
+              "text": "99 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45225217"
+                }
+              ]
+            },
+            {
+              "html": "404 points",
+              "text": "404 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261159"
+                }
+              ]
+            },
+            {
+              "html": "64 points",
+              "text": "64 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45228231"
+                }
+              ]
+            },
+            {
+              "html": "423 points",
+              "text": "423 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45257627"
+                }
+              ]
+            }
+          ],
+          "key": "points"
+        },
+        {
+          "selector": "tr.athing.submission + tr td.subtext span.score",
+          "results": [
+            {
+              "html": "316 points",
+              "text": "316 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264562"
+                }
+              ]
+            },
+            {
+              "html": "378 points",
+              "text": "378 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262835"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265881"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265937"
+                }
+              ]
+            },
+            {
+              "html": "88 points",
+              "text": "88 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264190"
+                }
+              ]
+            },
+            {
+              "html": "29 points",
+              "text": "29 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264867"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263317"
+                }
+              ]
+            },
+            {
+              "html": "63 points",
+              "text": "63 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45230515"
+                }
+              ]
+            },
+            {
+              "html": "122 points",
+              "text": "122 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261764"
+                }
+              ]
+            },
+            {
+              "html": "103 points",
+              "text": "103 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264340"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45245050"
+                }
+              ]
+            },
+            {
+              "html": "491 points",
+              "text": "491 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45260741"
+                }
+              ]
+            },
+            {
+              "html": "19 points",
+              "text": "19 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265831"
+                }
+              ]
+            },
+            {
+              "html": "8 points",
+              "text": "8 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45232426"
+                }
+              ]
+            },
+            {
+              "html": "67 points",
+              "text": "67 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262151"
+                }
+              ]
+            },
+            {
+              "html": "32 points",
+              "text": "32 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263221"
+                }
+              ]
+            },
+            {
+              "html": "12 points",
+              "text": "12 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45161219"
+                }
+              ]
+            },
+            {
+              "html": "65 points",
+              "text": "65 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264726"
+                }
+              ]
+            },
+            {
+              "html": "7 points",
+              "text": "7 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265610"
+                }
+              ]
+            },
+            {
+              "html": "180 points",
+              "text": "180 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261930"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45236479"
+                }
+              ]
+            },
+            {
+              "html": "135 points",
+              "text": "135 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263063"
+                }
+              ]
+            },
+            {
+              "html": "218 points",
+              "text": "218 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45231614"
+                }
+              ]
+            },
+            {
+              "html": "24 points",
+              "text": "24 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264094"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261659"
+                }
+              ]
+            },
+            {
+              "html": "188 points",
+              "text": "188 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261946"
+                }
+              ]
+            },
+            {
+              "html": "99 points",
+              "text": "99 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45225217"
+                }
+              ]
+            },
+            {
+              "html": "404 points",
+              "text": "404 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261159"
+                }
+              ]
+            },
+            {
+              "html": "64 points",
+              "text": "64 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45228231"
+                }
+              ]
+            },
+            {
+              "html": "423 points",
+              "text": "423 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45257627"
+                }
+              ]
+            }
+          ],
+          "key": "points"
+        },
+        {
+          "selector": "table#hnmain td.subtext span.score",
+          "results": [
+            {
+              "html": "316 points",
+              "text": "316 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264562"
+                }
+              ]
+            },
+            {
+              "html": "378 points",
+              "text": "378 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262835"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265881"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265937"
+                }
+              ]
+            },
+            {
+              "html": "88 points",
+              "text": "88 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264190"
+                }
+              ]
+            },
+            {
+              "html": "29 points",
+              "text": "29 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264867"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263317"
+                }
+              ]
+            },
+            {
+              "html": "63 points",
+              "text": "63 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45230515"
+                }
+              ]
+            },
+            {
+              "html": "122 points",
+              "text": "122 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261764"
+                }
+              ]
+            },
+            {
+              "html": "103 points",
+              "text": "103 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264340"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45245050"
+                }
+              ]
+            },
+            {
+              "html": "491 points",
+              "text": "491 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45260741"
+                }
+              ]
+            },
+            {
+              "html": "19 points",
+              "text": "19 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265831"
+                }
+              ]
+            },
+            {
+              "html": "8 points",
+              "text": "8 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45232426"
+                }
+              ]
+            },
+            {
+              "html": "67 points",
+              "text": "67 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262151"
+                }
+              ]
+            },
+            {
+              "html": "32 points",
+              "text": "32 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263221"
+                }
+              ]
+            },
+            {
+              "html": "12 points",
+              "text": "12 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45161219"
+                }
+              ]
+            },
+            {
+              "html": "65 points",
+              "text": "65 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264726"
+                }
+              ]
+            },
+            {
+              "html": "7 points",
+              "text": "7 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265610"
+                }
+              ]
+            },
+            {
+              "html": "180 points",
+              "text": "180 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261930"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45236479"
+                }
+              ]
+            },
+            {
+              "html": "135 points",
+              "text": "135 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263063"
+                }
+              ]
+            },
+            {
+              "html": "218 points",
+              "text": "218 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45231614"
+                }
+              ]
+            },
+            {
+              "html": "24 points",
+              "text": "24 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264094"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261659"
+                }
+              ]
+            },
+            {
+              "html": "188 points",
+              "text": "188 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261946"
+                }
+              ]
+            },
+            {
+              "html": "99 points",
+              "text": "99 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45225217"
+                }
+              ]
+            },
+            {
+              "html": "404 points",
+              "text": "404 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261159"
+                }
+              ]
+            },
+            {
+              "html": "64 points",
+              "text": "64 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45228231"
+                }
+              ]
+            },
+            {
+              "html": "423 points",
+              "text": "423 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45257627"
+                }
+              ]
+            }
+          ],
+          "key": "points"
+        },
+        {
+          "selector": "#bigbox td.subtext span.score",
+          "results": [
+            {
+              "html": "316 points",
+              "text": "316 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264562"
+                }
+              ]
+            },
+            {
+              "html": "378 points",
+              "text": "378 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262835"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265881"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265937"
+                }
+              ]
+            },
+            {
+              "html": "88 points",
+              "text": "88 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264190"
+                }
+              ]
+            },
+            {
+              "html": "29 points",
+              "text": "29 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264867"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263317"
+                }
+              ]
+            },
+            {
+              "html": "63 points",
+              "text": "63 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45230515"
+                }
+              ]
+            },
+            {
+              "html": "122 points",
+              "text": "122 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261764"
+                }
+              ]
+            },
+            {
+              "html": "103 points",
+              "text": "103 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264340"
+                }
+              ]
+            },
+            {
+              "html": "18 points",
+              "text": "18 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45245050"
+                }
+              ]
+            },
+            {
+              "html": "491 points",
+              "text": "491 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45260741"
+                }
+              ]
+            },
+            {
+              "html": "19 points",
+              "text": "19 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265831"
+                }
+              ]
+            },
+            {
+              "html": "8 points",
+              "text": "8 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45232426"
+                }
+              ]
+            },
+            {
+              "html": "67 points",
+              "text": "67 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45262151"
+                }
+              ]
+            },
+            {
+              "html": "32 points",
+              "text": "32 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263221"
+                }
+              ]
+            },
+            {
+              "html": "12 points",
+              "text": "12 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45161219"
+                }
+              ]
+            },
+            {
+              "html": "65 points",
+              "text": "65 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264726"
+                }
+              ]
+            },
+            {
+              "html": "7 points",
+              "text": "7 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45265610"
+                }
+              ]
+            },
+            {
+              "html": "180 points",
+              "text": "180 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261930"
+                }
+              ]
+            },
+            {
+              "html": "40 points",
+              "text": "40 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45236479"
+                }
+              ]
+            },
+            {
+              "html": "135 points",
+              "text": "135 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45263063"
+                }
+              ]
+            },
+            {
+              "html": "218 points",
+              "text": "218 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45231614"
+                }
+              ]
+            },
+            {
+              "html": "24 points",
+              "text": "24 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45264094"
+                }
+              ]
+            },
+            {
+              "html": "61 points",
+              "text": "61 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261659"
+                }
+              ]
+            },
+            {
+              "html": "188 points",
+              "text": "188 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261946"
+                }
+              ]
+            },
+            {
+              "html": "99 points",
+              "text": "99 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45225217"
+                }
+              ]
+            },
+            {
+              "html": "404 points",
+              "text": "404 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45261159"
+                }
+              ]
+            },
+            {
+              "html": "64 points",
+              "text": "64 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45228231"
+                }
+              ]
+            },
+            {
+              "html": "423 points",
+              "text": "423 points",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "score"
+                },
+                {
+                  "name": "id",
+                  "value": "score_45257627"
+                }
+              ]
+            }
+          ],
+          "key": "points"
+        }
+      ],
+      "advance_config": {
+        "console": [],
+        "network": [],
+        "cookies": []
+      },
+      "_usage": {
+        "input_tokens": 21,
+        "output_tokens": 4892,
+        "inference_time_tokens": 6322,
+        "total_tokens": 11235
+      }
+    },
+    "source": "https://jigsawstack.com/docs/api-reference/ai/scrape"
+  }
+}
