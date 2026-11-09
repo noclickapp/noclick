@@ -1,0 +1,596 @@
+[
+  {
+    "config": {
+      "operation": "list_clients"
+    },
+    "method": "GET",
+    "path": "/clients",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "clients",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "get_client",
+      "client_id": 1
+    },
+    "method": "GET",
+    "path": "/clients/1",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "clients",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_organizations"
+    },
+    "method": "GET",
+    "path": "/organizations",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "organizations",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "get_organization",
+      "organization_id": 2
+    },
+    "method": "GET",
+    "path": "/organizations/2",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "organizations",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_organization",
+      "name": "Acme",
+      "owner": {
+        "name": "Jane",
+        "email": "jane@example.test"
+      }
+    },
+    "method": "POST",
+    "path": "/organizations",
+    "query": {},
+    "body": {
+      "name": "Acme",
+      "owner": {
+        "name": "Jane",
+        "email": "jane@example.test"
+      }
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "organizations",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_organization",
+      "organization_id": 2,
+      "name": "Acme"
+    },
+    "method": "PATCH",
+    "path": "/organizations/2",
+    "query": {},
+    "body": {
+      "name": "Acme"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "organizations",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_requests"
+    },
+    "method": "GET",
+    "path": "/requests",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "requests",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "get_request",
+      "request_key": "design-request"
+    },
+    "method": "GET",
+    "path": "/requests/design-request",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "requests",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_request",
+      "client_id": 1,
+      "service_id": 3,
+      "title": "Design",
+      "assignee_ids": [],
+      "priority": "high"
+    },
+    "method": "POST",
+    "path": "/requests",
+    "query": {},
+    "body": {
+      "client_id": 1,
+      "service_id": 3,
+      "title": "Design",
+      "assignee_ids": [],
+      "priority": "high"
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "requests",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_request",
+      "request_id": 4
+    },
+    "method": "DELETE",
+    "path": "/requests/4",
+    "query": {},
+    "body": null,
+    "status": 204,
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "list_comments",
+      "request_key": "4"
+    },
+    "method": "GET",
+    "path": "/requests/4/comments",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "comments",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "create_comment",
+      "request_key": "4",
+      "body": "Internal note",
+      "user_id": 5,
+      "is_internal": false
+    },
+    "method": "POST",
+    "path": "/requests/4/comments",
+    "query": {},
+    "body": {
+      "body": "Internal note",
+      "user_id": 5,
+      "is_internal": false
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "comments",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_request_statuses"
+    },
+    "method": "GET",
+    "path": "/request-statuses",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "request-statuses",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "create_request_status",
+      "name": "Review",
+      "color": "#00FF00"
+    },
+    "method": "POST",
+    "path": "/request-statuses",
+    "query": {},
+    "body": {
+      "name": "Review",
+      "color": "#00FF00"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "request-statuses",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_request_status",
+      "status_id": 6,
+      "position": 0
+    },
+    "method": "PATCH",
+    "path": "/request-statuses/6",
+    "query": {},
+    "body": {
+      "position": 0
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "request-statuses",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_request_tags"
+    },
+    "method": "GET",
+    "path": "/request-tags",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "request-tags",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "create_request_tag",
+      "name": "Urgent"
+    },
+    "method": "POST",
+    "path": "/request-tags",
+    "query": {},
+    "body": {
+      "name": "Urgent"
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "request-tags",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_services"
+    },
+    "method": "GET",
+    "path": "/services",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "services",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "get_service",
+      "service_id": "3"
+    },
+    "method": "GET",
+    "path": "/services/3",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "services",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_form_fields",
+      "service_id": "3"
+    },
+    "method": "GET",
+    "path": "/services/3/form-fields",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "form-fields",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "list_team_members"
+    },
+    "method": "GET",
+    "path": "/team-members",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "team-members",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "list_time_entries",
+      "request_key": "4"
+    },
+    "method": "GET",
+    "path": "/requests/4/time-entries",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "time-entries",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "create_time_entry",
+      "request_id": 4,
+      "user_id": 5,
+      "started_at": "2026-01-01T10:00:00Z",
+      "ended_at": "2026-01-01T11:00:00Z",
+      "billable": false
+    },
+    "method": "POST",
+    "path": "/requests/4/time-entries",
+    "query": {},
+    "body": {
+      "user_id": 5,
+      "started_at": "2026-01-01T10:00:00Z",
+      "ended_at": "2026-01-01T11:00:00Z",
+      "billable": false
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "time-entries",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "/invoices",
+    "query": {
+      "per_page": "25"
+    },
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "1",
+          "type": "invoices",
+          "attributes": {
+            "name": "Synthetic record"
+          }
+        }
+      ],
+      "links": {},
+      "meta": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "get_invoice",
+      "invoice_id": 7
+    },
+    "method": "GET",
+    "path": "/invoices/7",
+    "query": {},
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "id": "1",
+        "type": "invoices",
+        "attributes": {
+          "name": "Synthetic record"
+        }
+      }
+    }
+  }
+]

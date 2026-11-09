@@ -1,0 +1,1245 @@
+{
+  "$defs": {
+    "CreateComment": {
+      "additionalProperties": false,
+      "properties": {
+        "request_key": {
+          "description": "Request ID or slug.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Request Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Create Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "is_internal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True limits visibility to the team; false is visible to the client. Omitted uses the provider default.",
+          "title": "Is Internal"
+        },
+        "scheduled_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled At"
+        }
+      },
+      "required": [
+        "request_key",
+        "body",
+        "user_id"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_organization",
+          "default": "create_organization",
+          "title": "Create Organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "owner": {
+          "$ref": "#/$defs/Owner",
+          "description": "The owner may receive provider notifications."
+        }
+      },
+      "required": [
+        "name",
+        "owner"
+      ],
+      "title": "CreateOrganization",
+      "type": "object"
+    },
+    "CreateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_request",
+          "default": "create_request",
+          "title": "Create Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "minimum": 1,
+          "title": "Service Id",
+          "type": "integer"
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand Id"
+        },
+        "assignee_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Ids"
+        },
+        "tag_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Ids"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "service_id",
+        "client_id",
+        "title"
+      ],
+      "title": "CreateRequest",
+      "type": "object"
+    },
+    "CreateRequestStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_request_status",
+          "default": "create_request_status",
+          "title": "Create Request Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "color": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Color",
+          "type": "string"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        }
+      },
+      "required": [
+        "name",
+        "color"
+      ],
+      "title": "CreateRequestStatus",
+      "type": "object"
+    },
+    "CreateRequestTag": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_request_tag",
+          "default": "create_request_tag",
+          "title": "Create Request Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateRequestTag",
+      "type": "object"
+    },
+    "CreateTimeEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_time_entry",
+          "default": "create_time_entry",
+          "title": "Create Time Entry",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "minimum": 1,
+          "title": "Request Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "ended_at": {
+          "format": "date-time",
+          "title": "Ended At",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billable hours may reduce the organization balance after approval.",
+          "title": "Billable"
+        }
+      },
+      "required": [
+        "request_id",
+        "user_id",
+        "started_at",
+        "ended_at"
+      ],
+      "title": "CreateTimeEntry",
+      "type": "object"
+    },
+    "DeleteRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_request",
+          "default": "delete_request",
+          "title": "Delete Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "minimum": 1,
+          "title": "Request Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "DeleteRequest",
+      "type": "object"
+    },
+    "GetClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "GetClient",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "minimum": 1,
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "minimum": 1,
+          "title": "Organization Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "request_key": {
+          "description": "Request ID or slug.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Request Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Get Request",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "request_key"
+      ],
+      "title": "GetRequest",
+      "type": "object"
+    },
+    "GetService": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Get Service",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "maxLength": 255,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Service Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "GetService",
+      "type": "object"
+    },
+    "ListClients": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List Clients",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        }
+      },
+      "title": "ListClients",
+      "type": "object"
+    },
+    "ListComments": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "request_key": {
+          "description": "Request ID or slug.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Request Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List Comments",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "request_key"
+      ],
+      "title": "ListComments",
+      "type": "object"
+    },
+    "ListFormFields": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_form_fields",
+          "default": "list_form_fields",
+          "title": "List Form Fields",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "maxLength": 255,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Service Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "ListFormFields",
+      "type": "object"
+    },
+    "ListInvoices": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListInvoices",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "List Organizations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "ListRequestStatuses": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_request_statuses",
+          "default": "list_request_statuses",
+          "title": "List Request Statuses",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListRequestStatuses",
+      "type": "object"
+    },
+    "ListRequestTags": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_request_tags",
+          "default": "list_request_tags",
+          "title": "List Request Tags",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListRequestTags",
+      "type": "object"
+    },
+    "ListRequests": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "List Requests",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        }
+      },
+      "title": "ListRequests",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "List Services",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "is_for_sale": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is For Sale"
+        }
+      },
+      "title": "ListServices",
+      "type": "object"
+    },
+    "ListTeamMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "List Team Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "portal admin",
+                "admin",
+                "team"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role",
+          "enum": [
+            "portal admin",
+            "admin",
+            "team"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListTeamMembers",
+      "type": "object"
+    },
+    "ListTimeEntries": {
+      "additionalProperties": false,
+      "properties": {
+        "per_page": {
+          "default": 25,
+          "description": "Maximum records in this single page. Provider links and metadata are returned for pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "request_key": {
+          "description": "Request ID or slug.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Request Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_time_entries",
+          "default": "list_time_entries",
+          "title": "List Time Entries",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "request_key"
+      ],
+      "title": "ListTimeEntries",
+      "type": "object"
+    },
+    "ManyRequestsAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "manyrequests_api_token",
+          "default": "manyrequests_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "portal_url": {
+          "description": "Your ManyRequests portal, for example youragency.manyrequests.com, or its custom domain.",
+          "title": "Portal domain",
+          "type": "string"
+        },
+        "api_token": {
+          "description": "Paste the token itself, without the Bearer prefix.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "portal_url",
+        "api_token"
+      ],
+      "title": "ManyRequests API Token",
+      "type": "object",
+      "x-credential-instructions": "Requires the ManyRequests Pro plan. In your portal, open Settings \u2192 Integrations \u2192 API \u2192 Create token. Paste the token and your portal domain below. Custom portal domains are supported.",
+      "x-credential-url": "https://help.manyrequests.com/en/articles/12749373-how-to-get-started-with-the-manyrequests-api"
+    },
+    "Owner": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "title": "Owner",
+      "type": "object"
+    },
+    "UpdateOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Update Organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "minimum": 1,
+          "title": "Organization Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "organization_id"
+      ],
+      "title": "UpdateOrganization",
+      "type": "object"
+    },
+    "UpdateRequestStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_request_status",
+          "default": "update_request_status",
+          "title": "Update Request Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status_id": {
+          "minimum": 1,
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        }
+      },
+      "required": [
+        "status_id"
+      ],
+      "title": "UpdateRequestStatus",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/CreateComment",
+          "create_organization": "#/$defs/CreateOrganization",
+          "create_request": "#/$defs/CreateRequest",
+          "create_request_status": "#/$defs/CreateRequestStatus",
+          "create_request_tag": "#/$defs/CreateRequestTag",
+          "create_time_entry": "#/$defs/CreateTimeEntry",
+          "delete_request": "#/$defs/DeleteRequest",
+          "get_client": "#/$defs/GetClient",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_request": "#/$defs/GetRequest",
+          "get_service": "#/$defs/GetService",
+          "list_clients": "#/$defs/ListClients",
+          "list_comments": "#/$defs/ListComments",
+          "list_form_fields": "#/$defs/ListFormFields",
+          "list_invoices": "#/$defs/ListInvoices",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "list_request_statuses": "#/$defs/ListRequestStatuses",
+          "list_request_tags": "#/$defs/ListRequestTags",
+          "list_requests": "#/$defs/ListRequests",
+          "list_services": "#/$defs/ListServices",
+          "list_team_members": "#/$defs/ListTeamMembers",
+          "list_time_entries": "#/$defs/ListTimeEntries",
+          "update_organization": "#/$defs/UpdateOrganization",
+          "update_request_status": "#/$defs/UpdateRequestStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListClients"
+        },
+        {
+          "$ref": "#/$defs/GetClient"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/CreateOrganization"
+        },
+        {
+          "$ref": "#/$defs/UpdateOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListRequests"
+        },
+        {
+          "$ref": "#/$defs/GetRequest"
+        },
+        {
+          "$ref": "#/$defs/CreateRequest"
+        },
+        {
+          "$ref": "#/$defs/DeleteRequest"
+        },
+        {
+          "$ref": "#/$defs/ListComments"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        },
+        {
+          "$ref": "#/$defs/ListRequestStatuses"
+        },
+        {
+          "$ref": "#/$defs/CreateRequestStatus"
+        },
+        {
+          "$ref": "#/$defs/UpdateRequestStatus"
+        },
+        {
+          "$ref": "#/$defs/ListRequestTags"
+        },
+        {
+          "$ref": "#/$defs/CreateRequestTag"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/GetService"
+        },
+        {
+          "$ref": "#/$defs/ListFormFields"
+        },
+        {
+          "$ref": "#/$defs/ListTeamMembers"
+        },
+        {
+          "$ref": "#/$defs/ListTimeEntries"
+        },
+        {
+          "$ref": "#/$defs/CreateTimeEntry"
+        },
+        {
+          "$ref": "#/$defs/ListInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ManyRequestsAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Manyrequests Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
