@@ -1,0 +1,656 @@
+{
+  "source": "https://api.contentsnare.com/partner_api/v1/doc_data.json",
+  "contract_sha256": "d3048549a0ba4902f3ff8250bbbfb122024957183aa1893cae5129e6cf66ce4b",
+  "cases": [
+    {
+      "operation": "get_identity",
+      "method": "GET",
+      "path": "/me",
+      "config": {},
+      "status": 200,
+      "response": {
+        "full_name": "Clay Schaden",
+        "message": "Clay Schaden",
+        "credential_type": "partner_api_token",
+        "scopes": [
+          "read_requests"
+        ],
+        "expires_at": "2026-12-31T23:59:59Z"
+      }
+    },
+    {
+      "operation": "list_clients",
+      "method": "GET",
+      "path": "/clients",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "q": "str",
+          "q_by": [
+            "email",
+            "full_name"
+          ],
+          "sort_by": "email",
+          "sort_direction": "asc",
+          "filter_by": {
+            "email": "james@example.com"
+          },
+          "total_count": 425
+        },
+        "results": [
+          {
+            "avatar": "https://example.com/user_avatar.jpeg",
+            "client_companies": [
+              {
+                "id": "cmp_z105QJxhy7YdlX",
+                "name": "Trantow LLC"
+              }
+            ],
+            "company_name": "Trantow LLC",
+            "email": "clayschaden@mail.org",
+            "full_name": "Clay Schaden",
+            "first_name": "Clay",
+            "last_name": "Schaden",
+            "id": "acc_MORVw9Cyq97AyN",
+            "phone": "+1 (415) 555-1212",
+            "salutation": "Dr",
+            "language_code": "en"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_requests",
+      "method": "GET",
+      "path": "/requests",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "q": "str",
+          "q_by": [
+            "name",
+            "clients.full_name",
+            "client_companies.name"
+          ],
+          "sort_by": "name",
+          "sort_direction": "asc",
+          "total_count": 425,
+          "filter_by": {
+            "statuses": [
+              "published",
+              "completed"
+            ]
+          }
+        },
+        "results": [
+          {
+            "due": "2024-08-15",
+            "expires_after_due": false,
+            "folder_name": "Folder 1",
+            "id": "req_1k7zv4aUlpN8PB",
+            "name": "Request 1",
+            "share_link": "https://webcorp.contentsnare.com/shared/6981788b-ce73-4bd6-985d-4eceec055ef9",
+            "status": "published",
+            "updated_at": "2025-01-15T12:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_client_companies",
+      "method": "GET",
+      "path": "/client_companies",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "q": "str",
+          "q_by": [
+            "name"
+          ],
+          "sort_by": "name",
+          "sort_direction": "asc",
+          "total_count": 425
+        },
+        "results": [
+          {
+            "id": "cmp_z105QJxhy7YdlX",
+            "name": "Trantow LLC"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_folders",
+      "method": "GET",
+      "path": "/folders",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "total_count": 425
+        },
+        "results": [
+          {
+            "id": "fol_9eav8o0bH2P71Q",
+            "name": "Folder1"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_request_templates",
+      "method": "GET",
+      "path": "/request_templates",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "total_count": 425,
+          "filter_by": {
+            "source": "company"
+          }
+        },
+        "results": [
+          {
+            "description": "Template description",
+            "id": "rtp_nRlwLZ1BiYvjWB",
+            "name": "Request Template 1",
+            "source": "company"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_page_templates",
+      "method": "GET",
+      "path": "/page_templates",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "total_count": 425,
+          "filter_by": {
+            "source": "company"
+          }
+        },
+        "results": [
+          {
+            "description": "Template description",
+            "id": "rtp_Nx5ELrl9S0glZ1",
+            "name": "Page Template 1",
+            "source": "company"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_section_templates",
+      "method": "GET",
+      "path": "/section_templates",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "total_count": 425,
+          "filter_by": {
+            "source": "company"
+          }
+        },
+        "results": [
+          {
+            "description": "Template description",
+            "id": "rtp_pdYGVjPxSJvA6y",
+            "name": "Section Template 1",
+            "source": "company"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_communication_templates",
+      "method": "GET",
+      "path": "/communication_templates",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "total_count": 425,
+          "filter_by": {
+            "source": "company"
+          }
+        },
+        "results": [
+          {
+            "id": "ctp_R0yJ9VqTGD8j5n",
+            "name": "Schedule1",
+            "description": "schedule description",
+            "source": "company"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_team_members",
+      "method": "GET",
+      "path": "/team_members",
+      "config": {},
+      "status": 200,
+      "response": {
+        "pagination": {
+          "limit": 200,
+          "offset": 0,
+          "q": "str",
+          "q_by": [
+            "full_name",
+            "phone"
+          ],
+          "sort_by": "phone",
+          "sort_direction": "asc",
+          "total_count": 425
+        },
+        "results": [
+          {
+            "active": false,
+            "avatar": "https://example.com/user_avatar.jpeg",
+            "company_name": "Trantow LLC",
+            "email": "clayschaden@mail.org",
+            "first_name": "Clay",
+            "full_name": "Clay Schaden",
+            "id": "acc_e7EVAXvJfxZ9zb",
+            "last_name": "Schaden",
+            "phone": "+1 (415) 555-1212",
+            "role": "viewer",
+            "salutation": "Dr"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_client",
+      "method": "GET",
+      "path": "/clients/{id}",
+      "config": {
+        "client_id": "acc_MORVw9Cyq97AyN"
+      },
+      "status": 200,
+      "response": {
+        "avatar": "https://example.com/user_avatar.jpeg",
+        "client_companies": [
+          {
+            "id": "cmp_z105QJxhy7YdlX",
+            "name": "Trantow LLC"
+          }
+        ],
+        "company_name": "Trantow LLC",
+        "email": "clayschaden@mail.org",
+        "full_name": "Clay Schaden",
+        "first_name": "Clay",
+        "last_name": "Schaden",
+        "id": "acc_MORVw9Cyq97AyN",
+        "phone": "+1 (415) 555-1212",
+        "salutation": "Dr",
+        "language_code": "en"
+      }
+    },
+    {
+      "operation": "delete_client",
+      "method": "DELETE",
+      "path": "/clients/{id}",
+      "config": {
+        "client_id": "acc_MORVw9Cyq97AyN"
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "operation": "create_client",
+      "method": "POST",
+      "path": "/clients",
+      "config": {
+        "email": "clayschaden@mail.org",
+        "full_name": "Clay Schaden"
+      },
+      "status": 201,
+      "response": {
+        "avatar": "https://example.com/user_avatar.jpeg",
+        "client_companies": [
+          {
+            "id": "cmp_z105QJxhy7YdlX",
+            "name": "Trantow LLC"
+          }
+        ],
+        "company_name": "Trantow LLC",
+        "email": "clayschaden@mail.org",
+        "full_name": "Clay Schaden",
+        "first_name": "Clay",
+        "last_name": "Schaden",
+        "id": "acc_MORVw9Cyq97AyN",
+        "phone": "+1 (415) 555-1212",
+        "salutation": "Dr",
+        "language_code": "en"
+      }
+    },
+    {
+      "operation": "update_client",
+      "method": "PUT",
+      "path": "/clients/{id}",
+      "config": {
+        "client_id": "acc_MORVw9Cyq97AyN",
+        "full_name": "Clay Schaden",
+        "salutation": "Dr"
+      },
+      "status": 200,
+      "response": {
+        "avatar": "https://example.com/user_avatar.jpeg",
+        "client_companies": [
+          {
+            "id": "cmp_z105QJxhy7YdlX",
+            "name": "Trantow LLC"
+          }
+        ],
+        "company_name": "Trantow LLC",
+        "email": "clayschaden@mail.org",
+        "full_name": "Clay Schaden",
+        "first_name": "Clay",
+        "last_name": "Schaden",
+        "id": "acc_MORVw9Cyq97AyN",
+        "phone": "+1 (415) 555-1212",
+        "salutation": "Dr",
+        "language_code": "en"
+      }
+    },
+    {
+      "operation": "get_request",
+      "method": "GET",
+      "path": "/requests/{id}",
+      "config": {
+        "request_id": "req_y8k0w9ASlnD4YX"
+      },
+      "status": 200,
+      "response": {
+        "approved_fields_count": 3,
+        "author_name": "Laurence Bosco",
+        "board_column_id": "bcl_b12Jl28mTJOea5",
+        "board_column_sorting_position": 7,
+        "build_status": "ready",
+        "clients": [
+          {
+            "avatar": "https://example.com/user_avatar.jpeg",
+            "company_name": "Stark Enterprises",
+            "email": "keva.ryan@stark.ca",
+            "first_name": "Keva",
+            "full_name": "Keva Ryan",
+            "id": "acc_MORVw9Cyq97AyN",
+            "last_name": "Ryan",
+            "phone": "+1 (415) 555-1212",
+            "salutation": "Dr",
+            "url": "https://webcorp.contentsnare.com/shared/b5cd2ffc-b290-40ff-bea9-adea3dc1994b"
+          }
+        ],
+        "comments_enabled": true,
+        "communications_template_name": "Default",
+        "completion_percentage": 65,
+        "country_code": "us",
+        "done_fields_count": 1,
+        "due": "2024-08-15",
+        "expires_after_due": false,
+        "fields_count": 4,
+        "folder_name": "Folder 1",
+        "has_comments": true,
+        "id": "req_y8k0w9ASlnD4YX",
+        "instruction_text": "<h5>Hi!</h5><div>We\u2019re happy to have you on board! We need some information from you. ...</div>",
+        "language_code": "en",
+        "name": "Request 1",
+        "owner_id": "acc_e7EVAXvJfxZ9zb",
+        "owner_name": "Julian Skiles",
+        "pages": [
+          {
+            "approved_fields_count": 1,
+            "done_fields_count": 1,
+            "fields_count": 2,
+            "id": "pag_jAxqEgBi4prM6g",
+            "instruction_text": "<h5>Page instruction</h5>",
+            "is_approved": true,
+            "is_done": false,
+            "name": "Page 1",
+            "redo_fields_count": 0,
+            "reference_id": "rpag_jAxqEgBi4prM6g",
+            "show_instruction": false,
+            "sorting_position": 0
+          }
+        ],
+        "passcode_enabled": false,
+        "primary_client_id": "acc_MORVw9Cyq97AyN",
+        "redo_fields_count": 0,
+        "request_template_name": "Request Template 1",
+        "share_link": "https://webcorp.contentsnare.com/shared/6981788b-ce73-4bd6-985d-4eceec055ef9",
+        "share_via_link_enabled": true,
+        "show_instruction": true,
+        "status": "published",
+        "wildcards": {
+          "client.contact_first_name": "Fred",
+          "client.company_name": "Smith & Sons",
+          "clients.contact_first_name": [
+            "Fred",
+            "Sam"
+          ],
+          "request.name": "Request 1"
+        },
+        "url": "https://webcorp.contentsnare.com/requests/143",
+        "updated_at": "2025-01-15T12:00:00Z"
+      }
+    },
+    {
+      "operation": "delete_request",
+      "method": "DELETE",
+      "path": "/requests/{id}",
+      "config": {
+        "request_id": "req_y8k0w9ASlnD4YX"
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "operation": "create_request",
+      "method": "POST",
+      "path": "/requests",
+      "config": {
+        "name": "Request 1",
+        "client_id": "acc_MORVw9Cyq97AyN",
+        "request_template_id": "rtp_nRlwLZ1BiYvjWB",
+        "status": "draft"
+      },
+      "status": 201,
+      "response": {
+        "author_name": "Laurence Bosco",
+        "build_status": "ready",
+        "client_status": "existing",
+        "client": {
+          "avatar": "https://example.com/user_avatar.jpeg",
+          "company_name": "Stark Enterprises",
+          "email": "keva.ryan@stark.ca",
+          "first_name": "Keva",
+          "full_name": "Keva Ryan",
+          "id": "acc_MORVw9Cyq97AyN",
+          "last_name": "Ryan",
+          "phone": "+1 (415) 555-1212",
+          "salutation": "Dr",
+          "url": "https://webcorp.contentsnare.com/shared/b5cd2ffc-b290-40ff-bea9-adea3dc1994b"
+        },
+        "clients": [
+          {
+            "avatar": "https://example.com/user_avatar.jpeg",
+            "company_name": "Stark Enterprises",
+            "email": "keva.ryan@stark.ca",
+            "first_name": "Keva",
+            "full_name": "Keva Ryan",
+            "id": "acc_MORVw9Cyq97AyN",
+            "last_name": "Ryan",
+            "phone": "+1 (415) 555-1212",
+            "salutation": "Dr",
+            "url": "https://webcorp.contentsnare.com/shared/b5cd2ffc-b290-40ff-bea9-adea3dc1994b"
+          }
+        ],
+        "comments_enabled": true,
+        "communications_template_name": "Default",
+        "completion_percentage": 65,
+        "due": "2024-08-15",
+        "expires_after_due": false,
+        "folder_name": "Folder 1",
+        "id": "req_1k7zv4aUlpN8PB",
+        "instruction_text": "<h5>Hi!</h5><div>We\u2019re happy to have you on board! We need some information from you. ...</div>",
+        "name": "Request 1",
+        "owner_name": "Julian Skiles",
+        "passcode_enabled": false,
+        "request_template_name": "Request Template 1",
+        "share_link": "https://webcorp.contentsnare.com/shared/6981788b-ce73-4bd6-985d-4eceec055ef9",
+        "share_via_link_enabled": true,
+        "show_instruction": false,
+        "status": "published",
+        "wildcards": {
+          "client.contact_first_name": "Fred",
+          "client.company_name": "Smith & Sons",
+          "clients.contact_first_name": [
+            "Fred",
+            "Sam"
+          ],
+          "request.name": "Request 1"
+        },
+        "url": "https://webcorp.contentsnare.com/requests/143",
+        "updated_at": "2025-01-15T12:00:00Z"
+      }
+    },
+    {
+      "operation": "update_request",
+      "method": "PUT",
+      "path": "/requests/{id}",
+      "config": {
+        "request_id": "req_y8k0w9ASlnD4YX",
+        "name": "Request 1",
+        "comments_enabled": false,
+        "status": "published"
+      },
+      "status": 200,
+      "response": {
+        "author_name": "Laurence Bosco",
+        "build_status": "ready",
+        "client_status": "existing",
+        "client": {
+          "avatar": "https://example.com/user_avatar.jpeg",
+          "company_name": "Stark Enterprises",
+          "email": "keva.ryan@stark.ca",
+          "first_name": "Keva",
+          "full_name": "Keva Ryan",
+          "id": "acc_MORVw9Cyq97AyN",
+          "last_name": "Ryan",
+          "phone": "+1 (415) 555-1212",
+          "salutation": "Dr",
+          "url": "https://webcorp.contentsnare.com/shared/b5cd2ffc-b290-40ff-bea9-adea3dc1994b"
+        },
+        "clients": [
+          {
+            "avatar": "https://example.com/user_avatar.jpeg",
+            "company_name": "Stark Enterprises",
+            "email": "keva.ryan@stark.ca",
+            "first_name": "Keva",
+            "full_name": "Keva Ryan",
+            "id": "acc_MORVw9Cyq97AyN",
+            "last_name": "Ryan",
+            "phone": "+1 (415) 555-1212",
+            "salutation": "Dr",
+            "url": "https://webcorp.contentsnare.com/shared/b5cd2ffc-b290-40ff-bea9-adea3dc1994b"
+          }
+        ],
+        "comments_enabled": true,
+        "communications_template_name": "Default",
+        "completion_percentage": 65,
+        "due": "2024-08-15",
+        "expires_after_due": false,
+        "folder_name": "Folder 1",
+        "id": "req_1k7zv4aUlpN8PB",
+        "instruction_text": "<h5>Hi!</h5><div>We\u2019re happy to have you on board! We need some information from you. ...</div>",
+        "name": "Request 1",
+        "owner_name": "Julian Skiles",
+        "passcode_enabled": false,
+        "request_template_name": "Request Template 1",
+        "share_link": "https://webcorp.contentsnare.com/shared/6981788b-ce73-4bd6-985d-4eceec055ef9",
+        "share_via_link_enabled": true,
+        "show_instruction": false,
+        "status": "published",
+        "wildcards": {
+          "client.contact_first_name": "Fred",
+          "client.company_name": "Smith & Sons",
+          "clients.contact_first_name": [
+            "Fred",
+            "Sam"
+          ],
+          "request.name": "Request 1"
+        },
+        "url": "https://webcorp.contentsnare.com/requests/143",
+        "updated_at": "2025-01-15T12:00:00Z"
+      }
+    },
+    {
+      "operation": "approve_request_fields",
+      "method": "PUT",
+      "path": "/requests/{id}/approve_all_submitted_fields",
+      "config": {
+        "request_id": "req_y8k0w9ASlnD4YX"
+      },
+      "status": 200,
+      "response": null
+    },
+    {
+      "operation": "submit_request_fields",
+      "method": "PUT",
+      "path": "/requests/{id}/submit_all_fields",
+      "config": {
+        "request_id": "req_y8k0w9ASlnD4YX"
+      },
+      "status": 200,
+      "response": null
+    },
+    {
+      "operation": "review_field",
+      "method": "PUT",
+      "path": "/fields/{id}/review",
+      "config": {
+        "field_id": "fld_1lqbwY6TaMPmAo",
+        "status": "redo",
+        "rejection_comment": "Rejection reason"
+      },
+      "status": 200,
+      "response": {
+        "answers": [
+          {
+            "id": "ans_RQ1zp49c7Xz4km",
+            "rejection_comment": "Rejection reason",
+            "status": "redo"
+          }
+        ],
+        "id": "fld_1lqbwY6TaMPmAo",
+        "rejection_comment": "Rejection reason",
+        "status": "redo"
+      }
+    }
+  ]
+}

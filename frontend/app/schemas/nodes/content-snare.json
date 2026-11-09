@@ -1,0 +1,1441 @@
+{
+  "$defs": {
+    "ApproveRequestFields": {
+      "additionalProperties": false,
+      "description": "Approve request fields.",
+      "properties": {
+        "operation": {
+          "const": "approve_request_fields",
+          "default": "approve_request_fields",
+          "title": "Approve Request Fields",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "ApproveRequestFields",
+      "type": "object"
+    },
+    "Assignment": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "minLength": 1,
+          "title": "Account Id",
+          "type": "string"
+        },
+        "client_company_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Company Id"
+        },
+        "primary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "Assignment",
+      "type": "object"
+    },
+    "ContentSnarePersonalToken": {
+      "properties": {
+        "credential_type": {
+          "const": "content_snare_personal_token",
+          "default": "content_snare_personal_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Content Snare Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Content Snare, open Settings \u2192 Security \u2192 Personal access tokens and generate a token. Paste only the token, without Bearer. Select read_clients, write_clients, read_requests, write_requests, review_requests, read_templates, read_team_members for all these actions, or only the scopes you need. NoClick checks your name with /me. Tokens expire and must be rotated manually; rotation invalidates the old token.",
+      "x-credential-url": "https://app.contentsnare.com/settings/security/access-tokens"
+    },
+    "CreateClient": {
+      "additionalProperties": false,
+      "description": "Create client.",
+      "properties": {
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "full_name": {
+          "minLength": 1,
+          "title": "Full Name",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "salutation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Salutation"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "en-gb",
+                "es",
+                "fr",
+                "de",
+                "nl",
+                "pt-br"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language Code",
+          "enum": [
+            "en",
+            "en-gb",
+            "es",
+            "fr",
+            "de",
+            "nl",
+            "pt-br"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create Client",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email",
+        "full_name"
+      ],
+      "title": "CreateClient",
+      "type": "object"
+    },
+    "CreateRequest": {
+      "additionalProperties": false,
+      "description": "Create a request for one existing client; inspect build_status and use Get Request later if still building.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date as YYYY-MM-DD",
+          "title": "Due"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "communication_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Communication Template Id"
+        },
+        "comments_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments Enabled"
+        },
+        "expires_after_due": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires After Due"
+        },
+        "passcode_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passcode Enabled"
+        },
+        "share_via_link_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Share Via Link Enabled"
+        },
+        "operation": {
+          "const": "create_request",
+          "default": "create_request",
+          "title": "Create Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Existing client ID; use Create Client first to add a client",
+          "minLength": 1,
+          "title": "Client Id",
+          "type": "string"
+        },
+        "request_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Template Id"
+        },
+        "status": {
+          "default": "draft",
+          "description": "Publishing may notify assigned clients",
+          "enum": [
+            "draft",
+            "published"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "client_id"
+      ],
+      "title": "CreateRequest",
+      "type": "object"
+    },
+    "DeleteClient": {
+      "additionalProperties": false,
+      "description": "Delete the selected client; success acknowledges deletion without verifying absence.",
+      "properties": {
+        "operation": {
+          "const": "delete_client",
+          "default": "delete_client",
+          "title": "Delete Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Content Snare resource ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "DeleteClient",
+      "type": "object"
+    },
+    "DeleteRequest": {
+      "additionalProperties": false,
+      "description": "Delete the selected request; success acknowledges deletion without verifying absence.",
+      "properties": {
+        "operation": {
+          "const": "delete_request",
+          "default": "delete_request",
+          "title": "Delete Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "Content Snare resource ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "DeleteRequest",
+      "type": "object"
+    },
+    "GetClient": {
+      "additionalProperties": false,
+      "description": "Get client.",
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Content Snare resource ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "GetClient",
+      "type": "object"
+    },
+    "GetIdentity": {
+      "additionalProperties": false,
+      "description": "Read the authenticated member name and token scopes without requiring an additional scope.",
+      "properties": {
+        "operation": {
+          "const": "get_identity",
+          "default": "get_identity",
+          "title": "Get Identity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetIdentity",
+      "type": "object"
+    },
+    "GetRequest": {
+      "additionalProperties": false,
+      "description": "Get request.",
+      "properties": {
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Get Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "Content Snare resource ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetRequest",
+      "type": "object"
+    },
+    "ListClientCompanies": {
+      "additionalProperties": false,
+      "description": "List client companies.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_client_companies",
+          "default": "list_client_companies",
+          "title": "List Client Companies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search using the provider default fields",
+          "title": "Q"
+        }
+      },
+      "title": "ListClientCompanies",
+      "type": "object"
+    },
+    "ListClients": {
+      "additionalProperties": false,
+      "description": "List clients.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List Clients",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search using the provider default fields",
+          "title": "Q"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact case-insensitive email filter",
+          "title": "Email"
+        },
+        "include_external": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include External"
+        }
+      },
+      "title": "ListClients",
+      "type": "object"
+    },
+    "ListCommunicationTemplates": {
+      "additionalProperties": false,
+      "description": "List communication templates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_communication_templates",
+          "default": "list_communication_templates",
+          "title": "List Communication Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "built_in",
+                "shared"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "company",
+            "built_in",
+            "shared"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListCommunicationTemplates",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "description": "List folders.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "List Folders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListPageTemplates": {
+      "additionalProperties": false,
+      "description": "List page templates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_page_templates",
+          "default": "list_page_templates",
+          "title": "List Page Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "built_in",
+                "shared"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "company",
+            "built_in",
+            "shared"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListPageTemplates",
+      "type": "object"
+    },
+    "ListRequestTemplates": {
+      "additionalProperties": false,
+      "description": "List request templates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_request_templates",
+          "default": "list_request_templates",
+          "title": "List Request Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "built_in",
+                "shared"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "company",
+            "built_in",
+            "shared"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListRequestTemplates",
+      "type": "object"
+    },
+    "ListRequests": {
+      "additionalProperties": false,
+      "description": "List requests.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "List Requests",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search using the provider default fields",
+          "title": "Q"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "draft",
+                  "published",
+                  "completed",
+                  "archived"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        }
+      },
+      "title": "ListRequests",
+      "type": "object"
+    },
+    "ListSectionTemplates": {
+      "additionalProperties": false,
+      "description": "List section templates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_section_templates",
+          "default": "list_section_templates",
+          "title": "List Section Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "built_in",
+                "shared"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "company",
+            "built_in",
+            "shared"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSectionTemplates",
+      "type": "object"
+    },
+    "ListTeamMembers": {
+      "additionalProperties": false,
+      "description": "List team members.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page. Follow next_offset to fetch another page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "List Team Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search using the provider default fields",
+          "title": "Q"
+        }
+      },
+      "title": "ListTeamMembers",
+      "type": "object"
+    },
+    "ReviewField": {
+      "additionalProperties": false,
+      "description": "Review field.",
+      "properties": {
+        "operation": {
+          "const": "review_field",
+          "default": "review_field",
+          "title": "Review Field",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "field_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Field Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "approved",
+            "done",
+            "redo",
+            "todo"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "rejection_comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rejection Comment"
+        }
+      },
+      "required": [
+        "field_id",
+        "status"
+      ],
+      "title": "ReviewField",
+      "type": "object"
+    },
+    "SubmitRequestFields": {
+      "additionalProperties": false,
+      "description": "Submit request fields.",
+      "properties": {
+        "operation": {
+          "const": "submit_request_fields",
+          "default": "submit_request_fields",
+          "title": "Submit Request Fields",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "SubmitRequestFields",
+      "type": "object"
+    },
+    "UpdateClient": {
+      "additionalProperties": false,
+      "description": "Update client.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "salutation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Salutation"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "en-gb",
+                "es",
+                "fr",
+                "de",
+                "nl",
+                "pt-br"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language Code",
+          "enum": [
+            "en",
+            "en-gb",
+            "es",
+            "fr",
+            "de",
+            "nl",
+            "pt-br"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Update Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Content Snare resource ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "UpdateClient",
+      "type": "object"
+    },
+    "UpdateRequest": {
+      "additionalProperties": false,
+      "description": "Update request.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date as YYYY-MM-DD",
+          "title": "Due"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "communication_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Communication Template Id"
+        },
+        "comments_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments Enabled"
+        },
+        "expires_after_due": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires After Due"
+        },
+        "passcode_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passcode Enabled"
+        },
+        "share_via_link_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Share Via Link Enabled"
+        },
+        "operation": {
+          "const": "update_request",
+          "default": "update_request",
+          "title": "Update Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "Content Snare resource ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "client_assignments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Assignment"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Assignments"
+        },
+        "instruction_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instruction Text"
+        },
+        "show_instruction": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Show Instruction"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "published",
+                "completed",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "published",
+            "completed",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "UpdateRequest",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_request_fields": "#/$defs/ApproveRequestFields",
+          "create_client": "#/$defs/CreateClient",
+          "create_request": "#/$defs/CreateRequest",
+          "delete_client": "#/$defs/DeleteClient",
+          "delete_request": "#/$defs/DeleteRequest",
+          "get_client": "#/$defs/GetClient",
+          "get_identity": "#/$defs/GetIdentity",
+          "get_request": "#/$defs/GetRequest",
+          "list_client_companies": "#/$defs/ListClientCompanies",
+          "list_clients": "#/$defs/ListClients",
+          "list_communication_templates": "#/$defs/ListCommunicationTemplates",
+          "list_folders": "#/$defs/ListFolders",
+          "list_page_templates": "#/$defs/ListPageTemplates",
+          "list_request_templates": "#/$defs/ListRequestTemplates",
+          "list_requests": "#/$defs/ListRequests",
+          "list_section_templates": "#/$defs/ListSectionTemplates",
+          "list_team_members": "#/$defs/ListTeamMembers",
+          "review_field": "#/$defs/ReviewField",
+          "submit_request_fields": "#/$defs/SubmitRequestFields",
+          "update_client": "#/$defs/UpdateClient",
+          "update_request": "#/$defs/UpdateRequest"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetIdentity"
+        },
+        {
+          "$ref": "#/$defs/ListClients"
+        },
+        {
+          "$ref": "#/$defs/ListRequests"
+        },
+        {
+          "$ref": "#/$defs/ListClientCompanies"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/ListRequestTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListPageTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListSectionTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListCommunicationTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListTeamMembers"
+        },
+        {
+          "$ref": "#/$defs/GetClient"
+        },
+        {
+          "$ref": "#/$defs/DeleteClient"
+        },
+        {
+          "$ref": "#/$defs/CreateClient"
+        },
+        {
+          "$ref": "#/$defs/UpdateClient"
+        },
+        {
+          "$ref": "#/$defs/GetRequest"
+        },
+        {
+          "$ref": "#/$defs/DeleteRequest"
+        },
+        {
+          "$ref": "#/$defs/CreateRequest"
+        },
+        {
+          "$ref": "#/$defs/UpdateRequest"
+        },
+        {
+          "$ref": "#/$defs/ApproveRequestFields"
+        },
+        {
+          "$ref": "#/$defs/SubmitRequestFields"
+        },
+        {
+          "$ref": "#/$defs/ReviewField"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContentSnarePersonalToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Content-snare Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
