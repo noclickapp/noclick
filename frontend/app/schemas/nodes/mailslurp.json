@@ -1,0 +1,820 @@
+{
+  "$defs": {
+    "MailslurpAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mailslurp_api_key",
+          "default": "mailslurp_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "MailSlurp API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the MailSlurp dashboard and paste it here. NoClick sends it as x-api-key to api.mailslurp.com. Connecting reads your account information. Your plan determines which operations are available.",
+      "x-credential-url": "https://app.mailslurp.com/api/"
+    },
+    "MailslurpCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "emailAddresses": {
+          "items": {
+            "format": "email",
+            "type": "string"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "title": "Emailaddresses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "emailAddresses"
+      ],
+      "title": "MailslurpCreateContactConfig",
+      "type": "object"
+    },
+    "MailslurpCreateInboxConfig": {
+      "additionalProperties": false,
+      "description": "Create an inbox email address. An inbox has a real email address and can send and receive emails. Inboxes can be either `SMTP` or `HTTP` inboxes..",
+      "properties": {
+        "operation": {
+          "const": "create_inbox",
+          "default": "create_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "expiresIn": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiresin"
+        },
+        "inboxType": {
+          "anyOf": [
+            {
+              "enum": [
+                "HTTP_INBOX",
+                "SMTP_INBOX"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inboxtype",
+          "enum": [
+            "HTTP_INBOX",
+            "SMTP_INBOX"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "MailslurpCreateInboxConfig",
+      "type": "object"
+    },
+    "MailslurpDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactId": {
+          "format": "uuid",
+          "title": "Contactid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactId"
+      ],
+      "title": "MailslurpDeleteContactConfig",
+      "type": "object"
+    },
+    "MailslurpDeleteEmailConfig": {
+      "additionalProperties": false,
+      "description": "Delete an email.",
+      "properties": {
+        "operation": {
+          "const": "delete_email",
+          "default": "delete_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "emailId": {
+          "format": "uuid",
+          "title": "Emailid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emailId"
+      ],
+      "title": "MailslurpDeleteEmailConfig",
+      "type": "object"
+    },
+    "MailslurpDeleteInboxConfig": {
+      "additionalProperties": false,
+      "description": "Delete inbox.",
+      "properties": {
+        "operation": {
+          "const": "delete_inbox",
+          "default": "delete_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inboxId": {
+          "format": "uuid",
+          "title": "Inboxid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inboxId"
+      ],
+      "title": "MailslurpDeleteInboxConfig",
+      "type": "object"
+    },
+    "MailslurpGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "get_account.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MailslurpGetAccountConfig",
+      "type": "object"
+    },
+    "MailslurpGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactId": {
+          "format": "uuid",
+          "title": "Contactid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactId"
+      ],
+      "title": "MailslurpGetContactConfig",
+      "type": "object"
+    },
+    "MailslurpGetEmailConfig": {
+      "additionalProperties": false,
+      "description": "Get hydrated email (headers and body).",
+      "properties": {
+        "operation": {
+          "const": "get_email",
+          "default": "get_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "emailId": {
+          "format": "uuid",
+          "title": "Emailid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emailId"
+      ],
+      "title": "MailslurpGetEmailConfig",
+      "type": "object"
+    },
+    "MailslurpGetInboxConfig": {
+      "additionalProperties": false,
+      "description": "Get Inbox. Returns properties of an inbox..",
+      "properties": {
+        "operation": {
+          "const": "get_inbox",
+          "default": "get_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inboxId": {
+          "format": "uuid",
+          "title": "Inboxid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inboxId"
+      ],
+      "title": "MailslurpGetInboxConfig",
+      "type": "object"
+    },
+    "MailslurpGetSentEmailConfig": {
+      "additionalProperties": false,
+      "description": "Get sent email receipt.",
+      "properties": {
+        "operation": {
+          "const": "get_sent_email",
+          "default": "get_sent_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MailslurpGetSentEmailConfig",
+      "type": "object"
+    },
+    "MailslurpListContactsConfig": {
+      "additionalProperties": false,
+      "description": "Get all contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MailslurpListContactsConfig",
+      "type": "object"
+    },
+    "MailslurpListEmailsConfig": {
+      "additionalProperties": false,
+      "description": "Get emails in an Inbox. This method is not idempotent as it allows retries and waits if you want certain conditions to be met before returning. For simple listing and sorting of known emails use the email controller instead..",
+      "properties": {
+        "operation": {
+          "const": "list_emails",
+          "default": "list_emails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inboxId": {
+          "format": "uuid",
+          "title": "Inboxid",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        },
+        "unreadOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unreadonly"
+        }
+      },
+      "required": [
+        "inboxId"
+      ],
+      "title": "MailslurpListEmailsConfig",
+      "type": "object"
+    },
+    "MailslurpListInboxesConfig": {
+      "additionalProperties": false,
+      "description": "List All Inboxes Paginated.",
+      "properties": {
+        "operation": {
+          "const": "list_inboxes",
+          "default": "list_inboxes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        }
+      },
+      "title": "MailslurpListInboxesConfig",
+      "type": "object"
+    },
+    "MailslurpListSentEmailsConfig": {
+      "additionalProperties": false,
+      "description": "Get all sent emails in paginated form.",
+      "properties": {
+        "operation": {
+          "const": "list_sent_emails",
+          "default": "list_sent_emails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inboxId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inboxid"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "MailslurpListSentEmailsConfig",
+      "type": "object"
+    },
+    "MailslurpMarkEmailReadConfig": {
+      "additionalProperties": false,
+      "description": "Mark an email as read or unread.",
+      "properties": {
+        "operation": {
+          "const": "mark_email_read",
+          "default": "mark_email_read",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "emailId": {
+          "format": "uuid",
+          "title": "Emailid",
+          "type": "string"
+        },
+        "read": {
+          "default": true,
+          "title": "Read",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "emailId"
+      ],
+      "title": "MailslurpMarkEmailReadConfig",
+      "type": "object"
+    },
+    "MailslurpReplyToEmailConfig": {
+      "additionalProperties": false,
+      "description": "Reply to an email.",
+      "properties": {
+        "operation": {
+          "const": "reply_to_email",
+          "default": "reply_to_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "emailId": {
+          "format": "uuid",
+          "title": "Emailid",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "string"
+        },
+        "isHTML": {
+          "title": "Ishtml",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "emailId",
+        "body",
+        "isHTML"
+      ],
+      "title": "MailslurpReplyToEmailConfig",
+      "type": "object"
+    },
+    "MailslurpSendEmailConfig": {
+      "additionalProperties": false,
+      "description": "Send Email.",
+      "properties": {
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inboxId": {
+          "format": "uuid",
+          "title": "Inboxid",
+          "type": "string"
+        },
+        "to": {
+          "items": {
+            "format": "email",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "To",
+          "type": "array"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "isHTML": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ishtml"
+        }
+      },
+      "required": [
+        "inboxId",
+        "to"
+      ],
+      "title": "MailslurpSendEmailConfig",
+      "type": "object"
+    },
+    "MailslurpUpdateInboxConfig": {
+      "additionalProperties": false,
+      "description": "Update Inbox. Change name and description. Email address is not editable..",
+      "properties": {
+        "operation": {
+          "const": "update_inbox",
+          "default": "update_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inboxId": {
+          "format": "uuid",
+          "title": "Inboxid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "favourite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favourite"
+        }
+      },
+      "required": [
+        "inboxId"
+      ],
+      "title": "MailslurpUpdateInboxConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/MailslurpCreateContactConfig",
+          "create_inbox": "#/$defs/MailslurpCreateInboxConfig",
+          "delete_contact": "#/$defs/MailslurpDeleteContactConfig",
+          "delete_email": "#/$defs/MailslurpDeleteEmailConfig",
+          "delete_inbox": "#/$defs/MailslurpDeleteInboxConfig",
+          "get_account": "#/$defs/MailslurpGetAccountConfig",
+          "get_contact": "#/$defs/MailslurpGetContactConfig",
+          "get_email": "#/$defs/MailslurpGetEmailConfig",
+          "get_inbox": "#/$defs/MailslurpGetInboxConfig",
+          "get_sent_email": "#/$defs/MailslurpGetSentEmailConfig",
+          "list_contacts": "#/$defs/MailslurpListContactsConfig",
+          "list_emails": "#/$defs/MailslurpListEmailsConfig",
+          "list_inboxes": "#/$defs/MailslurpListInboxesConfig",
+          "list_sent_emails": "#/$defs/MailslurpListSentEmailsConfig",
+          "mark_email_read": "#/$defs/MailslurpMarkEmailReadConfig",
+          "reply_to_email": "#/$defs/MailslurpReplyToEmailConfig",
+          "send_email": "#/$defs/MailslurpSendEmailConfig",
+          "update_inbox": "#/$defs/MailslurpUpdateInboxConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MailslurpGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpListInboxesConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpCreateInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpGetInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpUpdateInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpDeleteInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpListEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpSendEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpGetEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpReplyToEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpDeleteEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpMarkEmailReadConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpListSentEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpGetSentEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/MailslurpDeleteContactConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MailslurpAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mailslurp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

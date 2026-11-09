@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/mailslurp.png",
+  "source": "https://www.mailslurp.com/favicon.ico",
+  "license": "MailSlurp trademark; used to identify the MailSlurp integration",
+  "sha256": "ed5e35d9d2a042092bd8e9358306a14549463f9811ce6db75dd469ac368c45c5",
+  "notes": "Official favicon converted from ICO to PNG using macOS sips."
+}
