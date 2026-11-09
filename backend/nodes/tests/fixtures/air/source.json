@@ -1,0 +1,10 @@
+{
+  "source": "https://developer.air.inc/openapi/airapi.yaml",
+  "version": "1.0.0",
+  "sha256": "8e6005b272a1cc9ecbc176a88ee65cb11881ec74f4b65863494c5e0a33120751",
+  "server_defect": {
+    "published": "api.air.inc",
+    "documented_origin": "https://api.air.inc",
+    "source": "https://developer.air.inc/docs/upload-assets.md"
+  }
+}

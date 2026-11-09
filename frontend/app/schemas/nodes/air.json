@@ -1,0 +1,1669 @@
+{
+  "$defs": {
+    "AirAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "air_api_key",
+          "default": "air_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "workspace_id"
+      ],
+      "title": "Air API Key",
+      "type": "object",
+      "x-credential-instructions": "Contact your Air account manager for API access, then paste your API key and workspace ID.",
+      "x-credential-url": "https://developer.air.inc/docs/getting-started"
+    },
+    "AirAddBoardAssetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_board_assets",
+          "default": "add_board_assets",
+          "description": "Add Board Assets",
+          "title": "Add Board Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Add Board Assets",
+          "x-is-trigger": false
+        },
+        "assetIds": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Asset IDs",
+          "type": "array"
+        },
+        "boardId": {
+          "minLength": 1,
+          "title": "Board ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetIds",
+        "boardId"
+      ],
+      "title": "AirAddBoardAssetsConfig",
+      "type": "object"
+    },
+    "AirAddVersionTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_version_tag",
+          "default": "add_version_tag",
+          "description": "Add Version Tag",
+          "title": "Add Version Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Add Version Tag",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Tag ID",
+          "type": "string"
+        },
+        "versionId": {
+          "minLength": 1,
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "id",
+        "versionId"
+      ],
+      "title": "AirAddVersionTagConfig",
+      "type": "object"
+    },
+    "AirCreateBoardConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_board",
+          "default": "create_board",
+          "description": "Create Board",
+          "title": "Create Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Create Board",
+          "x-is-trigger": false
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "libraryId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library ID"
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Board ID"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "AirCreateBoardConfig",
+      "type": "object"
+    },
+    "AirCreateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "description": "Create Tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AirCreateTagConfig",
+      "type": "object"
+    },
+    "AirDeleteBoardConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_board",
+          "default": "delete_board",
+          "description": "Deleting a board also deletes assets contained only in it or its descendants.",
+          "title": "Delete Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Delete Board",
+          "x-is-trigger": false
+        },
+        "boardId": {
+          "minLength": 1,
+          "title": "Board ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "boardId"
+      ],
+      "title": "AirDeleteBoardConfig",
+      "type": "object"
+    },
+    "AirDeleteTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "description": "Delete Tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Delete Tag",
+          "x-is-trigger": false
+        },
+        "tagId": {
+          "minLength": 1,
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tagId"
+      ],
+      "title": "AirDeleteTagConfig",
+      "type": "object"
+    },
+    "AirGetAssetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "description": "Get Asset",
+          "title": "Get Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId"
+      ],
+      "title": "AirGetAssetConfig",
+      "type": "object"
+    },
+    "AirGetAssetVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_asset_version",
+          "default": "get_asset_version",
+          "description": "Get Asset Version",
+          "title": "Get Asset Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset Version",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "versionId": {
+          "minLength": 1,
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "versionId"
+      ],
+      "title": "AirGetAssetVersionConfig",
+      "type": "object"
+    },
+    "AirGetBoardConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_board",
+          "default": "get_board",
+          "description": "Get Board",
+          "title": "Get Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board",
+          "x-is-trigger": false
+        },
+        "boardId": {
+          "minLength": 1,
+          "title": "Board ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "boardId"
+      ],
+      "title": "AirGetBoardConfig",
+      "type": "object"
+    },
+    "AirGetImportStatusConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_import_status",
+          "default": "get_import_status",
+          "description": "Get Import Status",
+          "title": "Get Import Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Imports",
+          "x-display-name": "Get Import Status",
+          "x-is-trigger": false
+        },
+        "importId": {
+          "minLength": 1,
+          "title": "Import ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "importId"
+      ],
+      "title": "AirGetImportStatusConfig",
+      "type": "object"
+    },
+    "AirImportAssetConfig": {
+      "properties": {
+        "operation": {
+          "const": "import_asset",
+          "default": "import_asset",
+          "description": "Import Asset",
+          "title": "Import Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Imports",
+          "x-display-name": "Import Asset",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset ID"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "ext": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Extension"
+        },
+        "fileName": {
+          "minLength": 1,
+          "title": "File Name",
+          "type": "string"
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Board ID"
+        },
+        "recordedAt": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recorded At"
+        },
+        "sourceUrl": {
+          "minLength": 1,
+          "title": "Public File URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fileName",
+        "sourceUrl"
+      ],
+      "title": "AirImportAssetConfig",
+      "type": "object"
+    },
+    "AirListAssetVersionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_asset_versions",
+          "default": "list_asset_versions",
+          "description": "List Asset Versions",
+          "title": "List Asset Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Asset Versions",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId"
+      ],
+      "title": "AirListAssetVersionsConfig",
+      "type": "object"
+    },
+    "AirListAssetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "description": "List Assets",
+          "title": "List Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Assets",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Board ID"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        }
+      },
+      "title": "AirListAssetsConfig",
+      "type": "object"
+    },
+    "AirListBoardsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_boards",
+          "default": "list_boards",
+          "description": "List Boards",
+          "title": "List Boards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "List Boards",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "libraryId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library ID"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Board ID"
+        }
+      },
+      "title": "AirListBoardsConfig",
+      "type": "object"
+    },
+    "AirListLibrariesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_libraries",
+          "default": "list_libraries",
+          "description": "List Libraries",
+          "title": "List Libraries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Libraries",
+          "x-display-name": "List Libraries",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "AirListLibrariesConfig",
+      "type": "object"
+    },
+    "AirListTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "description": "List Tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "AirListTagsConfig",
+      "type": "object"
+    },
+    "AirOnNewOrUpdatedAssetConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_asset",
+          "default": "on_new_or_updated_asset",
+          "title": "On New or Updated Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Asset",
+          "x-is-trigger": true
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional immediate parent board. Watches asset metadata and cover version changes returned by the list API.",
+          "title": "Parent Board ID"
+        }
+      },
+      "title": "AirOnNewOrUpdatedAssetConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AirOnNewOrUpdatedBoardConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_board",
+          "default": "on_new_or_updated_board",
+          "title": "On New or Updated Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Board",
+          "x-is-trigger": true
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Board ID"
+        }
+      },
+      "title": "AirOnNewOrUpdatedBoardConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AirRemoveBoardAssetConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_board_asset",
+          "default": "remove_board_asset",
+          "description": "Remove Board Asset",
+          "title": "Remove Board Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Remove Board Asset",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "boardId": {
+          "minLength": 1,
+          "title": "Board ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "boardId"
+      ],
+      "title": "AirRemoveBoardAssetConfig",
+      "type": "object"
+    },
+    "AirRemoveVersionTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_version_tag",
+          "default": "remove_version_tag",
+          "description": "Remove Version Tag",
+          "title": "Remove Version Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Remove Version Tag",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "tagId": {
+          "minLength": 1,
+          "title": "Tag ID",
+          "type": "string"
+        },
+        "versionId": {
+          "minLength": 1,
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "tagId",
+        "versionId"
+      ],
+      "title": "AirRemoveVersionTagConfig",
+      "type": "object"
+    },
+    "AirUpdateAssetVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_asset_version",
+          "default": "update_asset_version",
+          "description": "Update Asset Version",
+          "title": "Update Asset Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Update Asset Version",
+          "x-is-trigger": false
+        },
+        "assetId": {
+          "minLength": 1,
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "versionId": {
+          "minLength": 1,
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "versionId"
+      ],
+      "title": "AirUpdateAssetVersionConfig",
+      "type": "object"
+    },
+    "AirUpdateBoardConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_board",
+          "default": "update_board",
+          "description": "Update Board",
+          "title": "Update Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Update Board",
+          "x-is-trigger": false
+        },
+        "boardId": {
+          "minLength": 1,
+          "title": "Board ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parentBoardId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Board ID"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "boardId"
+      ],
+      "title": "AirUpdateBoardConfig",
+      "type": "object"
+    },
+    "AirUpdateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "description": "Update Tag",
+          "title": "Update Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Update Tag",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "tagId": {
+          "minLength": 1,
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "tagId"
+      ],
+      "title": "AirUpdateTagConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_board_assets": "#/$defs/AirAddBoardAssetsConfig",
+          "add_version_tag": "#/$defs/AirAddVersionTagConfig",
+          "create_board": "#/$defs/AirCreateBoardConfig",
+          "create_tag": "#/$defs/AirCreateTagConfig",
+          "delete_board": "#/$defs/AirDeleteBoardConfig",
+          "delete_tag": "#/$defs/AirDeleteTagConfig",
+          "get_asset": "#/$defs/AirGetAssetConfig",
+          "get_asset_version": "#/$defs/AirGetAssetVersionConfig",
+          "get_board": "#/$defs/AirGetBoardConfig",
+          "get_import_status": "#/$defs/AirGetImportStatusConfig",
+          "import_asset": "#/$defs/AirImportAssetConfig",
+          "list_asset_versions": "#/$defs/AirListAssetVersionsConfig",
+          "list_assets": "#/$defs/AirListAssetsConfig",
+          "list_boards": "#/$defs/AirListBoardsConfig",
+          "list_libraries": "#/$defs/AirListLibrariesConfig",
+          "list_tags": "#/$defs/AirListTagsConfig",
+          "on_new_or_updated_asset": "#/$defs/AirOnNewOrUpdatedAssetConfig",
+          "on_new_or_updated_board": "#/$defs/AirOnNewOrUpdatedBoardConfig",
+          "remove_board_asset": "#/$defs/AirRemoveBoardAssetConfig",
+          "remove_version_tag": "#/$defs/AirRemoveVersionTagConfig",
+          "update_asset_version": "#/$defs/AirUpdateAssetVersionConfig",
+          "update_board": "#/$defs/AirUpdateBoardConfig",
+          "update_tag": "#/$defs/AirUpdateTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AirListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/AirListAssetVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirGetAssetVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/AirUpdateAssetVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/AirAddVersionTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AirRemoveVersionTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AirListBoardsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirGetBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/AirCreateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/AirUpdateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/AirDeleteBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/AirAddBoardAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirRemoveBoardAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/AirListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AirUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AirDeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AirImportAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/AirGetImportStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/AirListLibrariesConfig"
+        },
+        {
+          "$ref": "#/$defs/AirOnNewOrUpdatedAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/AirOnNewOrUpdatedBoardConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AirAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Air Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Import a creative asset from a public URL",
+    "Create an Air board",
+    "Watch Air assets for changes",
+    "Tag an asset version"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
