@@ -1,0 +1,604 @@
+{
+  "$defs": {
+    "AppendContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "Contact list ID returned by Create contact list.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "append_contacts",
+          "default": "append_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Append contacts to list"
+        },
+        "fields": {
+          "description": "Columns corresponding to each row in Values. Repeat phone for multiple numbers.",
+          "items": {
+            "enum": [
+              "record_id",
+              "first_name",
+              "last_name",
+              "company",
+              "email",
+              "phone",
+              "address1",
+              "address2",
+              "city",
+              "state",
+              "postal",
+              "country",
+              "custom1",
+              "custom2",
+              "custom3",
+              "custom4",
+              "custom5"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        },
+        "values": {
+          "description": "Up to 10,000 contact rows, each with one value per field.",
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Values",
+          "type": "array"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO country code used for local phone numbers. Provider default: US.",
+          "title": "Region"
+        }
+      },
+      "required": [
+        "list_id",
+        "fields",
+        "values"
+      ],
+      "title": "AppendContacts",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact_list",
+          "default": "create_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Create contact list"
+        },
+        "list_name": {
+          "minLength": 1,
+          "title": "List Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "DeleteList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "Contact list ID returned by Create contact list.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact_list",
+          "default": "delete_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Delete contact list"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteList",
+      "type": "object"
+    },
+    "DropCowboyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "drop_cowboy_api_key",
+          "default": "drop_cowboy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_id": {
+          "minLength": 1,
+          "title": "Team ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret": {
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_id",
+        "secret"
+      ],
+      "title": "Drop Cowboy API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your Team ID and secret from Drop Cowboy's API settings. Enable API access in the Trust Center. NoClick checks the connection by reading your brands.",
+      "x-credential-url": "https://www.dropcowboy.com/appv1/#/api"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "Contact list ID returned by Create contact list.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact_list",
+          "default": "get_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Get contact list"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "ListBrands": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_brands",
+          "default": "list_brands",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "List brands"
+        }
+      },
+      "title": "ListBrands",
+      "type": "object"
+    },
+    "ListMedia": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_media",
+          "default": "list_media",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "List media"
+        }
+      },
+      "title": "ListMedia",
+      "type": "object"
+    },
+    "ListPools": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_number_pools",
+          "default": "list_number_pools",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "List number pools"
+        }
+      },
+      "title": "ListPools",
+      "type": "object"
+    },
+    "ListRecordings": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "List recordings"
+        },
+        "api_allowed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by approval for API use; leave blank for all recordings.",
+          "title": "Api Allowed"
+        }
+      },
+      "title": "ListRecordings",
+      "type": "object"
+    },
+    "RenameList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "Contact list ID returned by Create contact list.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rename_contact_list",
+          "default": "rename_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Rename contact list"
+        },
+        "list_name": {
+          "minLength": 1,
+          "title": "List Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "list_name"
+      ],
+      "title": "RenameList",
+      "type": "object"
+    },
+    "SendRVM": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_ringless_voicemail",
+          "default": "send_ringless_voicemail",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Send ringless voicemail"
+        },
+        "phone_number": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "brand_id": {
+          "minLength": 1,
+          "title": "Brand Id",
+          "type": "string"
+        },
+        "foreign_id": {
+          "description": "Your reference, echoed in delivery callbacks.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Foreign Id",
+          "type": "string"
+        },
+        "recording_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Approved recording ID. Choose recording, voice with text, or audio URL.",
+          "title": "Recording Id"
+        },
+        "voice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voice Id"
+        },
+        "tts_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tts Body"
+        },
+        "audio_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MP3/WAV URL; requires special approval from Drop Cowboy.",
+          "title": "Audio Url"
+        },
+        "audio_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "mp3",
+                "wav"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Type",
+          "enum": [
+            "mp3",
+            "wav"
+          ],
+          "x-enum-searchable": true
+        },
+        "forwarding_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forwarding Number"
+        },
+        "phone_ivr_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Ivr Id"
+        },
+        "pool_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pool Id"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback Url"
+        }
+      },
+      "required": [
+        "phone_number",
+        "brand_id",
+        "foreign_id"
+      ],
+      "title": "SendRVM",
+      "type": "object"
+    },
+    "SendSMS": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:label": "Send SMS"
+        },
+        "phone_number": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "caller_id": {
+          "description": "Return phone number in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Caller Id",
+          "type": "string"
+        },
+        "pool_id": {
+          "description": "Private number pool registered for SMS.",
+          "minLength": 1,
+          "title": "Pool Id",
+          "type": "string"
+        },
+        "sms_body": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Sms Body",
+          "type": "string"
+        },
+        "opt_in": {
+          "const": true,
+          "description": "Confirm the recipient has opted in to receive SMS.",
+          "title": "Opt In",
+          "type": "boolean"
+        },
+        "foreign_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Foreign Id"
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback Url"
+        }
+      },
+      "required": [
+        "phone_number",
+        "caller_id",
+        "pool_id",
+        "sms_body",
+        "opt_in"
+      ],
+      "title": "SendSMS",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append_contacts": "#/$defs/AppendContacts",
+          "create_contact_list": "#/$defs/CreateList",
+          "delete_contact_list": "#/$defs/DeleteList",
+          "get_contact_list": "#/$defs/GetList",
+          "list_brands": "#/$defs/ListBrands",
+          "list_media": "#/$defs/ListMedia",
+          "list_number_pools": "#/$defs/ListPools",
+          "list_recordings": "#/$defs/ListRecordings",
+          "rename_contact_list": "#/$defs/RenameList",
+          "send_ringless_voicemail": "#/$defs/SendRVM",
+          "send_sms": "#/$defs/SendSMS"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBrands"
+        },
+        {
+          "$ref": "#/$defs/ListRecordings"
+        },
+        {
+          "$ref": "#/$defs/ListMedia"
+        },
+        {
+          "$ref": "#/$defs/ListPools"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/RenameList"
+        },
+        {
+          "$ref": "#/$defs/DeleteList"
+        },
+        {
+          "$ref": "#/$defs/AppendContacts"
+        },
+        {
+          "$ref": "#/$defs/SendSMS"
+        },
+        {
+          "$ref": "#/$defs/SendRVM"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DropCowboyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Drop-cowboy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
