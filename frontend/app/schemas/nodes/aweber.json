@@ -5507,7 +5507,7 @@
       "required": [
         "access_token"
       ],
-      "title": "AWeber OAuth",
+      "title": "Aweber OAuth",
       "type": "object",
       "x-credential-type": "oauth",
       "x-credential-url": "https://labs.aweber.com/apps",

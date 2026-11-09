@@ -42,7 +42,7 @@ class AWeberOAuthCredential(BaseModel):
     scope: Optional[str] = Field(None, title="Scopes")
 
     model_config = ConfigDict(json_schema_extra={
-        "title": "AWeber OAuth",
+        "title": "Aweber OAuth",
         "x-credential-type": "oauth",
         "x-oauth-provider": "aweber",
         "x-oauth-scopes": AWEBER_SCOPES,
@@ -199,6 +199,7 @@ class AWeberNode(ScheduledPollTriggerMixin, WorkflowNode):
     """AWeber subscriber, list, campaign, broadcast, and analytics actions."""
 
     integration_type = "automation-aweber"
+    credential_provider_labels = {"aweber": "AWeber Account"}
 
     edit_examples = [
         "Add a subscriber to my AWeber list",
