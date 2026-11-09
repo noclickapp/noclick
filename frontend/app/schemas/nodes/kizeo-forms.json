@@ -1,0 +1,809 @@
+{
+  "$defs": {
+    "CreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create a group with an optional parent group.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_group_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Group Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroupConfig",
+      "type": "object"
+    },
+    "DataFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "title": "Operator",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "val": {
+          "title": "Val",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "operator",
+        "type",
+        "val"
+      ],
+      "title": "DataFilter",
+      "type": "object"
+    },
+    "DataOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "col": {
+          "title": "Col",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "col",
+        "type"
+      ],
+      "title": "DataOrder",
+      "type": "object"
+    },
+    "DeleteGroupConfig": {
+      "additionalProperties": false,
+      "description": "Delete the selected group.",
+      "properties": {
+        "group_id": {
+          "description": "Group ID; use List Groups to find it.",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroupConfig",
+      "type": "object"
+    },
+    "GetCompleteListConfig": {
+      "additionalProperties": false,
+      "description": "Get the complete external list without applying user filters.",
+      "properties": {
+        "list_id": {
+          "description": "External list ID; use List Lists to find it.",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_complete_list",
+          "default": "get_complete_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetCompleteListConfig",
+      "type": "object"
+    },
+    "GetDataConfig": {
+      "additionalProperties": false,
+      "description": "Get one form submission and its field values.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "data_id": {
+          "description": "Kizeo submission ID.",
+          "minimum": 1,
+          "title": "Data Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_data",
+          "default": "get_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "form_id",
+        "data_id"
+      ],
+      "title": "GetDataConfig",
+      "type": "object"
+    },
+    "GetFormConfig": {
+      "additionalProperties": false,
+      "description": "Get a form definition including its field identifiers.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "GetFormConfig",
+      "type": "object"
+    },
+    "GetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get one group including its users and leaders.",
+      "properties": {
+        "group_id": {
+          "description": "Group ID; use List Groups to find it.",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroupConfig",
+      "type": "object"
+    },
+    "GetListConfig": {
+      "additionalProperties": false,
+      "description": "Get an external list definition with the user filters applied.",
+      "properties": {
+        "list_id": {
+          "description": "External list ID; use List Lists to find it.",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetListConfig",
+      "type": "object"
+    },
+    "KizeoFormsAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kizeo_forms_api_token",
+          "default": "kizeo_forms_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Kizeo Forms API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your existing Kizeo Forms API token. An administrator can request a token from support@kizeo.com with the company code and administrator or group leader user ID. NoClick sends it directly in the Authorization header. Your token's user permissions determine which forms, data, lists and groups you can access.",
+      "x-credential-url": "https://kizeo.github.io/kizeo-forms-documentations/docs/restv3/"
+    },
+    "ListExportsConfig": {
+      "additionalProperties": false,
+      "description": "List the Word and Excel export templates for a form.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_exports",
+          "default": "list_exports",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "ListExportsConfig",
+      "type": "object"
+    },
+    "ListFormsConfig": {
+      "additionalProperties": false,
+      "description": "List all forms accessible to the token user.",
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListFormsConfig",
+      "type": "object"
+    },
+    "ListGroupUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users of the selected group.",
+      "properties": {
+        "group_id": {
+          "description": "Group ID; use List Groups to find it.",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_group_users",
+          "default": "list_group_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "ListGroupUsersConfig",
+      "type": "object"
+    },
+    "ListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List groups in the account.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGroupsConfig",
+      "type": "object"
+    },
+    "ListListsConfig": {
+      "additionalProperties": false,
+      "description": "List accessible external lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListListsConfig",
+      "type": "object"
+    },
+    "ListPushInboxConfig": {
+      "additionalProperties": false,
+      "description": "Receive new pushed form data from the inbox.",
+      "properties": {
+        "operation": {
+          "const": "list_push_inbox",
+          "default": "list_push_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPushInboxConfig",
+      "type": "object"
+    },
+    "ListUnreadDataConfig": {
+      "additionalProperties": false,
+      "description": "Read submissions not yet marked for the named action.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "action": {
+          "description": "The read/unread action name used by your workflow.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_unread_data",
+          "default": "list_unread_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum unread submissions to return.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "form_id",
+        "action"
+      ],
+      "title": "ListUnreadDataConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users in the account, subject to the token user permissions.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "MarkDataReadConfig": {
+      "additionalProperties": false,
+      "description": "Mark selected submissions as read for an action.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "action": {
+          "description": "The read/unread action name used by your workflow.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "data_ids": {
+          "description": "Submission IDs to mark for this action.",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Data Ids",
+          "type": "array"
+        },
+        "operation": {
+          "const": "mark_data_read",
+          "default": "mark_data_read",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "form_id",
+        "action",
+        "data_ids"
+      ],
+      "title": "MarkDataReadConfig",
+      "type": "object"
+    },
+    "MarkDataUnreadConfig": {
+      "additionalProperties": false,
+      "description": "Mark selected submissions as unread for an action.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "action": {
+          "description": "The read/unread action name used by your workflow.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "data_ids": {
+          "description": "Submission IDs to mark for this action.",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Data Ids",
+          "type": "array"
+        },
+        "operation": {
+          "const": "mark_data_unread",
+          "default": "mark_data_unread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "form_id",
+        "action",
+        "data_ids"
+      ],
+      "title": "MarkDataUnreadConfig",
+      "type": "object"
+    },
+    "PushDataConfig": {
+      "additionalProperties": false,
+      "description": "Send prefilled form data to a user. This sends a push notification.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "push_data",
+          "default": "push_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipient_user_id": {
+          "description": "Recipient user ID for this push.",
+          "minimum": 1,
+          "title": "Recipient User Id",
+          "type": "integer"
+        },
+        "fields": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PushValue"
+          },
+          "description": "Form field IDs mapped to objects such as {\"value\": \"text\"}.",
+          "title": "Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "form_id",
+        "recipient_user_id",
+        "fields"
+      ],
+      "title": "PushDataConfig",
+      "type": "object"
+    },
+    "PushValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "PushValue",
+      "type": "object"
+    },
+    "SearchDataConfig": {
+      "additionalProperties": false,
+      "description": "Search submissions with the documented advanced filter body.",
+      "properties": {
+        "form_id": {
+          "description": "Kizeo form ID; use List Forms to find it.",
+          "minimum": 1,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_data",
+          "default": "search_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "global_filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Global Filters"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/$defs/DataFilter"
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "order": {
+          "items": {
+            "$ref": "#/$defs/DataOrder"
+          },
+          "title": "Order",
+          "type": "array"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "SearchDataConfig",
+      "type": "object"
+    },
+    "UpdateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Update the group name and optionally its parent.",
+      "properties": {
+        "group_id": {
+          "description": "Group ID; use List Groups to find it.",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_group_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Group Id"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "title": "UpdateGroupConfig",
+      "type": "object"
+    },
+    "UpdateListConfig": {
+      "additionalProperties": false,
+      "description": "Replace an external list with the supplied items.",
+      "properties": {
+        "list_id": {
+          "description": "External list ID; use List Lists to find it.",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items": {
+          "description": "Replacement external list items. An empty array clears the list.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "list_id",
+        "items"
+      ],
+      "title": "UpdateListConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_group": "#/$defs/CreateGroupConfig",
+          "delete_group": "#/$defs/DeleteGroupConfig",
+          "get_complete_list": "#/$defs/GetCompleteListConfig",
+          "get_data": "#/$defs/GetDataConfig",
+          "get_form": "#/$defs/GetFormConfig",
+          "get_group": "#/$defs/GetGroupConfig",
+          "get_list": "#/$defs/GetListConfig",
+          "list_exports": "#/$defs/ListExportsConfig",
+          "list_forms": "#/$defs/ListFormsConfig",
+          "list_group_users": "#/$defs/ListGroupUsersConfig",
+          "list_groups": "#/$defs/ListGroupsConfig",
+          "list_lists": "#/$defs/ListListsConfig",
+          "list_push_inbox": "#/$defs/ListPushInboxConfig",
+          "list_unread_data": "#/$defs/ListUnreadDataConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "mark_data_read": "#/$defs/MarkDataReadConfig",
+          "mark_data_unread": "#/$defs/MarkDataUnreadConfig",
+          "push_data": "#/$defs/PushDataConfig",
+          "search_data": "#/$defs/SearchDataConfig",
+          "update_group": "#/$defs/UpdateGroupConfig",
+          "update_list": "#/$defs/UpdateListConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchDataConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDataConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUnreadDataConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkDataReadConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkDataUnreadConfig"
+        },
+        {
+          "$ref": "#/$defs/PushDataConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPushInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/ListExportsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetListConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCompleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupUsersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KizeoFormsAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kizeo-forms Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
