@@ -1,0 +1,732 @@
+{
+  "$defs": {
+    "CreateChatCompletion": {
+      "properties": {
+        "operation": {
+          "const": "create_chat_completion",
+          "default": "create_chat_completion",
+          "title": "Create Chat Completion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generation",
+          "x-display-name": "Create Chat Completion"
+        },
+        "model": {
+          "description": "An available ID from List Chat Models.",
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "User message. Generation may consume credits.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "System Prompt"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Tokens"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        },
+        "reasoning_effort": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoning Effort",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "title": "CreateChatCompletion",
+      "type": "object"
+    },
+    "CreateResponse": {
+      "properties": {
+        "operation": {
+          "const": "create_response",
+          "default": "create_response",
+          "title": "Create Text Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generation",
+          "x-display-name": "Create Text Response"
+        },
+        "model": {
+          "description": "An available ID from List Chat Models. Uses the model's default reasoning.",
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "description": "Text input. Generation may consume credits.",
+          "minLength": 1,
+          "title": "Input",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "max_output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Output Tokens"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateResponse",
+      "type": "object"
+    },
+    "DeleteFile": {
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Delete Owned File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Delete Owned File"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "GenerateImage": {
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Generate Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generation",
+          "x-display-name": "Generate Image"
+        },
+        "prompt": {
+          "description": "Image description. Generation may consume credits. Returns a provider image URL.",
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image model from the provider's image guide, or omit for its deployment default. List Chat Models does not list image models.",
+          "title": "Model"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A model-supported pixel size, e.g. 1024x1024.",
+          "title": "Size"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateImage",
+      "type": "object"
+    },
+    "GetBalance": {
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Get Credit Balance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Credit Balance"
+        }
+      },
+      "title": "GetBalance",
+      "type": "object"
+    },
+    "GetCapabilities": {
+      "properties": {
+        "operation": {
+          "const": "get_capabilities",
+          "default": "get_capabilities",
+          "title": "Get API Capabilities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get API Capabilities"
+        }
+      },
+      "title": "GetCapabilities",
+      "type": "object"
+    },
+    "GetFile": {
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File Metadata"
+        },
+        "file_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetModel": {
+      "properties": {
+        "operation": {
+          "const": "get_model",
+          "default": "get_model",
+          "title": "Get Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "Get Model"
+        },
+        "model_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "GetModel",
+      "type": "object"
+    },
+    "InsertKnowledgeBaseFile": {
+      "properties": {
+        "operation": {
+          "const": "insert_knowledge_base_file",
+          "default": "insert_knowledge_base_file",
+          "title": "Add File to Knowledge Base",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "Add File to Knowledge Base"
+        },
+        "kb_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Kb Id",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "An existing uploaded file ID, not a URL. Acknowledgement does not mean indexing has finished.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kb_id",
+        "file_id"
+      ],
+      "title": "InsertKnowledgeBaseFile",
+      "type": "object"
+    },
+    "ListFiles": {
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page from the previous result; one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Owned Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Owned Files"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListKnowledgeBaseFiles": {
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page from the previous result; one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_knowledge_base_files",
+          "default": "list_knowledge_base_files",
+          "title": "List Knowledge Base Insertions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "List Knowledge Base Insertions"
+        },
+        "kb_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Kb Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kb_id"
+      ],
+      "title": "ListKnowledgeBaseFiles",
+      "type": "object"
+    },
+    "ListKnowledgeBases": {
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page from the previous result; one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_knowledge_bases",
+          "default": "list_knowledge_bases",
+          "title": "List Knowledge Bases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "List Knowledge Bases"
+        }
+      },
+      "title": "ListKnowledgeBases",
+      "type": "object"
+    },
+    "ListModels": {
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "List Chat Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "List Chat Models"
+        }
+      },
+      "title": "ListModels",
+      "type": "object"
+    },
+    "QueryKnowledgeBase": {
+      "properties": {
+        "operation": {
+          "const": "query_knowledge_base",
+          "default": "query_knowledge_base",
+          "title": "Query Knowledge Base",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "Query Knowledge Base"
+        },
+        "kb_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Kb Id",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "top_k": {
+          "default": 10,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Top K",
+          "type": "integer"
+        },
+        "verbatim": {
+          "default": false,
+          "description": "Use plain-text lexical query parsing.",
+          "title": "Verbatim",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kb_id",
+        "query"
+      ],
+      "title": "QueryKnowledgeBase",
+      "type": "object"
+    },
+    "SearchKnowledgeBaseFiles": {
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Use next_page from the previous result; one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 25,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_knowledge_base_files",
+          "default": "search_knowledge_base_files",
+          "title": "Search Knowledge Base Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "Search Knowledge Base Files"
+        },
+        "q": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SearchKnowledgeBaseFiles",
+      "type": "object"
+    },
+    "SearchWeb": {
+      "properties": {
+        "operation": {
+          "const": "search_web",
+          "default": "search_web",
+          "title": "Search the Web",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search the Web"
+        },
+        "query": {
+          "description": "Search text. Search may consume credits.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "limit": {
+          "default": 5,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchWeb",
+      "type": "object"
+    },
+    "TextcortexAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "textcortex_api_key",
+          "default": "textcortex_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "TextCortex API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your TextCortex account's API settings, then paste the key here. NoClick sends it as a Bearer token to api.textcortex.com. Connecting reads your owned file list; generation and search can consume credits.",
+      "x-credential-url": "https://app.textcortex.com/user/settings/api"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_chat_completion": "#/$defs/CreateChatCompletion",
+          "create_response": "#/$defs/CreateResponse",
+          "delete_file": "#/$defs/DeleteFile",
+          "generate_image": "#/$defs/GenerateImage",
+          "get_balance": "#/$defs/GetBalance",
+          "get_capabilities": "#/$defs/GetCapabilities",
+          "get_file": "#/$defs/GetFile",
+          "get_model": "#/$defs/GetModel",
+          "insert_knowledge_base_file": "#/$defs/InsertKnowledgeBaseFile",
+          "list_files": "#/$defs/ListFiles",
+          "list_knowledge_base_files": "#/$defs/ListKnowledgeBaseFiles",
+          "list_knowledge_bases": "#/$defs/ListKnowledgeBases",
+          "list_models": "#/$defs/ListModels",
+          "query_knowledge_base": "#/$defs/QueryKnowledgeBase",
+          "search_knowledge_base_files": "#/$defs/SearchKnowledgeBaseFiles",
+          "search_web": "#/$defs/SearchWeb"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        },
+        {
+          "$ref": "#/$defs/ListKnowledgeBases"
+        },
+        {
+          "$ref": "#/$defs/SearchKnowledgeBaseFiles"
+        },
+        {
+          "$ref": "#/$defs/ListKnowledgeBaseFiles"
+        },
+        {
+          "$ref": "#/$defs/InsertKnowledgeBaseFile"
+        },
+        {
+          "$ref": "#/$defs/QueryKnowledgeBase"
+        },
+        {
+          "$ref": "#/$defs/GetBalance"
+        },
+        {
+          "$ref": "#/$defs/GetCapabilities"
+        },
+        {
+          "$ref": "#/$defs/ListModels"
+        },
+        {
+          "$ref": "#/$defs/GetModel"
+        },
+        {
+          "$ref": "#/$defs/CreateChatCompletion"
+        },
+        {
+          "$ref": "#/$defs/CreateResponse"
+        },
+        {
+          "$ref": "#/$defs/GenerateImage"
+        },
+        {
+          "$ref": "#/$defs/SearchWeb"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TextcortexAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Textcortex Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
