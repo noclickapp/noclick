@@ -1,0 +1,95 @@
+{
+  "upload_video": {
+    "config": {
+      "operation": "upload_video",
+      "video": "https://example.com/videos/myvideo.mp4",
+      "title": "Your Video Title",
+      "description": "Your video description",
+      "user": "test",
+      "platforms": [
+        "youtube"
+      ]
+    },
+    "source": "https://docs.upload-post.com/api/upload-video"
+  },
+  "upload_text": {
+    "config": {
+      "operation": "upload_text",
+      "user": "test",
+      "platforms": [
+        "x"
+      ],
+      "title": "This is my tweet content!"
+    },
+    "source": "https://docs.upload-post.com/api/upload-text"
+  },
+  "upload_document": {
+    "config": {
+      "operation": "upload_document",
+      "user": "your_profile",
+      "platforms": [
+        "linkedin"
+      ],
+      "document": "https://example.com/document.pdf",
+      "title": "My Presentation",
+      "description": "Check out this presentation!"
+    },
+    "source": "https://docs.upload-post.com/api/upload-document"
+  },
+  "edit_scheduled_post": {
+    "config": {
+      "operation": "edit_scheduled_post",
+      "job_id": "JOB_ID",
+      "title": "Updated title",
+      "caption": "Updated caption"
+    },
+    "source": "https://docs.upload-post.com/api/schedule-posts"
+  },
+  "update_queue_settings": {
+    "config": {
+      "operation": "update_queue_settings",
+      "profile_username": "my_profile",
+      "timezone": "Europe/Madrid",
+      "slots": [
+        {
+          "hour": 8,
+          "minute": 30
+        },
+        {
+          "hour": 13,
+          "minute": 0
+        },
+        {
+          "hour": 19,
+          "minute": 30
+        }
+      ],
+      "days_of_week": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "source": "https://docs.upload-post.com/api/queue-system"
+  },
+  "get_media": {
+    "config": {
+      "operation": "get_media",
+      "platform": "instagram",
+      "user": "my-profile"
+    },
+    "source": "https://docs.upload-post.com/api/instagram-media"
+  },
+  "get_comments": {
+    "config": {
+      "operation": "get_comments",
+      "platform": "instagram",
+      "user": "my-profile",
+      "post_id": "17890455123456789",
+      "limit": 50
+    },
+    "source": "https://docs.upload-post.com/api/comments"
+  }
+}
