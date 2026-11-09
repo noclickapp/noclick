@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/uniswap-api.svg",
+  "source": "https://raw.githubusercontent.com/Uniswap/interface/1f602ef0e4053145c44fc5cd64042d7182a902fd/apps/web/src/assets/svg/uniswap_app_logo.svg",
+  "license": "Uniswap trademark; official publisher asset used to identify the integration",
+  "sha256": "a1cfab6ff30dbca6afcaf56b767c3aaaeb9ee6253a2609639500ceef43ec91bf"
+}

@@ -1,0 +1,127 @@
+{
+  "requestId": "34784ef4-065a-4fa2-b77c-521f785fc068",
+  "routing": "CLASSIC",
+  "quote": {
+    "chainId": 1,
+    "input": {
+      "amount": "2516",
+      "token": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+    },
+    "output": {
+      "amount": "996320746321162",
+      "token": "0x0000000000000000000000000000000000000000",
+      "recipient": "0xC9bebBA9f481b12cE6f3EA54c4B182c9636ec421"
+    },
+    "swapper": "0xC9bebBA9f481b12cE6f3EA54c4B182c9636ec421",
+    "route": [
+      [
+        {
+          "type": "v4-pool",
+          "address": "0x599326d9cd5e1ea0893305c87d5ec3199e7f05e94d72159f35dea381479a615e",
+          "tokenIn": {
+            "chainId": 1,
+            "decimals": "8",
+            "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+            "symbol": "WBTC"
+          },
+          "tokenOut": {
+            "chainId": 1,
+            "decimals": "18",
+            "address": "0x0000000000000000000000000000000000000000",
+            "symbol": "ETH"
+          },
+          "fee": "500",
+          "tickSpacing": "10",
+          "hooks": "0x0000000000000000000000000000000000000000",
+          "liquidity": "82781860385007263",
+          "sqrtRatioX96": "125814565506407615477027",
+          "tickCurrent": "-267075",
+          "amountIn": "2516",
+          "amountOut": "993829944455359"
+        }
+      ]
+    ],
+    "slippage": 5.5,
+    "tradeType": "EXACT_INPUT",
+    "quoteId": "62e83902-9455-405d-8c62-cdf8ee9e2042",
+    "gasFeeUSD": "1.27511942409885062",
+    "gasFeeQuote": "489108586810000",
+    "gasUseEstimate": "180350",
+    "priceImpact": 0.14,
+    "txFailureReasons": [],
+    "maxPriorityFeePerGas": "2000000000",
+    "maxFeePerGas": "4656513686",
+    "gasFee": "489108586810000",
+    "routeString": "[V4] 100.00% = WBTC -- 0.05% [0x599326d9cd5e1ea0893305c87d5ec3199e7f05e94d72159f35dea381479a615e]ETH",
+    "blockNumber": "22483653",
+    "aggregatedOutputs": [
+      {
+        "amount": "993829944455360",
+        "token": "0x0000000000000000000000000000000000000000",
+        "recipient": "0xC9bebBA9f481b12cE6f3EA54c4B182c9636ec421",
+        "bps": 9975,
+        "minAmount": "993829944455360"
+      },
+      {
+        "amount": "2490801865802",
+        "token": "0x0000000000000000000000000000000000000000",
+        "recipient": "0x000000fee13a103A10D593b9AE06b3e05F2E7E1c",
+        "bps": 25,
+        "minAmount": "2490801865802",
+        "fee": "INTEGRATOR"
+      }
+    ]
+  },
+  "permitData": {
+    "domain": {
+      "name": "Permit2",
+      "chainId": 1,
+      "verifyingContract": "0x000000000022D473030F116dDEE9F6B43aC78BA3"
+    },
+    "types": {
+      "PermitSingle": [
+        {
+          "name": "details",
+          "type": "PermitDetails"
+        },
+        {
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "name": "sigDeadline",
+          "type": "uint256"
+        }
+      ],
+      "PermitDetails": [
+        {
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint160"
+        },
+        {
+          "name": "expiration",
+          "type": "uint48"
+        },
+        {
+          "name": "nonce",
+          "type": "uint48"
+        }
+      ]
+    },
+    "values": {
+      "details": {
+        "token": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "amount": "1461501637330902918203684832716283019655932542975",
+        "expiration": "1749845047",
+        "nonce": "1"
+      },
+      "spender": "0x66a9893cc07d91d95644aedd05d03f95e1dba8af",
+      "sigDeadline": "1747254847"
+    }
+  },
+  "permitTransaction": null
+}

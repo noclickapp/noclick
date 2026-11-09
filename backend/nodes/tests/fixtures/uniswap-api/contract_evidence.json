@@ -1,0 +1,39 @@
+{
+  "manifest": {
+    "file": "api.json",
+    "sha256": "75d1bbb15cd3e8644f95cd603f6a315ecf9f736e35a389c5f3e75567c0a88bcb",
+    "version": "1.0.0",
+    "source_url": "https://trade-api.gateway.uniswap.org/v1/api.json",
+    "node_type": "automation-uniswap-api",
+    "credential": {
+      "credential_type": "uniswap_api_key",
+      "api_key": "<token>"
+    }
+  },
+  "spec_defects": [
+    {
+      "operations": [
+        "get_quote",
+        "create_swap"
+      ],
+      "kind": "d",
+      "description": "The published ClassicQuote, BridgeQuote and WrapUnwrapQuote schemas have no required discriminator and permit additional properties. The provider-authored classic quote example matches multiple oneOf alternatives, so OpenAPI validation rejects both QuoteSuccess200 and the unmodified /swap request example. The node preserves the documented payload; its editor uses inclusive unions for these overlapping variants.",
+      "docs": [
+        "https://developers.uniswap.org/docs/api-reference/aggregator_quote",
+        "https://developers.uniswap.org/docs/api-reference/create_swap_transaction",
+        "https://trade-api.gateway.uniswap.org/v1/api.json"
+      ]
+    },
+    {
+      "operations": [
+        "get_quote"
+      ],
+      "kind": "d",
+      "description": "QuoteSuccess200 includes permitTransaction: null in its published response example, but permitTransaction is an object without nullable:true. Node test preserves the provider example including null.",
+      "docs": [
+        "https://developers.uniswap.org/docs/api-reference/aggregator_quote",
+        "https://trade-api.gateway.uniswap.org/v1/api.json"
+      ]
+    }
+  ]
+}
