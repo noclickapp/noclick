@@ -1,0 +1,981 @@
+{
+  "$defs": {
+    "CreateAccount": {
+      "additionalProperties": false,
+      "description": "Create account.",
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateAccount",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateIssue": {
+      "additionalProperties": false,
+      "description": "Create an internal issue and first note without messaging a customer.",
+      "properties": {
+        "operation": {
+          "const": "create_issue",
+          "default": "create_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body_html": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body Html",
+          "type": "string"
+        },
+        "account_id": {
+          "description": "Account for this internal issue. No destination is sent, so the first message is an internal note.",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "urgent",
+                "high",
+                "medium",
+                "low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "urgent",
+            "high",
+            "medium",
+            "low"
+          ],
+          "x-enum-searchable": true
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Team Id"
+        }
+      },
+      "required": [
+        "title",
+        "body_html",
+        "account_id"
+      ],
+      "title": "CreateIssue",
+      "type": "object"
+    },
+    "CreateIssueNote": {
+      "additionalProperties": false,
+      "description": "Post an internal note that is not visible to the requester.",
+      "properties": {
+        "operation": {
+          "const": "create_issue_note",
+          "default": "create_issue_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "body_html": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body Html",
+          "type": "string"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal thread ID. When omitted, Pylon selects or creates an internal thread.",
+          "title": "Thread Id"
+        }
+      },
+      "required": [
+        "issue_id",
+        "body_html"
+      ],
+      "title": "CreateIssueNote",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "description": "Create tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "value": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "object_type": {
+          "enum": [
+            "account",
+            "article",
+            "issue"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        },
+        "hex_color": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hex Color"
+        }
+      },
+      "required": [
+        "value",
+        "object_type"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Get account.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_id": {
+          "title": "Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Get contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetIssue": {
+      "additionalProperties": false,
+      "description": "Get issue.",
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "title": "Issue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "GetIssue",
+      "type": "object"
+    },
+    "GetMe": {
+      "additionalProperties": false,
+      "description": "Identify the organization and API token user.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "description": "Get tag.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Get user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "description": "List accounts.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_cursor from a previous result; leave empty for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of records to request in this page.",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_cursor from a previous result; leave empty for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of records to request in this page.",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListIssueMessages": {
+      "additionalProperties": false,
+      "description": "List issue messages.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_cursor from a previous result; leave empty for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of records to request in this page.",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_issue_messages",
+          "default": "list_issue_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "title": "Issue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "ListIssueMessages",
+      "type": "object"
+    },
+    "ListIssueStatuses": {
+      "additionalProperties": false,
+      "description": "List issue statuses.",
+      "properties": {
+        "operation": {
+          "const": "list_issue_statuses",
+          "default": "list_issue_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListIssueStatuses",
+      "type": "object"
+    },
+    "ListIssues": {
+      "additionalProperties": false,
+      "description": "List issues.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_cursor from a previous result; leave empty for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of records to request in this page.",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_time": {
+          "description": "Inclusive created_at boundary, RFC3339 with timezone.",
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "Exclusive created_at boundary; at most 365 days after start_time.",
+          "format": "date-time",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time"
+      ],
+      "title": "ListIssues",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "List tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "description": "List teams.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_deactivated": {
+          "default": false,
+          "title": "Include Deactivated",
+          "type": "boolean"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "PylonAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "pylon_1_api_token",
+          "default": "pylon_1_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "US",
+          "description": "Region hosting your Pylon tenant.",
+          "enum": [
+            "US",
+            "EU"
+          ],
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Pylon API Token",
+      "type": "object",
+      "x-credential-instructions": "An Admin creates a token in Settings > Integrations & dev > API tokens. Paste the token and select your tenant region. Its role controls access; Pylon API tokens have no separate scopes. NoClick checks /me to identify the connected organization.",
+      "x-credential-url": "https://app.usepylon.com/settings/api-tokens"
+    },
+    "ReplyIssue": {
+      "additionalProperties": false,
+      "description": "Send a customer-facing reply to the selected existing conversation.",
+      "properties": {
+        "operation": {
+          "const": "reply_issue",
+          "default": "reply_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "Top-level Pylon message ID from list_issue_messages, identifying the customer-visible conversation.",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "body_html": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body Html",
+          "type": "string"
+        },
+        "to_emails": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For an email conversation, provide at least one recipient; recipients are not inferred from the referenced message.",
+          "title": "To Emails"
+        }
+      },
+      "required": [
+        "issue_id",
+        "message_id",
+        "body_html"
+      ],
+      "title": "ReplyIssue",
+      "type": "object"
+    },
+    "UpdateAccount": {
+      "additionalProperties": false,
+      "description": "Update the account name.",
+      "properties": {
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_id": {
+          "title": "Account Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "name"
+      ],
+      "title": "UpdateAccount",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update the contact name.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "name"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateIssue": {
+      "additionalProperties": false,
+      "description": "Update issue.",
+      "properties": {
+        "operation": {
+          "const": "update_issue",
+          "default": "update_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Standard or custom status slug, for example closed or waiting_on_customer.",
+          "title": "State"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Team Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces all issue tags with this exact list; an empty list clears tags.",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "UpdateIssue",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_account": "#/$defs/CreateAccount",
+          "create_contact": "#/$defs/CreateContact",
+          "create_issue": "#/$defs/CreateIssue",
+          "create_issue_note": "#/$defs/CreateIssueNote",
+          "create_tag": "#/$defs/CreateTag",
+          "get_account": "#/$defs/GetAccount",
+          "get_contact": "#/$defs/GetContact",
+          "get_issue": "#/$defs/GetIssue",
+          "get_me": "#/$defs/GetMe",
+          "get_tag": "#/$defs/GetTag",
+          "get_user": "#/$defs/GetUser",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_issue_messages": "#/$defs/ListIssueMessages",
+          "list_issue_statuses": "#/$defs/ListIssueStatuses",
+          "list_issues": "#/$defs/ListIssues",
+          "list_tags": "#/$defs/ListTags",
+          "list_teams": "#/$defs/ListTeams",
+          "list_users": "#/$defs/ListUsers",
+          "reply_issue": "#/$defs/ReplyIssue",
+          "update_account": "#/$defs/UpdateAccount",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_issue": "#/$defs/UpdateIssue"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/ListIssues"
+        },
+        {
+          "$ref": "#/$defs/GetIssue"
+        },
+        {
+          "$ref": "#/$defs/CreateIssue"
+        },
+        {
+          "$ref": "#/$defs/UpdateIssue"
+        },
+        {
+          "$ref": "#/$defs/ListIssueMessages"
+        },
+        {
+          "$ref": "#/$defs/CreateIssueNote"
+        },
+        {
+          "$ref": "#/$defs/ReplyIssue"
+        },
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/CreateAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateAccount"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/ListIssueStatuses"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PylonAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pylon-1 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
