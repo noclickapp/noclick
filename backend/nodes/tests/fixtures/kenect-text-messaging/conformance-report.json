@@ -1,0 +1,646 @@
+[
+  {
+    "provider": "kenect-text-messaging",
+    "node_type": "automation-kenect-text-messaging",
+    "checked": 15,
+    "passed": 15,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 15,
+    "auth_checked": 15,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 15,
+      "total": 35
+    },
+    "operations": [
+      {
+        "operation": "list_locations",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/locations?organizationId=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/locations",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "212ccf53a0292711a3d4b5481d1beca590f4b12b735222a93edab026858411ba"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_locations",
+          "organizationId": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_users",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/users?filterByLocationId=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/users",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "8aa4161b0b7865f1c9d9492926c68542a01e55823189723336025c3710637015"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_users",
+          "filterByLocationId": false
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_user",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/users/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/users/{userId}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f65a3a640ea78a21a767e366ff9993cfc074fd807102dae3acc5b274c0c53805"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_user",
+          "userId": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_leads",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/lead?limit=100&offset=0&startDate=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/lead",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 100,
+          "offset": 0,
+          "operation": "list_leads",
+          "startDate": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_broadcast_messages",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/broadcast-messages?beginAt=1&endAt=1&pageSize=100&page=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/broadcast-messages",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "88ea276a03027070e9454dc689837f9941f8a75d337f9dfd3a3901b8bdcb1241"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "beginAt": "1",
+          "endAt": "1",
+          "operation": "list_broadcast_messages",
+          "pageSize": 100,
+          "page": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_conversations",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/messages?beginAt=1&endAt=1&limit=100&offset=0",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/messages",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2e8b7ba70b3ff8ca050118e171d55921bbaa73935f47aed4b5fab381b656ad45"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "beginAt": "1",
+          "endAt": "1",
+          "limit": 100,
+          "offset": 0,
+          "operation": "list_conversations"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_messages_by_phone",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/messages/by-phone-number?limit=100&offset=0&phoneNumber=a",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/messages/by-phone-number",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "378f2c3ec95290f18803d88a36891aefd186d8a0b379179a1828aca70e9a8782"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 100,
+          "offset": 0,
+          "operation": "list_messages_by_phone",
+          "phoneNumber": "a"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_conversation_by_phone",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/messages/conversations/by-phone-number?limit=100&offset=0&phoneNumber=a",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/messages/conversations/by-phone-number",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f2ff9a75f2d56b147bb1817a7fa27f504cf169401c1a4d7486aab0ab41e61148"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 100,
+          "offset": 0,
+          "operation": "get_conversation_by_phone",
+          "phoneNumber": "a"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_conversations_by_contact",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/messages/conversations/by-contact-external-id?limit=100&offset=0&contactExternalId=a",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/messages/conversations/by-contact-external-id",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2e8b7ba70b3ff8ca050118e171d55921bbaa73935f47aed4b5fab381b656ad45"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 100,
+          "offset": 0,
+          "operation": "list_conversations_by_contact",
+          "contactExternalId": "a"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_attachment_info",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://integrations-api.kenect.com/api/v1/messages/attachment-info?attachmentId=1&messageId=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /api/v1/messages/attachment-info",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "662f2aeab2916e8e1b304022767b652d88d4683ae753e940b4b1652452e7985d"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_attachment_info",
+          "attachmentId": 1,
+          "messageId": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "send_message",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://integrations-api.kenect.com/api/v1/messages",
+            "content_type": "application/json",
+            "body": "{\"contactPhone\":\"a\",\"messageBody\":\"a\",\"contactName\":\"1\",\"externalContactId\":\"1\",\"sentByUserEmail\":\"1\",\"attachments\":[{\"name\":\"a\"}]}",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json",
+              "content-length": "131",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/messages",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "fc37d94d2ac7c9c7c54a70d5362dc7e959e567d12375216fb313a55336fe986f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "send_message",
+          "contactPhone": "a",
+          "messageBody": "a",
+          "contactName": "1",
+          "externalContactId": "1",
+          "sentByUserEmail": "1",
+          "attachments": [
+            {
+              "name": "a"
+            }
+          ]
+        },
+        "passed": true
+      },
+      {
+        "operation": "send_review_request",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://integrations-api.kenect.com/api/v1/reviews/review-request",
+            "content_type": "application/json",
+            "body": "{\"phoneNumber\":\"a\",\"messageBody\":\"a\",\"externalContactId\":\"1\",\"firstName\":\"1\",\"lastName\":\"1\",\"email\":\"1\"}",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json",
+              "content-length": "104",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/reviews/review-request",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "a0dbaaada483e22eb5f239a8e3ffce5ce0810ae84d53702e8c5cbcc16d20d286"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "send_review_request",
+          "phoneNumber": "a",
+          "messageBody": "a",
+          "externalContactId": "1",
+          "firstName": "1",
+          "lastName": "1",
+          "email": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_lead",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://integrations-api.kenect.com/api/v1/lead",
+            "content_type": "application/json",
+            "body": "{\"partnerLeadId\":\"a\",\"firstName\":\"a\",\"lastName\":\"a\",\"phoneNumber\":\"a\",\"email\":\"1\",\"inquiryText\":\"1\",\"attachments\":[{\"name\":\"a\"}]}",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json",
+              "content-length": "129",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/lead",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "a0a0609800a8d91c2e73aa995ead574379fa883b43f791f011dbb41d3d423eb3"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_lead",
+          "partnerLeadId": "a",
+          "firstName": "a",
+          "lastName": "a",
+          "phoneNumber": "a",
+          "email": "1",
+          "inquiryText": "1",
+          "attachments": [
+            {
+              "name": "a"
+            }
+          ]
+        },
+        "passed": true
+      },
+      {
+        "operation": "notify_event",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://integrations-api.kenect.com/api/v1/events/notify",
+            "content_type": "application/json",
+            "body": "{\"eventName\":\"a\",\"phone\":\"a\",\"recordId\":\"a\",\"assignedUserEmail\":\"1\",\"externalContactId\":\"1\",\"eventData\":{}}",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json",
+              "content-length": "107",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/events/notify",
+            "security_declared": true,
+            "response_status": 202,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "notify_event",
+          "eventName": "a",
+          "phone": "a",
+          "recordId": "a",
+          "assignedUserEmail": "1",
+          "externalContactId": "1",
+          "eventData": {}
+        },
+        "passed": true
+      },
+      {
+        "operation": "sync_contacts",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://integrations-api.kenect.com/api/v1/contact/batch",
+            "content_type": "application/json",
+            "body": "{\"contacts\":[{\"firstName\":\"1\",\"lastName\":\"1\",\"mobilePhone\":\"a\",\"externalId\":\"a\",\"primaryEmail\":\"1\",\"birthday\":1,\"contactPhones\":[\"1\"],\"addressLine1\":\"1\",\"addressLine2\":\"1\",\"city\":\"1\",\"state\":\"1\",\"zipCode\":\"1\"}],\"totalCount\":1}",
+            "auth_placement": null,
+            "headers": {
+              "host": "integrations-api.kenect.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-api-key": "conformance-fake-token",
+              "x-api-secret": "conformance-fake-token",
+              "x-location-id": "24685",
+              "accept": "application/json",
+              "content-length": "226",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /api/v1/contact/batch",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "sync_contacts",
+          "contacts": [
+            {
+              "firstName": "1",
+              "lastName": "1",
+              "mobilePhone": "a",
+              "externalId": "a",
+              "primaryEmail": "1",
+              "birthday": 1,
+              "contactPhones": [
+                "1"
+              ],
+              "addressLine1": "1",
+              "addressLine2": "1",
+              "city": "1",
+              "state": "1",
+              "zipCode": "1"
+            }
+          ],
+          "totalCount": 1
+        },
+        "passed": true
+      }
+    ]
+  }
+]

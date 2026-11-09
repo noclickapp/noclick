@@ -1,0 +1,1013 @@
+{
+  "$defs": {
+    "Attachment": {
+      "properties": {
+        "name": {
+          "description": "The path returned by Kenect's pre-sign API after uploading the attachment.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Attachment",
+      "type": "object"
+    },
+    "Contact": {
+      "properties": {
+        "firstName": {
+          "title": "First Name",
+          "type": "string"
+        },
+        "lastName": {
+          "title": "Last Name",
+          "type": "string"
+        },
+        "mobilePhone": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Mobile Phone",
+          "type": "string"
+        },
+        "externalId": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "External ID",
+          "type": "string"
+        },
+        "primaryEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Email"
+        },
+        "birthday": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in milliseconds.",
+          "title": "Birthday"
+        },
+        "contactPhones": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Phones"
+        },
+        "addressLine1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line1"
+        },
+        "addressLine2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zipCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip Code"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "mobilePhone",
+        "externalId"
+      ],
+      "title": "Contact",
+      "type": "object"
+    },
+    "CreateLead": {
+      "description": "Submit a lead with an external lead ID for Kenect.",
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partnerLeadId": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Partner Lead ID",
+          "type": "string"
+        },
+        "firstName": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "First Name",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "phoneNumber": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "inquiryText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inquiry Text"
+        },
+        "attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachments"
+        }
+      },
+      "required": [
+        "partnerLeadId",
+        "firstName",
+        "lastName",
+        "phoneNumber"
+      ],
+      "title": "CreateLead",
+      "type": "object"
+    },
+    "GetAttachmentInfo": {
+      "description": "Read attachment metadata; this operation does not download its URL.",
+      "properties": {
+        "operation": {
+          "const": "get_attachment_info",
+          "default": "get_attachment_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "attachmentId": {
+          "minimum": 1,
+          "title": "Attachment ID",
+          "type": "integer"
+        },
+        "messageId": {
+          "minimum": 1,
+          "title": "Message ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "attachmentId",
+        "messageId"
+      ],
+      "title": "GetAttachmentInfo",
+      "type": "object"
+    },
+    "GetConversationByPhone": {
+      "description": "Get a conversation and one page of its messages by phone number.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; run again with a larger offset for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_conversation_by_phone",
+          "default": "get_conversation_by_phone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumber": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Phone Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phoneNumber"
+      ],
+      "title": "GetConversationByPhone",
+      "type": "object"
+    },
+    "GetUser": {
+      "description": "Get a Kenect user by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "userId": {
+          "minimum": 1,
+          "title": "User ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "userId"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "KenectAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kenect_text_messaging_api_key",
+          "default": "kenect_text_messaging_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "kenect_location_id": {
+          "description": "The numeric Kenect location ID, sent as X-Location-Id.",
+          "maxLength": 30,
+          "pattern": "^[0-9]+$",
+          "title": "Kenect location ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret",
+        "kenect_location_id"
+      ],
+      "title": "Kenect Text Messaging API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Kenect integration API key, API secret and Kenect location ID. Obtain these from your Kenect integration administrator. NoClick sends X-Api-Key, X-Api-Secret and X-Location-Id to the Kenect Integrations API. Connecting reads the locations authorized for your key.",
+      "x-credential-url": "https://integrations-api.kenect.com/q/openapi"
+    },
+    "ListBroadcastMessages": {
+      "description": "Read one page of broadcast messages.",
+      "properties": {
+        "beginAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Messages sent since this timestamp, e.g. 2022-01-01T00:00:00Z.",
+          "title": "Begin At"
+        },
+        "endAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Messages sent until this timestamp.",
+          "title": "End At"
+        },
+        "operation": {
+          "const": "list_broadcast_messages",
+          "default": "list_broadcast_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pageSize": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListBroadcastMessages",
+      "type": "object"
+    },
+    "ListConversations": {
+      "description": "Read one page of conversations in the selected location.",
+      "properties": {
+        "beginAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Messages sent since this timestamp, e.g. 2022-01-01T00:00:00Z.",
+          "title": "Begin At"
+        },
+        "endAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Messages sent until this timestamp.",
+          "title": "End At"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; run again with a larger offset for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListConversations",
+      "type": "object"
+    },
+    "ListConversationsByContact": {
+      "description": "Read conversations by the contact ID in your external system.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; run again with a larger offset for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_conversations_by_contact",
+          "default": "list_conversations_by_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactExternalId": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Contact External ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactExternalId"
+      ],
+      "title": "ListConversationsByContact",
+      "type": "object"
+    },
+    "ListLeads": {
+      "description": "Read one page of leads; Kenect defaults to the past seven days.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; run again with a larger offset for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        }
+      },
+      "title": "ListLeads",
+      "type": "object"
+    },
+    "ListLocations": {
+      "description": "List active locations authorized for the integration key.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organizationId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization ID"
+        }
+      },
+      "title": "ListLocations",
+      "type": "object"
+    },
+    "ListMessagesByPhone": {
+      "description": "Read a page of messages for a contact's phone number.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; run again with a larger offset for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_messages_by_phone",
+          "default": "list_messages_by_phone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumber": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Phone Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phoneNumber"
+      ],
+      "title": "ListMessagesByPhone",
+      "type": "object"
+    },
+    "ListUsers": {
+      "description": "List organization users, optionally restricted to the credential location.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filterByLocationId": {
+          "default": false,
+          "title": "Filter By Location ID",
+          "type": "boolean"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "NotifyEvent": {
+      "description": "Queue an event previously configured in Kenect for automated messaging.",
+      "properties": {
+        "operation": {
+          "const": "notify_event",
+          "default": "notify_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "eventName": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Event Name",
+          "type": "string"
+        },
+        "phone": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Phone",
+          "type": "string"
+        },
+        "recordId": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "assignedUserEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned User Email"
+        },
+        "externalContactId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Contact ID"
+        },
+        "eventData": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Data"
+        }
+      },
+      "required": [
+        "eventName",
+        "phone",
+        "recordId"
+      ],
+      "title": "NotifyEvent",
+      "type": "object"
+    },
+    "SendMessage": {
+      "description": "Send a custom text message with optional already-uploaded attachments.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactPhone": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Contact Phone",
+          "type": "string"
+        },
+        "messageBody": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message Body",
+          "type": "string"
+        },
+        "contactName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Name"
+        },
+        "externalContactId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Contact ID"
+        },
+        "sentByUserEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sent By User Email"
+        },
+        "attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachments"
+        }
+      },
+      "required": [
+        "contactPhone",
+        "messageBody"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "SendReviewRequest": {
+      "description": "Send a review request using the current, non-deprecated review endpoint.",
+      "properties": {
+        "operation": {
+          "const": "send_review_request",
+          "default": "send_review_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumber": {
+          "description": "North American or international phone number, e.g. +15555555555.",
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "messageBody": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message Body",
+          "type": "string"
+        },
+        "externalContactId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Contact ID"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "phoneNumber",
+        "messageBody"
+      ],
+      "title": "SendReviewRequest",
+      "type": "object"
+    },
+    "SyncContacts": {
+      "description": "Send a batch of up to 500 contacts to Kenect.",
+      "properties": {
+        "operation": {
+          "const": "sync_contacts",
+          "default": "sync_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Contacts",
+          "type": "array"
+        },
+        "totalCount": {
+          "description": "Total contacts in the sync, possibly larger than this batch.",
+          "minimum": 1,
+          "title": "Total Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contacts",
+        "totalCount"
+      ],
+      "title": "SyncContacts",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_lead": "#/$defs/CreateLead",
+          "get_attachment_info": "#/$defs/GetAttachmentInfo",
+          "get_conversation_by_phone": "#/$defs/GetConversationByPhone",
+          "get_user": "#/$defs/GetUser",
+          "list_broadcast_messages": "#/$defs/ListBroadcastMessages",
+          "list_conversations": "#/$defs/ListConversations",
+          "list_conversations_by_contact": "#/$defs/ListConversationsByContact",
+          "list_leads": "#/$defs/ListLeads",
+          "list_locations": "#/$defs/ListLocations",
+          "list_messages_by_phone": "#/$defs/ListMessagesByPhone",
+          "list_users": "#/$defs/ListUsers",
+          "notify_event": "#/$defs/NotifyEvent",
+          "send_message": "#/$defs/SendMessage",
+          "send_review_request": "#/$defs/SendReviewRequest",
+          "sync_contacts": "#/$defs/SyncContacts"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListLocations"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListLeads"
+        },
+        {
+          "$ref": "#/$defs/ListBroadcastMessages"
+        },
+        {
+          "$ref": "#/$defs/ListConversations"
+        },
+        {
+          "$ref": "#/$defs/ListMessagesByPhone"
+        },
+        {
+          "$ref": "#/$defs/GetConversationByPhone"
+        },
+        {
+          "$ref": "#/$defs/ListConversationsByContact"
+        },
+        {
+          "$ref": "#/$defs/GetAttachmentInfo"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/SendReviewRequest"
+        },
+        {
+          "$ref": "#/$defs/CreateLead"
+        },
+        {
+          "$ref": "#/$defs/NotifyEvent"
+        },
+        {
+          "$ref": "#/$defs/SyncContacts"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KenectAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kenect-text-messaging Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
