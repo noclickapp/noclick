@@ -1,0 +1,842 @@
+{
+  "$defs": {
+    "CreateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Create a subfolder in the selected parent folder.",
+      "properties": {
+        "folder_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 165,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "title"
+      ],
+      "title": "CreateFolderConfig",
+      "type": "object"
+    },
+    "CreateRoomConfig": {
+      "additionalProperties": false,
+      "description": "Create a room with a title and room type.",
+      "properties": {
+        "operation": {
+          "const": "create_room",
+          "default": "create_room",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rooms",
+          "x-display-name": "Create Room",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 170,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "room_type": {
+          "default": "EditingRoom",
+          "description": "Room type. EditingRoom is a collaboration room.",
+          "enum": [
+            "FillingFormsRoom",
+            "EditingRoom",
+            "CustomRoom",
+            "PublicRoom",
+            "VirtualDataRoom",
+            "AiRoom"
+          ],
+          "enumNames": [
+            "Form filling",
+            "Collaboration",
+            "Custom",
+            "Public",
+            "Virtual data",
+            "AI"
+          ],
+          "title": "Room Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateRoomConfig",
+      "type": "object"
+    },
+    "CreateTextFileConfig": {
+      "additionalProperties": false,
+      "description": "Create a text file in My documents.",
+      "properties": {
+        "operation": {
+          "const": "create_text_file",
+          "default": "create_text_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Create Text File",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 165,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 1000000,
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "create_new_if_exist": {
+          "default": true,
+          "description": "Create another file when its title already exists.",
+          "title": "Create New If Exist",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title",
+        "content"
+      ],
+      "title": "CreateTextFileConfig",
+      "type": "object"
+    },
+    "GetFileConfig": {
+      "additionalProperties": false,
+      "description": "Read file metadata by ID.",
+      "properties": {
+        "file_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "File ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFileConfig",
+      "type": "object"
+    },
+    "GetFolderConfig": {
+      "additionalProperties": false,
+      "description": "Read folder metadata by ID.",
+      "properties": {
+        "folder_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Get Folder",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolderConfig",
+      "type": "object"
+    },
+    "GetFolderPathConfig": {
+      "additionalProperties": false,
+      "description": "Read the parent path of a folder.",
+      "properties": {
+        "folder_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_folder_path",
+          "default": "get_folder_path",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Get Folder Path",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolderPathConfig",
+      "type": "object"
+    },
+    "GetProfileConfig": {
+      "additionalProperties": false,
+      "description": "Read the currently authenticated user profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Get Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetProfileConfig",
+      "type": "object"
+    },
+    "GetRoomConfig": {
+      "additionalProperties": false,
+      "description": "Read room metadata by ID.",
+      "properties": {
+        "room_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Room ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_room",
+          "default": "get_room",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rooms",
+          "x-display-name": "Get Room",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "room_id"
+      ],
+      "title": "GetRoomConfig",
+      "type": "object"
+    },
+    "ListFileAccessConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of file access rights.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "file_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "File ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_file_access",
+          "default": "list_file_access",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "List File Access",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ListFileAccessConfig",
+      "type": "object"
+    },
+    "ListFileHistoryConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of actions performed on a file.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "file_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "File ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_file_history",
+          "default": "list_file_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List File History",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ListFileHistoryConfig",
+      "type": "object"
+    },
+    "ListFileVersionsConfig": {
+      "additionalProperties": false,
+      "description": "Read the versions of a file.",
+      "properties": {
+        "file_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "File ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_file_versions",
+          "default": "list_file_versions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List File Versions",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ListFileVersionsConfig",
+      "type": "object"
+    },
+    "ListFolderAccessConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of folder access rights.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "folder_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_folder_access",
+          "default": "list_folder_access",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "List Folder Access",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ListFolderAccessConfig",
+      "type": "object"
+    },
+    "ListFolderContentsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of files and subfolders in a folder.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "folder_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_folder_contents",
+          "default": "list_folder_contents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "List Folder Contents",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ListFolderContentsConfig",
+      "type": "object"
+    },
+    "ListMyDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of files and folders in My documents.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_my_documents",
+          "default": "list_my_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "List My Documents",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListMyDocumentsConfig",
+      "type": "object"
+    },
+    "ListRoomAccessConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of room access rights.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "room_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Room ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_room_access",
+          "default": "list_room_access",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "List Room Access",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "room_id"
+      ],
+      "title": "ListRoomAccessConfig",
+      "type": "object"
+    },
+    "ListRoomsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of rooms visible to the connected account.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_rooms",
+          "default": "list_rooms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rooms",
+          "x-display-name": "List Rooms",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListRoomsConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of portal user profiles.",
+      "properties": {
+        "count": {
+          "default": 50,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "description": "Zero-based page offset; advance by the number of returned items.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "OnlyofficeDocspaceTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "onlyoffice_docspace_token",
+          "default": "onlyoffice_docspace_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "base_url": {
+          "description": "Your portal HTTPS origin, for example https://yourportal.onlyoffice.com, without an API path.",
+          "title": "DocSpace portal URL",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "base_url",
+        "access_token"
+      ],
+      "title": "ONLYOFFICE DocSpace Token",
+      "type": "object",
+      "x-credential-instructions": "Enter your DocSpace portal HTTPS URL and paste an existing personal access token. Obtain the token using the provider's authentication instructions. NoClick sends it as a Bearer token to this portal; it does not collect your password or create or renew tokens. The account must have permission for the selected operation.",
+      "x-credential-url": "https://api.onlyoffice.com/docspace/api-backend/get-started/authentication/personal-access-tokens/"
+    },
+    "RenameFileConfig": {
+      "additionalProperties": false,
+      "description": "Change a file title.",
+      "properties": {
+        "file_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "File ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "rename_file",
+          "default": "rename_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Rename File",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 165,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "title"
+      ],
+      "title": "RenameFileConfig",
+      "type": "object"
+    },
+    "RenameFolderConfig": {
+      "additionalProperties": false,
+      "description": "Change a folder title.",
+      "properties": {
+        "folder_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "rename_folder",
+          "default": "rename_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Rename Folder",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 165,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "title"
+      ],
+      "title": "RenameFolderConfig",
+      "type": "object"
+    },
+    "RenameRoomConfig": {
+      "additionalProperties": false,
+      "description": "Change a room title.",
+      "properties": {
+        "room_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Room ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "rename_room",
+          "default": "rename_room",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rooms",
+          "x-display-name": "Rename Room",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 170,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "room_id",
+        "title"
+      ],
+      "title": "RenameRoomConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_folder": "#/$defs/CreateFolderConfig",
+          "create_room": "#/$defs/CreateRoomConfig",
+          "create_text_file": "#/$defs/CreateTextFileConfig",
+          "get_file": "#/$defs/GetFileConfig",
+          "get_folder": "#/$defs/GetFolderConfig",
+          "get_folder_path": "#/$defs/GetFolderPathConfig",
+          "get_profile": "#/$defs/GetProfileConfig",
+          "get_room": "#/$defs/GetRoomConfig",
+          "list_file_access": "#/$defs/ListFileAccessConfig",
+          "list_file_history": "#/$defs/ListFileHistoryConfig",
+          "list_file_versions": "#/$defs/ListFileVersionsConfig",
+          "list_folder_access": "#/$defs/ListFolderAccessConfig",
+          "list_folder_contents": "#/$defs/ListFolderContentsConfig",
+          "list_my_documents": "#/$defs/ListMyDocumentsConfig",
+          "list_room_access": "#/$defs/ListRoomAccessConfig",
+          "list_rooms": "#/$defs/ListRoomsConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "rename_file": "#/$defs/RenameFileConfig",
+          "rename_folder": "#/$defs/RenameFolderConfig",
+          "rename_room": "#/$defs/RenameRoomConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMyDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListRoomsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetRoomConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateRoomConfig"
+        },
+        {
+          "$ref": "#/$defs/RenameRoomConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFolderContentsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/RenameFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFolderPathConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/RenameFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFileVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFileHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTextFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListRoomAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFileAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFolderAccessConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OnlyofficeDocspaceTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Onlyoffice-docspace Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
