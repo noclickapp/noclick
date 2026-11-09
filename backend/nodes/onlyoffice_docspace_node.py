@@ -18,8 +18,8 @@ NODE_TYPE = "automation-onlyoffice-docspace"
 class OnlyofficeDocspaceTokenCredential(BaseModel):
     model_config = ConfigDict(title="ONLYOFFICE DocSpace Token", hide_input_in_errors=True,
         json_schema_extra={
-            "x-credential-url": "https://api.onlyoffice.com/docspace/api-backend/get-started/authentication/personal-access-tokens/",
-            "x-credential-instructions": "Enter your DocSpace portal HTTPS URL and paste an existing personal access token. Obtain the token using the provider's authentication instructions. NoClick sends it as a Bearer token to this portal; it does not collect your password or create or renew tokens. The account must have permission for the selected operation."})
+            "x-credential-url": "https://api.onlyoffice.com/docspace/",
+            "x-credential-instructions": "Enter your DocSpace portal HTTPS URL and paste an existing personal access token. In the linked documentation, open Backend, Get started, Authentication, then Personal access tokens for token instructions. NoClick sends it as a Bearer token to this portal; it does not collect your password or create or renew tokens. The account must have permission for the selected operation."})
     credential_type: Literal["onlyoffice_docspace_token"] = Field("onlyoffice_docspace_token", json_schema_extra={"ui:hidden": True})
     base_url: str = Field(..., title="DocSpace portal URL", description="Your portal HTTPS origin, for example https://yourportal.onlyoffice.com, without an API path.")
     access_token: str = Field(..., min_length=1, max_length=8192, title="Personal access token", json_schema_extra={"ui:widget": "password"})

@@ -621,8 +621,8 @@
       ],
       "title": "ONLYOFFICE DocSpace Token",
       "type": "object",
-      "x-credential-instructions": "Enter your DocSpace portal HTTPS URL and paste an existing personal access token. Obtain the token using the provider's authentication instructions. NoClick sends it as a Bearer token to this portal; it does not collect your password or create or renew tokens. The account must have permission for the selected operation.",
-      "x-credential-url": "https://api.onlyoffice.com/docspace/api-backend/get-started/authentication/personal-access-tokens/"
+      "x-credential-instructions": "Enter your DocSpace portal HTTPS URL and paste an existing personal access token. In the linked documentation, open Backend, Get started, Authentication, then Personal access tokens for token instructions. NoClick sends it as a Bearer token to this portal; it does not collect your password or create or renew tokens. The account must have permission for the selected operation.",
+      "x-credential-url": "https://api.onlyoffice.com/docspace/"
     },
     "RenameFileConfig": {
       "additionalProperties": false,

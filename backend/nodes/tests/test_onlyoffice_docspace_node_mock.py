@@ -60,7 +60,7 @@ CASES = [
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("config,method,path,body", CASES, ids=[c[0]["operation"] for c in CASES])
+@pytest.mark.parametrize("config,method,path,body", CASES, ids=["onlyoffice-docspace-" + c[0]["operation"] for c in CASES])
 async def test_onlyoffice_docspace_exact_contract_requests(monkeypatch, config, method, path, body):
     calls = transport(monkeypatch, {"response": {"files": [], "folders": [{"id": 9846, "title": "Team"}]}})
     result = await node(config).execute({})
