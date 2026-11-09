@@ -1,0 +1,622 @@
+[
+  {
+    "operation": "get_current_user",
+    "config": {
+      "operation": "get_current_user"
+    },
+    "method": "GET",
+    "path": "/user",
+    "body": null,
+    "response": {
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 996345132",
+      "photo": {
+        "type": "image",
+        "url": "https://four.precisefp.com/api/files/eyJwYXRoIjoiY29tcGFueS0xXC9hY2NvdW50c1wvZGF0YVwvYWNj",
+        "filetype": "image/jpg",
+        "filesize": 46080,
+        "filename": "photo.jpg"
+      },
+      "company": "PreciseFP",
+      "company_email": "company@precisefp.com",
+      "company_phone": "+1 235762365",
+      "company_logo": {
+        "type": "image",
+        "url": "https://four.precisefp.com/api/files/eyJwYXRoIjoiY29tcGFueS0xXC9hY2NvdW50c1wvZGF0YVwvYWNj",
+        "filetype": "image/jpg",
+        "filesize": 46080,
+        "filename": "photo.jpg"
+      }
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--user-get"
+  },
+  {
+    "operation": "list_accounts",
+    "config": {
+      "operation": "list_accounts"
+    },
+    "method": "GET",
+    "path": "/accounts",
+    "body": null,
+    "response": {
+      "items": [
+        {
+          "client": {
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "john.doe@precisefp.com",
+            "phone": "+1 5556667777",
+            "status": "ACTIVE",
+            "type": "CLIENT"
+          },
+          "coclient": {
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "jane.doe@precisefp.com",
+            "phone": "+1 555444333",
+            "status": "NEW",
+            "type": "COCLIENT"
+          },
+          "type": "clients",
+          "created_at": "2017-01-01 12:00:00",
+          "updated_at": "2017-01-01 13:00:00",
+          "id": 100
+        }
+      ],
+      "limit": 100,
+      "offset": "integer",
+      "total": 2
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts-get"
+  },
+  {
+    "operation": "get_account",
+    "config": {
+      "operation": "get_account",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100",
+    "body": null,
+    "response": {
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 5556667777",
+        "status": "ACTIVE",
+        "type": "CLIENT"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555444333",
+        "status": "NEW",
+        "type": "COCLIENT"
+      },
+      "type": "clients",
+      "created_at": "2017-01-01 12:00:00",
+      "updated_at": "2017-01-01 13:00:00",
+      "id": 100
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--get"
+  },
+  {
+    "operation": "create_account",
+    "config": {
+      "operation": "create_account",
+      "type": "clients",
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 555-666-7777"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555-444-3333"
+      }
+    },
+    "method": "POST",
+    "path": "/accounts",
+    "body": {
+      "type": "clients",
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 555-666-7777"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555-444-3333"
+      }
+    },
+    "response": {
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 5556667777",
+        "status": "ACTIVE",
+        "type": "CLIENT"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555444333",
+        "status": "NEW",
+        "type": "COCLIENT"
+      },
+      "type": "clients",
+      "created_at": "2017-01-01 12:00:00",
+      "updated_at": "2017-01-01 13:00:00",
+      "id": 100
+    },
+    "status": 201,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts-post"
+  },
+  {
+    "operation": "update_account",
+    "config": {
+      "operation": "update_account",
+      "account_id": 100,
+      "type": "clients",
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 555-666-7777"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555-444-3333"
+      }
+    },
+    "method": "PUT",
+    "path": "/accounts/100",
+    "body": {
+      "type": "clients",
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 555-666-7777"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555-444-3333"
+      }
+    },
+    "response": {
+      "client": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@precisefp.com",
+        "phone": "+1 5556667777",
+        "status": "ACTIVE",
+        "type": "CLIENT"
+      },
+      "coclient": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@precisefp.com",
+        "phone": "+1 555444333",
+        "status": "NEW",
+        "type": "COCLIENT"
+      },
+      "type": "clients",
+      "created_at": "2017-01-01 12:00:00",
+      "updated_at": "2017-01-01 13:00:00",
+      "id": 100
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--put"
+  },
+  {
+    "operation": "delete_account",
+    "config": {
+      "operation": "delete_account",
+      "account_id": 100
+    },
+    "method": "DELETE",
+    "path": "/accounts/100",
+    "body": null,
+    "response": null,
+    "status": 204,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--delete"
+  },
+  {
+    "operation": "get_account_member",
+    "config": {
+      "operation": "get_account_member",
+      "account_id": 100,
+      "client": "client"
+    },
+    "method": "GET",
+    "path": "/accounts/100/client/details",
+    "body": null,
+    "response": {
+      "first_name": "John",
+      "middle_initial": "M",
+      "last_name": "Doe",
+      "gender": "male",
+      "birth_date": "1980-01-01 00:00:00",
+      "marital_status": "married",
+      "previous_marriages": "integer",
+      "citizenship": {
+        "country": "US"
+      },
+      "email": "john.doe@precisefp.com",
+      "phone": "+1 5556667777",
+      "home_phone": "+1 5557778888",
+      "work_phone": "+1 5558888999",
+      "address": {
+        "line1": "Greenway street 56",
+        "line2": " ",
+        "city": "Beverly Hills",
+        "state": "CA",
+        "zip": "90210",
+        "country": "US"
+      },
+      "photo": {
+        "type": "image",
+        "url": "https://four.precisefp.com/api/files/eyJwYXRoIjoiY29tcGFueS0xXC9hY2NvdW50c1wvZGF0YVwvYWNj",
+        "filetype": "image/jpg",
+        "filesize": 46080,
+        "filename": "photo.jpg"
+      },
+      "risk_score": 50.32,
+      "comments": "Lorem ipsum dolor sit amet.",
+      "drivers_license": {
+        "number": "123456789",
+        "issue_date": "2010-01-01 00:00:00",
+        "expire_date": "2060-01-01 00:00:00",
+        "jurisdiction": {
+          "state": "CA",
+          "country": "US"
+        },
+        "document": {
+          "type": "document",
+          "url": "https://four.precisefp.com/api/files/eyJwYXRoIjoiY29tcGFueS0xXC9hY2NvdW50c1wvZGF0YVwvYWNj",
+          "filetype": "application/pdf",
+          "filesize": 46008,
+          "filename": "scan.pdf"
+        }
+      }
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId---client--details-get"
+  },
+  {
+    "operation": "list_contacts",
+    "config": {
+      "operation": "list_contacts",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/contacts",
+    "body": null,
+    "response": [
+      {
+        "type": "attorney",
+        "first_name": "William",
+        "last_name": "Black",
+        "email": "williamblack@precisefp.com",
+        "phone": "+1 434623992",
+        "company": "AttorneysUS",
+        "id": "010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    ],
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--contacts-get"
+  },
+  {
+    "operation": "get_contact",
+    "config": {
+      "operation": "get_contact",
+      "account_id": 100,
+      "contact_id": "010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+    },
+    "method": "GET",
+    "path": "/accounts/100/contacts/010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba",
+    "body": null,
+    "response": {
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS",
+      "id": "010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--contacts--contactId--get"
+  },
+  {
+    "operation": "create_contact",
+    "config": {
+      "operation": "create_contact",
+      "account_id": 100,
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS"
+    },
+    "method": "POST",
+    "path": "/accounts/100/contacts",
+    "body": {
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS"
+    },
+    "response": {
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS",
+      "id": "010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+    },
+    "status": 201,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--contacts-post"
+  },
+  {
+    "operation": "update_contact",
+    "config": {
+      "operation": "update_contact",
+      "account_id": 100,
+      "contact_id": "010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba",
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS"
+    },
+    "method": "PUT",
+    "path": "/accounts/100/contacts/010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba",
+    "body": {
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS"
+    },
+    "response": {
+      "type": "attorney",
+      "first_name": "William",
+      "last_name": "Black",
+      "email": "williamblack@precisefp.com",
+      "phone": "+1 434623992",
+      "company": "AttorneysUS"
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--contacts--contactId--put"
+  },
+  {
+    "operation": "delete_contact",
+    "config": {
+      "operation": "delete_contact",
+      "account_id": 100,
+      "contact_id": "010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+    },
+    "method": "DELETE",
+    "path": "/accounts/100/contacts/010eb904-f196-4b0e-b936-dd5038fa1397|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba",
+    "body": null,
+    "response": null,
+    "status": 204,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--contacts--contactId--delete"
+  },
+  {
+    "operation": "list_assets",
+    "config": {
+      "operation": "list_assets",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/assets",
+    "body": null,
+    "response": [
+      {
+        "name": "John's yacht",
+        "type": "other",
+        "owner": {
+          "id": null,
+          "type": "client",
+          "label": "John M Doe"
+        },
+        "current_value": 87000,
+        "original_value": 82000,
+        "id": "365f7627-10f2-4183-a724-eade147ac9fe|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    ],
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--assets-get"
+  },
+  {
+    "operation": "list_liabilities",
+    "config": {
+      "operation": "list_liabilities",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/liabilities",
+    "body": null,
+    "response": [
+      {
+        "name": "Golden Credit",
+        "owner": {
+          "id": null,
+          "type": "client",
+          "label": "John M Doe"
+        },
+        "provider": "Bank of America",
+        "type": "credit-card",
+        "start_date": "2016-03-02",
+        "end_date": "2021-06-09",
+        "interest": 6,
+        "original_value": 84000,
+        "current_value": 56000,
+        "cost_value": 11,
+        "id": "6c775488-6285-4fa5-80cf-3fc19e517a05|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    ],
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--liabilities-get"
+  },
+  {
+    "operation": "list_goals",
+    "config": {
+      "operation": "list_goals",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/goals",
+    "body": null,
+    "response": [
+      {
+        "type": "business",
+        "name": "New headquaters",
+        "owner": {
+          "id": null,
+          "type": "client",
+          "label": "John M Doe"
+        },
+        "beneficiary": {
+          "id": "cc428cbc-400b-4022-9e1b-eec86ec11479|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba",
+          "type": "FamilyMember",
+          "label": "David C Doe"
+        },
+        "priority": "medium",
+        "frequency": "monthly",
+        "id": "bd7511b8-0bd1-4280-8cd9-d1a53f7ee51c|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    ],
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--goals-get"
+  },
+  {
+    "operation": "list_family",
+    "config": {
+      "operation": "list_family",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/family",
+    "body": null,
+    "response": {
+      "items": {
+        "relationship": "child",
+        "first_name": "David",
+        "middle_initial": "C",
+        "last_name": "Doe",
+        "gender": "male",
+        "birth_date": "1998-01-01 00:00:00",
+        "dependent": true,
+        "email": "david.doe@precisefp.com",
+        "phone": "+1 555666777",
+        "college_type": "public",
+        "college_start": 2016,
+        "college_end": 2020,
+        "id": "cc428cbc-400b-4022-9e1b-eec86ec11479|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    },
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--family-get"
+  },
+  {
+    "operation": "list_insurance",
+    "config": {
+      "operation": "list_insurance",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/insurance",
+    "body": null,
+    "response": [
+      {
+        "type": "universal",
+        "name": "Joe's universal insurance",
+        "provider": "InsurersUS",
+        "owner": {
+          "id": null,
+          "type": "client",
+          "label": "John M Doe"
+        },
+        "insured": {
+          "id": null,
+          "type": "client",
+          "label": "John M Doe"
+        },
+        "primary_beneficiary": {
+          "id": null,
+          "type": "client",
+          "label": "John M Doe"
+        },
+        "secondary_beneficiary": {
+          "id": "cc428cbc-400b-4022-9e1b-eec86ec11479|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba",
+          "type": "FamilyMember",
+          "label": "David C Doe"
+        },
+        "premium_value": 1100,
+        "coverage_value": 500000,
+        "cash_value": 48000,
+        "id": "f5086bc5-80ee-414e-add8-e7df1e1a63de|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    ],
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--insurance-get"
+  },
+  {
+    "operation": "list_documents",
+    "config": {
+      "operation": "list_documents",
+      "account_id": 100
+    },
+    "method": "GET",
+    "path": "/accounts/100/documents",
+    "body": null,
+    "response": [
+      {
+        "file": {
+          "type": "image",
+          "url": "https://four.precisefp.com/api/files/eyJwYXRoIjoiY29tcGFueS0xXC9hY2NvdW50c1wvZGF0YVwvYWNj",
+          "filetype": "image/jpg",
+          "filesize": 46080,
+          "filename": "photo.jpg"
+        },
+        "relation": {
+          "type": "client",
+          "id": "string, null",
+          "label": "John M Doe"
+        },
+        "id": "f39360b1-dc88-4ed8-9ba5-a3d9a1fdda0d|14fa1202-7cfc-461e-bf69-7a5a5b3b9bba"
+      }
+    ],
+    "status": 200,
+    "source": "https://app.precisefp.com/docs/api/#operation--accounts--accountId--documents-get"
+  }
+]

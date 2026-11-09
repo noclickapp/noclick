@@ -1,0 +1,851 @@
+{
+  "$defs": {
+    "PreciseFPCreateAccount": {
+      "additionalProperties": false,
+      "description": "Create account.",
+      "properties": {
+        "type": {
+          "enum": [
+            "clients",
+            "prospects"
+          ],
+          "title": "Account type",
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/$defs/_Member"
+        },
+        "coclient": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Member"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "type",
+        "client"
+      ],
+      "title": "PreciseFPCreateAccount",
+      "type": "object"
+    },
+    "PreciseFPCreateContact": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "type": {
+          "enum": [
+            "accountant",
+            "attorney",
+            "broker",
+            "insurance-agent",
+            "tax-preparer",
+            "other"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "first_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "type",
+        "first_name",
+        "last_name",
+        "account_id"
+      ],
+      "title": "PreciseFPCreateContact",
+      "type": "object"
+    },
+    "PreciseFPDeleteAccount": {
+      "additionalProperties": false,
+      "description": "Delete account.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_account",
+          "default": "delete_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPDeleteAccount",
+      "type": "object"
+    },
+    "PreciseFPDeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete contact.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "contact_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "PreciseFPDeleteContact",
+      "type": "object"
+    },
+    "PreciseFPGetAccount": {
+      "additionalProperties": false,
+      "description": "Get account.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPGetAccount",
+      "type": "object"
+    },
+    "PreciseFPGetAccountMember": {
+      "additionalProperties": false,
+      "description": "Get account member.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_account_member",
+          "default": "get_account_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client": {
+          "default": "client",
+          "enum": [
+            "client",
+            "coclient"
+          ],
+          "title": "Account member",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPGetAccountMember",
+      "type": "object"
+    },
+    "PreciseFPGetContact": {
+      "additionalProperties": false,
+      "description": "Get contact.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "contact_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "PreciseFPGetContact",
+      "type": "object"
+    },
+    "PreciseFPGetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Get current user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "PreciseFPGetCurrentUser",
+      "type": "object"
+    },
+    "PreciseFPListAccounts": {
+      "additionalProperties": false,
+      "description": "List accounts.",
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "clients",
+                "prospects"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "clients",
+            "prospects"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "PreciseFPListAccounts",
+      "type": "object"
+    },
+    "PreciseFPListAssets": {
+      "additionalProperties": false,
+      "description": "List assets.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListAssets",
+      "type": "object"
+    },
+    "PreciseFPListContacts": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListContacts",
+      "type": "object"
+    },
+    "PreciseFPListDocuments": {
+      "additionalProperties": false,
+      "description": "List documents.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListDocuments",
+      "type": "object"
+    },
+    "PreciseFPListFamily": {
+      "additionalProperties": false,
+      "description": "List family.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_family",
+          "default": "list_family",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListFamily",
+      "type": "object"
+    },
+    "PreciseFPListGoals": {
+      "additionalProperties": false,
+      "description": "List goals.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_goals",
+          "default": "list_goals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListGoals",
+      "type": "object"
+    },
+    "PreciseFPListInsurance": {
+      "additionalProperties": false,
+      "description": "List insurance.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_insurance",
+          "default": "list_insurance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListInsurance",
+      "type": "object"
+    },
+    "PreciseFPListLiabilities": {
+      "additionalProperties": false,
+      "description": "List liabilities.",
+      "properties": {
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_liabilities",
+          "default": "list_liabilities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "PreciseFPListLiabilities",
+      "type": "object"
+    },
+    "PreciseFPOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "precisefp_oauth",
+          "default": "precisefp_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token expiry"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "PreciseFP Account",
+      "type": "object",
+      "x-credential-instructions": "Connect your PreciseFP account. PreciseFP must register the application's client ID, client secret and callback URL first; contact PreciseFP to request API access. The connection check reads your user profile and does not prove write access.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.precisefp.com/docs/api/#authentication",
+      "x-oauth-provider": "precisefp",
+      "x-oauth-scopes": [
+        "accounts",
+        "login"
+      ]
+    },
+    "PreciseFPUpdateAccount": {
+      "additionalProperties": false,
+      "description": "Update account.",
+      "properties": {
+        "type": {
+          "enum": [
+            "clients",
+            "prospects"
+          ],
+          "title": "Account type",
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/$defs/_Member"
+        },
+        "coclient": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/_Member"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "type",
+        "client",
+        "account_id"
+      ],
+      "title": "PreciseFPUpdateAccount",
+      "type": "object"
+    },
+    "PreciseFPUpdateContact": {
+      "additionalProperties": false,
+      "description": "Update contact.",
+      "properties": {
+        "type": {
+          "enum": [
+            "accountant",
+            "attorney",
+            "broker",
+            "insurance-agent",
+            "tax-preparer",
+            "other"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "first_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account ID",
+          "type": "integer"
+        },
+        "contact_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "type",
+        "first_name",
+        "last_name",
+        "account_id",
+        "contact_id"
+      ],
+      "title": "PreciseFPUpdateContact",
+      "type": "object"
+    },
+    "_Member": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "title": "_Member",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_account": "#/$defs/PreciseFPCreateAccount",
+          "create_contact": "#/$defs/PreciseFPCreateContact",
+          "delete_account": "#/$defs/PreciseFPDeleteAccount",
+          "delete_contact": "#/$defs/PreciseFPDeleteContact",
+          "get_account": "#/$defs/PreciseFPGetAccount",
+          "get_account_member": "#/$defs/PreciseFPGetAccountMember",
+          "get_contact": "#/$defs/PreciseFPGetContact",
+          "get_current_user": "#/$defs/PreciseFPGetCurrentUser",
+          "list_accounts": "#/$defs/PreciseFPListAccounts",
+          "list_assets": "#/$defs/PreciseFPListAssets",
+          "list_contacts": "#/$defs/PreciseFPListContacts",
+          "list_documents": "#/$defs/PreciseFPListDocuments",
+          "list_family": "#/$defs/PreciseFPListFamily",
+          "list_goals": "#/$defs/PreciseFPListGoals",
+          "list_insurance": "#/$defs/PreciseFPListInsurance",
+          "list_liabilities": "#/$defs/PreciseFPListLiabilities",
+          "update_account": "#/$defs/PreciseFPUpdateAccount",
+          "update_contact": "#/$defs/PreciseFPUpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PreciseFPGetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListAccounts"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPGetAccount"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPCreateAccount"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPUpdateAccount"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPDeleteAccount"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPGetAccountMember"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListContacts"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPGetContact"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPCreateContact"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPUpdateContact"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPDeleteContact"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListAssets"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListLiabilities"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListGoals"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListFamily"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListInsurance"
+        },
+        {
+          "$ref": "#/$defs/PreciseFPListDocuments"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PreciseFPOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Precisefp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
