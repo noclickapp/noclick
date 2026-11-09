@@ -1,0 +1,6 @@
+{
+  "GET /aliases/all": {"aliases": ["aBcDe012"], "lastId": "1588788835614657618"},
+  "GET /clicks": {"clicks": [{"country": "US", "os": "iOS", "createdAt": 1595845801514, "domain": "your.domain.com", "aliasId": "fixture-alias-id", "alias": "aBcDe012", "destination": "https://example.com", "userAgent": "fixture-agent", "browser": "fixture-browser", "referrer": "https://example.com"}], "lastId": "1588788835614657618"},
+  "GET /aliases": {"name": "aBcDe012", "domainName": "your.domain.com", "createdAt": 1595845801514, "updatedAt": 1595845801514, "destinations": [{"url": "https://example.com"}], "metatags": [], "snippets": []},
+  "POST /aliases": {"aliasName": "aBcDe012", "domainName": "your.domain.com", "shortUrl": "https://your.domain.com/aBcDe012"}
+}

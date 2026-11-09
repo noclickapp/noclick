@@ -1,0 +1,624 @@
+{
+  "$defs": {
+    "CreateAlias": {
+      "additionalProperties": false,
+      "properties": {
+        "destinations": {
+          "description": "Include a default destination (omit country and os).",
+          "items": {
+            "$ref": "#/$defs/Destination"
+          },
+          "minItems": 1,
+          "title": "Destinations",
+          "type": "array"
+        },
+        "metatags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MetaTag"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full replacement array. Alias tags override domain tags of the same name.",
+          "title": "Metatags"
+        },
+        "snippets": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Snippet"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full replacement array. Alias snippets override domain snippets of the same name.",
+          "title": "Snippets"
+        },
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_alias",
+          "default": "create_alias",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        },
+        "alias_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vanity alias, optionally containing @rnd. Omit to generate a random alias.",
+          "title": "Alias Name"
+        }
+      },
+      "required": [
+        "destinations"
+      ],
+      "title": "CreateAlias",
+      "type": "object"
+    },
+    "DeleteAlias": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "alias_name": {
+          "description": "Alias without a leading slash.",
+          "minLength": 1,
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_alias",
+          "default": "delete_alias",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "alias_name"
+      ],
+      "title": "DeleteAlias",
+      "type": "object"
+    },
+    "Destination": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Destination URL to redirect to.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO alpha-2 country code; omit for the default destination.",
+          "title": "Country"
+        },
+        "os": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Operating system from the provider's supported OS list.",
+          "title": "Os"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Destination",
+      "type": "object"
+    },
+    "GetAlias": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "alias_name": {
+          "description": "Alias without a leading slash.",
+          "minLength": 1,
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_alias",
+          "default": "get_alias",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "alias_name"
+      ],
+      "title": "GetAlias",
+      "type": "object"
+    },
+    "ListAliases": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "continue_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use lastId from the previous page; omitted on the first page.",
+          "title": "Continue From"
+        },
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_aliases",
+          "default": "list_aliases",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ListAliases",
+      "type": "object"
+    },
+    "ListClicks": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "continue_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use lastId from the previous page; omitted on the first page.",
+          "title": "Continue From"
+        },
+        "operation": {
+          "const": "list_clicks",
+          "default": "list_clicks",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ListClicks",
+      "type": "object"
+    },
+    "MetaTag": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "content"
+      ],
+      "title": "MetaTag",
+      "type": "object"
+    },
+    "SetDestinations": {
+      "additionalProperties": false,
+      "description": "Replace all destinations, leaving tags and snippets unchanged.",
+      "properties": {
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "alias_name": {
+          "description": "Alias without a leading slash.",
+          "minLength": 1,
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_destinations",
+          "default": "set_destinations",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        },
+        "destinations": {
+          "description": "Full destination array; include existing routes you want to keep.",
+          "items": {
+            "$ref": "#/$defs/Destination"
+          },
+          "title": "Destinations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alias_name",
+        "destinations"
+      ],
+      "title": "SetDestinations",
+      "type": "object"
+    },
+    "SetMetatags": {
+      "additionalProperties": false,
+      "description": "Replace alias metatags; an empty array removes alias overrides.",
+      "properties": {
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "alias_name": {
+          "description": "Alias without a leading slash.",
+          "minLength": 1,
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_metatags",
+          "default": "set_metatags",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        },
+        "metatags": {
+          "items": {
+            "$ref": "#/$defs/MetaTag"
+          },
+          "title": "Metatags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alias_name",
+        "metatags"
+      ],
+      "title": "SetMetatags",
+      "type": "object"
+    },
+    "SetSnippets": {
+      "additionalProperties": false,
+      "description": "Replace alias tracking snippets; an empty array removes alias overrides.",
+      "properties": {
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "alias_name": {
+          "description": "Alias without a leading slash.",
+          "minLength": 1,
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_snippets",
+          "default": "set_snippets",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        },
+        "snippets": {
+          "items": {
+            "$ref": "#/$defs/Snippet"
+          },
+          "title": "Snippets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alias_name",
+        "snippets"
+      ],
+      "title": "SetSnippets",
+      "type": "object"
+    },
+    "ShortenRestAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "shorten_rest_api_key",
+          "default": "shorten_rest_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Shorten Rest API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Shorten Rest API key. NoClick sends it in the x-api-key header and reads your aliases to check the connection.",
+      "x-credential-url": "https://shorten.rest"
+    },
+    "ShortenURL": {
+      "additionalProperties": false,
+      "description": "Shorten a single destination with a provider-generated random alias.",
+      "properties": {
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "shorten_url",
+          "default": "shorten_url",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        },
+        "url": {
+          "description": "Destination URL for the generated short link.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ShortenURL",
+      "type": "object"
+    },
+    "Snippet": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "ID from the provider's supported snippets list.",
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameters"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Snippet",
+      "type": "object"
+    },
+    "UpdateAlias": {
+      "additionalProperties": false,
+      "properties": {
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Destination"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full replacement array. Include existing destinations to retain them.",
+          "title": "Destinations"
+        },
+        "metatags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MetaTag"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full replacement array. Alias tags override domain tags of the same name.",
+          "title": "Metatags"
+        },
+        "snippets": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Snippet"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full replacement array. Alias snippets override domain snippets of the same name.",
+          "title": "Snippets"
+        },
+        "domain_name": {
+          "default": "short.fyi",
+          "description": "Domain without a scheme or slash. Defaults to short.fyi.",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "alias_name": {
+          "description": "Alias without a leading slash.",
+          "minLength": 1,
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_alias",
+          "default": "update_alias",
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "alias_name"
+      ],
+      "title": "UpdateAlias",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_alias": "#/$defs/CreateAlias",
+          "delete_alias": "#/$defs/DeleteAlias",
+          "get_alias": "#/$defs/GetAlias",
+          "list_aliases": "#/$defs/ListAliases",
+          "list_clicks": "#/$defs/ListClicks",
+          "set_destinations": "#/$defs/SetDestinations",
+          "set_metatags": "#/$defs/SetMetatags",
+          "set_snippets": "#/$defs/SetSnippets",
+          "shorten_url": "#/$defs/ShortenURL",
+          "update_alias": "#/$defs/UpdateAlias"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAliases"
+        },
+        {
+          "$ref": "#/$defs/ListClicks"
+        },
+        {
+          "$ref": "#/$defs/GetAlias"
+        },
+        {
+          "$ref": "#/$defs/DeleteAlias"
+        },
+        {
+          "$ref": "#/$defs/CreateAlias"
+        },
+        {
+          "$ref": "#/$defs/ShortenURL"
+        },
+        {
+          "$ref": "#/$defs/UpdateAlias"
+        },
+        {
+          "$ref": "#/$defs/SetDestinations"
+        },
+        {
+          "$ref": "#/$defs/SetMetatags"
+        },
+        {
+          "$ref": "#/$defs/SetSnippets"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ShortenRestAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Shorten-rest Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
