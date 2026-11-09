@@ -1,0 +1,344 @@
+[
+  {
+    "config": {
+      "operation": "list_tables"
+    },
+    "method": "GET",
+    "path": "/tables",
+    "response": {
+      "data": [
+        {
+          "tableId": "abc123",
+          "name": "Customers"
+        }
+      ],
+      "pagination": {
+        "pageNumber": 1,
+        "pageSize": 100,
+        "totalCount": 1
+      }
+    },
+    "status": 200,
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_table",
+      "table_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/tables/abc123",
+    "response": {
+      "data": {
+        "name": "Customers",
+        "tableId": "abc123"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_table_fields",
+      "table_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/tables/abc123/fields",
+    "response": {
+      "data": [
+        {
+          "name": "Name",
+          "dataType": "TEXT255",
+          "editable": true
+        }
+      ]
+    },
+    "status": 200,
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_table_field",
+      "table_id": "abc123",
+      "field_name": "Name"
+    },
+    "method": "GET",
+    "path": "/tables/abc123/fields/Name",
+    "response": {
+      "data": {
+        "name": "Name",
+        "dataType": "TEXT255"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_table_records",
+      "table_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/tables/abc123/records",
+    "response": {
+      "data": [
+        {
+          "PK_ID": 12,
+          "Name": "Example"
+        }
+      ],
+      "pagination": {
+        "pageNumber": 1,
+        "pageSize": 100,
+        "totalCount": 1
+      }
+    },
+    "status": 200,
+    "query": {
+      "PageNumber": "1",
+      "PageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_table_record",
+      "table_id": "abc123",
+      "record_pk_id": "12"
+    },
+    "method": "GET",
+    "path": "/tables/abc123/records/12",
+    "response": {
+      "data": {
+        "PK_ID": 12,
+        "Name": "Example"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "create_table_record",
+      "table_id": "abc123",
+      "values": {
+        "Name": "Example"
+      }
+    },
+    "method": "POST",
+    "path": "/tables/abc123/records",
+    "response": {
+      "PK_ID": "12"
+    },
+    "status": 201,
+    "body": {
+      "Name": "Example"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_table_record",
+      "table_id": "abc123",
+      "record_pk_id": "12",
+      "values": {
+        "Name": null
+      }
+    },
+    "method": "PATCH",
+    "path": "/tables/abc123/records/12",
+    "response": {
+      "recordsAffected": 1,
+      "data": null
+    },
+    "status": 200,
+    "body": {
+      "Name": null
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_table_record",
+      "table_id": "abc123",
+      "record_pk_id": "12"
+    },
+    "method": "DELETE",
+    "path": "/tables/abc123/records/12",
+    "response": {
+      "recordsAffected": 1
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_views"
+    },
+    "method": "GET",
+    "path": "/views",
+    "response": {
+      "data": [
+        {
+          "viewId": "def456",
+          "name": "ActiveCustomers"
+        }
+      ]
+    },
+    "status": 200,
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_view",
+      "view_id": "def456"
+    },
+    "method": "GET",
+    "path": "/views/def456",
+    "response": {
+      "data": {
+        "viewId": "def456",
+        "name": "ActiveCustomers"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_view_fields",
+      "view_id": "def456"
+    },
+    "method": "GET",
+    "path": "/views/def456/fields",
+    "response": {
+      "data": [
+        {
+          "name": "Name",
+          "dataType": "TEXT255"
+        }
+      ]
+    },
+    "status": 200,
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_view_records",
+      "view_id": "def456"
+    },
+    "method": "GET",
+    "path": "/views/def456/records",
+    "response": {
+      "data": [
+        {
+          "PK_ID": "12,34",
+          "Name": "Example"
+        }
+      ]
+    },
+    "status": 200,
+    "query": {
+      "PageNumber": "1",
+      "PageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_view_record",
+      "view_id": "def456",
+      "record_pk_id": "12,34"
+    },
+    "method": "GET",
+    "path": "/views/def456/records/12,34",
+    "response": {
+      "data": {
+        "PK_ID": "12,34",
+        "Name": "Example"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_tasks"
+    },
+    "method": "GET",
+    "path": "/tasks",
+    "response": {
+      "data": [
+        {
+          "taskId": "ghi789",
+          "name": "Daily sync"
+        }
+      ]
+    },
+    "status": 200,
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "100"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_task",
+      "task_id": "ghi789"
+    },
+    "method": "GET",
+    "path": "/tasks/ghi789",
+    "response": {
+      "data": {
+        "taskId": "ghi789",
+        "name": "Daily sync"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "run_task",
+      "task_id": "ghi789"
+    },
+    "method": "POST",
+    "path": "/tasks/ghi789/run",
+    "response": {
+      "hint": "Task completed"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_task_runs",
+      "task_id": "ghi789"
+    },
+    "method": "GET",
+    "path": "/tasks/ghi789/runs",
+    "response": {
+      "data": []
+    },
+    "status": 200,
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "25"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_task_run",
+      "task_id": "ghi789",
+      "run_id": "12345678-1234-1234-1234-123456789012"
+    },
+    "method": "GET",
+    "path": "/tasks/ghi789/runs/12345678-1234-1234-1234-123456789012",
+    "response": {
+      "data": {
+        "runId": "12345678-1234-1234-1234-123456789012"
+      }
+    },
+    "status": 200
+  }
+]
