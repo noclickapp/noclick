@@ -1,0 +1,1391 @@
+{
+  "$defs": {
+    "SnitcherAddOrganisationTagConfig": {
+      "additionalProperties": false,
+      "description": "Add a tag to an organisation.",
+      "properties": {
+        "operation": {
+          "const": "add_organisation_tag",
+          "default": "add_organisation_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        },
+        "tag_name": {
+          "description": "The name of the tag",
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid",
+        "tag_name"
+      ],
+      "title": "SnitcherAddOrganisationTagConfig",
+      "type": "object"
+    },
+    "SnitcherClearOrganisationCustomFieldConfig": {
+      "additionalProperties": false,
+      "description": "Clear a custom field value on an organisation.",
+      "properties": {
+        "operation": {
+          "const": "clear_organisation_custom_field",
+          "default": "clear_organisation_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the custom field",
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid",
+        "key"
+      ],
+      "title": "SnitcherClearOrganisationCustomFieldConfig",
+      "type": "object"
+    },
+    "SnitcherCreateCustomFieldConfig": {
+      "additionalProperties": false,
+      "description": "Create a custom field definition.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "name": {
+          "description": "The human-readable name of the field",
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "description": "The data type of the field",
+          "title": "Type",
+          "type": "string"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The machine-readable key. Must start with a lowercase letter and contain only lowercase letters, numbers, and underscores. Generated from the name when omitted.",
+          "title": "Key"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "visible_in_spotter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expose this field's values in the Spotter API response. Off by default: exposed values become readable on your website by any script that can access the Spotter response.",
+          "title": "Visible In Spotter"
+        },
+        "field_rules": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SnitcherFieldRule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Rules"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SnitcherFieldOption"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "name",
+        "type"
+      ],
+      "title": "SnitcherCreateCustomFieldConfig",
+      "type": "object"
+    },
+    "SnitcherCreateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Create a new workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SnitcherCreateWorkspaceConfig",
+      "type": "object"
+    },
+    "SnitcherCreateWorkspaceTagConfig": {
+      "additionalProperties": false,
+      "description": "Create a new tag for a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace_tag",
+          "default": "create_workspace_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uuid": {
+          "description": "UUID of the workspace",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "tag_name": {
+          "description": "The name of the tag",
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid",
+        "tag_name"
+      ],
+      "title": "SnitcherCreateWorkspaceTagConfig",
+      "type": "object"
+    },
+    "SnitcherDeleteCustomFieldConfig": {
+      "additionalProperties": false,
+      "description": "Delete a custom field definition.",
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the custom field",
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "key"
+      ],
+      "title": "SnitcherDeleteCustomFieldConfig",
+      "type": "object"
+    },
+    "SnitcherFieldOption": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 255,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 255,
+          "title": "Label",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "SnitcherFieldOption",
+      "type": "object"
+    },
+    "SnitcherFieldRule": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Config"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "SnitcherFieldRule",
+      "type": "object"
+    },
+    "SnitcherGetContactCreditsConfig": {
+      "additionalProperties": false,
+      "description": "Get the workspace's contact reveal credit balance.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_credits",
+          "default": "get_contact_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid"
+      ],
+      "title": "SnitcherGetContactCreditsConfig",
+      "type": "object"
+    },
+    "SnitcherGetCustomFieldConfig": {
+      "additionalProperties": false,
+      "description": "Get a custom field definition.",
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the custom field",
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "key"
+      ],
+      "title": "SnitcherGetCustomFieldConfig",
+      "type": "object"
+    },
+    "SnitcherGetOrganisationConfig": {
+      "additionalProperties": false,
+      "description": "Get an organisation.",
+      "properties": {
+        "operation": {
+          "const": "get_organisation",
+          "default": "get_organisation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid"
+      ],
+      "title": "SnitcherGetOrganisationConfig",
+      "type": "object"
+    },
+    "SnitcherGetProfileConfig": {
+      "additionalProperties": false,
+      "description": "Get the authenticated user's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SnitcherGetProfileConfig",
+      "type": "object"
+    },
+    "SnitcherGetWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Get details of a specific workspace.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uuid": {
+          "description": "UUID of the workspace",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "SnitcherGetWorkspaceConfig",
+      "type": "object"
+    },
+    "SnitcherListContactsConfig": {
+      "additionalProperties": false,
+      "description": "Get contacts for an organisation.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Either organisation_uuid or domain must be provided",
+          "title": "Domain"
+        },
+        "organisation_uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Either organisation_uuid or domain must be provided",
+          "title": "Organisation Uuid"
+        },
+        "page": {
+          "default": 1,
+          "description": "The page number for pagination. page \u00d7 size may not exceed 25,000 rows; narrow the listing with date_from and date_to instead of paging deeper.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 100,
+          "description": "The number of organisations per page (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspaceUuid"
+      ],
+      "title": "SnitcherListContactsConfig",
+      "type": "object"
+    },
+    "SnitcherListCustomFieldsConfig": {
+      "additionalProperties": false,
+      "description": "List custom field definitions.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid"
+      ],
+      "title": "SnitcherListCustomFieldsConfig",
+      "type": "object"
+    },
+    "SnitcherListOrganisationCustomFieldsConfig": {
+      "additionalProperties": false,
+      "description": "List custom field values for an organisation.",
+      "properties": {
+        "operation": {
+          "const": "list_organisation_custom_fields",
+          "default": "list_organisation_custom_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid"
+      ],
+      "title": "SnitcherListOrganisationCustomFieldsConfig",
+      "type": "object"
+    },
+    "SnitcherListOrganisationSessionsConfig": {
+      "additionalProperties": false,
+      "description": "Overview of the sessions of an organisation.",
+      "properties": {
+        "operation": {
+          "const": "list_organisation_sessions",
+          "default": "list_organisation_sessions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "The page number for pagination. page \u00d7 size may not exceed 25,000 rows; narrow the listing with date_from and date_to instead of paging deeper.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 100,
+          "description": "The number of sessions per page (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The specific date to filter sessions.",
+          "title": "Date"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date for filtering sessions. Can only be used if `date` is not provided.",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date for filtering sessions. Can only be used if `date` is not provided.",
+          "title": "Date To"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters sessions where the visited URL contains the given string.",
+          "title": "Url"
+        },
+        "referrer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters sessions where the referrer contains the given string.",
+          "title": "Referrer"
+        },
+        "visitor_uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include sessions of this visitor (client) ID \u2014 the `visitor_uuid` returned on every session, and the value the tracker sends as `anonymous_id`. Lets a client-side ID minted at conversion time be resolved back to the sessions, and therefore the organisation, it belongs to.",
+          "title": "Visitor Uuid"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid"
+      ],
+      "title": "SnitcherListOrganisationSessionsConfig",
+      "type": "object"
+    },
+    "SnitcherListOrganisationsConfig": {
+      "additionalProperties": false,
+      "description": "List organisations.",
+      "properties": {
+        "operation": {
+          "const": "list_organisations",
+          "default": "list_organisations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "segmentUuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional segment UUID for filtering organisations",
+          "title": "Segmentuuid"
+        },
+        "page": {
+          "default": 1,
+          "description": "The page number for pagination. page \u00d7 size may not exceed 25,000 rows; narrow the listing with date_from and date_to instead of paging deeper.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 100,
+          "description": "The number of organisations per page (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The specific date to filter organisations that visited that day.",
+          "title": "Date"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date for filtering organisations based on visits. Can only be used if `date` is not provided.",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date for filtering organisations based on visits. Can only be used if `date` is not provided.",
+          "title": "Date To"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters organisations where the name contains the given string.",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "workspaceUuid"
+      ],
+      "title": "SnitcherListOrganisationsConfig",
+      "type": "object"
+    },
+    "SnitcherListSegmentsConfig": {
+      "additionalProperties": false,
+      "description": "List all segments in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid"
+      ],
+      "title": "SnitcherListSegmentsConfig",
+      "type": "object"
+    },
+    "SnitcherListSessionsConfig": {
+      "additionalProperties": false,
+      "description": "Overview of the sessions in a date range.",
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "segmentUuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include sessions matching this segment UUID",
+          "title": "Segmentuuid"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The specific date to filter sessions. Cannot be used together with date_from/date_to. Either `date` or `date_from` must be provided.",
+          "title": "Date"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for filtering sessions (inclusive). Required unless `date` is provided.",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for filtering sessions (inclusive). Defaults to the end of today when omitted.",
+          "title": "Date To"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter sessions where the visited URL contains the given string.",
+          "title": "Url"
+        },
+        "referrer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter sessions where the referrer contains the given string.",
+          "title": "Referrer"
+        },
+        "visitor_uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include sessions of this visitor (client) ID \u2014 the `visitor_uuid` returned on every session, and the value the tracker sends as `anonymous_id`. Lets a client-side ID minted at conversion time be resolved back to the sessions, and therefore the organisation, it belongs to.",
+          "title": "Visitor Uuid"
+        },
+        "page": {
+          "default": 1,
+          "description": "The page number for pagination. page \u00d7 size may not exceed 25,000 rows; narrow the listing with date_from and date_to instead of paging deeper.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 100,
+          "description": "Number of sessions per page (1-1000).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspaceUuid"
+      ],
+      "title": "SnitcherListSessionsConfig",
+      "type": "object"
+    },
+    "SnitcherListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "Get the user's workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "The page number for pagination. page \u00d7 size may not exceed 25,000 rows; narrow the listing with date_from and date_to instead of paging deeper.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 100,
+          "description": "The number of organisations per page (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "SnitcherListWorkspacesConfig",
+      "type": "object"
+    },
+    "SnitcherRemoveOrganisationTagConfig": {
+      "additionalProperties": false,
+      "description": "Remove a tag from an organisation.",
+      "properties": {
+        "operation": {
+          "const": "remove_organisation_tag",
+          "default": "remove_organisation_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        },
+        "tag_name": {
+          "description": "The name of the tag",
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid",
+        "tag_name"
+      ],
+      "title": "SnitcherRemoveOrganisationTagConfig",
+      "type": "object"
+    },
+    "SnitcherRevealContactEmailConfig": {
+      "additionalProperties": false,
+      "description": "Reveal an email for an organisation contact.",
+      "properties": {
+        "operation": {
+          "const": "reveal_contact_email",
+          "default": "reveal_contact_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "contactUuid": {
+          "description": "The UUID of the contact",
+          "title": "Contactuuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "contactUuid"
+      ],
+      "title": "SnitcherRevealContactEmailConfig",
+      "type": "object"
+    },
+    "SnitcherSetOrganisationCustomFieldConfig": {
+      "additionalProperties": false,
+      "description": "Set a custom field value on an organisation.",
+      "properties": {
+        "operation": {
+          "const": "set_organisation_custom_field",
+          "default": "set_organisation_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the custom field",
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value to set for the field",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid",
+        "key",
+        "value"
+      ],
+      "title": "SnitcherSetOrganisationCustomFieldConfig",
+      "type": "object"
+    },
+    "SnitcherSetOrganisationCustomFieldsConfig": {
+      "additionalProperties": false,
+      "description": "Set multiple custom field values on an organisation.",
+      "properties": {
+        "operation": {
+          "const": "set_organisation_custom_fields",
+          "default": "set_organisation_custom_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "organisationUuid": {
+          "description": "The UUID of the organisation",
+          "title": "Organisationuuid",
+          "type": "string"
+        },
+        "custom_fields": {
+          "additionalProperties": true,
+          "description": "Map of field key to value (at most 50 keys per request). Unknown keys are created automatically, with their type inferred from the value. Every value must be non-empty \u2014 sending an empty array does not clear a multi-select; use the DELETE custom-fields/{key} endpoint to remove a value.",
+          "title": "Custom Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "organisationUuid",
+        "custom_fields"
+      ],
+      "title": "SnitcherSetOrganisationCustomFieldsConfig",
+      "type": "object"
+    },
+    "SnitcherTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "snitcher_token",
+          "default": "snitcher_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Snitcher Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Snitcher personal access token (PAT). NoClick sends it as a Bearer token to api.snitcher.com. Your profile is read to verify the connection.",
+      "x-credential-url": "https://app.snitcher.com/api/docs"
+    },
+    "SnitcherUpdateCustomFieldConfig": {
+      "additionalProperties": false,
+      "description": "Update a custom field definition.",
+      "properties": {
+        "operation": {
+          "const": "update_custom_field",
+          "default": "update_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceUuid": {
+          "description": "The UUID of the workspace",
+          "title": "Workspaceuuid",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the custom field",
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The human-readable name of the field",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "visible_in_spotter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expose this field's values in the Spotter API response. Omitted or null leaves the current setting unchanged; exposed values become readable on your website by any script that can access the Spotter response.",
+          "title": "Visible In Spotter"
+        },
+        "field_rules": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SnitcherFieldRule"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Rules"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SnitcherFieldOption"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        }
+      },
+      "required": [
+        "workspaceUuid",
+        "key"
+      ],
+      "title": "SnitcherUpdateCustomFieldConfig",
+      "type": "object"
+    },
+    "SnitcherUpdateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Update workspace details.",
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uuid": {
+          "description": "UUID of the workspace",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "usage_limit": {
+          "title": "Usage Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "uuid",
+        "usage_limit"
+      ],
+      "title": "SnitcherUpdateWorkspaceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_organisation_tag": "#/$defs/SnitcherAddOrganisationTagConfig",
+          "clear_organisation_custom_field": "#/$defs/SnitcherClearOrganisationCustomFieldConfig",
+          "create_custom_field": "#/$defs/SnitcherCreateCustomFieldConfig",
+          "create_workspace": "#/$defs/SnitcherCreateWorkspaceConfig",
+          "create_workspace_tag": "#/$defs/SnitcherCreateWorkspaceTagConfig",
+          "delete_custom_field": "#/$defs/SnitcherDeleteCustomFieldConfig",
+          "get_contact_credits": "#/$defs/SnitcherGetContactCreditsConfig",
+          "get_custom_field": "#/$defs/SnitcherGetCustomFieldConfig",
+          "get_organisation": "#/$defs/SnitcherGetOrganisationConfig",
+          "get_profile": "#/$defs/SnitcherGetProfileConfig",
+          "get_workspace": "#/$defs/SnitcherGetWorkspaceConfig",
+          "list_contacts": "#/$defs/SnitcherListContactsConfig",
+          "list_custom_fields": "#/$defs/SnitcherListCustomFieldsConfig",
+          "list_organisation_custom_fields": "#/$defs/SnitcherListOrganisationCustomFieldsConfig",
+          "list_organisation_sessions": "#/$defs/SnitcherListOrganisationSessionsConfig",
+          "list_organisations": "#/$defs/SnitcherListOrganisationsConfig",
+          "list_segments": "#/$defs/SnitcherListSegmentsConfig",
+          "list_sessions": "#/$defs/SnitcherListSessionsConfig",
+          "list_workspaces": "#/$defs/SnitcherListWorkspacesConfig",
+          "remove_organisation_tag": "#/$defs/SnitcherRemoveOrganisationTagConfig",
+          "reveal_contact_email": "#/$defs/SnitcherRevealContactEmailConfig",
+          "set_organisation_custom_field": "#/$defs/SnitcherSetOrganisationCustomFieldConfig",
+          "set_organisation_custom_fields": "#/$defs/SnitcherSetOrganisationCustomFieldsConfig",
+          "update_custom_field": "#/$defs/SnitcherUpdateCustomFieldConfig",
+          "update_workspace": "#/$defs/SnitcherUpdateWorkspaceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SnitcherGetContactCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherCreateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherGetCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherDeleteCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherUpdateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherRevealContactEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListOrganisationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherGetOrganisationConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherAddOrganisationTagConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherRemoveOrganisationTagConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListOrganisationCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherSetOrganisationCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherSetOrganisationCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherClearOrganisationCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListOrganisationSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherGetWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherUpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SnitcherCreateWorkspaceTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SnitcherTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Snitcher Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
