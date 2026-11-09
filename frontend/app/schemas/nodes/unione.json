@@ -1,0 +1,1410 @@
+{
+  "$defs": {
+    "CreateEventDump": {
+      "additionalProperties": false,
+      "description": "Queue an asynchronous CSV export; get its status and file URLs separately.",
+      "properties": {
+        "operation": {
+          "const": "create_event_dump",
+          "default": "create_event_dump",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_time": {
+          "description": "UTC YYYY-MM-DD hh:mm:ss, within the account's retention window.",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusive end time, UTC YYYY-MM-DD hh:mm:ss.",
+          "title": "End Time"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "all_projects": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "All Projects"
+        },
+        "aggregate": {
+          "anyOf": [
+            {
+              "enum": [
+                "",
+                "day_status"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aggregate",
+          "enum": [
+            "",
+            "day_status"
+          ],
+          "x-enum-searchable": true
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "enum": [
+                ",",
+                ";"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delimiter",
+          "enum": [
+            ",",
+            ";"
+          ],
+          "x-enum-searchable": true
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "csv",
+                "csv_gzip"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format",
+          "enum": [
+            "csv",
+            "csv_gzip"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "start_time"
+      ],
+      "title": "CreateEventDump",
+      "type": "object"
+    },
+    "DeleteEventDump": {
+      "additionalProperties": false,
+      "description": "Remove an export from the queue or storage.",
+      "properties": {
+        "dump_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Dump Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_event_dump",
+          "default": "delete_event_dump",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dump_id"
+      ],
+      "title": "DeleteEventDump",
+      "type": "object"
+    },
+    "DeleteSuppression": {
+      "additionalProperties": false,
+      "description": "Remove deletable suppressions for an address; provider limits still apply.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_suppression",
+          "default": "delete_suppression",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DeleteSuppression",
+      "type": "object"
+    },
+    "DeleteTag": {
+      "additionalProperties": false,
+      "description": "Remove a user-defined tag.",
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "DeleteTag",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "description": "Delete an email template by ID.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "description": "Delete the event notification handler identified by its URL.",
+      "properties": {
+        "url": {
+          "description": "The exact URL identifies the webhook; NoClick does not fetch this URL.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "GetAccountInfo": {
+      "additionalProperties": false,
+      "description": "Read the user or project identity and accounting information.",
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccountInfo",
+      "type": "object"
+    },
+    "GetDomainDNSRecords": {
+      "additionalProperties": false,
+      "description": "Get DNS setup records for a sending domain.",
+      "properties": {
+        "domain": {
+          "maxLength": 253,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\\.[A-Za-z]{2,63}$",
+          "title": "Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_domain_dns_records",
+          "default": "get_domain_dns_records",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "GetDomainDNSRecords",
+      "type": "object"
+    },
+    "GetEventDump": {
+      "additionalProperties": false,
+      "description": "Get export preparation status and download URLs without downloading files.",
+      "properties": {
+        "dump_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Dump Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_event_dump",
+          "default": "get_event_dump",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dump_id"
+      ],
+      "title": "GetEventDump",
+      "type": "object"
+    },
+    "GetSuppression": {
+      "additionalProperties": false,
+      "description": "Get suppression reasons for an address.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_suppression",
+          "default": "get_suppression",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "all_projects": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "All Projects"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetSuppression",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "description": "Get an email template by ID.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "GetWebhook": {
+      "additionalProperties": false,
+      "description": "Get event handler settings for an exact URL.",
+      "properties": {
+        "url": {
+          "description": "The exact URL identifies the webhook; NoClick does not fetch this URL.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GetWebhook",
+      "type": "object"
+    },
+    "ListDomains": {
+      "additionalProperties": false,
+      "description": "List a page of sending domains and their verification and DKIM states.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; increase offset to request another page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\\.[A-Za-z]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        }
+      },
+      "title": "ListDomains",
+      "type": "object"
+    },
+    "ListEventDumps": {
+      "additionalProperties": false,
+      "description": "List existing asynchronous exports.",
+      "properties": {
+        "operation": {
+          "const": "list_event_dumps",
+          "default": "list_event_dumps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEventDumps",
+      "type": "object"
+    },
+    "ListSuppressions": {
+      "additionalProperties": false,
+      "description": "List one suppression page, passing the returned cursor for the next page.",
+      "properties": {
+        "operation": {
+          "const": "list_suppressions",
+          "default": "list_suppressions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cause": {
+          "anyOf": [
+            {
+              "enum": [
+                "unsubscribed",
+                "temporary_unavailable",
+                "permanent_unavailable",
+                "complained",
+                "blocked"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cause",
+          "enum": [
+            "unsubscribed",
+            "temporary_unavailable",
+            "permanent_unavailable",
+            "complained",
+            "blocked"
+          ],
+          "x-enum-searchable": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "system",
+                "subscriber"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "user",
+            "system",
+            "subscriber"
+          ],
+          "x-enum-searchable": true
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTC YYYY-MM-DD hh:mm:ss, ignored when cursor is supplied.",
+          "title": "Start Time"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListSuppressions",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "List user-defined email tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "description": "List one page of account or project templates.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; increase offset to request another page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ListWebhooks": {
+      "additionalProperties": false,
+      "description": "List one page of event notification handlers.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; increase offset to request another page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWebhooks",
+      "type": "object"
+    },
+    "Ping": {
+      "additionalProperties": false,
+      "description": "Check API key validity and return the user ID.",
+      "properties": {
+        "operation": {
+          "const": "ping",
+          "default": "ping",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "Ping",
+      "type": "object"
+    },
+    "SendEmail": {
+      "additionalProperties": false,
+      "description": "Send a transactional email to one recipient; returns accepted and failed recipients.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "From Email",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "plaintext": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Plain text body",
+          "type": "string"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "maxLength": 2000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "HTML body"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Name"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "global_substitutions": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Global Substitutions",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "global_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Global Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "idempotence_key": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider idempotence key; use a stable value when retrying a send yourself.",
+          "title": "Idempotence Key"
+        }
+      },
+      "required": [
+        "email",
+        "from_email",
+        "subject",
+        "plaintext"
+      ],
+      "title": "SendEmail",
+      "type": "object"
+    },
+    "SetSuppression": {
+      "additionalProperties": false,
+      "description": "Suppress an email address with a specified cause.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_suppression",
+          "default": "set_suppression",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cause": {
+          "enum": [
+            "unsubscribed",
+            "temporary_unavailable",
+            "permanent_unavailable",
+            "complained"
+          ],
+          "title": "Cause",
+          "type": "string"
+        },
+        "created": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTC YYYY-MM-DD hh:mm:ss; omit to use the current time.",
+          "title": "Created"
+        }
+      },
+      "required": [
+        "email",
+        "cause"
+      ],
+      "title": "SetSuppression",
+      "type": "object"
+    },
+    "SetTemplate": {
+      "additionalProperties": false,
+      "description": "Create a template, or update it when an existing template ID is supplied.",
+      "properties": {
+        "operation": {
+          "const": "set_template",
+          "default": "set_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "from_email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "From Email",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing template ID"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "plaintext": {
+          "anyOf": [
+            {
+              "maxLength": 2000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plaintext"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "maxLength": 2000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Name"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "global_substitutions": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Global Substitutions",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "global_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Global Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name",
+        "from_email"
+      ],
+      "title": "SetTemplate",
+      "type": "object"
+    },
+    "SetWebhook": {
+      "additionalProperties": false,
+      "description": "Create or update the event handler identified by this URL.",
+      "properties": {
+        "url": {
+          "description": "The exact URL identifies the webhook; NoClick does not fetch this URL.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_webhook",
+          "default": "set_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "disabled",
+                "stopped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "disabled",
+            "stopped"
+          ],
+          "x-enum-searchable": true
+        },
+        "event_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "json_post",
+                "json_post_gzip"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Format",
+          "enum": [
+            "json_post",
+            "json_post_gzip"
+          ],
+          "x-enum-searchable": true
+        },
+        "delivery_info": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivery Info"
+        },
+        "single_event": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Single Event"
+        },
+        "max_parallel": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 5,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Parallel"
+        },
+        "events": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WebhookEvents"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Events",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SetWebhook",
+      "type": "object"
+    },
+    "UnioneAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "unione_api_key",
+          "default": "unione_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "UniOne API Key",
+      "type": "object",
+      "x-credential-instructions": "In UniOne account settings, copy your user API key, or use a project API key from Projects. Paste the key here. NoClick sends it in the X-API-KEY header. A project key limits operations to that project.",
+      "x-credential-url": "https://cp.unione.io/en/user/info/api"
+    },
+    "ValidateDomainDKIM": {
+      "additionalProperties": false,
+      "description": "Trigger validation of the domain DKIM record.",
+      "properties": {
+        "domain": {
+          "maxLength": 253,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\\.[A-Za-z]{2,63}$",
+          "title": "Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_domain_dkim",
+          "default": "validate_domain_dkim",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ValidateDomainDKIM",
+      "type": "object"
+    },
+    "ValidateDomainVerification": {
+      "additionalProperties": false,
+      "description": "Trigger validation of the domain ownership record.",
+      "properties": {
+        "domain": {
+          "maxLength": 253,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\\.[A-Za-z]{2,63}$",
+          "title": "Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_domain_verification",
+          "default": "validate_domain_verification",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ValidateDomainVerification",
+      "type": "object"
+    },
+    "WebhookEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "spam_block": {
+          "anyOf": [
+            {
+              "items": {
+                "const": "*",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spam Block"
+        },
+        "email_status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "sent",
+                  "delivered",
+                  "opened",
+                  "clicked",
+                  "unsubscribed",
+                  "subscribed",
+                  "soft_bounced",
+                  "hard_bounced",
+                  "spam"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Status"
+        }
+      },
+      "title": "WebhookEvents",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event_dump": "#/$defs/CreateEventDump",
+          "delete_event_dump": "#/$defs/DeleteEventDump",
+          "delete_suppression": "#/$defs/DeleteSuppression",
+          "delete_tag": "#/$defs/DeleteTag",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "get_account_info": "#/$defs/GetAccountInfo",
+          "get_domain_dns_records": "#/$defs/GetDomainDNSRecords",
+          "get_event_dump": "#/$defs/GetEventDump",
+          "get_suppression": "#/$defs/GetSuppression",
+          "get_template": "#/$defs/GetTemplate",
+          "get_webhook": "#/$defs/GetWebhook",
+          "list_domains": "#/$defs/ListDomains",
+          "list_event_dumps": "#/$defs/ListEventDumps",
+          "list_suppressions": "#/$defs/ListSuppressions",
+          "list_tags": "#/$defs/ListTags",
+          "list_templates": "#/$defs/ListTemplates",
+          "list_webhooks": "#/$defs/ListWebhooks",
+          "ping": "#/$defs/Ping",
+          "send_email": "#/$defs/SendEmail",
+          "set_suppression": "#/$defs/SetSuppression",
+          "set_template": "#/$defs/SetTemplate",
+          "set_webhook": "#/$defs/SetWebhook",
+          "validate_domain_dkim": "#/$defs/ValidateDomainDKIM",
+          "validate_domain_verification": "#/$defs/ValidateDomainVerification"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SendEmail"
+        },
+        {
+          "$ref": "#/$defs/SetTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/SetWebhook"
+        },
+        {
+          "$ref": "#/$defs/GetWebhook"
+        },
+        {
+          "$ref": "#/$defs/ListWebhooks"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        },
+        {
+          "$ref": "#/$defs/SetSuppression"
+        },
+        {
+          "$ref": "#/$defs/GetSuppression"
+        },
+        {
+          "$ref": "#/$defs/ListSuppressions"
+        },
+        {
+          "$ref": "#/$defs/DeleteSuppression"
+        },
+        {
+          "$ref": "#/$defs/GetDomainDNSRecords"
+        },
+        {
+          "$ref": "#/$defs/ListDomains"
+        },
+        {
+          "$ref": "#/$defs/ValidateDomainVerification"
+        },
+        {
+          "$ref": "#/$defs/ValidateDomainDKIM"
+        },
+        {
+          "$ref": "#/$defs/CreateEventDump"
+        },
+        {
+          "$ref": "#/$defs/GetEventDump"
+        },
+        {
+          "$ref": "#/$defs/ListEventDumps"
+        },
+        {
+          "$ref": "#/$defs/DeleteEventDump"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/DeleteTag"
+        },
+        {
+          "$ref": "#/$defs/Ping"
+        },
+        {
+          "$ref": "#/$defs/GetAccountInfo"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UnioneAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Unione Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

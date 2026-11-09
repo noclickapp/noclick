@@ -1,0 +1,272 @@
+{
+  "POST /email/send.json": {
+    "body": {
+      "status": "success",
+      "job_id": "1ZymBc-00041N-9X",
+      "emails": [
+        "user@example.com"
+      ],
+      "failed_emails": {
+        "email1@gmail.com": "temporary_unavailable",
+        "bad@address": "invalid",
+        "email@example.com": "duplicate",
+        "root@example.org": "permanent_unavailable",
+        "olduser@example.net": "unsubscribed"
+      }
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#email-send"
+  },
+  "POST /template/delete.json": {
+    "body": {
+      "status": "success"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#template-delete"
+  },
+  "POST /webhook/set.json": {
+    "body": {
+      "status": "success",
+      "object": {
+        "id": 0,
+        "url": "http://example.com",
+        "status": "active",
+        "event_format": "json_post",
+        "delivery_info": 0,
+        "single_event": 0,
+        "max_parallel": 10,
+        "updated_at": "string",
+        "events": {
+          "spam_block": [
+            "*"
+          ],
+          "email_status": [
+            "delivered",
+            "opened",
+            "clicked",
+            "unsubscribed",
+            "subscribed",
+            "soft_bounced",
+            "hard_bounced",
+            "spam"
+          ]
+        }
+      }
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#webhook-set"
+  },
+  "POST /webhook/get.json": {
+    "body": {
+      "status": "success",
+      "object": {
+        "id": 0,
+        "url": "http://example.com",
+        "status": "active",
+        "event_format": "json_post",
+        "delivery_info": 0,
+        "single_event": 0,
+        "max_parallel": 10,
+        "updated_at": "string",
+        "events": {
+          "spam_block": [
+            "*"
+          ],
+          "email_status": [
+            "delivered",
+            "opened",
+            "clicked",
+            "unsubscribed",
+            "subscribed",
+            "soft_bounced",
+            "hard_bounced",
+            "spam"
+          ]
+        }
+      }
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#webhook-get"
+  },
+  "POST /webhook/delete.json": {
+    "body": {
+      "status": "success"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#webhook-delete"
+  },
+  "POST /suppression/set.json": {
+    "body": {
+      "status": "success"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#suppression-set"
+  },
+  "POST /suppression/get.json": {
+    "body": {
+      "status": "success",
+      "email": "user@example.com",
+      "suppressions": [
+        {
+          "project_id": "6123462132634",
+          "cause": "unsubscribed",
+          "source": "user",
+          "is_deletable": true,
+          "created": "2021-12-19 10:15:49"
+        }
+      ]
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#suppression-get"
+  },
+  "POST /suppression/list.json": {
+    "body": {
+      "status": "success",
+      "suppressions": [
+        {
+          "email": "user@example.com",
+          "cause": "unsubscribed",
+          "source": "user",
+          "is_deletable": true,
+          "created": "2021-12-19 10:15:49"
+        }
+      ],
+      "cursor": "Ajfb6Hvdkn3hdhhvG57xbdufhG5"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#suppression-list"
+  },
+  "POST /suppression/delete.json": {
+    "body": {
+      "status": "success"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#suppression-delete"
+  },
+  "POST /domain/get-dns-records.json": {
+    "body": {
+      "status": "success",
+      "domain": "example.com",
+      "verification-record": "unione-validate-hash=483bb362ebdbeedd755cfb1d4d661",
+      "dkim": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDo7"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#domain-get-dns-records"
+  },
+  "POST /domain/list.json": {
+    "body": {
+      "status": "success",
+      "domains": [
+        {
+          "domain": "example.com",
+          "verification-record": {
+            "value": "unione-validate-hash=483bb362ebdbeedd755cfb1d4d661",
+            "status": "confirmed"
+          },
+          "dkim": {
+            "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDo7",
+            "status": "active"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#domain-list"
+  },
+  "POST /domain/validate-verification-record.json": {
+    "body": {
+      "status": "success",
+      "message": "Record updated"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#domain-validate-verification-record"
+  },
+  "POST /domain/validate-dkim.json": {
+    "body": {
+      "status": "success",
+      "message": "Record updated"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#domain-validate-dkim"
+  },
+  "POST /event-dump/create.json": {
+    "body": {
+      "status": "success",
+      "dump_id": "string"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#event-dump-create"
+  },
+  "POST /event-dump/get.json": {
+    "body": {
+      "status": "success",
+      "event_dump": {
+        "dump_id": "Gqfasjh34tlasd",
+        "dump_status": "in_process",
+        "files": [
+          {
+            "url": "https://eu1.unione.io/event-dump/Agejmh63Efmngaow4tDFGqwqt-1.csv",
+            "size": 512345
+          }
+        ]
+      }
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#event-dump-get"
+  },
+  "POST /event-dump/list.json": {
+    "body": {
+      "status": "success",
+      "event_dumps": [
+        {
+          "dump_id": "Gqfasjh34tlasd",
+          "dump_status": "in_process",
+          "files": [
+            {
+              "url": "https://eu1.unione.io/event-dump/Agejmh63Efmngaow4tDFGqwqt-1.csv",
+              "size": 512345
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#event-dump-list"
+  },
+  "POST /event-dump/delete.json": {
+    "body": {
+      "status": "success"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#event-dump-delete"
+  },
+  "POST /tag/list.json": {
+    "body": {
+      "status": "success",
+      "tags": [
+        {
+          "tag_id": 54,
+          "tag": "example-tag1"
+        }
+      ]
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#tag-list"
+  },
+  "POST /tag/delete.json": {
+    "body": {
+      "status": "success"
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#tag-delete"
+  },
+  "POST /system/ping.json": {
+    "body": {
+      "status": "success",
+      "user_id": 11344
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#system-ping"
+  },
+  "POST /system/info.json": {
+    "body": {
+      "status": "success",
+      "user_id": 11344,
+      "email": "user@example.com",
+      "project_id": "6123462132634",
+      "project_name": "Project 1A",
+      "project_accounting": {
+        "email_counter": 0,
+        "email_counter_limit": 0,
+        "email_counter_mode": "default"
+      },
+      "accounting": {
+        "period_start": "2016-08-29 09:12:33",
+        "period_end": "2016-09-29 09:12:33",
+        "emails_included": 0,
+        "emails_sent": 0
+      }
+    },
+    "source": "https://docs.unione.io/en/web-api-ref/#system-info"
+  }
+}
