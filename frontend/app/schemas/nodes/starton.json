@@ -1,0 +1,1864 @@
+{
+  "$defs": {
+    "StartonAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "starton_api_key",
+          "default": "starton_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Starton API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Starton project's developer settings and paste it here. The key can access your project; choose a project with the wallets and contracts your workflow needs.",
+      "x-credential-url": "https://app.starton.com/projects/default/developer"
+    },
+    "StartonCallSmartContractConfig": {
+      "additionalProperties": false,
+      "description": "Execute Smart Contract Function",
+      "properties": {
+        "operation": {
+          "const": "call_smart_contract",
+          "default": "call_smart_contract",
+          "title": "Call Smart Contract",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "network": {
+          "description": "EVM starton supported network.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Network",
+          "type": "string"
+        },
+        "address": {
+          "description": "Smart contract address.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Address",
+          "type": "string"
+        },
+        "simulate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean for transaction simulation. Will estimate gas price.",
+          "title": "Simulate"
+        },
+        "functionName": {
+          "maxLength": 8192,
+          "title": "Functionname",
+          "type": "string"
+        },
+        "params": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "description": "Smart-contract arguments as a JSON array, in ABI order.",
+          "title": "Params",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "speed": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "average",
+                "fast",
+                "fastest"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speed",
+          "enum": [
+            "low",
+            "average",
+            "fast",
+            "fastest"
+          ],
+          "x-enum-searchable": true
+        },
+        "gasLimit": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gaslimit"
+        },
+        "signerWallet": {
+          "description": "Existing Starton signerWallet.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Signerwallet",
+          "type": "string"
+        },
+        "nonce": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nonce"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "network",
+        "address",
+        "functionName",
+        "params",
+        "signerWallet"
+      ],
+      "title": "StartonCallSmartContractConfig",
+      "type": "object"
+    },
+    "StartonCreateTransactionConfig": {
+      "additionalProperties": false,
+      "description": "Create a new transaction",
+      "properties": {
+        "operation": {
+          "const": "create_transaction",
+          "default": "create_transaction",
+          "title": "Create Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "simulate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean for transaction simulation. Will estimate gas price.",
+          "title": "Simulate"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction data.",
+          "title": "Data"
+        },
+        "gasLimit": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gaslimit"
+        },
+        "speed": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "average",
+                "fast",
+                "fastest"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gas speed. Starton defaults to average.",
+          "title": "Speed",
+          "enum": [
+            "low",
+            "average",
+            "fast",
+            "fastest"
+          ],
+          "x-enum-searchable": true
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "network": {
+          "description": "Your network you want to perform transaction.",
+          "maxLength": 8192,
+          "title": "Network",
+          "type": "string"
+        },
+        "nonce": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your transaction nonce. Don't fill this value if you want to use relayer nonce auto assignation.",
+          "title": "Nonce"
+        },
+        "signerWallet": {
+          "description": "Your kms address. It's also the from of your transaction.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Signerwallet",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The address you want to send to.",
+          "title": "To"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The value of the transaction in wei.",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "network",
+        "signerWallet"
+      ],
+      "title": "StartonCreateTransactionConfig",
+      "type": "object"
+    },
+    "StartonCreateWalletConfig": {
+      "additionalProperties": false,
+      "description": "Create a new wallet",
+      "properties": {
+        "operation": {
+          "const": "create_wallet",
+          "default": "create_wallet",
+          "title": "Create Wallet",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "kmsId": {
+          "maxLength": 8192,
+          "title": "Kmsid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kmsId"
+      ],
+      "title": "StartonCreateWalletConfig",
+      "type": "object"
+    },
+    "StartonDeletePinConfig": {
+      "additionalProperties": false,
+      "description": "Deletes pinned file referenced by {id}",
+      "properties": {
+        "operation": {
+          "const": "delete_pin",
+          "default": "delete_pin",
+          "title": "Delete Pin",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resource_id": {
+          "description": "The unique identifier of the pinned file on Starton",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "StartonDeletePinConfig",
+      "type": "object"
+    },
+    "StartonDeployFromTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Deploy Smart Contract from Template",
+      "properties": {
+        "operation": {
+          "const": "deploy_from_template",
+          "default": "deploy_from_template",
+          "title": "Deploy From Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "simulate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean for transaction simulation. Will estimate gas price.",
+          "title": "Simulate"
+        },
+        "network": {
+          "description": "Network of the smart contract you want to deploy.",
+          "maxLength": 8192,
+          "title": "Network",
+          "type": "string"
+        },
+        "signerWallet": {
+          "description": "Signer wallet of the transaction.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Signerwallet",
+          "type": "string"
+        },
+        "templateId": {
+          "description": "Starton Library template to deploy.",
+          "maxLength": 8192,
+          "title": "Templateid",
+          "type": "string"
+        },
+        "name": {
+          "description": "Contract name on Starton database (off-chain).",
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contract description on Starton database (off-chain).",
+          "title": "Description"
+        },
+        "params": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "description": "Smart-contract arguments as a JSON array, in ABI order.",
+          "title": "Params",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "gasLimit": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional gas limit",
+          "title": "Gaslimit"
+        },
+        "speed": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "average",
+                "fast",
+                "fastest"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gas speed. Starton defaults to average.",
+          "title": "Speed",
+          "enum": [
+            "low",
+            "average",
+            "fast",
+            "fastest"
+          ],
+          "x-enum-searchable": true
+        },
+        "nonce": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nonce manual setting, if nonce referenced, Starton relayer will not automaticly assign nonce.",
+          "title": "Nonce"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you want to put value in your smart contract deployment (Example: payable constructor)",
+          "title": "Value"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "network",
+        "signerWallet",
+        "templateId",
+        "name",
+        "params"
+      ],
+      "title": "StartonDeployFromTemplateConfig",
+      "type": "object"
+    },
+    "StartonGetGasPriceConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the current gas prices",
+      "properties": {
+        "operation": {
+          "const": "get_gas_price",
+          "default": "get_gas_price",
+          "title": "Get Gas Price",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "network": {
+          "description": "The blockchain network you are checking gas prices on.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Network",
+          "type": "string"
+        }
+      },
+      "required": [
+        "network"
+      ],
+      "title": "StartonGetGasPriceConfig",
+      "type": "object"
+    },
+    "StartonGetNetworkConfig": {
+      "additionalProperties": false,
+      "description": "Fetch a specific network",
+      "properties": {
+        "operation": {
+          "const": "get_network",
+          "default": "get_network",
+          "title": "Get Network",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "network": {
+          "description": "The unique name of the network to retrieve",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Network",
+          "type": "string"
+        }
+      },
+      "required": [
+        "network"
+      ],
+      "title": "StartonGetNetworkConfig",
+      "type": "object"
+    },
+    "StartonGetPinConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Specific File",
+      "properties": {
+        "operation": {
+          "const": "get_pin",
+          "default": "get_pin",
+          "title": "Get Pin",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resource_id": {
+          "description": "The unique identifier of the file to be retrieved. This {id} is assigned when the file is initially uploaded to IPFS. ",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "includeDirectoryContent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includedirectorycontent"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "StartonGetPinConfig",
+      "type": "object"
+    },
+    "StartonGetSmartContractConfig": {
+      "additionalProperties": false,
+      "description": "Get a single smart contract",
+      "properties": {
+        "operation": {
+          "const": "get_smart_contract",
+          "default": "get_smart_contract",
+          "title": "Get Smart Contract",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "includeAbi": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeabi"
+        },
+        "includeCompilationDetails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includecompilationdetails"
+        },
+        "network": {
+          "description": "EVM starton supported network.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Network",
+          "type": "string"
+        },
+        "address": {
+          "description": "Smart contract address.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "network",
+        "address"
+      ],
+      "title": "StartonGetSmartContractConfig",
+      "type": "object"
+    },
+    "StartonGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Specific Smart Contract Template",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resource_id": {
+          "description": "Unique identifier of the smart contract template.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "includeForm": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeform"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "StartonGetTemplateConfig",
+      "type": "object"
+    },
+    "StartonGetTransactionConfig": {
+      "additionalProperties": false,
+      "description": "Get a Specific Transaction",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Get Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resource_id": {
+          "description": "Id of the transaction",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "StartonGetTransactionConfig",
+      "type": "object"
+    },
+    "StartonGetWalletConfig": {
+      "additionalProperties": false,
+      "description": "Fetch Wallet Details",
+      "properties": {
+        "operation": {
+          "const": "get_wallet",
+          "default": "get_wallet",
+          "title": "Get Wallet",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "The address of the wallet.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "StartonGetWalletConfig",
+      "type": "object"
+    },
+    "StartonListKmsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve all Key Management Systems (KMS)",
+      "properties": {
+        "operation": {
+          "const": "list_kms",
+          "default": "list_kms",
+          "title": "List KMS",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "StartonListKmsConfig",
+      "type": "object"
+    },
+    "StartonListNetworksConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the list of supported networks",
+      "properties": {
+        "operation": {
+          "const": "list_networks",
+          "default": "list_networks",
+          "title": "List Networks",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "testnet": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Testnet"
+        },
+        "featured": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Featured"
+        },
+        "deprecated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deprecated"
+        }
+      },
+      "title": "StartonListNetworksConfig",
+      "type": "object"
+    },
+    "StartonListPinsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve all files",
+      "properties": {
+        "operation": {
+          "const": "list_pins",
+          "default": "list_pins",
+          "title": "List Pins",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cid": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cid"
+        },
+        "includeDirectoryContent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includedirectorycontent"
+        }
+      },
+      "title": "StartonListPinsConfig",
+      "type": "object"
+    },
+    "StartonListSmartContractsConfig": {
+      "additionalProperties": false,
+      "description": "Get all smart contracts",
+      "properties": {
+        "operation": {
+          "const": "list_smart_contracts",
+          "default": "list_smart_contracts",
+          "title": "List Smart Contracts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "includeAbi": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeabi"
+        },
+        "includeCompilationDetails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includecompilationdetails"
+        }
+      },
+      "title": "StartonListSmartContractsConfig",
+      "type": "object"
+    },
+    "StartonListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "Fetch the list of Smart Contract Templates",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "isAudited": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isaudited"
+        },
+        "isActivated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isactivated"
+        },
+        "blockchain": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blockchain"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "NFT",
+                "FUNGIBLE",
+                "OTHER",
+                "DEPRECATED",
+                "SALE",
+                "TOOL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "enum": [
+            "NFT",
+            "FUNGIBLE",
+            "OTHER",
+            "DEPRECATED",
+            "SALE",
+            "TOOL"
+          ],
+          "x-enum-searchable": true
+        },
+        "includeCompilationDetails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includecompilationdetails"
+        },
+        "includeForm": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeform"
+        }
+      },
+      "title": "StartonListTemplatesConfig",
+      "type": "object"
+    },
+    "StartonListTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a List of Transactions",
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the network on which the transactions are deployed (filter). See <a href='https://docs.starton.com/docs/overview#supported-networks'>supported networks</a>.",
+          "title": "Network"
+        },
+        "transactionHash": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The hash of a specific transaction (filter).",
+          "title": "Transactionhash"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The address receiver of transactions, which can be a smart contract (filter).",
+          "title": "To"
+        },
+        "from_address": {
+          "anyOf": [
+            {
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The wallet used to sign the transactions (filter).",
+          "title": "From Address"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieves transactions executed after a specified date.",
+          "title": "Fromdate"
+        }
+      },
+      "title": "StartonListTransactionsConfig",
+      "type": "object"
+    },
+    "StartonListWalletsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the list of Wallets",
+      "properties": {
+        "operation": {
+          "const": "list_wallets",
+          "default": "list_wallets",
+          "title": "List Wallets",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Number of returned page. By default the returned page is the first.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of entities returned on each page. By default this number is set to 100.",
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "kmsId": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kmsid"
+        }
+      },
+      "title": "StartonListWalletsConfig",
+      "type": "object"
+    },
+    "StartonPinFileConfig": {
+      "additionalProperties": false,
+      "description": "Pin Existing IPFS File",
+      "properties": {
+        "operation": {
+          "const": "pin_file",
+          "default": "pin_file",
+          "title": "Pin File",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cid": {
+          "maxLength": 8192,
+          "title": "Cid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "cid"
+      ],
+      "title": "StartonPinFileConfig",
+      "type": "object"
+    },
+    "StartonReadSmartContractConfig": {
+      "additionalProperties": false,
+      "description": "Query Smart Contract Function",
+      "properties": {
+        "operation": {
+          "const": "read_smart_contract",
+          "default": "read_smart_contract",
+          "title": "Read Smart Contract",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "network": {
+          "description": "EVM starton supported network.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Network",
+          "type": "string"
+        },
+        "address": {
+          "description": "Smart contract address.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Address",
+          "type": "string"
+        },
+        "functionName": {
+          "maxLength": 8192,
+          "title": "Functionname",
+          "type": "string"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "Smart-contract arguments as a JSON array, in ABI order.",
+          "title": "Params",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "network",
+        "address",
+        "functionName"
+      ],
+      "title": "StartonReadSmartContractConfig",
+      "type": "object"
+    },
+    "StartonUpdatePinConfig": {
+      "additionalProperties": false,
+      "description": "Update File Details",
+      "properties": {
+        "operation": {
+          "const": "update_pin",
+          "default": "update_pin",
+          "title": "Update Pin",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resource_id": {
+          "description": "The unique identifier for the file you wish to update. This ID is assigned upon the initial upload of the file to IPFS.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "StartonUpdatePinConfig",
+      "type": "object"
+    },
+    "StartonUpdateSmartContractConfig": {
+      "additionalProperties": false,
+      "description": "Update a smart contract",
+      "properties": {
+        "operation": {
+          "const": "update_smart_contract",
+          "default": "update_smart_contract",
+          "title": "Update Smart Contract",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "network": {
+          "description": "EVM starton supported network.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Network",
+          "type": "string"
+        },
+        "address": {
+          "description": "Smart contract address.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Address",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "network",
+        "address"
+      ],
+      "title": "StartonUpdateSmartContractConfig",
+      "type": "object"
+    },
+    "StartonUpdateWalletConfig": {
+      "additionalProperties": false,
+      "description": "Update Wallet Information",
+      "properties": {
+        "operation": {
+          "const": "update_wallet",
+          "default": "update_wallet",
+          "title": "Update Wallet",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "The address of the wallet to update.",
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "title": "Address",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "StartonUpdateWalletConfig",
+      "type": "object"
+    },
+    "StartonUploadJsonConfig": {
+      "additionalProperties": false,
+      "description": "Upload a JSON file",
+      "properties": {
+        "operation": {
+          "const": "upload_json",
+          "default": "upload_json",
+          "title": "Upload JSON",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "content": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "description": "JSON object to upload to IPFS.",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name",
+        "content"
+      ],
+      "title": "StartonUploadJsonConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "call_smart_contract": "#/$defs/StartonCallSmartContractConfig",
+          "create_transaction": "#/$defs/StartonCreateTransactionConfig",
+          "create_wallet": "#/$defs/StartonCreateWalletConfig",
+          "delete_pin": "#/$defs/StartonDeletePinConfig",
+          "deploy_from_template": "#/$defs/StartonDeployFromTemplateConfig",
+          "get_gas_price": "#/$defs/StartonGetGasPriceConfig",
+          "get_network": "#/$defs/StartonGetNetworkConfig",
+          "get_pin": "#/$defs/StartonGetPinConfig",
+          "get_smart_contract": "#/$defs/StartonGetSmartContractConfig",
+          "get_template": "#/$defs/StartonGetTemplateConfig",
+          "get_transaction": "#/$defs/StartonGetTransactionConfig",
+          "get_wallet": "#/$defs/StartonGetWalletConfig",
+          "list_kms": "#/$defs/StartonListKmsConfig",
+          "list_networks": "#/$defs/StartonListNetworksConfig",
+          "list_pins": "#/$defs/StartonListPinsConfig",
+          "list_smart_contracts": "#/$defs/StartonListSmartContractsConfig",
+          "list_templates": "#/$defs/StartonListTemplatesConfig",
+          "list_transactions": "#/$defs/StartonListTransactionsConfig",
+          "list_wallets": "#/$defs/StartonListWalletsConfig",
+          "pin_file": "#/$defs/StartonPinFileConfig",
+          "read_smart_contract": "#/$defs/StartonReadSmartContractConfig",
+          "update_pin": "#/$defs/StartonUpdatePinConfig",
+          "update_smart_contract": "#/$defs/StartonUpdateSmartContractConfig",
+          "update_wallet": "#/$defs/StartonUpdateWalletConfig",
+          "upload_json": "#/$defs/StartonUploadJsonConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/StartonListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonListSmartContractsConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetSmartContractConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonUpdateSmartContractConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonDeployFromTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonCallSmartContractConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonReadSmartContractConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonCreateTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonListWalletsConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetWalletConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonCreateWalletConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonUpdateWalletConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonListKmsConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonListNetworksConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetNetworkConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetGasPriceConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonListPinsConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonGetPinConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonPinFileConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonUpdatePinConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonDeletePinConfig"
+        },
+        {
+          "$ref": "#/$defs/StartonUploadJsonConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StartonAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Starton Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
