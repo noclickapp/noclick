@@ -1,0 +1,1339 @@
+{
+  "$defs": {
+    "CreateEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "appointmentId": {
+          "description": "Appointment associated with this estimate.",
+          "minLength": 1,
+          "title": "Appointmentid",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "estimateDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimatedatetime"
+        },
+        "estimateStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimatestatus"
+        },
+        "estimateType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimatetype"
+        },
+        "proposalDeliveryDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposaldeliverydate"
+        },
+        "taxAmount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxamount"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "lineItems": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/EstimateLineItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lineitems"
+        },
+        "operation": {
+          "const": "create_estimate",
+          "default": "create_estimate",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "appointmentId",
+        "name"
+      ],
+      "title": "CreateEstimate",
+      "type": "object"
+    },
+    "DeleteOpportunityNote": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "inquiry_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Inquiry Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_opportunity_note",
+          "default": "delete_opportunity_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "inquiry_id",
+        "note_id"
+      ],
+      "title": "DeleteOpportunityNote",
+      "type": "object"
+    },
+    "EstimateLineItem": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "estimateId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimateid"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "unitOfMeasure": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unitofmeasure"
+        },
+        "retailPrice": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retailprice"
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "title": "EstimateLineItem",
+      "type": "object"
+    },
+    "FilterAppointments": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "start_modified_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Modified Datetime"
+        },
+        "start_appointment_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Appointment Datetime"
+        },
+        "end_appointment_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Appointment Datetime"
+        },
+        "appointment_salesperson_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Appointment Salesperson Id"
+        },
+        "pageNumber": {
+          "default": 1,
+          "description": "One-based provider page. Increment to retrieve another page; no automatic pagination.",
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "rowsPerPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Rowsperpage",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "filter_appointments",
+          "default": "filter_appointments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FilterAppointments",
+      "type": "object"
+    },
+    "FilterContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "start_modified_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Modified Datetime"
+        },
+        "start_appointment_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Appointment Datetime"
+        },
+        "end_appointment_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Appointment Datetime"
+        },
+        "appointment_salesperson_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Appointment Salesperson Id"
+        },
+        "pageNumber": {
+          "default": 1,
+          "description": "One-based provider page. Increment to retrieve another page; no automatic pagination.",
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "rowsPerPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Rowsperpage",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "filter_contacts",
+          "default": "filter_contacts",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FilterContacts",
+      "type": "object"
+    },
+    "GetAppointment": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "appointment_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Appointment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "appointment_id"
+      ],
+      "title": "GetAppointment",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "inquiry_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Inquiry Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_inquiry",
+          "default": "get_inquiry",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "inquiry_id"
+      ],
+      "title": "GetInquiry",
+      "type": "object"
+    },
+    "GetOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "inquiry_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Inquiry Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_opportunity",
+          "default": "get_opportunity",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "inquiry_id"
+      ],
+      "title": "GetOpportunity",
+      "type": "object"
+    },
+    "ListAppointmentResults": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_appointment_results",
+          "default": "list_appointment_results",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ListAppointmentResults",
+      "type": "object"
+    },
+    "ListCompanies": {
+      "additionalProperties": false,
+      "description": "Read companies available to the supplied token.",
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCompanies",
+      "type": "object"
+    },
+    "ListOpportunityNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "inquiry_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Inquiry Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_opportunity_notes",
+          "default": "list_opportunity_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "note_type": {
+          "default": "Inquiry",
+          "enum": [
+            "Inquiry",
+            "Job"
+          ],
+          "title": "Note Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "inquiry_id"
+      ],
+      "title": "ListOpportunityNotes",
+      "type": "object"
+    },
+    "ListPricebook": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_pricebook",
+          "default": "list_pricebook",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ListPricebook",
+      "type": "object"
+    },
+    "ListPrimaryLeadSources": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_primary_lead_sources",
+          "default": "list_primary_lead_sources",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ListPrimaryLeadSources",
+      "type": "object"
+    },
+    "ListSecondaryLeadSources": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_secondary_lead_sources",
+          "default": "list_secondary_lead_sources",
+          "title": "Operation",
+          "type": "string"
+        },
+        "primary_lead_source_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Primary Lead Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "primary_lead_source_id"
+      ],
+      "title": "ListSecondaryLeadSources",
+      "type": "object"
+    },
+    "MarketSharpAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "marketsharp_api_token",
+          "default": "marketsharp_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "MarketSharp API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing MarketSharp access token returned by /token, without Bearer. MarketSharp provides API credentials; use Employee Authentication for contact searches. NoClick does not sign in, create or refresh tokens. Replace the token when it expires.",
+      "x-credential-url": "https://restapi.marketsharpm.com/swagger/ui/index"
+    },
+    "QualifyOpportunity": {
+      "additionalProperties": false,
+      "description": "Set the inquiry Qualified_By and Qualified_Date_Utc fields.",
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "inquiry_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Inquiry Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "qualify_opportunity",
+          "default": "qualify_opportunity",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "inquiry_id"
+      ],
+      "title": "QualifyOpportunity",
+      "type": "object"
+    },
+    "ResultAppointment": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "result_appointment",
+          "default": "result_appointment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "appointment_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Appointment Id",
+          "type": "string"
+        },
+        "result_id": {
+          "minLength": 1,
+          "title": "Result Id",
+          "type": "string"
+        },
+        "result_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Result Reason"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "employee_id": {
+          "minLength": 1,
+          "title": "Employee Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "appointment_id",
+        "result_id",
+        "employee_id"
+      ],
+      "title": "ResultAppointment",
+      "type": "object"
+    },
+    "SaveOpportunityNote": {
+      "additionalProperties": false,
+      "description": "Insert a note, or update it when note_id is provided.",
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "save_opportunity_note",
+          "default": "save_opportunity_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "inquiry_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Inquiry Id",
+          "type": "string"
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "note_type": {
+          "default": "Inquiry",
+          "enum": [
+            "Inquiry",
+            "Job"
+          ],
+          "title": "Note Type",
+          "type": "string"
+        },
+        "note_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "inquiry_id",
+        "note"
+      ],
+      "title": "SaveOpportunityNote",
+      "type": "object"
+    },
+    "SearchContacts": {
+      "additionalProperties": false,
+      "description": "QuickFind contact search; requires an employee identity in the bearer token.",
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "numberOfRecords": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Numberofrecords",
+          "type": "integer"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Name"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "address_line_one": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line One"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "contactType": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contacttype"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "SearchContacts",
+      "type": "object"
+    },
+    "UpdateEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "description": "MarketSharp company ID from List Companies.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "appointmentId": {
+          "description": "Appointment associated with this estimate.",
+          "minLength": 1,
+          "title": "Appointmentid",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "estimateDateTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimatedatetime"
+        },
+        "estimateStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimatestatus"
+        },
+        "estimateType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimatetype"
+        },
+        "proposalDeliveryDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposaldeliverydate"
+        },
+        "taxAmount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxamount"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "lineItems": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/EstimateLineItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lineitems"
+        },
+        "operation": {
+          "const": "update_estimate",
+          "default": "update_estimate",
+          "title": "Operation",
+          "type": "string"
+        },
+        "estimate_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Estimate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "appointmentId",
+        "name",
+        "estimate_id"
+      ],
+      "title": "UpdateEstimate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_estimate": "#/$defs/CreateEstimate",
+          "delete_opportunity_note": "#/$defs/DeleteOpportunityNote",
+          "filter_appointments": "#/$defs/FilterAppointments",
+          "filter_contacts": "#/$defs/FilterContacts",
+          "get_appointment": "#/$defs/GetAppointment",
+          "get_company": "#/$defs/GetCompany",
+          "get_contact": "#/$defs/GetContact",
+          "get_inquiry": "#/$defs/GetInquiry",
+          "get_opportunity": "#/$defs/GetOpportunity",
+          "list_appointment_results": "#/$defs/ListAppointmentResults",
+          "list_companies": "#/$defs/ListCompanies",
+          "list_opportunity_notes": "#/$defs/ListOpportunityNotes",
+          "list_pricebook": "#/$defs/ListPricebook",
+          "list_primary_lead_sources": "#/$defs/ListPrimaryLeadSources",
+          "list_secondary_lead_sources": "#/$defs/ListSecondaryLeadSources",
+          "qualify_opportunity": "#/$defs/QualifyOpportunity",
+          "result_appointment": "#/$defs/ResultAppointment",
+          "save_opportunity_note": "#/$defs/SaveOpportunityNote",
+          "search_contacts": "#/$defs/SearchContacts",
+          "update_estimate": "#/$defs/UpdateEstimate"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCompanies"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/SearchContacts"
+        },
+        {
+          "$ref": "#/$defs/FilterContacts"
+        },
+        {
+          "$ref": "#/$defs/GetInquiry"
+        },
+        {
+          "$ref": "#/$defs/GetOpportunity"
+        },
+        {
+          "$ref": "#/$defs/ListOpportunityNotes"
+        },
+        {
+          "$ref": "#/$defs/SaveOpportunityNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteOpportunityNote"
+        },
+        {
+          "$ref": "#/$defs/QualifyOpportunity"
+        },
+        {
+          "$ref": "#/$defs/GetAppointment"
+        },
+        {
+          "$ref": "#/$defs/FilterAppointments"
+        },
+        {
+          "$ref": "#/$defs/ResultAppointment"
+        },
+        {
+          "$ref": "#/$defs/CreateEstimate"
+        },
+        {
+          "$ref": "#/$defs/UpdateEstimate"
+        },
+        {
+          "$ref": "#/$defs/ListPricebook"
+        },
+        {
+          "$ref": "#/$defs/ListPrimaryLeadSources"
+        },
+        {
+          "$ref": "#/$defs/ListSecondaryLeadSources"
+        },
+        {
+          "$ref": "#/$defs/ListAppointmentResults"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketSharpAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Marketsharp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
