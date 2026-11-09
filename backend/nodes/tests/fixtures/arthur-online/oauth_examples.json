@@ -1,0 +1,355 @@
+{
+  "exchange": {
+    "name": "II. Request Access Token",
+    "id": "b86973ba-1d44-4ad9-a531-2fb94d9333c2",
+    "protocolProfileBehavior": {
+      "disableBodyPruning": true
+    },
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/x-www-form-urlencoded"
+        }
+      ],
+      "body": {
+        "mode": "urlencoded",
+        "urlencoded": [
+          {
+            "key": "grant_type",
+            "value": "authorization_code",
+            "description": "<p>This parameter indicates the type of grant requested. Parameter must have the value \"authorization_code\"</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "code",
+            "value": "",
+            "description": "<p>Temporary authorization code obtained during the user authorization step 1</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "client_id",
+            "value": "",
+            "description": "<p>This is the unique identifier for your third-party application, which was received after registration</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "client_secret",
+            "value": "",
+            "description": "<p>This is the secret key that identifies your third-party application and authenticates the application. It was also received after registration</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "redirect_uri",
+            "value": "",
+            "description": "<p>This is the URL to which the user will be redirected after the user authorization step. It must match the redirect URI specified during application registration</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "state",
+            "value": "",
+            "description": "<p>To maintain state between the request and the callback</p>\n",
+            "type": "text"
+          }
+        ]
+      },
+      "url": "https://auth.arthuronline.co.uk/oauth/token",
+      "description": "<p>To obtain an access token, you need to use the authorization code obtained in the previous step.</p>\n<p>You can make a\u00a0<code>POST</code>\u00a0request to the token endpoint with the following parameters, using the\u00a0<code>application/x-www-form-urlencoded</code>\u00a0format.</p>\n",
+      "urlObject": {
+        "protocol": "https",
+        "path": [
+          "oauth",
+          "token"
+        ],
+        "host": [
+          "auth",
+          "arthuronline",
+          "co",
+          "uk"
+        ],
+        "query": [],
+        "variable": []
+      }
+    },
+    "response": [
+      {
+        "id": "ffef2b56-d95f-4253-b56b-0bacb0c5c35f",
+        "name": "Example",
+        "originalRequest": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ],
+          "body": {
+            "mode": "urlencoded",
+            "urlencoded": [
+              {
+                "key": "grant_type",
+                "value": "authorization_code",
+                "description": "This parameter indicates the type of grant requested. Parameter must have the value \"authorization_code\"",
+                "type": "text"
+              },
+              {
+                "key": "code",
+                "value": "{{your_authorisation_code}}",
+                "description": "Temporary authorization code obtained during the user authorization step",
+                "type": "text"
+              },
+              {
+                "key": "client_id",
+                "value": "{{your_client_id}}",
+                "description": "This is the unique identifier for your third-party application, which was received after registration",
+                "type": "text"
+              },
+              {
+                "key": "client_secret",
+                "value": "{{your_client_secret}}",
+                "description": "This is the secret key that identifies your third-party application and authenticates the application. It was also received after registration",
+                "type": "text"
+              },
+              {
+                "key": "redirect_uri",
+                "value": "{{your_redirect_uri}}",
+                "description": "This is the URL to which the user will be redirected after the user authorization step. It must match the redirect URI specified during application registration",
+                "type": "text"
+              },
+              {
+                "key": "state",
+                "value": "{{your_state_string}}",
+                "description": "To maintain state between the request and the callback",
+                "type": "text"
+              }
+            ]
+          },
+          "url": "https://auth.arthuronline.co.uk/oauth/token"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "name": "Content-Type",
+            "description": "",
+            "type": "text"
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n   \"access_token\": \"c3a27902fb66891\",\n   \"token_type\": \"Bearer\",\n   \"expires_in\": 1209599,\n   \"refresh_token\": \"72b06203bcd7d3a\",\n   \"info\": {\n      \"user_id\": 1,\n      \"email\": \"john@example.com\"\n   }\n}"
+      }
+    ],
+    "_postman_id": "b86973ba-1d44-4ad9-a531-2fb94d9333c2"
+  },
+  "refresh": {
+    "name": "Refresh Token Flow",
+    "id": "619667e8-091d-42c0-9201-316db965c56c",
+    "protocolProfileBehavior": {
+      "disableBodyPruning": true
+    },
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "content-type",
+          "value": "application/x-www-form-urlencoded"
+        }
+      ],
+      "body": {
+        "mode": "urlencoded",
+        "urlencoded": [
+          {
+            "key": "refresh_token",
+            "value": "",
+            "description": "<p>This is the refresh token that you have previously obtained and want to use to request a new access token</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "client_id",
+            "value": "",
+            "description": "<p>This is the client ID that you obtained when you registered your application</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "client_secret",
+            "value": "",
+            "description": "<p>This is the client secret that you obtained when you registered your application with the API provider</p>\n",
+            "type": "text"
+          },
+          {
+            "key": "grant_type",
+            "value": "refresh_token",
+            "description": "<p>This is the type of grant being requested</p>\n",
+            "type": "text"
+          }
+        ]
+      },
+      "url": "https://auth.arthuronline.co.uk/oauth/token",
+      "description": "<p>This request will return a new access token that can be used to access protected resources within the API.</p>\n<p>You can use this <code>curl</code> command as a reference when setting up your own refresh token request using Postman or other HTTP client libraries.</p>\n",
+      "urlObject": {
+        "protocol": "https",
+        "path": [
+          "oauth",
+          "token"
+        ],
+        "host": [
+          "auth",
+          "arthuronline",
+          "co",
+          "uk"
+        ],
+        "query": [],
+        "variable": []
+      }
+    },
+    "response": [
+      {
+        "id": "adbcde19-e40b-4a33-a6c6-40cb3e4ce306",
+        "name": "Example",
+        "originalRequest": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "key": "content-type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ],
+          "body": {
+            "mode": "urlencoded",
+            "urlencoded": [
+              {
+                "key": "refresh_token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR",
+                "description": "This is the refresh token that you have previously obtained and want to use to request a new access token",
+                "type": "text"
+              },
+              {
+                "key": "client_id",
+                "value": "abc123def456",
+                "description": "This is the client ID that you obtained when you registered your application",
+                "type": "text"
+              },
+              {
+                "key": "client_secret",
+                "value": "789ghi012jkl345mno678pqr",
+                "description": "This is the client secret that you obtained when you registered your application with the API provider",
+                "type": "text"
+              },
+              {
+                "key": "grant_type",
+                "value": "refresh_token",
+                "description": "This is the type of grant being requested",
+                "type": "text"
+              }
+            ]
+          },
+          "url": "https://auth.arthuronline.co.uk/oauth/token"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "name": "Content-Type",
+            "description": "",
+            "type": "text"
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n   \"access_token\": \"c3a27902fb66891\",\n   \"token_type\": \"Bearer\",\n   \"expires_in\": 1209599,\n   \"refresh_token\": \"72b06203bcd7d3a\",\n   \"info\": {\n      \"user_id\": 1,\n      \"email\": \"john@example.com\"\n   }\n}"
+      }
+    ],
+    "_postman_id": "619667e8-091d-42c0-9201-316db965c56c"
+  },
+  "identity": {
+    "name": "View Entity",
+    "id": "399c0bc9-e40c-4e78-9bf5-5b75146374f8",
+    "protocolProfileBehavior": {
+      "disableBodyPruning": true
+    },
+    "request": {
+      "method": "GET",
+      "header": [],
+      "url": "https://api.arthuronline.co.uk/v2/entities/{{entity_id}}",
+      "description": "<p>This API endpoint retrieves the details of a single entity, identified by its unique\u00a0<code>entity_id</code>.</p>\n<p>Use this endpoint to view the specific details of a entity.</p>\n",
+      "urlObject": {
+        "protocol": "https",
+        "path": [
+          "v2",
+          "entities",
+          "{{entity_id}}"
+        ],
+        "host": [
+          "api",
+          "arthuronline",
+          "co",
+          "uk"
+        ],
+        "query": [],
+        "variable": []
+      }
+    },
+    "response": [
+      {
+        "id": "46ce0a4e-b5f7-4dfb-ad6d-f57d56cfe989",
+        "name": "Example",
+        "originalRequest": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{your_access_token}}",
+              "type": "text"
+            },
+            {
+              "key": "X-EntityID",
+              "value": "{{your_entity_id}}",
+              "type": "text"
+            }
+          ],
+          "url": "https://api.arthuronline.co.uk/v2/entities/{{entity_id}}"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "name": "Content-Type",
+            "description": "",
+            "type": "text"
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n    \"status\": 200,\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"\",\n        \"name\": \"Company\",\n        \"address\": \"Address name, Address line 1, Address line 2, City, County, POSTCODE, United Kingdom\",\n        \"address_line_1\": \"Address line 1\",\n        \"address_line_2\": \"Address line 2\",\n        \"city\": \"City\",\n        \"county\": \"County\",\n        \"country\": \"United Kingdom\",\n        \"postcode\": \"POSTCODE\",\n        \"website\": \"Company website\",\n        \"phone_home\": \"123\",\n        \"phone_work\": \"123\",\n        \"phone_mobile\": \"123\",\n        \"email\": \"companyEmail@gmail.com\",\n        \"registration_status\": \"active\",\n        \"company\": \"Company name\",\n        \"vat_no\": 1,\n        \"contacts\": [\n            {\n                \"id\": 2,\n                \"name\": \"Company Owner\",\n                \"main_contact\": true,\n                \"phone_home\": \"132\",\n                \"phone_work\": \"132\",\n                \"phone_mobile\": \"132\",\n                \"email\": \"contactemail@gmail.com\",\n                \"registration_status\": \"active\"\n            }\n        ],\n        \"tags\": [],\n        \"modified\": \"2020-06-26T14:09:12+01:00\",\n        \"created\": \"2020-06-26T13:01:15+01:00\"\n    }\n}"
+      }
+    ],
+    "_postman_id": "399c0bc9-e40c-4e78-9bf5-5b75146374f8"
+  }
+}
