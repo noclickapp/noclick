@@ -1,0 +1,1101 @@
+{
+  "$defs": {
+    "AssignTag": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "assign_tag",
+          "default": "assign_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "AssignTag",
+      "type": "object"
+    },
+    "ContactField": {
+      "additionalProperties": false,
+      "properties": {
+        "slug": {
+          "description": "Contact field slug, e.g. first_name or country (two-letter ISO code).",
+          "minLength": 1,
+          "title": "Slug",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Field value; null clears it.",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "slug",
+        "value"
+      ],
+      "title": "ContactField",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the new contact.",
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "fr",
+                "es",
+                "it",
+                "pt",
+                "de",
+                "nl",
+                "ru",
+                "jp",
+                "tr",
+                "ar",
+                "zh",
+                "sv",
+                "ro",
+                "cs",
+                "hu",
+                "sk",
+                "dk",
+                "id",
+                "pl",
+                "el",
+                "sr",
+                "hi",
+                "no",
+                "th",
+                "sq",
+                "sl",
+                "ua"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale",
+          "enum": [
+            "en",
+            "fr",
+            "es",
+            "it",
+            "pt",
+            "de",
+            "nl",
+            "ru",
+            "jp",
+            "tr",
+            "ar",
+            "zh",
+            "sv",
+            "ro",
+            "cs",
+            "hu",
+            "sk",
+            "dk",
+            "id",
+            "pl",
+            "el",
+            "sr",
+            "hi",
+            "no",
+            "th",
+            "sq",
+            "sl",
+            "ua"
+          ],
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactField"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Request deletion; the provider may retain contact data for several days.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteEnrollment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_enrollment",
+          "default": "delete_enrollment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "enrollment_id": {
+          "minimum": 1,
+          "title": "Enrollment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enrollment_id"
+      ],
+      "title": "DeleteEnrollment",
+      "type": "object"
+    },
+    "DeleteTag": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "DeleteTag",
+      "type": "object"
+    },
+    "EnrollContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "enroll_contact",
+          "default": "enroll_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "access_type": {
+          "description": "Course access granted to this contact.",
+          "enum": [
+            "partial_access",
+            "full_access",
+            "dripping_content",
+            "partial_dripping_access"
+          ],
+          "title": "Access Type",
+          "type": "string"
+        },
+        "modules": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required module IDs for partial access types.",
+          "title": "Modules"
+        }
+      },
+      "required": [
+        "course_id",
+        "contact_id",
+        "access_type"
+      ],
+      "title": "EnrollContact",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "minimum": 1,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetCourse": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course_id": {
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetCourse",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "ListCampaignSteps": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_campaign_steps",
+          "default": "list_campaign_steps",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "minimum": 1,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ListCampaignSteps",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page; 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_starting_after from the previous page with the same filters and order.",
+          "title": "Starting After"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page; 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_starting_after from the previous page with the same filters and order.",
+          "title": "Starting After"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact contact email filter.",
+          "title": "Email"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "pattern": "^[1-9][0-9]*(,[1-9][0-9]*)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag IDs; matches all tags.",
+          "title": "Tags"
+        },
+        "bounced": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounced"
+        },
+        "unsubscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribed"
+        },
+        "needs_confirmation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Needs Confirmation"
+        },
+        "registered_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registered Before"
+        },
+        "registered_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registered After"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListCourses": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page; 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_starting_after from the previous page with the same filters and order.",
+          "title": "Starting After"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ListCourses",
+      "type": "object"
+    },
+    "ListEnrollments": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page; 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_starting_after from the previous page with the same filters and order.",
+          "title": "Starting After"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_enrollments",
+          "default": "list_enrollments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "course": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Course"
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact"
+        }
+      },
+      "title": "ListEnrollments",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page; 10 to 100.",
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_starting_after from the previous page with the same filters and order.",
+          "title": "Starting After"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "RemoveTag": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_tag",
+          "default": "remove_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "RemoveTag",
+      "type": "object"
+    },
+    "SystemeioAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "systemeio_api_key",
+          "default": "systemeio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "systeme.io API Key",
+      "type": "object",
+      "x-credential-instructions": "In systeme.io profile settings, open Public API keys and generate a key. Paste it here without a header prefix. NoClick sends it as X-API-Key to api.systeme.io. Connection verification reads your contacts; it does not verify every write permission.",
+      "x-credential-url": "https://developer.systeme.io/reference/api"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "fr",
+                "es",
+                "it",
+                "pt",
+                "de",
+                "nl",
+                "ru",
+                "jp",
+                "tr",
+                "ar",
+                "zh",
+                "sv",
+                "ro",
+                "cs",
+                "hu",
+                "sk",
+                "dk",
+                "id",
+                "pl",
+                "el",
+                "sr",
+                "hi",
+                "no",
+                "th",
+                "sq",
+                "sl",
+                "ua"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale",
+          "enum": [
+            "en",
+            "fr",
+            "es",
+            "it",
+            "pt",
+            "de",
+            "nl",
+            "ru",
+            "jp",
+            "tr",
+            "ar",
+            "zh",
+            "sv",
+            "ro",
+            "cs",
+            "hu",
+            "sk",
+            "dk",
+            "id",
+            "pl",
+            "el",
+            "sr",
+            "hi",
+            "no",
+            "th",
+            "sq",
+            "sl",
+            "ua"
+          ],
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactField"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_id": {
+          "minimum": 1,
+          "title": "Tag Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "name"
+      ],
+      "title": "UpdateTag",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_tag": "#/$defs/AssignTag",
+          "create_contact": "#/$defs/CreateContact",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_enrollment": "#/$defs/DeleteEnrollment",
+          "delete_tag": "#/$defs/DeleteTag",
+          "enroll_contact": "#/$defs/EnrollContact",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_contact": "#/$defs/GetContact",
+          "get_course": "#/$defs/GetCourse",
+          "get_tag": "#/$defs/GetTag",
+          "list_campaign_steps": "#/$defs/ListCampaignSteps",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_courses": "#/$defs/ListCourses",
+          "list_enrollments": "#/$defs/ListEnrollments",
+          "list_tags": "#/$defs/ListTags",
+          "remove_tag": "#/$defs/RemoveTag",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_tag": "#/$defs/UpdateTag"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/AssignTag"
+        },
+        {
+          "$ref": "#/$defs/RemoveTag"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/UpdateTag"
+        },
+        {
+          "$ref": "#/$defs/DeleteTag"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignSteps"
+        },
+        {
+          "$ref": "#/$defs/ListCourses"
+        },
+        {
+          "$ref": "#/$defs/GetCourse"
+        },
+        {
+          "$ref": "#/$defs/EnrollContact"
+        },
+        {
+          "$ref": "#/$defs/ListEnrollments"
+        },
+        {
+          "$ref": "#/$defs/DeleteEnrollment"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SystemeioAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Systemeio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

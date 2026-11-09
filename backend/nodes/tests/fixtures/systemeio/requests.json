@@ -1,0 +1,228 @@
+[
+  {
+    "config": {
+      "operation": "list_contacts"
+    },
+    "method": "GET",
+    "path": "/api/contacts",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_contact",
+      "contact_id": 12
+    },
+    "method": "GET",
+    "path": "/api/contacts/12",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_contact",
+      "email": "ada@example.com",
+      "locale": "en",
+      "fields": [
+        {
+          "slug": "country",
+          "value": "US"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/api/contacts",
+    "body": {
+      "email": "ada@example.com",
+      "locale": "en",
+      "fields": [
+        {
+          "slug": "country",
+          "value": "US"
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "update_contact",
+      "contact_id": 12,
+      "fields": [
+        {
+          "slug": "phone_number",
+          "value": null
+        }
+      ]
+    },
+    "method": "PATCH",
+    "path": "/api/contacts/12",
+    "body": {
+      "fields": [
+        {
+          "slug": "phone_number",
+          "value": null
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_contact",
+      "contact_id": 12
+    },
+    "method": "DELETE",
+    "path": "/api/contacts/12",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "assign_tag",
+      "contact_id": 12,
+      "tag_id": 34
+    },
+    "method": "POST",
+    "path": "/api/contacts/12/tags",
+    "body": {
+      "tagId": 34
+    }
+  },
+  {
+    "config": {
+      "operation": "remove_tag",
+      "contact_id": 12,
+      "tag_id": 34
+    },
+    "method": "DELETE",
+    "path": "/api/contacts/12/tags/34",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_tags"
+    },
+    "method": "GET",
+    "path": "/api/tags",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_tag",
+      "tag_id": 34
+    },
+    "method": "GET",
+    "path": "/api/tags/34",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_tag",
+      "name": "Customer"
+    },
+    "method": "POST",
+    "path": "/api/tags",
+    "body": {
+      "name": "Customer"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_tag",
+      "tag_id": 34,
+      "name": "Customer"
+    },
+    "method": "PUT",
+    "path": "/api/tags/34",
+    "body": {
+      "name": "Customer"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_tag",
+      "tag_id": 34
+    },
+    "method": "DELETE",
+    "path": "/api/tags/34",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_campaigns"
+    },
+    "method": "GET",
+    "path": "/api/mailing/campaigns",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_campaign",
+      "campaign_id": 56
+    },
+    "method": "GET",
+    "path": "/api/mailing/campaigns/56",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_campaign_steps",
+      "campaign_id": 56
+    },
+    "method": "GET",
+    "path": "/api/mailing/campaigns/56/steps",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_courses"
+    },
+    "method": "GET",
+    "path": "/api/school/courses",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_course",
+      "course_id": 78
+    },
+    "method": "GET",
+    "path": "/api/school/courses/78",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "enroll_contact",
+      "course_id": 78,
+      "contact_id": 12,
+      "access_type": "partial_access",
+      "modules": [
+        90
+      ]
+    },
+    "method": "POST",
+    "path": "/api/school/courses/78/enrollments",
+    "body": {
+      "contactId": 12,
+      "accessType": "partial_access",
+      "modules": [
+        90
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "list_enrollments",
+      "contact": 12,
+      "course": 78
+    },
+    "method": "GET",
+    "path": "/api/school/enrollments",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "delete_enrollment",
+      "enrollment_id": 91
+    },
+    "method": "DELETE",
+    "path": "/api/school/enrollments/91",
+    "body": null
+  }
+]
