@@ -1,0 +1,423 @@
+[
+  {
+    "config": {
+      "operation": "list_projects",
+      "page_size": 20,
+      "page_token": "next-token"
+    },
+    "method": "GET",
+    "url": "https://iam.tidbapi.com/v1beta1/projects",
+    "params": {
+      "pageSize": "20",
+      "pageToken": "next-token"
+    },
+    "body": null,
+    "response": {
+      "projects": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_clusters",
+      "page_size": 20,
+      "page_token": "next-token"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters",
+    "params": {
+      "pageSize": "20",
+      "pageToken": "next-token"
+    },
+    "body": null,
+    "response": {
+      "clusters": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_cluster",
+      "cluster_id": "12345"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345",
+    "params": {
+      "view": "FULL"
+    },
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_cluster",
+      "display_name": "foo-bar",
+      "region": "regions/aws-us-west-2",
+      "root_password": "my-shining-password"
+    },
+    "method": "POST",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters",
+    "params": {},
+    "body": {
+      "displayName": "foo-bar",
+      "region": {
+        "name": "regions/aws-us-west-2"
+      },
+      "rootPassword": "my-shining-password"
+    },
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_cluster",
+      "cluster_id": "12345",
+      "display_name": "new-name"
+    },
+    "method": "PATCH",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345",
+    "params": {},
+    "body": {
+      "cluster": {
+        "displayName": "new-name"
+      },
+      "updateMask": "displayName"
+    },
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_cluster",
+      "cluster_id": "12345"
+    },
+    "method": "DELETE",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "change_root_password",
+      "cluster_id": "12345",
+      "password": "my-shining-password"
+    },
+    "method": "PUT",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/password",
+    "params": {},
+    "body": {
+      "password": "my-shining-password"
+    },
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_regions"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/regions",
+    "params": {},
+    "body": null,
+    "response": {
+      "regions": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_branches",
+      "cluster_id": "12345",
+      "page_size": 20,
+      "page_token": "next-token"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/branches",
+    "params": {
+      "pageSize": "20",
+      "pageToken": "next-token"
+    },
+    "body": null,
+    "response": {
+      "branches": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_branch",
+      "cluster_id": "12345",
+      "branch_id": "54321"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/branches/54321",
+    "params": {
+      "view": "FULL"
+    },
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_branch",
+      "cluster_id": "12345",
+      "display_name": "dev-branch",
+      "parent_id": "54321",
+      "root_password": "my-shining-password"
+    },
+    "method": "POST",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/branches",
+    "params": {},
+    "body": {
+      "displayName": "dev-branch",
+      "parentId": "54321",
+      "rootPassword": "my-shining-password"
+    },
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_branch",
+      "cluster_id": "12345",
+      "branch_id": "54321"
+    },
+    "method": "DELETE",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/branches/54321",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "reset_branch",
+      "cluster_id": "12345",
+      "branch_id": "54321"
+    },
+    "method": "POST",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/branches/54321:reset",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_backups",
+      "cluster_id": "12345",
+      "page_size": 20,
+      "page_token": "next-token"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/backups",
+    "params": {
+      "pageSize": "20",
+      "pageToken": "next-token",
+      "clusterId": "12345"
+    },
+    "body": null,
+    "response": {
+      "backups": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_backup",
+      "backup_id": "67890"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/backups/67890",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_backup",
+      "backup_id": "67890"
+    },
+    "method": "DELETE",
+    "url": "https://serverless.tidbapi.com/v1beta1/backups/67890",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_imports",
+      "cluster_id": "12345",
+      "page_size": 20,
+      "page_token": "next-token"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/imports",
+    "params": {
+      "pageSize": "20",
+      "pageToken": "next-token"
+    },
+    "body": null,
+    "response": {
+      "imports": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_import",
+      "cluster_id": "12345",
+      "import_id": "24680"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/imports/24680",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "cancel_import",
+      "cluster_id": "12345",
+      "import_id": "24680"
+    },
+    "method": "POST",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/imports/24680:cancel",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_exports",
+      "cluster_id": "12345",
+      "page_size": 20,
+      "page_token": "next-token"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/exports",
+    "params": {
+      "pageSize": "20",
+      "pageToken": "next-token"
+    },
+    "body": null,
+    "response": {
+      "exports": [
+        {
+          "displayName": "my-resource",
+          "name": "my-resource"
+        }
+      ],
+      "nextPageToken": "next-page"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_export",
+      "cluster_id": "12345",
+      "export_id": "13579"
+    },
+    "method": "GET",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/exports/13579",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_export",
+      "cluster_id": "12345",
+      "export_id": "13579"
+    },
+    "method": "DELETE",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/exports/13579",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  },
+  {
+    "config": {
+      "operation": "cancel_export",
+      "cluster_id": "12345",
+      "export_id": "13579"
+    },
+    "method": "POST",
+    "url": "https://serverless.tidbapi.com/v1beta1/clusters/12345/exports/13579:cancel",
+    "params": {},
+    "body": null,
+    "response": {
+      "name": "my-resource",
+      "rootPassword": "my-shining-password"
+    }
+  }
+]

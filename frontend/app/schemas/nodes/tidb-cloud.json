@@ -1,0 +1,939 @@
+{
+  "$defs": {
+    "TiDBCloudAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "tidb_cloud_api_key",
+          "default": "tidb_cloud_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public_key": {
+          "minLength": 1,
+          "title": "Public key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "private_key": {
+          "minLength": 1,
+          "title": "Private key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "public_key",
+        "private_key"
+      ],
+      "title": "Tidb Cloud API Key",
+      "type": "object",
+      "x-credential-instructions": "In TiDB Cloud, open Organization Settings > API Keys. Create a key with the role and resource scope needed for your workflows, then paste both keys. The private key is shown only once. NoClick verifies access by listing your projects.",
+      "x-credential-url": "https://tidbcloud.com"
+    },
+    "TiDBCloudCancelExportConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "export_id": {
+          "minLength": 1,
+          "title": "Export ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_export",
+          "default": "cancel_export",
+          "title": "Cancel Export",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "export_id"
+      ],
+      "title": "TiDBCloudCancelExportConfig",
+      "type": "object"
+    },
+    "TiDBCloudCancelImportConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "import_id": {
+          "minLength": 1,
+          "title": "Import ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_import",
+          "default": "cancel_import",
+          "title": "Cancel Import",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "import_id"
+      ],
+      "title": "TiDBCloudCancelImportConfig",
+      "type": "object"
+    },
+    "TiDBCloudChangeRootPasswordConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "change_root_password",
+          "default": "change_root_password",
+          "title": "Change Root Password",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "password": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "New root password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "cluster_id",
+        "password"
+      ],
+      "title": "TiDBCloudChangeRootPasswordConfig",
+      "type": "object"
+    },
+    "TiDBCloudCreateBranchConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_branch",
+          "default": "create_branch",
+          "title": "Create Branch",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "display_name": {
+          "minLength": 1,
+          "title": "Branch name",
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent branch ID"
+        },
+        "root_password": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch root password",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "cluster_id",
+        "display_name"
+      ],
+      "title": "TiDBCloudCreateBranchConfig",
+      "type": "object"
+    },
+    "TiDBCloudCreateClusterConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_cluster",
+          "default": "create_cluster",
+          "title": "Create Cluster",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "display_name": {
+          "maxLength": 64,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9]{2,62}[A-Za-z0-9]$",
+          "title": "Cluster name",
+          "type": "string"
+        },
+        "region": {
+          "description": "Region name, e.g. regions/aws-us-west-2. Use List Regions to find available locations.",
+          "pattern": "^regions/(aws|gcp|azure)-(.+)$",
+          "title": "Region",
+          "type": "string"
+        },
+        "root_password": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Root password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "display_name",
+        "region",
+        "root_password"
+      ],
+      "title": "TiDBCloudCreateClusterConfig",
+      "type": "object"
+    },
+    "TiDBCloudDeleteBackupConfig": {
+      "properties": {
+        "backup_id": {
+          "minLength": 1,
+          "title": "Backup ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_backup",
+          "default": "delete_backup",
+          "title": "Delete Backup",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "backup_id"
+      ],
+      "title": "TiDBCloudDeleteBackupConfig",
+      "type": "object"
+    },
+    "TiDBCloudDeleteBranchConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "branch_id": {
+          "minLength": 1,
+          "title": "Branch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_branch",
+          "default": "delete_branch",
+          "title": "Delete Branch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "branch_id"
+      ],
+      "title": "TiDBCloudDeleteBranchConfig",
+      "type": "object"
+    },
+    "TiDBCloudDeleteClusterConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_cluster",
+          "default": "delete_cluster",
+          "title": "Delete Cluster",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "TiDBCloudDeleteClusterConfig",
+      "type": "object"
+    },
+    "TiDBCloudDeleteExportConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "export_id": {
+          "minLength": 1,
+          "title": "Export ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_export",
+          "default": "delete_export",
+          "title": "Delete Export",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "export_id"
+      ],
+      "title": "TiDBCloudDeleteExportConfig",
+      "type": "object"
+    },
+    "TiDBCloudGetBackupConfig": {
+      "properties": {
+        "backup_id": {
+          "minLength": 1,
+          "title": "Backup ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_backup",
+          "default": "get_backup",
+          "title": "Get Backup",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "backup_id"
+      ],
+      "title": "TiDBCloudGetBackupConfig",
+      "type": "object"
+    },
+    "TiDBCloudGetBranchConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "branch_id": {
+          "minLength": 1,
+          "title": "Branch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_branch",
+          "default": "get_branch",
+          "title": "Get Branch",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "view": {
+          "default": "FULL",
+          "enum": [
+            "BASIC",
+            "FULL"
+          ],
+          "title": "View",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cluster_id",
+        "branch_id"
+      ],
+      "title": "TiDBCloudGetBranchConfig",
+      "type": "object"
+    },
+    "TiDBCloudGetClusterConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_cluster",
+          "default": "get_cluster",
+          "title": "Get Cluster",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "view": {
+          "default": "FULL",
+          "enum": [
+            "BASIC",
+            "FULL"
+          ],
+          "title": "View",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "TiDBCloudGetClusterConfig",
+      "type": "object"
+    },
+    "TiDBCloudGetExportConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "export_id": {
+          "minLength": 1,
+          "title": "Export ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_export",
+          "default": "get_export",
+          "title": "Get Export",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "export_id"
+      ],
+      "title": "TiDBCloudGetExportConfig",
+      "type": "object"
+    },
+    "TiDBCloudGetImportConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "import_id": {
+          "minLength": 1,
+          "title": "Import ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_import",
+          "default": "get_import",
+          "title": "Get Import",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "import_id"
+      ],
+      "title": "TiDBCloudGetImportConfig",
+      "type": "object"
+    },
+    "TiDBCloudListBackupsConfig": {
+      "properties": {
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use nextPageToken from the previous response. Keep the same filters.",
+          "title": "Page token"
+        },
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_backups",
+          "default": "list_backups",
+          "title": "List Backups",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "TiDBCloudListBackupsConfig",
+      "type": "object"
+    },
+    "TiDBCloudListBranchesConfig": {
+      "properties": {
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use nextPageToken from the previous response. Keep the same filters.",
+          "title": "Page token"
+        },
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "List Branches",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "TiDBCloudListBranchesConfig",
+      "type": "object"
+    },
+    "TiDBCloudListClustersConfig": {
+      "properties": {
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use nextPageToken from the previous response. Keep the same filters.",
+          "title": "Page token"
+        },
+        "operation": {
+          "const": "list_clusters",
+          "default": "list_clusters",
+          "title": "List Clusters",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google AIP filter, e.g. state=\"ACTIVE\".",
+          "title": "Filter"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order by"
+        }
+      },
+      "title": "TiDBCloudListClustersConfig",
+      "type": "object"
+    },
+    "TiDBCloudListExportsConfig": {
+      "properties": {
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use nextPageToken from the previous response. Keep the same filters.",
+          "title": "Page token"
+        },
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_exports",
+          "default": "list_exports",
+          "title": "List Exports",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example, createTime desc.",
+          "title": "Order by"
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "TiDBCloudListExportsConfig",
+      "type": "object"
+    },
+    "TiDBCloudListImportsConfig": {
+      "properties": {
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use nextPageToken from the previous response. Keep the same filters.",
+          "title": "Page token"
+        },
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_imports",
+          "default": "list_imports",
+          "title": "List Imports",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example, createTime desc.",
+          "title": "Order by"
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "TiDBCloudListImportsConfig",
+      "type": "object"
+    },
+    "TiDBCloudListProjectsConfig": {
+      "properties": {
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use nextPageToken from the previous response. Keep the same filters.",
+          "title": "Page token"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TiDBCloudListProjectsConfig",
+      "type": "object"
+    },
+    "TiDBCloudListRegionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_regions",
+          "default": "list_regions",
+          "title": "List Regions",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TiDBCloudListRegionsConfig",
+      "type": "object"
+    },
+    "TiDBCloudResetBranchConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "branch_id": {
+          "minLength": 1,
+          "title": "Branch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reset_branch",
+          "default": "reset_branch",
+          "title": "Reset Branch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "cluster_id",
+        "branch_id"
+      ],
+      "title": "TiDBCloudResetBranchConfig",
+      "type": "object"
+    },
+    "TiDBCloudUpdateClusterConfig": {
+      "properties": {
+        "cluster_id": {
+          "description": "The cluster ID, not its full resource name.",
+          "minLength": 1,
+          "title": "Cluster ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_cluster",
+          "default": "update_cluster",
+          "title": "Update Cluster",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "display_name": {
+          "description": "Renames the selected cluster using updateMask=displayName.",
+          "maxLength": 64,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9]{2,62}[A-Za-z0-9]$",
+          "title": "New cluster name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cluster_id",
+        "display_name"
+      ],
+      "title": "TiDBCloudUpdateClusterConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_export": "#/$defs/TiDBCloudCancelExportConfig",
+          "cancel_import": "#/$defs/TiDBCloudCancelImportConfig",
+          "change_root_password": "#/$defs/TiDBCloudChangeRootPasswordConfig",
+          "create_branch": "#/$defs/TiDBCloudCreateBranchConfig",
+          "create_cluster": "#/$defs/TiDBCloudCreateClusterConfig",
+          "delete_backup": "#/$defs/TiDBCloudDeleteBackupConfig",
+          "delete_branch": "#/$defs/TiDBCloudDeleteBranchConfig",
+          "delete_cluster": "#/$defs/TiDBCloudDeleteClusterConfig",
+          "delete_export": "#/$defs/TiDBCloudDeleteExportConfig",
+          "get_backup": "#/$defs/TiDBCloudGetBackupConfig",
+          "get_branch": "#/$defs/TiDBCloudGetBranchConfig",
+          "get_cluster": "#/$defs/TiDBCloudGetClusterConfig",
+          "get_export": "#/$defs/TiDBCloudGetExportConfig",
+          "get_import": "#/$defs/TiDBCloudGetImportConfig",
+          "list_backups": "#/$defs/TiDBCloudListBackupsConfig",
+          "list_branches": "#/$defs/TiDBCloudListBranchesConfig",
+          "list_clusters": "#/$defs/TiDBCloudListClustersConfig",
+          "list_exports": "#/$defs/TiDBCloudListExportsConfig",
+          "list_imports": "#/$defs/TiDBCloudListImportsConfig",
+          "list_projects": "#/$defs/TiDBCloudListProjectsConfig",
+          "list_regions": "#/$defs/TiDBCloudListRegionsConfig",
+          "reset_branch": "#/$defs/TiDBCloudResetBranchConfig",
+          "update_cluster": "#/$defs/TiDBCloudUpdateClusterConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TiDBCloudListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudListClustersConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudGetClusterConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudCreateClusterConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudUpdateClusterConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudDeleteClusterConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudChangeRootPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudListRegionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudGetBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudCreateBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudDeleteBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudResetBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudListBackupsConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudGetBackupConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudDeleteBackupConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudListImportsConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudGetImportConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudCancelImportConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudListExportsConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudGetExportConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudDeleteExportConfig"
+        },
+        {
+          "$ref": "#/$defs/TiDBCloudCancelExportConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TiDBCloudAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tidb-cloud Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/tidb-cloud.png",
+  "source": "https://tidbcloud.com/favicon.ico",
+  "license": "TiDB Cloud brand mark, used nominatively to identify the service. Trademark rights remain with PingCAP.",
+  "sha256": "2240d916fc53c9e7f9f0e7e66327b9b1637435d52a02e60ccc678c6b03950480",
+  "notes": "The original ICO contains one 256x256 PNG at byte offset 22, length 10225. Those exact PNG bytes were extracted without rendering or modification."
+}
