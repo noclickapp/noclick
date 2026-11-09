@@ -1,0 +1,426 @@
+[
+  {
+    "config": {
+      "operation": "list_organisations"
+    },
+    "method": "GET",
+    "path": "/Organisations",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "OrganisationId": 9,
+        "OrganisationName": "Example Ltd",
+        "OrganisationCity": "London",
+        "OrganisationTelephone": "123456"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_organisation",
+      "organisation_id": 9
+    },
+    "method": "GET",
+    "path": "/Organisations/9",
+    "response": {
+      "OrganisationId": 9,
+      "OrganisationName": "Example Ltd",
+      "OrganisationCity": "London",
+      "OrganisationTelephone": "123456"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_organisation",
+      "name": "Example Ltd",
+      "city": "London",
+      "telephone": "123456"
+    },
+    "method": "POST",
+    "path": "/Organisations",
+    "body": {
+      "OrganisationId": 0,
+      "OrganisationName": "Example Ltd",
+      "OrganisationCity": "London",
+      "OrganisationTelephone": "123456"
+    },
+    "response": 42
+  },
+  {
+    "config": {
+      "operation": "update_organisation",
+      "organisation_id": 9,
+      "name": "Example Ltd",
+      "city": "London",
+      "telephone": "123456"
+    },
+    "method": "PUT",
+    "path": "/Organisations/9",
+    "body": {
+      "OrganisationId": 9,
+      "OrganisationName": "Example Ltd",
+      "OrganisationCity": "London",
+      "OrganisationTelephone": "123456"
+    },
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "list_persons"
+    },
+    "method": "GET",
+    "path": "/Persons",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "PersonId": 9,
+        "PersonFirstName": "Jane",
+        "PersonLastName": "Doe",
+        "PersonEmail": "jane@example.test",
+        "PersonOrganisationId": 8
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_person",
+      "person_id": 9
+    },
+    "method": "GET",
+    "path": "/Persons/9",
+    "response": {
+      "PersonId": 9,
+      "PersonFirstName": "Jane",
+      "PersonLastName": "Doe",
+      "PersonEmail": "jane@example.test",
+      "PersonOrganisationId": 8
+    }
+  },
+  {
+    "config": {
+      "operation": "create_person",
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "jane@example.test",
+      "organisation_id": 8
+    },
+    "method": "POST",
+    "path": "/Persons",
+    "body": {
+      "PersonId": 0,
+      "PersonFirstName": "Jane",
+      "PersonLastName": "Doe",
+      "PersonEmail": "jane@example.test",
+      "PersonOrganisationId": 8
+    },
+    "response": 42
+  },
+  {
+    "config": {
+      "operation": "update_person",
+      "person_id": 9,
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "jane@example.test",
+      "organisation_id": 8
+    },
+    "method": "PUT",
+    "path": "/Persons/9",
+    "body": {
+      "PersonId": 9,
+      "PersonFirstName": "Jane",
+      "PersonLastName": "Doe",
+      "PersonEmail": "jane@example.test",
+      "PersonOrganisationId": 8
+    },
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "list_opportunities"
+    },
+    "method": "GET",
+    "path": "/Opportunities",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "OpportunityId": 9,
+        "OpportunityDescription": "New sale",
+        "OpportunityOrganisationId": 8,
+        "OpportunityPersonId": 9
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_opportunity",
+      "opportunity_id": 9
+    },
+    "method": "GET",
+    "path": "/Opportunities/9",
+    "response": {
+      "OpportunityId": 9,
+      "OpportunityDescription": "New sale",
+      "OpportunityOrganisationId": 8,
+      "OpportunityPersonId": 9
+    }
+  },
+  {
+    "config": {
+      "operation": "create_opportunity",
+      "description": "New sale",
+      "organisation_id": 8,
+      "person_id": 9
+    },
+    "method": "POST",
+    "path": "/Opportunities",
+    "body": {
+      "OpportunityId": 0,
+      "OpportunityDescription": "New sale",
+      "OpportunityOrganisationId": 8,
+      "OpportunityPersonId": 9
+    },
+    "response": 42
+  },
+  {
+    "config": {
+      "operation": "update_opportunity",
+      "opportunity_id": 9,
+      "description": "New sale",
+      "organisation_id": 8,
+      "person_id": 9
+    },
+    "method": "PUT",
+    "path": "/Opportunities/9",
+    "body": {
+      "OpportunityId": 9,
+      "OpportunityDescription": "New sale",
+      "OpportunityOrganisationId": 8,
+      "OpportunityPersonId": 9
+    },
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "list_activities"
+    },
+    "method": "GET",
+    "path": "/Activities",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "ActivityId": 9,
+        "ActivityDescription": "Follow up",
+        "ActivityOrganisationId": 8,
+        "ActivityPersonId": 9,
+        "ActivityStatus": "Planned"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_activity",
+      "activity_id": 9
+    },
+    "method": "GET",
+    "path": "/Activities/9",
+    "response": {
+      "ActivityId": 9,
+      "ActivityDescription": "Follow up",
+      "ActivityOrganisationId": 8,
+      "ActivityPersonId": 9,
+      "ActivityStatus": "Planned"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_activity",
+      "description": "Follow up",
+      "organisation_id": 8,
+      "person_id": 9,
+      "status": "Planned"
+    },
+    "method": "POST",
+    "path": "/Activities",
+    "body": {
+      "ActivityId": 0,
+      "ActivityDescription": "Follow up",
+      "ActivityOrganisationId": 8,
+      "ActivityPersonId": 9,
+      "ActivityStatus": "Planned"
+    },
+    "response": 42
+  },
+  {
+    "config": {
+      "operation": "update_activity",
+      "activity_id": 9,
+      "description": "Follow up",
+      "organisation_id": 8,
+      "person_id": 9,
+      "status": "Planned"
+    },
+    "method": "PUT",
+    "path": "/Activities/9",
+    "body": {
+      "ActivityId": 9,
+      "ActivityDescription": "Follow up",
+      "ActivityOrganisationId": 8,
+      "ActivityPersonId": 9,
+      "ActivityStatus": "Planned"
+    },
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "list_support_cases"
+    },
+    "method": "GET",
+    "path": "/SupportCases",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "SupportCaseId": 9,
+        "SupportCaseSubject": "Help",
+        "SupportCaseDescription": "A question",
+        "SupportCaseOrganisationId": 8,
+        "SupportCasePersonId": 9,
+        "SupportCaseStatus": "Created"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_support_case",
+      "support_case_id": 9
+    },
+    "method": "GET",
+    "path": "/SupportCases/9",
+    "response": {
+      "SupportCaseId": 9,
+      "SupportCaseSubject": "Help",
+      "SupportCaseDescription": "A question",
+      "SupportCaseOrganisationId": 8,
+      "SupportCasePersonId": 9,
+      "SupportCaseStatus": "Created"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_support_case",
+      "subject": "Help",
+      "description": "A question",
+      "organisation_id": 8,
+      "person_id": 9,
+      "status": "Created"
+    },
+    "method": "POST",
+    "path": "/SupportCases",
+    "body": {
+      "SupportCaseId": 0,
+      "SupportCaseSubject": "Help",
+      "SupportCaseDescription": "A question",
+      "SupportCaseOrganisationId": 8,
+      "SupportCasePersonId": 9,
+      "SupportCaseStatus": "Created"
+    },
+    "response": 42
+  },
+  {
+    "config": {
+      "operation": "update_support_case",
+      "support_case_id": 9,
+      "subject": "Help",
+      "description": "A question",
+      "organisation_id": 8,
+      "person_id": 9,
+      "status": "Created"
+    },
+    "method": "PUT",
+    "path": "/SupportCases/9",
+    "body": {
+      "SupportCaseId": 9,
+      "SupportCaseSubject": "Help",
+      "SupportCaseDescription": "A question",
+      "SupportCaseOrganisationId": 8,
+      "SupportCasePersonId": 9,
+      "SupportCaseStatus": "Created"
+    },
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "search_persons",
+      "search": "Jane"
+    },
+    "method": "GET",
+    "path": "/Persons/Search",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending",
+      "input": "Jane"
+    },
+    "response": [
+      {
+        "PersonId": 9,
+        "PersonName": "Jane Doe"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "list_organisation_persons",
+      "organisation_id": 8
+    },
+    "method": "GET",
+    "path": "/Organisations/8/Persons",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "PersonId": 9
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "list_users"
+    },
+    "method": "GET",
+    "path": "/Users",
+    "query": {
+      "Page": "1",
+      "Size": "50",
+      "SortOrder": "Ascending"
+    },
+    "response": [
+      {
+        "UserId": 9
+      }
+    ]
+  }
+]

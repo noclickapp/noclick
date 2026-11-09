@@ -1,0 +1,1 @@
+Synthetic wire fixtures for webCRM REST v1. These are local tests, not provider-authored response examples. Routes, parameter names, required DTO identifiers and field limits follow https://api.webcrm.com/swagger/v1/swagger.json (SHA-256 e2230fcf9fa889d464f88675d4d061748090eb8613ca93786f7faa6e2434da5d). No real account or credential is used.
