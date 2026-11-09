@@ -197,7 +197,7 @@ async def test_subscriber_poll_baseline_dedup_and_repoint(monkeypatch):
     import json
     from pathlib import Path
     examples = json.loads((Path(__file__).parent / "fixtures/aweber/subscriber-property-examples.json").read_text())
-    row = {key: value["example"] for key, value in examples["properties"].items()}
+    row = {key: value["example"] for key, value in examples["properties"].items() if "example" in value}
     client = FakeClient(_response(payload={"entries": []}))
     monkeypatch.setattr("nodes.aweber_node.httpx.AsyncClient", lambda **_: client)
     node = _node({"operation": "on_new_subscriber", "accountId": 123, "listId": 456})
@@ -218,7 +218,8 @@ async def test_subscriber_poll_baseline_dedup_and_repoint(monkeypatch):
     assert fresh["subscribers"] == [row]
     assert node.should_propagate_output(fresh, {"operation": "on_new_subscriber"})
     event = node.resolve_agent_event(fresh)
-    assert row["email"] in event["text"] and str(row["id"]) in event["text"]
+    assert row["name"] in event["text"] and str(row["id"]) in event["text"]
+    assert "None" not in event["text"]
     assert "list 456" in event["text"] and "account 123" in event["text"]
     assert client.request.await_args.kwargs["params"]["sort_order"] == "desc"
     repeated = await node.execute({})

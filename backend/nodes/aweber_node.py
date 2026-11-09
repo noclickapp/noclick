@@ -349,9 +349,12 @@ class AWeberNode(ScheduledPollTriggerMixin, WorkflowNode):
             return super().resolve_agent_event(output)
         if not subscribers:
             return None
-        lines = [f"- {row.get('name') or row.get('email')} <{row.get('email')}> "
-                 f"(subscriber {row['id']}, subscribed {row.get('subscribed_at')})"
-                 for row in subscribers[:10]]
+        lines = []
+        for row in subscribers[:10]:
+            label = row.get("name") or row.get("email") or f"Subscriber {row['id']}"
+            email = f" <{row['email']}>" if row.get("email") else ""
+            when = f", subscribed {row['subscribed_at']}" if row.get("subscribed_at") else ""
+            lines.append(f"- {label}{email} (subscriber {row['id']}{when})")
         if len(subscribers) > 10:
             lines.append(f"- … and {len(subscribers) - 10} more")
         return {"text": f"AWeber: {len(subscribers)} new subscriber(s) in list {output['list_id']} "
