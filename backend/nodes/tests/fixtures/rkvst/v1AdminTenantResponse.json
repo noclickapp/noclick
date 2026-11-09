@@ -1,0 +1,13 @@
+{
+  "identity": "tenant/08838336-c357-460d-902a-3aba9528dd22",
+  "verified_domain": "foo.com",
+  "display_name": "My First Tenancy",
+  "enterprise_sso_enabled": true,
+  "enterprise_sso_config": {
+    "policy_id": "foo",
+    "config_url": "foo",
+    "issuer": "foo",
+    "client_id": "foo",
+    "client_secret": ""
+  }
+}

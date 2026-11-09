@@ -1,0 +1,42 @@
+{
+  "identity": "access_policies/08838336-c357-460d-902a-3aba9528dd22",
+  "display_name": "User name for this policy",
+  "description": "User description for this policy",
+  "filters": [
+    {
+      "or": [
+        "location=basingstoke",
+        "location=cambridge"
+      ]
+    },
+    {
+      "or": [
+        "asset_type=door_access_reader"
+      ]
+    }
+  ],
+  "access_permissions": [
+    {
+      "subjects": [
+        "subjects/9846b867-3e42-4b5d-af56-bcd62c2126d2",
+        "subjects/3907c132-900b-4481-82da-21ffe699ddb9"
+      ],
+      "behaviours": [
+        "behaviour1",
+        "behaviour2"
+      ],
+      "asset_attributes_read": [
+        "attribute1",
+        "attribute2"
+      ],
+      "user_attributes": [
+        {
+          "or": [
+            "group:maintainers",
+            "group:supervisors"
+          ]
+        }
+      ]
+    }
+  ]
+}
