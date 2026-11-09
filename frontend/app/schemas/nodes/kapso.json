@@ -1,0 +1,1356 @@
+{
+  "$defs": {
+    "KapsoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kapso_api_key",
+          "default": "kapso_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "business_account_id": {
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Business account ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "business_account_id"
+      ],
+      "title": "Kapso API Key",
+      "type": "object",
+      "x-credential-instructions": "Create a project API key in Kapso under Integrations > API keys. Paste the key and your WhatsApp Business Account ID. NoClick verifies access by listing that account's phone numbers.",
+      "x-credential-url": "https://app.kapso.ai/integrations"
+    },
+    "KapsoBlockUsersConfig": {
+      "additionalProperties": false,
+      "description": "Block users.",
+      "properties": {
+        "operation": {
+          "const": "block_users",
+          "default": "block_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "users": {
+          "description": "WhatsApp IDs (phone numbers) to block",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Users",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "users"
+      ],
+      "title": "KapsoBlockUsersConfig",
+      "type": "object"
+    },
+    "KapsoCreateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Create or update message template.",
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "pattern": "^[a-z0-9_]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "language": {
+          "minLength": 1,
+          "title": "Language",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "AUTHENTICATION",
+            "MARKETING",
+            "UTILITY"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "components": {
+          "description": "WhatsApp template components, including a BODY component",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Components",
+          "type": "array"
+        },
+        "parameter_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "NAMED",
+                "POSITIONAL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameter Format",
+          "enum": [
+            "NAMED",
+            "POSITIONAL"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "language",
+        "category",
+        "components"
+      ],
+      "title": "KapsoCreateTemplateConfig",
+      "type": "object"
+    },
+    "KapsoDeleteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Delete message template.",
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Template name to delete (use this OR hsm_id)",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KapsoDeleteTemplateConfig",
+      "type": "object"
+    },
+    "KapsoGetBusinessProfileConfig": {
+      "additionalProperties": false,
+      "description": "Get business profile.",
+      "properties": {
+        "operation": {
+          "const": "get_business_profile",
+          "default": "get_business_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "KapsoGetBusinessProfileConfig",
+      "type": "object"
+    },
+    "KapsoGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get contact details.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "wa_id": {
+          "description": "WhatsApp ID (phone number)",
+          "minLength": 1,
+          "title": "Wa Id",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter response fields",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "wa_id"
+      ],
+      "title": "KapsoGetContactConfig",
+      "type": "object"
+    },
+    "KapsoGetConversationConfig": {
+      "additionalProperties": false,
+      "description": "Get conversation details.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "conversation_id": {
+          "description": "Conversation ID",
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter response fields. Use `kapso()` to include Kapso-specific extensions.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "conversation_id"
+      ],
+      "title": "KapsoGetConversationConfig",
+      "type": "object"
+    },
+    "KapsoGetFlowConfig": {
+      "additionalProperties": false,
+      "description": "Get flow details.",
+      "properties": {
+        "operation": {
+          "const": "get_flow",
+          "default": "get_flow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "flow_id": {
+          "description": "Flow ID",
+          "minLength": 1,
+          "title": "Flow Id",
+          "type": "string"
+        },
+        "fields": {
+          "description": "Comma-separated list of fields to retrieve.\n\nAvailable fields: id, name, status, categories, validation_errors, json_version, data_api_version, endpoint_uri, preview, whatsapp_business_account, application, health_status\n\nPreview can be invalidated: `preview.invalidate(true)`\n\nMetrics: `metric.name(ENDPOINT_REQUEST_COUNT).granularity(DAY).since(2024-01-28).until(2024-01-30)`\n",
+          "title": "Fields",
+          "type": "string"
+        },
+        "phone_number_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when accessing flow by ID (unless business_account_id provided)",
+          "title": "Phone Number Id"
+        }
+      },
+      "required": [
+        "flow_id",
+        "fields"
+      ],
+      "title": "KapsoGetFlowConfig",
+      "type": "object"
+    },
+    "KapsoGetMessageConfig": {
+      "additionalProperties": false,
+      "description": "Get message by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "WhatsApp message ID",
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter response fields. Use `kapso()` to include Kapso-specific extensions.\n\nExample: `fields=kapso(direction,status,processing_status)`\n",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "message_id"
+      ],
+      "title": "KapsoGetMessageConfig",
+      "type": "object"
+    },
+    "KapsoGetPhoneNumberConfig": {
+      "additionalProperties": false,
+      "description": "Get phone number details.",
+      "properties": {
+        "operation": {
+          "const": "get_phone_number",
+          "default": "get_phone_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to retrieve.\n\nAvailable fields: id, verified_name, display_phone_number, quality_rating, code_verification_status, is_official_business_account, name_status, new_name_status, platform_type, throughput, account_mode, certificate, messaging_limit_tier\n\nExample: `fields=id,verified_name,display_phone_number,quality_rating,throughput,messaging_limit_tier`\n",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "KapsoGetPhoneNumberConfig",
+      "type": "object"
+    },
+    "KapsoGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get message template by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "Template ID",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "KapsoGetTemplateConfig",
+      "type": "object"
+    },
+    "KapsoListBlockedUsersConfig": {
+      "additionalProperties": false,
+      "description": "List blocked users.",
+      "properties": {
+        "operation": {
+          "const": "list_blocked_users",
+          "default": "list_blocked_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "KapsoListBlockedUsersConfig",
+      "type": "object"
+    },
+    "KapsoListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "wa_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by WhatsApp ID (phone number)",
+          "title": "Wa Id"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by associated customer ID",
+          "title": "Customer Id"
+        },
+        "has_customer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by customer association (true/false)",
+          "title": "Has Customer"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Maximum number of results per page (default 20, max 100)",
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for previous page (Base64 encoded)",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (Base64 encoded)",
+          "title": "After"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter response fields. Use `kapso()` to include Kapso-specific extensions.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "KapsoListContactsConfig",
+      "type": "object"
+    },
+    "KapsoListConversationsConfig": {
+      "additionalProperties": false,
+      "description": "List conversations.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "ended"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by conversation status",
+          "title": "Status",
+          "enum": [
+            "active",
+            "ended"
+          ],
+          "x-enum-searchable": true
+        },
+        "assigned_user_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by active assignee user ID (must be a project member)",
+          "title": "Assigned User Id"
+        },
+        "unassigned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations with no active assignment. Cannot be combined with `assigned_user_id`.",
+          "title": "Unassigned"
+        },
+        "last_active_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations active on or after this time (ISO 8601)",
+          "title": "Last Active Since"
+        },
+        "last_active_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations active on or before this time (ISO 8601)",
+          "title": "Last Active Until"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contact phone number",
+          "title": "Phone Number"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Maximum number of results per page (default 20, max 100)",
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for previous page (Base64 encoded)",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (Base64 encoded)",
+          "title": "After"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter response fields. Use `kapso()` to include Kapso-specific extensions.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "KapsoListConversationsConfig",
+      "type": "object"
+    },
+    "KapsoListFlowsConfig": {
+      "additionalProperties": false,
+      "description": "List flows.",
+      "properties": {
+        "operation": {
+          "const": "list_flows",
+          "default": "list_flows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KapsoListFlowsConfig",
+      "type": "object"
+    },
+    "KapsoListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "List messages.",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "conversation_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by conversation ID",
+          "title": "Conversation Id"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "inbound",
+                "outbound"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by message direction",
+          "title": "Direction",
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "sent",
+                "delivered",
+                "read",
+                "failed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by message status",
+          "title": "Status",
+          "enum": [
+            "pending",
+            "sent",
+            "delivered",
+            "read",
+            "failed"
+          ],
+          "x-enum-searchable": true
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter messages created on or after this time (ISO 8601)",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter messages created on or before this time (ISO 8601)",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Maximum number of results per page (default 20, max 100)",
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for previous page (Base64 encoded)",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for next page (Base64 encoded)",
+          "title": "After"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter response fields. Use `kapso()` to include Kapso-specific extensions.\n\nExample: `fields=kapso(direction,status,processing_status)`\n",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "KapsoListMessagesConfig",
+      "type": "object"
+    },
+    "KapsoListPhoneNumbersConfig": {
+      "additionalProperties": false,
+      "description": "List phone numbers.",
+      "properties": {
+        "operation": {
+          "const": "list_phone_numbers",
+          "default": "list_phone_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to retrieve.\n\nAvailable fields: id, verified_name, display_phone_number, quality_rating, code_verification_status, is_official_business_account, name_status, new_name_status, platform_type, throughput, account_mode, certificate, messaging_limit_tier\n",
+          "title": "Fields"
+        }
+      },
+      "title": "KapsoListPhoneNumbersConfig",
+      "type": "object"
+    },
+    "KapsoListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List message templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by template name",
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "APPROVED",
+                "PENDING",
+                "REJECTED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by template status",
+          "title": "Status",
+          "enum": [
+            "APPROVED",
+            "PENDING",
+            "REJECTED"
+          ],
+          "x-enum-searchable": true
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "AUTHENTICATION",
+                "MARKETING",
+                "UTILITY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by template category",
+          "title": "Category",
+          "enum": [
+            "AUTHENTICATION",
+            "MARKETING",
+            "UTILITY"
+          ],
+          "x-enum-searchable": true
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by language code",
+          "title": "Language"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Maximum number of results (default 20, max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "KapsoListTemplatesConfig",
+      "type": "object"
+    },
+    "KapsoSendTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Send an approved WhatsApp template with optional component parameters.",
+      "properties": {
+        "operation": {
+          "const": "send_template",
+          "default": "send_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "to": {
+          "minLength": 1,
+          "title": "To",
+          "type": "string"
+        },
+        "name": {
+          "description": "Approved template name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "language": {
+          "description": "Template language code, for example en_US",
+          "minLength": 1,
+          "title": "Language",
+          "type": "string"
+        },
+        "components": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Template header, body or button parameter components",
+          "title": "Components"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "to",
+        "name",
+        "language"
+      ],
+      "title": "KapsoSendTemplateConfig",
+      "type": "object"
+    },
+    "KapsoSendTextConfig": {
+      "additionalProperties": false,
+      "description": "Send a message.",
+      "properties": {
+        "operation": {
+          "const": "send_text",
+          "default": "send_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient phone number or group ID",
+          "minLength": 1,
+          "title": "To",
+          "type": "string"
+        },
+        "text": {
+          "description": "Message text; requires an open customer service window",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "to",
+        "text"
+      ],
+      "title": "KapsoSendTextConfig",
+      "type": "object"
+    },
+    "KapsoUnblockUsersConfig": {
+      "additionalProperties": false,
+      "description": "Unblock users.",
+      "properties": {
+        "operation": {
+          "const": "unblock_users",
+          "default": "unblock_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "users": {
+          "description": "WhatsApp IDs (phone numbers) to unblock",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Users",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "users"
+      ],
+      "title": "KapsoUnblockUsersConfig",
+      "type": "object"
+    },
+    "KapsoUpdateBusinessProfileConfig": {
+      "additionalProperties": false,
+      "description": "Update business profile.",
+      "properties": {
+        "operation": {
+          "const": "update_business_profile",
+          "default": "update_business_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID",
+          "minLength": 1,
+          "title": "Phone Number Id",
+          "type": "string"
+        },
+        "about": {
+          "description": "New WhatsApp Business About text",
+          "maxLength": 139,
+          "minLength": 1,
+          "title": "About",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "about"
+      ],
+      "title": "KapsoUpdateBusinessProfileConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "block_users": "#/$defs/KapsoBlockUsersConfig",
+          "create_template": "#/$defs/KapsoCreateTemplateConfig",
+          "delete_template": "#/$defs/KapsoDeleteTemplateConfig",
+          "get_business_profile": "#/$defs/KapsoGetBusinessProfileConfig",
+          "get_contact": "#/$defs/KapsoGetContactConfig",
+          "get_conversation": "#/$defs/KapsoGetConversationConfig",
+          "get_flow": "#/$defs/KapsoGetFlowConfig",
+          "get_message": "#/$defs/KapsoGetMessageConfig",
+          "get_phone_number": "#/$defs/KapsoGetPhoneNumberConfig",
+          "get_template": "#/$defs/KapsoGetTemplateConfig",
+          "list_blocked_users": "#/$defs/KapsoListBlockedUsersConfig",
+          "list_contacts": "#/$defs/KapsoListContactsConfig",
+          "list_conversations": "#/$defs/KapsoListConversationsConfig",
+          "list_flows": "#/$defs/KapsoListFlowsConfig",
+          "list_messages": "#/$defs/KapsoListMessagesConfig",
+          "list_phone_numbers": "#/$defs/KapsoListPhoneNumbersConfig",
+          "list_templates": "#/$defs/KapsoListTemplatesConfig",
+          "send_template": "#/$defs/KapsoSendTemplateConfig",
+          "send_text": "#/$defs/KapsoSendTextConfig",
+          "unblock_users": "#/$defs/KapsoUnblockUsersConfig",
+          "update_business_profile": "#/$defs/KapsoUpdateBusinessProfileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KapsoListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoSendTextConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoSendTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetBusinessProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoUpdateBusinessProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoListBlockedUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoBlockUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoUnblockUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoListFlowsConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetFlowConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoListPhoneNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/KapsoGetPhoneNumberConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KapsoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kapso Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

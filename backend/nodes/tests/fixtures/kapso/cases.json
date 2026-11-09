@@ -1,0 +1,577 @@
+{
+  "list_messages": {
+    "config": {
+      "operation": "list_messages",
+      "phone_number_id": "110987654321"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA==",
+          "timestamp": "1705328096",
+          "type": "text",
+          "from": "15551234567",
+          "text": {
+            "body": "Hello! I need help with my order"
+          },
+          "kapso": {
+            "direction": "inbound",
+            "status": "delivered",
+            "processing_status": "completed",
+            "phone_number": "+15551234567",
+            "has_media": false,
+            "whatsapp_conversation_id": "123e4567-e89b-12d3-a456-426614174000",
+            "contact_name": "John Doe",
+            "content": "Hello! I need help with my order"
+          }
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "after": "eyJ2YWx1ZXMiOlsiMjAyNC0wMS0xNVQxMjozNDo1Ni4xMjM0NTZaIiwiMTIzNDUiXSwiY29sdW1ucyI6WyJjcmVhdGVkX2F0IiwiaWQiXX0="
+        }
+      }
+    }
+  },
+  "send_text": {
+    "config": {
+      "operation": "send_text",
+      "phone_number_id": "110987654321",
+      "to": "15551234567",
+      "text": "Hello! Your order #12345 has been shipped."
+    },
+    "response": {
+      "messaging_product": "whatsapp",
+      "contacts": [
+        {
+          "input": "15551234567",
+          "wa_id": "15551234567"
+        }
+      ],
+      "messages": [
+        {
+          "id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA=="
+        }
+      ]
+    }
+  },
+  "get_message": {
+    "config": {
+      "operation": "get_message",
+      "phone_number_id": "110987654321",
+      "message_id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA=="
+    },
+    "response": {
+      "id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA==",
+      "timestamp": "1705328096",
+      "type": "text",
+      "from": "15551234567",
+      "text": {
+        "body": "Hello! I need help with my order"
+      },
+      "kapso": {
+        "direction": "inbound",
+        "status": "delivered",
+        "processing_status": "completed",
+        "phone_number": "+15551234567",
+        "has_media": false,
+        "whatsapp_conversation_id": "123e4567-e89b-12d3-a456-426614174000",
+        "contact_name": "John Doe",
+        "content": "Hello! I need help with my order"
+      }
+    }
+  },
+  "list_conversations": {
+    "config": {
+      "operation": "list_conversations",
+      "phone_number_id": "110987654321"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "phone_number": "15551234567",
+          "status": "active",
+          "last_active_at": "2024-01-15 14:30:00+00:00",
+          "created_at": "2024-01-15 10:00:00+00:00",
+          "updated_at": "2024-01-15 14:30:00+00:00",
+          "whatsapp_config_id": "456e7890-a12b-34c5-d678-901234567890",
+          "metadata": {
+            "tags": [
+              "vip",
+              "priority"
+            ]
+          },
+          "phone_number_id": "110987654321",
+          "kapso": {
+            "contact_name": "John Doe",
+            "messages_count": 15,
+            "last_message_id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA==",
+            "last_message_type": "text",
+            "last_message_timestamp": "2024-01-15 14:30:00+00:00",
+            "last_message_text": "Hello! I need help with my order",
+            "last_inbound_at": "2024-01-15 14:30:00+00:00",
+            "last_outbound_at": "2024-01-15 14:25:00+00:00"
+          }
+        },
+        {
+          "id": "223e4567-e89b-12d3-a456-426614174001",
+          "phone_number": "15559876543",
+          "status": "ended",
+          "last_active_at": "2024-01-14 12:00:00+00:00",
+          "created_at": "2024-01-14 08:00:00+00:00",
+          "updated_at": "2024-01-14 12:00:00+00:00",
+          "whatsapp_config_id": "456e7890-a12b-34c5-d678-901234567890",
+          "metadata": null,
+          "phone_number_id": "110987654321",
+          "kapso": {
+            "contact_name": "Jane Smith",
+            "messages_count": 8,
+            "last_message_id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAB==",
+            "last_message_type": "text",
+            "last_message_timestamp": "2024-01-14 12:00:00+00:00",
+            "last_message_text": "Thank you for your help!",
+            "last_inbound_at": "2024-01-14 12:00:00+00:00",
+            "last_outbound_at": "2024-01-14 11:58:00+00:00"
+          }
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "after": "eyJ2YWx1ZXMiOlsiMjAyNC0wMS0xNFQxMjowMDowMC4wMDAwMDBaIiwiMjIzZTQ1NjctZTg5Yi0xMmQzLWE0NTYtNDI2NjE0MTc0MDAxIl0sImNvbHVtbnMiOlsibGFzdF9hY3RpdmVfYXQiLCJpZCJdfQ=="
+        }
+      }
+    }
+  },
+  "get_conversation": {
+    "config": {
+      "operation": "get_conversation",
+      "phone_number_id": "110987654321",
+      "conversation_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "phone_number": "15551234567",
+      "status": "active",
+      "last_active_at": "2024-01-15 14:30:00+00:00",
+      "created_at": "2024-01-15 10:00:00+00:00",
+      "updated_at": "2024-01-15 14:30:00+00:00",
+      "whatsapp_config_id": "456e7890-a12b-34c5-d678-901234567890",
+      "metadata": {
+        "tags": [
+          "vip",
+          "priority"
+        ],
+        "customer_tier": "premium"
+      },
+      "phone_number_id": "110987654321",
+      "kapso": {
+        "contact_name": "John Doe",
+        "messages_count": 15,
+        "last_message_id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA==",
+        "last_message_type": "text",
+        "last_message_timestamp": "2024-01-15 14:30:00+00:00",
+        "last_message_text": "Hello! I need help with my order",
+        "last_inbound_at": "2024-01-15 14:30:00+00:00",
+        "last_outbound_at": "2024-01-15 14:25:00+00:00"
+      }
+    }
+  },
+  "list_contacts": {
+    "config": {
+      "operation": "list_contacts",
+      "phone_number_id": "110987654321"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "wa_id": "15551234567",
+          "profile_name": "John Doe",
+          "display_name": "John (VIP Customer)",
+          "metadata": {
+            "customer_tier": "premium",
+            "tags": [
+              "vip",
+              "high-value"
+            ]
+          },
+          "created_at": "2024-01-10 08:00:00+00:00",
+          "updated_at": "2024-01-15 12:34:56.123456+00:00"
+        },
+        {
+          "id": "223e4567-e89b-12d3-a456-426614174001",
+          "wa_id": "15559876543",
+          "profile_name": "Jane Smith",
+          "display_name": null,
+          "metadata": null,
+          "created_at": "2024-01-12 10:00:00+00:00",
+          "updated_at": "2024-01-12 10:00:00+00:00"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "after": "eyJ2YWx1ZXMiOlsiMjAyNC0wMS0xMlQxMDowMDowMC4wMDAwMDBaIiwiMjIzZTQ1NjctZTg5Yi0xMmQzLWE0NTYtNDI2NjE0MTc0MDAxIl0sImNvbHVtbnMiOlsiY3JlYXRlZF9hdCIsImlkIl19"
+        }
+      }
+    }
+  },
+  "get_contact": {
+    "config": {
+      "operation": "get_contact",
+      "phone_number_id": "110987654321",
+      "wa_id": "15551234567"
+    },
+    "response": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "wa_id": "15551234567",
+      "profile_name": "John Doe",
+      "display_name": "John (VIP Customer)",
+      "metadata": {
+        "customer_tier": "premium",
+        "tags": [
+          "vip",
+          "high-value"
+        ],
+        "last_order_date": "2024-01-10"
+      },
+      "created_at": "2024-01-10 08:00:00+00:00",
+      "updated_at": "2024-01-15 12:34:56.123456+00:00"
+    }
+  },
+  "list_templates": {
+    "config": {
+      "operation": "list_templates"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "1192339204654487",
+          "name": "hello_world",
+          "previous_category": "ACCOUNT_UPDATE",
+          "components": [
+            {
+              "type": "HEADER",
+              "format": "TEXT",
+              "text": "Hello World"
+            },
+            {
+              "type": "BODY",
+              "text": "Welcome and congratulations!! This message demonstrates your ability to send a message notification from WhatsApp Business Platform's Cloud API. Thank you for taking the time to test with us."
+            },
+            {
+              "type": "FOOTER",
+              "text": "WhatsApp Business API Team"
+            }
+          ],
+          "language": "en_US",
+          "status": "APPROVED",
+          "category": "MARKETING"
+        },
+        {
+          "id": "920070352646140",
+          "name": "seasonal_promotion",
+          "components": [
+            {
+              "type": "HEADER",
+              "format": "TEXT",
+              "text": "Fall Sale"
+            },
+            {
+              "type": "BODY",
+              "text": "Hi {{1}}, our Fall Sale is on! Use promo code {{2}} Get an extra 25% off every order above $350!",
+              "example": {
+                "body_text": [
+                  [
+                    "Mark",
+                    "FALL25"
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "FOOTER",
+              "text": "Not interested in any of our sales? Tap Stop Promotions"
+            },
+            {
+              "type": "BUTTONS",
+              "buttons": [
+                {
+                  "type": "QUICK_REPLY",
+                  "text": "Stop promotions"
+                }
+              ]
+            }
+          ],
+          "language": "en_US",
+          "status": "APPROVED",
+          "category": "MARKETING"
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "MAZDZD",
+          "after": "MjQZD"
+        }
+      }
+    }
+  },
+  "create_template": {
+    "config": {
+      "operation": "create_template",
+      "name": "order_confirmation_simple",
+      "language": "en_US",
+      "category": "UTILITY",
+      "parameter_format": "NAMED",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Thank you, {{customer_name}}! Your order number is {{order_number}}.",
+          "example": {
+            "body_text_named_params": [
+              {
+                "param_name": "customer_name",
+                "example": "Pablo"
+              },
+              {
+                "param_name": "order_number",
+                "example": "860198-230332"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "response": {
+      "id": "1627019861106475",
+      "status": "PENDING",
+      "category": "UTILITY"
+    }
+  },
+  "delete_template": {
+    "config": {
+      "operation": "delete_template",
+      "name": "order_confirmation"
+    },
+    "response": {
+      "success": true
+    }
+  },
+  "get_template": {
+    "config": {
+      "operation": "get_template",
+      "template_id": "1259544702043867"
+    },
+    "response": {
+      "id": "1259544702043867",
+      "name": "order_confirmation",
+      "language": "en_US",
+      "status": "APPROVED",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "HEADER",
+          "format": "TEXT",
+          "text": "Order Update"
+        },
+        {
+          "type": "BODY",
+          "text": "Your order {{1}} has been confirmed and will arrive by {{2}}.",
+          "example": {
+            "body_text": [
+              [
+                "#12345",
+                "Friday"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "FOOTER",
+          "text": "Thanks for shopping with us!"
+        }
+      ]
+    }
+  },
+  "get_business_profile": {
+    "config": {
+      "operation": "get_business_profile",
+      "phone_number_id": "110987654321"
+    },
+    "response": {
+      "data": [
+        {
+          "about": "Premium coffee roasters since 2010",
+          "address": "123 Main St, San Francisco, CA 94102",
+          "description": "Specialty coffee beans sourced directly from sustainable farms",
+          "email": "hello@premiumcoffee.com",
+          "messaging_product": "whatsapp",
+          "profile_picture_url": "https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=...",
+          "websites": [
+            "https://premiumcoffee.com",
+            "https://instagram.com/premiumcoffee"
+          ],
+          "vertical": "RETAIL"
+        }
+      ]
+    }
+  },
+  "update_business_profile": {
+    "config": {
+      "operation": "update_business_profile",
+      "phone_number_id": "110987654321",
+      "about": "Welcome to our store! We're here to help you 24/7 with all your shopping needs."
+    },
+    "response": {
+      "success": true
+    }
+  },
+  "list_blocked_users": {
+    "config": {
+      "operation": "list_blocked_users",
+      "phone_number_id": "110987654321"
+    },
+    "response": {
+      "data": [
+        {
+          "user": "15551234567"
+        },
+        {
+          "user": "15559876543"
+        }
+      ]
+    }
+  },
+  "block_users": {
+    "config": {
+      "operation": "block_users",
+      "phone_number_id": "110987654321",
+      "users": [
+        "15551234567"
+      ]
+    },
+    "response": {
+      "success": true
+    }
+  },
+  "unblock_users": {
+    "config": {
+      "operation": "unblock_users",
+      "phone_number_id": "110987654321",
+      "users": [
+        "15551234567"
+      ]
+    },
+    "response": {
+      "success": true
+    }
+  },
+  "list_flows": {
+    "config": {
+      "operation": "list_flows"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "flow-1",
+          "name": "my first flow",
+          "status": "DRAFT",
+          "categories": [
+            "SIGN_UP"
+          ],
+          "validation_errors": []
+        },
+        {
+          "id": "flow-2",
+          "name": "my second flow",
+          "status": "PUBLISHED",
+          "categories": [
+            "SURVEY"
+          ],
+          "validation_errors": []
+        }
+      ],
+      "paging": {
+        "cursors": {
+          "before": "QVFIUnpKT...",
+          "after": "QVFIUnZAWV..."
+        }
+      }
+    }
+  },
+  "get_flow": {
+    "config": {
+      "operation": "get_flow",
+      "flow_id": "123456789012345",
+      "fields": "id,name,categories,preview,status,validation_errors"
+    },
+    "response": {
+      "id": "flow-1",
+      "name": "appointment_booking",
+      "status": "DRAFT",
+      "categories": [
+        "APPOINTMENT_BOOKING"
+      ],
+      "validation_errors": [],
+      "json_version": "3.0",
+      "data_api_version": "3.0",
+      "endpoint_uri": "https://example.com"
+    }
+  },
+  "list_phone_numbers": {
+    "config": {
+      "operation": "list_phone_numbers"
+    },
+    "response": {
+      "data": [
+        {
+          "id": "1906385232743451",
+          "verified_name": "Jasper's Market",
+          "display_phone_number": "+1 631-555-5555",
+          "quality_rating": "GREEN"
+        },
+        {
+          "id": "1913623884432103",
+          "verified_name": "Jasper's Ice Cream",
+          "display_phone_number": "+1 631-555-5556",
+          "quality_rating": "NA"
+        }
+      ]
+    }
+  },
+  "get_phone_number": {
+    "config": {
+      "operation": "get_phone_number",
+      "phone_number_id": "123456789012345"
+    },
+    "response": {
+      "id": "1906385232743451",
+      "verified_name": "Jasper's Market",
+      "display_phone_number": "+1 631-555-5555",
+      "quality_rating": "GREEN"
+    }
+  },
+  "send_template": {
+    "config": {
+      "operation": "send_template",
+      "phone_number_id": "110987654321",
+      "to": "15551234567",
+      "name": "order_update",
+      "language": "en_US"
+    },
+    "response": {
+      "messaging_product": "whatsapp",
+      "contacts": [
+        {
+          "input": "15551234567",
+          "wa_id": "15551234567"
+        }
+      ],
+      "messages": [
+        {
+          "id": "wamid.HBgNMTU1NTE0OTU5Nzg1FQIAERgSMDhGRjdBMDEyOTcxQzFFQkFBAA=="
+        }
+      ]
+    }
+  }
+}

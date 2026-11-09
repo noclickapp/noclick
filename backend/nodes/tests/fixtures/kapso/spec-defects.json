@@ -1,0 +1,15 @@
+[
+  {
+    "operation": "create_template",
+    "contract_operation": "POST /{business_account_id}/message_templates",
+    "source": "https://docs.kapso.ai/api/meta/whatsapp/templates/create-or-update-message-template.md",
+    "defect": "The 200 response oneOf has two object branches with only optional properties and unrestricted additional properties. The documented created response {id: 1627019861106475, status: PENDING, category: UTILITY} validates against both branches, violating oneOf. The node accepts that documented response and its mock test verifies this. The pinned contract is unchanged."
+  },
+  {
+    "operation": "get_phone_number",
+    "contract_operation": "GET /{phone_number_id}",
+    "source": "https://docs.kapso.ai/api/meta/whatsapp/phone-numbers/get-phone-number-details.md",
+    "related_source": "https://docs.kapso.ai/api/meta/whatsapp/flows/get-flow-details.md",
+    "defect": "The pinned contract declares GET /{media_id}, GET /{flow_id} and GET /{phone_number_id}, which are identical after path-template normalization. The harness resolves get_phone_number as GET /{flow_id}; its request check cannot distinguish these operations. The provider phone-number docs specify the node route with optional fields and a phone-number response. Separate mock fixtures verify the phone-number and flow routes and their respective published response examples."
+  }
+]
