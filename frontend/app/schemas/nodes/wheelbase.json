@@ -1,0 +1,1903 @@
+{
+  "$defs": {
+    "WheelbaseAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "wheelbase_api_token",
+          "default": "wheelbase_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Wheelbase API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Wheelbase Partner API bearer token. Use a production token for api.wheelbasepro.com, without the Bearer prefix. The token needs the read/write scopes for your selected operations; dealer-only operations also need a dealer-scoped token. NoClick does not mint or refresh tokens. Replace an expired or revoked token here. Connection checks read only the current credential at /v1/me.",
+      "x-credential-url": "https://api.wheelbasepro.com/docs"
+    },
+    "WheelbaseAddonInput": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Quantity"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "WheelbaseAddonInput",
+      "type": "object"
+    },
+    "WheelbaseApproveBooking": {
+      "additionalProperties": false,
+      "description": "Approve a booking. Approves the booking from the calling credential's side (renter if user_id = renter_id, owner otherwise). Both sides approving triggers payment capture / confirmation.\n\n**Sending a quote:** when a dealer creates a booking on behalf of a customer and then calls approve, the platform marks the owner side approved and emails the customer their quote with a link to review and pay. Include `reason` to add a personal message to that email and the conversation thread.",
+      "properties": {
+        "operation": {
+          "const": "approve_booking",
+          "default": "approve_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional free-text note. On approve it's delivered to the customer as a message (and included in the quote email).",
+          "title": "Reason"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Set false to suppress the platform email for this transition \u2014 e.g. when you send the customer a checkout link through your own channel (see POST /v1/bookings/{id}/links).",
+          "title": "Notify"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseApproveBooking",
+      "type": "object"
+    },
+    "WheelbaseCancelBooking": {
+      "additionalProperties": false,
+      "description": "Cancel a booking. Cancels a confirmed booking. Returns 409 if the booking has not been confirmed (use /decline instead). Cancellation may trigger refund logic per the listing's cancel policy.",
+      "properties": {
+        "operation": {
+          "const": "cancel_booking",
+          "default": "cancel_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional free-text note. On approve it's delivered to the customer as a message (and included in the quote email).",
+          "title": "Reason"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Set false to suppress the platform email for this transition \u2014 e.g. when you send the customer a checkout link through your own channel (see POST /v1/bookings/{id}/links).",
+          "title": "Notify"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseCancelBooking",
+      "type": "object"
+    },
+    "WheelbaseCreateBooking": {
+      "additionalProperties": false,
+      "description": "Create a booking. Creates a booking in `negotiating` status.\n\nSend an `Idempotency-Key` header to make retries safe \u2014 repeating a request with the same key returns the original response instead of creating a duplicate booking. Without the header, every request creates a new booking.\n\nPayment collection (Stripe client_secret) is not yet wired here; a dedicated endpoint will be added for that.",
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[\\x20-\\x7e]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional but strongly recommended in production. Any unique string per logical create; retrying with the same key returns the original response instead of creating a duplicate booking.",
+          "title": "Idempotency Key"
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "guests": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guests"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WheelbaseCreateBookingCustomer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "discount_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Discount Code"
+        },
+        "insurance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Insurance coverage tier (legacy string). Prefer `insurance_option_id`.",
+          "title": "Insurance"
+        },
+        "insurance_option_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Insurance/protection option to apply (id from GET /v1/listings/{id}/insurance-options). Omit to use the listing default.",
+          "title": "Insurance Option Id"
+        },
+        "delivery": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WheelbaseDeliveryInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deliver to an address instead of lot pickup. The platform geocodes it and prices the delivery fee (tiered mileage vs minimum), returned as a `delivery` line item. Omit for lot pickup."
+        },
+        "addons": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/WheelbaseAddonInput"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional add-ons (ids from GET /v1/listings/{id}/addons). Required items (prep fees etc.) are attached automatically \u2014 do not send them.",
+          "title": "Addons"
+        }
+      },
+      "required": [
+        "listing_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WheelbaseCreateBooking",
+      "type": "object"
+    },
+    "WheelbaseCreateBookingCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "birthdate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Birthdate"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "title": "WheelbaseCreateBookingCustomer",
+      "type": "object"
+    },
+    "WheelbaseCreateBookingLink": {
+      "additionalProperties": false,
+      "description": "Create a shareable checkout link. Mints a single-use-style deep link the customer can open without a password \u2014 resolving it signs them in and lands them on the booking's checkout or payment step. Send it through your own channel (SMS, email).\n\nOnly available when the booking's customer is one of **your** customers (`managed_by: \"dealer\"`) \u2014 marketplace customers have their own accounts and cannot be signed in via links. Links expire after ~3 days; mint a fresh one per send.\n\nTypical flow for a dealer-sent quote: create the booking \u2192 `POST /{id}/approve` with `notify: false` \u2192 create a `payment` link \u2192 send it to the customer yourself.",
+      "properties": {
+        "operation": {
+          "const": "create_booking_link",
+          "default": "create_booking_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "`booking` \u2014 lands the customer in the checkout flow for the booking. `payment` \u2014 jumps straight to the payment step (or the make-a-payment section on a confirmed booking).",
+          "enum": [
+            "booking",
+            "payment"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_id",
+        "type"
+      ],
+      "title": "WheelbaseCreateBookingLink",
+      "type": "object"
+    },
+    "WheelbaseCreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create a customer. Creates a dealer-managed customer. Find-or-create semantics by email: if a customer with this email already exists in your account, that record is updated and returned instead of creating a duplicate.\n\nCreated customers are `managed_by: \"dealer\"` and fully editable. You cannot create a customer using your own account email.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "birthdate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Birthdate"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WheelbaseCustomerAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "location_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dealer locations to associate the customer with.",
+          "title": "Location Ids"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "title": "WheelbaseCreateCustomer",
+      "type": "object"
+    },
+    "WheelbaseCreateQuote": {
+      "additionalProperties": false,
+      "description": "Get a quote. Returns a non-destructive full price breakdown for a listing and date range. Quote calculation does not reserve availability or create a booking.",
+      "properties": {
+        "operation": {
+          "const": "create_quote",
+          "default": "create_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "addons": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/WheelbaseAddonInput"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional add-ons to include (ids from GET /v1/listings/{id}/addons). Each shows up in line_items with its cost and tax.",
+          "title": "Addons"
+        },
+        "insurance_option_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Insurance/protection option to price into the quote (id from GET /v1/listings/{id}/insurance-options). Omit to use the listing default.",
+          "title": "Insurance Option Id"
+        },
+        "delivery": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WheelbaseDeliveryInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deliver to an address instead of lot pickup. The platform geocodes it and prices the delivery fee (tiered mileage vs minimum), returned as a `delivery` line item. Omit for lot pickup."
+        }
+      },
+      "required": [
+        "listing_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "WheelbaseCreateQuote",
+      "type": "object"
+    },
+    "WheelbaseCustomerAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "line_1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line 1"
+        },
+        "line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line 2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        }
+      },
+      "title": "WheelbaseCustomerAddress",
+      "type": "object"
+    },
+    "WheelbaseDeclineBooking": {
+      "additionalProperties": false,
+      "description": "Decline a booking. Declines a pre-confirmation booking. Returns 409 if the booking is already confirmed (use /cancel instead).",
+      "properties": {
+        "operation": {
+          "const": "decline_booking",
+          "default": "decline_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional free-text note. On approve it's delivered to the customer as a message (and included in the quote email).",
+          "title": "Reason"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Set false to suppress the platform email for this transition \u2014 e.g. when you send the customer a checkout link through your own channel (see POST /v1/bookings/{id}/links).",
+          "title": "Notify"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseDeclineBooking",
+      "type": "object"
+    },
+    "WheelbaseDeliveryAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "line_1": {
+          "minLength": 1,
+          "title": "Line 1",
+          "type": "string"
+        },
+        "line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line 2"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "zip": {
+          "minLength": 1,
+          "title": "Zip",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to US.",
+          "title": "Country"
+        }
+      },
+      "required": [
+        "line_1",
+        "city",
+        "state",
+        "zip"
+      ],
+      "title": "WheelbaseDeliveryAddress",
+      "type": "object"
+    },
+    "WheelbaseDeliveryInput": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/WheelbaseDeliveryAddress"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional; skips geocoding when both lat/lng are set.",
+          "title": "Lat"
+        },
+        "lng": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lng"
+        },
+        "stationary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True when the vehicle stays parked at the delivery address (no return trip).",
+          "title": "Stationary"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note for the dealer about the delivery.",
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "WheelbaseDeliveryInput",
+      "type": "object"
+    },
+    "WheelbaseGetAccount": {
+      "additionalProperties": false,
+      "description": "Get current credential. Returns the identity and metadata for the credential authenticating this request. Useful for verifying an integration is wired up correctly (\"is my token being accepted, and as whom?\"). No scope required.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WheelbaseGetAccount",
+      "type": "object"
+    },
+    "WheelbaseGetBooking": {
+      "additionalProperties": false,
+      "description": "Get a booking. Returns a single booking. Only accessible to the renter or the owner of the associated listing.",
+      "properties": {
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseGetBooking",
+      "type": "object"
+    },
+    "WheelbaseGetBookingMessages": {
+      "additionalProperties": false,
+      "description": "Get a booking's message thread. Returns the full renter conversation attached to a booking, oldest message first. Authors are normalized to renter/dealer/system. Reading does NOT mark the thread read in the Wheelbase dashboard.",
+      "properties": {
+        "operation": {
+          "const": "get_booking_messages",
+          "default": "get_booking_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseGetBookingMessages",
+      "type": "object"
+    },
+    "WheelbaseGetCustomer": {
+      "additionalProperties": false,
+      "description": "Get a customer. Returns a single customer.\n\nDealer-managed customers (`managed_by: \"dealer\"`) return all fields. Marketplace customers are only readable when they have an interaction with your account (booking or conversation) \u2014 otherwise 404 \u2014 and their `email`/`phone` are populated only once a confirmed booking exists. `birthdate` is never available for marketplace customers.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "WheelbaseGetCustomer",
+      "type": "object"
+    },
+    "WheelbaseGetListing": {
+      "additionalProperties": false,
+      "description": "Get listing detail. Returns source-of-truth detail for a single listing. Use this for read-modify-write flows \u2014 the search index is eventually consistent.\n\nDealer credentials (with `owner_ids`) can only view listings in their own fleet; other listings return 404 (same as if the listing didn't exist, to avoid confirming other dealers' listing IDs). Marketplace credentials (empty `owner_ids`) can view any listing.",
+      "properties": {
+        "operation": {
+          "const": "get_listing",
+          "default": "get_listing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "listing_id"
+      ],
+      "title": "WheelbaseGetListing",
+      "type": "object"
+    },
+    "WheelbaseGetListingAvailability": {
+      "additionalProperties": false,
+      "description": "Get a listing's availability. Returns the date ranges that cannot be booked within the window \u2014 existing bookings, owner blocks, and turnaround buffer days, merged into anonymous ranges. Dates not listed are available.\n\nThis reads the booking source of truth (not the search index) and reflects the same rules booking creation enforces.",
+      "properties": {
+        "operation": {
+          "const": "get_listing_availability",
+          "default": "get_listing_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window start (inclusive). Defaults to today.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window end (inclusive). Defaults to 12 months from `from`. Max window: 24 months.",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "listing_id"
+      ],
+      "title": "WheelbaseGetListingAvailability",
+      "type": "object"
+    },
+    "WheelbaseListBookingDocuments": {
+      "additionalProperties": false,
+      "description": "List a booking's documents. Returns the booking's documents: platform-generated PDFs (receipt, contract, e-sign receipt, departure/return forms) and uploaded files (driver documents, message attachments). Fetch on demand \u2014 availability of generated documents changes with booking state (e.g. the receipt appears once the booking is approved).",
+      "properties": {
+        "operation": {
+          "const": "list_booking_documents",
+          "default": "list_booking_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseListBookingDocuments",
+      "type": "object"
+    },
+    "WheelbaseListBookingPayments": {
+      "additionalProperties": false,
+      "description": "List a booking's payments. Returns the booking's money movement, newest first, in two groups:\n\n- `payments` \u2014 the customer timeline: settled charges and refunds plus scheduled/pending future charges (e.g. the remainder auto-charge). `scheduled: true` entries carry a `due_date`; refund entries carry `original_payment_id`.\n- `payouts` \u2014 money paid out to your account for this booking, with expected/actual bank deposit dates.\n\nComplements the `payment` block on booking detail: that block is the summary (total paid / balance / plan); this is the itemized history behind it.",
+      "properties": {
+        "operation": {
+          "const": "list_booking_payments",
+          "default": "list_booking_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseListBookingPayments",
+      "type": "object"
+    },
+    "WheelbaseListBookings": {
+      "additionalProperties": false,
+      "description": "List bookings. Returns bookings the credential participates in \u2014 either as renter (bookings where renter_id = credential user_id) or as owner (bookings on rentals in the credential's owner_ids).",
+      "properties": {
+        "operation": {
+          "const": "list_bookings",
+          "default": "list_bookings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by booking status (e.g. `negotiating`, `confirmed`).",
+          "title": "Status"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this customer's bookings (find the id via GET /v1/customers). Dealer credentials only.",
+          "title": "Customer Id"
+        },
+        "start_date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return bookings whose start_date is on/after this date.",
+          "title": "Start Date From"
+        },
+        "start_date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date To"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 150,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "title": "Page Size"
+        }
+      },
+      "title": "WheelbaseListBookings",
+      "type": "object"
+    },
+    "WheelbaseListCustomers": {
+      "additionalProperties": false,
+      "description": "Search customers. Searches the dealer's customers \u2014 both dealer-managed records and marketplace guests who have booked with the dealer.\n\nMarketplace customers (`managed_by: \"marketplace\"`) have `email` and `phone` masked (empty strings) in search results, regardless of booking history. Use `GET /v1/customers/{id}` to read contact info once a confirmed booking exists.",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches name, email, phone, or customer id.",
+          "title": "Search"
+        },
+        "location_ids": {
+          "anyOf": [
+            {
+              "pattern": "^\\d+(,\\d+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Ids"
+        },
+        "repeat_guest": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only customers with more than one booking.",
+          "title": "Repeat Guest"
+        },
+        "active_guest": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only customers with a current or upcoming booking.",
+          "title": "Active Guest"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 200,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Page Size"
+        }
+      },
+      "title": "WheelbaseListCustomers",
+      "type": "object"
+    },
+    "WheelbaseListInsuranceOptions": {
+      "additionalProperties": false,
+      "description": "List a listing\u2019s insurance options. The insurance/protection options (tiers) offered on a listing \u2014 price per day, deductible, coverage summary, and feature list. Dealer credentials get dealer-priced options; other credentials get marketplace pricing.",
+      "properties": {
+        "operation": {
+          "const": "list_insurance_options",
+          "default": "list_insurance_options",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "listing_id"
+      ],
+      "title": "WheelbaseListInsuranceOptions",
+      "type": "object"
+    },
+    "WheelbaseListListingAddons": {
+      "additionalProperties": false,
+      "description": "List a listing's add-ons. Returns the optional add-ons bookable on this listing (account-wide and listing-specific, filtered to what applies at its location and vehicle type). Apply them via `addons: [{id, quantity}]` on POST /v1/quotes or booking create/update.\n\nRequired items (prep fees etc.) are attached to bookings automatically and are not listed here.",
+      "properties": {
+        "operation": {
+          "const": "list_listing_addons",
+          "default": "list_listing_addons",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "listing_id"
+      ],
+      "title": "WheelbaseListListingAddons",
+      "type": "object"
+    },
+    "WheelbaseListListings": {
+      "additionalProperties": false,
+      "description": "Search listings. Returns a page of listings matching the supplied filters. Backed by an eventually-consistent search index; use GET /v1/listings/{id} for source-of-truth state.",
+      "properties": {
+        "operation": {
+          "const": "list_listings",
+          "default": "list_listings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text location search (city, address, or place name).",
+          "title": "Location"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "End Date"
+        },
+        "guests": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guests"
+        },
+        "instant_book": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instant Book"
+        },
+        "vehicle_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vehicle Type"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 150,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "title": "Page Size"
+        }
+      },
+      "title": "WheelbaseListListings",
+      "type": "object"
+    },
+    "WheelbaseListLocations": {
+      "additionalProperties": false,
+      "description": "List locations. Returns the dealer's pickup/drop-off locations with address and weekly hours. Use the ids with the `location_ids` filters on vehicle/booking reports and customer search \u2014 and to tie a booking or vehicle to its pickup location's hours.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WheelbaseListLocations",
+      "type": "object"
+    },
+    "WheelbaseListMessageThreads": {
+      "additionalProperties": false,
+      "description": "List message threads. Returns the credential's renter message threads, newest activity first. Each row carries the follow-up signals \u2014 last_message_at, last_message_author, unread \u2014 so a queue can skip renters who already replied. Reading threads does NOT mark them read in the Wheelbase dashboard.",
+      "properties": {
+        "operation": {
+          "const": "list_message_threads",
+          "default": "list_message_threads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "unread_only": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only threads with unread renter activity.",
+          "title": "Unread Only",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "title": "Page Size"
+        }
+      },
+      "title": "WheelbaseListMessageThreads",
+      "type": "object"
+    },
+    "WheelbaseUpdateBooking": {
+      "additionalProperties": false,
+      "description": "Modify a booking. Partially update a booking. Only dates, guests, discount code, and insurance can be modified. Go api rejects updates once a booking is confirmed \u2014 you'll see a 400 with an upstream reason.",
+      "properties": {
+        "operation": {
+          "const": "update_booking",
+          "default": "update_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "guests": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guests"
+        },
+        "discount_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Discount Code"
+        },
+        "insurance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Insurance"
+        },
+        "insurance_option_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Change the insurance/protection option (id from GET /v1/listings/{id}/insurance-options).",
+          "title": "Insurance Option Id"
+        },
+        "delivery": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WheelbaseDeliveryInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deliver to an address instead of lot pickup. The platform geocodes it and prices the delivery fee (tiered mileage vs minimum), returned as a `delivery` line item. Omit for lot pickup."
+        },
+        "addons": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/WheelbaseAddonInput"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The full optional add-on set for the booking (a replace, not a delta). Send the complete desired list (ids from GET /v1/listings/{id}/addons) \u2014 any add-on you leave out is removed, and `[]` removes all. Omit this field entirely to leave add-ons unchanged. Required items (prep fees, etc.) are managed automatically \u2014 do not send them.",
+          "title": "Addons"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "WheelbaseUpdateBooking",
+      "type": "object"
+    },
+    "WheelbaseUpdateCustomer": {
+      "additionalProperties": false,
+      "description": "Update a customer. Partially update a dealer-managed customer. Marketplace customers (`managed_by: \"marketplace\"`) are managed by the marketplace and cannot be edited \u2014 attempts return 403.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "birthdate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Birthdate"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WheelbaseCustomerAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "WheelbaseUpdateCustomer",
+      "type": "object"
+    },
+    "WheelbaseUpdateListing": {
+      "additionalProperties": false,
+      "description": "Update a listing. Partially update a listing. Only whitelisted fields (`name`, `description`, `price_per_day`, `instant_book`) are accepted; anything else is silently dropped. The authenticated user must have owner-equivalent rights on the listing.",
+      "properties": {
+        "operation": {
+          "const": "update_listing",
+          "default": "update_listing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "exclusiveMinimum": 0,
+          "title": "Listing Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "price_per_day": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nightly rate in minor units (cents) \u2014 matches `price_per_day.value` from GET responses.",
+          "title": "Price Per Day"
+        },
+        "instant_book": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instant Book"
+        }
+      },
+      "required": [
+        "listing_id"
+      ],
+      "title": "WheelbaseUpdateListing",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_booking": "#/$defs/WheelbaseApproveBooking",
+          "cancel_booking": "#/$defs/WheelbaseCancelBooking",
+          "create_booking": "#/$defs/WheelbaseCreateBooking",
+          "create_booking_link": "#/$defs/WheelbaseCreateBookingLink",
+          "create_customer": "#/$defs/WheelbaseCreateCustomer",
+          "create_quote": "#/$defs/WheelbaseCreateQuote",
+          "decline_booking": "#/$defs/WheelbaseDeclineBooking",
+          "get_account": "#/$defs/WheelbaseGetAccount",
+          "get_booking": "#/$defs/WheelbaseGetBooking",
+          "get_booking_messages": "#/$defs/WheelbaseGetBookingMessages",
+          "get_customer": "#/$defs/WheelbaseGetCustomer",
+          "get_listing": "#/$defs/WheelbaseGetListing",
+          "get_listing_availability": "#/$defs/WheelbaseGetListingAvailability",
+          "list_booking_documents": "#/$defs/WheelbaseListBookingDocuments",
+          "list_booking_payments": "#/$defs/WheelbaseListBookingPayments",
+          "list_bookings": "#/$defs/WheelbaseListBookings",
+          "list_customers": "#/$defs/WheelbaseListCustomers",
+          "list_insurance_options": "#/$defs/WheelbaseListInsuranceOptions",
+          "list_listing_addons": "#/$defs/WheelbaseListListingAddons",
+          "list_listings": "#/$defs/WheelbaseListListings",
+          "list_locations": "#/$defs/WheelbaseListLocations",
+          "list_message_threads": "#/$defs/WheelbaseListMessageThreads",
+          "update_booking": "#/$defs/WheelbaseUpdateBooking",
+          "update_customer": "#/$defs/WheelbaseUpdateCustomer",
+          "update_listing": "#/$defs/WheelbaseUpdateListing"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WheelbaseGetAccount"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListListings"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseGetListing"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseUpdateListing"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListListingAddons"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseGetListingAvailability"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListInsuranceOptions"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseCreateQuote"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListBookings"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseCreateBooking"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseGetBooking"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseUpdateBooking"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseApproveBooking"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseDeclineBooking"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseCancelBooking"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseCreateBookingLink"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListBookingDocuments"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListBookingPayments"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseGetBookingMessages"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListCustomers"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseCreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseGetCustomer"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseUpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListLocations"
+        },
+        {
+          "$ref": "#/$defs/WheelbaseListMessageThreads"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WheelbaseAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wheelbase Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find upcoming bookings",
+    "Create a customer",
+    "Get a price quote for this vehicle"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
