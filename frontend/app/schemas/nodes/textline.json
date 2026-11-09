@@ -1,0 +1,930 @@
+{
+  "$defs": {
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create an address-book customer with a phone number.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma or space separated tags; use underscores within a tag.",
+          "title": "Tags"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone_number": {
+          "minLength": 1,
+          "title": "Phone Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "DisableAvailability": {
+      "additionalProperties": false,
+      "description": "Turn off availability for an agent.",
+      "properties": {
+        "operation": {
+          "const": "disable_availability",
+          "default": "disable_availability",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "DisableAvailability",
+      "type": "object"
+    },
+    "EnableAvailability": {
+      "additionalProperties": false,
+      "description": "Turn on availability for an agent.",
+      "properties": {
+        "operation": {
+          "const": "enable_availability",
+          "default": "enable_availability",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "EnableAvailability",
+      "type": "object"
+    },
+    "GetAgent": {
+      "additionalProperties": false,
+      "description": "Read the agent details exposed by Textline's users endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAgent",
+      "type": "object"
+    },
+    "GetConversation": {
+      "additionalProperties": false,
+      "description": "Read a conversation and one page of its posts.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Textline page number, starting at zero. Only this page is returned.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Uuid"
+        },
+        "before_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Uuid"
+        },
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetConversation",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "description": "Retrieve one customer by UUID.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "description": "Read organization details, optionally including departments and agents.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string"
+        },
+        "include_groups": {
+          "default": false,
+          "title": "Include Groups",
+          "type": "boolean"
+        },
+        "include_users": {
+          "default": false,
+          "title": "Include Users",
+          "type": "boolean"
+        }
+      },
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "ListConversations": {
+      "additionalProperties": false,
+      "description": "Read one page of conversations, or a contact's conversation by phone.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Textline page number, starting at zero. Only this page is returned.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 30,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Uuid"
+        },
+        "before_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Uuid"
+        },
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "group_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Uuid"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        }
+      },
+      "title": "ListConversations",
+      "type": "object"
+    },
+    "ListCustomFields": {
+      "additionalProperties": false,
+      "description": "Read configured address-book custom field names and UUIDs.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomFields",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "description": "Read the provider's default customer page or find a contact by phone.",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListDepartments": {
+      "additionalProperties": false,
+      "description": "Read departments available to the connected agent.",
+      "properties": {
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDepartments",
+      "type": "object"
+    },
+    "ListDispositions": {
+      "additionalProperties": false,
+      "description": "Read conversation dispositions configured in the account.",
+      "properties": {
+        "operation": {
+          "const": "list_dispositions",
+          "default": "list_dispositions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDispositions",
+      "type": "object"
+    },
+    "ListSavedSearches": {
+      "additionalProperties": false,
+      "description": "Read the account's saved contact searches.",
+      "properties": {
+        "operation": {
+          "const": "list_saved_searches",
+          "default": "list_saved_searches",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSavedSearches",
+      "type": "object"
+    },
+    "ListSurveys": {
+      "additionalProperties": false,
+      "description": "Read survey names, types, and UUIDs.",
+      "properties": {
+        "operation": {
+          "const": "list_surveys",
+          "default": "list_surveys",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSurveys",
+      "type": "object"
+    },
+    "MessageConversation": {
+      "additionalProperties": false,
+      "description": "Send a message or internal whisper to an existing conversation.",
+      "properties": {
+        "body": {
+          "description": "Message text. Customer-visible unless internal_whisper is selected.",
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "internal_whisper": {
+          "default": false,
+          "description": "Send an internal agent note instead of a customer-visible message.",
+          "title": "Internal Whisper",
+          "type": "boolean"
+        },
+        "resolve": {
+          "default": false,
+          "description": "Resolve the conversation after sending.",
+          "title": "Resolve",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "message_conversation",
+          "default": "message_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body",
+        "uuid"
+      ],
+      "title": "MessageConversation",
+      "type": "object"
+    },
+    "ResolveConversation": {
+      "additionalProperties": false,
+      "description": "Resolve an existing conversation without changing its disposition.",
+      "properties": {
+        "operation": {
+          "const": "resolve_conversation",
+          "default": "resolve_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "ResolveConversation",
+      "type": "object"
+    },
+    "ScheduleConversation": {
+      "additionalProperties": false,
+      "description": "Schedule a customer-visible message to an existing conversation.",
+      "properties": {
+        "body": {
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Unix timestamp in seconds at which Textline should send the message.",
+          "minimum": 0,
+          "title": "Timestamp",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "schedule_conversation",
+          "default": "schedule_conversation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body",
+        "timestamp",
+        "uuid"
+      ],
+      "title": "ScheduleConversation",
+      "type": "object"
+    },
+    "ScheduleMessage": {
+      "additionalProperties": false,
+      "description": "Schedule a customer-visible message to a phone number.",
+      "properties": {
+        "body": {
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Unix timestamp in seconds at which Textline should send the message.",
+          "minimum": 0,
+          "title": "Timestamp",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "schedule_message",
+          "default": "schedule_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone_number": {
+          "minLength": 1,
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "group_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Uuid"
+        }
+      },
+      "required": [
+        "body",
+        "timestamp",
+        "phone_number"
+      ],
+      "title": "ScheduleMessage",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "description": "Send a message or internal whisper to a phone number.",
+      "properties": {
+        "body": {
+          "description": "Message text. Customer-visible unless internal_whisper is selected.",
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "internal_whisper": {
+          "default": false,
+          "description": "Send an internal agent note instead of a customer-visible message.",
+          "title": "Internal Whisper",
+          "type": "boolean"
+        },
+        "resolve": {
+          "default": false,
+          "description": "Resolve the conversation after sending.",
+          "title": "Resolve",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone_number": {
+          "minLength": 1,
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "group_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Uuid"
+        }
+      },
+      "required": [
+        "body",
+        "phone_number"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "TextlineAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "textline_access_token",
+          "default": "textline_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Textline Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Textline, open Settings \u2192 Tools & Integrations \u2192 Developer API and copy your access token. Paste the access token here. Your agent's permissions determine which departments and actions are available.",
+      "x-credential-url": "https://application.textline.com/organization/api_settings"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "description": "Update supplied contact fields, tags, and custom fields only.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma or space separated tags; use underscores within a tag.",
+          "title": "Tags"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "tags_handling": {
+          "anyOf": [
+            {
+              "enum": [
+                "add",
+                "remove",
+                "replace"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Handling",
+          "enum": [
+            "add",
+            "remove",
+            "replace"
+          ],
+          "x-enum-searchable": true
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        },
+        "blocked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocked"
+        },
+        "unreachable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unreachable"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Map Textline custom-field UUIDs to their new values.",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/CreateCustomer",
+          "disable_availability": "#/$defs/DisableAvailability",
+          "enable_availability": "#/$defs/EnableAvailability",
+          "get_agent": "#/$defs/GetAgent",
+          "get_conversation": "#/$defs/GetConversation",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_organization": "#/$defs/GetOrganization",
+          "list_conversations": "#/$defs/ListConversations",
+          "list_custom_fields": "#/$defs/ListCustomFields",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_departments": "#/$defs/ListDepartments",
+          "list_dispositions": "#/$defs/ListDispositions",
+          "list_saved_searches": "#/$defs/ListSavedSearches",
+          "list_surveys": "#/$defs/ListSurveys",
+          "message_conversation": "#/$defs/MessageConversation",
+          "resolve_conversation": "#/$defs/ResolveConversation",
+          "schedule_conversation": "#/$defs/ScheduleConversation",
+          "schedule_message": "#/$defs/ScheduleMessage",
+          "send_message": "#/$defs/SendMessage",
+          "update_customer": "#/$defs/UpdateCustomer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListConversations"
+        },
+        {
+          "$ref": "#/$defs/GetConversation"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/MessageConversation"
+        },
+        {
+          "$ref": "#/$defs/ResolveConversation"
+        },
+        {
+          "$ref": "#/$defs/ScheduleConversation"
+        },
+        {
+          "$ref": "#/$defs/ScheduleMessage"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListCustomFields"
+        },
+        {
+          "$ref": "#/$defs/ListSavedSearches"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListDepartments"
+        },
+        {
+          "$ref": "#/$defs/GetAgent"
+        },
+        {
+          "$ref": "#/$defs/EnableAvailability"
+        },
+        {
+          "$ref": "#/$defs/DisableAvailability"
+        },
+        {
+          "$ref": "#/$defs/ListDispositions"
+        },
+        {
+          "$ref": "#/$defs/ListSurveys"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TextlineAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Textline Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

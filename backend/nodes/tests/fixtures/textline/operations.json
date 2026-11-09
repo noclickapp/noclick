@@ -1,0 +1,1043 @@
+[
+  {
+    "operation": "list_conversations",
+    "method": "GET",
+    "path": "/api/conversations.json",
+    "config": {
+      "operation": "list_conversations",
+      "page": 0,
+      "page_size": 30
+    },
+    "body": null,
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "posts": [
+        {
+          "attachments": [
+            {
+              "content_type": "image/jpeg",
+              "name": "my_photo.png",
+              "url": "https://example.com/image.png"
+            }
+          ],
+          "body": "hello world",
+          "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+          "created_at": 1493923935,
+          "creator": {
+            "name `Chuck Finley`": "",
+            "type": "user"
+          },
+          "is_whisper": false,
+          "marked_as_resolved": false,
+          "transferred_to": {
+            "avatar_url": "https://example.com/image.png",
+            "name": "Chuck Finley",
+            "on_call": true,
+            "username": "ChuckF",
+            "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+            "email": "chuckf@textline.com",
+            "permission_level": "Admin",
+            "group_uuids": [
+              "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+              "35c450e8-5b60-46e2-b691-481419462c16"
+            ]
+          },
+          "assigned_to": {
+            "avatar_url": "https://example.com/image.png",
+            "name": "Chuck Finley",
+            "on_call": true,
+            "username": "ChuckF",
+            "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+            "email": "chuckf@textline.com",
+            "permission_level": "Admin",
+            "group_uuids": [
+              "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+              "35c450e8-5b60-46e2-b691-481419462c16"
+            ]
+          },
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "first_post": false,
+          "message_type": "SMS"
+        }
+      ]
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "get_conversation",
+    "method": "GET",
+    "path": "/api/conversation/84a2c56f-6b79-4764-811d-90880e2757b4.json",
+    "config": {
+      "operation": "get_conversation",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+      "page": 0,
+      "page_size": 30
+    },
+    "body": null,
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "posts": [
+        {
+          "attachments": [
+            {
+              "content_type": "image/jpeg",
+              "name": "my_photo.png",
+              "url": "https://example.com/image.png"
+            }
+          ],
+          "body": "hello world",
+          "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+          "created_at": 1493923935,
+          "creator": {
+            "name `Chuck Finley`": "",
+            "type": "user"
+          },
+          "is_whisper": false,
+          "marked_as_resolved": false,
+          "transferred_to": {
+            "avatar_url": "https://example.com/image.png",
+            "name": "Chuck Finley",
+            "on_call": true,
+            "username": "ChuckF",
+            "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+            "email": "chuckf@textline.com",
+            "permission_level": "Admin",
+            "group_uuids": [
+              "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+              "35c450e8-5b60-46e2-b691-481419462c16"
+            ]
+          },
+          "assigned_to": {
+            "avatar_url": "https://example.com/image.png",
+            "name": "Chuck Finley",
+            "on_call": true,
+            "username": "ChuckF",
+            "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+            "email": "chuckf@textline.com",
+            "permission_level": "Admin",
+            "group_uuids": [
+              "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+              "35c450e8-5b60-46e2-b691-481419462c16"
+            ]
+          },
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "first_post": false,
+          "message_type": "SMS"
+        }
+      ]
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "send_message",
+    "method": "POST",
+    "path": "/api/conversations.json",
+    "config": {
+      "operation": "send_message",
+      "phone_number": "(222) 222-2222",
+      "body": "hello world"
+    },
+    "body": {
+      "phone_number": "(222) 222-2222",
+      "comment": {
+        "body": "hello world"
+      }
+    },
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "post": {
+        "assigned_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "attachments": [
+          {
+            "content_type": "image/jpeg",
+            "name": "my_photo.png",
+            "url": "https://example.com/image.png"
+          }
+        ],
+        "body": "hello world",
+        "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+        "created_at": 1493923935,
+        "creator": {
+          "name `Chuck Finley`": "",
+          "type": "user"
+        },
+        "first_post": false,
+        "is_whisper": false,
+        "marked_as_resolved": false,
+        "message_type": "SMS",
+        "transferred_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369"
+      },
+      "group": {
+        "name": "Sales",
+        "phone_number": "(222) 222-2222",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "is_sms_group": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "message_conversation",
+    "method": "POST",
+    "path": "/api/conversation/84a2c56f-6b79-4764-811d-90880e2757b4.json",
+    "config": {
+      "operation": "message_conversation",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+      "body": "hello world"
+    },
+    "body": {
+      "comment": {
+        "body": "hello world"
+      }
+    },
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "whisper": {
+        "attachments": [
+          {
+            "content_type": "image/jpeg",
+            "name": "my_photo.png",
+            "url": "https://example.com/image.png"
+          }
+        ],
+        "body": "hello friend this is a whisper",
+        "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+        "created_at": 1493923935,
+        "creator": {
+          "name `Chuck Finley`": "",
+          "type": "user"
+        },
+        "is_whisper": true,
+        "marked_as_resolved": false,
+        "transferred_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369"
+      },
+      "group": {
+        "name": "Sales",
+        "phone_number": "(222) 222-2222",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "is_sms_group": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "resolve_conversation",
+    "method": "POST",
+    "path": "/api/conversation/84a2c56f-6b79-4764-811d-90880e2757b4/resolve.json",
+    "config": {
+      "operation": "resolve_conversation",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+    },
+    "body": null,
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "post": {
+        "assigned_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "attachments": [
+          {
+            "content_type": "image/jpeg",
+            "name": "my_photo.png",
+            "url": "https://example.com/image.png"
+          }
+        ],
+        "body": "hello world",
+        "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+        "created_at": 1493923935,
+        "creator": {
+          "name `Chuck Finley`": "",
+          "type": "user"
+        },
+        "first_post": false,
+        "is_whisper": false,
+        "marked_as_resolved": false,
+        "message_type": "SMS",
+        "transferred_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369"
+      },
+      "group": {
+        "name": "Sales",
+        "phone_number": "(222) 222-2222",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "is_sms_group": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "schedule_conversation",
+    "method": "POST",
+    "path": "/api/conversation/84a2c56f-6b79-4764-811d-90880e2757b4/schedule.json",
+    "config": {
+      "operation": "schedule_conversation",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+      "body": "hello world",
+      "timestamp": 1497308340
+    },
+    "body": {
+      "comment": {
+        "body": "hello world"
+      },
+      "timestamp": 1497308340
+    },
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "post": {
+        "assigned_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "attachments": [
+          {
+            "content_type": "image/jpeg",
+            "name": "my_photo.png",
+            "url": "https://example.com/image.png"
+          }
+        ],
+        "body": "hello world",
+        "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+        "created_at": 1493923935,
+        "creator": {
+          "name `Chuck Finley`": "",
+          "type": "user"
+        },
+        "first_post": false,
+        "is_whisper": false,
+        "marked_as_resolved": false,
+        "message_type": "SMS",
+        "transferred_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369"
+      },
+      "group": {
+        "name": "Sales",
+        "phone_number": "(222) 222-2222",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "is_sms_group": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "schedule_message",
+    "method": "POST",
+    "path": "/api/conversations/schedule.json",
+    "config": {
+      "operation": "schedule_message",
+      "phone_number": "(222) 222-2222",
+      "body": "hello world",
+      "timestamp": 1497308340
+    },
+    "body": {
+      "phone_number": "(222) 222-2222",
+      "comment": {
+        "body": "hello world"
+      },
+      "timestamp": 1497308340
+    },
+    "response": {
+      "conversation": {
+        "customer": {
+          "avatar_url": "https://example.com/image.png",
+          "blocked": false,
+          "archived": false,
+          "name": "Chuck Finley",
+          "notes": "``",
+          "phone_number": "(222) 222-2222",
+          "reachable_by_sms": true,
+          "tags": [
+            "foo",
+            "bar"
+          ],
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "facebook_id": "null",
+          "custom_fields": {
+            "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+            "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+          },
+          "consent_status": true,
+          "verified": true
+        },
+        "resolved": true,
+        "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+      },
+      "post": {
+        "assigned_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "attachments": [
+          {
+            "content_type": "image/jpeg",
+            "name": "my_photo.png",
+            "url": "https://example.com/image.png"
+          }
+        ],
+        "body": "hello world",
+        "conversation_uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+        "created_at": 1493923935,
+        "creator": {
+          "name `Chuck Finley`": "",
+          "type": "user"
+        },
+        "first_post": false,
+        "is_whisper": false,
+        "marked_as_resolved": false,
+        "message_type": "SMS",
+        "transferred_to": {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        },
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369"
+      },
+      "group": {
+        "name": "Sales",
+        "phone_number": "(222) 222-2222",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "is_sms_group": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "list_customers",
+    "method": "GET",
+    "path": "/api/customers.json",
+    "config": {
+      "operation": "list_customers"
+    },
+    "body": null,
+    "response": {
+      "customer": {
+        "avatar_url": "https://example.com/image.png",
+        "blocked": false,
+        "archived": false,
+        "name": "Chuck Finley",
+        "notes": "``",
+        "phone_number": "(222) 222-2222",
+        "reachable_by_sms": true,
+        "tags": [
+          "foo",
+          "bar"
+        ],
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "facebook_id": "null",
+        "custom_fields": {
+          "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+          "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+        },
+        "consent_status": true,
+        "verified": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "create_customer",
+    "method": "POST",
+    "path": "/api/customers.json",
+    "config": {
+      "operation": "create_customer",
+      "phone_number": "(222) 222-2222",
+      "name": "Chuck Finley"
+    },
+    "body": {
+      "customer": {
+        "phone_number": "(222) 222-2222",
+        "name": "Chuck Finley"
+      }
+    },
+    "response": {
+      "customer": {
+        "avatar_url": "https://example.com/image.png",
+        "blocked": false,
+        "archived": false,
+        "name": "Chuck Finley",
+        "notes": "``",
+        "phone_number": "(222) 222-2222",
+        "reachable_by_sms": true,
+        "tags": [
+          "foo",
+          "bar"
+        ],
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "facebook_id": "null",
+        "custom_fields": {
+          "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+          "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+        },
+        "consent_status": true,
+        "verified": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "get_customer",
+    "method": "GET",
+    "path": "/api/customer/84a2c56f-6b79-4764-811d-90880e2757b4.json",
+    "config": {
+      "operation": "get_customer",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+    },
+    "body": null,
+    "response": {
+      "customer": {
+        "avatar_url": "https://example.com/image.png",
+        "blocked": false,
+        "archived": false,
+        "name": "Chuck Finley",
+        "notes": "``",
+        "phone_number": "(222) 222-2222",
+        "reachable_by_sms": true,
+        "tags": [
+          "foo",
+          "bar"
+        ],
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "facebook_id": "null",
+        "custom_fields": {
+          "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+          "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+        },
+        "consent_status": true,
+        "verified": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "update_customer",
+    "method": "PUT",
+    "path": "/api/customer/84a2c56f-6b79-4764-811d-90880e2757b4.json",
+    "config": {
+      "operation": "update_customer",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4",
+      "name": "Chuck Finley",
+      "blocked": false
+    },
+    "body": {
+      "customer": {
+        "name": "Chuck Finley",
+        "blocked": false
+      }
+    },
+    "response": {
+      "customer": {
+        "avatar_url": "https://example.com/image.png",
+        "blocked": false,
+        "archived": false,
+        "name": "Chuck Finley",
+        "notes": "``",
+        "phone_number": "(222) 222-2222",
+        "reachable_by_sms": true,
+        "tags": [
+          "foo",
+          "bar"
+        ],
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "facebook_id": "null",
+        "custom_fields": {
+          "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0": "Custom_Field_1_value",
+          "116bad5a-6233-472d-bcf0-199d53342a82": "null"
+        },
+        "consent_status": true,
+        "verified": true
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "list_custom_fields",
+    "method": "GET",
+    "path": "/api/address_book/custom_fields.json",
+    "config": {
+      "operation": "list_custom_fields"
+    },
+    "body": null,
+    "response": {
+      "fields": [
+        {
+          "data_type": "string",
+          "name": "Custom Field 1",
+          "uuid": "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0"
+        },
+        {
+          "data_type": "link",
+          "name": "Custom Field 2",
+          "uuid": "342fbe5b-da20-4f82-b899-53f4a5b0a8df"
+        }
+      ]
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "list_saved_searches",
+    "method": "GET",
+    "path": "/api/address_book/saved_searches.json",
+    "config": {
+      "operation": "list_saved_searches"
+    },
+    "body": null,
+    "response": {
+      "saved_search": [
+        {
+          "name": "saved_search_1",
+          "description": "saved_search_parameters",
+          "uuid": "44db893e-cf20-4279-96c7-60abb8a43b61"
+        },
+        {
+          "name": "customers with tags",
+          "description": "has tags",
+          "uuid": "dd9d4cc2-c6df-421e-8925-09ec93461482"
+        }
+      ]
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "get_organization",
+    "method": "GET",
+    "path": "/api/organization.json",
+    "config": {
+      "operation": "get_organization",
+      "include_groups": false,
+      "include_users": false
+    },
+    "body": null,
+    "response": {
+      "organization": {
+        "name": "My Company"
+      },
+      "groups": [
+        {
+          "name": "Sales",
+          "phone_number": "(222) 222-2222",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "is_sms_group": true
+        }
+      ],
+      "users": [
+        {
+          "avatar_url": "https://example.com/image.png",
+          "name": "Chuck Finley",
+          "on_call": true,
+          "username": "ChuckF",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "email": "chuckf@textline.com",
+          "permission_level": "Admin",
+          "group_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ]
+        }
+      ]
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "list_departments",
+    "method": "GET",
+    "path": "/api/groups.json",
+    "config": {
+      "operation": "list_departments"
+    },
+    "body": null,
+    "response": {
+      "departments": [
+        {
+          "name": "Customer Service",
+          "uuid": "c43a1766-47e1-4c9c-a2cc-36bf424fcbc0",
+          "phone_number": "(415) 849-4349",
+          "is_sms_group": true,
+          "user_uuids": [
+            "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+            "35c450e8-5b60-46e2-b691-481419462c16"
+          ],
+          "type": "sms",
+          "facebook_page_id": "null",
+          "smart_sms_phone_numbers": [
+            {
+              "display_phone_number": "(305) 867-5309",
+              "location": "Miami, Florida, US"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "get_agent",
+    "method": "GET",
+    "path": "/api/users.json",
+    "config": {
+      "operation": "get_agent"
+    },
+    "body": null,
+    "response": {
+      "user": {
+        "avatar_url": "https://example.com/image.png",
+        "name": "Chuck Finley",
+        "on_call": true,
+        "username": "ChuckF",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "email": "chuckf@textline.com",
+        "permission_level": "Admin",
+        "group_uuids": [
+          "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+          "35c450e8-5b60-46e2-b691-481419462c16"
+        ]
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "enable_availability",
+    "method": "POST",
+    "path": "/api/users/84a2c56f-6b79-4764-811d-90880e2757b4/on_call.json",
+    "config": {
+      "operation": "enable_availability",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+    },
+    "body": null,
+    "response": {
+      "user": {
+        "avatar_url": "https://example.com/image.png",
+        "name": "Chuck Finley",
+        "on_call": true,
+        "username": "ChuckF",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "email": "chuckf@textline.com",
+        "permission_level": "Admin",
+        "group_uuids": [
+          "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+          "35c450e8-5b60-46e2-b691-481419462c16"
+        ]
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "disable_availability",
+    "method": "DELETE",
+    "path": "/api/users/84a2c56f-6b79-4764-811d-90880e2757b4/on_call.json",
+    "config": {
+      "operation": "disable_availability",
+      "uuid": "84a2c56f-6b79-4764-811d-90880e2757b4"
+    },
+    "body": null,
+    "response": {
+      "user": {
+        "avatar_url": "https://example.com/image.png",
+        "name": "Chuck Finley",
+        "on_call": false,
+        "username": "ChuckF",
+        "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+        "email": "chuckf@textline.com",
+        "permission_level": "Admin",
+        "group_uuids": [
+          "21ca50a9-a85d-49d1-9266-0df69fd5a9ef",
+          "35c450e8-5b60-46e2-b691-481419462c16"
+        ]
+      }
+    },
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "list_dispositions",
+    "method": "GET",
+    "path": "/api/dispositions.json",
+    "config": {
+      "operation": "list_dispositions"
+    },
+    "body": null,
+    "response": [
+      {
+        "title": "Technical Support",
+        "uuid": "ffb9ba22-1302-4045-8865-449d3eed461c",
+        "group": {
+          "name": "Sales",
+          "phone_number": "(222) 222-2222",
+          "uuid": "deb79a6a-0652-4e14-86f2-dc8c5c502369",
+          "is_sms_group": true
+        }
+      },
+      {
+        "name": "Sales",
+        "uuid": "2212a996-ec67-11ea-adc1-0242ac120002"
+      }
+    ],
+    "source": "https://reference.textline.com/source.json"
+  },
+  {
+    "operation": "list_surveys",
+    "method": "GET",
+    "path": "/api/surveys.json",
+    "config": {
+      "operation": "list_surveys"
+    },
+    "body": null,
+    "response": [
+      {
+        "name": "Sample NPS",
+        "type": "NpsSurvey",
+        "uuid": "ffb9ba22-1302-4045-8865-449d3eed461c"
+      },
+      {
+        "name": "Sample CSAT",
+        "type": "CsatSurvey",
+        "uuid": "2212a996-ec67-11ea-adc1-0242ac120002"
+      },
+      {
+        "name": "Sample Custom",
+        "type": "CustomSurvey",
+        "uuid": "28196e88-ec67-11ea-adc1-0242ac120002"
+      }
+    ],
+    "source": "https://reference.textline.com/source.json"
+  }
+]
