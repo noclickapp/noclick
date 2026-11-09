@@ -1,0 +1,2621 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "street": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Street",
+          "type": "string"
+        },
+        "city": {
+          "maxLength": 45,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "description": "Two-letter state or province code.",
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "State",
+          "type": "string"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "state"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "ServiceTradeCreateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Create a new appointment. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job ID this appointment is for",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "scheduled",
+                "unscheduled",
+                "canceled_by_vendor",
+                "canceled_by_customer",
+                "completed",
+                "no_show"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial status, defaults to `scheduled`",
+          "title": "Status",
+          "enum": [
+            "scheduled",
+            "unscheduled",
+            "canceled_by_vendor",
+            "canceled_by_customer",
+            "completed",
+            "no_show"
+          ],
+          "x-enum-searchable": true
+        },
+        "service_request_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service request IDs to fulfill on this appointment (must belong to the job)",
+          "title": "Service Request Ids"
+        },
+        "tech_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Technician user IDs to assign to this appointment",
+          "title": "Tech Ids"
+        },
+        "window_start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window start timestamp (defaults to `null` for unscheduled, current time for other statuses)",
+          "title": "Window Start"
+        },
+        "window_end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window end timestamp (defaults to `null` for unscheduled, current time for other statuses)",
+          "title": "Window End"
+        },
+        "released": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release appointment to assigned technicians (default depends on account settings)",
+          "title": "Released"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ServiceTradeCreateAppointmentConfig",
+      "type": "object"
+    },
+    "ServiceTradeCreateCommentConfig": {
+      "additionalProperties": false,
+      "description": "Create a comment. The entity type is the documented numeric constant (3 for a job).",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entity_id": {
+          "description": "ID of the entity to comment on",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Entity Id",
+          "type": "integer"
+        },
+        "entity_type": {
+          "description": "Entity type constant of the entity to comment on (see the list of [Entity Types](/api/docs/description/entity-types))",
+          "minimum": 0,
+          "title": "Entity Type",
+          "type": "integer"
+        },
+        "content": {
+          "description": "Text of the comment",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "public",
+                  "schedule",
+                  "tech",
+                  "billing"
+                ],
+                "type": "string"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Privacy level and context flags. For assets, only `public` and `tech` are accepted.",
+          "title": "Visibility"
+        },
+        "pinned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to pin the comment",
+          "title": "Pinned"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_type",
+        "content"
+      ],
+      "title": "ServiceTradeCreateCommentConfig",
+      "type": "object"
+    },
+    "ServiceTradeCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create a new contact. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact first name (required if `lastName` not provided)",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact last name (required if `firstName` not provided)",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email address",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact phone number",
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact mobile phone number",
+          "title": "Mobile"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "private",
+                "inactive"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact visibility status (defaults to `private`)",
+          "title": "Status",
+          "enum": [
+            "public",
+            "private",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "company_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of companies to assign this contact to",
+          "title": "Company Ids"
+        },
+        "location_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of locations to assign this contact to",
+          "title": "Location Ids"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact types (e.g., `[\"management\", \"financial\"]`). Takes precedence over `type`",
+          "title": "Types"
+        }
+      },
+      "title": "ServiceTradeCreateContactConfig",
+      "type": "object"
+    },
+    "ServiceTradeCreateJobConfig": {
+      "additionalProperties": false,
+      "description": "Create a new job. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "description": "Location where the job will be performed",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Job type",
+          "enum": [
+            "administrative",
+            "buildout",
+            "cleaning",
+            "construction",
+            "consultation",
+            "delivery",
+            "design",
+            "emergency_service_call",
+            "exchange",
+            "hookup",
+            "inspection",
+            "inspection_repair",
+            "installation",
+            "monitoring",
+            "pickup",
+            "planned_maintenance",
+            "preventative_maintenance",
+            "priority_inspection",
+            "priority_service_call",
+            "quality_assurance",
+            "reinspection",
+            "repair",
+            "replacement",
+            "retrofit",
+            "sales",
+            "service_call",
+            "start_up",
+            "survey",
+            "testing",
+            "training",
+            "unknown",
+            "upgrade",
+            "urgent_service_call",
+            "warranty"
+          ],
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "custom_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom name for the job",
+          "title": "Custom Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job description",
+          "title": "Description"
+        },
+        "customer_po": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer purchase order number",
+          "title": "Customer Po"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "scheduled",
+                "canceled",
+                "bidding",
+                "completed",
+                "pending_invoice",
+                "sending_invoice",
+                "invoiced",
+                "closed"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial job status. `invoiced` is deprecated",
+          "title": "Status",
+          "enum": [
+            "new",
+            "scheduled",
+            "canceled",
+            "bidding",
+            "completed",
+            "pending_invoice",
+            "sending_invoice",
+            "invoiced",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "percent_complete": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Completion percentage (0-100), or `null` if unknown",
+          "title": "Percent Complete"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User ID of the job owner",
+          "title": "Owner Id"
+        },
+        "service_request_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service request IDs to fulfill by this job (services must belong to the job's location)",
+          "title": "Service Request Ids"
+        }
+      },
+      "required": [
+        "location_id",
+        "type"
+      ],
+      "title": "ServiceTradeCreateJobConfig",
+      "type": "object"
+    },
+    "ServiceTradeCreateLocationConfig": {
+      "additionalProperties": false,
+      "description": "Create a new location. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "create_location",
+          "default": "create_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Location name",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "company_id": {
+          "description": "ID of the company this location belongs to",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "address": {
+          "$ref": "#/$defs/Address",
+          "description": "Address object: `street`, `city`, and `state` are required; `postalCode` is optional"
+        },
+        "ref_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference number. Auto-generated if not specified.",
+          "title": "Ref Number"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number for the location",
+          "title": "Phone Number"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address for the location",
+          "title": "Email"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "pending"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location status, defaults to `active`",
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        },
+        "primary_contact_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of contact to set as primary. Contact must belong to this location or company. `null` to clear.",
+          "title": "Primary Contact Id"
+        }
+      },
+      "required": [
+        "name",
+        "company_id",
+        "address"
+      ],
+      "title": "ServiceTradeCreateLocationConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Get a single appointment.",
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Appointment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "ServiceTradeGetAppointmentConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a single company.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ServiceTradeGetCompanyConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get a single contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ServiceTradeGetContactConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetDeficiencyConfig": {
+      "additionalProperties": false,
+      "description": "Get a single deficiency.",
+      "properties": {
+        "operation": {
+          "const": "get_deficiency",
+          "default": "get_deficiency",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deficiency_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Deficiency Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "deficiency_id"
+      ],
+      "title": "ServiceTradeGetDeficiencyConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a single invoice by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "ServiceTradeGetInvoiceConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetJobConfig": {
+      "additionalProperties": false,
+      "description": "Get a single job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ServiceTradeGetJobConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetLocationConfig": {
+      "additionalProperties": false,
+      "description": "Get a single location.",
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "ServiceTradeGetLocationConfig",
+      "type": "object"
+    },
+    "ServiceTradeGetQuoteConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a single quote.",
+      "properties": {
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "quote_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Quote Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "quote_id"
+      ],
+      "title": "ServiceTradeGetQuoteConfig",
+      "type": "object"
+    },
+    "ServiceTradeListAppointmentsConfig": {
+      "additionalProperties": false,
+      "description": "List all appointments. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by job ID",
+          "title": "Job Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "scheduled",
+                "unscheduled",
+                "canceled_by_vendor",
+                "canceled_by_customer",
+                "completed",
+                "no_show"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of statuses, defaults to all except `unscheduled`",
+          "title": "Status",
+          "enum": [
+            "scheduled",
+            "unscheduled",
+            "canceled_by_vendor",
+            "canceled_by_customer",
+            "completed",
+            "no_show"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ServiceTradeListAppointmentsConfig",
+      "type": "object"
+    },
+    "ServiceTradeListCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "List all companies. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by company name (case-insensitive substring match)",
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "pending",
+                "inactive",
+                "on_hold"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by company status",
+          "title": "Status",
+          "enum": [
+            "active",
+            "pending",
+            "inactive",
+            "on_hold"
+          ],
+          "x-enum-searchable": true
+        },
+        "is_customer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If `true`, returns only companies listed as customers",
+          "title": "Is Customer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by records updated on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by records updated on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListCompaniesConfig",
+      "type": "object"
+    },
+    "ServiceTradeListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List all contacts. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by company ID. Returns contacts belonging to this company or its locations. To only include contacts directly related to the company (excluding location contacts), also set `locationId` to empty string",
+          "title": "Company Id"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by contact name, phone numbers, or email address",
+          "title": "Search"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact match on contact email address",
+          "title": "Email"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contacts updated on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contacts updated on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListContactsConfig",
+      "type": "object"
+    },
+    "ServiceTradeListDeficienciesConfig": {
+      "additionalProperties": false,
+      "description": "List all deficiencies. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_deficiencies",
+          "default": "list_deficiencies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by asset ID",
+          "title": "Asset Id"
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "enum": [
+                "inoperable",
+                "deficient",
+                "suggested"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by severity level",
+          "title": "Severity",
+          "enum": [
+            "inoperable",
+            "deficient",
+            "suggested"
+          ],
+          "x-enum-searchable": true
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by records updated on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by records updated on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListDeficienciesConfig",
+      "type": "object"
+    },
+    "ServiceTradeListInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List all invoices. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job to which this invoice is attached",
+          "title": "Job Id"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer for this invoice",
+          "title": "Customer Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ok",
+                "internal_review",
+                "pending_accounting",
+                "pending_sales_tax",
+                "processed",
+                "paid",
+                "sent",
+                "failed",
+                "void"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status (multiple allowed). Note: `sent` and `paid` statuses are deprecated",
+          "title": "Status",
+          "enum": [
+            "ok",
+            "internal_review",
+            "pending_accounting",
+            "pending_sales_tax",
+            "processed",
+            "paid",
+            "sent",
+            "failed",
+            "void"
+          ],
+          "x-enum-searchable": true
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListInvoicesConfig",
+      "type": "object"
+    },
+    "ServiceTradeListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List all jobs. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of location IDs",
+          "title": "Location Id"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of customer company IDs",
+          "title": "Customer Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by job custom name (substring match)",
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "*",
+                "all",
+                "new",
+                "scheduled",
+                "canceled",
+                "bidding",
+                "completed",
+                "pending_invoice",
+                "sending_invoice",
+                "invoiced",
+                "closed"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by one status; use * for all statuses. If omitted, ServiceTrade returns scheduled jobs only.",
+          "title": "Status",
+          "enum": [
+            "*",
+            "all",
+            "new",
+            "scheduled",
+            "canceled",
+            "bidding",
+            "completed",
+            "pending_invoice",
+            "sending_invoice",
+            "invoiced",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by records updated on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by records updated on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListJobsConfig",
+      "type": "object"
+    },
+    "ServiceTradeListLocationsConfig": {
+      "additionalProperties": false,
+      "description": "List all locations. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of company IDs; returns locations belonging to any of these",
+          "title": "Company Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by location name or store number (substring match)",
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "pending"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of statuses to filter by",
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return locations updated on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return locations updated on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListLocationsConfig",
+      "type": "object"
+    },
+    "ServiceTradeListQuotesConfig": {
+      "additionalProperties": false,
+      "description": "List all quotes. Returns one page; pass the next_page value to continue.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Each run reads one page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; see ServiceTrade's general pagination contract.",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_quotes",
+          "default": "list_quotes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-delimited list of integers, return only quotes applying to these locations",
+          "title": "Location Id"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only quotes for customer with this company ID",
+          "title": "Customer Id"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only quotes whose last update time is on or after this timestamp",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only quotes whose last update time is on or before this timestamp",
+          "title": "Updated Before"
+        }
+      },
+      "title": "ServiceTradeListQuotesConfig",
+      "type": "object"
+    },
+    "ServiceTradeSessionToken": {
+      "properties": {
+        "credential_type": {
+          "const": "servicetrade_session_token",
+          "default": "servicetrade_session_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Session Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "ServiceTrade Session Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing API session's authToken (the PHPSESSID cookie value) from ServiceTrade. Send only the value, without PHPSESSID= or a Cookie header. The API documents this legacy session method alongside OAuth client credentials. Sessions expire: replace the token when ServiceTrade rejects it. NoClick does not sign in or renew this session. The session's user permissions govern reads and writes.",
+      "x-credential-url": "https://api.servicetrade.com/api/docs/tag/authentication"
+    },
+    "ServiceTradeUpdateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Update an appointment. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "update_appointment",
+          "default": "update_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Appointment Id",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "scheduled",
+                "canceled_by_vendor",
+                "canceled_by_customer",
+                "completed",
+                "no_show"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New appointment status",
+          "title": "Status",
+          "enum": [
+            "scheduled",
+            "canceled_by_vendor",
+            "canceled_by_customer",
+            "completed",
+            "no_show"
+          ],
+          "x-enum-searchable": true
+        },
+        "service_request_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service request IDs to fulfill (replaces existing)",
+          "title": "Service Request Ids"
+        },
+        "tech_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Technician user IDs to assign (replaces existing)",
+          "title": "Tech Ids"
+        },
+        "window_start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window start timestamp",
+          "title": "Window Start"
+        },
+        "window_end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window end timestamp",
+          "title": "Window End"
+        },
+        "released": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release appointment to assigned technicians",
+          "title": "Released"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "ServiceTradeUpdateAppointmentConfig",
+      "type": "object"
+    },
+    "ServiceTradeUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update an existing contact. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact last name",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email address",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact phone number",
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact mobile phone number",
+          "title": "Mobile"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "private",
+                "inactive"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact visibility status",
+          "title": "Status",
+          "enum": [
+            "public",
+            "private",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "company_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of companies to assign this contact to (replaces existing assignments)",
+          "title": "Company Ids"
+        },
+        "location_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of locations to assign this contact to (replaces existing assignments)",
+          "title": "Location Ids"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact types (e.g., `[\"management\", \"financial\"]`). Takes precedence over `type`",
+          "title": "Types"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ServiceTradeUpdateContactConfig",
+      "type": "object"
+    },
+    "ServiceTradeUpdateJobConfig": {
+      "additionalProperties": false,
+      "description": "Update a job. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "administrative",
+                "buildout",
+                "cleaning",
+                "construction",
+                "consultation",
+                "delivery",
+                "design",
+                "emergency_service_call",
+                "exchange",
+                "hookup",
+                "inspection",
+                "inspection_repair",
+                "installation",
+                "monitoring",
+                "pickup",
+                "planned_maintenance",
+                "preventative_maintenance",
+                "priority_inspection",
+                "priority_service_call",
+                "quality_assurance",
+                "reinspection",
+                "repair",
+                "replacement",
+                "retrofit",
+                "sales",
+                "service_call",
+                "start_up",
+                "survey",
+                "testing",
+                "training",
+                "unknown",
+                "upgrade",
+                "urgent_service_call",
+                "warranty"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job type",
+          "title": "Type",
+          "enum": [
+            "administrative",
+            "buildout",
+            "cleaning",
+            "construction",
+            "consultation",
+            "delivery",
+            "design",
+            "emergency_service_call",
+            "exchange",
+            "hookup",
+            "inspection",
+            "inspection_repair",
+            "installation",
+            "monitoring",
+            "pickup",
+            "planned_maintenance",
+            "preventative_maintenance",
+            "priority_inspection",
+            "priority_service_call",
+            "quality_assurance",
+            "reinspection",
+            "repair",
+            "replacement",
+            "retrofit",
+            "sales",
+            "service_call",
+            "start_up",
+            "survey",
+            "testing",
+            "training",
+            "unknown",
+            "upgrade",
+            "urgent_service_call",
+            "warranty"
+          ],
+          "x-enum-searchable": true
+        },
+        "custom_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom name for the job",
+          "title": "Custom Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job description",
+          "title": "Description"
+        },
+        "customer_po": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer purchase order number",
+          "title": "Customer Po"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "scheduled",
+                "canceled",
+                "bidding",
+                "completed",
+                "pending_invoice",
+                "sending_invoice",
+                "invoiced",
+                "closed"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job status. `invoiced` is deprecated",
+          "title": "Status",
+          "enum": [
+            "new",
+            "scheduled",
+            "canceled",
+            "bidding",
+            "completed",
+            "pending_invoice",
+            "sending_invoice",
+            "invoiced",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "percent_complete": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Completion percentage (0-100), or `null` if unknown",
+          "title": "Percent Complete"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User ID of the job owner",
+          "title": "Owner Id"
+        },
+        "service_request_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 2000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service request IDs to fulfill by this job",
+          "title": "Service Request Ids"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ServiceTradeUpdateJobConfig",
+      "type": "object"
+    },
+    "ServiceTradeUpdateLocationConfig": {
+      "additionalProperties": false,
+      "description": "Update a location. Only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "update_location",
+          "default": "update_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location name",
+          "title": "Name"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the company this location belongs to",
+          "title": "Company Id"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Address object containing `street`, `city`, `state`, and `postalCode` properties"
+        },
+        "ref_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference number",
+          "title": "Ref Number"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number for the location",
+          "title": "Phone Number"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address for the location",
+          "title": "Email"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "pending"
+              ],
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location status",
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        },
+        "primary_contact_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of contact to set as primary. Contact must belong to this location or company. `null` to clear.",
+          "title": "Primary Contact Id"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "ServiceTradeUpdateLocationConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_appointment": "#/$defs/ServiceTradeCreateAppointmentConfig",
+          "create_comment": "#/$defs/ServiceTradeCreateCommentConfig",
+          "create_contact": "#/$defs/ServiceTradeCreateContactConfig",
+          "create_job": "#/$defs/ServiceTradeCreateJobConfig",
+          "create_location": "#/$defs/ServiceTradeCreateLocationConfig",
+          "get_appointment": "#/$defs/ServiceTradeGetAppointmentConfig",
+          "get_company": "#/$defs/ServiceTradeGetCompanyConfig",
+          "get_contact": "#/$defs/ServiceTradeGetContactConfig",
+          "get_deficiency": "#/$defs/ServiceTradeGetDeficiencyConfig",
+          "get_invoice": "#/$defs/ServiceTradeGetInvoiceConfig",
+          "get_job": "#/$defs/ServiceTradeGetJobConfig",
+          "get_location": "#/$defs/ServiceTradeGetLocationConfig",
+          "get_quote": "#/$defs/ServiceTradeGetQuoteConfig",
+          "list_appointments": "#/$defs/ServiceTradeListAppointmentsConfig",
+          "list_companies": "#/$defs/ServiceTradeListCompaniesConfig",
+          "list_contacts": "#/$defs/ServiceTradeListContactsConfig",
+          "list_deficiencies": "#/$defs/ServiceTradeListDeficienciesConfig",
+          "list_invoices": "#/$defs/ServiceTradeListInvoicesConfig",
+          "list_jobs": "#/$defs/ServiceTradeListJobsConfig",
+          "list_locations": "#/$defs/ServiceTradeListLocationsConfig",
+          "list_quotes": "#/$defs/ServiceTradeListQuotesConfig",
+          "update_appointment": "#/$defs/ServiceTradeUpdateAppointmentConfig",
+          "update_contact": "#/$defs/ServiceTradeUpdateContactConfig",
+          "update_job": "#/$defs/ServiceTradeUpdateJobConfig",
+          "update_location": "#/$defs/ServiceTradeUpdateLocationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ServiceTradeListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeListDeficienciesConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeGetDeficiencyConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeCreateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeUpdateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeCreateLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeUpdateLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeCreateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeUpdateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ServiceTradeCreateCommentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ServiceTradeSessionToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Servicetrade Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
