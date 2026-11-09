@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/osv.png",
+  "source": "https://raw.githubusercontent.com/google/osv.dev/master/website/frontend3/img/favicon-32x32.png",
+  "license": "Apache-2.0 (https://github.com/google/osv.dev/blob/master/LICENSE); OSV brand mark used to identify the service, trademark rights remain with its owner.",
+  "sha256": "5321baff2a69906cdcd37771d13bd0350af37d79f3d0317aa318a27cc2adab47"
+}
