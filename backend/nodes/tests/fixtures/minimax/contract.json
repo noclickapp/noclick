@@ -1,0 +1,185 @@
+{
+  "provider": "minimax",
+  "operations": {
+    "list_models": {
+      "file": "openapi-06.json",
+      "sha256": "273aa06a2ed60ddf8b396fc6ceb12416b1ceed9a8a5a6f22f2bee5f56142c060",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/models/openai/api/list-models.json",
+      "method": "GET",
+      "path": "/v1/models",
+      "operation_id": "listModels"
+    },
+    "get_model": {
+      "file": "openapi-07.json",
+      "sha256": "ad14c4369b8b34bcfd4e7b142753f0d6263756ed38fd1e233df9115b2af8a339",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/models/openai/api/retrieve-model.json",
+      "method": "GET",
+      "path": "/v1/models/{model_id}",
+      "operation_id": "retrieveModel"
+    },
+    "list_files": {
+      "file": "openapi-01.json",
+      "sha256": "f47a23e9e2afd7a5950652501ca4e0a2850a80b45823769b3a3d6262d371cae4",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/file/management/api/openapi.json",
+      "method": "GET",
+      "path": "/v1/files/list",
+      "operation_id": "listFiles"
+    },
+    "get_file": {
+      "file": "openapi-01.json",
+      "sha256": "f47a23e9e2afd7a5950652501ca4e0a2850a80b45823769b3a3d6262d371cae4",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/file/management/api/openapi.json",
+      "method": "GET",
+      "path": "/v1/files/retrieve",
+      "operation_id": "retrieveFile"
+    },
+    "delete_file": {
+      "file": "openapi-01.json",
+      "sha256": "f47a23e9e2afd7a5950652501ca4e0a2850a80b45823769b3a3d6262d371cae4",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/file/management/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/files/delete",
+      "operation_id": "deleteFile"
+    },
+    "generate_text": {
+      "file": "openapi-19.json",
+      "sha256": "7eae52ebadf1ccf3aab887e30eda5cb6fdbe0069d7e25438dd5e2ed3f46a3704",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/text/api/openapi-chat-openai.json",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "operation_id": "chatCompletionOpenAI"
+    },
+    "generate_image": {
+      "file": "openapi-03.json",
+      "sha256": "e1a8ded692f7de1ac4398c20157419751e51b5514a427fc25bc048eda49d9efe",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/image/generation/api/text-to-image.json",
+      "method": "POST",
+      "path": "/v1/image_generation",
+      "operation_id": "imageGeneration"
+    },
+    "generate_music": {
+      "file": "openapi-08.json",
+      "sha256": "fd08440baab07483daf7acbd2f5f662bd5b0dbe9a68ecbaf9b0101351080611d",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/music/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/music_generation",
+      "operation_id": "generateMusic"
+    },
+    "generate_lyrics": {
+      "file": "openapi-09.json",
+      "sha256": "2d10621c8548c669e25c763f4e62d5aebc002de0066245b6bafaedc084d8c8c6",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/music/lyrics/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/lyrics_generation",
+      "operation_id": "generateLyrics"
+    },
+    "generate_speech": {
+      "file": "openapi-12.json",
+      "sha256": "4e50553b9fab959a3617004a85b851af590498f7ef779eec276b79f73bd0b644",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/t2a/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/t2a_v2",
+      "operation_id": "t2aV2"
+    },
+    "create_speech_task": {
+      "file": "openapi-11.json",
+      "sha256": "a59d49d148fc39930451f73c9c5353741b088051a29e9d3c21f84e738b3cf88d",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/t2a-async/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/t2a_async_v2",
+      "operation_id": "t2aAsyncV2"
+    },
+    "get_speech_task": {
+      "file": "openapi-11.json",
+      "sha256": "a59d49d148fc39930451f73c9c5353741b088051a29e9d3c21f84e738b3cf88d",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/t2a-async/api/openapi.json",
+      "method": "GET",
+      "path": "/v1/query/t2a_async_query_v2",
+      "operation_id": "t2aAsyncV2Query"
+    },
+    "list_voices": {
+      "file": "openapi-17.json",
+      "sha256": "de57ea775e9e2a79ab640ff7057758d7e8161dc944d480c732dadeda2becc4e4",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/voice-management/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/get_voice",
+      "operation_id": "getVoice"
+    },
+    "delete_voice": {
+      "file": "openapi-17.json",
+      "sha256": "de57ea775e9e2a79ab640ff7057758d7e8161dc944d480c732dadeda2becc4e4",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/voice-management/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/delete_voice",
+      "operation_id": "deleteVoice"
+    },
+    "design_voice": {
+      "file": "openapi-16.json",
+      "sha256": "3659f44381c8ea7b60398877f22fda8d5752ee0e630bc5729ca59a9f1c16ecc4",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/voice-design/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/voice_design",
+      "operation_id": "voiceDesign"
+    },
+    "clone_voice": {
+      "file": "openapi-13.json",
+      "sha256": "c5eb057da3b0678046631a8e4563b3d9c60b2bf332cf34c0f2e179b8f63fc36b",
+      "version": "1.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/speech/voice-cloning/api/openapi.json",
+      "method": "POST",
+      "path": "/v1/voice_clone",
+      "operation_id": "voiceClone"
+    },
+    "create_video_task": {
+      "file": "openapi-29.json",
+      "sha256": "81353c47e0e61d520b52c9012c91e18c6c5ddc27c695fbb7ad1c3a913c89e05a",
+      "version": "2.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/video/generation/api/v2-video-generation.json",
+      "method": "POST",
+      "path": "/v2/video_generation",
+      "operation_id": "videoGenerationV2Create"
+    },
+    "get_video_task": {
+      "file": "openapi-29.json",
+      "sha256": "81353c47e0e61d520b52c9012c91e18c6c5ddc27c695fbb7ad1c3a913c89e05a",
+      "version": "2.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/video/generation/api/v2-video-generation.json",
+      "method": "GET",
+      "path": "/v2/query/video_generation/{task_id}",
+      "operation_id": "videoGenerationV2Query"
+    },
+    "delete_video_task": {
+      "file": "openapi-29.json",
+      "sha256": "81353c47e0e61d520b52c9012c91e18c6c5ddc27c695fbb7ad1c3a913c89e05a",
+      "version": "2.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/video/generation/api/v2-video-generation.json",
+      "method": "DELETE",
+      "path": "/v2/video_generation/{task_id}",
+      "operation_id": "videoGenerationV2Delete"
+    },
+    "list_video_tasks": {
+      "file": "openapi-29.json",
+      "sha256": "81353c47e0e61d520b52c9012c91e18c6c5ddc27c695fbb7ad1c3a913c89e05a",
+      "version": "2.0.0",
+      "source_url": "https://platform.minimax.io/docs/api-reference/video/generation/api/v2-video-generation.json",
+      "method": "GET",
+      "path": "/v2/query/video_generation",
+      "operation_id": "videoGenerationV2List"
+    }
+  }
+}
