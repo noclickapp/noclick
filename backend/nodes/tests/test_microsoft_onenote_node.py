@@ -4,6 +4,8 @@ These are local HTTP tests; live OAuth and FlowCanvas QA are separate gates.
 """
 
 from unittest.mock import AsyncMock
+from copy import deepcopy
+import json
 
 import httpx
 import pytest
@@ -14,6 +16,8 @@ from nodes.microsoft_onenote_node import (
     OneNoteNode,
     OneNoteNodeConfig,
     OneNoteOAuthCredential,
+    OneNoteOnNewPageConfig,
+    OneNoteOnNewOrUpdatedPageConfig,
 )
 
 
@@ -176,7 +180,7 @@ async def test_graph_error_surfaces_message_without_token(monkeypatch):
 def test_schema_and_scope_cover_every_operation():
     schema = OneNoteNode.get_config_schema()
     assert len(OPERATIONS) == 19
-    assert set(OPERATIONS) == OneNoteNode.scope_registry.keys_declared
+    assert set(OPERATIONS) | {"on_new_page", "on_new_or_updated_page"} == OneNoteNode.scope_registry.keys_declared
     credential = schema["$defs"]["OneNoteOAuthCredential"]
     assert credential["x-oauth-provider"] == "microsoft"
     assert "https://graph.microsoft.com/Notes.ReadWrite" in credential["x-oauth-scopes"]
@@ -209,3 +213,139 @@ async def test_freshen_credential_uses_staging_microsoft_refresh(monkeypatch):
         data, pool="pool", user_id="user", credential_id="credential",
         refresh=refresh_access_token, provider="microsoft",
     )
+
+
+# Unmodified resource JSON from Microsoft's page resource documentation:
+# https://learn.microsoft.com/en-us/graph/api/resources/page?view=graph-rest-1.0
+PAGE = json.loads('''{
+  "content": "stream",
+  "contentUrl": "string",
+  "createdByAppId": "string",
+  "createdDateTime": "String (timestamp)",
+  "id": "string (identifier)",
+  "lastModifiedDateTime": "String (timestamp)",
+  "level": 1024,
+  "links": {
+    "@odata.type": "microsoft.graph.pageLinks"
+  },
+  "order": 1024,
+  "self": "string",
+  "title": "string"
+}''')
+
+
+def poll_node(operation="on_new_page", section_id=None):
+    model = (OneNoteOnNewPageConfig if operation == "on_new_page"
+             else OneNoteOnNewOrUpdatedPageConfig)
+    return OneNoteNode(
+        node_id="onenote-poll", node_type="automation-microsoft-onenote", node_data={},
+        config=OneNoteNodeConfig(config=model(section_id=section_id), credentials=CREDENTIAL),
+        sio=None, sid=None, workflow_id="workflow-qa",
+    )
+
+
+def poll_state(node):
+    state = {}
+
+    async def update(mutator, **kwargs):
+        changed, result = mutator(deepcopy(state))
+        if changed is not None:
+            state.clear()
+            state.update(changed)
+        return result
+
+    node._update_node_state = update
+    return state
+
+
+def mock_poll(monkeypatch, respond):
+    from nodes.core import oauth_refresh
+    from nodes import microsoft_onenote_node as module
+
+    monkeypatch.setattr(oauth_refresh, "ensure_fresh_oauth_token", AsyncMock(return_value="token"))
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(module.httpx, "AsyncClient", lambda **kw: real_client(
+        transport=httpx.MockTransport(respond)))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["on_new_page", "on_new_or_updated_page"])
+async def test_poll_baselines_and_detects_new_pages_and_revisions(monkeypatch, operation):
+    pages = [deepcopy(PAGE)]
+    mock_poll(monkeypatch, lambda request: httpx.Response(200, json={"value": pages}, request=request))
+    node = poll_node(operation)
+    state = poll_state(node)
+    assert (await node.execute({}))["pages"] == []
+    assert node.trigger_produced_no_event({})
+    assert (await node.execute({}))["pages"] == []
+    # A later revision uses the timestamp from Microsoft's List Pages response.
+    pages[0]["lastModifiedDateTime"] = "2016-10-19T10:37:00Z"
+    result = await node.execute({})
+    assert result["count"] == (1 if operation == "on_new_or_updated_page" else 0)
+    if result["count"]:
+        assert node.trigger_emitted_event(result)
+        event = node.resolve_agent_event(result)
+        assert PAGE["id"] in event["text"]
+        assert PAGE["title"] in event["text"]
+        assert PAGE["contentUrl"] in event["text"]
+    assert (await node.execute({}))["pages"] == []
+    # Vary the documented resource's identifier to simulate a newly created page.
+    pages.append({**PAGE, "id": "second-page"})
+    result = await node.execute({})
+    assert [p["id"] for p in result["pages"]] == ["second-page"]
+    assert node.should_propagate_output(result, {"operation": operation})
+    assert not node.should_propagate_output({"pages": []}, {"operation": operation})
+    assert node.resolve_agent_event({"operation": operation, "pages": []}) is None
+    assert "seen_ids" in state
+
+
+@pytest.mark.asyncio
+async def test_poll_paginates_within_selected_section_before_recording_state(monkeypatch):
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        assert request.headers["Authorization"] == "Bearer token"
+        assert request.url.raw_path.decode().split("?")[0].endswith("/sections/section%2Fone/pages")
+        if len(requests) == 1:
+            assert request.url.params["$orderby"] == "lastModifiedDateTime desc"
+            assert request.url.params["$skip"] == "0"
+            return httpx.Response(200, json={"value": [
+                {**PAGE, "id": f"page-{i}"} for i in range(100)
+            ]}, request=request)
+        assert request.url.params["$skip"] == "100"
+        assert request.url.params["$orderby"] == "lastModifiedDateTime desc"
+        return httpx.Response(200, json={"value": [{**PAGE, "id": "second-page"}]}, request=request)
+
+    mock_poll(monkeypatch, respond)
+    node = poll_node(section_id="section/one")
+    state = poll_state(node)
+    await node.execute({})
+    assert len(requests) == 2
+    assert len(state["seen_ids"]) == 101
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body", [
+    {"value": [{"title": "missing ID"}]},
+    {"value": [{"id": "missing timestamp"}]},
+    {"error": {"message": "bad response"}},
+])
+async def test_poll_errors_never_commit_partial_state(monkeypatch, body):
+    mock_poll(monkeypatch, lambda request: httpx.Response(200, json=body, request=request))
+    node = poll_node("on_new_or_updated_page")
+    state = poll_state(node)
+    with pytest.raises(ValueError):
+        await node.execute({})
+    assert state == {}
+
+
+def test_poll_scope_tracks_only_declared_resource_fields():
+    from nodes.core.poll_trigger import poll_scope
+
+    config = {"operation": "on_new_page", "section_id": "a"}
+    scope = poll_scope(OneNoteNode, config)
+    assert scope
+    assert scope == poll_scope(OneNoteNode, {**config, "label": "cosmetic", "webhook_id": "changed"})
+    assert scope != poll_scope(OneNoteNode, {**config, "section_id": "b"})
+    assert scope != poll_scope(OneNoteNode, {**config, "operation": "on_new_or_updated_page"})

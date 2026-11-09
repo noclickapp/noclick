@@ -10,6 +10,6 @@ ONENOTE_SCOPES = ScopeRegistry(
         "list_section_groups", "get_section_group", "create_section_group",
         "list_pages", "list_section_pages", "get_page", "get_page_content",
         "get_page_preview", "create_page", "append_page_content",
-        "replace_page_content", "delete_page",
+        "replace_page_content", "delete_page", "on_new_page", "on_new_or_updated_page",
     )},
 )

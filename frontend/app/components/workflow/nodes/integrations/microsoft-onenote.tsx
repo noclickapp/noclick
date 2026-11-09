@@ -28,7 +28,7 @@ const OneNoteNodeComponent = (props: NodeProps) => (
 export const OneNoteNode: NodeDefinition = {
     type: 'automation-microsoft-onenote',
     label: 'OneNote',
-    description: 'Microsoft OneNote notebooks and pages',
+    description: 'Microsoft OneNote notebooks, pages, and page change triggers',
     category: 'microsoft',
     Icon: OneNoteIcon,
     iconColor: '',

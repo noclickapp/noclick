@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.scopes.microsoft_onenote import ONENOTE_SCOPES
 
 logger = logging.getLogger(__name__)
@@ -206,8 +207,37 @@ def _config_model(slug: str, operation: Operation) -> type[BaseModel]:
 
 
 CONFIG_MODELS = {slug: _config_model(slug, spec) for slug, spec in OPERATIONS.items()}
+
+
+class OneNoteOnNewPageConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_page"] = Field(
+        "on_new_page", title="New Page", json_schema_extra={
+            "const": "on_new_page", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "New Page",
+        },
+    )
+    section_id: str | None = Field(
+        None, title="Section ID", min_length=1,
+        description="Watch this section, or leave blank to watch all your OneNote pages.",
+    )
+
+
+class OneNoteOnNewOrUpdatedPageConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_page"] = Field(
+        "on_new_or_updated_page", title="New or Updated Page", json_schema_extra={
+            "const": "on_new_or_updated_page", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "New or Updated Page",
+        },
+    )
+    section_id: str | None = Field(
+        None, title="Section ID", min_length=1,
+        description="Watch this section, or leave blank to watch all your OneNote pages.",
+    )
+
+
+TRIGGER_MODELS = (OneNoteOnNewPageConfig, OneNoteOnNewOrUpdatedPageConfig)
 OneNoteOperationConfig = Annotated[
-    Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")
+    Union[tuple(CONFIG_MODELS.values()) + TRIGGER_MODELS], Discriminator("operation")
 ]
 
 
@@ -215,7 +245,7 @@ class OneNoteNodeConfig(NodeConfig[OneNoteOperationConfig, OneNoteOAuthCredentia
     pass
 
 
-class OneNoteNode(WorkflowNode):
+class OneNoteNode(ScheduledPollTriggerMixin, WorkflowNode):
     """Execute account-scoped Microsoft Graph OneNote actions."""
 
     integration_type = "automation-microsoft-onenote"
@@ -235,6 +265,73 @@ class OneNoteNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return OneNoteNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in ("on_new_page", "on_new_or_updated_page"):
+            return bool(output.get("pages"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in ("on_new_page", "on_new_or_updated_page"):
+            return super().resolve_agent_event(output)
+        pages = output.get("pages") or []
+        if not pages:
+            return None
+        action = "new" if output["operation"] == "on_new_page" else "new or updated"
+        lines = []
+        for page in pages:
+            section = page.get("parentSection") or {}
+            link = ((page.get("links") or {}).get("oneNoteWebUrl") or {}).get("href")
+            lines.append(
+                f"- {page.get('title') or 'Untitled page'} (page ID: {page['id']}; "
+                f"section: {section.get('displayName') or section.get('id') or 'OneNote'}; "
+                f"section ID: {section.get('id') or 'not supplied'}; "
+                f"created by app: {page.get('createdByAppId') or 'not supplied'}; "
+                f"modified: {page.get('lastModifiedDateTime') or 'not supplied'})"
+                + (f"\n  Open: {link}" if link else "")
+                + (f"\n  Read content: {page['contentUrl']}" if page.get("contentUrl") else "")
+            )
+        return {"text": f"OneNote: {len(pages)} {action} page(s) in your connected account:\n"
+                + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_pages(self, token, config):
+        # Explicit top/skip pagination, including section pages, is documented at:
+        # https://learn.microsoft.com/en-us/graph/onenote-get-content#example-get-requests
+        path = (f"/sections/{quote(config.section_id, safe='')}/pages"
+                if config.section_id else "/pages")
+        url = GRAPH_ROOT + path
+        pages = []
+        params = {"$top": 100, "$orderby": "lastModifiedDateTime desc"}
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            for offset in range(0, 10000, 100):
+                params["$skip"] = offset
+                response = await client.request("GET", url, params=params, headers={
+                    "Authorization": f"Bearer {token}", "Accept": "application/json",
+                })
+                response.raise_for_status()
+                data = response.json()
+                items = data.get("value")
+                if not isinstance(items, list):
+                    raise ValueError("OneNote page list did not contain a value array")
+                for page in items:
+                    if not isinstance(page, dict) or not page.get("id"):
+                        raise ValueError("OneNote page did not contain an ID")
+                    if config.operation == "on_new_or_updated_page" and not page.get("lastModifiedDateTime"):
+                        raise ValueError("OneNote page did not contain a modification timestamp")
+                pages.extend(items)
+                if len(items) < 100:
+                    break
+            else:
+                raise ValueError("OneNote has too many pages to poll; choose a smaller section")
+        updated = config.operation == "on_new_or_updated_page"
+        fresh = await self._filter_unseen(
+            pages, lambda page: (f"{page['id']}:{page['lastModifiedDateTime']}"
+                                 if updated else str(page["id"])),
+        )
+        return {"type": "onenote", "operation": config.operation, "status": "success",
+                "pages": fresh, "count": len(fresh)}
 
     @classmethod
     async def freshen_credential(
@@ -275,6 +372,8 @@ class OneNoteNode(WorkflowNode):
         for key in ("access_token", "refresh_token", "expires_at"):
             setattr(credential, key, cred_dict[key])
         config = node_config.config
+        if isinstance(config, TRIGGER_MODELS):
+            return await self._poll_pages(token, config)
         slug = config.operation
         spec = OPERATIONS[slug]
         values = config.model_dump(exclude={"operation"})
