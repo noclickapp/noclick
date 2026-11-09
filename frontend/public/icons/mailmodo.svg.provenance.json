@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/mailmodo.svg",
+  "source": "https://www.mailmodo.com/static/images/logo/logo-full.svg",
+  "license": "Mailmodo brand mark used nominatively to identify the service; trademark rights remain with Mailmodo.",
+  "sha256": "4736997aeefa6a5058f7e212bb7351bed6ef1620cf855f0c689ea8f6d7e363bc",
+  "modifications": "Trailing whitespace normalized; vector artwork unchanged."
+}

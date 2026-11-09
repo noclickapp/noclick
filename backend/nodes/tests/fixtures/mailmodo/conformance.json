@@ -1,0 +1,86 @@
+{
+  "contract": [
+    {
+      "file": "6_Contact-Management.json",
+      "sha256": "c702c22f506ec976729f37eec10231c659898cb50f4a376a65c2f58e7c02f8c6",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/6_Contact-Management.json?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "1_Sending-Emails - copy.json",
+      "sha256": "e732c710d7811edf09200942d30cfdb4b46b428d272e12ce3b8700af9530e4d7",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/1_Sending-Emails%20-%20copy.json?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "2_journey.json",
+      "sha256": "dd3d815456958263311a566c91d99f729995fb696c32d0f6622a2e22986fe9f9",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/2_journey.json?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "4_Dynamic_Form.json",
+      "sha256": "26f5f8e31abdb9c5cc7f7f63a9e8793c5ac551d044c137c6ccf0f0b3fba21d07",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/4_Dynamic_Form.json?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "5_Repeatable_Block.json",
+      "sha256": "7b2616977ba9b1f445b778c3843cb120d468c69ad4828531cf8a7127e0f85509",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/5_Repeatable_Block.json?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "7_Sending-Custom-Events.json",
+      "sha256": "316b4f5abd1321a230154dc34e62d5f231cbd515cfdf71d9844d3cdde7626169",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/7_Sending-Custom-Events.json?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "03_Campiagn-Apis.yaml",
+      "sha256": "2b128f8ab8eb5c2e4dafc76b7c2324c5c77d9feb248d9cf7e3df7433e7aad09b",
+      "version": "1.0.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/03_Campiagn-Apis.yaml?fromExportButton=true&snapshotType=http_service"
+    },
+    {
+      "file": "8_Templates.json",
+      "sha256": "1ef759d1afd55c1367989f6d67b827a46f18b89b7cc924ea60da36a8271f858e",
+      "version": "1.0",
+      "source_url": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/8_Templates.json?fromExportButton=true&snapshotType=http_service"
+    }
+  ],
+  "verdict": {
+    "provider": "mailmodo",
+    "ready": false,
+    "blocking": [
+      "get_contact: request: InvalidParameter: Invalid query parameter: email / InvalidSchemaValue: Value tennisjoy19@gmail.com not valid for schema of type string: (<ValidationError: \"'tennisjoy19@gmail.com' is not one ",
+      "add_contact_to_list: request: KeyError: 'name' / KeyError: 'name'"
+    ],
+    "advisory": [],
+    "stats": {
+      "operations": 15,
+      "skipped": 0,
+      "request_ok": 13,
+      "authored_parser_ok": 10,
+      "generated_only": 5,
+      "local_ok": 0
+    }
+  },
+  "spec_defects": [
+    {
+      "operation": "get_contact",
+      "kind": "d",
+      "source": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/6_Contact-Management.json?fromExportButton=true&snapshotType=http_service",
+      "docs": "https://support.mailmodo.com/articles/195037-april-2022-new-features-in-mailmodo",
+      "description": "GET /getContactDetails query email is simultaneously format email and enum [contactEmail]. No valid email satisfies both. The parameter description says Enter contact email id; the response example uses tennisjoy19@gmail.com. The node sends the caller email as documented."
+    },
+    {
+      "operation": "add_contact_to_list",
+      "kind": "d",
+      "source": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/6_Contact-Management.json?fromExportButton=true&snapshotType=http_service",
+      "docs": "https://stoplight.io/api/v1/projects/mailmodo/api-docs/nodes/6_Contact-Management.json?fromExportButton=true&snapshotType=http_service",
+      "description": "POST /addToList has a third header parameter with only schema and in, no name. This invalid OpenAPI parameter crashes validation with KeyError name. The first two named required headers are Content-Type and mmApiKey; the node sends both and the documented email/listName JSON body."
+    }
+  ],
+  "merge_bar": "Only documented category (d) spec contradictions remain; all local checks must pass before PR."
+}
