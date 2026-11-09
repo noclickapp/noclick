@@ -1,0 +1,21 @@
+{
+  "id": "58300e07-2cfa-4d6c-938c-b3a362edde05",
+  "name": "Adam",
+  "phone": "435-6356-45",
+  "email": "adam@charla.com",
+  "country_code": "en-US",
+  "location": "Miami, Florida",
+  "ip": "43.546.123.43",
+  "platform": "iPhone, iOS",
+  "browser_language": "en-US",
+  "custom_attributes": [
+    {
+      "name": "Company",
+      "value": "Charla",
+      "external_id": "company-43gt3"
+    }
+  ],
+  "last_seen_at": "2026-11-08T20:29:56.0775059Z",
+  "last_message_at": "2026-11-08T20:29:56.0775061Z",
+  "created_at": "2026-11-08T20:29:56.0775062Z"
+}
