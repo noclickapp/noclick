@@ -1,0 +1,144 @@
+{
+  "list_businesses": {
+    "operation": "list_businesses",
+    "datefrom": "2016-03-12",
+    "dateto": "2016-03-13",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "get_business": {
+    "operation": "get_business",
+    "businessid": 1101281
+  },
+  "list_businesses_by_category": {
+    "operation": "list_businesses_by_category",
+    "categoryid": 173863,
+    "datefrom": "18-11-2015 00:00:00",
+    "dateto": "19/11/2016 23:59:59",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_businesses_by_assignee": {
+    "operation": "list_businesses_by_assignee",
+    "clientuserid": 192301,
+    "datefrom": "18-11-2015 00:00:00",
+    "dateto": "19/11/2016 23:59:59",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_visits": {
+    "operation": "list_visits",
+    "datefrom": "10-05-2016 00:00:00",
+    "dateto": "19-06-2016 23:59:59",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "get_visit": {
+    "operation": "get_visit",
+    "visitid": 1632401172
+  },
+  "get_visit_details": {
+    "operation": "get_visit_details",
+    "visitid": 1258759738
+  },
+  "list_visits_by_business": {
+    "operation": "list_visits_by_business",
+    "businessid": 1101279,
+    "datefrom": "10-05-2016 00:00:00",
+    "dateto": "19-06-2016 23:59:59",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_visits_by_conversion": {
+    "operation": "list_visits_by_conversion",
+    "datefrom": "10-05-2016 00:00:00",
+    "dateto": "19-06-2016 23:59:59",
+    "pagesize": 5,
+    "pageno": 1,
+    "conversionid": 248182
+  },
+  "list_visits_by_trigger_report": {
+    "operation": "list_visits_by_trigger_report",
+    "triggerreportid": 77080,
+    "datefrom": "10-05-2016 00:00:00",
+    "dateto": "19-06-2016 23:59:59",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_recent_visits": {
+    "operation": "list_recent_visits"
+  },
+  "list_pages": {
+    "operation": "list_pages",
+    "datefrom": "2016-08-07",
+    "dateto": "2016-08-08",
+    "pagesize": 10,
+    "pageno": 1
+  },
+  "list_pages_by_visit": {
+    "operation": "list_pages_by_visit",
+    "visitid": 1258759738,
+    "pagesize": 10,
+    "pageno": 1
+  },
+  "list_industries": {
+    "operation": "list_industries",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_countries": {
+    "operation": "list_countries",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_employee_bands": {
+    "operation": "list_employee_bands",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_categories": {
+    "operation": "list_categories",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_assignees": {
+    "operation": "list_assignees",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_conversions": {
+    "operation": "list_conversions",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_trigger_reports": {
+    "operation": "list_trigger_reports",
+    "pagesize": 5,
+    "pageno": 1
+  },
+  "list_date_ranges": {
+    "operation": "list_date_ranges"
+  },
+  "get_new_leads": {
+    "operation": "get_new_leads",
+    "numberOfResults": 2,
+    "clientuserid": 192301
+  },
+  "get_lead_funnel": {
+    "operation": "get_lead_funnel",
+    "dateid": 14,
+    "numberOfResults": 10,
+    "clientuserid": 192301
+  },
+  "get_most_active_companies": {
+    "operation": "get_most_active_companies",
+    "dateid": 14,
+    "numberOfResults": 2
+  },
+  "get_visit_kpi": {
+    "operation": "get_visit_kpi",
+    "datetypeid": 1,
+    "numberOfResults": 2,
+    "clientuserid": 192301
+  }
+}
