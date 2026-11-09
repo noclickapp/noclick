@@ -1,0 +1,1403 @@
+{
+  "$defs": {
+    "TripadvisorAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "tripadvisor_api_key",
+          "default": "tripadvisor_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Tripadvisor API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Tripadvisor Terra partner API key. NoClick sends it as X-API-Key only to terra.tripadvisor.com. Your package determines access to content, feeds and allowlist management. Connecting reads the account's location allowlist; it does not prove write permission. Member OAuth review-owner actions are not included.",
+      "x-credential-url": "https://terra.tripadvisor.com/"
+    },
+    "TripadvisorGetCatalogLocationConfig": {
+      "description": "Get Catalog Location.",
+      "properties": {
+        "operation": {
+          "const": "get_catalog_location",
+          "default": "get_catalog_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the Tripadvisor Location ID to retrieve",
+          "title": "Id",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorGetCatalogLocationConfig",
+      "type": "object"
+    },
+    "TripadvisorGetFeedFileUrlConfig": {
+      "description": "Feed File URL.",
+      "properties": {
+        "operation": {
+          "const": "get_feed_file_url",
+          "default": "get_feed_file_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filename": {
+          "description": "name of the file to get download data for",
+          "title": "Filename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filename"
+      ],
+      "title": "TripadvisorGetFeedFileUrlConfig",
+      "type": "object"
+    },
+    "TripadvisorGetGeoConfig": {
+      "description": "Geo Details.",
+      "properties": {
+        "operation": {
+          "const": "get_geo",
+          "default": "get_geo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the Tripadvisor Geo ID to retrieve",
+          "title": "Id",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorGetGeoConfig",
+      "type": "object"
+    },
+    "TripadvisorGetGeosConfig": {
+      "description": "Multiple Geos Details.",
+      "properties": {
+        "operation": {
+          "const": "get_geos",
+          "default": "get_geos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the set of Tripadvisor Geo IDs to retrieve",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "title": "Id",
+          "type": "array"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorGetGeosConfig",
+      "type": "object"
+    },
+    "TripadvisorGetLocationConfig": {
+      "description": "Location Details.",
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the Tripadvisor Location ID to retrieve",
+          "title": "Id",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorGetLocationConfig",
+      "type": "object"
+    },
+    "TripadvisorGetLocationsConfig": {
+      "description": "Multiple Locations Details.",
+      "properties": {
+        "operation": {
+          "const": "get_locations",
+          "default": "get_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the set of Tripadvisor Location IDs to retrieve",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "title": "Id",
+          "type": "array"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorGetLocationsConfig",
+      "type": "object"
+    },
+    "TripadvisorListAllowlistConfig": {
+      "description": "Get Location allowlist IDs.",
+      "properties": {
+        "operation": {
+          "const": "list_allowlist",
+          "default": "list_allowlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "size": {
+          "default": 1000,
+          "description": "maximum number of IDs to return (between 1 and 1000, defaults to 1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the <code>pagination.next_cursor</code> of the previous page; omit it to start from the beginning",
+          "title": "Cursor"
+        }
+      },
+      "title": "TripadvisorListAllowlistConfig",
+      "type": "object"
+    },
+    "TripadvisorListFeedFilesConfig": {
+      "description": "List Files.",
+      "properties": {
+        "operation": {
+          "const": "list_feed_files",
+          "default": "list_feed_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page",
+          "title": "Page"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size",
+          "title": "Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort",
+          "title": "Sort"
+        }
+      },
+      "title": "TripadvisorListFeedFilesConfig",
+      "type": "object"
+    },
+    "TripadvisorListPhotosConfig": {
+      "description": "Location Photos.",
+      "properties": {
+        "operation": {
+          "const": "list_photos",
+          "default": "list_photos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the Tripadvisor Location ID to retrieve photos for",
+          "title": "Id",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. captions), in priority order; falls back\n                 to the default locale when omitted",
+          "title": "Locale"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page",
+          "title": "Page"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size",
+          "title": "Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort",
+          "title": "Sort"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorListPhotosConfig",
+      "type": "object"
+    },
+    "TripadvisorListReviewsConfig": {
+      "description": "Location Reviews.",
+      "properties": {
+        "operation": {
+          "const": "list_reviews",
+          "default": "list_reviews",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the Tripadvisor Location ID to retrieve reviews for",
+          "title": "Id",
+          "type": "integer"
+        },
+        "rating_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "when set, only return reviews with an overall rating of at least this\n                               value",
+          "title": "Rating Min"
+        },
+        "trip_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "when set, only return reviews tagged with this trip type (e.g. business,\n                               family, couples)",
+          "title": "Trip Type"
+        },
+        "published_after_ts": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "when set, only return reviews published on or after this date\n                               (format: <code>YYYY-MM-DD</code>)",
+          "title": "Published After Ts"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "MOST_RECENT",
+                "HIGHEST_RATED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ordering to apply to the reviews (defaults to most recent)",
+          "title": "Sort By",
+          "enum": [
+            "MOST_RECENT",
+            "HIGHEST_RATED"
+          ],
+          "x-enum-searchable": true
+        },
+        "published_after_review_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "cursor for keyset pagination; returns reviews published after the review\n                               with this ID",
+          "title": "Published After Review Id"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UGC language code (e.g. <code>en</code>, <code>fr</code>) or the special keyword\n                               <code>primary</code> to return reviews in their original written language.\n                               Defaults to <code>en</code> when absent.",
+          "title": "Language"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page index (1-based).",
+          "title": "Page"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size.",
+          "title": "Size"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TripadvisorListReviewsConfig",
+      "type": "object"
+    },
+    "TripadvisorSearchCatalogConfig": {
+      "description": "Search Locations Catalog.",
+      "properties": {
+        "operation": {
+          "const": "search_catalog",
+          "default": "search_catalog",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Text search query.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "search_type": {
+          "default": "NAME",
+          "description": "Searching type.",
+          "title": "Search Type",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alpha-2 country code.",
+          "title": "Country Code"
+        },
+        "geo_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City, Town, or Country Geo Name.",
+          "title": "Geo Name"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal/zip code to further narrow results.\n <p>\n If both `geo_name` and `postal_code` are given, the `postal_code` takes precedence in case they do not resolve.",
+          "title": "Postal Code"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESTAURANT",
+                "ATTRACTION",
+                "HOTEL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter based on Tripadvisor\u2019s top-level categories (eat & drink, accommodations, attractions).",
+          "title": "Category",
+          "enum": [
+            "RESTAURANT",
+            "ATTRACTION",
+            "HOTEL"
+          ],
+          "x-enum-searchable": true
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page index (1-based).",
+          "title": "Page"
+        },
+        "size": {
+          "default": 20,
+          "description": "Page size.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TripadvisorSearchCatalogConfig",
+      "type": "object"
+    },
+    "TripadvisorSearchLocationsConfig": {
+      "description": "Search Locations.",
+      "properties": {
+        "operation": {
+          "const": "search_locations",
+          "default": "search_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Text search query.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "search_type": {
+          "default": "NAME",
+          "description": "Searching type.",
+          "title": "Search Type",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alpha-2 country code.",
+          "title": "Country Code"
+        },
+        "geo_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City, Town, or Country Geo Name.",
+          "title": "Geo Name"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal/zip code to further narrow results.\n <p>\n If both `geo_name` and `postal_code` are given, the `postal_code` takes precedence in case they do not resolve.",
+          "title": "Postal Code"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESTAURANT",
+                "ATTRACTION",
+                "HOTEL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter based on Tripadvisor\u2019s top-level categories (eat & drink, accommodations, attractions).",
+          "title": "Category",
+          "enum": [
+            "RESTAURANT",
+            "ATTRACTION",
+            "HOTEL"
+          ],
+          "x-enum-searchable": true
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n               falls back to the default locale when omitted",
+          "title": "Locale"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page index (1-based).",
+          "title": "Page"
+        },
+        "size": {
+          "default": 20,
+          "description": "Page size.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TripadvisorSearchLocationsConfig",
+      "type": "object"
+    },
+    "TripadvisorSearchNearbyCatalogConfig": {
+      "description": "Search Nearby Locations Catalog.",
+      "properties": {
+        "operation": {
+          "const": "search_nearby_catalog",
+          "default": "search_nearby_catalog",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the Location to use as a reference for the radius-based search.\n <p>\n Required if `lat` or `lon` is not given.",
+          "title": "Location Id"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude of the center point for the radius-based search.\n <p>\n Required if `location_id` not given.",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude of the center point for the radius-based search.\n <p>\n Required if `location_id` not given.",
+          "title": "Lon"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The radius for the radius-based search.\n <p>\n Required if \"Bounding Box\" criteria is not given (`sw_lat`, `sw_lon`, `ne_lat`, `ne_lon`).",
+          "title": "Radius"
+        },
+        "unit": {
+          "default": "MI",
+          "description": "Unit of length for distance. If none specified defaults to miles.",
+          "title": "Unit",
+          "type": "string"
+        },
+        "sw_lat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box southwest latitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Sw Lat"
+        },
+        "sw_lon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box southwest longitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Sw Lon"
+        },
+        "ne_lat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box northeast latitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Ne Lat"
+        },
+        "ne_lon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box northeast longitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Ne Lon"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESTAURANT",
+                "ATTRACTION",
+                "HOTEL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter based on Tripadvisor\u2019s top-level categories (eat & drink, accommodations, attractions).",
+          "title": "Category",
+          "enum": [
+            "RESTAURANT",
+            "ATTRACTION",
+            "HOTEL"
+          ],
+          "x-enum-searchable": true
+        },
+        "min_rating": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by ratings with at least N bubbles (1.0-5.0).",
+          "title": "Min Rating"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority order;\n                 falls back to the default locale when omitted",
+          "title": "Locale"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page index (1-based).",
+          "title": "Page"
+        },
+        "size": {
+          "default": 20,
+          "description": "Page size.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sort": {
+          "default": [
+            "rating,desc"
+          ],
+          "description": "Sorting criteria in the format: property,(asc|desc). Multiple sort criteria are supported. Available sorting: `distance` (for radius-based search only), `rating`",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Sort",
+          "type": "array"
+        }
+      },
+      "title": "TripadvisorSearchNearbyCatalogConfig",
+      "type": "object"
+    },
+    "TripadvisorSearchNearbyLocationsConfig": {
+      "description": "Search Nearby Locations.",
+      "properties": {
+        "operation": {
+          "const": "search_nearby_locations",
+          "default": "search_nearby_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the Location to use as a reference for the radius-based search.\n <p>\n Required if `lat` or `lon` is not given.",
+          "title": "Location Id"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude of the center point for the radius-based search.\n <p>\n Required if `location_id` not given.",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude of the center point for the radius-based search.\n <p>\n Required if `location_id` not given.",
+          "title": "Lon"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The radius for the radius-based search.\n <p>\n Required if \"Bounding Box\" criteria is not given (`sw_lat`, `sw_lon`, `ne_lat`, `ne_lon`).",
+          "title": "Radius"
+        },
+        "unit": {
+          "default": "MI",
+          "description": "Unit of length for distance. If none specified defaults to miles.",
+          "title": "Unit",
+          "type": "string"
+        },
+        "sw_lat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box southwest latitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Sw Lat"
+        },
+        "sw_lon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box southwest longitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Sw Lon"
+        },
+        "ne_lat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box northeast latitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Ne Lat"
+        },
+        "ne_lon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bounding Box northeast longitude coordinate.\n <p>\n Required if `radius` is not given.",
+          "title": "Ne Lon"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESTAURANT",
+                "ATTRACTION",
+                "HOTEL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter based on Tripadvisor\u2019s top-level categories (eat & drink, accommodations, attractions).",
+          "title": "Category",
+          "enum": [
+            "RESTAURANT",
+            "ATTRACTION",
+            "HOTEL"
+          ],
+          "x-enum-searchable": true
+        },
+        "min_rating": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by ratings with at least N bubbles (1.0-5.0).",
+          "title": "Min Rating"
+        },
+        "include_photo": {
+          "default": false,
+          "description": "when <code>true</code>, include a single representative photo for each Location",
+          "title": "Include Photo",
+          "type": "boolean"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "preferred locales for localized fields (e.g. names, descriptions), in priority\n                     order; falls back to the default locale when omitted",
+          "title": "Locale"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page index (1-based).",
+          "title": "Page"
+        },
+        "size": {
+          "default": 20,
+          "description": "Page size.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sort": {
+          "default": [
+            "rating,desc"
+          ],
+          "description": "Sorting criteria in the format: property,(asc|desc). Multiple sort criteria are supported. Available sorting: `distance` (for radius-based search only), `rating`",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Sort",
+          "type": "array"
+        }
+      },
+      "title": "TripadvisorSearchNearbyLocationsConfig",
+      "type": "object"
+    },
+    "TripadvisorUpdateAllowlistConfig": {
+      "description": "Add, remove, or replace location IDs.",
+      "properties": {
+        "operation": {
+          "const": "update_allowlist",
+          "default": "update_allowlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "operation_type": {
+          "description": "APPEND adds IDs; DELETE removes IDs; OVERWRITE replaces the complete allowlist, including clearing it with an empty list.",
+          "enum": [
+            "APPEND",
+            "DELETE",
+            "OVERWRITE"
+          ],
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "allowlist": {
+          "description": "Unique Tripadvisor location IDs to apply. An empty OVERWRITE clears the account allowlist.",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 10000,
+          "title": "Allowlist",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operation_type",
+        "allowlist"
+      ],
+      "title": "TripadvisorUpdateAllowlistConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_catalog_location": "#/$defs/TripadvisorGetCatalogLocationConfig",
+          "get_feed_file_url": "#/$defs/TripadvisorGetFeedFileUrlConfig",
+          "get_geo": "#/$defs/TripadvisorGetGeoConfig",
+          "get_geos": "#/$defs/TripadvisorGetGeosConfig",
+          "get_location": "#/$defs/TripadvisorGetLocationConfig",
+          "get_locations": "#/$defs/TripadvisorGetLocationsConfig",
+          "list_allowlist": "#/$defs/TripadvisorListAllowlistConfig",
+          "list_feed_files": "#/$defs/TripadvisorListFeedFilesConfig",
+          "list_photos": "#/$defs/TripadvisorListPhotosConfig",
+          "list_reviews": "#/$defs/TripadvisorListReviewsConfig",
+          "search_catalog": "#/$defs/TripadvisorSearchCatalogConfig",
+          "search_locations": "#/$defs/TripadvisorSearchLocationsConfig",
+          "search_nearby_catalog": "#/$defs/TripadvisorSearchNearbyCatalogConfig",
+          "search_nearby_locations": "#/$defs/TripadvisorSearchNearbyLocationsConfig",
+          "update_allowlist": "#/$defs/TripadvisorUpdateAllowlistConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TripadvisorListAllowlistConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorUpdateAllowlistConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorSearchNearbyCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorSearchCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorGetCatalogLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorGetGeosConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorGetGeoConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorGetLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorSearchNearbyLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorSearchLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorListPhotosConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorListReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorListFeedFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/TripadvisorGetFeedFileUrlConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TripadvisorAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tripadvisor Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
