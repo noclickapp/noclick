@@ -1,0 +1,313 @@
+{
+  "source": "https://api.n2p.io/v1/openapi-1.10.json",
+  "examples": {
+    "webhook-call-ringing": {
+      "time_start": "2021-11-24 13:50:12",
+      "from": {
+        "id": "+16133246100",
+        "name": null,
+        "call_id": "ea5537bf1fd8eb53e8b435592f86a539",
+        "domain": null,
+        "user": null,
+        "state": "progressing"
+      },
+      "to": {
+        "id": "126",
+        "is_human": true,
+        "call_id": "ac68b6fb9072dd2aa32b5e9098330b72",
+        "state": "ringing",
+        "user": "126",
+        "domain": "yourdomain.com"
+      },
+      "on_net": false,
+      "time_answer": null,
+      "by_call_id": null,
+      "duration": 10
+    },
+    "webhook-call-answered": {
+      "time_start": "2021-11-24 13:50:12",
+      "from": {
+        "id": "+16133246100",
+        "name": null,
+        "call_id": "ea5537bf1fd8eb53e8b435592f86a539",
+        "domain": null,
+        "user": null,
+        "state": "active"
+      },
+      "to": {
+        "id": "126",
+        "is_human": true,
+        "call_id": "ac68b6fb9072dd2aa32b5e9098330b72",
+        "state": "active",
+        "user": "126",
+        "domain": "yourdomain.com"
+      },
+      "on_net": false,
+      "time_answer": "2021-11-24 13:50:22",
+      "by_call_id": null,
+      "duration": 10
+    },
+    "webhook-call-completed": {
+      "time_start": "2021-11-24 13:50:12",
+      "from": {
+        "id": "+16133246100",
+        "name": "John Doe",
+        "call_id": "ea5537bf1fd8eb53e8b435592f86a539",
+        "domain": "yourdomain.com",
+        "user": "120",
+        "state": "ended"
+      },
+      "to": {
+        "id": "126",
+        "is_human": true,
+        "call_id": "ac68b6fb9072dd2aa32b5e9098330b72",
+        "state": "ended",
+        "user": "126",
+        "domain": "yourdomain.com"
+      },
+      "on_net": false,
+      "time_answer": "2021-11-24 13:50:22",
+      "by_call_id": null,
+      "duration": 10
+    },
+    "webhook-call-auto-attendant": {
+      "time_start": "2022-07-13 14:10:20",
+      "from": {
+        "id": "+16133246101",
+        "name": "Example User",
+        "call_id": "ea5537bf1fd8eb53e8b435902f86a539",
+        "domain": "yourdomain.com",
+        "user": "106",
+        "state": "active"
+      },
+      "to": {
+        "id": "110wp",
+        "is_human": true,
+        "call_id": "ac68b6fb9682dd2aa32b9e9098330b72",
+        "state": "active",
+        "user": "110",
+        "domain": "yourdomain.com"
+      },
+      "on_net": false,
+      "time_answer": "2022-07-13 14:10:29",
+      "by_call_id": null,
+      "duration": 10
+    },
+    "account-3": {
+      "account_number": null,
+      "generation": "gen_x",
+      "domain": "1015790",
+      "package": null
+    },
+    "cdrs-3": {
+      "result": [
+        {
+          "from": {
+            "value": "+16133246111",
+            "call_id": "20210503030052031111-06f03fea68d5e32ff07831a419fdfcab",
+            "name": "John Doe",
+            "user": "111"
+          },
+          "to": {
+            "value": "+16133246100",
+            "call_id": "20210503030052031111-436c626c08717949a56705103ea809c0",
+            "name": "",
+            "user": null
+          },
+          "call_type": "Inbound",
+          "duration": 120,
+          "start_time": "2021-05-01T03:00:49+00:00",
+          "end_time": "2021-05-01T03:02:49+00:00"
+        }
+      ],
+      "cursor": "ejLDdXJac3JJZCI5MTg3MTgy9Kf5LCJEaBGlP3Rpb24iOkA5",
+      "more": true
+    },
+    "call": {
+      "to": "+16133246100"
+    },
+    "call-2": {
+      "from": "39657",
+      "to": "+16133246100"
+    },
+    "call-3": {
+      "from": "101",
+      "to": "+16133246100"
+    },
+    "users": [
+      {
+        "first_name": "John",
+        "last_name": "Smith",
+        "domain": "example.com",
+        "email": "noreply@versature.com",
+        "scope": "Basic User",
+        "username": "110@example.com",
+        "user": "100",
+        "time_zone": "US/Pacific"
+      },
+      {
+        "first_name": "Jane",
+        "last_name": "Brown",
+        "domain": "example.com",
+        "email": "yesreply@versature.com",
+        "scope": "Office Manager",
+        "username": "220@example.com",
+        "user": "220",
+        "time_zone": "US/Eastern"
+      }
+    ],
+    "call-4": {
+      "from": "103",
+      "to": "100"
+    },
+    "http-webhook-subscription-settings": {
+      "cdrs": false,
+      "expires_in": 604800,
+      "calls": true,
+      "recordings": false,
+      "user": "*",
+      "post_uri": "https://mydomain.com/webhooks"
+    },
+    "call-5": {
+      "to": "100@yourdomain.com",
+      "auto_answer": true
+    },
+    "account": {
+      "account_number": "600010",
+      "generation": "gen_v",
+      "domain": "versature.com",
+      "package": "Professional"
+    },
+    "http-webhook-subscription": {
+      "id": 12345,
+      "events": [
+        {
+          "type": "cdrs",
+          "user": "*"
+        },
+        {
+          "type": "recordings",
+          "user": "201"
+        }
+      ],
+      "expires": "2021-04-29T11:45:11.110000",
+      "post_uri": "https://mydomain.com/webhooks"
+    },
+    "call-6": {
+      "from": "100@yourdomain.com",
+      "to": "+16133246100"
+    },
+    "cdrs-2": {
+      "result": [
+        {
+          "from": {
+            "value": "+16133246111",
+            "user": "111",
+            "call_id": "20210503030052031111-06f03fea68d5e32ff07831a419fdfcab"
+          },
+          "to": {
+            "value": "+16133246100",
+            "user": null,
+            "call_id": "20210503030052031111-436c626c08717949a56705103ea809c0"
+          },
+          "end_time": "2021-05-01T03:02:49+00:00",
+          "start_time": "2021-05-01T03:00:49+00:00",
+          "duration": 120
+        }
+      ],
+      "cursor": "20",
+      "more": true
+    },
+    "call-7": {
+      "from": "+16135769032",
+      "to": "+16133246100"
+    },
+    "cdrs": {
+      "result": [
+        {
+          "from": {
+            "uri": "sip:16133246100@yourdomain.com",
+            "call_id": "20180503030052031111-436c626c08717949a56705103ea809c0",
+            "has_recording_been_analyzed": false,
+            "name": "John Doe",
+            "value": "+16133246100",
+            "domain": "yourdomain.com",
+            "has_recording_been_analyzed_for_sentiment": false,
+            "recordings": [
+              {
+                "processing_error": false,
+                "has_recording_been_analyzed": false,
+                "is_processed": true,
+                "is_available": true,
+                "recording_id": "93bc0b9a43a6458acced84a6fc4cf270",
+                "url": "https://versature-integrate.appspot.com/api/recordings/93bc0b9a43a6458acced84a6fc4cf270/recording/",
+                "has_recording_been_analyzed_for_sentiment": false,
+                "status": {
+                  "processing_error": false,
+                  "time": "Monday, 3 Jun 2018 19:05:45 -0000",
+                  "message": null,
+                  "name": "Available"
+                }
+              }
+            ],
+            "user": "101",
+            "username": null
+          },
+          "to": {
+            "uri": "sip:+16133246100@herdomain.com",
+            "call_id": "20210503030052031111-436c626c08717949a56705103ea809c0",
+            "has_recording_been_analyzed": false,
+            "username": null,
+            "value": "+16133246100",
+            "user": null,
+            "recordings": [],
+            "has_recording_been_analyzed_for_sentiment": false,
+            "domain": "herdomain.com"
+          },
+          "has_recording_been_analyzed": false,
+          "by": {
+            "value": "+16133246100",
+            "domain": "yourdomain.com",
+            "user": null,
+            "username": null
+          },
+          "answer_time": "2018-05-03T14:02:49+00:00",
+          "duration": 312,
+          "start_time": "2018-05-03T14:02:45+00:00",
+          "domain": "yourdomain.com",
+          "call_type": "Outgoing",
+          "has_recording_been_analyzed_for_sentiment": false,
+          "end_time": "2018-05-03T15:08:01+00:00"
+        }
+      ],
+      "cursor": "CtsBCh0KEAbCdeFgHIjklmNOpQRstuWvXyZlruU_JfyAhK1AWocc352ZXJzYXR1cmUtaW50ZWdyYXRlLTItdGVzdHKUAQsSBUJhdGNoIihmdTJkbWQyMjRwdDIxYmV2amlmcl8yMDIxLTA4LTA19D823K45H06S78dmVyc2F0dXJlLmNvbV9mdTJkbWQyMjRwdDIxYmV2amlmcl8yMDIxMDgwNDE4MTMzMjAzMzk5OS01MDhhNDllYTFhMGExN2YyODRmMGYwZjY2ZmE1ZmYMCA0OKs8k2",
+      "more": true
+    },
+    "user": {
+      "first_name": "John",
+      "last_name": "Smith",
+      "domain": "example.com",
+      "email": "noreply@versature.com",
+      "scope": "Office Manager",
+      "username": "110@example.com",
+      "user": "100",
+      "time_zone": "Canada/Eastern"
+    },
+    "endpoints": [
+      "password_grant",
+      "refresh_token_grant",
+      "place_call",
+      "read_subscription",
+      "delete_subscription",
+      "create_subscription",
+      "refresh_subscription",
+      "cdrs"
+    ],
+    "account-2": {
+      "account_number": null,
+      "generation": "gen_p",
+      "domain": "811128461112849",
+      "package": null
+    }
+  }
+}
