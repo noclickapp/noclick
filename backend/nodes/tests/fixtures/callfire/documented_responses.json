@@ -1,0 +1,425 @@
+{
+  "GET /me/account": {
+    "body": {
+      "id": 1,
+      "email": "test-account@callfire.com",
+      "name": "Test Account",
+      "firstName": "CallFire",
+      "lastName": "Developer",
+      "permissions": [
+        "ACCOUNT_HOLDER",
+        "API"
+      ]
+    },
+    "source": "https://developers.callfire.com/docs.html#getAccount"
+  },
+  "GET /texts": {
+    "body": {
+      "items": [
+        {
+          "id": 13405,
+          "fromNumber": "12135551100",
+          "toNumber": "12135551123",
+          "state": "READY",
+          "campaignId": 13,
+          "batchId": 11,
+          "contact": {
+            "id": 4101,
+            "homePhone": "12135551123"
+          },
+          "inbound": true,
+          "created": 1443382358000,
+          "modified": 1443382358000,
+          "message": "a new test message"
+        },
+        {
+          "id": 13404,
+          "fromNumber": "12135551100",
+          "toNumber": "12135551122",
+          "state": "READY",
+          "campaignId": 13,
+          "batchId": 10,
+          "contact": {
+            "id": 4099,
+            "homePhone": "12135551122"
+          },
+          "inbound": true,
+          "created": 1443382248000,
+          "modified": 1443382248000,
+          "message": "a new test message"
+        }
+      ],
+      "limit": 2,
+      "offset": 0,
+      "totalCount": 4107
+    },
+    "source": "https://developers.callfire.com/docs.html#findTexts"
+  },
+  "GET /texts/{id}": {
+    "body": {
+      "id": 13413,
+      "fromNumber": "67076",
+      "toNumber": "12135551100",
+      "state": "FINISHED",
+      "campaignId": 20,
+      "batchId": 14,
+      "contact": {
+        "id": 4096,
+        "homePhone": "12135551100"
+      },
+      "inbound": false,
+      "created": 1443403042000,
+      "modified": 1443403045000,
+      "message": "Hello World!",
+      "finalTextResult": "DNT",
+      "records": [
+        {
+          "id": 10310,
+          "billedAmount": 0.0,
+          "finishTime": 1443403043000,
+          "message": "Hello World!",
+          "textResult": "DNT"
+        }
+      ]
+    },
+    "source": "https://developers.callfire.com/docs.html#getText"
+  },
+  "POST /texts": {
+    "body": {
+      "items": [
+        {
+          "id": 13413,
+          "fromNumber": "67076",
+          "toNumber": "12135551100",
+          "state": "READY",
+          "campaignId": 20,
+          "batchId": 14,
+          "contact": {
+            "id": 4096,
+            "homePhone": "12135551100"
+          },
+          "inbound": false,
+          "created": 1443403042000,
+          "modified": 1443403042000,
+          "message": "Hello World!"
+        },
+        {
+          "id": 13414,
+          "fromNumber": "67076",
+          "toNumber": "12135551101",
+          "state": "READY",
+          "campaignId": 20,
+          "batchId": 14,
+          "contact": {
+            "id": 4097,
+            "homePhone": "12135551101"
+          },
+          "inbound": false,
+          "created": 1443403044000,
+          "modified": 1443403044000,
+          "message": "Testing 1 2 3"
+        }
+      ]
+    },
+    "source": "https://developers.callfire.com/docs.html#sendTexts"
+  },
+  "GET /calls": {
+    "body": {
+      "items": [
+        {
+          "id": 13395,
+          "fromNumber": "12135551189",
+          "toNumber": "12135551101",
+          "state": "FINISHED",
+          "campaignId": 10,
+          "batchId": 6,
+          "contact": {
+            "id": 4097,
+            "homePhone": "12135551101"
+          },
+          "labels": [
+            "survey 1"
+          ],
+          "attributes": {
+            "external_user_id": "45450007002",
+            "external_route_id": "77770007002"
+          },
+          "inbound": false,
+          "created": 1443373386000,
+          "modified": 1443373412000,
+          "finalCallResult": "LA",
+          "records": [
+            {
+              "id": 10306,
+              "billedAmount": 1.1667,
+              "finishTime": 1443373425000,
+              "callResult": "LA",
+              "questionResponses": [
+                {
+                  "question": "Do you have a dog",
+                  "response": "Yes"
+                },
+                {
+                  "question": "What's your favorite movie",
+                  "response": "StarWars"
+                }
+              ]
+            }
+          ],
+          "agentCall": false
+        },
+        {
+          "id": 13394,
+          "fromNumber": "12135551189",
+          "toNumber": "12135551100",
+          "state": "FINISHED",
+          "campaignId": 10,
+          "batchId": 6,
+          "contact": {
+            "id": 4096,
+            "homePhone": "12135551100"
+          },
+          "inbound": false,
+          "created": 1443373382000,
+          "modified": 1443373412000,
+          "finalCallResult": "CARRIER_ERROR",
+          "records": [
+            {
+              "id": 10305,
+              "billedAmount": 0,
+              "finishTime": 1443373408000,
+              "callResult": "CARRIER_ERROR"
+            }
+          ],
+          "agentCall": false
+        }
+      ],
+      "limit": 2,
+      "offset": 0,
+      "totalCount": 7160
+    },
+    "source": "https://developers.callfire.com/docs.html#findCalls"
+  },
+  "GET /calls/{id}": {
+    "body": {
+      "id": 13393,
+      "fromNumber": "12135551189",
+      "toNumber": "12135551101",
+      "state": "FINISHED",
+      "campaignId": 10,
+      "batchId": 6,
+      "contact": {
+        "id": 4097,
+        "homePhone": "12135551101"
+      },
+      "inbound": false,
+      "created": 1443333911000,
+      "modified": 1443333978000,
+      "finalCallResult": "LA",
+      "records": [
+        {
+          "id": 10304,
+          "billedAmount": 1.1667,
+          "finishTime": 1443333972000,
+          "callResult": "LA"
+        }
+      ],
+      "agentCall": false
+    },
+    "source": "https://developers.callfire.com/docs.html#getCall"
+  },
+  "POST /calls": {
+    "body": {
+      "items": [
+        {
+          "id": 13394,
+          "fromNumber": "12135551189",
+          "toNumber": "12135551100",
+          "state": "READY",
+          "campaignId": 10,
+          "batchId": 6,
+          "contact": {
+            "id": 4096,
+            "homePhone": "12135551100"
+          },
+          "inbound": false,
+          "created": 1443373382000,
+          "modified": 1443373382000,
+          "agentCall": false
+        },
+        {
+          "id": 13395,
+          "fromNumber": "12135551189",
+          "toNumber": "12135551101",
+          "state": "READY",
+          "campaignId": 10,
+          "batchId": 6,
+          "contact": {
+            "id": 4097,
+            "homePhone": "12135551101"
+          },
+          "inbound": false,
+          "created": 1443373386000,
+          "modified": 1443373386000,
+          "agentCall": false
+        }
+      ]
+    },
+    "source": "https://developers.callfire.com/docs.html#sendCalls"
+  },
+  "GET /contacts/{id}": {
+    "body": {
+      "id": 4103,
+      "firstName": "Test",
+      "lastName": "Contact",
+      "homePhone": "12135551124",
+      "workPhone": "1213555115"
+    },
+    "source": "https://developers.callfire.com/docs.html#getContact"
+  },
+  "POST /contacts": {
+    "body": {
+      "items": [
+        {
+          "id": 4103
+        },
+        {
+          "id": 4104
+        }
+      ]
+    },
+    "source": "https://developers.callfire.com/docs.html#createContacts"
+  },
+  "GET /contacts/lists": {
+    "body": {
+      "items": [
+        {
+          "id": 3,
+          "name": "Created Contact List",
+          "size": 1,
+          "created": 1443390407000,
+          "status": "ACTIVE"
+        }
+      ],
+      "totalCount": 1
+    },
+    "source": "https://developers.callfire.com/docs.html#findContactLists"
+  },
+  "GET /contacts/lists/{id}": {
+    "body": {
+      "id": 3,
+      "name": "Created Contact List",
+      "size": 1,
+      "created": 1443390407000,
+      "status": "ACTIVE"
+    },
+    "source": "https://developers.callfire.com/docs.html#getContactList"
+  },
+  "POST /contacts/lists": {
+    "body": {
+      "id": 3
+    },
+    "source": "https://developers.callfire.com/docs.html#createContactList"
+  },
+  "GET /contacts/lists/{id}/items": {
+    "body": {
+      "items": [
+        {
+          "id": 4104,
+          "firstName": "Carl",
+          "lastName": "Friar",
+          "homePhone": "12135551125"
+        },
+        {
+          "id": 4105,
+          "firstName": "Contact",
+          "lastName": "One",
+          "homePhone": "12135551126"
+        },
+        {
+          "id": 4106,
+          "firstName": "Contact",
+          "lastName": "Two",
+          "homePhone": "12135551127"
+        }
+      ],
+      "totalCount": 3
+    },
+    "source": "https://developers.callfire.com/docs.html#getContactListItems"
+  },
+  "GET /texts/broadcasts": {
+    "body": {
+      "items": [
+        {
+          "id": 3,
+          "name": "Outbound SMS Broadcast",
+          "status": "FINISHED",
+          "lastModified": 1443333295000,
+          "fromNumber": "67076",
+          "localTimeRestriction": {
+            "enabled": false
+          },
+          "retryConfig": {
+            "maxAttempts": 1,
+            "minutesBetweenAttempts": 60,
+            "retryPhoneTypes": [
+              "FIRST_NUMBER"
+            ]
+          },
+          "message": "This is a text broadcast",
+          "bigMessageStrategy": "DO_NOT_SEND",
+          "resumeNextDay": true
+        },
+        {
+          "id": 13,
+          "name": "Example API SMS",
+          "status": "STOPPED",
+          "lastModified": 1443380774000,
+          "fromNumber": "12135551100",
+          "localTimeRestriction": {
+            "enabled": false
+          },
+          "retryConfig": {
+            "maxAttempts": 1,
+            "minutesBetweenAttempts": 60,
+            "retryPhoneTypes": [
+              "FIRST_NUMBER"
+            ]
+          },
+          "message": "Hello World!",
+          "resumeNextDay": true
+        }
+      ],
+      "totalCount": 2
+    },
+    "source": "https://developers.callfire.com/docs.html#findTextBroadcasts"
+  },
+  "GET /texts/broadcasts/{id}": {
+    "body": {
+      "id": 13,
+      "name": "Example API SMS",
+      "status": "STOPPED",
+      "lastModified": 1443380774000,
+      "fromNumber": "12135551100",
+      "localTimeRestriction": {
+        "enabled": false
+      },
+      "retryConfig": {
+        "maxAttempts": 1,
+        "minutesBetweenAttempts": 60,
+        "retryPhoneTypes": [
+          "FIRST_NUMBER"
+        ]
+      },
+      "message": "Hello World!",
+      "resumeNextDay": true
+    },
+    "source": "https://developers.callfire.com/docs.html#getTextBroadcast"
+  },
+  "POST /texts/broadcasts": {
+    "body": {
+      "id": 13
+    },
+    "source": "https://developers.callfire.com/docs.html#createTextBroadcast"
+  }
+}

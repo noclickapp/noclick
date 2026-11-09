@@ -1,0 +1,37 @@
+{
+  "PUT /contacts/{id}": {
+    "status": 200,
+    "source": "https://developers.callfire.com/docs.html#updateContact",
+    "documented_response": "200 OK - No Response"
+  },
+  "DELETE /contacts/{id}": {
+    "status": 204,
+    "source": "https://developers.callfire.com/docs.html#deleteContact",
+    "documented_response": "204 - No Content"
+  },
+  "PUT /contacts/lists/{id}": {
+    "status": 200,
+    "source": "https://developers.callfire.com/docs.html#updateContactList",
+    "documented_response": "200 OK - No Response"
+  },
+  "DELETE /contacts/lists/{id}": {
+    "status": 204,
+    "source": "https://developers.callfire.com/docs.html#deleteContactList",
+    "documented_response": "204 - No Content"
+  },
+  "POST /contacts/lists/{id}/items": {
+    "status": 200,
+    "source": "https://developers.callfire.com/docs.html#addContactListItems",
+    "documented_response": "200 OK - No Response"
+  },
+  "POST /texts/broadcasts/{id}/start": {
+    "status": 200,
+    "source": "https://developers.callfire.com/docs.html#startTextBroadcast",
+    "documented_response": "200 OK - No Response"
+  },
+  "POST /texts/broadcasts/{id}/stop": {
+    "status": 200,
+    "source": "https://developers.callfire.com/docs.html#stopTextBroadcast",
+    "documented_response": "200 OK - No Response"
+  }
+}
