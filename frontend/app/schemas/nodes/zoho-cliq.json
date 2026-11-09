@@ -1,0 +1,858 @@
+{
+  "$defs": {
+    "AddChannelMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_channel_members",
+          "default": "add_channel_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "user_ids": {
+          "items": {
+            "maxLength": 255,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "channel_id",
+        "user_ids"
+      ],
+      "title": "AddChannelMembers",
+      "type": "object"
+    },
+    "AddChatMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_chat_members",
+          "default": "add_chat_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "user_ids": {
+          "items": {
+            "maxLength": 255,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "chat_id",
+        "user_ids"
+      ],
+      "title": "AddChatMembers",
+      "type": "object"
+    },
+    "CreateChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_channel",
+          "default": "create_channel",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 90,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "default": "private",
+          "description": "Create an organization or private channel.",
+          "enum": [
+            "organization",
+            "private"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "visibility": {
+          "default": "closed",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateChannel",
+      "type": "object"
+    },
+    "CreateChat": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_chat",
+          "default": "create_chat",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Zoho user ID of the other participant in a direct chat.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "CreateChat",
+      "type": "object"
+    },
+    "EditMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "edit_message",
+          "default": "edit_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "message_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "notify_edit": {
+          "default": false,
+          "title": "Notify Edit",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id",
+        "text"
+      ],
+      "title": "EditMessage",
+      "type": "object"
+    },
+    "GetChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_channel",
+          "default": "get_channel",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "GetChannel",
+      "type": "object"
+    },
+    "GetChat": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_chat",
+          "default": "get_chat",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "GetChat",
+      "type": "object"
+    },
+    "LeaveChat": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "leave_chat",
+          "default": "leave_chat",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "LeaveChat",
+      "type": "object"
+    },
+    "ListChannelMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_channel_members",
+          "default": "list_channel_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Token"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "ListChannelMembers",
+      "type": "object"
+    },
+    "ListChannels": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass the provider's next_token unchanged to retrieve the next page.",
+          "title": "Next Token"
+        }
+      },
+      "title": "ListChannels",
+      "type": "object"
+    },
+    "ListChatMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_chat_members",
+          "default": "list_chat_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "ListChatMembers",
+      "type": "object"
+    },
+    "ListChats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_chats",
+          "default": "list_chats",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "modified_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Epoch milliseconds; use the last chat timestamp to retrieve older chats.",
+          "title": "Modified Before"
+        }
+      },
+      "title": "ListChats",
+      "type": "object"
+    },
+    "RemoveChannelMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_channel_member",
+          "default": "remove_channel_member",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id",
+        "user_id"
+      ],
+      "title": "RemoveChannelMember",
+      "type": "object"
+    },
+    "RenameChat": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rename_chat",
+          "default": "rename_chat",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id",
+        "title"
+      ],
+      "title": "RenameChat",
+      "type": "object"
+    },
+    "SearchMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_messages",
+          "default": "search_messages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Token"
+        },
+        "chat_ids": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]+(?:,[A-Za-z0-9_-]+){0,4}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated chat IDs, at most five.",
+          "title": "Chat Ids"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchMessages",
+      "type": "object"
+    },
+    "SendChannelMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_channel_message",
+          "default": "send_channel_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "sync_message": {
+          "default": true,
+          "title": "Sync Message",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "channel_id",
+        "text"
+      ],
+      "title": "SendChannelMessage",
+      "type": "object"
+    },
+    "SendChatMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_chat_message",
+          "default": "send_chat_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chat_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "sync_message": {
+          "default": true,
+          "title": "Sync Message",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "chat_id",
+        "text"
+      ],
+      "title": "SendChatMessage",
+      "type": "object"
+    },
+    "UpdateChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_channel",
+          "default": "update_channel",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "description": {
+          "description": "Replace the channel description; empty text clears it.",
+          "maxLength": 10500,
+          "title": "Description",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 90,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "channel_id",
+        "description"
+      ],
+      "title": "UpdateChannel",
+      "type": "object"
+    },
+    "ZohoCliqOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zoho_cliq_oauth",
+          "default": "zoho_cliq_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Zoho Cliq OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect a Zoho Cliq account in the US data center. Authorize the chat, channel and messaging permissions requested. An existing US OAuth access token can also be supplied by hand; refresh token and expiry are optional for that method.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://api-console.zoho.com/",
+      "x-oauth-provider": "zoho_cliq",
+      "x-oauth-scopes": [
+        "ZohoCliq.Channels.CREATE",
+        "ZohoCliq.Channels.DELETE",
+        "ZohoCliq.Channels.READ",
+        "ZohoCliq.Channels.UPDATE",
+        "ZohoCliq.Chats.CREATE",
+        "ZohoCliq.Chats.READ",
+        "ZohoCliq.Chats.UPDATE",
+        "ZohoCliq.Messages.UPDATE",
+        "ZohoCliq.Webhooks.CREATE",
+        "aaaserver.profile.READ"
+      ]
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_channel_members": "#/$defs/AddChannelMembers",
+          "add_chat_members": "#/$defs/AddChatMembers",
+          "create_channel": "#/$defs/CreateChannel",
+          "create_chat": "#/$defs/CreateChat",
+          "edit_message": "#/$defs/EditMessage",
+          "get_channel": "#/$defs/GetChannel",
+          "get_chat": "#/$defs/GetChat",
+          "leave_chat": "#/$defs/LeaveChat",
+          "list_channel_members": "#/$defs/ListChannelMembers",
+          "list_channels": "#/$defs/ListChannels",
+          "list_chat_members": "#/$defs/ListChatMembers",
+          "list_chats": "#/$defs/ListChats",
+          "remove_channel_member": "#/$defs/RemoveChannelMember",
+          "rename_chat": "#/$defs/RenameChat",
+          "search_messages": "#/$defs/SearchMessages",
+          "send_channel_message": "#/$defs/SendChannelMessage",
+          "send_chat_message": "#/$defs/SendChatMessage",
+          "update_channel": "#/$defs/UpdateChannel"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListChats"
+        },
+        {
+          "$ref": "#/$defs/GetChat"
+        },
+        {
+          "$ref": "#/$defs/ListChatMembers"
+        },
+        {
+          "$ref": "#/$defs/CreateChat"
+        },
+        {
+          "$ref": "#/$defs/RenameChat"
+        },
+        {
+          "$ref": "#/$defs/AddChatMembers"
+        },
+        {
+          "$ref": "#/$defs/LeaveChat"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        },
+        {
+          "$ref": "#/$defs/GetChannel"
+        },
+        {
+          "$ref": "#/$defs/CreateChannel"
+        },
+        {
+          "$ref": "#/$defs/UpdateChannel"
+        },
+        {
+          "$ref": "#/$defs/ListChannelMembers"
+        },
+        {
+          "$ref": "#/$defs/AddChannelMembers"
+        },
+        {
+          "$ref": "#/$defs/RemoveChannelMember"
+        },
+        {
+          "$ref": "#/$defs/SendChatMessage"
+        },
+        {
+          "$ref": "#/$defs/SendChannelMessage"
+        },
+        {
+          "$ref": "#/$defs/SearchMessages"
+        },
+        {
+          "$ref": "#/$defs/EditMessage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZohoCliqOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zoho-cliq Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/zoho-cliq.svg",
+  "source": "https://www.zohowebstatic.com/sites/zweb/images/producticon/cliq.svg",
+  "license": "Zoho brand mark, used nominatively to identify Zoho Cliq. All trademark rights belong to the owner.",
+  "sha256": "bf7404373225920a61c0eaf82b92fcd106c10f08637c3e604d8e55689c3df09b",
+  "modifications": "Removed trailing whitespace only; SVG paths and geometry are unchanged."
+}
