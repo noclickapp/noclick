@@ -1,0 +1,374 @@
+[
+  {
+    "operation": "get_account",
+    "method": "GET",
+    "path": "/info/account",
+    "path_fields": [],
+    "query_fields": [],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "get_user",
+    "method": "GET",
+    "path": "/info/user",
+    "path_fields": [],
+    "query_fields": [],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_contacts",
+    "method": "GET",
+    "path": "/contacts",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page",
+      "search",
+      "updated_since",
+      "include_custom_fields"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "create_contact",
+    "method": "POST",
+    "path": "/contacts",
+    "path_fields": [],
+    "query_fields": [],
+    "body_fields": {
+      "first_name": "first_name",
+      "last_name": "last_name",
+      "company_name": "company_name",
+      "email_addresses": "email_addresses[]",
+      "tags": "tags[]",
+      "mailing_address": "mailing_address",
+      "mailing_city": "mailing_city",
+      "mailing_state": "mailing_state",
+      "mailing_zip_code": "mailing_zip_code"
+    },
+    "status": 201
+  },
+  {
+    "operation": "update_contact",
+    "method": "PUT",
+    "path": "/contacts/{contact_id}",
+    "path_fields": [
+      "contact_id"
+    ],
+    "query_fields": [],
+    "body_fields": {
+      "first_name": "first_name",
+      "last_name": "last_name",
+      "company_name": "company_name",
+      "email_addresses": "email_addresses[]",
+      "tags": "tags[]",
+      "mailing_address": "mailing_address",
+      "mailing_city": "mailing_city",
+      "mailing_state": "mailing_state",
+      "mailing_zip_code": "mailing_zip_code",
+      "secondary_name": "secondary_name"
+    },
+    "status": 200
+  },
+  {
+    "operation": "list_deals",
+    "method": "GET",
+    "path": "/deals",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page",
+      "pipeline_id",
+      "search",
+      "include_custom_fields",
+      "updated_since"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "get_deal",
+    "method": "GET",
+    "path": "/deals/{deal_id}",
+    "path_fields": [
+      "deal_id"
+    ],
+    "query_fields": [
+      "include_custom_fields"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "create_deal",
+    "method": "POST",
+    "path": "/deals",
+    "path_fields": [],
+    "query_fields": [],
+    "body_fields": {
+      "deal_pipeline_id": "deal[pipeline_id]",
+      "deal_name": "deal[name]",
+      "deal_stage_id": "deal[stage_id]",
+      "deal_assignee_id": "deal[assignee_id]",
+      "deal_source_id_or_name": "deal[source_id_or_name]",
+      "deal_comments": "deal[comments]",
+      "deal_value": "deal[value]",
+      "deal_cost": "deal[cost]",
+      "deal_tags": "deal[tags][]",
+      "contact_full_name": "contact[full_name]",
+      "contact_email_addresses": "contact[email_addresses][]",
+      "deal_accept_duplicates": "deal[accept_duplicates]"
+    },
+    "status": 201
+  },
+  {
+    "operation": "update_deal",
+    "method": "PUT",
+    "path": "/deals/{deal_id}",
+    "path_fields": [
+      "deal_id"
+    ],
+    "query_fields": [],
+    "body_fields": {
+      "pipeline_id": "pipeline_id",
+      "name": "name",
+      "stage_id": "stage_id",
+      "assignee_id": "assignee_id",
+      "comments": "comments",
+      "value": "value",
+      "cost": "cost",
+      "tags": "tags[]",
+      "remove_tags": "remove_tags",
+      "contact_ids": "contact_ids[]",
+      "property_ids": "property_ids[]",
+      "closed_at": "closed_at"
+    },
+    "status": 200
+  },
+  {
+    "operation": "list_processes",
+    "method": "GET",
+    "path": "/processes",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page",
+      "process_type_id",
+      "search",
+      "include_custom_fields",
+      "include_property_groups",
+      "updated_since"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "get_process",
+    "method": "GET",
+    "path": "/processes/{process_id}",
+    "path_fields": [
+      "process_id"
+    ],
+    "query_fields": [
+      "include_custom_fields",
+      "include_property_groups"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "create_process",
+    "method": "POST",
+    "path": "/processes",
+    "path_fields": [],
+    "query_fields": [],
+    "body_fields": {
+      "process_process_type_id": "process[process_type_id]",
+      "process_stage_id": "process[stage_id]",
+      "process_name": "process[name]",
+      "process_comments": "process[comments]",
+      "process_due_at": "process[due_at]",
+      "process_user_id": "process[user_id]",
+      "process_tags": "process[tags][]",
+      "property_ids": "property_ids[]",
+      "unit_ids": "unit_ids[]"
+    },
+    "status": 201
+  },
+  {
+    "operation": "update_process",
+    "method": "PUT",
+    "path": "/processes/{process_id}",
+    "path_fields": [
+      "process_id"
+    ],
+    "query_fields": [],
+    "body_fields": {
+      "name": "name",
+      "comments": "comments",
+      "due_at": "due_at",
+      "stage_id": "stage_id",
+      "user_id": "user_id",
+      "tags": "tags[]",
+      "remove_tags": "remove_tags",
+      "closed_at": "closed_at"
+    },
+    "status": 200
+  },
+  {
+    "operation": "create_note",
+    "method": "POST",
+    "path": "/notes",
+    "path_fields": [],
+    "query_fields": [],
+    "body_fields": {
+      "created_at": "created_at",
+      "description": "description",
+      "direction": "direction",
+      "kind": "kind",
+      "parent_id": "parent_id",
+      "parent_type": "parent_type",
+      "user_id": "user_id"
+    },
+    "status": 201
+  },
+  {
+    "operation": "list_pipelines",
+    "method": "GET",
+    "path": "/pipelines",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page",
+      "account_id"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "get_pipeline",
+    "method": "GET",
+    "path": "/pipelines/{pipeline_id}",
+    "path_fields": [
+      "pipeline_id"
+    ],
+    "query_fields": [],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_pipeline_stages",
+    "method": "GET",
+    "path": "/pipelines/{pipeline_id}/stages",
+    "path_fields": [
+      "pipeline_id"
+    ],
+    "query_fields": [
+      "page",
+      "per_page"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_pipeline_sources",
+    "method": "GET",
+    "path": "/pipelines/{pipeline_id}/sources",
+    "path_fields": [
+      "pipeline_id"
+    ],
+    "query_fields": [
+      "page",
+      "per_page"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_process_types",
+    "method": "GET",
+    "path": "/process_types",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_process_type_stages",
+    "method": "GET",
+    "path": "/process_types/{process_type_id}/stages",
+    "path_fields": [
+      "process_type_id"
+    ],
+    "query_fields": [
+      "page",
+      "per_page"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_users",
+    "method": "GET",
+    "path": "/users",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page",
+      "search"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "list_properties",
+    "method": "GET",
+    "path": "/properties",
+    "path_fields": [],
+    "query_fields": [
+      "page",
+      "per_page",
+      "search",
+      "updated_since",
+      "include_custom_fields",
+      "include_property_groups"
+    ],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "get_property",
+    "method": "GET",
+    "path": "/properties/{property_id}",
+    "path_fields": [
+      "property_id"
+    ],
+    "query_fields": [],
+    "body_fields": {},
+    "status": 200
+  },
+  {
+    "operation": "update_property",
+    "method": "PUT",
+    "path": "/properties/{property_id}",
+    "path_fields": [
+      "property_id"
+    ],
+    "query_fields": [],
+    "body_fields": {
+      "address_city": "address_city",
+      "address_line_1": "address_line_1",
+      "address_state": "address_state",
+      "address_zip_code": "address_zip_code",
+      "property_type": "property_type",
+      "tags": "tags[]"
+    },
+    "status": 200
+  }
+]
