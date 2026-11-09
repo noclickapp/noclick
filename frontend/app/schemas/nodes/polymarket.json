@@ -1,0 +1,808 @@
+{
+  "$defs": {
+    "CancelAllOrders": {
+      "additionalProperties": false,
+      "description": "Cancel every open order for this account; settled fills remain unchanged.",
+      "properties": {
+        "operation": {
+          "const": "cancel_all_orders",
+          "default": "cancel_all_orders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CancelAllOrders",
+      "type": "object"
+    },
+    "CancelMarketOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_market_orders",
+          "default": "cancel_market_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "market": {
+          "minLength": 1,
+          "title": "Market",
+          "type": "string"
+        },
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "market",
+        "asset_id"
+      ],
+      "title": "CancelMarketOrders",
+      "type": "object"
+    },
+    "CancelOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "CancelOrder",
+      "type": "object"
+    },
+    "CancelOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_orders",
+          "default": "cancel_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_ids": {
+          "description": "Order hashes to cancel; inspect not_canceled for failures.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Order Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "order_ids"
+      ],
+      "title": "CancelOrders",
+      "type": "object"
+    },
+    "GetBalanceAllowance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_balance_allowance",
+          "default": "get_balance_allowance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "asset_type": {
+          "default": "COLLATERAL",
+          "enum": [
+            "COLLATERAL",
+            "CONDITIONAL"
+          ],
+          "title": "Asset Type",
+          "type": "string"
+        },
+        "token_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Id"
+        },
+        "signature_type": {
+          "default": 0,
+          "description": "0 EOA, 1 proxy, 2 Safe, 3 deposit wallet",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "title": "Signature Type",
+          "type": "integer"
+        }
+      },
+      "title": "GetBalanceAllowance",
+      "type": "object"
+    },
+    "GetClosedOnlyMode": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_closed_only_mode",
+          "default": "get_closed_only_mode",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetClosedOnlyMode",
+      "type": "object"
+    },
+    "GetFeeRate": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_fee_rate",
+          "default": "get_fee_rate",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetFeeRate",
+      "type": "object"
+    },
+    "GetLastTradePrice": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_last_trade_price",
+          "default": "get_last_trade_price",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetLastTradePrice",
+      "type": "object"
+    },
+    "GetMidpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_midpoint",
+          "default": "get_midpoint",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetMidpoint",
+      "type": "object"
+    },
+    "GetNegRisk": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_neg_risk",
+          "default": "get_neg_risk",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetNegRisk",
+      "type": "object"
+    },
+    "GetOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "GetOrderBook": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_order_book",
+          "default": "get_order_book",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetOrderBook",
+      "type": "object"
+    },
+    "GetPrice": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_price",
+          "default": "get_price",
+          "title": "Operation",
+          "type": "string"
+        },
+        "side": {
+          "default": "BUY",
+          "enum": [
+            "BUY",
+            "SELL"
+          ],
+          "title": "Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetPrice",
+      "type": "object"
+    },
+    "GetPriceHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_price_history",
+          "default": "get_price_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "market": {
+          "description": "Outcome token (asset) ID, not condition ID",
+          "minLength": 1,
+          "title": "Market",
+          "type": "string"
+        },
+        "startTs": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startts"
+        },
+        "endTs": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endts"
+        },
+        "interval": {
+          "default": "1d",
+          "enum": [
+            "max",
+            "all",
+            "1m",
+            "1w",
+            "1d",
+            "6h",
+            "1h"
+          ],
+          "title": "Interval",
+          "type": "string"
+        },
+        "fidelity": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fidelity"
+        }
+      },
+      "required": [
+        "market"
+      ],
+      "title": "GetPriceHistory",
+      "type": "object"
+    },
+    "GetSpread": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_spread",
+          "default": "get_spread",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetSpread",
+      "type": "object"
+    },
+    "GetTickSize": {
+      "additionalProperties": false,
+      "properties": {
+        "token_id": {
+          "description": "CLOB outcome token (asset) ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Token Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_tick_size",
+          "default": "get_tick_size",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_id"
+      ],
+      "title": "GetTickSize",
+      "type": "object"
+    },
+    "ListNotifications": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notifications",
+          "default": "list_notifications",
+          "title": "Operation",
+          "type": "string"
+        },
+        "signature_type": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "title": "Signature Type",
+          "type": "integer"
+        }
+      },
+      "title": "ListNotifications",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "description": "Read one page of this authenticated account's open orders.",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Market"
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Id"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continue with the provider's next_cursor. One page per run; LTE= marks the end.",
+          "title": "Next Cursor"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListTrades": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "pattern": "^0x[a-fA-F0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Market"
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Id"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continue with the provider's next_cursor. One page per run; LTE= marks the end.",
+          "title": "Next Cursor"
+        },
+        "operation": {
+          "const": "list_trades",
+          "default": "list_trades",
+          "title": "Operation",
+          "type": "string"
+        },
+        "maker_address": {
+          "pattern": "^0x[a-fA-F0-9]{40}$",
+          "title": "Maker Address",
+          "type": "string"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "pattern": "^\\d+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "pattern": "^\\d+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        }
+      },
+      "required": [
+        "maker_address"
+      ],
+      "title": "ListTrades",
+      "type": "object"
+    },
+    "MarkNotificationsRead": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "mark_notifications_read",
+          "default": "mark_notifications_read",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Comma-separated notification IDs",
+          "pattern": "^\\d+(,\\d+)*$",
+          "title": "Ids",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "MarkNotificationsRead",
+      "type": "object"
+    },
+    "PolymarketAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "polymarket_api_key",
+          "default": "polymarket_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_passphrase": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API passphrase",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "wallet_address": {
+          "pattern": "^0x[a-fA-F0-9]{40}$",
+          "title": "Signer wallet address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret",
+        "api_passphrase",
+        "wallet_address"
+      ],
+      "title": "Polymarket CLOB API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your existing CLOB API key, secret and passphrase, and the signer wallet address used to create them. These are CLOB L2 credentials, not Builder or Relayer keys. Use the official SDK to create or derive them with your wallet first. Never paste a wallet private key. NoClick signs account requests locally with HMAC-SHA256. Public market reads do not verify a credential.",
+      "x-credential-url": "https://docs.polymarket.com/trading/wallets-auth"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_all_orders": "#/$defs/CancelAllOrders",
+          "cancel_market_orders": "#/$defs/CancelMarketOrders",
+          "cancel_order": "#/$defs/CancelOrder",
+          "cancel_orders": "#/$defs/CancelOrders",
+          "get_balance_allowance": "#/$defs/GetBalanceAllowance",
+          "get_closed_only_mode": "#/$defs/GetClosedOnlyMode",
+          "get_fee_rate": "#/$defs/GetFeeRate",
+          "get_last_trade_price": "#/$defs/GetLastTradePrice",
+          "get_midpoint": "#/$defs/GetMidpoint",
+          "get_neg_risk": "#/$defs/GetNegRisk",
+          "get_order": "#/$defs/GetOrder",
+          "get_order_book": "#/$defs/GetOrderBook",
+          "get_price": "#/$defs/GetPrice",
+          "get_price_history": "#/$defs/GetPriceHistory",
+          "get_spread": "#/$defs/GetSpread",
+          "get_tick_size": "#/$defs/GetTickSize",
+          "list_notifications": "#/$defs/ListNotifications",
+          "list_orders": "#/$defs/ListOrders",
+          "list_trades": "#/$defs/ListTrades",
+          "mark_notifications_read": "#/$defs/MarkNotificationsRead"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/ListTrades"
+        },
+        {
+          "$ref": "#/$defs/GetBalanceAllowance"
+        },
+        {
+          "$ref": "#/$defs/ListNotifications"
+        },
+        {
+          "$ref": "#/$defs/GetClosedOnlyMode"
+        },
+        {
+          "$ref": "#/$defs/CancelOrder"
+        },
+        {
+          "$ref": "#/$defs/CancelOrders"
+        },
+        {
+          "$ref": "#/$defs/CancelAllOrders"
+        },
+        {
+          "$ref": "#/$defs/CancelMarketOrders"
+        },
+        {
+          "$ref": "#/$defs/MarkNotificationsRead"
+        },
+        {
+          "$ref": "#/$defs/GetOrderBook"
+        },
+        {
+          "$ref": "#/$defs/GetPrice"
+        },
+        {
+          "$ref": "#/$defs/GetMidpoint"
+        },
+        {
+          "$ref": "#/$defs/GetSpread"
+        },
+        {
+          "$ref": "#/$defs/GetLastTradePrice"
+        },
+        {
+          "$ref": "#/$defs/GetFeeRate"
+        },
+        {
+          "$ref": "#/$defs/GetTickSize"
+        },
+        {
+          "$ref": "#/$defs/GetNegRisk"
+        },
+        {
+          "$ref": "#/$defs/GetPriceHistory"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PolymarketAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Polymarket Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
