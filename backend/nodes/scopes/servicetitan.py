@@ -2,6 +2,9 @@
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 
 SERVICETITAN_SCOPES = ScopeRegistry("servicetitan", {
+    'on_new_or_updated_customer': ScopeRequirement(('tn.crm.customers:r',)),
+    'on_new_or_updated_location': ScopeRequirement(('tn.crm.locations:r',)),
+    'on_new_or_updated_lead': ScopeRequirement(('tn.crm.leads:r',)),
     'list_customers': ScopeRequirement(('tn.crm.customers:r',)),
     'get_customer': ScopeRequirement(('tn.crm.customers:r',)),
     'update_customer': ScopeRequirement(('tn.crm.customers:w',)),

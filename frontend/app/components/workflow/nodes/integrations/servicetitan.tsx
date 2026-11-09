@@ -12,7 +12,7 @@ const ServiceTitanIcon = ({ className, style }: { className?: string; style?: CS
 
 export const ServiceTitanNode: NodeDefinition = {
     type: 'automation-servicetitan', category: 'industry', label: 'ServiceTitan',
-    description: 'Read and update CRM customers, locations, leads, contacts and notes',
+    description: 'Watch new or updated customers, locations and leads; read and update CRM records, contacts and notes',
     Icon: ServiceTitanIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={ServiceTitanIcon} iconColor="" />),
