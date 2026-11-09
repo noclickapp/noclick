@@ -1,0 +1,282 @@
+{
+  "get_balances": {
+    "config": {
+      "operation": "get_balances"
+    },
+    "method": "GET",
+    "url": "https://api.polymarket.us/v1/account/balances",
+    "response": {
+      "balances": [
+        {
+          "currency": "USD",
+          "currentBalance": 123.45,
+          "buyingPower": 100.0
+        }
+      ]
+    }
+  },
+  "list_positions": {
+    "config": {
+      "operation": "list_positions",
+      "market": "nba-bos-nyk-2025-03-15",
+      "limit": 10,
+      "cursor": "next-page"
+    },
+    "method": "GET",
+    "url": "https://api.polymarket.us/v1/portfolio/positions",
+    "response": {
+      "positions": [],
+      "cursor": "next-page"
+    }
+  },
+  "list_activities": {
+    "config": {
+      "operation": "list_activities",
+      "limit": 10,
+      "types": [
+        "ACTIVITY_TYPE_TRADE"
+      ],
+      "sortOrder": "SORT_ORDER_DESCENDING"
+    },
+    "method": "GET",
+    "url": "https://api.polymarket.us/v1/portfolio/activities",
+    "response": {
+      "activities": [],
+      "cursor": "next-page"
+    }
+  },
+  "list_open_orders": {
+    "config": {
+      "operation": "list_open_orders",
+      "slugs": [
+        "market-a",
+        "market-b"
+      ]
+    },
+    "method": "GET",
+    "url": "https://api.polymarket.us/v1/orders/open",
+    "response": {
+      "orders": []
+    }
+  },
+  "get_order": {
+    "config": {
+      "operation": "get_order",
+      "orderId": "order-1"
+    },
+    "method": "GET",
+    "url": "https://api.polymarket.us/v1/order/order-1",
+    "response": {
+      "order": {
+        "id": "order-1"
+      }
+    }
+  },
+  "create_order": {
+    "config": {
+      "operation": "create_order",
+      "body": {
+        "marketSlug": "nba-bos-nyk-2025-03-15",
+        "type": "ORDER_TYPE_LIMIT",
+        "intent": "ORDER_INTENT_BUY_LONG",
+        "price": {
+          "value": "0.55",
+          "currency": "USD"
+        },
+        "quantity": 10,
+        "tif": "TIME_IN_FORCE_GOOD_TILL_CANCEL",
+        "manualOrderIndicator": "MANUAL_ORDER_INDICATOR_AUTOMATIC"
+      }
+    },
+    "method": "POST",
+    "url": "https://api.polymarket.us/v1/orders",
+    "response": {
+      "id": "order-1"
+    }
+  },
+  "cancel_order": {
+    "config": {
+      "operation": "cancel_order",
+      "orderId": "order-1",
+      "body": {
+        "marketSlug": "nba-bos-nyk-2025-03-15"
+      }
+    },
+    "method": "POST",
+    "url": "https://api.polymarket.us/v1/order/order-1/cancel",
+    "response": {}
+  },
+  "modify_order": {
+    "config": {
+      "operation": "modify_order",
+      "orderId": "order-1",
+      "body": {
+        "marketSlug": "nba-bos-nyk-2025-03-15",
+        "price": {
+          "value": "0.54",
+          "currency": "USD"
+        },
+        "quantity": 5
+      }
+    },
+    "method": "POST",
+    "url": "https://api.polymarket.us/v1/order/order-1/modify",
+    "response": {}
+  },
+  "preview_order": {
+    "config": {
+      "operation": "preview_order",
+      "body": {
+        "request": {
+          "marketSlug": "nba-bos-nyk-2025-03-15",
+          "type": "ORDER_TYPE_LIMIT",
+          "intent": "ORDER_INTENT_BUY_LONG",
+          "price": {
+            "value": "0.55",
+            "currency": "USD"
+          },
+          "quantity": 10,
+          "tif": "TIME_IN_FORCE_GOOD_TILL_CANCEL",
+          "manualOrderIndicator": "MANUAL_ORDER_INDICATOR_AUTOMATIC"
+        }
+      }
+    },
+    "method": "POST",
+    "url": "https://api.polymarket.us/v1/order/preview",
+    "response": {
+      "order": {
+        "id": "order-1"
+      }
+    }
+  },
+  "close_position": {
+    "config": {
+      "operation": "close_position",
+      "body": {
+        "marketSlug": "nba-bos-nyk-2025-03-15",
+        "manualOrderIndicator": "MANUAL_ORDER_INDICATOR_AUTOMATIC"
+      }
+    },
+    "method": "POST",
+    "url": "https://api.polymarket.us/v1/order/close-position",
+    "response": {
+      "id": "order-2"
+    }
+  },
+  "cancel_open_orders": {
+    "config": {
+      "operation": "cancel_open_orders",
+      "body": {
+        "slugs": [
+          "nba-bos-nyk-2025-03-15"
+        ]
+      }
+    },
+    "method": "POST",
+    "url": "https://api.polymarket.us/v1/orders/open/cancel",
+    "response": {}
+  },
+  "list_markets": {
+    "config": {
+      "operation": "list_markets",
+      "limit": 10,
+      "offset": 20,
+      "active": true,
+      "slug": [
+        "market-a",
+        "market-b"
+      ]
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/markets",
+    "response": {
+      "markets": []
+    }
+  },
+  "get_market": {
+    "config": {
+      "operation": "get_market",
+      "slug": "nba-bos-nyk-2025-03-15"
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/market/slug/nba-bos-nyk-2025-03-15",
+    "response": {
+      "market": {
+        "slug": "nba-bos-nyk-2025-03-15"
+      }
+    }
+  },
+  "get_market_bbo": {
+    "config": {
+      "operation": "get_market_bbo",
+      "slug": "nba-bos-nyk-2025-03-15"
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/markets/nba-bos-nyk-2025-03-15/bbo",
+    "response": {
+      "marketData": {}
+    }
+  },
+  "get_market_book": {
+    "config": {
+      "operation": "get_market_book",
+      "slug": "nba-bos-nyk-2025-03-15"
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/markets/nba-bos-nyk-2025-03-15/book",
+    "response": {
+      "marketData": {}
+    }
+  },
+  "get_market_settlement": {
+    "config": {
+      "operation": "get_market_settlement",
+      "slug": "nba-bos-nyk-2025-03-15"
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/markets/nba-bos-nyk-2025-03-15/settlement",
+    "response": {
+      "settlement": {}
+    }
+  },
+  "list_events": {
+    "config": {
+      "operation": "list_events",
+      "limit": 10,
+      "offset": 20,
+      "closed": false,
+      "tagSlug": "sports"
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/events",
+    "response": {
+      "events": []
+    }
+  },
+  "get_event": {
+    "config": {
+      "operation": "get_event",
+      "slug": "nba-bos-nyk-2025-03-15"
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/events/slug/nba-bos-nyk-2025-03-15",
+    "response": {
+      "event": {
+        "slug": "nba-bos-nyk-2025-03-15"
+      }
+    }
+  },
+  "search": {
+    "config": {
+      "operation": "search",
+      "query": "Boston Celtics",
+      "limit": 10,
+      "page": 2
+    },
+    "method": "GET",
+    "url": "https://gateway.polymarket.us/v1/search",
+    "response": {
+      "events": []
+    }
+  }
+}
