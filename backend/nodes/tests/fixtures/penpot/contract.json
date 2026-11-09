@@ -1,0 +1,838 @@
+{
+  "get_profile": {
+    "request": {},
+    "response": {
+      "id": "3681d377-bc58-8110-8008-e76748f8c11b",
+      "fullname": "yguvdg",
+      "email": "zozwvy@example.net",
+      "theme": "4VwBkBF1JSDnr9101L120C",
+      "props": {
+        "v2InfoShown": true,
+        "newsletterUpdates": true,
+        "onboardingViewed": true,
+        "onboardingQuestions": {
+          ".wm": "31uIhGsuk55bB1mROa6bD9Os9NO",
+          "?C?W2": "l224MYq223g7zd6ylOw",
+          "b?X": "7WxUmquT",
+          "O": "oSIvf56kzb3SelR1fZW1zp3PuM",
+          "pW-78L": "qOymE0od0Q",
+          "?:CX?6_": "5FIP",
+          "-rT5x": "183ci2k51Fpu"
+        },
+        "workspaceVisited": false,
+        "renderer": "svg",
+        "newsletterNews": true,
+        "plugins": {
+          "ids": [
+            "w9JX689PH1JhAd1JVM8whCE4",
+            "U6ORQH0C8JWso6xJ2P",
+            "T8ra9q0cUH758Yjocp265Do",
+            "Y",
+            "4864i",
+            "dpC57WF1AR3x0oZ5PM",
+            "aY3KpTX5QfX4p2aYZ2N3nb",
+            "18",
+            "iA84zQ42U4L2W3Toa3G",
+            "dE6m7w7TzKrAzo1A3ILAB5F583k24",
+            "cOfQox0nLLws03",
+            "AyfK",
+            "88xaV1bjCVD43fUlBGwTSsa",
+            "4j5HVi961t3VkGaKDeqclmBT9D11D",
+            "62",
+            "73W64jb7OZ76tIr2",
+            "2lstxkHDx4f4",
+            "TMDm9dDK5v1c4q3zK1O5TqNvS",
+            "62tx4EvYo3Yy"
+          ],
+          "data": {
+            "A9zB5zCe8X0WuSmcXsI77qeT": {
+              "pluginId": "Z5v9n01aXqNGudWBwv72TC2Wsd",
+              "name": "5",
+              "host": "",
+              "code": "k554VAOkZv39122y9q9ei3qw5FhK2GU92Aa6AKTiAKZ9thVNNdxY31h49N4A4b3HfCOrhH8V1Qvv8SAs0S9QK0BwEP5014tmQkRYUz8dp7atoKa3eWA2JqHlLpnnmYjigpnj48",
+              "icon": "tfKh6Mu54Tt5H6g7pyn9Uis2pNP75TQ41bN9O4DTwzkB30765OeoOMY107l5o8HYTuKJPCHaPZN90W379952SwdcHv8bVM4WJRI4LIOuZsa7a1iY3A58MjE5GF69GLvt4xg51FFBoe7TX4VvPzC09C7V4A5OCfePQm4JKy1FQ103l5Y7ne68O702lTE9MzaWq4E220t5PECJB96Z67rx7YQ4YWC03gB9mILc0VQFXsyuy6HowFklc9W796e2w7FeP3eYN8555F4v8Ghor2nof1yC4BscwY6l09pkwUC2GT5xvgyVOq980Snm22y0MqWcyik5Xbg1602Ym0G338lD7Qf58XVQFPmy827wzN0UeN8yUn61e18iv5Z4UK722kVG6IXTDRK1euA5TMCszpP1N41P5FFrtk0448up0cGBz486538h193zL42Y64VG58Ojnn8xMUy9YEJVl",
+              "permissions": [
+                "allow:localstorage",
+                "comment:read",
+                "comment:write",
+                "content:read",
+                "user:read"
+              ]
+            },
+            "lNIbcTNd08HT0r3597kWIi5uQB5O": {
+              "pluginId": "UyMt7fR7yLWx8Kb2XB3Zl95nR",
+              "version": 13342,
+              "name": "13wHwomxBI7AlHmY5W14H45ten646nX6GslaW6bA0lJ7dNWvaccHiv69KpbEWdKzX8hRUeUrc6MeM0BpiSPei2Oa31ZY2Z62yAW079L6KHc9eN0KN6mx4hwtR75Q75vQdL4lH3W68R5D11MM96yhY6E",
+              "description": "DZ6bZrlXbcXj56Mr4YH829l5Xf9JE561Nzbxi3WcYyAc3huRIlR7lC1Kacia7H1d9pdYSdAw2u8bkjbnU6F6t99PGXH9Fky7G5O1MstrDqG9i89AW1T6z5t0KbVH2Dq0mF19pOfy6YKtpSwE4oeKO5O04FsK9qNq1A00TGg9D0I33Tw32eHl598ionsDu7UJgzD51TlNhXJHe44mmRQ4X78nM339zbe92b86ht9t64T07vSWLmudsJ7RFotx8sNFZzW6JayoIeZK1YP2S2QLy93NKGpJ7dtGJyjaoYTMcaasFVvvUrPZ0Q2hIEEGB17m8MXV4Pqna0g01gIcxiROHYDijytTbm2387Sn1L0g3ecfNXN3c2irjL47n2eJ8DeP6iYrahGRw1vClj7MS01f9yLUWK5mEE2i4VrR2e0vHVbqtn3sUIqCXot7ohrs3j77n9oh0M4l5Zh7W5Gw4K1g03xWYH9vU6J7ZRsC7nywO8SbYXWAkq05zn6LtS6BGXoFgzf5VAMe85B87vwJI7Jz9qhr5QmQG3td7hGlZR8V47HXeer8zrQkNd034L0G0Kh36FqwHVzJ270R6q3L83tj6420RM2kh2tVPzX164Fm1Vz6Snkv1Sp177O31jnV22681qlbUU9Bctr2v155hBU702TKj0W68zw37bxy8bkd3K55CqUQ0y6gZ8zcCPVu0o79X6f9e9357D6A1IJKxDZc3MFc634sxJbHtKFLSIrmws63voCJwgO7F5WDmI79pUaoh6QB9CI3lMp17o8oiyHkMxcU9jYC2lgijFyLBc9i0462UA9FCR40O31xke70d0NAre63YG6k9J1YNz5k80x1qvg0DLe4ckF5xLTCw7389092Vo465JmD6877ERkVe149wrPWP2NA8j48MppYFQIA6KYq0VVV29uB1oG1yaYzGUFW6Bh21TC7d3buM776nC94Q47QZ10AUKPi4OmxlOEp782mhR54018zfAk730b130c740h1HtyaCz1jS29E5mf62CcLDF4jIzNPdk12CCSAJQYc096a2t6AO57rPd8tx322498TNa5QKwrczB6x50slG7I7hMO8Xf41fEPdBS7pZ64fI1kZ1NWpUw4PnF3iWePs35Bim9zEajvgLAQ8hFYKaG5yr6iEk7912YCVB3MA8f6etvhUYE2V9YUZHaSQ9K80jOL623lm7hKM82WN572l03j6J0THng1r1JkihUUiS2VF4gU00LWtOS0EJl6a69cTqVIh45Z3pa6QRG3cj83Af4HuSgGK5L4KQkmFaq2y20I6rSNcJ48v6qjWhjYm2q85af1ESDk7O5CzK1wN2vVxxVIQZViLcaNfP3fvsU8dh6e1OMSCd7Td77g1gHX9yEY5qEfQc0k0fW67wP27OF053B47IaCFk48ZqE98PICyPj3L28N8kw3UlvrxHW8FHdyU0zuYJx1r45lMwVmaP9oU23x8Us82VKaYOqq0tSU5dspuGNb082SYXS95NadSuUcoj3dBy325gxcgIIJvNrh0970222E42kCl16lMOY8XnxIECPNnlvzrKG83W6MtaqGm7asNt0KffbOW46iadz8gAB4jhdhwJx929pGdHYl3vI9bJse4KWKG7x8Wv6677mb5Q8Rt648c9X1F1mkguAj14GdJhNbg4SY4X72GeT024AK1463467j3mgb3g8MNmvU5Pj5U0NLF4tR328NM6tQ28qdrn458GG4Fk6Ts9106eHT5BFotWE2rN99Ca0n61ukwCiOTXmjf48H4vBOOtHKHx8v14fzQI67v4B8r6psSkr3UzEd74g2tB0KaQKgtum7thLMrdDvIpQs2rNm0d0M70DCGZJn7zS67v5ST3LXqc0yjD7GHQ78A6u33j5w9xs5dCi1IVWYxEF5X6Gqib2MJHy92rSF7ZaJ53IfSEM6z0v6oKj7H4jq29z45QGl85h0PBoqKANkwXojl2Ika0Kz01757Yyz4YF60UAPur49C495I5mR81l181js3BLWw8QS8lvo9OAwK8lvvDLP7oj3g134Ve8YcdF78L7mnrZDK20vAtCh92LL82Fy94HKo68sXRe2Zz7S54qmNfmwaNgtkhtlmVncg13dq298W1VM5HqzMVeOZlko228w65S1OHGly77I2B8j4mRuN8XUm11k09M78WUE3u0a62jhriR4",
+              "host": "IY3080NV11J3rpF2bqiF56F10wTSD3jB9179oKo0QB3EI6wb211lNFp3e9oBjMK3GhSL9MyG0j0TrB7iBP2A0d5M5ekyF81S7BtT197iWC01PO9uikUxWyh5r1ylxxe3A4e0dxb546B3hW6nzLTLhV20MN9eo507ZU6ksyY7996Q4s5J0xYOiTXjRW16Bl0EjwuCgr430r9hLTJ0uHLxw539P5001viJXqz1Xte0Irr86DY21hR7oAp3lulvKRBfsOIarg6rooRNo9xX1lj7yoe2F2xE4LGoN9GB967nACps0IMx46q3vbf4Nd6iDeLVAcVzrrh9626Y2z3ezWG0M6hB06szb6Bi7V9K0E01l7rbF96hfNyd4s1lFg5Lk9jrBj4N3nXE666kRD0FO0XW3v2iJ70QWBmlN8k4qmo43FXD8kExn7G23wkebf0c7ypWLJqx",
+              "code": "cWJ7QuH7F7b21iE0dxzcIICM5725XnrQJY85d3MG8NgaK9C2g6vj7h3kU6L6S57Ho2M9076E6oskrS15eogDg8lJj7wKeM22cL0c3EH2N268WD6eQ6s0Z6xE3y6ep21sQUxYLC54Ly6GpKsV",
+              "permissions": [
+                "allow:localstorage",
+                "library:write",
+                "content:write",
+                "comment:write",
+                "content:read",
+                "clipboard:read",
+                "user:read"
+              ]
+            }
+          }
+        },
+        "releaseNotesViewed": "shgst"
+      }
+    },
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-profile",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_teams": {
+    "request": {},
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-teams",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_team": {
+    "request": {
+      "fileId": "3681d377-bc58-8110-8008-e76748e64cde"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-team",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_projects": {
+    "request": {
+      "teamId": "3681d377-bc58-8110-8008-e7674a1d8561"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-projects",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_project": {
+    "request": {
+      "id": "3681d377-bc58-8110-8008-e7674a1e6ad3"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-project",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "create_project": {
+    "request": {
+      "teamId": "3681d377-bc58-8110-8008-e7674a1ca7e7",
+      "name": "ebFHr5L52lj6YKNRhnbH63kcQVtoRlIAhJJ481sF26mUpFCQ078526e2f2535882sKk911rvU023WyJB8l8S6vtD4Q21Ek2oW4McH89aCEh49eCxeBSrY4a5vYlm7HEJeRiV1l5lH5WMuEj22GfFv5F9e8EDIGk7BN95QB5Wgo2lcD7M2eW5s49DQYC5UjL37FXZJ2tEpUS5L"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/create-project",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "rename_project": {
+    "request": {
+      "name": "8n8TtSZ9Vg8k38Amh04t0OJ2W5pFSnWEfr82CF9eVC5P4a6reHvr2JGaYu24M9vbTvc13Rxyml6OO5p74G8Rzh0UF63jL8uI8uk2AIhjasOBN6MDhd37f38Az8jtr1JN5Ap5WTcH6W7eJom0C1PL7MS69h",
+      "id": "3681d377-bc58-8110-8008-e76748ae21c6"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/rename-project",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "delete_project": {
+    "request": {
+      "id": "3681d377-bc58-8110-8008-e76748fb77bf"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/delete-project",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_project_files": {
+    "request": {
+      "projectId": "3681d377-bc58-8110-8008-e76748b0da85"
+    },
+    "response": [
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "styles/v2",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "tokens/numeric-input",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 23268254,
+        "name": "LxisvGrRmySLD1z4x9tvki8jL0V270tx5MB8cv9407as6Obk73nYVC1y3H1Vv66cXCh4D2T9QsIkeU91Dnb3lId0alEyRxnkXgc7brCo866s9o7KVHD4363ZelQU3TkXk74C54H39IGOUBGKqTEqb4",
+        "revn": 491,
+        "modifiedAt": "2026-11-06T11:09:36.238064694Z",
+        "vern": 15,
+        "id": "3681d377-bc58-8110-8008-e76748b166b2",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b2065d",
+        "createdAt": "2026-11-06T11:09:36.276470222Z",
+        "data": 62
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "design-tokens/v1",
+          "variants/v1",
+          "layout/grid",
+          "styles/v2",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "components/v2",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 20,
+        "name": "u",
+        "revn": 271,
+        "modifiedAt": "2026-11-06T11:09:36.271935491Z",
+        "vern": 26,
+        "id": "3681d377-bc58-8110-8008-e76748b2065e",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b2065f",
+        "createdAt": "2026-11-06T11:09:36.264003486Z",
+        "data": true
+      },
+      {
+        "features": [
+          "fdata/pointer-map",
+          "text-editor/v2",
+          "render-wasm/v1",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 46,
+        "name": "10VNNvOVHmz7U068U1r2K070xZ1G3M781d0qI5ManNQd9XL6QI9t2pAd5ydBuNSnd22twobLdYJYWo8fsMRWGZTqbj75t6JUvC1o9SzJ0ecdG1rGb99nzN0SoOKA292gI9r17eCx",
+        "revn": 1,
+        "modifiedAt": "2026-11-06T11:09:36.267851679Z",
+        "vern": 55,
+        "id": "3681d377-bc58-8110-8008-e76748b24135",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b29e17",
+        "createdAt": "2026-11-06T11:09:36.330910780Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "variants/v1",
+          "layout/grid",
+          "styles/v2",
+          "render-wasm/v1",
+          "text-editor-wasm/v1",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 19474389,
+        "name": "11lNy77Y5H1J0VmCKbRmY56Sy82dwZyQzQvIKiX14r8WoIev3sF02zF2Gt8a7j6FV727edUxm9F7LwDfz2uDuwCJmOHqL41yU0H67678HH2p1UK5bp0c8HmqHfR6",
+        "revn": 14738677,
+        "modifiedAt": "2026-11-06T11:09:36.264612249Z",
+        "vern": 50852315,
+        "id": "3681d377-bc58-8110-8008-e76748b29e18",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b33db6",
+        "createdAt": "2026-11-06T11:09:36.274682173Z"
+      },
+      {
+        "features": [
+          "plugins/runtime",
+          "design-tokens/v1",
+          "layout/grid",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "tokens/numeric-input",
+          "text-editor-wasm/v1",
+          "components/v2",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 7,
+        "name": "cDBpA68YMij4Uv2wDS2G65hT5U8IpbYVc0iCHJe6RnPTL4ePRNZ4S9xml8y568AC5u9cwEw7H4557eD8SB7W8c8ilPfL2BaXq0aOA6GqiT776GAe95p264EMcR3UTnmKCsHem12RUZfpI70S9SBc8518F5u3k7n0yiiEs89u5",
+        "revn": 318873262,
+        "modifiedAt": "2026-11-06T11:09:36.254559831Z",
+        "vern": 96547881,
+        "id": "3681d377-bc58-8110-8008-e76748b33db7",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b3c3e2",
+        "createdAt": "2026-11-06T11:09:36.242646165Z"
+      },
+      {
+        "features": [
+          "plugins/runtime",
+          "layout/grid",
+          "styles/v2",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "text-editor/v2",
+          "text-editor-wasm/v1",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 1722,
+        "name": "4y2G94vxeAhLj29Pxeq5GR8V66s4u8vVQtziBES94m5VCau1DtPS1JTrAK49pY9j9ebPbd9TxCP8Ap5E3894udGV0QJtk6wzF9H",
+        "revn": 5629,
+        "modifiedAt": "2026-11-06T11:09:36.319144567Z",
+        "vern": 2243,
+        "id": "3681d377-bc58-8110-8008-e76748b3c3e3",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b463ce",
+        "createdAt": "2026-11-06T11:09:36.275212669Z",
+        "data": -90
+      },
+      {
+        "features": [
+          "plugins/runtime",
+          "design-tokens/v1",
+          "variants/v1",
+          "layout/grid",
+          "styles/v2",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "render-wasm/v1",
+          "text-editor-wasm/v1",
+          "components/v2",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 27,
+        "name": "603bY4AASdt0nFPOtg38Y027K00h8Xj7AhR0jJ5sII93BvOwFji0Hs1C8o1AbqvM7B918rZ2sMgU1yHR3Es4zMO4btNn9914h2mh4EeDEvtMWFwWp05BgfeE9OlRcp95W4c07tOzrRu5xe4q14751h5k3ZIDCTq4UBD64SW8ru198zv7p3U09",
+        "revn": 0,
+        "modifiedAt": "2026-11-06T11:09:36.279489330Z",
+        "vern": 147773962,
+        "id": "3681d377-bc58-8110-8008-e76748b463cf",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b4df6e",
+        "createdAt": "2026-11-06T11:09:36.246585994Z",
+        "data": 0.14
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "design-tokens/v1",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "text-editor/v2",
+          "render-wasm/v1",
+          "text-editor-wasm/v1",
+          "text-editor-wasm/v1-html-paste",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 939722,
+        "name": "44U8",
+        "revn": 10,
+        "modifiedAt": "2026-11-06T11:09:36.285130795Z",
+        "vern": 18781,
+        "id": "3681d377-bc58-8110-8008-e76748b4df6f",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b51e45",
+        "createdAt": "2026-11-06T11:09:36.337189724Z",
+        "data": "jnffvvqt"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "styles/v2",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "render-wasm/v1",
+          "text-editor-wasm/v1",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 98087,
+        "name": "AdDLni8ca86a2n27MclM6Y4Lzo2iR",
+        "revn": 58130,
+        "modifiedAt": "2026-11-06T11:09:36.255821194Z",
+        "vern": 198762415,
+        "id": "3681d377-bc58-8110-8008-e76748b51e46",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b51e47",
+        "createdAt": "2026-11-06T11:09:36.333908242Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "variants/v1",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "render-wasm/v1"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 45,
+        "name": "34gQ8nD4o17k33NR7LK4jSXUn8gi095c8Q5Ht3TP26cIgQ8K",
+        "revn": 849098,
+        "modifiedAt": "2026-11-06T11:09:36.339677886Z",
+        "vern": 225,
+        "id": "3681d377-bc58-8110-8008-e76748b57b9b",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b57b9c",
+        "createdAt": "2026-11-06T11:09:36.253742320Z",
+        "data": 3.85
+      },
+      {
+        "features": [
+          "plugins/runtime",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "components/v2",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 1,
+        "name": "2EZr81fyQZOv7fgACP48u74p615811AGv9K3ELTPA844seCRa129B1UvTPXsu4ANasXyuR6y0nl42AC1v289HHDB2TmR2gk8IaryFunq",
+        "revn": 70209953,
+        "modifiedAt": "2026-11-06T11:09:36.261056461Z",
+        "vern": 6,
+        "id": "3681d377-bc58-8110-8008-e76748b57b9d",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b5c2c5",
+        "createdAt": "2026-11-06T11:09:36.278107390Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "text-editor/v2-html-paste",
+          "text-editor/v2",
+          "text-editor-wasm/v1",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 2252,
+        "name": "9bg210sl26S0386g7izu9HYvU17569zN37646H3FQb1v5xY90l21ngQmpSK3aEiFQ6SJHV3IWkBUFYFWswr23v5mvQ720le934TZieNiqET6WGtXUNR8P4LsnF5M1X08J334O48u7Dv0112ts39f6LOk0e5Xuiw3f2Cw8ECmCE1IV72uyar8CuaNgfi1U9zv96D8fo687D647qz1By9TD5wRtm7i5XnlTO5K5eD1U8y67Pj0x7",
+        "revn": 1,
+        "modifiedAt": "2026-11-06T11:09:36.291588374Z",
+        "vern": 22666,
+        "id": "3681d377-bc58-8110-8008-e76748b5c2c6",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b64b6a",
+        "createdAt": "2026-11-06T11:09:36.272642208Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "design-tokens/v1",
+          "variants/v1",
+          "layout/grid",
+          "styles/v2",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "text-editor/v2",
+          "text-editor-wasm/v1"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 367832,
+        "name": "3eljP7IUEBA0Dnlg71OYQ96Zgyde72StTw229b5i3gl8y8iWutv5IYANIHzfM5WInwDnKa8Q6lV91a52z82Hg3bGaR674EMaxRcLmJ4nF4PvM60MbeoU75l6GxcG16nlRId8g67d8Tw94Tr7RFKt6j72X2Fep5tSLbhCfm4Xfeu222qXh0go3AkuZ4d6Rns1",
+        "revn": 39155060,
+        "modifiedAt": "2026-11-06T11:09:36.286620040Z",
+        "vern": 92,
+        "id": "3681d377-bc58-8110-8008-e76748b64b6b",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b6e8ba",
+        "createdAt": "2026-11-06T11:09:36.292673554Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "layout/grid",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "tokens/numeric-input"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 49807,
+        "name": "dG3mT02ZkiXtoMJEY0PdbGLCrK7STd238CLE2lfM4psU4xx8B7ZVqYkk4WWNmZ598ZgX6Bl",
+        "revn": 52492468,
+        "modifiedAt": "2026-11-06T11:09:36.253595607Z",
+        "vern": 420,
+        "id": "3681d377-bc58-8110-8008-e76748b6e8bb",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b70acb",
+        "createdAt": "2026-11-06T11:09:36.267672242Z",
+        "data": 51
+      },
+      {
+        "features": [
+          "design-tokens/v1",
+          "styles/v2",
+          "fdata/objects-map",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "text-editor-wasm/v1",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 71117,
+        "name": "72NTiVtw1mu7e3BP85f3MixdI2PorWoi808P60A2Y0p83tsk01pFFvm5VHw5PBlcgmcwYI",
+        "revn": 0,
+        "modifiedAt": "2026-11-06T11:09:36.342534940Z",
+        "vern": 79192436,
+        "id": "3681d377-bc58-8110-8008-e76748b70acc",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748b74c91",
+        "createdAt": "2026-11-06T11:09:36.288590144Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "styles/v2",
+          "fdata/pointer-map",
+          "render-wasm/v1",
+          "text-editor-wasm/v1",
+          "text-editor-wasm/v1-html-paste",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 355,
+        "name": "mTr9D9opB48s3u7n66H3OaWdofcoF6gfXt4V5YtS5m0n79hC9vdKu66YI6Hi57o8Gx9FGCfu5Fiw6L03kiN5hHS3Jc6cIj6cXwq80oWjYS76nSOormcQBMVZ",
+        "revn": 1,
+        "modifiedAt": "2026-11-06T11:09:36.350961827Z",
+        "vern": 604937,
+        "id": "3681d377-bc58-8110-8008-e76748b74c92",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b79876",
+        "createdAt": "2026-11-06T11:09:36.278021986Z",
+        "data": true
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "design-tokens/v1",
+          "variants/v1",
+          "layout/grid",
+          "styles/v2",
+          "fdata/pointer-map",
+          "fdata/objects-map",
+          "tokens/numeric-input",
+          "render-wasm/v1"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 0,
+        "name": "072aY9KSuB05ETLGp0Vb4HF26u25FZUMCw9dM4SJxEXvW8rxnKjm1U2nYkr71ru566JuyIVW4apaWsu5fF87h8MGp0lQ3akdW9W03C1rA6OoWg70IK8WF66z5O3Jh85U6BzmG8qROx9N13W5S2nxvpt6Ax6eWObjrUca6r2DT6mlefY30gMF587R5BjuLxC107WxX36eQ41",
+        "revn": 4,
+        "modifiedAt": "2026-11-06T11:09:36.351126638Z",
+        "vern": 4,
+        "id": "3681d377-bc58-8110-8008-e76748b7edd9",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b8920f",
+        "createdAt": "2026-11-06T11:09:36.270206301Z"
+      },
+      {
+        "features": [
+          "design-tokens/v1",
+          "variants/v1",
+          "layout/grid",
+          "styles/v2",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "tokens/numeric-input",
+          "text-editor-wasm/v1",
+          "fdata/shape-data-type"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 68412962,
+        "name": "iixrHf8r49ARhDG70ZO889HvDL11pRxRIWu8JD632Z0FNl0BQQJhYzt1N8q2U5i9998H17QI8htpJR3j5O3XOQ2W5Bt6T5ci6ve7H4iR01Jf49LGIVQG",
+        "revn": 277721,
+        "modifiedAt": "2026-11-06T11:09:36.269554444Z",
+        "vern": 260,
+        "id": "3681d377-bc58-8110-8008-e76748b89210",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b8ea24",
+        "createdAt": "2026-11-06T11:09:36.305641335Z",
+        "data": "bhqb"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "variants/v1",
+          "styles/v2",
+          "fdata/pointer-map",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "components/v2",
+          "text-editor-wasm/v1-html-paste"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 511,
+        "name": "91G1c50Q8uXi49vP957tm4VHh0G3N730WXqW375UTGKDb12U3A8dTZI4S9sQel03yZZG89O5N61w7mOrVNWqs4gTAp8Oov5zF667i81L1qx0XOF22QYC0vWjLJB052hYAwshw2S2wg2TuZZQPW3pR8NLES2T3Wb4SmH8XFtY8L8r1c7XL6sV0Io9Of36DBE3rpFb3WA677F7ugz5eSA6ks3143plfhY5850ywDnj49J9hfLOZd",
+        "revn": 340069,
+        "modifiedAt": "2026-11-06T11:09:36.356934596Z",
+        "vern": 6855653,
+        "id": "3681d377-bc58-8110-8008-e76748b92be7",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b94999",
+        "createdAt": "2026-11-06T11:09:36.300987600Z"
+      },
+      {
+        "features": [
+          "plugins/runtime",
+          "variants/v1",
+          "layout/grid",
+          "fdata/pointer-map",
+          "text-editor-wasm/v1",
+          "components/v2"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 42,
+        "name": "l2yMmX3QYG3kF0h1336TzJpBwR3uYD91q8t09F9r8Af03wzk8K5T9iDN80gY5x3NacO2j7WOm201Zng9MJOsfT18443R2Ss3kdat6yopRnfsvjtdlWHmcdOU9WI8T543zDrg2879uM23",
+        "revn": 20177436,
+        "modifiedAt": "2026-11-06T11:09:36.293152072Z",
+        "vern": 108,
+        "id": "3681d377-bc58-8110-8008-e76748b980bf",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748b9f853",
+        "createdAt": "2026-11-06T11:09:36.359195633Z",
+        "data": "fbzdjo"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "design-tokens/v1",
+          "layout/grid",
+          "fdata/pointer-map",
+          "text-editor/v2-html-paste",
+          "text-editor/v2",
+          "tokens/numeric-input",
+          "text-editor-wasm/v1"
+        ],
+        "hasMediaTrimmed": false,
+        "commentThreadSeqn": 162706,
+        "name": "8795M3kpnPa17293M4pJVQN5sRyZ37u4yqSrbP0G5uO8bVyAd1O2SpApQZwI3gn3eTQlPRA04RjoS06jTj36t1MwTMNdw9Q0oed1TKrka",
+        "revn": 5895,
+        "modifiedAt": "2026-11-06T11:09:36.294167762Z",
+        "vern": 0,
+        "id": "3681d377-bc58-8110-8008-e76748b9f854",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748ba39c5",
+        "createdAt": "2026-11-06T11:09:36.359209821Z"
+      },
+      {
+        "features": [
+          "fdata/path-data",
+          "plugins/runtime",
+          "variants/v1",
+          "styles/v2",
+          "text-editor/v2-html-paste",
+          "fdata/objects-map",
+          "tokens/numeric-input",
+          "render-wasm/v1",
+          "components/v2"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 52204,
+        "name": "3880Tm9qq069ibM3M0m1yfz6V8YB5I6pAOIJMA9FRMr089ffuDOwBS9W1e9X4D3KCNX7h6jMJegkAqgJk9K6Gx6wGGo44r4Ii1S2W2wO0n0LZ66grGBc3k4kqwwpb84F5XOZcyGLQ5j3p0G3",
+        "revn": 223529,
+        "modifiedAt": "2026-11-06T11:09:36.304436225Z",
+        "vern": 11,
+        "id": "3681d377-bc58-8110-8008-e76748ba39c6",
+        "isShared": true,
+        "projectId": "3681d377-bc58-8110-8008-e76748ba6576",
+        "createdAt": "2026-11-06T11:09:36.288484003Z",
+        "data": "iqlsr"
+      },
+      {
+        "features": [
+          "plugins/runtime",
+          "layout/grid",
+          "styles/v2",
+          "tokens/numeric-input",
+          "render-wasm/v1",
+          "text-editor-wasm/v1"
+        ],
+        "hasMediaTrimmed": true,
+        "commentThreadSeqn": 9950366,
+        "name": "EaPij6Jskdm0lt4kIEmNZqZaHo9lSa8OcW660C4y34c53ezIfeOQlk5vYjsa9reZTxsQNg2lT7bTm55jiAz01xrOxB7g5ikFOIiZRgv521L5Y28ae00fE6WMfK9yV6295ZXNJT002r0yh02enq63nlien31dwflLx856T1K7DLmNN396x9r9I69Wi",
+        "revn": 30204559,
+        "modifiedAt": "2026-11-06T11:09:36.293272931Z",
+        "vern": 23,
+        "id": "3681d377-bc58-8110-8008-e76748ba6577",
+        "isShared": false,
+        "projectId": "3681d377-bc58-8110-8008-e76748bac00f",
+        "createdAt": "2026-11-06T11:09:36.358349656Z",
+        "data": "dnrgd"
+      }
+    ],
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-project-files",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_file": {
+    "request": {
+      "features": [
+        "fdata/path-data",
+        "variants/v1",
+        "layout/grid",
+        "styles/v2",
+        "text-editor/v2-html-paste",
+        "fdata/objects-map",
+        "text-editor/v2",
+        "render-wasm/v1",
+        "components/v2"
+      ],
+      "id": "3681d377-bc58-8110-8008-e76748f67e67"
+    },
+    "response": {
+      "features": [
+        "plugins/runtime",
+        "design-tokens/v1",
+        "styles/v2",
+        "fdata/objects-map",
+        "text-editor/v2",
+        "render-wasm/v1",
+        "fdata/shape-data-type"
+      ],
+      "permissions": {
+        "type": "membership",
+        "isOwner": false,
+        "isAdmin": true,
+        "canEdit": true,
+        "canRead": true,
+        "isLogged": false
+      },
+      "hasMediaTrimmed": false,
+      "commentThreadSeqn": 635916,
+      "name": "PJFb4xcJCRxPg70ya3yueM952htB1emPC0Uw587k",
+      "revn": 492619,
+      "modifiedAt": "2026-11-06T11:09:36.517411374Z",
+      "vern": 31788,
+      "id": "3681d377-bc58-8110-8008-e76748f73c3d",
+      "isShared": true,
+      "projectId": "3681d377-bc58-8110-8008-e76748f73c3e",
+      "createdAt": "2026-11-06T11:09:36.603447805Z",
+      "data": "xwxvyzc"
+    },
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-file",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "create_file": {
+    "request": {
+      "name": "7sz0n37He3w6CM5cNrnEXHLl9Y7Mcrc1Z90XM951L27z9FEL6P4e32fwHbtSdlRYeT02BSIQ4OLv8TIU4j3DfBOQqnn710fk8",
+      "projectId": "3681d377-bc58-8110-8008-e7674a282167"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/create-file",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "rename_file": {
+    "request": {
+      "name": "1y6C9AmfO47T4zgfAUOMQgnl56z30XqxUSM7A7tSLIKywg7E37vtjg369BplJZD5t3zyEUwT06n5ktte2DL49I5yo1Uo1EiuEu2Nmw6y29tXtWloic4MpSnptZlUwnH36sBsoQ1q433P5O405Hq8E5yroxU8453jwya9aI191s2fP8nw2ks1j773faJoSL4OWY03bESgG43zFZrQ0WHB3YN6moIxqv7",
+      "id": "3681d377-bc58-8110-8008-e76748e584d4"
+    },
+    "response": {
+      "id": "3681d377-bc58-8110-8008-e76748e5e0e3",
+      "name": "ZZ3ptZCv923R3U32p37K02WY5nCsWA4GZ5ZU72a4D85fTS6Wpj16gJ4Bmv1f4M7Wy7ut2o8zP032MMR0G4Lje19d5MF6pCv74PX51V2HfG3JNq6bPew0TMdrqB7DP7o2d2M07RigubR2Y26H1mq6E1VVP0VYRyX5VaSYhDrCs1eEhB9EPDfyY2A71DmV42Svl0MHnD2wsiUSyX752z6K0cl5k0b3qDCPJ9sYNqYRvZavYQMTYBA89404",
+      "createdAt": "2026-11-06T11:09:36.529172143Z",
+      "modifiedAt": "2026-11-06T11:09:36.531199818Z"
+    },
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/rename-file",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "delete_file": {
+    "request": {
+      "id": "3681d377-bc58-8110-8008-e7674a287f89"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/delete-file",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "duplicate_file": {
+    "request": {
+      "fileId": "3681d377-bc58-8110-8008-e76748a3fa4d"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/duplicate-file",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_file_libraries": {
+    "request": {
+      "fileId": "3681d377-bc58-8110-8008-e76748dffdab"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-file-libraries",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "link_file_to_library": {
+    "request": {
+      "fileId": "3681d377-bc58-8110-8008-e7674a1c614c",
+      "libraryId": "3681d377-bc58-8110-8008-e7674a1c614d"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/link-file-to-library",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "unlink_file_from_library": {
+    "request": {
+      "fileId": "3681d377-bc58-8110-8008-e7674a1e6acf",
+      "libraryId": "3681d377-bc58-8110-8008-e7674a1e6ad0"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/unlink-file-from-library",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "search_files": {
+    "request": {
+      "teamId": "3681d377-bc58-8110-8008-e7674a279397",
+      "searchTerm": "sGG12LOZP2KwkH98M1nZijpnQfft6yxDp7FGUrXq7dDXa4fi9Hh6s73UTTsLQ4zx617I53Ggl7XXCX5qaO0U7Qo598RrF90qgv2uPj9oSPzrA2q1O7ki1cBcb1p5dL5Sy3fHafzI7pw1vKgwrftwKwVrlwz1hZ1320gV1lr6J2i2F2bNxAkCYWfzH7Fb83W981Sn47nQx5"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/search-files",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "get_team_members": {
+    "request": {
+      "teamId": "3681d377-bc58-8110-8008-e76748bcb56a"
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/get-team-members",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  },
+  "set_file_shared": {
+    "request": {
+      "id": "3681d377-bc58-8110-8008-e76748fd96c6",
+      "isShared": false
+    },
+    "response": null,
+    "source": "https://design.penpot.app/api/main/doc/openapi.json",
+    "url": "https://design.penpot.app/api/main/methods/set-file-shared",
+    "url_source": "https://design.penpot.app/api/main/doc"
+  }
+}

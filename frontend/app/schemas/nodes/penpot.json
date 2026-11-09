@@ -1,0 +1,717 @@
+{
+  "$defs": {
+    "PenpotCreateFile": {
+      "additionalProperties": false,
+      "description": "Create file.",
+      "properties": {
+        "operation": {
+          "const": "create_file",
+          "default": "create_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 250,
+          "title": "Name",
+          "type": "string"
+        },
+        "projectId": {
+          "format": "uuid",
+          "title": "Project id (UUID)",
+          "type": "string"
+        },
+        "isShared": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is shared"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Penpot feature flags; leave unset to use the server defaults.",
+          "title": "Features"
+        }
+      },
+      "required": [
+        "name",
+        "projectId"
+      ],
+      "title": "PenpotCreateFile",
+      "type": "object"
+    },
+    "PenpotCreateProject": {
+      "additionalProperties": false,
+      "description": "Create project.",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamId": {
+          "format": "uuid",
+          "title": "Team id (UUID)",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamId",
+        "name"
+      ],
+      "title": "PenpotCreateProject",
+      "type": "object"
+    },
+    "PenpotDeleteFile": {
+      "additionalProperties": false,
+      "description": "Delete file.",
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PenpotDeleteFile",
+      "type": "object"
+    },
+    "PenpotDeleteProject": {
+      "additionalProperties": false,
+      "description": "Delete project.",
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PenpotDeleteProject",
+      "type": "object"
+    },
+    "PenpotDuplicateFile": {
+      "additionalProperties": false,
+      "description": "Duplicate a single file in the same team.",
+      "properties": {
+        "operation": {
+          "const": "duplicate_file",
+          "default": "duplicate_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fileId": {
+          "format": "uuid",
+          "title": "File id (UUID)",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "fileId"
+      ],
+      "title": "PenpotDuplicateFile",
+      "type": "object"
+    },
+    "PenpotGetFile": {
+      "additionalProperties": false,
+      "description": "Retrieve a file by its ID. Only authenticated users.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Penpot feature flags; leave unset to use the server defaults.",
+          "title": "Features"
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PenpotGetFile",
+      "type": "object"
+    },
+    "PenpotGetFileLibraries": {
+      "additionalProperties": false,
+      "description": "Get libraries used by the specified file.",
+      "properties": {
+        "operation": {
+          "const": "get_file_libraries",
+          "default": "get_file_libraries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fileId": {
+          "format": "uuid",
+          "title": "File id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fileId"
+      ],
+      "title": "PenpotGetFileLibraries",
+      "type": "object"
+    },
+    "PenpotGetProfile": {
+      "additionalProperties": false,
+      "description": "Get profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "PenpotGetProfile",
+      "type": "object"
+    },
+    "PenpotGetProject": {
+      "additionalProperties": false,
+      "description": "Get project.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PenpotGetProject",
+      "type": "object"
+    },
+    "PenpotGetProjectFiles": {
+      "additionalProperties": false,
+      "description": "Get all files for the specified project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_files",
+          "default": "get_project_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "projectId": {
+          "format": "uuid",
+          "title": "Project id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "PenpotGetProjectFiles",
+      "type": "object"
+    },
+    "PenpotGetProjects": {
+      "additionalProperties": false,
+      "description": "Get projects.",
+      "properties": {
+        "operation": {
+          "const": "get_projects",
+          "default": "get_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamId": {
+          "format": "uuid",
+          "title": "Team id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
+      "title": "PenpotGetProjects",
+      "type": "object"
+    },
+    "PenpotGetTeam": {
+      "additionalProperties": false,
+      "description": "Get a team by its ID or by a file it contains.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Team ID (UUID)"
+        },
+        "fileId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File ID (UUID)"
+        }
+      },
+      "title": "PenpotGetTeam",
+      "type": "object"
+    },
+    "PenpotGetTeamMembers": {
+      "additionalProperties": false,
+      "description": "Get team members.",
+      "properties": {
+        "operation": {
+          "const": "get_team_members",
+          "default": "get_team_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamId": {
+          "format": "uuid",
+          "title": "Team id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
+      "title": "PenpotGetTeamMembers",
+      "type": "object"
+    },
+    "PenpotGetTeams": {
+      "additionalProperties": false,
+      "description": "Get teams.",
+      "properties": {
+        "operation": {
+          "const": "get_teams",
+          "default": "get_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "PenpotGetTeams",
+      "type": "object"
+    },
+    "PenpotLinkFileToLibrary": {
+      "additionalProperties": false,
+      "description": "Link a file to a library. Returns the recursive list of libraries used by that library",
+      "properties": {
+        "operation": {
+          "const": "link_file_to_library",
+          "default": "link_file_to_library",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fileId": {
+          "format": "uuid",
+          "title": "File id (UUID)",
+          "type": "string"
+        },
+        "libraryId": {
+          "format": "uuid",
+          "title": "Library id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fileId",
+        "libraryId"
+      ],
+      "title": "PenpotLinkFileToLibrary",
+      "type": "object"
+    },
+    "PenpotRenameFile": {
+      "additionalProperties": false,
+      "description": "Rename file.",
+      "properties": {
+        "operation": {
+          "const": "rename_file",
+          "default": "rename_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "id"
+      ],
+      "title": "PenpotRenameFile",
+      "type": "object"
+    },
+    "PenpotRenameProject": {
+      "additionalProperties": false,
+      "description": "Rename project.",
+      "properties": {
+        "operation": {
+          "const": "rename_project",
+          "default": "rename_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "id"
+      ],
+      "title": "PenpotRenameProject",
+      "type": "object"
+    },
+    "PenpotSearchFiles": {
+      "additionalProperties": false,
+      "description": "Search files.",
+      "properties": {
+        "operation": {
+          "const": "search_files",
+          "default": "search_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamId": {
+          "format": "uuid",
+          "title": "Team id (UUID)",
+          "type": "string"
+        },
+        "searchTerm": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search term"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
+      "title": "PenpotSearchFiles",
+      "type": "object"
+    },
+    "PenpotSetFileShared": {
+      "additionalProperties": false,
+      "description": "Set file shared.",
+      "properties": {
+        "operation": {
+          "const": "set_file_shared",
+          "default": "set_file_shared",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id (UUID)",
+          "type": "string"
+        },
+        "isShared": {
+          "title": "Is shared",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "isShared"
+      ],
+      "title": "PenpotSetFileShared",
+      "type": "object"
+    },
+    "PenpotTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "penpot_token",
+          "default": "penpot_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Penpot Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Penpot, open Your account > Integrations > Personal access tokens. Create a token, choose its expiration, and paste the token here. It gives access to your account until it expires or you delete it.",
+      "x-credential-url": "https://design.penpot.app/#/settings/access-tokens"
+    },
+    "PenpotUnlinkFileFromLibrary": {
+      "additionalProperties": false,
+      "description": "Unlink file from library.",
+      "properties": {
+        "operation": {
+          "const": "unlink_file_from_library",
+          "default": "unlink_file_from_library",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fileId": {
+          "format": "uuid",
+          "title": "File id (UUID)",
+          "type": "string"
+        },
+        "libraryId": {
+          "format": "uuid",
+          "title": "Library id (UUID)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fileId",
+        "libraryId"
+      ],
+      "title": "PenpotUnlinkFileFromLibrary",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_file": "#/$defs/PenpotCreateFile",
+          "create_project": "#/$defs/PenpotCreateProject",
+          "delete_file": "#/$defs/PenpotDeleteFile",
+          "delete_project": "#/$defs/PenpotDeleteProject",
+          "duplicate_file": "#/$defs/PenpotDuplicateFile",
+          "get_file": "#/$defs/PenpotGetFile",
+          "get_file_libraries": "#/$defs/PenpotGetFileLibraries",
+          "get_profile": "#/$defs/PenpotGetProfile",
+          "get_project": "#/$defs/PenpotGetProject",
+          "get_project_files": "#/$defs/PenpotGetProjectFiles",
+          "get_projects": "#/$defs/PenpotGetProjects",
+          "get_team": "#/$defs/PenpotGetTeam",
+          "get_team_members": "#/$defs/PenpotGetTeamMembers",
+          "get_teams": "#/$defs/PenpotGetTeams",
+          "link_file_to_library": "#/$defs/PenpotLinkFileToLibrary",
+          "rename_file": "#/$defs/PenpotRenameFile",
+          "rename_project": "#/$defs/PenpotRenameProject",
+          "search_files": "#/$defs/PenpotSearchFiles",
+          "set_file_shared": "#/$defs/PenpotSetFileShared",
+          "unlink_file_from_library": "#/$defs/PenpotUnlinkFileFromLibrary"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PenpotGetProfile"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetTeams"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetTeam"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetProjects"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetProject"
+        },
+        {
+          "$ref": "#/$defs/PenpotCreateProject"
+        },
+        {
+          "$ref": "#/$defs/PenpotRenameProject"
+        },
+        {
+          "$ref": "#/$defs/PenpotDeleteProject"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetProjectFiles"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetFile"
+        },
+        {
+          "$ref": "#/$defs/PenpotCreateFile"
+        },
+        {
+          "$ref": "#/$defs/PenpotRenameFile"
+        },
+        {
+          "$ref": "#/$defs/PenpotDeleteFile"
+        },
+        {
+          "$ref": "#/$defs/PenpotDuplicateFile"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetFileLibraries"
+        },
+        {
+          "$ref": "#/$defs/PenpotLinkFileToLibrary"
+        },
+        {
+          "$ref": "#/$defs/PenpotUnlinkFileFromLibrary"
+        },
+        {
+          "$ref": "#/$defs/PenpotSearchFiles"
+        },
+        {
+          "$ref": "#/$defs/PenpotGetTeamMembers"
+        },
+        {
+          "$ref": "#/$defs/PenpotSetFileShared"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PenpotTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Penpot Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
