@@ -1,0 +1,4137 @@
+{
+  "source": "https://www.postman.com/collections/6878708-927efeee-a632-465f-9101-1ff0afa4b1a4",
+  "collection_sha256": "608575ebf6b31d4021a320d4ddbff96d86a9d91b92ad0d341fcef3014bd05311",
+  "operations": {
+    "get_environment": {
+      "collection_item_id": "cc50f340-66a4-4293-a051-024f3bc8e053",
+      "name": "Retrieve environment information",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id"
+          ],
+          "variable": [
+            {
+              "id": "8e455f81-f18d-4e85-9e70-e6d50302ba96",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve the ID and display name of your project's environment. Using this endpoint, you can also validate your [Management API key](https://kontent.ai/learn/link-to/id/f1d8684c-2037-4478-a723-e606f075aae4)."
+      },
+      "responses": [
+        {
+          "id": "ca00475f-4977-4c40-9827-e7917f9dde3a",
+          "name": "Information about the specified environment.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"id\": \"8d20758c-d74c-4f59-ae04-ee928c0816b7\",\n  \"name\": \"Sample project\",\n  \"environment\": \"Production\",\n  \"is_production\": true\n}"
+        },
+        {
+          "id": "aec3191d-67da-486b-8081-58e2abe8e06c",
+          "name": "The requested environment doesn't exist.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Forbidden",
+          "code": 403,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"0c7e480c5894d4be\",\n  \"error_code\": 4,\n  \"message\": \"The specified API key does not provide the permissions required to access the project.\"\n}"
+        }
+      ]
+    },
+    "list_items": {
+      "collection_item_id": "2bb79aa6-7315-428d-95e3-f9e1476dec4e",
+      "name": "List content items",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+            "key": "x-continuation",
+            "value": "<string>",
+            "disabled": true
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items"
+          ],
+          "variable": [
+            {
+              "id": "a972b690-9342-40c5-a6f4-ca51abd975bd",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve a dynamically paginated list of content items."
+      },
+      "responses": [
+        {
+          "id": "ebbd90ec-a6ff-4058-a20c-0a2121cc20cd",
+          "name": "A dynamically paginated list of content items.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"items\": [\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  ],\n  \"pagination\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}"
+        },
+        {
+          "id": "64476c35-35ee-4a55-b557-8c11a5e464df",
+          "name": "The specified continuation token is incorrect.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|9d8951f5b06a1947a8f1d042c590662a.81f7e2f_\",\n  \"error_code\": 1007,\n  \"message\": \"Query parameter 'continuationToken' is invalid. Please include the valid token specified in the pagination response.\"\n}"
+        }
+      ]
+    },
+    "get_item": {
+      "collection_item_id": "cebca65d-1959-4b41-89e2-0e5d0a9ec766",
+      "name": "Retrieve a content item",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier"
+          ],
+          "variable": [
+            {
+              "id": "f39be0ac-5c68-479c-8beb-375979456aab",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "34b36e51-2ec0-4372-bd96-ac48378ff383",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            }
+          ]
+        },
+        "description": "Retrieve metadata about a content item.\n\nIf you want to retrieve content data, see how to [retrieve language variants of a content item](https://kontent.ai/learn/link-to/id/5cd82cab-32eb-46a4-8551-621656c7094a)."
+      },
+      "responses": [
+        {
+          "id": "dfb7ed5b-7381-4ebd-9c54-8eced76b6b18",
+          "name": "The specified content item.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"name\": \"My article\",\n  \"type\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"id\": \"335d17ac-b6ba-4c6a-ae31-23c1193215cb\",\n  \"codename\": \"my_article\",\n  \"collection\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"spaces\": [\n    {},\n    {}\n  ],\n  \"external_id\": \"custom-identifier-for-my-article\",\n  \"last_modified\": \"2023-04-04T13:45:30.7692802Z\"\n}"
+        },
+        {
+          "id": "bcc43590-8cae-43c5-a069-1f4c97e8e2ef",
+          "name": "The specified content item was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-8918-0080000000cd\",\n  \"error_code\": 100,\n  \"message\": \"The requested content item '59713' was not found.\"\n}"
+        }
+      ]
+    },
+    "update_item": {
+      "collection_item_id": "e27ca8d4-c287-49d9-b153-7064a9e670d9",
+      "name": "Upsert a content item",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"codename\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"collection\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"sitemap_locations\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier"
+          ],
+          "variable": [
+            {
+              "id": "de476e22-cd4b-4d0f-a87e-5327aad4becf",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "97d8b407-3e24-4bcb-90f2-bb6de542bb9f",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`).\n\n\n\n<div class=\"callout callout--info\">\n\n**External IDs**\n\nIf the provided external ID is not used by an existing content item, the API will try to create a new item.\n\nIf the content item specified by the external ID already exists, the properties specified in the request body will be updated.</div>\n\n"
+            }
+          ]
+        },
+        "description": "Update or create a content item.\n\n* To update a content item, you need to identify the existing item by its internal ID, external ID, or codename.\n* To create a content item, you need to specify the [external ID](https://kontent.ai/learn/link-to/id/39ee23e8-c352-4966-b48d-7b312da3100e) as the item's identifier. You can also specify external ID when [adding content items](https://kontent.ai/learn/link-to/id/b65b450a-9c53-432b-a157-9623c951bd7a).\n\n\n\n<div class=\"callout callout--info\">\n\nContent items don't contain any content themselves directly. They serve as wrappers for [language variants](https://kontent.ai/learn/link-to/id/153c924f-ed81-4236-8cfb-7937329654d8). Language variants hold the items' content even in [environments](https://kontent.ai/learn/link-to/id/c3f2cd46-66af-4191-a3dd-41c80eb2dcba) with a single language.\n\nTo change the content in content items, [upsert their specific language variant](https://kontent.ai/learn/link-to/id/9de98072-589d-4076-a8bc-688c86ac0a4c).</div>\n\n"
+      },
+      "responses": [
+        {
+          "id": "85a1e40c-c3ab-430a-a611-4131844781f7",
+          "name": "The updated content item.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`).\n\n\n\n<div class=\"callout callout--info\">\n\n**External IDs**\n\nIf the provided external ID is not used by an existing content item, the API will try to create a new item.\n\nIf the content item specified by the external ID already exists, the properties specified in the request body will be updated.</div>\n\n"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"id\": \"335d17ac-b6ba-4c6a-ae31-23c1193215cb\",\n  \"name\": \"My new article\",\n  \"codename\": \"my_article\",\n  \"type\": {\n    \"id\": \"b7aa4a53-d9b1-48cf-b7a6-ed0b182c4b89\"\n  },\n  \"collection\": {\n    \"id\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"spaces\": [\n    {\n      \"id\": \"dcbf90fb-7135-4465-8102-b3e739821ed8\"\n    },\n    {\n      \"id\": \"39efe8a4-23d2-4d3a-8dfb-07789668474f\"\n    }\n  ],\n  \"sitemap_locations\": [],\n  \"last_modified\": \"2020-04-04T13:45:30.7692802Z\"\n}"
+        },
+        {
+          "id": "1db1db42-04ca-4573-9c10-e20756442bac",
+          "name": "The specified content item was created.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`).\n\n\n\n<div class=\"callout callout--info\">\n\n**External IDs**\n\nIf the provided external ID is not used by an existing content item, the API will try to create a new item.\n\nIf the content item specified by the external ID already exists, the properties specified in the request body will be updated.</div>\n\n"
+                }
+              ]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"id\": \"335d17ac-b6ba-4c6a-ae31-23c1193215cb\",\n  \"name\": \"My new article\",\n  \"codename\": \"my_article\",\n  \"type\": {\n    \"id\": \"b7aa4a53-d9b1-48cf-b7a6-ed0b182c4b89\"\n  },\n  \"collection\": {\n    \"id\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"spaces\": [\n    {\n      \"id\": \"dcbf90fb-7135-4465-8102-b3e739821ed8\"\n    },\n    {\n      \"id\": \"39efe8a4-23d2-4d3a-8dfb-07789668474f\"\n    }\n  ],\n  \"sitemap_locations\": [],\n  \"external_id\": \"custom-identifier-for-my-article\",\n  \"last_modified\": \"2020-04-04T13:45:30.7692802Z\"\n}"
+        },
+        {
+          "id": "a808725c-d1c0-49da-86db-45977b169804",
+          "name": "The specified request body is invalid.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`).\n\n\n\n<div class=\"callout callout--info\">\n\n**External IDs**\n\nIf the provided external ID is not used by an existing content item, the API will try to create a new item.\n\nIf the content item specified by the external ID already exists, the properties specified in the request body will be updated.</div>\n\n"
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-8805-0080000000bf\",\n  \"error_code\": 5,\n  \"message\": \"The provided request body is invalid. See the 'validation_errors' attribute for more information and specify a valid JSON object.\",\n  \"validation_errors\": [\n    {\n      \"message\": \"Property 'id' must be a valid Guid identifier.\",\n      \"path\": \"type\",\n      \"line\": 6,\n      \"position\": 2\n    }\n  ]\n}"
+        }
+      ]
+    },
+    "delete_item": {
+      "collection_item_id": "d3644ae5-9a0a-4718-a305-6ad7cfd8892e",
+      "name": "Delete a content item",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier"
+          ],
+          "variable": [
+            {
+              "id": "e8faffe1-3e75-4d7f-b69d-58ce81feb4a8",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "22e19632-7f85-4773-8383-dd06309a11a1",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            }
+          ]
+        },
+        "description": "Delete a content item.\n\nIf you only want to delete a specific language variant, see how to [delete a language variant](https://kontent.ai/learn/link-to/id/06fc9ccb-bdc3-4efb-bcf0-324421ac676a).\n\n\n\n<div class=\"callout callout--info\">\n\nWhen you delete the last variant of a content item, the whole content item is deleted.</div>\n\n"
+      },
+      "responses": [
+        {
+          "id": "8ddf912a-8dca-4893-a513-e31b9c2e9d27",
+          "name": "The specified content item was deleted from the environment.",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "c02a3ae6-035b-43ca-a07d-83bd08992d4f",
+          "name": "The specified content item was not found.",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"2d2803b7-9b67-4bd8-b3d2-436aa077827f\",\n  \"error_code\": 100,\n  \"message\": \"The requested content item 'f4b3fc05-e988-4dae-9ac1-a94aba566474' was not found.\"\n}"
+        }
+      ]
+    },
+    "list_variants": {
+      "collection_item_id": "9828d14b-11be-4f44-a044-6797345ba6ce",
+      "name": "Retrieve language variants of an item",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants"
+          ],
+          "variable": [
+            {
+              "id": "ebfdaec0-e029-4a80-b67d-ffe15c2288dd",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "6f2cef18-8a9c-4b28-a854-f97eb7fa5a23",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            }
+          ]
+        },
+        "description": "Retrieve a list of [language variants](https://kontent.ai/learn/link-to/id/153c924f-ed81-4236-8cfb-7937329654d8) of a content item.\n\nWhen retrieving variants, the API returns their latest versions. For example, if the variant contains both the draft and published versions, the API returns the draft version because it's considered the latest.\n\nIf you want to retrieve metadata information about the parent content item, see how to [Retrieve a content item](https://kontent.ai/learn/link-to/id/94197e9b-75b2-47f4-949e-dafe593df131)."
+      },
+      "responses": [
+        {
+          "id": "a26663d8-da5b-4508-9b0e-727ad532f8bd",
+          "name": "Array of language variants for the specified content item.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "[\n  {\n    \"elements\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"workflow\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"workflow_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"item\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"language\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"last_modified\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"schedule\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"contributors\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"due_date\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"note\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  }\n]"
+        },
+        {
+          "id": "81c334ff-6127-486f-b258-2646409d92aa",
+          "name": "The specified content item was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-9105-0080000000bf\",\n  \"error_code\": 100,\n  \"message\": \"The requested content item '4db9f4da-827b-4400-87c9-c47d44fba65d' was not found.\"\n}"
+        }
+      ]
+    },
+    "get_variant": {
+      "collection_item_id": "d3c8c70d-fe36-468b-a44e-53e86bada7ae",
+      "name": "Retrieve the latest language variant",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants",
+            ":language_identifier"
+          ],
+          "variable": [
+            {
+              "id": "15270faf-9bcb-479b-9976-11ec5d5c7aea",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "e6507ab1-c67f-4692-9efa-098a796edb37",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            },
+            {
+              "id": "d1fa435a-4ca7-4e04-b1ce-bf1d82d07cec",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+            }
+          ]
+        },
+        "description": "Retrieve the latest available version of the specified [language variant](https://kontent.ai/learn/link-to/id/153c924f-ed81-4236-8cfb-7937329654d8) of a [content item](https://kontent.ai/learn/link-to/id/087d28e4-8b1a-4310-93ac-cdf704414125). You can also explicitly [retrieve the latest published version of the variant](https://kontent.ai/learn/link-to/id/38afb421-4cf2-4e34-8fd2-88841b636c1a).\n\nWhen retrieving variants, the API returns their latest versions. For example, if the variant contains both the draft and published versions, the API returns the draft version because it's considered the latest."
+      },
+      "responses": [
+        {
+          "id": "b2eb2ae9-369b-4796-8992-ec3cdfe25f50",
+          "name": "Language variant for the specified language and content item.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"elements\": [\n    {\n      \"element\": {},\n      \"value\": \"Text element value\"\n    },\n    {\n      \"mode\": \"custom\",\n      \"element\": {},\n      \"value\": \"custom-url-slug-value\"\n    }\n  ],\n  \"workflow\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"workflow_step\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"item\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"language\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"last_modified\": \"2020-02-27T19:08:25.404Z\",\n  \"schedule\": {\n    \"publish_time\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"publish_display_timezone\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"unpublish_time\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"unpublish_display_timezone\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"contributors\": [\n    {}\n  ],\n  \"due_date\": {\n    \"value\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"note\": \"This content is waiting for a legal review.\"\n}"
+        },
+        {
+          "id": "b509afa7-b613-4fd0-aa71-8a1f38dce159",
+          "name": "The specified language variant was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|34b4f5ab4fb3f54bbd72877d98f3121c.d1a27a5_\",\n  \"error_code\": 0,\n  \"message\": \"The requested content item 'getting_contents' was not found.\"\n}"
+        }
+      ]
+    },
+    "get_published_variant": {
+      "collection_item_id": "8c883e04-dc2c-41f5-ae60-1104b06124f0",
+      "name": "Retrieve the published language variant",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/published",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants",
+            ":language_identifier",
+            "published"
+          ],
+          "variable": [
+            {
+              "id": "340b928a-1531-4129-9134-f17eb74f3336",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "31a66fca-067d-4f98-829c-fb33e17dc9fc",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            },
+            {
+              "id": "e26b5fcf-cc52-4eaf-ab6e-9c5bd305cfd9",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+            }
+          ]
+        },
+        "description": "Retrieve the currently published version of the specified [language variant](https://kontent.ai/learn/link-to/id/153c924f-ed81-4236-8cfb-7937329654d8) of a [content item](https://kontent.ai/learn/link-to/id/087d28e4-8b1a-4310-93ac-cdf704414125). You can also [retrieve the latest available version of the variant](https://kontent.ai/learn/link-to/id/9362d5ed-0819-46dd-aaa9-48c62f56e3f3)."
+      },
+      "responses": [
+        {
+          "id": "e6e9c57d-05e6-44c3-a2b0-bfbca4ac8e75",
+          "name": "The currently published language variant of the specified content item.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/published",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "published"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"elements\": [\n    {\n      \"element\": {},\n      \"value\": \"Text element value\"\n    },\n    {\n      \"mode\": \"custom\",\n      \"element\": {},\n      \"value\": \"custom-url-slug-value\"\n    }\n  ],\n  \"workflow\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"workflow_step\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"item\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"language\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"last_modified\": \"2020-02-27T19:08:25.404Z\",\n  \"schedule\": {\n    \"publish_time\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"publish_display_timezone\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"unpublish_time\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"unpublish_display_timezone\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"contributors\": [\n    {}\n  ],\n  \"due_date\": {\n    \"value\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"note\": \"This content is waiting for a legal review.\"\n}"
+        },
+        {
+          "id": "38b782a9-42fd-4146-bb27-16ba2fce945a",
+          "name": "The specified variant doesn't have a published version.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/published",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "published"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"03be983088326f1b\",\n  \"error_code\": 122,\n  \"message\": \"The requested variant '00000000-0000-0000-0000-000000000000' of content item '1fae99ea-3939-4b05-9171-0e39767aca80' has no published version.\"\n}"
+        }
+      ]
+    },
+    "delete_variant": {
+      "collection_item_id": "44e083b5-c446-42e5-8352-bde58a7ff284",
+      "name": "Delete a language variant",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants",
+            ":language_identifier"
+          ],
+          "variable": [
+            {
+              "id": "c6f883df-15bb-474f-872c-fe7044a789d8",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "08e7303a-4a48-4810-8902-add14f5d9e02",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            },
+            {
+              "id": "8d6c0d4f-d1af-46a7-913f-c37a7930f7d0",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+            }
+          ]
+        },
+        "description": "Deletes a specific [language variant](https://kontent.ai/learn/link-to/id/153c924f-ed81-4236-8cfb-7937329654d8). If you want to delete all language variants of a content item, see how to [Delete a content item](https://kontent.ai/learn/link-to/id/6c16a4ae-2b0c-4080-92c9-918e0fca3d5d).\n\n\n\n<div class=\"callout callout--info\">\n\nWhen you delete the last variant of a content item, the whole content item is deleted.</div>\n\n"
+      },
+      "responses": [
+        {
+          "id": "e04d7560-7789-4564-bc50-5b2fcf1c86df",
+          "name": "The specified language variant was deleted.",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "97a69bfd-7196-46ed-bbe5-8675cae4f6d1",
+          "name": "The specified language variant was not found.",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-c813-0080000000c3\",\n  \"error_code\": 103,\n  \"message\": \"The requested content item variant was not found.\"\n}"
+        }
+      ]
+    },
+    "create_variant_version": {
+      "collection_item_id": "ac5c7524-a849-40db-b6fe-bc40a899f2eb",
+      "name": "Create a new version of a language variant",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/new-version",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants",
+            ":language_identifier",
+            "new-version"
+          ],
+          "variable": [
+            {
+              "id": "e0dce32c-cbbb-46eb-8c71-9b54037d5b68",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "ade60a7d-df34-4d6d-a8cb-2bcbc6fbf51b",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+            },
+            {
+              "id": "1463d7dd-b6ec-435b-b5ba-8bc5da97c669",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            }
+          ]
+        },
+        "description": "Create a new version of a published language variant while keeping the original version published and available via [Delivery API](https://kontent.ai/learn/link-to/id/1db12301-a138-44bb-a06a-bc3e655c098a). This is the same as [creating new versions](https://kontent.ai/learn/link-to/id/dcd8c96c-77ff-4fd4-a2da-c7705831b8f6) in the UI.\n\nYou can only create new versions of published language variants that don't already have an existing Draft (unpublished) version."
+      },
+      "responses": [
+        {
+          "id": "18ddfbba-f0a9-4113-a0b6-5908231c5af6",
+          "name": "A new version of the specified published language variant was created.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/new-version",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "new-version"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "18a22e53-7921-4d73-963d-81ee2aaeca15",
+          "name": "The specified language variant is not published.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/new-version",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "new-version"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"550c4c30-1b9c-4fe4-8140-a9cda5cd7c11\",\n  \"error_code\": 214,\n  \"message\": \"Cannot create a new version of a language variant that is not published.\"\n}"
+        },
+        {
+          "id": "c164d415-cca9-4ae2-8514-5f309777ef56",
+          "name": "The specified language variant was not found.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/new-version",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "new-version"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"0d49e996-3543-45ac-8af5-62f142eb64d4\",\n  \"error_code\": 103,\n  \"message\": \"The requested content item variant was not found.\"\n}"
+        }
+      ]
+    },
+    "publish_variant": {
+      "collection_item_id": "9ef9f7f6-bb4f-4918-8cdf-7bb65cb014bb",
+      "name": "Publish or schedule a language variant",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scheduled_to\": \"<dateTime>\",\n  \"display_timezone\": \"<string>\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/publish",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants",
+            ":language_identifier",
+            "publish"
+          ],
+          "variable": [
+            {
+              "id": "eb834c3a-5345-4a94-acb9-96b5b3fa1a69",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "6c5ac87c-39c7-4d82-965a-ff6497a332f1",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            },
+            {
+              "id": "74430e80-a650-4c00-b305-9a6c8f070e48",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+            }
+          ]
+        },
+        "description": "Change the workflow step of the specified language variant to \"Published\" or schedule the variant to be published at a specific date and time.\n\n* Equivalent to [publishing](https://kontent.ai/learn/link-to/id/fc78b528-9249-4a6b-8bb3-0ab121696f2a) and [scheduling](https://kontent.ai/learn/link-to/id/807db2f1-e413-4697-9ae7-6d4f9ad32e58) content in the UI.\n* The API follows the [workflow transition](https://kontent.ai/learn/link-to/id/9a4df3f8-4568-4830-be6d-f864e6509475) restrictions based on the variant's [workflow](https://kontent.ai/learn/link-to/id/d9aef4af-94c2-4376-a173-13b1c3f041ba). This means you can publish or schedule the variant (that is, move the variant to the Publish or Scheduled steps) only if the workflow allows you to.\n* Scheduling a published language variant has no effect."
+      },
+      "responses": [
+        {
+          "id": "998237fa-d9f1-467f-be6a-f6840f6956f7",
+          "name": "The specified language variant was published or scheduled.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/publish",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "publish"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "df4deeff-b7c1-4bbc-a9b5-a37c7124011f",
+          "name": "Selected schedule publish date is in the past",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/publish",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "publish"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"bf6cc72a3efc514d\",\n  \"error_code\": 5,\n  \"message\": \"The provided request body is invalid. See 'validation_errors' for more information and specify a valid JSON object.\",\n  \"validation_errors\": [\n    {\n      \"message\": \"The provided date-time value needs to be in the future.\",\n      \"path\": \"scheduled_to\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "d7064df9-b5e2-4ae4-913d-24afc253385b",
+          "name": "The specified language variant was not found.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/publish",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "publish"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"0d49e996-3543-45ac-8af5-62f142eb64d4\",\n  \"error_code\": 103,\n  \"message\": \"The requested content item variant was not found.\"\n}"
+        }
+      ]
+    },
+    "unpublish_variant": {
+      "collection_item_id": "9d7e8d0c-5b5c-439f-a88c-2c94e2eecee7",
+      "name": "Unpublish or schedule unpublishing of a language variant",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scheduled_to\": \"<dateTime>\",\n  \"display_timezone\": \"<string>\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/unpublish-and-archive",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "items",
+            ":item_identifier",
+            "variants",
+            ":language_identifier",
+            "unpublish-and-archive"
+          ],
+          "variable": [
+            {
+              "id": "126b6d0d-4cc3-4eb1-8385-df052d18d7fa",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "f6e19c1e-a301-4939-acf5-b41567fc293b",
+              "key": "item_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+            },
+            {
+              "id": "bf70d7c9-4565-44dc-88ae-9363863d3140",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+            }
+          ]
+        },
+        "description": "Unpublish the specified language variant and change its workflow step to \"Archived\" or schedule these operations.\n\n* Equivalent to the UI operations of unpublishing and adding an unpublish date.\n* You can unpublish only a published language variant.\n* You can schedule for unpublishing only variants that are published or scheduled for publishing."
+      },
+      "responses": [
+        {
+          "id": "d6673264-4133-4301-aae2-78efd278fffa",
+          "name": "The specified language variant was unpublished or scheduled for unpublishing.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/unpublish-and-archive",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "unpublish-and-archive"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "30ca26df-6730-4571-b146-d93c3fba4fab",
+          "name": "The specified time zone is not a valid IANA time zone.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/unpublish-and-archive",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "unpublish-and-archive"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"5ea183ec21712c08\",\n  \"error_code\": 5,\n  \"message\": \"The provided request body is invalid. See 'validation_errors' for more information and specify a valid JSON object.\",\n  \"validation_errors\": [\n    {\n      \"message\": \"Time zone name must be valid according to the IANA specification. See https://kontent.ai/learn/reference/management-api-v2 for details.\",\n      \"path\": \"display_timezone\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "9bda33f2-1271-4595-9c8d-351962bd8056",
+          "name": "The specified language variant was not found.",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/items/:item_identifier/variants/:language_identifier/unpublish-and-archive",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "items",
+                ":item_identifier",
+                "variants",
+                ":language_identifier",
+                "unpublish-and-archive"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "item_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies a content item by its internal ID (e.g., `335d17ac-b6ba-4c6a-ae31-23c1193215cb`), external ID (e.g., `external-id/custom-identifier-for-my-article`), or codename (e.g., `codename/my_article`)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `d1f95fde-af02-b3b5-bd9e-f232311ccab8`) or codename (e.g., `codename/es-ES`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"0d49e996-3543-45ac-8af5-62f142eb64d4\",\n  \"error_code\": 103,\n  \"message\": \"The requested variant '00000000-0000-0000-0000-000000000000' of content item '00000000-0000-0000-0000-000000000000' was not found.\"\n}"
+        }
+      ]
+    },
+    "list_assets": {
+      "collection_item_id": "56caaaa2-5163-4be6-a56e-2f44c2299eac",
+      "name": "List assets",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+            "key": "x-continuation",
+            "value": "<string>",
+            "disabled": true
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "assets"
+          ],
+          "variable": [
+            {
+              "id": "b6490b4b-7053-4952-8ca0-1df0bcd38dad",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve a dynamically paginated list of assets."
+      },
+      "responses": [
+        {
+          "id": "6ee4ff9c-cd30-4375-8ab9-c2914b33df51",
+          "name": "A dynamically paginated list of assets.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "assets"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"assets\": [\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  ],\n  \"pagination\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}"
+        },
+        {
+          "id": "81fa5011-e015-4ee7-85eb-6e1f207df74f",
+          "name": "The specified continuation token is incorrect.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "assets"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|9d8951f5b06a1947a8f1d042c590662a.81f7e2f_\",\n  \"error_code\": 1007,\n  \"message\": \"Query parameter 'continuationToken' is invalid. Please include the valid token specified in the pagination response.\"\n}"
+        }
+      ]
+    },
+    "get_asset": {
+      "collection_item_id": "f86f6048-083e-40fe-8520-6a4d359a6843",
+      "name": "Retrieve an asset",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets/:asset_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "assets",
+            ":asset_identifier"
+          ],
+          "variable": [
+            {
+              "id": "704ea599-b41e-49d0-8e65-2851c886e6b3",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "f95f579e-434c-4384-96f3-a661e6c21fbb",
+              "key": "asset_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the asset by internal ID (e.g., `fcbb12e6-66a3-4672-85d9-d502d16b8d9c`), codename (e.g., `codename/my_asset`, or external ID (e.g., `external-id/my-own-asset-identifier-42`)."
+            }
+          ]
+        },
+        "description": "Retrieve information about a single asset."
+      },
+      "responses": [
+        {
+          "id": "c02a35c0-ddae-4e6d-8948-655a98ae9ec5",
+          "name": "A single asset object with metadata about the asset and the referenced binary file.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets/:asset_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "assets",
+                ":asset_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "asset_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the asset by internal ID (e.g., `fcbb12e6-66a3-4672-85d9-d502d16b8d9c`), codename (e.g., `codename/my_asset`, or external ID (e.g., `external-id/my-own-asset-identifier-42`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"file_reference\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"descriptions\": [\n    {\n      \"language\": {},\n      \"description\": \"The asset's alt text for the default language.\"\n    }\n  ],\n  \"elements\": [\n    {\n      \"element\": {},\n      \"value\": [\n        {},\n        {}\n      ]\n    }\n  ],\n  \"external_id\": \"custom-asset-identifier\",\n  \"file_name\": \"file_name.png\",\n  \"folder\": {},\n  \"collection\": {\n    \"reference\": {\n      \"codename\": \"first_collection\"\n    }\n  },\n  \"id\": \"fcbb12e6-66a3-4672-85d9-d502d16b8d9c\",\n  \"codename\": \"my_asset\",\n  \"image_height\": 548,\n  \"image_width\": 1280,\n  \"last_modified\": \"2019-09-12T08:29:36.1645977Z\",\n  \"size\": 148636,\n  \"title\": \"Makes the asset easier to find when you need it\",\n  \"type\": \"image/png\",\n  \"url\": \"https://assets-us-01.kc-usercontent.com/8d20758c-d74c-4f59-ae04-ee928c0816b7/806ec84e-7c71-4856-9519-ee3dd3558583/file_name.png\"\n}"
+        },
+        {
+          "id": "f6860d6a-0fca-44b1-a8b9-ca28f6e5ccde",
+          "name": "The specified asset was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets/:asset_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "assets",
+                ":asset_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "asset_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the asset by internal ID (e.g., `fcbb12e6-66a3-4672-85d9-d502d16b8d9c`), codename (e.g., `codename/my_asset`, or external ID (e.g., `external-id/my-own-asset-identifier-42`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-0e3f-0080000000d9\",\n  \"error_code\": 105,\n  \"message\": \"The requested asset 'fcbb12e6-66a3-4672-85d9-d502d16b8d9d' was not found.\"\n}"
+        }
+      ]
+    },
+    "delete_asset": {
+      "collection_item_id": "104e17a4-40bd-4c34-abbc-07fe9a0a9117",
+      "name": "Delete an asset",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets/:asset_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "assets",
+            ":asset_identifier"
+          ],
+          "variable": [
+            {
+              "id": "4f118305-5316-4ace-b40a-395b1730b2f7",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "a3406342-5edf-4a9b-9e08-847c2bab97ed",
+              "key": "asset_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the asset by internal ID (e.g., `fcbb12e6-66a3-4672-85d9-d502d16b8d9c`), codename (e.g., `codename/my_asset`, or external ID (e.g., `external-id/my-own-asset-identifier-42`)."
+            }
+          ]
+        },
+        "description": "Delete an unused asset from an environment."
+      },
+      "responses": [
+        {
+          "id": "88bf46ec-636d-4fc3-934f-9415af745f50",
+          "name": "The specified asset was deleted.",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets/:asset_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "assets",
+                ":asset_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "asset_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the asset by internal ID (e.g., `fcbb12e6-66a3-4672-85d9-d502d16b8d9c`), codename (e.g., `codename/my_asset`, or external ID (e.g., `external-id/my-own-asset-identifier-42`)."
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "fedfb8a6-6c02-4a0a-976e-3a2c3f4bf628",
+          "name": "The specified asset was already deleted or doesn't exist.",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/assets/:asset_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "assets",
+                ":asset_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "asset_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the asset by internal ID (e.g., `fcbb12e6-66a3-4672-85d9-d502d16b8d9c`), codename (e.g., `codename/my_asset`, or external ID (e.g., `external-id/my-own-asset-identifier-42`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-6f12-0080000000c7\",\n  \"error_code\": 105,\n  \"message\": \"The requested asset 'fcbb12e6-66a3-4672-85d9-d502d16b8d9c' was not found.\"\n}"
+        }
+      ]
+    },
+    "list_types": {
+      "collection_item_id": "b983c9f3-b6ec-4f46-9aff-0c33f97b62c3",
+      "name": "List content types",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+            "key": "x-continuation",
+            "value": "<string>",
+            "disabled": true
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/types",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "types"
+          ],
+          "variable": [
+            {
+              "id": "4344dc9d-9487-4b5d-a816-5518b372ec20",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve a dynamically paginated list of content types."
+      },
+      "responses": [
+        {
+          "id": "3e78bf3b-cd14-48a7-83d2-105fcfbc8fd5",
+          "name": "A dynamically paginated list of content types.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/types",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "types"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"types\": [\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  ],\n  \"pagination\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}"
+        },
+        {
+          "id": "f4e01252-cdde-4bd6-8832-dd3b962367d3",
+          "name": "The specified continuation token is incorrect.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/types",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "types"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|9d8951f5b06a1947a8f1d042c590662a.81f7e2f_\",\n  \"error_code\": 1007,\n  \"message\": \"Query parameter 'continuationToken' is invalid. Please include the valid token specified in the pagination response.\"\n}"
+        }
+      ]
+    },
+    "get_type": {
+      "collection_item_id": "5ceff6e8-9ae0-4626-a42c-0e3cc2a76c68",
+      "name": "Retrieve a content type",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/types/:type_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "types",
+            ":type_identifier"
+          ],
+          "variable": [
+            {
+              "id": "76a23935-c783-4844-b4db-1b2947ed7c61",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "4315bb21-b436-4f47-9536-e6d8dc335b22",
+              "key": "type_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the content type by internal ID (e.g., `269202ad-1d9d-47fd-b3e8-bdb05b3e3cf0`), external ID (e.g., `external-id/Content-Type-123`), or codename (e.g., `codename/hosted_video`)."
+            }
+          ]
+        },
+        "description": "Retrieve information about a single content type."
+      },
+      "responses": [
+        {
+          "id": "232c9968-4146-420f-acde-e326d713e1ed",
+          "name": "A content type object with metadata about the type and its elements.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/types/:type_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "types",
+                ":type_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "type_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the content type by internal ID (e.g., `269202ad-1d9d-47fd-b3e8-bdb05b3e3cf0`), external ID (e.g., `external-id/Content-Type-123`), or codename (e.g., `codename/hosted_video`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"elements\": [\n    {\n      \"snippet\": {},\n      \"type\": \"snippet\",\n      \"codename\": \"snippet_with_title_element\",\n      \"is_non_localizable\": false,\n      \"content_group\": {}\n    },\n    {\n      \"maximum_text_length\": null,\n      \"maximum_image_size\": null,\n      \"allowed_content_types\": [\n        {}\n      ],\n      \"image_width_limit\": null,\n      \"image_height_limit\": null,\n      \"allowed_image_types\": \"any\",\n      \"allowed_blocks\": [\n        \"text\",\n        \"tables\",\n        \"components-and-items\"\n      ],\n      \"allowed_text_blocks\": [\n        \"paragraph\",\n        \"heading-two\",\n        \"heading-three\",\n        \"heading-four\",\n        \"ordered-list\",\n        \"unordered-list\"\n      ],\n      \"allowed_table_blocks\": [\n        \"text\"\n      ],\n      \"allowed_table_text_blocks\": [\n        \"paragraph\"\n      ],\n      \"name\": \"Content\",\n      \"guidelines\": \"Make it snappy.\",\n      \"is_required\": true,\n      \"is_non_localizable\": false,\n      \"type\": \"rich_text\",\n      \"codename\": \"content\",\n      \"content_group\": {}\n    },\n    {\n      \"item_count_limit\": {\n        \"value\": 1,\n        \"condition\": \"at_least\"\n      },\n      \"allowed_content_types\": [\n        {}\n      ],\n      \"name\": \"Author\",\n      \"guidelines\": \"Select the author or authors.\",\n      \"is_required\": true,\n      \"is_non_localizable\": false,\n      \"type\": \"modular_content\",\n      \"codename\": \"author\",\n      \"content_group\": {}\n    },\n    {\n      \"depends_on\": {\n        \"snippet\": {},\n        \"element\": {}\n      },\n      \"name\": \"URL\",\n      \"guidelines\": \"If needed, provide a custom URL slug.\",\n      \"is_required\": true,\n      \"is_non_localizable\": false,\n      \"type\": \"url_slug\",\n      \"codename\": \"url\",\n      \"content_group\": {}\n    }\n  ],\n  \"name\": \"Article\",\n  \"id\": \"dd1439d5-4ee2-4895-a4e4-5b0d9d8c754e\",\n  \"codename\": \"new_article\",\n  \"external_id\": \"custom-content-type-id\",\n  \"last_modified\": \"2021-06-17T06:28:11.6503569Z\",\n  \"content_groups\": [\n    {\n      \"name\": \"Content\",\n      \"codename\": \"content\"\n    },\n    {\n      \"name\": \"Author\",\n      \"codename\": \"author\"\n    },\n    {\n      \"name\": \"URL\",\n      \"codename\": \"url\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "f4b2aba1-7687-426d-bde7-9b928255fb8d",
+          "name": "The specified content type was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/types/:type_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "types",
+                ":type_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "type_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the content type by internal ID (e.g., `269202ad-1d9d-47fd-b3e8-bdb05b3e3cf0`), external ID (e.g., `external-id/Content-Type-123`), or codename (e.g., `codename/hosted_video`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"00000000-0000-0000-0e3f-0080000000d9\",\n  \"error_code\": 105,\n  \"message\": \"The requested content type '269202ad-1d9d-47fd-b3e8-bdb05b3e3cf0' was not found.\"\n}"
+        }
+      ]
+    },
+    "list_languages": {
+      "collection_item_id": "f5fadf91-1605-4c9f-aa3b-8cf957fa689c",
+      "name": "List languages",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+            "key": "x-continuation",
+            "value": "<string>",
+            "disabled": true
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "languages"
+          ],
+          "variable": [
+            {
+              "id": "f645935f-2b23-49c3-9f02-2eb62ac818e6",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve a dynamically paginated list of languages from your environment."
+      },
+      "responses": [
+        {
+          "id": "62c61614-c6ff-42e7-bb53-5602a55fd596",
+          "name": "A dynamically paginated list of languages.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "languages"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"languages\": [\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  ],\n  \"pagination\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}"
+        },
+        {
+          "id": "c88c7a70-dc5f-492e-a260-690eadc4da11",
+          "name": "The specified continuation token is incorrect.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "languages"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|9d8951f5b06a1947a8f1d042c590662a.81f7e2f_\",\n  \"error_code\": 1007,\n  \"message\": \"Query parameter 'continuationToken' is invalid. Please include the valid token specified in the pagination response.\"\n}"
+        }
+      ]
+    },
+    "get_language": {
+      "collection_item_id": "77c7eeb2-3d6a-48dc-89b5-71457aa865ad",
+      "name": "Retrieve a language",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages/:language_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "languages",
+            ":language_identifier"
+          ],
+          "variable": [
+            {
+              "id": "80fffd6d-8961-4bc9-bc20-e084a2023a35",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "f1bb3962-06f1-4060-9fa4-9c23d95d3520",
+              "key": "language_identifier",
+              "value": "<string>",
+              "description": "(Required) Identifies the language by its internal ID (e.g., `2ea66788-d3b8-5ff5-b37e-258502e4fd5d`), external ID (e.g., `external-id/standard-german`), or codename (e.g., `codename/de-DE`)."
+            }
+          ]
+        },
+        "description": "Retrieve a language from your environment."
+      },
+      "responses": [
+        {
+          "id": "c56085d9-6686-4ade-a7a2-8944faecb14e",
+          "name": "A single language object.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages/:language_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "languages",
+                ":language_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `2ea66788-d3b8-5ff5-b37e-258502e4fd5d`), external ID (e.g., `external-id/standard-german`), or codename (e.g., `codename/de-DE`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"name\": \"Default language\",\n  \"codename\": \"default\",\n  \"id\": \"00000000-0000-0000-0000-000000000000\",\n  \"external_id\": \"esse aute\",\n  \"is_active\": true,\n  \"is_default\": true,\n  \"fallback_language\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}"
+        },
+        {
+          "id": "c1a25dde-6457-48fb-85bd-041576e27c70",
+          "name": "The specified language was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages/:language_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "languages",
+                ":language_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "language_identifier",
+                  "value": "<string>",
+                  "description": "(Required) Identifies the language by its internal ID (e.g., `2ea66788-d3b8-5ff5-b37e-258502e4fd5d`), external ID (e.g., `external-id/standard-german`), or codename (e.g., `codename/de-DE`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|3c987acab6ee204d9776e9d79be7407e.67117f28_\",\n  \"error_code\": 111,\n  \"message\": \"The requested language was not found.\"\n}"
+        }
+      ]
+    },
+    "create_language": {
+      "collection_item_id": "c0e33e39-8773-483e-b40c-79b496243585",
+      "name": "Add a language",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"<string>\",\n  \"codename\": \"<string>\",\n  \"id\": \"<string>\",\n  \"external_id\": \"<string>\",\n  \"is_active\": \"<boolean>\",\n  \"is_default\": \"<boolean>\",\n  \"fallback_language\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "languages"
+          ],
+          "variable": [
+            {
+              "id": "d17c587c-16fa-4661-945b-6107ed48cd14",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Create new languages in your environment. For each active language, you can create localized content using [language variants](https://kontent.ai/learn/link-to/id/153c924f-ed81-4236-8cfb-7937329654d8)."
+      },
+      "responses": [
+        {
+          "id": "f44d99d3-3059-4bbc-96c7-e5d5cc21b664",
+          "name": "The created language object.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "languages"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"id\": \"2ea66788-d3b8-5ff5-b37e-258502e4fd5d\",\n  \"name\": \"German (Germany)\",\n  \"codename\": \"de-DE\",\n  \"external_id\": \"standard-german\",\n  \"is_active\": true,\n  \"is_default\": false,\n  \"fallback_language\": {\n    \"id\": \"00000000-0000-0000-0000-000000000000\"\n  }\n}"
+        },
+        {
+          "id": "83081586-d563-432b-a64e-788e8af3567d",
+          "name": "The specified request body is invalid or the language already exists.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/languages",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "languages"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|40636d1f3a267642b10b90ae70a0ff59.67117dc3_\",\n  \"error_code\": 0,\n  \"message\": \"Fallback language not found or inactive\"\n}"
+        }
+      ]
+    },
+    "list_taxonomies": {
+      "collection_item_id": "d44dd682-fd7e-4906-a084-a60de5302e6b",
+      "name": "List taxonomy groups",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+            "key": "x-continuation",
+            "value": "<string>",
+            "disabled": true
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/taxonomies",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "taxonomies"
+          ],
+          "variable": [
+            {
+              "id": "818717f9-6b9c-4059-a4da-412ee86658b2",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve a dynamically paginated list of taxonomy groups."
+      },
+      "responses": [
+        {
+          "id": "511fe3be-6970-405a-adec-b6d3398895f1",
+          "name": "A list of taxonomy groups",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/taxonomies",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "taxonomies"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"taxonomies\": [\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  ],\n  \"pagination\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  }\n}"
+        },
+        {
+          "id": "559cb723-9695-4bdc-8cff-e9e9e6d5029e",
+          "name": "The specified continuation token is incorrect.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "description": "Determines the page of results to retrieve.\n\nTo get the next page of results, check the pagination object in the API response and set the `x-continuation` header parameter to the value of the `continuation_token` property.",
+                "key": "x-continuation",
+                "value": "W3sidG9rZW4iOiIrUklEOn...",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/taxonomies",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "taxonomies"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"|9d8951f5b06a1947a8f1d042c590662a.81f7e2f_\",\n  \"error_code\": 1007,\n  \"message\": \"Query parameter 'continuationToken' is invalid. Please include the valid token specified in the pagination response.\"\n}"
+        }
+      ]
+    },
+    "get_taxonomy": {
+      "collection_item_id": "70d1d912-cac9-45ff-a753-c693057290bf",
+      "name": "Retrieve a taxonomy group",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/taxonomies/:taxonomy_group_identifier",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "taxonomies",
+            ":taxonomy_group_identifier"
+          ],
+          "variable": [
+            {
+              "id": "590aafd3-2231-4e35-9b44-87a4ba0d764f",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            },
+            {
+              "id": "bbf62bc2-e6bc-4e5f-ad33-6279a1903f87",
+              "key": "taxonomy_group_identifier",
+              "value": "<string>",
+              "description": "(Required) The identifier of a specific [taxonomy group](https://kontent.ai/learn/link-to/id/37f45a13-9d90-4a38-aba7-5c28758647a3). You can specify a taxonomy group by its internal ID (e.g., `0be13600-e57c-577d-8108-c8d860330985`), external ID (e.g., `external-id/Tax-Group-123`), or codename {e.g., `codename/personas`)."
+            }
+          ]
+        },
+        "description": "Retrieve a taxonomy group."
+      },
+      "responses": [
+        {
+          "id": "fd8c3f7c-8969-4bc6-8259-0c0f9d94b99e",
+          "name": "A single taxonomy group with metadata.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/taxonomies/:taxonomy_group_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "taxonomies",
+                ":taxonomy_group_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "taxonomy_group_identifier",
+                  "value": "<string>",
+                  "description": "(Required) The identifier of a specific [taxonomy group](https://kontent.ai/learn/link-to/id/37f45a13-9d90-4a38-aba7-5c28758647a3). You can specify a taxonomy group by its internal ID (e.g., `0be13600-e57c-577d-8108-c8d860330985`), external ID (e.g., `external-id/Tax-Group-123`), or codename {e.g., `codename/personas`)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"name\": \"Categories\",\n  \"codename\": \"categories\",\n  \"external_id\": \"my-little-taxopony\",\n  \"id\": \"bef9dd62-a3b8-4146-83e4-33be707899b4\",\n  \"last_modified\": \"2020-11-14T14:05:43.9190528Z\",\n  \"terms\": [\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "fcbf0d0a-09d1-4189-9bb3-76923ec3d099",
+          "name": "The specified taxonomy group was not found.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/taxonomies/:taxonomy_group_identifier",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "taxonomies",
+                ":taxonomy_group_identifier"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                },
+                {
+                  "key": "taxonomy_group_identifier",
+                  "value": "<string>",
+                  "description": "(Required) The identifier of a specific [taxonomy group](https://kontent.ai/learn/link-to/id/37f45a13-9d90-4a38-aba7-5c28758647a3). You can specify a taxonomy group by its internal ID (e.g., `0be13600-e57c-577d-8108-c8d860330985`), external ID (e.g., `external-id/Tax-Group-123`), or codename {e.g., `codename/personas`)."
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"request_id\": \"80006583-0000-f900-b63f-84710c7967bb\",\n  \"error_code\": 107,\n  \"message\": \"The requested taxonomy was not found.\"\n}"
+        }
+      ]
+    },
+    "list_collections": {
+      "collection_item_id": "443463d7-276d-4ad7-905d-fba9a6244d25",
+      "name": "List collections",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/collections",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "collections"
+          ],
+          "variable": [
+            {
+              "id": "3100f7da-05bb-4d70-be9a-ee75dce93ec8",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve an array of all collections."
+      },
+      "responses": [
+        {
+          "id": "127394ea-6fec-471c-aba0-16f3505f7cb7",
+          "name": "All collections in the environment.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/collections",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "collections"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"collections\": [\n    {\n      \"name\": \"Default\",\n      \"codename\": \"default\"\n    },\n    {\n      \"external_id\": \"second_external_id\",\n      \"name\": \"Second collection\",\n      \"codename\": \"second_collection\"\n    }\n  ],\n  \"last_modified\": \"2021-03-04T08:16:24.3620957Z\"\n}"
+        }
+      ]
+    },
+    "list_workflows": {
+      "collection_item_id": "0f68360b-cd52-4975-8ef1-fa2251fb3afc",
+      "name": "Retrieve workflows",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://manage.kontent.ai/v2/projects/:environment_id/workflows",
+          "protocol": "https",
+          "host": [
+            "manage",
+            "kontent",
+            "ai"
+          ],
+          "path": [
+            "v2",
+            "projects",
+            ":environment_id",
+            "workflows"
+          ],
+          "variable": [
+            {
+              "id": "97f0d102-69a8-43d8-940a-f4e343930ea0",
+              "key": "environment_id",
+              "value": "{{environment_id}}",
+              "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+            }
+          ]
+        },
+        "description": "Retrieve a list of workflows with information about the workflow steps they define."
+      },
+      "responses": [
+        {
+          "id": "123a947c-6f8d-4cd6-8778-3b536cb91abb",
+          "name": "Workflows in the specified environment.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://manage.kontent.ai/v2/projects/:environment_id/workflows",
+              "protocol": "https",
+              "host": [
+                "manage",
+                "kontent",
+                "ai"
+              ],
+              "path": [
+                "v2",
+                "projects",
+                ":environment_id",
+                "workflows"
+              ],
+              "variable": [
+                {
+                  "key": "environment_id",
+                  "value": "<string>",
+                  "description": "(Required) Identifies your [environment](https://kontent.ai/learn/link-to/id/a814879f-64a2-4689-8a99-e4e98cdf60ba)."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "[\n  {\n    \"name\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"steps\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"scopes\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"published_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"archived_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"id\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"codename\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"scheduled_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  {\n    \"name\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"steps\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"scopes\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"published_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"archived_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"id\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"codename\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"scheduled_step\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  }\n]"
+        }
+      ]
+    }
+  }
+}

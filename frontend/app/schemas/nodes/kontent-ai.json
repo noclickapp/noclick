@@ -1,0 +1,839 @@
+{
+  "$defs": {
+    "KontentAiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kontent_ai_api_key",
+          "default": "kontent_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "environment_id": {
+          "description": "The environment UUID from Kontent.ai API keys.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Environment ID",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Management API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "environment_id",
+        "api_key"
+      ],
+      "title": "Kontent.ai Management API Key",
+      "type": "object",
+      "x-credential-instructions": "In Kontent.ai, open your environment's API keys and copy a Management API key and the environment ID. Paste the key without the Bearer prefix. The key must permit the operations you use. NoClick reads environment information to verify this connection. Replace expired keys manually.",
+      "x-credential-url": "https://app.kontent.ai/"
+    },
+    "KontentAiCreateLanguageConfig": {
+      "additionalProperties": false,
+      "description": "Add a language.",
+      "properties": {
+        "operation": {
+          "const": "create_language",
+          "default": "create_language",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "codename": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "title": "Codename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "codename"
+      ],
+      "title": "KontentAiCreateLanguageConfig",
+      "type": "object"
+    },
+    "KontentAiCreateVariantVersionConfig": {
+      "additionalProperties": false,
+      "description": "Create a new version of a language variant.",
+      "properties": {
+        "operation": {
+          "const": "create_variant_version",
+          "default": "create_variant_version",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "language_identifier"
+      ],
+      "title": "KontentAiCreateVariantVersionConfig",
+      "type": "object"
+    },
+    "KontentAiDeleteAssetConfig": {
+      "additionalProperties": false,
+      "description": "Delete an asset.",
+      "properties": {
+        "operation": {
+          "const": "delete_asset",
+          "default": "delete_asset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "asset_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Asset Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_identifier"
+      ],
+      "title": "KontentAiDeleteAssetConfig",
+      "type": "object"
+    },
+    "KontentAiDeleteItemConfig": {
+      "additionalProperties": false,
+      "description": "Delete a content item.",
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier"
+      ],
+      "title": "KontentAiDeleteItemConfig",
+      "type": "object"
+    },
+    "KontentAiDeleteVariantConfig": {
+      "additionalProperties": false,
+      "description": "Delete a language variant.",
+      "properties": {
+        "operation": {
+          "const": "delete_variant",
+          "default": "delete_variant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "language_identifier"
+      ],
+      "title": "KontentAiDeleteVariantConfig",
+      "type": "object"
+    },
+    "KontentAiGetAssetConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an asset.",
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "asset_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Asset Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_identifier"
+      ],
+      "title": "KontentAiGetAssetConfig",
+      "type": "object"
+    },
+    "KontentAiGetEnvironmentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve environment information.",
+      "properties": {
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiGetEnvironmentConfig",
+      "type": "object"
+    },
+    "KontentAiGetItemConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a content item.",
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier"
+      ],
+      "title": "KontentAiGetItemConfig",
+      "type": "object"
+    },
+    "KontentAiGetLanguageConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a language.",
+      "properties": {
+        "operation": {
+          "const": "get_language",
+          "default": "get_language",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "language_identifier"
+      ],
+      "title": "KontentAiGetLanguageConfig",
+      "type": "object"
+    },
+    "KontentAiGetPublishedVariantConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the published language variant.",
+      "properties": {
+        "operation": {
+          "const": "get_published_variant",
+          "default": "get_published_variant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "language_identifier"
+      ],
+      "title": "KontentAiGetPublishedVariantConfig",
+      "type": "object"
+    },
+    "KontentAiGetTaxonomyConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a taxonomy group.",
+      "properties": {
+        "operation": {
+          "const": "get_taxonomy",
+          "default": "get_taxonomy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taxonomy_group_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Taxonomy Group Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taxonomy_group_identifier"
+      ],
+      "title": "KontentAiGetTaxonomyConfig",
+      "type": "object"
+    },
+    "KontentAiGetTypeConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a content type.",
+      "properties": {
+        "operation": {
+          "const": "get_type",
+          "default": "get_type",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Type Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type_identifier"
+      ],
+      "title": "KontentAiGetTypeConfig",
+      "type": "object"
+    },
+    "KontentAiGetVariantConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the latest language variant.",
+      "properties": {
+        "operation": {
+          "const": "get_variant",
+          "default": "get_variant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "language_identifier"
+      ],
+      "title": "KontentAiGetVariantConfig",
+      "type": "object"
+    },
+    "KontentAiListAssetsConfig": {
+      "additionalProperties": false,
+      "description": "List assets.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListAssetsConfig",
+      "type": "object"
+    },
+    "KontentAiListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List collections.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListCollectionsConfig",
+      "type": "object"
+    },
+    "KontentAiListItemsConfig": {
+      "additionalProperties": false,
+      "description": "List content items.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListItemsConfig",
+      "type": "object"
+    },
+    "KontentAiListLanguagesConfig": {
+      "additionalProperties": false,
+      "description": "List languages.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_languages",
+          "default": "list_languages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListLanguagesConfig",
+      "type": "object"
+    },
+    "KontentAiListTaxonomiesConfig": {
+      "additionalProperties": false,
+      "description": "List taxonomy groups.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_taxonomies",
+          "default": "list_taxonomies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListTaxonomiesConfig",
+      "type": "object"
+    },
+    "KontentAiListTypesConfig": {
+      "additionalProperties": false,
+      "description": "List content types.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_types",
+          "default": "list_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListTypesConfig",
+      "type": "object"
+    },
+    "KontentAiListVariantsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve language variants of an item.",
+      "properties": {
+        "operation": {
+          "const": "list_variants",
+          "default": "list_variants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier"
+      ],
+      "title": "KontentAiListVariantsConfig",
+      "type": "object"
+    },
+    "KontentAiListWorkflowsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve workflows.",
+      "properties": {
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Continuation value from the previous response. Each run returns one page; pass this token to continue.",
+          "title": "Continuation Token"
+        },
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "KontentAiListWorkflowsConfig",
+      "type": "object"
+    },
+    "KontentAiPublishVariantConfig": {
+      "additionalProperties": false,
+      "description": "Publish or schedule a language variant.",
+      "properties": {
+        "operation": {
+          "const": "publish_variant",
+          "default": "publish_variant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "language_identifier"
+      ],
+      "title": "KontentAiPublishVariantConfig",
+      "type": "object"
+    },
+    "KontentAiUnpublishVariantConfig": {
+      "additionalProperties": false,
+      "description": "Unpublish or schedule unpublishing of a language variant.",
+      "properties": {
+        "operation": {
+          "const": "unpublish_variant",
+          "default": "unpublish_variant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "language_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Language Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "language_identifier"
+      ],
+      "title": "KontentAiUnpublishVariantConfig",
+      "type": "object"
+    },
+    "KontentAiUpdateItemConfig": {
+      "additionalProperties": false,
+      "description": "Upsert a content item.",
+      "properties": {
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_identifier": {
+          "description": "Kontent.ai internal UUID.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Item Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "New display name for this existing content item. This operation updates metadata; it does not write element content.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "codename": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[a-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Codename"
+        }
+      },
+      "required": [
+        "item_identifier",
+        "name"
+      ],
+      "title": "KontentAiUpdateItemConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_language": "#/$defs/KontentAiCreateLanguageConfig",
+          "create_variant_version": "#/$defs/KontentAiCreateVariantVersionConfig",
+          "delete_asset": "#/$defs/KontentAiDeleteAssetConfig",
+          "delete_item": "#/$defs/KontentAiDeleteItemConfig",
+          "delete_variant": "#/$defs/KontentAiDeleteVariantConfig",
+          "get_asset": "#/$defs/KontentAiGetAssetConfig",
+          "get_environment": "#/$defs/KontentAiGetEnvironmentConfig",
+          "get_item": "#/$defs/KontentAiGetItemConfig",
+          "get_language": "#/$defs/KontentAiGetLanguageConfig",
+          "get_published_variant": "#/$defs/KontentAiGetPublishedVariantConfig",
+          "get_taxonomy": "#/$defs/KontentAiGetTaxonomyConfig",
+          "get_type": "#/$defs/KontentAiGetTypeConfig",
+          "get_variant": "#/$defs/KontentAiGetVariantConfig",
+          "list_assets": "#/$defs/KontentAiListAssetsConfig",
+          "list_collections": "#/$defs/KontentAiListCollectionsConfig",
+          "list_items": "#/$defs/KontentAiListItemsConfig",
+          "list_languages": "#/$defs/KontentAiListLanguagesConfig",
+          "list_taxonomies": "#/$defs/KontentAiListTaxonomiesConfig",
+          "list_types": "#/$defs/KontentAiListTypesConfig",
+          "list_variants": "#/$defs/KontentAiListVariantsConfig",
+          "list_workflows": "#/$defs/KontentAiListWorkflowsConfig",
+          "publish_variant": "#/$defs/KontentAiPublishVariantConfig",
+          "unpublish_variant": "#/$defs/KontentAiUnpublishVariantConfig",
+          "update_item": "#/$defs/KontentAiUpdateItemConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KontentAiGetEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiDeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListVariantsConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetPublishedVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiDeleteVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiCreateVariantVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiPublishVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiUnpublishVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiDeleteAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListLanguagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetLanguageConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiCreateLanguageConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListTaxonomiesConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiGetTaxonomyConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/KontentAiListWorkflowsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KontentAiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kontent-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
