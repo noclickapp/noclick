@@ -1,0 +1,10 @@
+{
+  "source": "https://s1.dev/docs/advanced/extract",
+  "body": {
+    "success": true,
+    "extractParameters": {
+      "url": "http://example.com"
+    },
+    "results": null
+  }
+}

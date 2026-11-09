@@ -1,0 +1,60 @@
+{
+  "source": "https://s1.dev/docs/basic/news",
+  "body": {
+    "searchParameters": {
+      "query": "string",
+      "search_service": "google",
+      "max_results": 5,
+      "crawl_results": 0,
+      "image": false,
+      "include_sites": [],
+      "exclude_sites": [],
+      "language": "string",
+      "time_range": "day"
+    },
+    "results": [
+      {
+        "title": "string",
+        "link": "http://example.com",
+        "snippet": "string",
+        "content": "string",
+        "published_date": "string",
+        "metadata": {
+          "kind": "repo",
+          "stars": 0,
+          "language": "string",
+          "num_comments": 0,
+          "story_url": "http://example.com",
+          "points": 0,
+          "post_id": "string",
+          "author_username": "string",
+          "author_name": "string",
+          "author_id": "string",
+          "author_image": "http://example.com",
+          "author_verified": true,
+          "author_followers": 0,
+          "like_count": 0,
+          "repost_count": 0,
+          "quote_count": 0,
+          "bookmark_count": 0,
+          "view_count": 0,
+          "is_reply": true,
+          "conversation_id": "string",
+          "in_reply_to_id": "string",
+          "media": [
+            {
+              "type": "photo",
+              "url": "http://example.com",
+              "width": 0,
+              "height": 0,
+              "video_url": "http://example.com"
+            }
+          ]
+        }
+      }
+    ],
+    "images": [
+      "http://example.com"
+    ]
+  }
+}

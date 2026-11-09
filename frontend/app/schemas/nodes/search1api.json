@@ -1,0 +1,966 @@
+{
+  "$defs": {
+    "Search1ApiAskConfig": {
+      "additionalProperties": false,
+      "description": "Search the engines a natural-language request calls for",
+      "properties": {
+        "operation": {
+          "const": "ask",
+          "default": "ask",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "What you are looking for, in natural language. Platform hints (\"on Reddit\", \"papers\") and time hints (\"this week\") steer engine and time-range selection.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search1ApiAskConfig",
+      "type": "object"
+    },
+    "Search1ApiCrawlPageConfig": {
+      "additionalProperties": false,
+      "description": "Crawl a URL and extract its content",
+      "properties": {
+        "operation": {
+          "const": "crawl_page",
+          "default": "crawl_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "enableFallback": {
+          "default": true,
+          "title": "Enablefallback",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Search1ApiCrawlPageConfig",
+      "type": "object"
+    },
+    "Search1ApiExtractContentConfig": {
+      "additionalProperties": false,
+      "description": "Extract structured content from a URL",
+      "properties": {
+        "operation": {
+          "const": "extract_content",
+          "default": "extract_content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt"
+        },
+        "response_format": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Format"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Search1ApiExtractContentConfig",
+      "type": "object"
+    },
+    "Search1ApiGetDeepcrawlStatusConfig": {
+      "additionalProperties": false,
+      "description": "Check deepcrawl task status",
+      "properties": {
+        "operation": {
+          "const": "get_deepcrawl_status",
+          "default": "get_deepcrawl_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taskId": {
+          "minLength": 1,
+          "title": "Taskid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "Search1ApiGetDeepcrawlStatusConfig",
+      "type": "object"
+    },
+    "Search1ApiGetSitemapConfig": {
+      "additionalProperties": false,
+      "description": "Extract sitemap URLs from a website",
+      "properties": {
+        "operation": {
+          "const": "get_sitemap",
+          "default": "get_sitemap",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "sitemap",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "sitemap",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Search1ApiGetSitemapConfig",
+      "type": "object"
+    },
+    "Search1ApiGetTrendingConfig": {
+      "additionalProperties": false,
+      "description": "Get trending topics from various platforms",
+      "properties": {
+        "operation": {
+          "const": "get_trending",
+          "default": "get_trending",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_service": {
+          "minLength": 1,
+          "title": "Search Service",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "search_service"
+      ],
+      "title": "Search1ApiGetTrendingConfig",
+      "type": "object"
+    },
+    "Search1ApiGetUsageConfig": {
+      "additionalProperties": false,
+      "description": "Get API key usage statistics",
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "period": {
+          "anyOf": [
+            {
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "year"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "Search1ApiGetUsageConfig",
+      "type": "object"
+    },
+    "Search1ApiKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "search1api_api_key",
+          "default": "search1api_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste your Search1API API key without the Bearer prefix.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Search1API API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Search1API dashboard, then paste it here.",
+      "x-credential-url": "https://app.s1.dev"
+    },
+    "Search1ApiSearchMapsConfig": {
+      "additionalProperties": false,
+      "description": "Search Google Maps for local businesses and places",
+      "properties": {
+        "operation": {
+          "const": "search_maps",
+          "default": "search_maps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Google Maps search phrase; leading and trailing whitespace is removed.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "country": {
+          "default": "us",
+          "description": "Two-letter country code, normalized to lowercase. Defaults to us.",
+          "pattern": "^[a-zA-Z]{2}$",
+          "title": "Country",
+          "type": "string"
+        },
+        "language": {
+          "default": "en",
+          "description": "Result language, for example en, de or zh-CN. Defaults to en.",
+          "pattern": "^[a-z]{2,3}(-[a-zA-Z]{2,4})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Search1ApiSearchMapsConfigLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search origin coordinates and map zoom (default 14). Required for page > 1. Latitude must be -90 to 90, longitude -180 to 180, and zoom 3 to 30. Example: {\"latitude\":40.7455,\"longitude\":-74.0083,\"zoom\":15}."
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number, 1\u20136; default 1. Accepts an integer or canonical integer string such as \"2\". Empty strings use the default. Pages after the first require location.",
+          "maximum": 6,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "max_results": {
+          "default": 20,
+          "description": "Maximum places to return from this page, 1\u201320; default 20. Accepts an integer or canonical integer string such as \"10\". Empty strings use the default. Truncation does not reduce the page charge or carry places to the next page.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search1ApiSearchMapsConfig",
+      "type": "object"
+    },
+    "Search1ApiSearchMapsConfigLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "zoom": {
+          "default": 14,
+          "maximum": 30,
+          "minimum": 3,
+          "title": "Zoom",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "Search1ApiSearchMapsConfigLocation",
+      "type": "object"
+    },
+    "Search1ApiSearchNewsConfig": {
+      "additionalProperties": false,
+      "description": "Search news articles across multiple sources",
+      "properties": {
+        "operation": {
+          "const": "search_news",
+          "default": "search_news",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "search_service": {
+          "anyOf": [
+            {
+              "enum": [
+                "google",
+                "bing",
+                "duckduckgo",
+                "yahoo",
+                "hackernews",
+                "",
+                "reuters"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Service",
+          "enum": [
+            "google",
+            "bing",
+            "duckduckgo",
+            "yahoo",
+            "hackernews",
+            "",
+            "reuters"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "default": 5,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "crawl_results": {
+          "default": 0,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Crawl Results",
+          "type": "integer"
+        },
+        "image": {
+          "default": false,
+          "title": "Image",
+          "type": "boolean"
+        },
+        "include_sites": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Include Sites",
+          "type": "array"
+        },
+        "exclude_sites": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Exclude Sites",
+          "type": "array"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "time_range": {
+          "anyOf": [
+            {
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "year",
+                ""
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Range",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year",
+            ""
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search1ApiSearchNewsConfig",
+      "type": "object"
+    },
+    "Search1ApiSearchWebConfig": {
+      "additionalProperties": false,
+      "description": "Search the web using multiple search engines",
+      "properties": {
+        "operation": {
+          "const": "search_web",
+          "default": "search_web",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "search_service": {
+          "anyOf": [
+            {
+              "enum": [
+                "google",
+                "bing",
+                "bingcn",
+                "duckduckgo",
+                "yahoo",
+                "yandex",
+                "youtube",
+                "x",
+                "reddit",
+                "github",
+                "arxiv",
+                "wechat",
+                "bilibili",
+                "imdb",
+                "wikipedia",
+                "grokipedia",
+                "",
+                "baidu",
+                "360",
+                "quark"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Service",
+          "enum": [
+            "google",
+            "bing",
+            "bingcn",
+            "duckduckgo",
+            "yahoo",
+            "yandex",
+            "youtube",
+            "x",
+            "reddit",
+            "github",
+            "arxiv",
+            "wechat",
+            "bilibili",
+            "imdb",
+            "wikipedia",
+            "grokipedia",
+            "",
+            "baidu",
+            "360",
+            "quark"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "default": 5,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "crawl_results": {
+          "default": 0,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Crawl Results",
+          "type": "integer"
+        },
+        "image": {
+          "default": false,
+          "title": "Image",
+          "type": "boolean"
+        },
+        "include_sites": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Include Sites",
+          "type": "array"
+        },
+        "exclude_sites": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Exclude Sites",
+          "type": "array"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "time_range": {
+          "anyOf": [
+            {
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "year",
+                ""
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Range",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year",
+            ""
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search1ApiSearchWebConfig",
+      "type": "object"
+    },
+    "Search1ApiStartDeepcrawlConfig": {
+      "additionalProperties": false,
+      "description": "Deep crawl a website across multiple pages",
+      "properties": {
+        "operation": {
+          "const": "start_deepcrawl",
+          "default": "start_deepcrawl",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "sitemap",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "sitemap",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_pages": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of pages to crawl, 1\u20131000; default 1000. Applied after include_paths/exclude_paths, in discovery order.",
+          "title": "Max Pages"
+        },
+        "include_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only crawl URLs whose path matches one of these rules (up to 20). A rule without * is a path prefix on segment boundaries: \"/docs\" matches /docs and /docs/api but not /docsearch. A rule with * must match the whole path, and * matches any characters including /, e.g. \"/blog/*\". Empty or omitted means every discovered URL.",
+          "title": "Include Paths"
+        },
+        "exclude_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip URLs whose path matches one of these rules (up to 20), using the same syntax as include_paths. Exclusion wins over inclusion.",
+          "title": "Exclude Paths"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "zip",
+                "json"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Result format; default \"zip\". \"zip\" packages the pages as Markdown files behind zipUrl. \"json\" returns pages: [{url, title, content}] in the completed status response, plus resultUrl for the same JSON file.",
+          "title": "Format",
+          "enum": [
+            "zip",
+            "json"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Search1ApiStartDeepcrawlConfig",
+      "type": "object"
+    },
+    "Search1ApiSubmitFeedbackConfig": {
+      "additionalProperties": false,
+      "description": "Report a Search1API problem or feature request. Submits a report to Search1API; omit credentials and private content.",
+      "properties": {
+        "operation": {
+          "const": "submit_feedback",
+          "default": "submit_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Intent"
+        },
+        "category": {
+          "default": "other",
+          "enum": [
+            "bug",
+            "feature_request",
+            "docs",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Search1ApiSubmitFeedbackConfigAgent"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "Search1ApiSubmitFeedbackConfig",
+      "type": "object"
+    },
+    "Search1ApiSubmitFeedbackConfigAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        }
+      },
+      "title": "Search1ApiSubmitFeedbackConfigAgent",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "ask": "#/$defs/Search1ApiAskConfig",
+          "crawl_page": "#/$defs/Search1ApiCrawlPageConfig",
+          "extract_content": "#/$defs/Search1ApiExtractContentConfig",
+          "get_deepcrawl_status": "#/$defs/Search1ApiGetDeepcrawlStatusConfig",
+          "get_sitemap": "#/$defs/Search1ApiGetSitemapConfig",
+          "get_trending": "#/$defs/Search1ApiGetTrendingConfig",
+          "get_usage": "#/$defs/Search1ApiGetUsageConfig",
+          "search_maps": "#/$defs/Search1ApiSearchMapsConfig",
+          "search_news": "#/$defs/Search1ApiSearchNewsConfig",
+          "search_web": "#/$defs/Search1ApiSearchWebConfig",
+          "start_deepcrawl": "#/$defs/Search1ApiStartDeepcrawlConfig",
+          "submit_feedback": "#/$defs/Search1ApiSubmitFeedbackConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Search1ApiSearchWebConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiSearchMapsConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiSearchNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiAskConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiCrawlPageConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiGetSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiGetTrendingConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiExtractContentConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiStartDeepcrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiGetDeepcrawlStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiGetUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/Search1ApiSubmitFeedbackConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Search1ApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Search1api Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

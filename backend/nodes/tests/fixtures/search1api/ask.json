@@ -1,0 +1,29 @@
+{
+  "source": "https://s1.dev/docs/basic/ask",
+  "body": {
+    "query": "string",
+    "intent": {
+      "search_query": "string",
+      "sources": [
+        "string"
+      ],
+      "time_range": "day"
+    },
+    "results": [
+      {
+        "title": "string",
+        "link": "http://example.com",
+        "snippet": "string",
+        "published_date": "string",
+        "source": "string",
+        "relevance": 0
+      }
+    ],
+    "errors": [
+      {
+        "source": "string",
+        "message": "string"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "source": "https://s1.dev/docs/basic/crawl",
+  "body": {
+    "crawlParameters": {
+      "url": "http://example.com"
+    },
+    "results": {
+      "title": "string",
+      "link": "http://example.com",
+      "content": "string",
+      "metadata": {}
+    }
+  }
+}

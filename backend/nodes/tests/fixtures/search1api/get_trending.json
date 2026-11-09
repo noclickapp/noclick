@@ -1,0 +1,16 @@
+{
+  "source": "https://s1.dev/docs/advanced/trending",
+  "body": {
+    "trendingParameters": {
+      "search_service": "string",
+      "max_results": 1
+    },
+    "results": [
+      {
+        "title": "string",
+        "url": "http://example.com",
+        "description": "string"
+      }
+    ]
+  }
+}
