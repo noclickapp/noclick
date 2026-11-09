@@ -13,6 +13,8 @@ export interface ChannelMember {
     name: string;
     /** A platform agent member's agent. */
     agentId?: string;
+    /** A person's user id (in a space, the one their DM and role name them by). */
+    userId?: string;
     /** An agent from your Automations: its workflow and agent node, and the workflow's name. */
     workflowId?: string;
     nodeId?: string;
