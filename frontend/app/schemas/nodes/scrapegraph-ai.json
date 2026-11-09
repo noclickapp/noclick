@@ -1,0 +1,1223 @@
+{
+  "$defs": {
+    "CreateMonitor": {
+      "additionalProperties": false,
+      "description": "Create a recurring scrape. The provider bills scheduled runs.",
+      "properties": {
+        "fetch_mode": {
+          "default": "auto",
+          "description": "auto chooses the provider; js renders JavaScript.",
+          "enum": [
+            "auto",
+            "fast",
+            "js"
+          ],
+          "title": "Fetch Mode",
+          "type": "string"
+        },
+        "timeout_ms": {
+          "default": 60000,
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Timeout Ms",
+          "type": "integer"
+        },
+        "wait_ms": {
+          "default": 0,
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Wait Ms",
+          "type": "integer"
+        },
+        "formats": {
+          "description": "Requested output types. Screenshot output is a provider URL.",
+          "items": {
+            "enum": [
+              "markdown",
+              "html",
+              "links",
+              "images",
+              "summary",
+              "json",
+              "branding",
+              "screenshot"
+            ],
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Formats",
+          "type": "array"
+        },
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "interval": {
+          "description": "5-field cron expression, for example 0 */6 * * *.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Interval",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional destination for provider change notifications.",
+          "title": "Webhook Url"
+        }
+      },
+      "required": [
+        "url",
+        "interval",
+        "name"
+      ],
+      "title": "CreateMonitor",
+      "type": "object"
+    },
+    "DeleteCrawl": {
+      "additionalProperties": false,
+      "description": "Delete the selected crawl.",
+      "properties": {
+        "crawl_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Crawl Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_crawl",
+          "default": "delete_crawl",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "DeleteCrawl",
+      "type": "object"
+    },
+    "DeleteMonitor": {
+      "additionalProperties": false,
+      "description": "Delete a monitor and stop its future scheduled runs.",
+      "properties": {
+        "monitor_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DeleteMonitor",
+      "type": "object"
+    },
+    "Extract": {
+      "additionalProperties": false,
+      "description": "Extract structured JSON from exactly one URL, HTML or Markdown source.",
+      "properties": {
+        "fetch_mode": {
+          "default": "auto",
+          "description": "auto chooses the provider; js renders JavaScript.",
+          "enum": [
+            "auto",
+            "fast",
+            "js"
+          ],
+          "title": "Fetch Mode",
+          "type": "string"
+        },
+        "timeout_ms": {
+          "default": 60000,
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Timeout Ms",
+          "type": "integer"
+        },
+        "wait_ms": {
+          "default": 0,
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Wait Ms",
+          "type": "integer"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional SGAI-Session-Id groups requests in history.",
+          "title": "Session Id"
+        },
+        "operation": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Operation",
+          "type": "string"
+        },
+        "prompt": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "maxLength": 1000000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html",
+          "ui:widget": "textarea"
+        },
+        "markdown": {
+          "anyOf": [
+            {
+              "maxLength": 1000000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown",
+          "ui:widget": "textarea"
+        },
+        "mode": {
+          "default": "normal",
+          "enum": [
+            "normal",
+            "reader",
+            "prune"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "json_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON Schema object as JSON text.",
+          "title": "Json Schema",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "Extract",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Validate the key and read its account email.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCrawl": {
+      "additionalProperties": false,
+      "description": "Read crawl status and the provider's current page summary.",
+      "properties": {
+        "crawl_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Crawl Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_crawl",
+          "default": "get_crawl",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "GetCrawl",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Read remaining and used credits and crawl/monitor job limits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetHistory": {
+      "additionalProperties": false,
+      "description": "Read a single request, including its stored parameters and result.",
+      "properties": {
+        "operation": {
+          "const": "get_history",
+          "default": "get_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "history_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "History Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "history_id"
+      ],
+      "title": "GetHistory",
+      "type": "object"
+    },
+    "GetMonitor": {
+      "additionalProperties": false,
+      "description": "Read one monitor and its schedule configuration.",
+      "properties": {
+        "monitor_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "GetMonitor",
+      "type": "object"
+    },
+    "GetMonitorActivity": {
+      "additionalProperties": false,
+      "description": "Read one page of monitor ticks; pass nextCursor to the next call.",
+      "properties": {
+        "monitor_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_monitor_activity",
+          "default": "get_monitor_activity",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp returned as nextCursor.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "GetMonitorActivity",
+      "type": "object"
+    },
+    "ListCrawlPages": {
+      "additionalProperties": false,
+      "description": "Read one page of crawl results using the provider's numeric cursor.",
+      "properties": {
+        "crawl_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Crawl Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_crawl_pages",
+          "default": "list_crawl_pages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "ListCrawlPages",
+      "type": "object"
+    },
+    "ListHistory": {
+      "additionalProperties": false,
+      "description": "Read one page of this account's request history.",
+      "properties": {
+        "operation": {
+          "const": "list_history",
+          "default": "list_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "service": {
+          "anyOf": [
+            {
+              "enum": [
+                "scrape",
+                "extract",
+                "search",
+                "monitor",
+                "crawl"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service",
+          "enum": [
+            "scrape",
+            "extract",
+            "search",
+            "monitor",
+            "crawl"
+          ],
+          "x-enum-searchable": true
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        }
+      },
+      "title": "ListHistory",
+      "type": "object"
+    },
+    "ListMonitors": {
+      "additionalProperties": false,
+      "description": "List this account's monitors (the API returns an unpaginated array).",
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMonitors",
+      "type": "object"
+    },
+    "PauseMonitor": {
+      "additionalProperties": false,
+      "description": "Pause future monitor ticks.",
+      "properties": {
+        "monitor_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_monitor",
+          "default": "pause_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "PauseMonitor",
+      "type": "object"
+    },
+    "ResumeCrawl": {
+      "additionalProperties": false,
+      "description": "Request a paused crawl to resume; poll get_crawl for progress.",
+      "properties": {
+        "crawl_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Crawl Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resume_crawl",
+          "default": "resume_crawl",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "ResumeCrawl",
+      "type": "object"
+    },
+    "ResumeMonitor": {
+      "additionalProperties": false,
+      "description": "Resume a paused monitor's scheduled ticks.",
+      "properties": {
+        "monitor_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resume_monitor",
+          "default": "resume_monitor",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ResumeMonitor",
+      "type": "object"
+    },
+    "ScrapeURL": {
+      "additionalProperties": false,
+      "description": "Scrape one URL into selected formats. Format errors remain in the output.",
+      "properties": {
+        "fetch_mode": {
+          "default": "auto",
+          "description": "auto chooses the provider; js renders JavaScript.",
+          "enum": [
+            "auto",
+            "fast",
+            "js"
+          ],
+          "title": "Fetch Mode",
+          "type": "string"
+        },
+        "timeout_ms": {
+          "default": 60000,
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Timeout Ms",
+          "type": "integer"
+        },
+        "wait_ms": {
+          "default": 0,
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Wait Ms",
+          "type": "integer"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional SGAI-Session-Id groups requests in history.",
+          "title": "Session Id"
+        },
+        "operation": {
+          "const": "scrape_url",
+          "default": "scrape_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "formats": {
+          "items": {
+            "enum": [
+              "markdown",
+              "html",
+              "links",
+              "images",
+              "summary",
+              "json",
+              "branding",
+              "screenshot"
+            ],
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Formats",
+          "type": "array"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScrapeURL",
+      "type": "object"
+    },
+    "ScrapegraphAIAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "scrapegraph_ai_api_key",
+          "default": "scrapegraph_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Scrapegraph AI API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your ScrapeGraphAI API key from the dashboard. NoClick sends it in the SGAI-APIKEY header to the v2 API. Connecting reads the email associated with your key.",
+      "x-credential-url": "https://dashboard.scrapegraphai.com/"
+    },
+    "Search": {
+      "additionalProperties": false,
+      "description": "Search and scrape a bounded number of results.",
+      "properties": {
+        "fetch_mode": {
+          "default": "auto",
+          "description": "auto chooses the provider; js renders JavaScript.",
+          "enum": [
+            "auto",
+            "fast",
+            "js"
+          ],
+          "title": "Fetch Mode",
+          "type": "string"
+        },
+        "timeout_ms": {
+          "default": 60000,
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Timeout Ms",
+          "type": "integer"
+        },
+        "wait_ms": {
+          "default": 0,
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Wait Ms",
+          "type": "integer"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional SGAI-Session-Id groups requests in history.",
+          "title": "Session Id"
+        },
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "num_results": {
+          "default": 3,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Num Results",
+          "type": "integer"
+        },
+        "format": {
+          "default": "markdown",
+          "enum": [
+            "html",
+            "markdown"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "mode": {
+          "default": "prune",
+          "enum": [
+            "normal",
+            "reader",
+            "prune"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "location_geo_code": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Geo Code"
+        },
+        "time_range": {
+          "anyOf": [
+            {
+              "enum": [
+                "past_hour",
+                "past_24_hours",
+                "past_week",
+                "past_month",
+                "past_year"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Range",
+          "enum": [
+            "past_hour",
+            "past_24_hours",
+            "past_week",
+            "past_month",
+            "past_year"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search",
+      "type": "object"
+    },
+    "StartCrawl": {
+      "additionalProperties": false,
+      "description": "Start a bounded asynchronous crawl; poll get_crawl for progress.",
+      "properties": {
+        "fetch_mode": {
+          "default": "auto",
+          "description": "auto chooses the provider; js renders JavaScript.",
+          "enum": [
+            "auto",
+            "fast",
+            "js"
+          ],
+          "title": "Fetch Mode",
+          "type": "string"
+        },
+        "timeout_ms": {
+          "default": 60000,
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Timeout Ms",
+          "type": "integer"
+        },
+        "wait_ms": {
+          "default": 0,
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Wait Ms",
+          "type": "integer"
+        },
+        "formats": {
+          "description": "Requested output types. Screenshot output is a provider URL.",
+          "items": {
+            "enum": [
+              "markdown",
+              "html",
+              "links",
+              "images",
+              "summary",
+              "json",
+              "branding",
+              "screenshot"
+            ],
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Formats",
+          "type": "array"
+        },
+        "operation": {
+          "const": "start_crawl",
+          "default": "start_crawl",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "max_depth": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 2,
+          "description": "Null allows unlimited depth within the page limit.",
+          "title": "Max Depth"
+        },
+        "max_pages": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "max_links_per_page": {
+          "default": 10,
+          "minimum": 1,
+          "title": "Max Links Per Page",
+          "type": "integer"
+        },
+        "allow_external": {
+          "default": false,
+          "title": "Allow External",
+          "type": "boolean"
+        },
+        "include_patterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Patterns"
+        },
+        "exclude_patterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude Patterns"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartCrawl",
+      "type": "object"
+    },
+    "StopCrawl": {
+      "additionalProperties": false,
+      "description": "Request a running crawl to stop; this is an acknowledgement.",
+      "properties": {
+        "crawl_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Crawl Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_crawl",
+          "default": "stop_crawl",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "StopCrawl",
+      "type": "object"
+    },
+    "UpdateMonitor": {
+      "additionalProperties": false,
+      "description": "Change a monitor name, interval, output formats or notification destination.",
+      "properties": {
+        "monitor_id": {
+          "description": "UUID returned by ScrapeGraphAI.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Monitor Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval"
+        },
+        "formats": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "markdown",
+                  "html",
+                  "links",
+                  "images",
+                  "summary",
+                  "json",
+                  "branding",
+                  "screenshot"
+                ],
+                "type": "string"
+              },
+              "maxItems": 8,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Formats"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url"
+        },
+        "clear_webhook": {
+          "default": false,
+          "description": "Send webhookUrl: null to remove the destination.",
+          "title": "Clear Webhook",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "UpdateMonitor",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_monitor": "#/$defs/CreateMonitor",
+          "delete_crawl": "#/$defs/DeleteCrawl",
+          "delete_monitor": "#/$defs/DeleteMonitor",
+          "extract": "#/$defs/Extract",
+          "get_account": "#/$defs/GetAccount",
+          "get_crawl": "#/$defs/GetCrawl",
+          "get_credits": "#/$defs/GetCredits",
+          "get_history": "#/$defs/GetHistory",
+          "get_monitor": "#/$defs/GetMonitor",
+          "get_monitor_activity": "#/$defs/GetMonitorActivity",
+          "list_crawl_pages": "#/$defs/ListCrawlPages",
+          "list_history": "#/$defs/ListHistory",
+          "list_monitors": "#/$defs/ListMonitors",
+          "pause_monitor": "#/$defs/PauseMonitor",
+          "resume_crawl": "#/$defs/ResumeCrawl",
+          "resume_monitor": "#/$defs/ResumeMonitor",
+          "scrape_url": "#/$defs/ScrapeURL",
+          "search": "#/$defs/Search",
+          "start_crawl": "#/$defs/StartCrawl",
+          "stop_crawl": "#/$defs/StopCrawl",
+          "update_monitor": "#/$defs/UpdateMonitor"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ScrapeURL"
+        },
+        {
+          "$ref": "#/$defs/Extract"
+        },
+        {
+          "$ref": "#/$defs/Search"
+        },
+        {
+          "$ref": "#/$defs/ListHistory"
+        },
+        {
+          "$ref": "#/$defs/GetHistory"
+        },
+        {
+          "$ref": "#/$defs/CreateMonitor"
+        },
+        {
+          "$ref": "#/$defs/ListMonitors"
+        },
+        {
+          "$ref": "#/$defs/GetMonitor"
+        },
+        {
+          "$ref": "#/$defs/UpdateMonitor"
+        },
+        {
+          "$ref": "#/$defs/DeleteMonitor"
+        },
+        {
+          "$ref": "#/$defs/GetMonitorActivity"
+        },
+        {
+          "$ref": "#/$defs/PauseMonitor"
+        },
+        {
+          "$ref": "#/$defs/ResumeMonitor"
+        },
+        {
+          "$ref": "#/$defs/StartCrawl"
+        },
+        {
+          "$ref": "#/$defs/GetCrawl"
+        },
+        {
+          "$ref": "#/$defs/DeleteCrawl"
+        },
+        {
+          "$ref": "#/$defs/ListCrawlPages"
+        },
+        {
+          "$ref": "#/$defs/StopCrawl"
+        },
+        {
+          "$ref": "#/$defs/ResumeCrawl"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ScrapegraphAIAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Scrapegraph-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
