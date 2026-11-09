@@ -1,0 +1,1346 @@
+{
+  "$defs": {
+    "BookingItem": {
+      "additionalProperties": false,
+      "properties": {
+        "productCode": {
+          "minLength": 1,
+          "title": "Productcode",
+          "type": "string"
+        },
+        "quantities": {
+          "items": {
+            "$ref": "#/$defs/Quantity"
+          },
+          "minItems": 1,
+          "title": "Quantities",
+          "type": "array"
+        },
+        "startTimeLocal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier local time, yyyy-MM-dd HH:mm:ss; required for dated products.",
+          "title": "Starttimelocal"
+        },
+        "startTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 session start time, as an alternative to startTimeLocal.",
+          "title": "Starttime"
+        }
+      },
+      "required": [
+        "productCode",
+        "quantities"
+      ],
+      "title": "BookingItem",
+      "type": "object"
+    },
+    "BookingPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "description": "Complete booking items, including session and price-option quantities.",
+          "items": {
+            "$ref": "#/$defs/BookingItem"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Customer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "internalNotes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internalnotes"
+        },
+        "resellerReference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resellerreference"
+        },
+        "resellerComments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resellercomments"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "BookingPayload",
+      "type": "object"
+    },
+    "CancelBooking": {
+      "additionalProperties": false,
+      "description": "Cancel booking.",
+      "properties": {
+        "operation": {
+          "const": "cancel_booking",
+          "default": "cancel_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "orderNumber": {
+          "minLength": 1,
+          "title": "Ordernumber",
+          "type": "string"
+        },
+        "sendNotifications": {
+          "default": false,
+          "description": "Send the cancellation notification email.",
+          "title": "Sendnotifications",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "orderNumber"
+      ],
+      "title": "CancelBooking",
+      "type": "object"
+    },
+    "CreateBooking": {
+      "additionalProperties": false,
+      "description": "Create booking.",
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking": {
+          "$ref": "#/$defs/CreateBookingPayload",
+          "description": "Creates a booking and may affect inventory and payment workflows. Inspect uncertain results before retrying."
+        }
+      },
+      "required": [
+        "booking"
+      ],
+      "title": "CreateBooking",
+      "type": "object"
+    },
+    "CreateBookingPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "description": "Complete booking items, including session and price-option quantities.",
+          "items": {
+            "$ref": "#/$defs/BookingItem"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Customer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "internalNotes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internalnotes"
+        },
+        "resellerReference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resellerreference"
+        },
+        "resellerComments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resellercomments"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments"
+        },
+        "sendNotifications": {
+          "default": false,
+          "description": "Send Rezdy's booking notification emails.",
+          "title": "Sendnotifications",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "CreateBookingPayload",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create customer.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "$ref": "#/$defs/Customer"
+        }
+      },
+      "required": [
+        "customer"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "Customer": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "addressLine": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Countrycode"
+        }
+      },
+      "required": [
+        "firstName"
+      ],
+      "title": "Customer",
+      "type": "object"
+    },
+    "DeleteCustomer": {
+      "additionalProperties": false,
+      "description": "Delete customer.",
+      "properties": {
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customerId": {
+          "minimum": 1,
+          "title": "Customerid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customerId"
+      ],
+      "title": "DeleteCustomer",
+      "type": "object"
+    },
+    "GetBooking": {
+      "additionalProperties": false,
+      "description": "Get booking.",
+      "properties": {
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "orderNumber": {
+          "minLength": 1,
+          "title": "Ordernumber",
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderNumber"
+      ],
+      "title": "GetBooking",
+      "type": "object"
+    },
+    "GetCategory": {
+      "additionalProperties": false,
+      "description": "Get category.",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "categoryId": {
+          "minimum": 1,
+          "title": "Categoryid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "categoryId"
+      ],
+      "title": "GetCategory",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "description": "Get customer.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customerId": {
+          "minimum": 1,
+          "title": "Customerid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customerId"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "description": "Get product.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productCode": {
+          "minLength": 1,
+          "title": "Productcode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productCode"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetVoucher": {
+      "additionalProperties": false,
+      "description": "Get voucher.",
+      "properties": {
+        "operation": {
+          "const": "get_voucher",
+          "default": "get_voucher",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "voucherCode": {
+          "minLength": 1,
+          "title": "Vouchercode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "voucherCode"
+      ],
+      "title": "GetVoucher",
+      "type": "object"
+    },
+    "ListBookings": {
+      "additionalProperties": false,
+      "description": "List bookings.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_bookings",
+          "default": "list_bookings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "orderStatus": {
+          "anyOf": [
+            {
+              "enum": [
+                "PROCESSING",
+                "NEW",
+                "ON_HOLD",
+                "PENDING_SUPPLIER",
+                "PENDING_CUSTOMER",
+                "CONFIRMED",
+                "CANCELLED",
+                "ABANDONED_CART"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderstatus",
+          "enum": [
+            "PROCESSING",
+            "NEW",
+            "ON_HOLD",
+            "PENDING_SUPPLIER",
+            "PENDING_CUSTOMER",
+            "CONFIRMED",
+            "CANCELLED",
+            "ABANDONED_CART"
+          ],
+          "x-enum-searchable": true
+        },
+        "productCode": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Productcode"
+        },
+        "minTourStartTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mintourstarttime"
+        },
+        "maxTourStartTime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxtourstarttime"
+        },
+        "minDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mindatecreated"
+        },
+        "maxDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxdatecreated"
+        },
+        "updatedSince": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updatedsince"
+        },
+        "resellerReference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resellerreference"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESELLER",
+                "SUPPLIER",
+                "ALL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role",
+          "enum": [
+            "RESELLER",
+            "SUPPLIER",
+            "ALL"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListBookings",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "description": "List categories.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "visible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visible"
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListCategoryProducts": {
+      "additionalProperties": false,
+      "description": "List category products.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_category_products",
+          "default": "list_category_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "categoryId": {
+          "minimum": 1,
+          "title": "Categoryid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "categoryId"
+      ],
+      "title": "ListCategoryProducts",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "description": "List customers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListProductPickups": {
+      "additionalProperties": false,
+      "description": "List product pickups.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_product_pickups",
+          "default": "list_product_pickups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productCode": {
+          "minLength": 1,
+          "title": "Productcode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productCode"
+      ],
+      "title": "ListProductPickups",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "description": "List products.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListRates": {
+      "additionalProperties": false,
+      "description": "List rates.",
+      "properties": {
+        "operation": {
+          "const": "list_rates",
+          "default": "list_rates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rateName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ratename"
+        },
+        "productCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Productcode"
+        }
+      },
+      "title": "ListRates",
+      "type": "object"
+    },
+    "ListResources": {
+      "additionalProperties": false,
+      "description": "List resources.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_resources",
+          "default": "list_resources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListResources",
+      "type": "object"
+    },
+    "ListVouchers": {
+      "additionalProperties": false,
+      "description": "List vouchers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_vouchers",
+          "default": "list_vouchers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListVouchers",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minimum": 1,
+          "title": "Value",
+          "type": "integer"
+        },
+        "optionLabel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for products with multiple price options.",
+          "title": "Optionlabel"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuoteBooking": {
+      "additionalProperties": false,
+      "description": "Quote booking.",
+      "properties": {
+        "operation": {
+          "const": "quote_booking",
+          "default": "quote_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking": {
+          "$ref": "#/$defs/BookingPayload"
+        }
+      },
+      "required": [
+        "booking"
+      ],
+      "title": "QuoteBooking",
+      "type": "object"
+    },
+    "RezdyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "rezdy_api_key",
+          "default": "rezdy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Rezdy API Key",
+      "type": "object",
+      "x-credential-instructions": "In Rezdy, open Integrations > Rezdy API and request an API key. Paste the key here. NoClick sends it in the apiKey header to api.rezdy.com. Your plan and key permissions determine which operations are available.",
+      "x-credential-url": "https://developers.rezdy.com/rezdyapi/"
+    },
+    "SearchAvailability": {
+      "additionalProperties": false,
+      "description": "Search availability.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum results on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset for this page; pass next_offset to continue.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_availability",
+          "default": "search_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productCode": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Productcode",
+          "type": "array"
+        },
+        "startTimeLocal": {
+          "description": "Start of range in supplier local time, yyyy-MM-dd HH:mm:ss.",
+          "title": "Starttimelocal",
+          "type": "string"
+        },
+        "endTimeLocal": {
+          "description": "End of range in supplier local time, yyyy-MM-dd HH:mm:ss.",
+          "title": "Endtimelocal",
+          "type": "string"
+        },
+        "minAvailability": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minavailability"
+        }
+      },
+      "required": [
+        "productCode",
+        "startTimeLocal",
+        "endTimeLocal"
+      ],
+      "title": "SearchAvailability",
+      "type": "object"
+    },
+    "UpdateBooking": {
+      "additionalProperties": false,
+      "description": "Update booking.",
+      "properties": {
+        "operation": {
+          "const": "update_booking",
+          "default": "update_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "orderNumber": {
+          "minLength": 1,
+          "title": "Ordernumber",
+          "type": "string"
+        },
+        "booking": {
+          "$ref": "#/$defs/BookingPayload",
+          "description": "Supply the complete items required by Rezdy, plus the fields to update."
+        }
+      },
+      "required": [
+        "orderNumber",
+        "booking"
+      ],
+      "title": "UpdateBooking",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_booking": "#/$defs/CancelBooking",
+          "create_booking": "#/$defs/CreateBooking",
+          "create_customer": "#/$defs/CreateCustomer",
+          "delete_customer": "#/$defs/DeleteCustomer",
+          "get_booking": "#/$defs/GetBooking",
+          "get_category": "#/$defs/GetCategory",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_product": "#/$defs/GetProduct",
+          "get_voucher": "#/$defs/GetVoucher",
+          "list_bookings": "#/$defs/ListBookings",
+          "list_categories": "#/$defs/ListCategories",
+          "list_category_products": "#/$defs/ListCategoryProducts",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_product_pickups": "#/$defs/ListProductPickups",
+          "list_products": "#/$defs/ListProducts",
+          "list_rates": "#/$defs/ListRates",
+          "list_resources": "#/$defs/ListResources",
+          "list_vouchers": "#/$defs/ListVouchers",
+          "quote_booking": "#/$defs/QuoteBooking",
+          "search_availability": "#/$defs/SearchAvailability",
+          "update_booking": "#/$defs/UpdateBooking"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/ListBookings"
+        },
+        {
+          "$ref": "#/$defs/GetBooking"
+        },
+        {
+          "$ref": "#/$defs/CreateBooking"
+        },
+        {
+          "$ref": "#/$defs/QuoteBooking"
+        },
+        {
+          "$ref": "#/$defs/UpdateBooking"
+        },
+        {
+          "$ref": "#/$defs/CancelBooking"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomer"
+        },
+        {
+          "$ref": "#/$defs/SearchAvailability"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/GetCategory"
+        },
+        {
+          "$ref": "#/$defs/ListCategoryProducts"
+        },
+        {
+          "$ref": "#/$defs/ListResources"
+        },
+        {
+          "$ref": "#/$defs/ListVouchers"
+        },
+        {
+          "$ref": "#/$defs/GetVoucher"
+        },
+        {
+          "$ref": "#/$defs/ListProductPickups"
+        },
+        {
+          "$ref": "#/$defs/ListRates"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RezdyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rezdy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

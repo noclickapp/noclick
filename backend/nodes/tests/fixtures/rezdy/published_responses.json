@@ -1,0 +1,429 @@
+{
+  "get /v1/products/{productCode}": {
+    "requestStatus": {
+      "success": true,
+      "version": "v1"
+    },
+    "product": {
+      "productType": "ACTIVITY",
+      "name": "Double dive with sharks",
+      "shortDescription": "Double dive with grey nurse or leopard sharks, depending on the season.",
+      "description": "Double dive with grey nurse or leopard sharks, depending on the season. Boat dive with a snack provided during the break between the dives. The dive site is suitable for open water divers.",
+      "productCode": "PWQF1Y",
+      "internalCode": "DIVING",
+      "supplierId": 13398,
+      "supplierAlias": "apispecificationdemosupplierdonotedit",
+      "supplierName": "API specification demo supplier (DO NOT EDIT)",
+      "timezone": "Australia/Sydney",
+      "advertisedPrice": 200.0,
+      "priceOptions": [
+        {
+          "price": 250.0,
+          "label": "Adult",
+          "id": 929159,
+          "seatsUsed": 1,
+          "productCode": "PWQF1Y"
+        },
+        {
+          "price": 200.0,
+          "label": "Student",
+          "id": 929160,
+          "seatsUsed": 1,
+          "productCode": "PWQF1Y"
+        }
+      ],
+      "currency": "AUD",
+      "unitLabel": "Participant",
+      "unitLabelPlural": "Participants",
+      "quantityRequired": true,
+      "quantityRequiredMin": 1,
+      "quantityRequiredMax": 50,
+      "images": [
+        {
+          "id": 22650,
+          "itemUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8351.jpg",
+          "thumbnailUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8351_tb.jpg",
+          "mediumSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8351_med.jpg",
+          "largeSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8351_lg.jpg"
+        },
+        {
+          "id": 22651,
+          "itemUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8378.jpg",
+          "thumbnailUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8378_tb.jpg",
+          "mediumSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8378_med.jpg",
+          "largeSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN8378_lg.jpg"
+        },
+        {
+          "id": 22652,
+          "itemUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1387.jpg",
+          "thumbnailUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1387_tb.jpg",
+          "mediumSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1387_med.jpg",
+          "largeSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1387_lg.jpg"
+        },
+        {
+          "id": 22653,
+          "itemUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1402.jpg",
+          "thumbnailUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1402_tb.jpg",
+          "mediumSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1402_med.jpg",
+          "largeSizeUrl": "https://img.rezdy-staging.com/PRODUCT_IMAGE/13398/DSCN1402_lg.jpg"
+        }
+      ],
+      "videos": [],
+      "bookingMode": "INVENTORY",
+      "charter": false,
+      "terms": "",
+      "extras": [
+        {
+          "name": "Underwater camera rental",
+          "description": "An underwater camera rental for the dive. Choice of GoPro or Nikon Coolpix AW130. Select the number of cameras up to the number of participants, that you would like to rent for this booking.",
+          "price": 15.0,
+          "extraPriceType": "ANY"
+        }
+      ],
+      "bookingFields": [
+        {
+          "label": "First Name",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": true,
+          "visiblePerBooking": true,
+          "fieldType": "String"
+        },
+        {
+          "label": "Last Name",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": true,
+          "visiblePerBooking": true,
+          "fieldType": "String"
+        },
+        {
+          "label": "Mobile",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": false,
+          "visiblePerBooking": true,
+          "fieldType": "Phone"
+        },
+        {
+          "label": "Email",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": false,
+          "visiblePerBooking": true,
+          "fieldType": "String"
+        },
+        {
+          "label": "Special Requirements",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": false,
+          "visiblePerBooking": true,
+          "fieldType": "String"
+        },
+        {
+          "label": "Certification level",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": true,
+          "visiblePerBooking": false,
+          "fieldType": "String"
+        },
+        {
+          "label": "Certification number",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": true,
+          "visiblePerBooking": false,
+          "fieldType": "String"
+        },
+        {
+          "label": "Certification agency",
+          "requiredPerParticipant": false,
+          "requiredPerBooking": false,
+          "visiblePerParticipant": true,
+          "visiblePerBooking": false,
+          "listOptions": "PADI\r\nSSI\r\nSDI",
+          "fieldType": "List"
+        }
+      ],
+      "latitude": -28.6113488,
+      "longitude": 153.629085,
+      "confirmMode": "AUTOCONFIRM",
+      "confirmModeMinParticipants": 0,
+      "agentPaymentType": "FULL_AGENT",
+      "maxCommissionPercent": 10.0,
+      "commissionIncludesExtras": true,
+      "dateCreated": "2021-08-30T23:49:55Z",
+      "minimumNoticeMinutes": 1440,
+      "durationMinutes": 180,
+      "dateUpdated": "2021-09-13T04:13:35Z",
+      "pickupId": 475,
+      "locationAddress": {
+        "addressLine": "Julien rocks",
+        "postCode": "",
+        "city": "Byron Bay",
+        "state": "",
+        "countryCode": "au",
+        "latitude": -28.6113488,
+        "longitude": 153.629085
+      },
+      "languages": [
+        "en_au"
+      ],
+      "tags": [
+        "TYPE:Activity"
+      ],
+      "waitListingEnabled": false,
+      "isApiBookingSupported": true
+    }
+  },
+  "get /v1/bookings/{orderNumber}": {
+    "requestStatus": {
+      "success": true,
+      "version": "v1"
+    },
+    "booking": {
+      "orderNumber": "RKM1ULT",
+      "status": "CONFIRMED",
+      "supplierId": 13398,
+      "supplierName": "API specification demo supplier (DO NOT EDIT)",
+      "supplierAlias": "apispecificationdemosupplierdonotedit",
+      "resellerId": 13399,
+      "resellerName": "API specification demo agent (DO NOT EDIT)",
+      "resellerAlias": "apispecificationdemoagentdonotedit",
+      "customer": {
+        "id": 29692,
+        "firstName": "Rick",
+        "lastName": "Sanchez",
+        "name": "Rick Sanchez",
+        "phone": "+61484123456"
+      },
+      "items": [
+        {
+          "productName": "Double dive with sharks",
+          "productCode": "PWQF1Y",
+          "startTime": "2025-09-30T23:00:00Z",
+          "endTime": "2025-10-01T02:00:00Z",
+          "startTimeLocal": "2025-10-01 09:00:00",
+          "endTimeLocal": "2025-10-01 12:00:00",
+          "quantities": [
+            {
+              "optionLabel": "Adult",
+              "optionPrice": 250.0,
+              "value": 1
+            }
+          ],
+          "totalQuantity": 1,
+          "amount": 250.0,
+          "extras": [],
+          "participants": [
+            {
+              "fields": [
+                {
+                  "label": "First Name",
+                  "value": "Rick"
+                },
+                {
+                  "label": "Last Name",
+                  "value": "Sanchez"
+                },
+                {
+                  "label": "Certification level"
+                },
+                {
+                  "label": "Certification number"
+                },
+                {
+                  "label": "Certification agency"
+                }
+              ]
+            }
+          ],
+          "subtotal": 250.0,
+          "pickupLocation": {
+            "pickupInstructions": "Call us on +61123456 to arrange a pickup from a custom pickup request not listed among the pickup locations.\r\nPlease be ready 15 minute before the pickup time."
+          }
+        }
+      ],
+      "totalAmount": 250.0,
+      "totalCurrency": "AUD",
+      "totalPaid": 250.0,
+      "totalDue": 0.0,
+      "dateCreated": "2025-09-09T02:14:12Z",
+      "dateConfirmed": "2025-09-09T02:14:12Z",
+      "datePaid": "2025-09-09T02:14:12Z",
+      "payments": [
+        {
+          "type": "CASH",
+          "amount": 250.0,
+          "currency": "AUD",
+          "date": "2025-09-09T02:14:12Z",
+          "label": "Paid in cash to API specification demo agent",
+          "recipient": "RESELLER"
+        }
+      ],
+      "fields": [
+        {
+          "label": "Barcode",
+          "value": "RKM1ULT"
+        }
+      ],
+      "source": "MARKETPLACE_PREF_RATE",
+      "resellerSource": "API",
+      "sourceChannel": "APISPECIFICATIONDEMOAGENTDONOTEDIT",
+      "commission": 25.0,
+      "vouchers": [],
+      "barcodeType": "QR_CODE"
+    }
+  },
+  "post /v1/bookings": {
+    "requestStatus": {
+      "success": true,
+      "version": "v1"
+    },
+    "booking": {
+      "orderNumber": "RSQ6K2F",
+      "status": "CONFIRMED",
+      "supplierId": 13398,
+      "supplierName": "API specification demo supplier (DO NOT EDIT)",
+      "supplierAlias": "apispecificationdemosupplierdonotedit",
+      "customer": {
+        "id": 29769,
+        "firstName": "Rick",
+        "lastName": "Sanchez",
+        "name": "Rick Sanchez",
+        "email": "ricksanchez@test.com",
+        "phone": "+61484123456"
+      },
+      "items": [
+        {
+          "productName": "Double dive with sharks",
+          "productCode": "PWQF1Y",
+          "startTime": "2025-09-30T23:00:00Z",
+          "endTime": "2025-10-01T02:00:00Z",
+          "startTimeLocal": "2025-10-01 09:00:00",
+          "endTimeLocal": "2025-10-01 12:00:00",
+          "quantities": [
+            {
+              "optionLabel": "Adult",
+              "optionPrice": 250.0,
+              "value": 2
+            }
+          ],
+          "totalQuantity": 2,
+          "amount": 500.0,
+          "extras": [
+            {
+              "name": "Underwater camera rental",
+              "price": 15.0,
+              "extraPriceType": "ANY",
+              "quantity": 1
+            }
+          ],
+          "participants": [
+            {
+              "fields": [
+                {
+                  "label": "First Name",
+                  "value": "Rick"
+                },
+                {
+                  "label": "Last Name",
+                  "value": "Sanchez"
+                },
+                {
+                  "label": "Barcode",
+                  "value": "RSQ6K2F*79309"
+                },
+                {
+                  "label": "Certification level",
+                  "value": "Open Water"
+                },
+                {
+                  "label": "Certification number",
+                  "value": "123456798"
+                },
+                {
+                  "label": "Certification agency",
+                  "value": "PADI"
+                },
+                {
+                  "label": "Barcode",
+                  "value": "123"
+                }
+              ]
+            },
+            {
+              "fields": [
+                {
+                  "label": "First Name",
+                  "value": "Morty"
+                },
+                {
+                  "label": "Last Name",
+                  "value": "Smith"
+                },
+                {
+                  "label": "Barcode",
+                  "value": "RSQ6K2F*79308"
+                },
+                {
+                  "label": "Certification level",
+                  "value": "Rescue Diver"
+                },
+                {
+                  "label": "Certification number",
+                  "value": "111222333"
+                },
+                {
+                  "label": "Certification agency",
+                  "value": "SDI"
+                },
+                {
+                  "label": "Barcode",
+                  "value": "456"
+                }
+              ]
+            }
+          ],
+          "subtotal": 515.0,
+          "pickupLocation": {
+            "pickupInstructions": "Call us on +61123456 to arrange a pickup from a custom pickup request not listed among the pickup locations.\r\nPlease be ready 15 minute before the pickup time."
+          }
+        }
+      ],
+      "totalAmount": 515.0,
+      "totalCurrency": "AUD",
+      "totalPaid": 515.0,
+      "totalDue": 0.0,
+      "dateCreated": "2021-09-20T04:56:34Z",
+      "dateConfirmed": "2021-09-20T04:56:33.562Z",
+      "datePaid": "2021-09-20T04:56:33.562Z",
+      "comments": "Here come comments that are visible to you, but not to customers",
+      "payments": [
+        {
+          "type": "CASH",
+          "amount": 515.0,
+          "currency": "AUD",
+          "date": "2021-09-20T04:56:33.566Z",
+          "label": "Paid in cash to API specification demo",
+          "recipient": "SUPPLIER"
+        }
+      ],
+      "fields": [
+        {
+          "label": "Barcode",
+          "value": "RSQ6K2F"
+        },
+        {
+          "label": "Special Requirements",
+          "value": "Gluten free lunch for Morty"
+        }
+      ],
+      "source": "API",
+      "vouchers": [],
+      "barcodeType": "QR_CODE"
+    }
+  }
+}
