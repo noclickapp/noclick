@@ -1,0 +1,887 @@
+{
+  "$defs": {
+    "ApplyCode": {
+      "description": "Apply an existing source code or tag to a person.",
+      "properties": {
+        "operation": {
+          "const": "apply_code",
+          "default": "apply_code",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "code_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Code Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "van_id",
+        "code_id"
+      ],
+      "title": "ApplyCode",
+      "type": "object"
+    },
+    "CheckConnection": {
+      "description": "Read the API key's own database, committee and user profiles.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateNote": {
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "is_view_restricted": {
+          "default": false,
+          "description": "Restrict this note to permitted users in the CRM context.",
+          "title": "Is View Restricted",
+          "type": "boolean"
+        },
+        "note_category_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note Category Id"
+        }
+      },
+      "required": [
+        "van_id",
+        "text"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "CreateSignup": {
+      "properties": {
+        "operation": {
+          "const": "create_signup",
+          "default": "create_signup",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "event_shift_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Shift Id",
+          "type": "integer"
+        },
+        "role_id": {
+          "exclusiveMinimum": 0,
+          "title": "Role Id",
+          "type": "integer"
+        },
+        "status_id": {
+          "exclusiveMinimum": 0,
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id"
+        }
+      },
+      "required": [
+        "van_id",
+        "event_id",
+        "event_shift_id",
+        "role_id",
+        "status_id"
+      ],
+      "title": "CreateSignup",
+      "type": "object"
+    },
+    "DeleteSignup": {
+      "properties": {
+        "operation": {
+          "const": "delete_signup",
+          "default": "delete_signup",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_signup_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Signup Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_signup_id"
+      ],
+      "title": "DeleteSignup",
+      "type": "object"
+    },
+    "EveryActionAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "everyaction_api_key",
+          "default": "everyaction_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "application_name": {
+          "description": "Application name assigned with your API key.",
+          "minLength": 1,
+          "title": "Application name",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "database_mode": {
+          "default": "1",
+          "description": "1: My Campaign / EveryAction CRM. 0: My Voters (requires permission).",
+          "enum": [
+            "1",
+            "0"
+          ],
+          "title": "Database mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "application_name",
+        "api_key"
+      ],
+      "title": "EveryAction API Key",
+      "type": "object",
+      "x-credential-instructions": "Use an API key issued for this integration, requested through API Integrations in your CRM. Enter the assigned application name and the key without its |0 or |1 suffix; choose the database mode separately. My Campaign (1) is the usual EveryAction CRM. Available operations depend on your key's approved permissions and security tier.",
+      "x-credential-url": "https://docs.everyaction.com/docs/key-generation-and-usage"
+    },
+    "FindOrCreatePerson": {
+      "description": "Match or create a contact using the documented name and birth-date fields.",
+      "properties": {
+        "operation": {
+          "const": "find_or_create_person",
+          "default": "find_or_create_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "FindOrCreatePerson",
+      "type": "object"
+    },
+    "FindPerson": {
+      "description": "Match a person by name; this POST is a read-only lookup.",
+      "properties": {
+        "operation": {
+          "const": "find_person",
+          "default": "find_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "FindPerson",
+      "type": "object"
+    },
+    "GetContribution": {
+      "properties": {
+        "operation": {
+          "const": "get_contribution",
+          "default": "get_contribution",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contribution_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contribution Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contribution_id"
+      ],
+      "title": "GetContribution",
+      "type": "object"
+    },
+    "GetEvent": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetPerson": {
+      "properties": {
+        "operation": {
+          "const": "get_person",
+          "default": "get_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated: phones, emails, addresses, customFields, externalIds, recordedAddresses, preferences, suppressions, reportedDemographics, disclosureFieldValues.",
+          "title": "Expand"
+        }
+      },
+      "required": [
+        "van_id"
+      ],
+      "title": "GetPerson",
+      "type": "object"
+    },
+    "GetPersonActivistCodes": {
+      "properties": {
+        "operation": {
+          "const": "get_person_activist_codes",
+          "default": "get_person_activist_codes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "van_id"
+      ],
+      "title": "GetPersonActivistCodes",
+      "type": "object"
+    },
+    "GetSavedList": {
+      "properties": {
+        "operation": {
+          "const": "get_saved_list",
+          "default": "get_saved_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "saved_list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Saved List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "saved_list_id"
+      ],
+      "title": "GetSavedList",
+      "type": "object"
+    },
+    "GetSignup": {
+      "properties": {
+        "operation": {
+          "const": "get_signup",
+          "default": "get_signup",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_signup_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Signup Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_signup_id"
+      ],
+      "title": "GetSignup",
+      "type": "object"
+    },
+    "ListActivistCodes": {
+      "properties": {
+        "operation": {
+          "const": "list_activist_codes",
+          "default": "list_activist_codes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "top": {
+          "default": 200,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Top",
+          "type": "integer"
+        }
+      },
+      "title": "ListActivistCodes",
+      "type": "object"
+    },
+    "ListEvents": {
+      "description": "Return one event page; nextPageLink is retained in data.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting After"
+        },
+        "starting_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting Before"
+        },
+        "event_type_ids": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+(,[0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Type Ids"
+        },
+        "top": {
+          "default": 10,
+          "description": "Maximum events in this page ($top).",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Top",
+          "type": "integer"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListNotes": {
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "van_id"
+      ],
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListSavedLists": {
+      "properties": {
+        "operation": {
+          "const": "list_saved_lists",
+          "default": "list_saved_lists",
+          "title": "Operation",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        }
+      },
+      "title": "ListSavedLists",
+      "type": "object"
+    },
+    "ListSignups": {
+      "properties": {
+        "operation": {
+          "const": "list_signups",
+          "default": "list_signups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "ListSignups",
+      "type": "object"
+    },
+    "UpdateNote": {
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "is_view_restricted": {
+          "default": false,
+          "description": "Restrict this note to permitted users in the CRM context.",
+          "title": "Is View Restricted",
+          "type": "boolean"
+        },
+        "note_category_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note Category Id"
+        },
+        "note_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "van_id",
+        "text",
+        "note_id"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "UpdatePerson": {
+      "properties": {
+        "operation": {
+          "const": "update_person",
+          "default": "update_person",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        }
+      },
+      "required": [
+        "van_id"
+      ],
+      "title": "UpdatePerson",
+      "type": "object"
+    },
+    "UpdateSignup": {
+      "properties": {
+        "operation": {
+          "const": "update_signup",
+          "default": "update_signup",
+          "title": "Operation",
+          "type": "string"
+        },
+        "van_id": {
+          "description": "EveryAction VAN ID",
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Van Id",
+          "type": "string"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "event_shift_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Shift Id",
+          "type": "integer"
+        },
+        "role_id": {
+          "exclusiveMinimum": 0,
+          "title": "Role Id",
+          "type": "integer"
+        },
+        "status_id": {
+          "exclusiveMinimum": 0,
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id"
+        },
+        "event_signup_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Signup Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "van_id",
+        "event_id",
+        "event_shift_id",
+        "role_id",
+        "status_id",
+        "event_signup_id"
+      ],
+      "title": "UpdateSignup",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "apply_code": "#/$defs/ApplyCode",
+          "check_connection": "#/$defs/CheckConnection",
+          "create_note": "#/$defs/CreateNote",
+          "create_signup": "#/$defs/CreateSignup",
+          "delete_signup": "#/$defs/DeleteSignup",
+          "find_or_create_person": "#/$defs/FindOrCreatePerson",
+          "find_person": "#/$defs/FindPerson",
+          "get_contribution": "#/$defs/GetContribution",
+          "get_event": "#/$defs/GetEvent",
+          "get_person": "#/$defs/GetPerson",
+          "get_person_activist_codes": "#/$defs/GetPersonActivistCodes",
+          "get_saved_list": "#/$defs/GetSavedList",
+          "get_signup": "#/$defs/GetSignup",
+          "list_activist_codes": "#/$defs/ListActivistCodes",
+          "list_events": "#/$defs/ListEvents",
+          "list_notes": "#/$defs/ListNotes",
+          "list_saved_lists": "#/$defs/ListSavedLists",
+          "list_signups": "#/$defs/ListSignups",
+          "update_note": "#/$defs/UpdateNote",
+          "update_person": "#/$defs/UpdatePerson",
+          "update_signup": "#/$defs/UpdateSignup"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/GetPerson"
+        },
+        {
+          "$ref": "#/$defs/FindPerson"
+        },
+        {
+          "$ref": "#/$defs/FindOrCreatePerson"
+        },
+        {
+          "$ref": "#/$defs/UpdatePerson"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/ListSignups"
+        },
+        {
+          "$ref": "#/$defs/CreateSignup"
+        },
+        {
+          "$ref": "#/$defs/UpdateSignup"
+        },
+        {
+          "$ref": "#/$defs/GetSignup"
+        },
+        {
+          "$ref": "#/$defs/DeleteSignup"
+        },
+        {
+          "$ref": "#/$defs/ListSavedLists"
+        },
+        {
+          "$ref": "#/$defs/GetSavedList"
+        },
+        {
+          "$ref": "#/$defs/ListActivistCodes"
+        },
+        {
+          "$ref": "#/$defs/GetPersonActivistCodes"
+        },
+        {
+          "$ref": "#/$defs/ApplyCode"
+        },
+        {
+          "$ref": "#/$defs/GetContribution"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EveryActionAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Everyaction Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
