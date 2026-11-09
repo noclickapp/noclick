@@ -1,0 +1,555 @@
+{
+  "$defs": {
+    "BindDevice": {
+      "description": "Register a device/owner association in the Plaud cloud registry.",
+      "properties": {
+        "operation": {
+          "const": "bind_device",
+          "default": "bind_device",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sn": {
+          "description": "Device serial number.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sn",
+          "type": "string"
+        },
+        "type": {
+          "default": "notepro",
+          "description": "Use notepro for SN prefix 881, notepins for 882.",
+          "enum": [
+            "notepro",
+            "notepins"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sn"
+      ],
+      "title": "BindDevice",
+      "type": "object"
+    },
+    "CompleteUpload": {
+      "description": "Finalize previously uploaded parts. The returned download URL lasts 24 hours.",
+      "properties": {
+        "operation": {
+          "const": "complete_upload",
+          "default": "complete_upload",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "upload_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Upload Id",
+          "type": "string"
+        },
+        "part_list": {
+          "items": {
+            "$ref": "#/$defs/UploadPart"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Part List",
+          "type": "array"
+        },
+        "filetype": {
+          "default": "mp3",
+          "enum": [
+            "mp3",
+            "opus"
+          ],
+          "title": "Filetype",
+          "type": "string"
+        },
+        "file_md5": {
+          "anyOf": [
+            {
+              "pattern": "^[a-fA-F0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Md5"
+        }
+      },
+      "required": [
+        "file_id",
+        "upload_id",
+        "part_list"
+      ],
+      "title": "CompleteUpload",
+      "type": "object"
+    },
+    "GeneratePresignedUrls": {
+      "description": "Generate multipart upload URLs. Upload the raw chunks separately and keep each ETag.",
+      "properties": {
+        "operation": {
+          "const": "generate_presigned_urls",
+          "default": "generate_presigned_urls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filesize": {
+          "description": "Full audio size in bytes; Plaud returns one URL per 5 MB part.",
+          "exclusiveMinimum": 0,
+          "title": "Filesize",
+          "type": "integer"
+        },
+        "filetype": {
+          "default": "mp3",
+          "enum": [
+            "mp3",
+            "opus"
+          ],
+          "title": "Filetype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filesize"
+      ],
+      "title": "GeneratePresignedUrls",
+      "type": "object"
+    },
+    "GetDeviceBinding": {
+      "description": "Read remote device binding and app history; this does not prove ownership.",
+      "properties": {
+        "operation": {
+          "const": "get_device_binding",
+          "default": "get_device_binding",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sn": {
+          "description": "Device serial number.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sn",
+          "type": "string"
+        },
+        "type": {
+          "default": "notepro",
+          "description": "Use notepro for SN prefix 881, notepins for 882.",
+          "enum": [
+            "notepro",
+            "notepins"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sn"
+      ],
+      "title": "GetDeviceBinding",
+      "type": "object"
+    },
+    "GetFile": {
+      "description": "Read recording metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "Recording ID from the file change feed.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetFileAudio": {
+      "description": "Get the expiring audio URL, without downloading the audio.",
+      "properties": {
+        "operation": {
+          "const": "get_file_audio",
+          "default": "get_file_audio",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "Recording ID from the file change feed.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFileAudio",
+      "type": "object"
+    },
+    "GetFileSummaries": {
+      "description": "Read all generated summaries for a recording.",
+      "properties": {
+        "operation": {
+          "const": "get_file_summaries",
+          "default": "get_file_summaries",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "Recording ID from the file change feed.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFileSummaries",
+      "type": "object"
+    },
+    "GetFileTranscript": {
+      "description": "Read the recording's speaker-labelled transcript.",
+      "properties": {
+        "operation": {
+          "const": "get_file_transcript",
+          "default": "get_file_transcript",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "Recording ID from the file change feed.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFileTranscript",
+      "type": "object"
+    },
+    "ListFileChanges": {
+      "description": "Read one page of changed recordings; retain next_checkpoint to resume.",
+      "properties": {
+        "operation": {
+          "const": "list_file_changes",
+          "default": "list_file_changes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Cursor"
+        },
+        "checkpoint": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checkpoint"
+        }
+      },
+      "title": "ListFileChanges",
+      "type": "object"
+    },
+    "ListMembers": {
+      "description": "Read one page of members, including inactive members.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListMembers",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "description": "Read the workspace belonging to the supplied US workspace token.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "PlaudUserCredential": {
+      "properties": {
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "credential_type": {
+          "const": "plaud_user_token",
+          "default": "plaud_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "us",
+          "enum": [
+            "us",
+            "jp"
+          ],
+          "title": "API region",
+          "type": "string"
+        },
+        "device_sn": {
+          "description": "A device SN for the read-only connection check (881 = Note Pro, 882 = NotePin S).",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^(881|882)[0-9]+$",
+          "title": "Device serial number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "device_sn"
+      ],
+      "title": "Plaud Embedded User Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Embedded user access token, not a partner token. Choose the token's region and enter a device serial number for the read-only binding check. Replace expired tokens yourself. Binding reads prove token acceptance, not device ownership.",
+      "x-credential-url": "https://docs.plaud.ai/plaud-embedded/auth-api-overview"
+    },
+    "PlaudWorkspaceCredential": {
+      "properties": {
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "credential_type": {
+          "const": "plaud_workspace_token",
+          "default": "plaud_workspace_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Plaud Workspace Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing US workspace access token from Plaud's workspace token endpoint. Tokens expire after one hour; replace the token when it expires. Connection reads your own workspace. Japan workspace endpoints are not supported by this credential.",
+      "x-credential-url": "https://docs.plaud.ai/openapi/enterprise.json"
+    },
+    "UnbindDevice": {
+      "description": "Remove the cloud binding. Also call depair(clear: true) in the device SDK to clear the local BLE binding.",
+      "properties": {
+        "operation": {
+          "const": "unbind_device",
+          "default": "unbind_device",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sn": {
+          "description": "Device serial number.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sn",
+          "type": "string"
+        },
+        "type": {
+          "default": "notepro",
+          "description": "Use notepro for SN prefix 881, notepins for 882.",
+          "enum": [
+            "notepro",
+            "notepins"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sn"
+      ],
+      "title": "UnbindDevice",
+      "type": "object"
+    },
+    "UploadPart": {
+      "properties": {
+        "PartNumber": {
+          "minimum": 1,
+          "title": "Partnumber",
+          "type": "integer"
+        },
+        "ETag": {
+          "description": "Exact ETag returned by the S3 PUT, including quotes.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Etag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PartNumber",
+        "ETag"
+      ],
+      "title": "UploadPart",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "bind_device": "#/$defs/BindDevice",
+          "complete_upload": "#/$defs/CompleteUpload",
+          "generate_presigned_urls": "#/$defs/GeneratePresignedUrls",
+          "get_device_binding": "#/$defs/GetDeviceBinding",
+          "get_file": "#/$defs/GetFile",
+          "get_file_audio": "#/$defs/GetFileAudio",
+          "get_file_summaries": "#/$defs/GetFileSummaries",
+          "get_file_transcript": "#/$defs/GetFileTranscript",
+          "list_file_changes": "#/$defs/ListFileChanges",
+          "list_members": "#/$defs/ListMembers",
+          "list_workspaces": "#/$defs/ListWorkspaces",
+          "unbind_device": "#/$defs/UnbindDevice"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/ListMembers"
+        },
+        {
+          "$ref": "#/$defs/ListFileChanges"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/GetFileTranscript"
+        },
+        {
+          "$ref": "#/$defs/GetFileSummaries"
+        },
+        {
+          "$ref": "#/$defs/GetFileAudio"
+        },
+        {
+          "$ref": "#/$defs/GetDeviceBinding"
+        },
+        {
+          "$ref": "#/$defs/BindDevice"
+        },
+        {
+          "$ref": "#/$defs/UnbindDevice"
+        },
+        {
+          "$ref": "#/$defs/GeneratePresignedUrls"
+        },
+        {
+          "$ref": "#/$defs/CompleteUpload"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlaudWorkspaceCredential"
+        },
+        {
+          "$ref": "#/$defs/PlaudUserCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Plaud Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
