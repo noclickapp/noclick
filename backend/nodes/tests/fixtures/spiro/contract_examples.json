@@ -1,0 +1,2333 @@
+{
+  "source": "https://developers.spiro.ai/api/docs/v1/openapi.json",
+  "sha256": "e12b49ea7cc08d4e4a1f5300ad67d9864dd02bbbb15aa79f7d79bb8cadfc7bcf",
+  "operations": {
+    "list_companies": {
+      "method": "GET",
+      "path": "/api/v1/companies",
+      "kind": "company",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "432",
+            "type": "company",
+            "attributes": {
+              "id": 432,
+              "name": "West-Schuster",
+              "website": "parisian.test",
+              "address": "59433 Lucina Greens",
+              "city": "North Glindabury",
+              "zipcode": "36791-9251",
+              "parent_id": null,
+              "country": "Slovenia",
+              "state": "Kansas",
+              "phone": "1-237-139-3783 x372",
+              "description": "Compatible encompassing neural-net",
+              "custom": {},
+              "created_at": "2026-09-01T09:57:38.304Z",
+              "updated_at": "2026-09-01T09:57:38.304Z",
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "990",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "433",
+            "type": "company",
+            "attributes": {
+              "id": 433,
+              "name": "Kassulke-Shanahan",
+              "website": "carter.test",
+              "address": "14995 Forest Station",
+              "city": "East Sondra",
+              "zipcode": "72551-8890",
+              "parent_id": null,
+              "country": "Martinique",
+              "state": "South Dakota",
+              "phone": "820.435.8601",
+              "description": "Networked incremental time-frame",
+              "custom": {},
+              "created_at": "2026-09-01T09:57:38.308Z",
+              "updated_at": "2026-09-01T09:57:38.308Z",
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "990",
+                  "type": "user"
+                }
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 25,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_companies"
+      }
+    },
+    "get_company": {
+      "method": "GET",
+      "path": "/api/v1/companies/{id}",
+      "kind": "company",
+      "path_values": {
+        "id": "434"
+      },
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "434",
+          "type": "company",
+          "attributes": {
+            "id": 434,
+            "name": "Hagenes, Towne and Hauck",
+            "website": "mcglynn.example",
+            "address": "6161 Zemlak Junction",
+            "city": "Hammesmouth",
+            "zipcode": "67367-3864",
+            "parent_id": null,
+            "country": "Malta",
+            "state": "Kansas",
+            "phone": "963-337-2915 x94253",
+            "description": "Fully-configurable motivating info-mediaries",
+            "custom": {
+              "string_field": null,
+              "date_field": null,
+              "float_field": null,
+              "integer_field": 10,
+              "link_field": null,
+              "list_field": null,
+              "multipleselect_field": null,
+              "contact_lookup": null
+            },
+            "created_at": "2026-09-01T09:57:38.326Z",
+            "updated_at": "2026-09-01T09:57:38.326Z",
+            "external_id": null
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "991",
+                "type": "user"
+              }
+            }
+          }
+        },
+        "included": [
+          {
+            "id": "991",
+            "type": "user",
+            "attributes": {
+              "id": 991,
+              "first_name": "Kasey",
+              "last_name": "Gleason",
+              "email": "kasey@zemlak.example",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          }
+        ]
+      },
+      "config": {
+        "operation": "get_company",
+        "id": "434"
+      }
+    },
+    "create_company": {
+      "method": "POST",
+      "path": "/api/v1/companies",
+      "kind": "company",
+      "path_values": {},
+      "request": {
+        "data": {
+          "attributes": {
+            "website": "mckenzie.test",
+            "name": "Hilpert-Cummings",
+            "city": "Donteborough",
+            "zipcode": "62422",
+            "country": "Philippines",
+            "state": "Ohio",
+            "phone": "(596) 982-9822 x362",
+            "address": "890 Marcene Summit",
+            "description": "Profit-focused coherent collaboration",
+            "custom": {
+              "local_store": "Yes"
+            },
+            "parent_id": 435
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 992
+              }
+            }
+          }
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "436",
+          "type": "company",
+          "attributes": {
+            "id": 436,
+            "name": "Hilpert-Cummings",
+            "website": "mckenzie.test",
+            "address": "890 Marcene Summit",
+            "city": "Donteborough",
+            "zipcode": "62422",
+            "parent_id": 435,
+            "country": "Philippines",
+            "state": "Ohio",
+            "phone": "(596) 982-9822 x362",
+            "description": "Profit-focused coherent collaboration",
+            "custom": {
+              "local_store": "Yes"
+            },
+            "created_at": "2026-09-01T09:57:38.373Z",
+            "updated_at": "2026-09-01T09:57:38.373Z",
+            "external_id": null
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "992",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "create_company",
+        "website": "mckenzie.test",
+        "name": "Hilpert-Cummings",
+        "city": "Donteborough",
+        "zipcode": "62422",
+        "country": "Philippines",
+        "state": "Ohio",
+        "phone": "(596) 982-9822 x362",
+        "address": "890 Marcene Summit",
+        "description": "Profit-focused coherent collaboration",
+        "custom": {
+          "local_store": "Yes"
+        },
+        "user_id": 992
+      }
+    },
+    "update_company": {
+      "method": "PUT",
+      "path": "/api/v1/companies/{id}",
+      "kind": "company",
+      "path_values": {
+        "id": "438"
+      },
+      "request": {
+        "data": {
+          "attributes": {
+            "website": "dooley.example",
+            "name": "White-Hartmann",
+            "city": "New Jonah",
+            "zipcode": "42232-5770",
+            "country": "Canada",
+            "state": "Louisiana",
+            "phone": "1-184-373-8917",
+            "address": "852 Jacqueline Stream",
+            "description": "Focused multimedia structure",
+            "custom": {
+              "local_store": "Yes"
+            }
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 994
+              }
+            }
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "438",
+          "type": "company",
+          "attributes": {
+            "id": 438,
+            "name": "White-Hartmann",
+            "website": "dooley.example",
+            "address": "852 Jacqueline Stream",
+            "city": "New Jonah",
+            "zipcode": "42232-5770",
+            "parent_id": 437,
+            "country": "Canada",
+            "state": "Louisiana",
+            "phone": "1-184-373-8917",
+            "description": "Focused multimedia structure",
+            "custom": {
+              "local_store": "Yes"
+            },
+            "created_at": "2026-09-01T09:57:38.390Z",
+            "updated_at": "2026-09-01T09:57:38.403Z",
+            "external_id": null
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "994",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "update_company",
+        "id": "438",
+        "website": "dooley.example",
+        "name": "White-Hartmann",
+        "city": "New Jonah",
+        "zipcode": "42232-5770",
+        "country": "Canada",
+        "state": "Louisiana",
+        "phone": "1-184-373-8917",
+        "address": "852 Jacqueline Stream",
+        "description": "Focused multimedia structure",
+        "custom": {
+          "local_store": "Yes"
+        },
+        "user_id": 994
+      }
+    },
+    "list_contacts": {
+      "method": "GET",
+      "path": "/api/v1/contacts",
+      "kind": "contact",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "208",
+            "type": "contact",
+            "attributes": {
+              "id": 208,
+              "first_name": "Charles",
+              "last_name": "Howell",
+              "created_at": "2026-09-01T09:57:38.521Z",
+              "updated_at": "2026-09-01T09:57:38.521Z",
+              "title": "agriculturist",
+              "phone": "303.165.1111",
+              "mobile_phone": "731.348.1560",
+              "home_phone": null,
+              "email": "charles@armstrong.test",
+              "description": null,
+              "custom": {},
+              "external_id": null,
+              "email_opt_out": false
+            },
+            "relationships": {
+              "company": {
+                "data": {
+                  "id": "441",
+                  "type": "company"
+                }
+              },
+              "user": {
+                "data": {
+                  "id": "998",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "207",
+            "type": "contact",
+            "attributes": {
+              "id": 207,
+              "first_name": "Elden",
+              "last_name": "Rogahn",
+              "created_at": "2026-09-01T09:57:38.516Z",
+              "updated_at": "2026-09-01T09:57:38.516Z",
+              "title": "builder",
+              "phone": "1-754-822-6128",
+              "mobile_phone": "817-259-2747",
+              "home_phone": null,
+              "email": "elden@jaskolski-thompson.example",
+              "description": null,
+              "custom": {},
+              "external_id": null,
+              "email_opt_out": false
+            },
+            "relationships": {
+              "company": {
+                "data": {
+                  "id": "441",
+                  "type": "company"
+                }
+              },
+              "user": {
+                "data": {
+                  "id": "998",
+                  "type": "user"
+                }
+              }
+            }
+          }
+        ],
+        "included": [
+          {
+            "id": "441",
+            "type": "company",
+            "attributes": {
+              "id": 441,
+              "name": "McKenzie, Corkery and Gibson",
+              "website": "lang.test",
+              "address": "590 Kuphal Trafficway",
+              "city": "Melodifurt",
+              "zipcode": "92145-2912",
+              "parent_id": null,
+              "country": "Tuvalu",
+              "state": "Massachusetts",
+              "phone": "373-920-4478 x98696",
+              "description": "Open-source mission-critical analyzer",
+              "custom": {},
+              "created_at": "2026-09-01T09:57:38.511Z",
+              "updated_at": "2026-09-01T09:57:38.511Z",
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "998",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "998",
+            "type": "user",
+            "attributes": {
+              "id": 998,
+              "first_name": "Alfredo",
+              "last_name": "Hermann",
+              "email": "alfredo@oconner.example",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 10,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_contacts"
+      }
+    },
+    "get_contact": {
+      "method": "GET",
+      "path": "/api/v1/contacts/{id}",
+      "kind": "contact",
+      "path_values": {
+        "id": "209"
+      },
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "209",
+          "type": "contact",
+          "attributes": {
+            "id": 209,
+            "first_name": "Juliann",
+            "last_name": "Welch",
+            "created_at": "2026-09-01T09:57:38.544Z",
+            "updated_at": "2026-09-01T09:57:38.544Z",
+            "title": "mechanic",
+            "phone": "(282) 982-9557",
+            "mobile_phone": "142.956.9393",
+            "home_phone": null,
+            "email": "juliann@hintz.example",
+            "description": null,
+            "custom": {},
+            "external_id": null,
+            "email_opt_out": false
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "id": "442",
+                "type": "company"
+              }
+            },
+            "user": {
+              "data": {
+                "id": "999",
+                "type": "user"
+              }
+            }
+          }
+        },
+        "included": [
+          {
+            "id": "442",
+            "type": "company",
+            "attributes": {
+              "id": 442,
+              "name": "Beatty Group",
+              "website": "conn.example",
+              "address": "111 Gladys Trail",
+              "city": "Mayertmouth",
+              "zipcode": "27557-9110",
+              "parent_id": null,
+              "country": "Honduras",
+              "state": "Louisiana",
+              "phone": "935-596-8429 x1457",
+              "description": "Virtual empowering collaboration",
+              "custom": {},
+              "created_at": "2026-09-01T09:57:38.540Z",
+              "updated_at": "2026-09-01T09:57:38.540Z",
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1000",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "999",
+            "type": "user",
+            "attributes": {
+              "id": 999,
+              "first_name": "Ossie",
+              "last_name": "Schneider",
+              "email": "ossie@cummerata.test",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          }
+        ]
+      },
+      "config": {
+        "operation": "get_contact",
+        "id": "209"
+      }
+    },
+    "create_contact": {
+      "method": "POST",
+      "path": "/api/v1/contacts",
+      "kind": "contact",
+      "path_values": {},
+      "request": {
+        "data": {
+          "attributes": {
+            "first_name": "Santiago",
+            "last_name": "Davis",
+            "email": "SANTIAGO@JENKINS-EMARD.TEST",
+            "title": "Manager",
+            "phone": "+1 654 987 564",
+            "mobile_phone": "357.732.9783",
+            "home_phone": "1-587-979-7259",
+            "description": "Customer-focused solution-oriented groupware",
+            "custom": {
+              "date_field": "2018-06-18",
+              "list_field": "One",
+              "multipleselect_field": "One,Two"
+            }
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "type": "company",
+                "id": 443
+              }
+            },
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 1001
+              }
+            }
+          }
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "210",
+          "type": "contact",
+          "attributes": {
+            "id": 210,
+            "first_name": "Santiago",
+            "last_name": "Davis",
+            "created_at": "2026-09-01T09:57:38.578Z",
+            "updated_at": "2026-09-01T09:57:38.578Z",
+            "title": "Manager",
+            "phone": "+1654987564",
+            "mobile_phone": "357.732.9783",
+            "home_phone": "1-587-979-7259",
+            "email": "santiago@jenkins-emard.test",
+            "description": "Customer-focused solution-oriented groupware",
+            "custom": {
+              "date_field": "2018-06-18",
+              "list_field": "One",
+              "multipleselect_field": "One,Two"
+            },
+            "external_id": null,
+            "email_opt_out": false
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "id": "443",
+                "type": "company"
+              }
+            },
+            "user": {
+              "data": {
+                "id": "1001",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "create_contact",
+        "first_name": "Santiago",
+        "last_name": "Davis",
+        "email": "SANTIAGO@JENKINS-EMARD.TEST",
+        "title": "Manager",
+        "phone": "+1 654 987 564",
+        "mobile_phone": "357.732.9783",
+        "home_phone": "1-587-979-7259",
+        "description": "Customer-focused solution-oriented groupware",
+        "custom": {
+          "date_field": "2018-06-18",
+          "list_field": "One",
+          "multipleselect_field": "One,Two"
+        },
+        "company_id": 443,
+        "user_id": 1001
+      }
+    },
+    "update_contact": {
+      "method": "PUT",
+      "path": "/api/v1/contacts/{id}",
+      "kind": "contact",
+      "path_values": {
+        "id": "211"
+      },
+      "request": {
+        "data": {
+          "attributes": {
+            "first_name": "Porter"
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "211",
+          "type": "contact",
+          "attributes": {
+            "id": 211,
+            "first_name": "Porter",
+            "last_name": "LName",
+            "created_at": "2026-09-01T09:57:38.596Z",
+            "updated_at": "2026-09-01T09:57:38.607Z",
+            "title": "businessman",
+            "phone": "1-350-348-8407",
+            "mobile_phone": "423.305.2183",
+            "home_phone": null,
+            "email": "fname@fahey.test",
+            "description": null,
+            "custom": {},
+            "external_id": null,
+            "email_opt_out": false
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "id": "444",
+                "type": "company"
+              }
+            },
+            "user": {
+              "data": {
+                "id": "1002",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "update_contact",
+        "id": "211",
+        "first_name": "Porter"
+      }
+    },
+    "list_opportunities": {
+      "method": "GET",
+      "path": "/api/v1/opportunities",
+      "kind": "opportunity",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "117",
+            "type": "opportunity",
+            "attributes": {
+              "id": 117,
+              "name": "Ernser-Lueilwitz",
+              "close_at": "2026-09-26",
+              "amount": "6236.41",
+              "updated_at": "2026-09-01T09:57:39.426Z",
+              "description": "Shoes & Automotive",
+              "custom": {},
+              "external_id": null,
+              "currency": null,
+              "created_at": "2026-09-01T09:57:39.426Z"
+            },
+            "relationships": {
+              "company": {
+                "data": {
+                  "id": "478",
+                  "type": "company"
+                }
+              },
+              "pipeline": {
+                "data": {
+                  "id": "126",
+                  "type": "pipeline"
+                }
+              },
+              "opportunity_stage": {
+                "data": {
+                  "id": "367",
+                  "type": "opportunity_stage"
+                }
+              },
+              "user": {
+                "data": {
+                  "id": "1061",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "116",
+            "type": "opportunity",
+            "attributes": {
+              "id": 116,
+              "name": "Kris, Jast and Hilpert",
+              "close_at": "2026-09-17",
+              "amount": "6353.65",
+              "updated_at": "2026-09-01T09:57:39.417Z",
+              "description": "Sports",
+              "custom": {},
+              "external_id": null,
+              "currency": null,
+              "created_at": "2026-09-01T09:57:39.418Z"
+            },
+            "relationships": {
+              "company": {
+                "data": {
+                  "id": "477",
+                  "type": "company"
+                }
+              },
+              "pipeline": {
+                "data": {
+                  "id": "125",
+                  "type": "pipeline"
+                }
+              },
+              "opportunity_stage": {
+                "data": {
+                  "id": "364",
+                  "type": "opportunity_stage"
+                }
+              },
+              "user": {
+                "data": {
+                  "id": "1061",
+                  "type": "user"
+                }
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 10,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_opportunities"
+      }
+    },
+    "get_opportunity": {
+      "method": "GET",
+      "path": "/api/v1/opportunities/{id}",
+      "kind": "opportunity",
+      "path_values": {
+        "id": "118"
+      },
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "118",
+          "type": "opportunity",
+          "attributes": {
+            "id": 118,
+            "name": "Langosh and Sons",
+            "close_at": "2026-09-03",
+            "amount": "4075.59",
+            "updated_at": "2026-09-01T09:57:39.444Z",
+            "description": "Kids",
+            "custom": {},
+            "external_id": null,
+            "currency": null,
+            "created_at": "2026-08-30T09:57:39.437Z"
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "id": "479",
+                "type": "company"
+              }
+            },
+            "pipeline": {
+              "data": {
+                "id": "127",
+                "type": "pipeline"
+              }
+            },
+            "opportunity_stage": {
+              "data": {
+                "id": "370",
+                "type": "opportunity_stage"
+              }
+            },
+            "user": {
+              "data": {
+                "id": "1064",
+                "type": "user"
+              }
+            }
+          }
+        },
+        "included": [
+          {
+            "id": "479",
+            "type": "company",
+            "attributes": {
+              "id": 479,
+              "name": "Borer Group",
+              "website": "simonis-oconner.example",
+              "address": "315 Rosenbaum Cliffs",
+              "city": "Emmittfort",
+              "zipcode": "37865",
+              "parent_id": null,
+              "country": "Swaziland",
+              "state": "Rhode Island",
+              "phone": "1-454-585-2986",
+              "description": "Programmable homogeneous encoding",
+              "custom": {},
+              "created_at": "2026-09-01T09:57:39.441Z",
+              "updated_at": "2026-09-01T09:57:39.441Z",
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1065",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "1064",
+            "type": "user",
+            "attributes": {
+              "id": 1064,
+              "first_name": "Mindy",
+              "last_name": "DuBuque",
+              "email": "mindy@abbott.test",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          }
+        ]
+      },
+      "config": {
+        "operation": "get_opportunity",
+        "id": "118"
+      }
+    },
+    "create_opportunity": {
+      "method": "POST",
+      "path": "/api/v1/opportunities",
+      "kind": "opportunity",
+      "path_values": {},
+      "request": {
+        "data": {
+          "attributes": {
+            "name": "Shanahan Inc",
+            "amount": 7305.28,
+            "close_at": "2026-09-04",
+            "description": "Description",
+            "custom": {
+              "date_field": "2026-09-01T09:57:39Z"
+            }
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "type": "company",
+                "id": 480
+              }
+            },
+            "pipeline": {
+              "data": {
+                "type": "pipeline",
+                "id": 128
+              }
+            },
+            "opportunity_stage": {
+              "data": {
+                "type": "opportunity_stage",
+                "id": 373
+              }
+            },
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 1067
+              }
+            }
+          }
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "119",
+          "type": "opportunity",
+          "attributes": {
+            "id": 119,
+            "name": "Shanahan Inc",
+            "close_at": "2026-09-04",
+            "amount": "7305.28",
+            "updated_at": "2026-09-01T09:57:39.468Z",
+            "description": "Description",
+            "custom": {
+              "string_field": null,
+              "date_field": "2026-09-01",
+              "float_field": null,
+              "integer_field": null,
+              "link_field": null,
+              "list_field": null,
+              "multipleselect_field": null,
+              "contact_lookup": null
+            },
+            "external_id": null,
+            "currency": null,
+            "created_at": "2026-09-01T09:57:39.468Z"
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "id": "480",
+                "type": "company"
+              }
+            },
+            "pipeline": {
+              "data": {
+                "id": "128",
+                "type": "pipeline"
+              }
+            },
+            "opportunity_stage": {
+              "data": {
+                "id": "373",
+                "type": "opportunity_stage"
+              }
+            },
+            "user": {
+              "data": {
+                "id": "1067",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "create_opportunity",
+        "name": "Shanahan Inc",
+        "amount": 7305.28,
+        "close_at": "2019-06-25T08:35:17Z",
+        "description": "Description",
+        "custom": {
+          "date_field": "2026-09-01T09:57:39Z"
+        },
+        "company_id": 480,
+        "pipeline_id": 128,
+        "opportunity_stage_id": 373,
+        "user_id": 1067
+      }
+    },
+    "update_opportunity": {
+      "method": "PUT",
+      "path": "/api/v1/opportunities/{id}",
+      "kind": "opportunity",
+      "path_values": {
+        "id": "120"
+      },
+      "request": {
+        "data": {
+          "attributes": {
+            "name": "Fritsch-Mayer",
+            "custom": {
+              "date_field": "2026-09-01T09:57:39Z"
+            }
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 1070
+              }
+            },
+            "opportunity_stage": {
+              "data": {
+                "id": 375
+              }
+            }
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "120",
+          "type": "opportunity",
+          "attributes": {
+            "id": 120,
+            "name": "Fritsch-Mayer",
+            "close_at": "2026-09-01",
+            "amount": "8803.24",
+            "updated_at": "2026-09-01T09:57:39.501Z",
+            "description": "Outdoors, Clothing & Tools",
+            "custom": {
+              "string_field": null,
+              "date_field": "2026-09-01",
+              "float_field": null,
+              "integer_field": null,
+              "link_field": null,
+              "list_field": null,
+              "multipleselect_field": null,
+              "contact_lookup": null
+            },
+            "external_id": null,
+            "currency": null,
+            "created_at": "2026-09-01T09:57:39.487Z"
+          },
+          "relationships": {
+            "company": {
+              "data": {
+                "id": "481",
+                "type": "company"
+              }
+            },
+            "pipeline": {
+              "data": {
+                "id": "129",
+                "type": "pipeline"
+              }
+            },
+            "opportunity_stage": {
+              "data": {
+                "id": "375",
+                "type": "opportunity_stage"
+              }
+            },
+            "user": {
+              "data": {
+                "id": "1070",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "update_opportunity",
+        "id": "120",
+        "name": "Fritsch-Mayer",
+        "custom": {
+          "date_field": "2026-09-01T09:57:39Z"
+        },
+        "user_id": 1070,
+        "opportunity_stage_id": 375
+      }
+    },
+    "list_notes": {
+      "method": "GET",
+      "path": "/api/v1/notes",
+      "kind": "note",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "179",
+            "type": "note",
+            "attributes": {
+              "id": 179,
+              "subject": "voluptas",
+              "description": "Voluptatem et necessitatibus repellendus.",
+              "interacted_at": "2026-09-01T09:57:39.193Z",
+              "custom": {},
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1041",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "180",
+            "type": "note",
+            "attributes": {
+              "id": 180,
+              "subject": "dolor",
+              "description": "Blanditiis suscipit est libero.",
+              "interacted_at": "2026-09-01T09:57:39.196Z",
+              "custom": {},
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1041",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "181",
+            "type": "note",
+            "attributes": {
+              "id": 181,
+              "subject": "voluptatem",
+              "description": "Minus suscipit provident deserunt.",
+              "interacted_at": "2026-09-01T09:57:39.198Z",
+              "custom": {},
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1041",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "182",
+            "type": "note",
+            "attributes": {
+              "id": 182,
+              "subject": "aut",
+              "description": "Et enim sed cum.",
+              "interacted_at": "2026-09-01T09:57:39.200Z",
+              "custom": {},
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1041",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "183",
+            "type": "note",
+            "attributes": {
+              "id": 183,
+              "subject": "voluptas",
+              "description": "Molestias corrupti possimus et.",
+              "interacted_at": "2026-09-01T09:57:39.203Z",
+              "custom": {},
+              "external_id": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1041",
+                  "type": "user"
+                }
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 25,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_notes"
+      }
+    },
+    "create_note": {
+      "method": "POST",
+      "path": "/api/v1/notes",
+      "kind": "note",
+      "path_values": {},
+      "request": {
+        "data": {
+          "attributes": {
+            "subject": "Subject",
+            "description": "Description",
+            "interacted_at": "2026-09-01T09:57:39Z"
+          },
+          "relationships": {
+            "owner": {
+              "data": {
+                "type": "company",
+                "id": 464
+              }
+            },
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 1043
+              }
+            }
+          }
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "184",
+          "type": "note",
+          "attributes": {
+            "id": 184,
+            "subject": "Subject",
+            "description": "Description",
+            "interacted_at": "2026-09-01T09:57:39.000Z",
+            "custom": {},
+            "external_id": null
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "1043",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "create_note",
+        "subject": "Subject",
+        "description": "Description",
+        "interacted_at": "2026-09-01T09:57:39Z",
+        "owner_type": "company",
+        "owner_id": 464,
+        "user_id": 1043
+      }
+    },
+    "update_note": {
+      "method": "PUT",
+      "path": "/api/v1/notes/{id}",
+      "kind": "note",
+      "path_values": {
+        "id": "185"
+      },
+      "request": {
+        "data": {
+          "attributes": {
+            "subject": "New Subject",
+            "description": "New Description",
+            "interacted_at": "2026-08-30T09:57:39Z",
+            "custom": {
+              "float_field": "130.0",
+              "integer_field": "150"
+            }
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "185",
+          "type": "note",
+          "attributes": {
+            "id": 185,
+            "subject": "New Subject",
+            "description": "New Description",
+            "interacted_at": "2026-08-30T09:57:39.000Z",
+            "custom": {
+              "string_field": null,
+              "date_field": null,
+              "float_field": "130.0",
+              "integer_field": "150",
+              "link_field": null,
+              "list_field": null,
+              "multipleselect_field": null,
+              "contact_lookup": null
+            },
+            "external_id": null
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "1044",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "update_note",
+        "id": "185",
+        "subject": "New Subject",
+        "description": "New Description",
+        "interacted_at": "2026-08-30T09:57:39Z",
+        "custom": {
+          "float_field": "130.0",
+          "integer_field": "150"
+        }
+      }
+    },
+    "list_reminders": {
+      "method": "GET",
+      "path": "/api/v1/reminders",
+      "kind": "reminder",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "32",
+            "type": "reminder",
+            "attributes": {
+              "id": 32,
+              "reason": "Call him",
+              "description": "We should close that deal",
+              "created_at": "2026-09-01T09:57:39.682Z",
+              "done_at": null,
+              "remind_me_at": "2026-09-01T09:57:39.682Z",
+              "remind_me": false,
+              "custom": {}
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1080",
+                  "type": "user"
+                }
+              },
+              "contact": {
+                "data": {
+                  "id": "235",
+                  "type": "contact"
+                }
+              },
+              "company": {
+                "data": null
+              },
+              "opportunity": {
+                "data": null
+              }
+            }
+          },
+          {
+            "id": "31",
+            "type": "reminder",
+            "attributes": {
+              "id": 31,
+              "reason": "Call him",
+              "description": "We should close that deal",
+              "created_at": "2026-09-01T09:57:39.672Z",
+              "done_at": null,
+              "remind_me_at": "2026-09-01T09:57:39.671Z",
+              "remind_me": false,
+              "custom": {}
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "1080",
+                  "type": "user"
+                }
+              },
+              "contact": {
+                "data": {
+                  "id": "234",
+                  "type": "contact"
+                }
+              },
+              "company": {
+                "data": null
+              },
+              "opportunity": {
+                "data": null
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 10,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_reminders"
+      }
+    },
+    "create_reminder": {
+      "method": "POST",
+      "path": "/api/v1/reminders",
+      "kind": "reminder",
+      "path_values": {},
+      "request": {
+        "data": {
+          "attributes": {
+            "remind_me_at": "2026-09-03T09:57:39Z",
+            "reason": "Schedule meeting",
+            "remind_me": true,
+            "custom": {
+              "schedule": "week"
+            }
+          },
+          "relationships": {
+            "contact": {
+              "data": {
+                "type": "contact",
+                "id": 237
+              }
+            }
+          }
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "34",
+          "type": "reminder",
+          "attributes": {
+            "id": 34,
+            "reason": "Schedule meeting",
+            "description": null,
+            "created_at": "2026-09-01T09:57:39.724Z",
+            "done_at": null,
+            "remind_me_at": "2026-09-03T09:57:39.000Z",
+            "remind_me": true,
+            "custom": {
+              "schedule": "week"
+            }
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "1087",
+                "type": "user"
+              }
+            },
+            "contact": {
+              "data": {
+                "id": "237",
+                "type": "contact"
+              }
+            },
+            "company": {
+              "data": null
+            },
+            "opportunity": {
+              "data": null
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "create_reminder",
+        "remind_me_at": "2026-09-03T09:57:39Z",
+        "reason": "Schedule meeting",
+        "remind_me": true,
+        "custom": {
+          "schedule": "week"
+        },
+        "owner_type": "contact",
+        "owner_id": 237
+      }
+    },
+    "update_reminder": {
+      "method": "PUT",
+      "path": "/api/v1/reminders/{id}",
+      "kind": "reminder",
+      "path_values": {
+        "id": "38"
+      },
+      "request": {
+        "data": {
+          "attributes": {
+            "remind_me_at": "2026-09-08T09:57:39Z"
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "38",
+          "type": "reminder",
+          "attributes": {
+            "id": 38,
+            "reason": "Call him",
+            "description": "We should close that deal",
+            "created_at": "2026-09-01T09:57:39.785Z",
+            "done_at": null,
+            "remind_me_at": "2026-09-08T09:57:39.000Z",
+            "remind_me": false,
+            "custom": {}
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "1095",
+                "type": "user"
+              }
+            },
+            "contact": {
+              "data": {
+                "id": "239",
+                "type": "contact"
+              }
+            },
+            "company": {
+              "data": null
+            },
+            "opportunity": {
+              "data": null
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "update_reminder",
+        "id": "38",
+        "remind_me_at": "2026-09-08T09:57:39Z"
+      }
+    },
+    "get_reminder": {
+      "method": "GET",
+      "path": "/api/v1/reminders/{id}",
+      "kind": "reminder",
+      "path_values": {
+        "id": "33"
+      },
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "33",
+          "type": "reminder",
+          "attributes": {
+            "id": 33,
+            "reason": "Call him",
+            "description": "We should close that deal",
+            "created_at": "2026-09-01T09:57:39.702Z",
+            "done_at": null,
+            "remind_me_at": "2026-09-01T09:57:39.702Z",
+            "remind_me": false,
+            "custom": {}
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "1085",
+                "type": "user"
+              }
+            },
+            "contact": {
+              "data": {
+                "id": "236",
+                "type": "contact"
+              }
+            },
+            "company": {
+              "data": null
+            },
+            "opportunity": {
+              "data": null
+            }
+          }
+        },
+        "included": [
+          {
+            "id": "1085",
+            "type": "user",
+            "attributes": {
+              "id": 1085,
+              "first_name": "Joesph",
+              "last_name": "Brekke",
+              "email": "joesph@kovacek.example",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          }
+        ]
+      },
+      "config": {
+        "operation": "get_reminder",
+        "id": "33"
+      }
+    },
+    "list_activities": {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "kind": "activity",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "151",
+            "type": "activity",
+            "attributes": {
+              "id": 151,
+              "interacted_at": "2026-09-01T09:57:37.932Z",
+              "subject": "ipsam",
+              "description": "Tempore tempora accusantium aperiam.",
+              "status": null,
+              "disposition": "undefined",
+              "call_status": null,
+              "result": 0,
+              "custom": {},
+              "external_id": null,
+              "custom_activity_type": null,
+              "call_duration": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "956",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "152",
+            "type": "activity",
+            "attributes": {
+              "id": 152,
+              "interacted_at": "2026-09-01T09:57:37.957Z",
+              "subject": "id",
+              "description": "Nihil qui rerum iure.",
+              "status": null,
+              "disposition": "undefined",
+              "call_status": null,
+              "result": 0,
+              "custom": {},
+              "external_id": null,
+              "custom_activity_type": null,
+              "call_duration": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "956",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "153",
+            "type": "activity",
+            "attributes": {
+              "id": 153,
+              "interacted_at": "2026-09-01T09:57:37.961Z",
+              "subject": "consequuntur",
+              "description": "Error temporibus quaerat omnis.",
+              "status": null,
+              "disposition": "undefined",
+              "call_status": null,
+              "result": 0,
+              "custom": {},
+              "external_id": null,
+              "custom_activity_type": null,
+              "call_duration": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "956",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "154",
+            "type": "activity",
+            "attributes": {
+              "id": 154,
+              "interacted_at": "2026-09-01T09:57:37.964Z",
+              "subject": "nam",
+              "description": "Et fugiat sapiente omnis.",
+              "status": null,
+              "disposition": "undefined",
+              "call_status": null,
+              "result": 0,
+              "custom": {},
+              "external_id": null,
+              "custom_activity_type": null,
+              "call_duration": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "956",
+                  "type": "user"
+                }
+              }
+            }
+          },
+          {
+            "id": "155",
+            "type": "activity",
+            "attributes": {
+              "id": 155,
+              "interacted_at": "2026-09-01T09:57:37.977Z",
+              "subject": "nihil",
+              "description": "Vero repudiandae dolores tenetur.",
+              "status": null,
+              "disposition": "undefined",
+              "call_status": null,
+              "result": 0,
+              "custom": {},
+              "external_id": null,
+              "custom_activity_type": null,
+              "call_duration": null
+            },
+            "relationships": {
+              "user": {
+                "data": {
+                  "id": "956",
+                  "type": "user"
+                }
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 25,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_activities"
+      }
+    },
+    "create_activity": {
+      "method": "POST",
+      "path": "/api/v1/activities",
+      "kind": "activity",
+      "path_values": {},
+      "request": {
+        "data": {
+          "attributes": {
+            "subject": "Subject",
+            "description": "Description",
+            "disposition": "no_connect",
+            "interacted_at": "2026-09-01T09:57:38Z",
+            "call_duration": 180,
+            "custom": {
+              "date_field": "2026-09-01T09:57:38Z"
+            }
+          },
+          "relationships": {
+            "owner": {
+              "data": {
+                "type": "company",
+                "id": 428
+              }
+            },
+            "user": {
+              "data": {
+                "type": "user",
+                "id": 958
+              }
+            }
+          }
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "156",
+          "type": "activity",
+          "attributes": {
+            "id": 156,
+            "interacted_at": "2026-09-01T09:57:38.000Z",
+            "subject": "Subject",
+            "description": "Description",
+            "status": null,
+            "disposition": "no_connect",
+            "call_status": null,
+            "result": 0,
+            "custom": {
+              "string_field": null,
+              "date_field": "2026-09-01",
+              "float_field": null,
+              "integer_field": null,
+              "link_field": null,
+              "list_field": null,
+              "multipleselect_field": null,
+              "contact_lookup": null
+            },
+            "external_id": null,
+            "custom_activity_type": null,
+            "call_duration": "180"
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "958",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "create_activity",
+        "subject": "Subject",
+        "description": "Description",
+        "disposition": "no_connect",
+        "interacted_at": "2026-09-01T09:57:38Z",
+        "call_duration": 180,
+        "custom": {
+          "date_field": "2026-09-01T09:57:38Z"
+        },
+        "owner_type": "company",
+        "owner_id": 428,
+        "user_id": 958
+      }
+    },
+    "update_activity": {
+      "method": "PUT",
+      "path": "/api/v1/activities/{id}",
+      "kind": "activity",
+      "path_values": {
+        "id": "157"
+      },
+      "request": {
+        "data": {
+          "attributes": {
+            "subject": "New Subject",
+            "description": "New Description",
+            "interacted_at": "2026-08-30T09:57:38Z",
+            "call_duration": 240,
+            "custom": {
+              "float_field": "130.0",
+              "integer_field": "150",
+              "date_field": "2026-09-01T09:57:38Z"
+            }
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "157",
+          "type": "activity",
+          "attributes": {
+            "id": 157,
+            "interacted_at": "2026-08-30T09:57:38.000Z",
+            "subject": "New Subject",
+            "description": "New Description",
+            "status": null,
+            "disposition": "undefined",
+            "call_status": null,
+            "result": 0,
+            "custom": {
+              "string_field": null,
+              "date_field": "2026-09-01",
+              "float_field": "130.0",
+              "integer_field": "150",
+              "link_field": null,
+              "list_field": null,
+              "multipleselect_field": null,
+              "contact_lookup": null
+            },
+            "external_id": null,
+            "custom_activity_type": null,
+            "call_duration": "240"
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "id": "959",
+                "type": "user"
+              }
+            }
+          }
+        }
+      },
+      "config": {
+        "operation": "update_activity",
+        "id": "157",
+        "subject": "New Subject",
+        "description": "New Description",
+        "interacted_at": "2026-08-30T09:57:38Z",
+        "call_duration": 240,
+        "custom": {
+          "float_field": "130.0",
+          "integer_field": "150",
+          "date_field": "2026-09-01T09:57:38Z"
+        }
+      }
+    },
+    "list_pipelines": {
+      "method": "GET",
+      "path": "/api/v1/pipelines",
+      "kind": "pipeline",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "133",
+            "type": "pipeline",
+            "attributes": {
+              "id": 133,
+              "name": "Pipeline 16",
+              "is_active": true,
+              "index": 0
+            },
+            "relationships": {
+              "opportunity_stages": {
+                "data": [
+                  {
+                    "id": "385",
+                    "type": "opportunity_stage"
+                  },
+                  {
+                    "id": "386",
+                    "type": "opportunity_stage"
+                  },
+                  {
+                    "id": "387",
+                    "type": "opportunity_stage"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "132",
+            "type": "pipeline",
+            "attributes": {
+              "id": 132,
+              "name": "Pipeline 15",
+              "is_active": true,
+              "index": 0
+            },
+            "relationships": {
+              "opportunity_stages": {
+                "data": [
+                  {
+                    "id": "382",
+                    "type": "opportunity_stage"
+                  },
+                  {
+                    "id": "383",
+                    "type": "opportunity_stage"
+                  },
+                  {
+                    "id": "384",
+                    "type": "opportunity_stage"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 10,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_pipelines"
+      }
+    },
+    "list_opportunity_stages": {
+      "method": "GET",
+      "path": "/api/v1/pipelines/{pipeline_id}/opportunity_stages",
+      "kind": "opportunity_stage",
+      "path_values": {
+        "pipeline_id": "131"
+      },
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "379",
+            "type": "opportunity_stage",
+            "attributes": {
+              "id": 379,
+              "name": "Stage 37",
+              "is_closed": false,
+              "is_won": false,
+              "is_active": true,
+              "index": 1,
+              "created_at": "2026-09-01T09:57:39.544Z"
+            },
+            "relationships": {
+              "pipeline": {
+                "data": {
+                  "id": "131",
+                  "type": "pipeline"
+                }
+              }
+            }
+          },
+          {
+            "id": "380",
+            "type": "opportunity_stage",
+            "attributes": {
+              "id": 380,
+              "name": "Stage 38",
+              "is_closed": true,
+              "is_won": true,
+              "is_active": true,
+              "index": 2,
+              "created_at": "2026-09-01T09:57:39.544Z"
+            },
+            "relationships": {
+              "pipeline": {
+                "data": {
+                  "id": "131",
+                  "type": "pipeline"
+                }
+              }
+            }
+          },
+          {
+            "id": "381",
+            "type": "opportunity_stage",
+            "attributes": {
+              "id": 381,
+              "name": "Stage 39",
+              "is_closed": true,
+              "is_won": false,
+              "is_active": true,
+              "index": 3,
+              "created_at": "2026-09-01T09:57:39.545Z"
+            },
+            "relationships": {
+              "pipeline": {
+                "data": {
+                  "id": "131",
+                  "type": "pipeline"
+                }
+              }
+            }
+          }
+        ],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 25,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_opportunity_stages",
+        "pipeline_id": "131"
+      }
+    },
+    "list_users": {
+      "method": "GET",
+      "path": "/api/v1/users",
+      "kind": "user",
+      "path_values": {},
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "1247",
+            "type": "user",
+            "attributes": {
+              "id": 1247,
+              "first_name": "Sandy",
+              "last_name": "King",
+              "email": "sandy@koss.example",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          },
+          {
+            "id": "1248",
+            "type": "user",
+            "attributes": {
+              "id": 1248,
+              "first_name": "Jenifer",
+              "last_name": "Wiza",
+              "email": "jenifer@hirthe.test",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          },
+          {
+            "id": "1249",
+            "type": "user",
+            "attributes": {
+              "id": 1249,
+              "first_name": "Benedict",
+              "last_name": "Brown",
+              "email": "benedict@schroeder.test",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          },
+          {
+            "id": "1250",
+            "type": "user",
+            "attributes": {
+              "id": 1250,
+              "first_name": "Lois",
+              "last_name": "Barrows",
+              "email": "lois@greenfelder-wyman.test",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          },
+          {
+            "id": "1251",
+            "type": "user",
+            "attributes": {
+              "id": 1251,
+              "first_name": "Roberta",
+              "last_name": "Boyle",
+              "email": "roberta@brown.test",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          },
+          {
+            "id": "1252",
+            "type": "user",
+            "attributes": {
+              "id": 1252,
+              "first_name": "Adrian",
+              "last_name": "Lockman",
+              "email": "adrian@blick.example",
+              "phone": null,
+              "custom": {},
+              "external_id": null,
+              "status": "created",
+              "role": "normal",
+              "is_admin": false
+            },
+            "relationships": {
+              "manager": {
+                "data": null
+              }
+            }
+          }
+        ],
+        "included": [],
+        "meta": {
+          "pagination": {
+            "current_page": 1,
+            "per_page": 25,
+            "total_pages": 1,
+            "next_page": null
+          }
+        }
+      },
+      "config": {
+        "operation": "list_users"
+      }
+    }
+  }
+}

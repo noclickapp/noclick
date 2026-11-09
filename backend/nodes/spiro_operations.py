@@ -1,0 +1,33 @@
+"""Fixed Spiro API v1 routes: https://developers.spiro.ai/."""
+
+OPERATIONS = {
+    "list_companies": ("GET", "/api/v1/companies", "company"),
+    "get_company": ("GET", "/api/v1/companies/{id}", "company"),
+    "create_company": ("POST", "/api/v1/companies", "company"),
+    "update_company": ("PUT", "/api/v1/companies/{id}", "company"),
+    "list_contacts": ("GET", "/api/v1/contacts", "contact"),
+    "get_contact": ("GET", "/api/v1/contacts/{id}", "contact"),
+    "create_contact": ("POST", "/api/v1/contacts", "contact"),
+    "update_contact": ("PUT", "/api/v1/contacts/{id}", "contact"),
+    "list_opportunities": ("GET", "/api/v1/opportunities", "opportunity"),
+    "get_opportunity": ("GET", "/api/v1/opportunities/{id}", "opportunity"),
+    "create_opportunity": ("POST", "/api/v1/opportunities", "opportunity"),
+    "update_opportunity": ("PUT", "/api/v1/opportunities/{id}", "opportunity"),
+    "list_notes": ("GET", "/api/v1/notes", "note"),
+    "create_note": ("POST", "/api/v1/notes", "note"),
+    "update_note": ("PUT", "/api/v1/notes/{id}", "note"),
+    "list_reminders": ("GET", "/api/v1/reminders", "reminder"),
+    "create_reminder": ("POST", "/api/v1/reminders", "reminder"),
+    "update_reminder": ("PUT", "/api/v1/reminders/{id}", "reminder"),
+    "get_reminder": ("GET", "/api/v1/reminders/{id}", "reminder"),
+    "list_activities": ("GET", "/api/v1/activities", "activity"),
+    "create_activity": ("POST", "/api/v1/activities", "activity"),
+    "update_activity": ("PUT", "/api/v1/activities/{id}", "activity"),
+    "list_pipelines": ("GET", "/api/v1/pipelines", "pipeline"),
+    "list_opportunity_stages": (
+        "GET",
+        "/api/v1/pipelines/{pipeline_id}/opportunity_stages",
+        "opportunity_stage",
+    ),
+    "list_users": ("GET", "/api/v1/users", "user"),
+}
