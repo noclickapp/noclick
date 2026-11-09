@@ -1,0 +1,2055 @@
+{
+  "$defs": {
+    "FactorialAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "factorial_api_key",
+          "default": "factorial_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Factorial API Key",
+      "type": "object",
+      "x-credential-instructions": "For internal workflows in your own company, paste an API key from Factorial: Configuration \u2192 API \u2192 Create API Key. A company administrator must create it. Keys grant full company access and do not expire. Factorial requires OAuth for marketplace integrations.",
+      "x-credential-url": "https://apidoc.factorialhr.com/docs/api-keys"
+    },
+    "FactorialApproveLeaveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "approve_leave",
+          "default": "approve_leave",
+          "title": "Approve Leave Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Approve Leave Request",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Identifier of the Leave",
+          "minLength": 1,
+          "title": "Leave ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialApproveLeaveConfig",
+      "type": "object"
+    },
+    "FactorialCreateCandidateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_candidate",
+          "default": "create_candidate",
+          "title": "Create Candidate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruitment",
+          "x-display-name": "Create Candidate",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "company identifier, refers to /core/me endpoint.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "first name of the candidate.",
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "last name of the candidate.",
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "email of the candidate.",
+          "title": "Email"
+        },
+        "talent_pool": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "is the candidate part of talent pool?",
+          "title": "Talent Pool"
+        },
+        "consent_given_at": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "date when the consent was given.",
+          "title": "Consent Given At"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "source of the candidate.",
+          "title": "Source"
+        },
+        "medium": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "specifies additional details related to the source of the candidate, such as the referrer name for example if the source is referred.",
+          "title": "Medium"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "phone number of the candidate.",
+          "title": "Phone Number"
+        },
+        "personal_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "personal web resource from the candidate.",
+          "title": "Personal Url"
+        }
+      },
+      "required": [
+        "company_id",
+        "first_name",
+        "last_name"
+      ],
+      "title": "FactorialCreateCandidateConfig",
+      "type": "object"
+    },
+    "FactorialCreateEmployeeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_employee",
+          "default": "create_employee",
+          "title": "Create Employee With Contract",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Create Employee With Contract",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "company id of the employee, you can get it in companies/legal_entities endpoint.",
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "name of the employee.",
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "last name of the employee.",
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "description": "login email of the new employee. Not the personal email.",
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "contract_effective_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the day the specific contract starts, in case of hiring the same than contract_starts_on.",
+          "title": "Contract Effective On"
+        },
+        "contract_starts_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the day the employee is hired.",
+          "title": "Contract Starts On"
+        },
+        "ends_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the day the contract ends.",
+          "title": "Ends On"
+        },
+        "manager_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "id of manager, you can get the manager_id from employees endpoint.",
+          "title": "Manager Id"
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "team id of the employee.",
+          "title": "Team Id"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "location id of the employee, references to locations/locations.",
+          "title": "Location Id"
+        },
+        "legal_entity_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "legal entity of the employee, references to companies/legal_entities.",
+          "title": "Legal Entity Id"
+        },
+        "company_identifier": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "identity number or string used inside a company to internally identify the employee.",
+          "title": "Company Identifier"
+        }
+      },
+      "required": [
+        "company_id",
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "title": "FactorialCreateEmployeeConfig",
+      "type": "object"
+    },
+    "FactorialCreateLeaveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_leave",
+          "default": "create_leave",
+          "title": "Create Leave Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Create Leave Request",
+          "x-is-trigger": false
+        },
+        "employee_id": {
+          "description": "The employee id of the leave",
+          "minLength": 1,
+          "title": "Employee Id",
+          "type": "string"
+        },
+        "leave_type_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The leave type id",
+          "title": "Leave Type Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the leave",
+          "title": "Description"
+        },
+        "start_on": {
+          "description": "The valid start date of the leave following the format YYYY-MM-DD",
+          "minLength": 1,
+          "title": "Start On",
+          "type": "string"
+        },
+        "finish_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The valid end date of the leave following the format YYYY-MM-DD",
+          "title": "Finish On"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start time of a leave",
+          "title": "Start Time"
+        },
+        "hours_amount_in_cents": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The hours amount in cents of a leave",
+          "title": "Hours Amount In Cents"
+        }
+      },
+      "required": [
+        "employee_id",
+        "start_on"
+      ],
+      "title": "FactorialCreateLeaveConfig",
+      "type": "object"
+    },
+    "FactorialCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "name of the task.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "description": "status of the task (todo | in_progress | done | discarded).",
+          "enum": [
+            "todo",
+            "in_progress",
+            "done",
+            "discarded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "description of the task",
+          "title": "Content"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "expiration date of the task.",
+          "title": "Due On"
+        },
+        "assignee_ids_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Employees assigned to the task, assignee_id references to access_id. Enter a JSON array of access IDs, for example [\"1\", \"2\"].",
+          "title": "Assignee Ids JSON"
+        },
+        "author_employee_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "employee that will be set as the author of the task. Only taken into account when authenticating with an API key, requests performed on behalf of a user always use that user as the author. When omitted, the task is authored by the first active employee of the company.",
+          "title": "Author Employee Id"
+        }
+      },
+      "required": [
+        "name",
+        "status"
+      ],
+      "title": "FactorialCreateTaskConfig",
+      "type": "object"
+    },
+    "FactorialCreateTeamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_team",
+          "default": "create_team",
+          "title": "Create Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organisation",
+          "x-display-name": "Create Team",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the team.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the team",
+          "title": "Description"
+        },
+        "parent_team_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the parent team to nest the new team under (omit or null for a root team). Requires the nested teams feature and permission to manage the parent team; the hierarchy is capped at 4 levels.",
+          "title": "Parent Team Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FactorialCreateTeamConfig",
+      "type": "object"
+    },
+    "FactorialDeleteLeaveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_leave",
+          "default": "delete_leave",
+          "title": "Delete Leave Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Delete Leave Request",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "",
+          "minLength": 1,
+          "title": "Leave ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialDeleteLeaveConfig",
+      "type": "object"
+    },
+    "FactorialGetCandidateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_candidate",
+          "default": "get_candidate",
+          "title": "Get Candidate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruitment",
+          "x-display-name": "Get Candidate",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "list of candidate identifiers.",
+          "minLength": 1,
+          "title": "Candidate ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialGetCandidateConfig",
+      "type": "object"
+    },
+    "FactorialGetCredentialsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_credentials",
+          "default": "get_credentials",
+          "title": "Get Connected Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Connected Company",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialGetCredentialsConfig",
+      "type": "object"
+    },
+    "FactorialGetEmployeeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_employee",
+          "default": "get_employee",
+          "title": "Get Employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get Employee",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Return only the employees with these ids. Ids outside what the reader may see are dropped, rather than failing the whole read.",
+          "minLength": 1,
+          "title": "Employee ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialGetEmployeeConfig",
+      "type": "object"
+    },
+    "FactorialGetLeaveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_leave",
+          "default": "get_leave",
+          "title": "Get Leave Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Get Leave Request",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Return only the leaves with these ids.",
+          "minLength": 1,
+          "title": "Leave ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialGetLeaveConfig",
+      "type": "object"
+    },
+    "FactorialGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "retrieve only the tasks that match the IDs passed in the request.",
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialGetTaskConfig",
+      "type": "object"
+    },
+    "FactorialListCandidatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_candidates",
+          "default": "list_candidates",
+          "title": "List Candidates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruitment",
+          "x-display-name": "List Candidates",
+          "x-is-trigger": false
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "is the candidate active?",
+          "title": "Active"
+        },
+        "talent_pool": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "is the candidate part of talent pool?",
+          "title": "Talent Pool"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "is the candidate archived?",
+          "title": "Archived"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialListCandidatesConfig",
+      "type": "object"
+    },
+    "FactorialListEmployeesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "title": "List Employees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "List Employees",
+          "x-is-trigger": false
+        },
+        "full_text_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "filter by employee name.",
+          "title": "Full Text Name"
+        },
+        "updated_at_gteq": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter employees by their latest update timestamp (`updated_at`), on or after this date. Only the date is considered; any time component is ignored (matching starts at 00:00:00 of the given date). Note: `updated_at` only stores the most recent update, so an employee updated multiple times is matched solely by its latest update, not by earlier ones.",
+          "title": "Updated At Gteq"
+        },
+        "only_active": {
+          "default": false,
+          "description": "Set to true to keep only the employees not terminated as of today: those with no termination date, or one still in the future. Passing false has no effect, and it is ignored altogether when `include_active_and_terminated` is set.",
+          "title": "Only Active",
+          "type": "boolean"
+        },
+        "only_managers": {
+          "default": false,
+          "description": "Set to true to return only the employees who have at least one direct report. Passing false has no effect.",
+          "title": "Only Managers",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialListEmployeesConfig",
+      "type": "object"
+    },
+    "FactorialListLeaveTypesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_leave_types",
+          "default": "list_leave_types",
+          "title": "List Leave Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "List Leave Types",
+          "x-is-trigger": false
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true for the leave types currently in use, false for the retired ones. Leave it unset to get both.",
+          "title": "Active"
+        },
+        "payable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true for the leave types that are paid, false for the unpaid ones. Leave it unset to get both.",
+          "title": "Payable"
+        },
+        "employee_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the leave types the time-off policy in force for this employee grants. It REQUIRES `reference_date`, which says on which date to resolve that policy: without it the read raises.",
+          "title": "Employee Id"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialListLeaveTypesConfig",
+      "type": "object"
+    },
+    "FactorialListLeavesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_leaves",
+          "default": "list_leaves",
+          "title": "List Leave Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "List Leave Requests",
+          "x-is-trigger": false
+        },
+        "to": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the leaves that had already started by this date (start date on or before it). Usable on its own; pair it with `from` for a window.",
+          "title": "To"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the leaves that had not finished before this date, meaning they end on or after it or have no end date at all. Usable on its own; pair it with `to` for a window.",
+          "title": "From"
+        },
+        "only_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve only active leaves",
+          "title": "Only Active"
+        },
+        "include_deleted_leaves": {
+          "default": false,
+          "description": "Whether to include deleted leaves (not included by default if not specified)",
+          "title": "Include Deleted Leaves",
+          "type": "boolean"
+        },
+        "approved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true for leaves that were approved, false for leaves that were rejected. Leave it unset for every leave whatever its decision. Combining `approved: true` with `include_pending: true` returns approved and still-pending leaves together.",
+          "title": "Approved"
+        },
+        "include_pending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to include leaves still awaiting a decision. On its own it returns ONLY the pending ones; alongside `approved: true` it returns approved and pending together.",
+          "title": "Include Pending"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialListLeavesConfig",
+      "type": "object"
+    },
+    "FactorialListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "retrieve the tasks that have a company_id associated",
+          "title": "Company Id"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "retrieve the tasks that have an assignee_id associated, assignee_id references to access_id.",
+          "title": "Assignee Id"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "filter by tasks that have a due date.",
+          "title": "Due On"
+        },
+        "already_due": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "filter by tasks that have expired or are still due.",
+          "title": "Already Due"
+        },
+        "task_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "in_progress",
+                "done",
+                "discarded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "filter by tasks that with an especific status (todo | in_progress | done | discarded).",
+          "title": "Task Status",
+          "enum": [
+            "todo",
+            "in_progress",
+            "done",
+            "discarded"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialListTasksConfig",
+      "type": "object"
+    },
+    "FactorialListTeamsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organisation",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use meta.end_cursor from the previous page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "FactorialListTeamsConfig",
+      "type": "object"
+    },
+    "FactorialOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Factorial Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Factorial Event",
+          "x-is-trigger": true
+        },
+        "subscription_type": {
+          "default": "employees/employee/update",
+          "enum": [
+            "employees/employee/create_with_contract",
+            "employees/employee/update",
+            "employees/employee/terminate",
+            "employees/employee/unterminate",
+            "timeoff/leave/create",
+            "timeoff/leave/update",
+            "timeoff/leave/approve",
+            "timeoff/leave/reject",
+            "attendance/shift/clock_in",
+            "attendance/shift/clock_out",
+            "ats/candidate/create"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "company_id": {
+          "description": "The company_id returned by Get Connected Company.",
+          "minLength": 1,
+          "title": "Company ID",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Factorial automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "FactorialOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FactorialRejectLeaveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "reject_leave",
+          "default": "reject_leave",
+          "title": "Reject Leave Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Reject Leave Request",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "Identifier of the Leave",
+          "minLength": 1,
+          "title": "Leave ID",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason for rejecting the leave",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialRejectLeaveConfig",
+      "type": "object"
+    },
+    "FactorialTerminateEmployeeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "terminate_employee",
+          "default": "terminate_employee",
+          "title": "Terminate Employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Terminate Employee",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "id of the employee.",
+          "minLength": 1,
+          "title": "Employee ID",
+          "type": "string"
+        },
+        "terminated_on": {
+          "description": "when the employee will be terminated.",
+          "minLength": 1,
+          "title": "Terminated On",
+          "type": "string"
+        },
+        "termination_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A reason for the termination.",
+          "title": "Termination Reason"
+        },
+        "termination_assigned_manager_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "id of manager that terminates the employee, you can get the manager_id from employees endpoint.",
+          "title": "Termination Assigned Manager Id"
+        },
+        "open_backfill": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, automatically opens a backfill position (vacancy or requisition) for the terminated employee. Requires ATS to be enabled with an automatic backfill setting configured. When false or omitted, no backfill is created.",
+          "title": "Open Backfill"
+        }
+      },
+      "required": [
+        "id",
+        "terminated_on"
+      ],
+      "title": "FactorialTerminateEmployeeConfig",
+      "type": "object"
+    },
+    "FactorialUpdateEmployeeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_employee",
+          "default": "update_employee",
+          "title": "Update Employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Update Employee",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "id of the employee.",
+          "minLength": 1,
+          "title": "Employee ID",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "name of the employee.",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "last name of the employee.",
+          "title": "Last Name"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nickname of the employee or a name that defines the employee better.",
+          "title": "Preferred Name"
+        },
+        "manager_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "id of manager, you can get the manager_id from employees endpoint.",
+          "title": "Manager Id"
+        },
+        "timeoff_manager_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "id of manager, you can get the manager_id from employees endpoint.",
+          "title": "Timeoff Manager Id"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "location id of the employee, references to locations/locations.",
+          "title": "Location Id"
+        },
+        "legal_entity_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "legal entity of the employee, references to companies/legal_entities.",
+          "title": "Legal Entity Id"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "phone number of the employee.",
+          "title": "Phone Number"
+        },
+        "personal_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "personal email of the employee.",
+          "title": "Personal Email"
+        },
+        "communications_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address for company communications and notifications. Separate from login email.",
+          "title": "Communications Email"
+        },
+        "company_identifier": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "identity number or string used inside a company to internally identify the employee.",
+          "title": "Company Identifier"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialUpdateEmployeeConfig",
+      "type": "object"
+    },
+    "FactorialUpdateLeaveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_leave",
+          "default": "update_leave",
+          "title": "Update Leave Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Update Leave Request",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "The leave id",
+          "minLength": 1,
+          "title": "Leave ID",
+          "type": "string"
+        },
+        "leave_type_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The leave type id",
+          "title": "Leave Type Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the leave",
+          "title": "Description"
+        },
+        "start_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The valid start date of the leave following the format YYYY-MM-DD",
+          "title": "Start On"
+        },
+        "finish_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The valid end date of the leave following the format YYYY-MM-DD",
+          "title": "Finish On"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start time of a leave",
+          "title": "Start Time"
+        },
+        "hours_amount_in_cents": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The hours amount in cents of a leave",
+          "title": "Hours Amount In Cents"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialUpdateLeaveConfig",
+      "type": "object"
+    },
+    "FactorialUpdateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "id of a task.",
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "name of  task.",
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "in_progress",
+                "done",
+                "discarded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "status of the task (todo | in_progress | done | discarded).",
+          "title": "Status",
+          "enum": [
+            "todo",
+            "in_progress",
+            "done",
+            "discarded"
+          ],
+          "x-enum-searchable": true
+        },
+        "content": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "description of the task.",
+          "title": "Content"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "expiration date of the task.",
+          "title": "Due On"
+        },
+        "assignee_ids_json": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "employees assigned to the task, assignee_id references to access_id. Enter a JSON array of access IDs, for example [\"1\", \"2\"].",
+          "title": "Assignee Ids JSON"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FactorialUpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_leave": "#/$defs/FactorialApproveLeaveConfig",
+          "create_candidate": "#/$defs/FactorialCreateCandidateConfig",
+          "create_employee": "#/$defs/FactorialCreateEmployeeConfig",
+          "create_leave": "#/$defs/FactorialCreateLeaveConfig",
+          "create_task": "#/$defs/FactorialCreateTaskConfig",
+          "create_team": "#/$defs/FactorialCreateTeamConfig",
+          "delete_leave": "#/$defs/FactorialDeleteLeaveConfig",
+          "get_candidate": "#/$defs/FactorialGetCandidateConfig",
+          "get_credentials": "#/$defs/FactorialGetCredentialsConfig",
+          "get_employee": "#/$defs/FactorialGetEmployeeConfig",
+          "get_leave": "#/$defs/FactorialGetLeaveConfig",
+          "get_task": "#/$defs/FactorialGetTaskConfig",
+          "list_candidates": "#/$defs/FactorialListCandidatesConfig",
+          "list_employees": "#/$defs/FactorialListEmployeesConfig",
+          "list_leave_types": "#/$defs/FactorialListLeaveTypesConfig",
+          "list_leaves": "#/$defs/FactorialListLeavesConfig",
+          "list_tasks": "#/$defs/FactorialListTasksConfig",
+          "list_teams": "#/$defs/FactorialListTeamsConfig",
+          "on_event": "#/$defs/FactorialOnEventConfig",
+          "reject_leave": "#/$defs/FactorialRejectLeaveConfig",
+          "terminate_employee": "#/$defs/FactorialTerminateEmployeeConfig",
+          "update_employee": "#/$defs/FactorialUpdateEmployeeConfig",
+          "update_leave": "#/$defs/FactorialUpdateLeaveConfig",
+          "update_task": "#/$defs/FactorialUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FactorialGetCredentialsConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialListEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialGetEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialCreateEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialUpdateEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialTerminateEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialListLeavesConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialGetLeaveConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialCreateLeaveConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialUpdateLeaveConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialDeleteLeaveConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialApproveLeaveConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialRejectLeaveConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialListLeaveTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialCreateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialListCandidatesConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialGetCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialCreateCandidateConfig"
+        },
+        {
+          "$ref": "#/$defs/FactorialOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FactorialAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Factorial Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
