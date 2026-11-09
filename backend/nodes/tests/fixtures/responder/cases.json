@@ -1,0 +1,1262 @@
+{
+  "get_account": {
+    "config": {},
+    "method": "GET",
+    "path": "/me",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": true,
+      "account": 1,
+      "old_account": 1,
+      "data": [
+        {
+          "id": 1,
+          "username": "1",
+          "password": "1",
+          "email": "1",
+          "phone": "1",
+          "phone_verified": "1",
+          "sms_disabled": 0,
+          "first": "1",
+          "last": "1",
+          "failed_logins": 1,
+          "last_failed_login": "1",
+          "last_login": "1",
+          "mfa_secret": "1",
+          "mfa_expiration": "1",
+          "active": 0,
+          "created": "1",
+          "modified": "1",
+          "role_id": 1
+        }
+      ],
+      "volumes": {
+        "monthly_sends_left": 1,
+        "active_subscribers_limit": 1,
+        "total_sms_left": 1
+      }
+    },
+    "expected_data": {
+      "status": true,
+      "account": 1,
+      "old_account": 1,
+      "data": [
+        {
+          "id": 1,
+          "username": "1",
+          "email": "1",
+          "phone": "1",
+          "phone_verified": "1",
+          "sms_disabled": 0,
+          "first": "1",
+          "last": "1",
+          "failed_logins": 1,
+          "last_failed_login": "1",
+          "last_login": "1",
+          "active": 0,
+          "created": "1",
+          "modified": "1",
+          "role_id": 1
+        }
+      ],
+      "volumes": {
+        "monthly_sends_left": 1,
+        "active_subscribers_limit": 1,
+        "total_sms_left": 1
+      }
+    }
+  },
+  "list_lists": {
+    "config": {},
+    "method": "GET",
+    "path": "/lists",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "name": "My List",
+          "account_id": 1,
+          "sender_id": 135,
+          "public_name": "My Public Name",
+          "is_all_lists": 0,
+          "is_dynamic": 0,
+          "is_hidden": 0,
+          "is_favorite": 0,
+          "is_double_opt_in": 0,
+          "created": "1",
+          "modified": "1",
+          "tags": [
+            1
+          ],
+          "has_subscribers": true,
+          "count": 10
+        }
+      ]
+    },
+    "expected_data": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "name": "My List",
+          "account_id": 1,
+          "sender_id": 135,
+          "public_name": "My Public Name",
+          "is_all_lists": 0,
+          "is_dynamic": 0,
+          "is_hidden": 0,
+          "is_favorite": 0,
+          "is_double_opt_in": 0,
+          "created": "1",
+          "modified": "1",
+          "tags": [
+            1
+          ],
+          "has_subscribers": true,
+          "count": 10
+        }
+      ]
+    }
+  },
+  "get_list": {
+    "config": {
+      "list_id": 1
+    },
+    "method": "GET",
+    "path": "/lists/1",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": {
+        "id": 1,
+        "name": "My List",
+        "account_id": 1,
+        "sender_id": 135,
+        "public_name": "My Public List",
+        "is_all_lists": 0,
+        "is_dynamic": 0,
+        "is_hidden": 0,
+        "is_favorite": 0,
+        "is_double_opt_in": 0,
+        "created": "1",
+        "modified": "1",
+        "notifications": {
+          "type_id": 1,
+          "email": "david@example.com",
+          "active": false
+        },
+        "tags": [
+          16985
+        ]
+      }
+    },
+    "expected_data": {
+      "status": "true",
+      "data": {
+        "id": 1,
+        "name": "My List",
+        "account_id": 1,
+        "sender_id": 135,
+        "public_name": "My Public List",
+        "is_all_lists": 0,
+        "is_dynamic": 0,
+        "is_hidden": 0,
+        "is_favorite": 0,
+        "is_double_opt_in": 0,
+        "created": "1",
+        "modified": "1",
+        "notifications": {
+          "type_id": 1,
+          "email": "david@example.com",
+          "active": false
+        },
+        "tags": [
+          16985
+        ]
+      }
+    }
+  },
+  "create_list": {
+    "config": {
+      "name": "My List",
+      "public_name": "My Public List",
+      "tags": [
+        16985
+      ]
+    },
+    "method": "POST",
+    "path": "/lists",
+    "query": {},
+    "body": {
+      "name": "My List",
+      "public_name": "My Public List",
+      "tags": [
+        16985
+      ]
+    },
+    "response": {
+      "status": true,
+      "createdId": 1
+    },
+    "expected_data": {
+      "status": true,
+      "createdId": 1
+    }
+  },
+  "list_list_subscribers": {
+    "config": {
+      "list_id": 1
+    },
+    "method": "GET",
+    "path": "/lists/1/subscribers",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": true,
+      "total": 1,
+      "data": [
+        {
+          "id": 1,
+          "list_id": 1,
+          "subscriber_id": 1,
+          "subscription_id": 1,
+          "unsubscription_id": 1,
+          "list_seniority_date": "1",
+          "offset": 1,
+          "inactive": 0,
+          "pending": 1,
+          "size_pending": 1,
+          "active": 1,
+          "created": "1",
+          "modified": "1",
+          "phone": "1",
+          "email": "1",
+          "first": "1",
+          "last": "1",
+          "score": 1,
+          "vip": 0,
+          "last_open": "1",
+          "blocked": 0,
+          "unsubscribed": 0,
+          "unsubscribed_phone": 0,
+          "unsubscribed_reason": "MANUAL",
+          "name": "1",
+          "external_identifier": "1",
+          "seniority_date": "1",
+          "is_robot": 0,
+          "emails_unwanted_id": 1,
+          "phones_unwanted_id": 1,
+          "emails_forbidden_id": 1,
+          "phones_forbidden_id": 1,
+          "is_all_lists": 0,
+          "list_name": "1",
+          "stars": 5,
+          "personal_fields": {
+            "11973": null,
+            "11974": true,
+            "11975": "example_value3",
+            "15462": [
+              6163,
+              6164
+            ]
+          },
+          "fields_names": {
+            "11973": "local_list_and_all_lists_field_names_1",
+            "11974": "local_list_and_all_lists_field_names_2"
+          },
+          "inactive_account": 0,
+          "inactive_sms": 0,
+          "list_created": "1",
+          "side_pending": null,
+          "phones_forbiden_id": null
+        }
+      ]
+    },
+    "expected_data": {
+      "status": true,
+      "total": 1,
+      "data": [
+        {
+          "id": 1,
+          "list_id": 1,
+          "subscriber_id": 1,
+          "subscription_id": 1,
+          "unsubscription_id": 1,
+          "list_seniority_date": "1",
+          "offset": 1,
+          "inactive": 0,
+          "pending": 1,
+          "size_pending": 1,
+          "active": 1,
+          "created": "1",
+          "modified": "1",
+          "phone": "1",
+          "email": "1",
+          "first": "1",
+          "last": "1",
+          "score": 1,
+          "vip": 0,
+          "last_open": "1",
+          "blocked": 0,
+          "unsubscribed": 0,
+          "unsubscribed_phone": 0,
+          "unsubscribed_reason": "MANUAL",
+          "name": "1",
+          "external_identifier": "1",
+          "seniority_date": "1",
+          "is_robot": 0,
+          "emails_unwanted_id": 1,
+          "phones_unwanted_id": 1,
+          "emails_forbidden_id": 1,
+          "phones_forbidden_id": 1,
+          "is_all_lists": 0,
+          "list_name": "1",
+          "stars": 5,
+          "personal_fields": {
+            "11973": null,
+            "11974": true,
+            "11975": "example_value3",
+            "15462": [
+              6163,
+              6164
+            ]
+          },
+          "fields_names": {
+            "11973": "local_list_and_all_lists_field_names_1",
+            "11974": "local_list_and_all_lists_field_names_2"
+          },
+          "inactive_account": 0,
+          "inactive_sms": 0,
+          "list_created": "1",
+          "side_pending": null,
+          "phones_forbiden_id": null
+        }
+      ]
+    }
+  },
+  "get_subscriber": {
+    "config": {
+      "identifier": "doe@example.com"
+    },
+    "method": "GET",
+    "path": "/subscribers/identifier/doe@example.com",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": {
+        "id": 1,
+        "account_id": 1,
+        "email": "example@responder.co.il",
+        "phone": "0501234567",
+        "first": "1",
+        "last": "1",
+        "name": "1",
+        "offset": 1,
+        "score": 1,
+        "bounce_Score": 1,
+        "vip": 0,
+        "last_open": "2023-06-20 13:06:25",
+        "unsubscribed": 0,
+        "unsubscribed_phone": 0,
+        "unsubscribe_reason": "1",
+        "blocked": 0,
+        "is_robot": 0,
+        "active": 0,
+        "emails_forbidden_id": 1,
+        "phones_forbidden_id": 1,
+        "emails_unwanted_id": 1,
+        "phones_unwanted_id": 1,
+        "external_identifier": "1",
+        "seniority_date": "1",
+        "created": "2023-06-20 13:06:25",
+        "modified": "2023-06-20 13:06:25",
+        "list_seniority_date": "2023-06-20 13:06:25",
+        "list_created": "2023-06-20 13:06:25",
+        "stars": 2,
+        "personal_fields": {
+          "personal_field_id": "value",
+          "personal_field_id_2": 1000,
+          "personal_field_id_3": [
+            5694
+          ]
+        },
+        "fields_names": {
+          "personal_field_id": "field_name_value"
+        },
+        "tags": {
+          "tag_id": 37164
+        },
+        "tag_names": {
+          "tag_id": "tag_name_value"
+        },
+        "lists": [
+          {
+            "id": 3427,
+            "name": "list_name_value",
+            "seniority_date": "2023-06-20",
+            "created_date": "2023-06-20 13:06:26"
+          }
+        ],
+        "token": null,
+        "bounce_score": null,
+        "tag_name": null
+      }
+    },
+    "expected_data": {
+      "status": "true",
+      "data": {
+        "id": 1,
+        "account_id": 1,
+        "email": "example@responder.co.il",
+        "phone": "0501234567",
+        "first": "1",
+        "last": "1",
+        "name": "1",
+        "offset": 1,
+        "score": 1,
+        "bounce_Score": 1,
+        "vip": 0,
+        "last_open": "2023-06-20 13:06:25",
+        "unsubscribed": 0,
+        "unsubscribed_phone": 0,
+        "unsubscribe_reason": "1",
+        "blocked": 0,
+        "is_robot": 0,
+        "active": 0,
+        "emails_forbidden_id": 1,
+        "phones_forbidden_id": 1,
+        "emails_unwanted_id": 1,
+        "phones_unwanted_id": 1,
+        "external_identifier": "1",
+        "seniority_date": "1",
+        "created": "2023-06-20 13:06:25",
+        "modified": "2023-06-20 13:06:25",
+        "list_seniority_date": "2023-06-20 13:06:25",
+        "list_created": "2023-06-20 13:06:25",
+        "stars": 2,
+        "personal_fields": {
+          "personal_field_id": "value",
+          "personal_field_id_2": 1000,
+          "personal_field_id_3": [
+            5694
+          ]
+        },
+        "fields_names": {
+          "personal_field_id": "field_name_value"
+        },
+        "tags": {
+          "tag_id": 37164
+        },
+        "tag_names": {
+          "tag_id": "tag_name_value"
+        },
+        "lists": [
+          {
+            "id": 3427,
+            "name": "list_name_value",
+            "seniority_date": "2023-06-20",
+            "created_date": "2023-06-20 13:06:26"
+          }
+        ],
+        "bounce_score": null,
+        "tag_name": null
+      }
+    }
+  },
+  "create_subscriber": {
+    "config": {
+      "email": "doe@example.com",
+      "list_ids": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "personal_fields": {
+        "508": "Field_String_Value",
+        "509": {
+          "day": 17,
+          "month": 5,
+          "year": 2020
+        }
+      },
+      "disable_notification": true,
+      "override": false
+    },
+    "method": "POST",
+    "path": "/subscribers",
+    "query": {},
+    "body": {
+      "email": "doe@example.com",
+      "list_ids": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "personal_fields": {
+        "508": "Field_String_Value",
+        "509": {
+          "day": 17,
+          "month": 5,
+          "year": 2020
+        }
+      },
+      "disable_notification": true,
+      "override": false
+    },
+    "response": {
+      "status": true,
+      "duplicate": false,
+      "createdId": 1,
+      "capacity": false
+    },
+    "expected_data": {
+      "status": true,
+      "duplicate": false,
+      "createdId": 1,
+      "capacity": false
+    }
+  },
+  "update_subscriber": {
+    "config": {
+      "subscriber_id": 1,
+      "first": "David",
+      "unsubscribed": false,
+      "tags_names": [
+        "tag_name_1"
+      ]
+    },
+    "method": "PUT",
+    "path": "/subscribers/1",
+    "query": {},
+    "body": {
+      "first": "David",
+      "unsubscribed": false,
+      "tags_names": [
+        "tag_name_1"
+      ]
+    },
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "delete_subscriber": {
+    "config": {
+      "subscriber_id": 1
+    },
+    "method": "DELETE",
+    "path": "/subscribers/1",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "search_subscribers": {
+    "config": {
+      "listId": 1,
+      "searchKey": "David",
+      "offset": 0,
+      "size": 10
+    },
+    "method": "POST",
+    "path": "/subscribers/search",
+    "query": {
+      "listId": 1,
+      "searchKey": "David",
+      "offset": 0,
+      "size": 10
+    },
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": {
+        "subscribers": [
+          {
+            "id": 1,
+            "list_id": 1,
+            "subscriber_id": 1,
+            "subscription_id": 1,
+            "unsubscription_id": 1,
+            "list_seniority_date": "1",
+            "offset": 1,
+            "inactive": 0,
+            "pending": 1,
+            "size_pending": 1,
+            "active": 1,
+            "created": "1",
+            "modified": "1",
+            "phone": "1",
+            "email": "1",
+            "first": "1",
+            "last": "1",
+            "score": 1,
+            "vip": 0,
+            "last_open": "1",
+            "blocked": 0,
+            "unsubscribed": 0,
+            "unsubscribed_phone": 0,
+            "unsubscribed_reason": "MANUAL",
+            "name": "1",
+            "external_identifier": "1",
+            "seniority_date": "1",
+            "is_robot": 0,
+            "emails_unwanted_id": 1,
+            "phones_unwanted_id": 1,
+            "emails_forbidden_id": 1,
+            "phones_forbidden_id": 1,
+            "is_all_lists": 0,
+            "list_name": "1",
+            "stars": 5,
+            "personal_fields": {
+              "11973": null,
+              "11974": true,
+              "11975": "test_value",
+              "15462": [
+                6163,
+                6164
+              ]
+            },
+            "fields_names": {
+              "11973": "local_list_and_all_lists_field_names_1",
+              "11974": "local_list_and_all_lists_field_names_2"
+            },
+            "tags": [
+              "tag_value"
+            ],
+            "inactive_account": 0,
+            "inactive_sms": 0,
+            "list_created": "1",
+            "listId": 10000,
+            "side_pending": null,
+            "phones_forbiden_id": null
+          }
+        ],
+        "listId": 10000,
+        "count": 1
+      }
+    },
+    "expected_data": {
+      "status": "true",
+      "data": {
+        "subscribers": [
+          {
+            "id": 1,
+            "list_id": 1,
+            "subscriber_id": 1,
+            "subscription_id": 1,
+            "unsubscription_id": 1,
+            "list_seniority_date": "1",
+            "offset": 1,
+            "inactive": 0,
+            "pending": 1,
+            "size_pending": 1,
+            "active": 1,
+            "created": "1",
+            "modified": "1",
+            "phone": "1",
+            "email": "1",
+            "first": "1",
+            "last": "1",
+            "score": 1,
+            "vip": 0,
+            "last_open": "1",
+            "blocked": 0,
+            "unsubscribed": 0,
+            "unsubscribed_phone": 0,
+            "unsubscribed_reason": "MANUAL",
+            "name": "1",
+            "external_identifier": "1",
+            "seniority_date": "1",
+            "is_robot": 0,
+            "emails_unwanted_id": 1,
+            "phones_unwanted_id": 1,
+            "emails_forbidden_id": 1,
+            "phones_forbidden_id": 1,
+            "is_all_lists": 0,
+            "list_name": "1",
+            "stars": 5,
+            "personal_fields": {
+              "11973": null,
+              "11974": true,
+              "11975": "test_value",
+              "15462": [
+                6163,
+                6164
+              ]
+            },
+            "fields_names": {
+              "11973": "local_list_and_all_lists_field_names_1",
+              "11974": "local_list_and_all_lists_field_names_2"
+            },
+            "tags": [
+              "tag_value"
+            ],
+            "inactive_account": 0,
+            "inactive_sms": 0,
+            "list_created": "1",
+            "listId": 10000,
+            "side_pending": null,
+            "phones_forbiden_id": null
+          }
+        ],
+        "listId": 10000,
+        "count": 1
+      }
+    }
+  },
+  "remove_list_subscriber": {
+    "config": {
+      "list_id": 1,
+      "subscriber_id": 1
+    },
+    "method": "DELETE",
+    "path": "/lists/1/subscribers/1",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "update_list_subscriber": {
+    "config": {
+      "list_id": 1,
+      "subscriber_id": 1,
+      "inactive": false,
+      "offset": 0
+    },
+    "method": "PUT",
+    "path": "/lists/1/subscribers/1",
+    "query": {},
+    "body": {
+      "inactive": false,
+      "offset": 0
+    },
+    "response": {
+      "status": true,
+      "updatedId": 7432010
+    },
+    "expected_data": {
+      "status": true,
+      "updatedId": 7432010
+    }
+  },
+  "unsubscribe_subscriber": {
+    "config": {
+      "subscriber_id": 7446295
+    },
+    "method": "POST",
+    "path": "/req/unsubscribe",
+    "query": {},
+    "body": {
+      "subscriber_id": 7446295
+    },
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "subscribe_subscriber": {
+    "config": {
+      "subscriber_id": 7446295
+    },
+    "method": "POST",
+    "path": "/req/subscribe",
+    "query": {},
+    "body": {
+      "subscriber_id": 7446295
+    },
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "list_personal_fields": {
+    "config": {},
+    "method": "GET",
+    "path": "/personal-fields",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "type_id": 1,
+          "name": "1",
+          "hidden": 0,
+          "position": 1,
+          "default": 0,
+          "options": [
+            {
+              "id": 1,
+              "name": 1,
+              "is_default": 0
+            }
+          ]
+        }
+      ]
+    },
+    "expected_data": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "type_id": 1,
+          "name": "1",
+          "hidden": 0,
+          "position": 1,
+          "default": 0,
+          "options": [
+            {
+              "id": 1,
+              "name": 1,
+              "is_default": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "list_list_personal_fields": {
+    "config": {
+      "list_id": 1
+    },
+    "method": "GET",
+    "path": "/lists/1/personal-fields",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "type_id": 1,
+          "name": "1",
+          "hidden": 0,
+          "position": 1,
+          "day": 10,
+          "month": 12,
+          "year": 2022,
+          "default": "1",
+          "options": [
+            {
+              "id": 1,
+              "name": "1",
+              "is_default": 0
+            }
+          ]
+        }
+      ]
+    },
+    "expected_data": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "type_id": 1,
+          "name": "1",
+          "hidden": 0,
+          "position": 1,
+          "day": 10,
+          "month": 12,
+          "year": 2022,
+          "default": "1",
+          "options": [
+            {
+              "id": 1,
+              "name": "1",
+              "is_default": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "list_list_fields": {
+    "config": {
+      "list_id": 1
+    },
+    "method": "GET",
+    "path": "/lists/1/fields",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": {
+        "fields": [
+          {
+            "token": "1",
+            "email": "1",
+            "phone": "1",
+            "first": "1",
+            "last": "1",
+            "name": "1",
+            "offset": 1,
+            "score": 1,
+            "vip": false,
+            "unsubscribed": 0,
+            "unsubscribed_phone": 0,
+            "unsubscribe_reason": "1",
+            "blocked": 0,
+            "is_robot": 0,
+            "active": 0,
+            "emails_forbidden_id": 1,
+            "phones_forbidden_id": 1,
+            "emails_unwanted_id": 1,
+            "phones_unwanted_id": 1,
+            "external_identifier": "1",
+            "seniority_date": "1",
+            "unsubscribed_reason": null,
+            "phones_unwanted_if": null
+          }
+        ],
+        "personal_fields": [
+          {
+            "id": 1,
+            "type_id": 1,
+            "name": "1",
+            "hidden": 0,
+            "position": 1,
+            "day": 10,
+            "month": 12,
+            "year": 2022,
+            "default": "1",
+            "options": [
+              {
+                "id": 1,
+                "name": "1",
+                "is_default": 0
+              }
+            ]
+          }
+        ],
+        "all_lists_personal_fields": [
+          {
+            "id": 1,
+            "type_id": 1,
+            "name": "1",
+            "hidden": 0,
+            "position": 1,
+            "day": 10,
+            "month": 12,
+            "year": 2022,
+            "default": "1",
+            "options": [
+              {
+                "id": 1,
+                "name": "1",
+                "is_default": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expected_data": {
+      "status": "true",
+      "data": {
+        "fields": [
+          {
+            "email": "1",
+            "phone": "1",
+            "first": "1",
+            "last": "1",
+            "name": "1",
+            "offset": 1,
+            "score": 1,
+            "vip": false,
+            "unsubscribed": 0,
+            "unsubscribed_phone": 0,
+            "unsubscribe_reason": "1",
+            "blocked": 0,
+            "is_robot": 0,
+            "active": 0,
+            "emails_forbidden_id": 1,
+            "phones_forbidden_id": 1,
+            "emails_unwanted_id": 1,
+            "phones_unwanted_id": 1,
+            "external_identifier": "1",
+            "seniority_date": "1",
+            "unsubscribed_reason": null,
+            "phones_unwanted_if": null
+          }
+        ],
+        "personal_fields": [
+          {
+            "id": 1,
+            "type_id": 1,
+            "name": "1",
+            "hidden": 0,
+            "position": 1,
+            "day": 10,
+            "month": 12,
+            "year": 2022,
+            "default": "1",
+            "options": [
+              {
+                "id": 1,
+                "name": "1",
+                "is_default": 0
+              }
+            ]
+          }
+        ],
+        "all_lists_personal_fields": [
+          {
+            "id": 1,
+            "type_id": 1,
+            "name": "1",
+            "hidden": 0,
+            "position": 1,
+            "day": 10,
+            "month": 12,
+            "year": 2022,
+            "default": "1",
+            "options": [
+              {
+                "id": 1,
+                "name": "1",
+                "is_default": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "create_personal_field": {
+    "config": {
+      "type_id": 1,
+      "name": "Cat"
+    },
+    "method": "POST",
+    "path": "/personal-fields",
+    "query": {},
+    "body": {
+      "type_id": 1,
+      "name": "Cat"
+    },
+    "response": {
+      "status": true,
+      "createdId": 1
+    },
+    "expected_data": {
+      "status": true,
+      "createdId": 1
+    }
+  },
+  "update_personal_field": {
+    "config": {
+      "field_id": 1,
+      "type_id": 1,
+      "name": "Cat"
+    },
+    "method": "PUT",
+    "path": "/personal-fields/1",
+    "query": {},
+    "body": {
+      "type_id": 1,
+      "name": "Cat"
+    },
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "list_tags": {
+    "config": {},
+    "method": "GET",
+    "path": "/tag",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "account_id": 1,
+          "type_id": 1,
+          "name": "1",
+          "selected": 1,
+          "active": 0,
+          "created": "1",
+          "modified": "1"
+        }
+      ]
+    },
+    "expected_data": {
+      "status": "true",
+      "data": [
+        {
+          "id": 1,
+          "account_id": 1,
+          "type_id": 1,
+          "name": "1",
+          "selected": 1,
+          "active": 0,
+          "created": "1",
+          "modified": "1"
+        }
+      ]
+    }
+  },
+  "list_subscriber_tags": {
+    "config": {},
+    "method": "GET",
+    "path": "/tags/subscribers",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "count": 1,
+      "data": [
+        {
+          "id": 1,
+          "account_id": 1,
+          "type_id": 1,
+          "name": "1",
+          "selected": 1,
+          "active": 0,
+          "created": "1",
+          "modified": "1"
+        }
+      ]
+    },
+    "expected_data": {
+      "status": "true",
+      "count": 1,
+      "data": [
+        {
+          "id": 1,
+          "account_id": 1,
+          "type_id": 1,
+          "name": "1",
+          "selected": 1,
+          "active": 0,
+          "created": "1",
+          "modified": "1"
+        }
+      ]
+    }
+  },
+  "get_subscriber_tag": {
+    "config": {
+      "tag_id": 1
+    },
+    "method": "GET",
+    "path": "/tags/subscribers/1",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": "true",
+      "count": 1,
+      "data": [
+        {
+          "id": 1,
+          "account_id": 1,
+          "type_id": 1,
+          "name": "1",
+          "selected": 1,
+          "active": 0,
+          "created": "1",
+          "modified": "1",
+          "subscriber_id": 1
+        }
+      ]
+    },
+    "expected_data": {
+      "status": "true",
+      "count": 1,
+      "data": [
+        {
+          "id": 1,
+          "account_id": 1,
+          "type_id": 1,
+          "name": "1",
+          "selected": 1,
+          "active": 0,
+          "created": "1",
+          "modified": "1",
+          "subscriber_id": 1
+        }
+      ]
+    }
+  },
+  "create_subscriber_tag": {
+    "config": {
+      "name": "tag_name_1"
+    },
+    "method": "POST",
+    "path": "/tags/subscribers",
+    "query": {},
+    "body": {
+      "name": "tag_name_1"
+    },
+    "response": {
+      "status": true,
+      "createdId": 1
+    },
+    "expected_data": {
+      "status": true,
+      "createdId": 1
+    }
+  },
+  "remove_subscriber_tag": {
+    "config": {
+      "subscriber_id": 1,
+      "tag_id": 1
+    },
+    "method": "DELETE",
+    "path": "/subscribers/1/tags/1",
+    "query": {},
+    "body": {},
+    "response": {
+      "status": true
+    },
+    "expected_data": {
+      "status": true
+    }
+  },
+  "add_unwanted_email": {
+    "config": {
+      "email": "doe@example.com"
+    },
+    "method": "POST",
+    "path": "/emails/unwanted",
+    "query": {},
+    "body": {
+      "email": "doe@example.com"
+    },
+    "response": {
+      "status": true,
+      "createdId": 1
+    },
+    "expected_data": {
+      "status": true,
+      "createdId": 1
+    }
+  }
+}
