@@ -1,0 +1,570 @@
+{
+  "$defs": {
+    "CreateClient": {
+      "description": "Create a client using your practice's configured fields.",
+      "properties": {
+        "doc_json": {
+          "description": "The client fields object, e.g. {\"title\":\"Mostly Harmless PLC\",\"clientstate\":\"Client\"}. Do not add a doc wrapper. Fields depend on Settings > Forms. Writes can start jobs automatically.",
+          "maxLength": 100000,
+          "minLength": 2,
+          "title": "Client fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "doc_json"
+      ],
+      "title": "CreateClient",
+      "type": "object"
+    },
+    "CreateClientNote": {
+      "description": "Add a note attached to a client.",
+      "properties": {
+        "client_id": {
+          "description": "Client ID, for example c260af21ede8f.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^c[a-zA-Z0-9]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Note text; Senta permits HTML.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "note_type": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use Senta's default \"Note\".",
+          "title": "Note Type"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date/time; omit to use the time of posting.",
+          "title": "Date"
+        },
+        "operation": {
+          "const": "create_client_note",
+          "default": "create_client_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id",
+        "text"
+      ],
+      "title": "CreateClientNote",
+      "type": "object"
+    },
+    "CreateJobNote": {
+      "description": "Add a note attached to a client and a job.",
+      "properties": {
+        "client_id": {
+          "description": "Client ID, for example c260af21ede8f.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^c[a-zA-Z0-9]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Note text; Senta permits HTML.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "note_type": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use Senta's default \"Note\".",
+          "title": "Note Type"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date/time; omit to use the time of posting.",
+          "title": "Date"
+        },
+        "operation": {
+          "const": "create_job_note",
+          "default": "create_job_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maxLength": 128,
+          "pattern": "^j[a-zA-Z0-9]+$",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id",
+        "text",
+        "job_id"
+      ],
+      "title": "CreateJobNote",
+      "type": "object"
+    },
+    "DeleteClient": {
+      "description": "Delete the selected client.",
+      "properties": {
+        "client_id": {
+          "description": "Client ID, for example c260af21ede8f.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^c[a-zA-Z0-9]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_client",
+          "default": "delete_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "DeleteClient",
+      "type": "object"
+    },
+    "GetClient": {
+      "description": "Get the documented subset of one client's data.",
+      "properties": {
+        "client_id": {
+          "description": "Client ID, for example c260af21ede8f.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^c[a-zA-Z0-9]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "GetClient",
+      "type": "object"
+    },
+    "ListClientJobs": {
+      "description": "List jobs belonging to one client, optionally filtered by status.",
+      "properties": {
+        "client_id": {
+          "description": "Client ID, for example c260af21ede8f.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^c[a-zA-Z0-9]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "ready",
+                "overdue",
+                "completed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "pending",
+            "ready",
+            "overdue",
+            "completed",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_client_jobs",
+          "default": "list_client_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "ListClientJobs",
+      "type": "object"
+    },
+    "ListClients": {
+      "description": "Read a practice-created client list with its configured filters and columns.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_view_id": {
+          "description": "View ID from a publicly browsable client list URL /c/l/v\u2026; columns use display names.",
+          "maxLength": 128,
+          "pattern": "^v[a-zA-Z0-9]+$",
+          "title": "Client View Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_view_id"
+      ],
+      "title": "ListClients",
+      "type": "object"
+    },
+    "ListJobs": {
+      "description": "List jobs, optionally filtered by client, template and status.",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "ready",
+                "overdue",
+                "completed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "pending",
+            "ready",
+            "overdue",
+            "completed",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^c[a-zA-Z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^w[a-zA-Z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListTemplateJobs": {
+      "description": "List jobs using one job template, optionally filtered by status.",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "ready",
+                "overdue",
+                "completed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "pending",
+            "ready",
+            "overdue",
+            "completed",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_template_jobs",
+          "default": "list_template_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "maxLength": 128,
+          "pattern": "^w[a-zA-Z0-9]+$",
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "ListTemplateJobs",
+      "type": "object"
+    },
+    "SearchClients": {
+      "description": "Search clients by keywords.",
+      "properties": {
+        "operation": {
+          "const": "search_clients",
+          "default": "search_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keywords": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Keywords",
+          "type": "string"
+        }
+      },
+      "required": [
+        "keywords"
+      ],
+      "title": "SearchClients",
+      "type": "object"
+    },
+    "SentaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "senta_api_key",
+          "default": "senta_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "practice": {
+          "description": "For acme.senta.co, enter acme.",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+          "title": "Workspace subdomain",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "practice",
+        "api_key"
+      ],
+      "title": "Senta API Key",
+      "type": "object",
+      "x-credential-instructions": "Enter your Senta workspace subdomain and paste its API key. In Senta Settings > Users, choose Add integration, name it NoClick, and generate an API key. Regenerating a key revokes its predecessor. NoClick sends it in the x-auth header to your workspace only.",
+      "x-credential-url": "https://support.senta.co/support/solutions/articles/12000068808-setting-up-integration-users"
+    },
+    "UpdateClient": {
+      "description": "Update submitted fields; state/service changes may launch Senta jobs.",
+      "properties": {
+        "client_id": {
+          "description": "Client ID, for example c260af21ede8f.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^c[a-zA-Z0-9]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "doc_json": {
+          "description": "The client fields object, e.g. {\"title\":\"Mostly Harmless PLC\",\"clientstate\":\"Client\"}. Do not add a doc wrapper. Fields depend on Settings > Forms. Writes can start jobs automatically.",
+          "maxLength": 100000,
+          "minLength": 2,
+          "title": "Client fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id",
+        "doc_json"
+      ],
+      "title": "UpdateClient",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/CreateClient",
+          "create_client_note": "#/$defs/CreateClientNote",
+          "create_job_note": "#/$defs/CreateJobNote",
+          "delete_client": "#/$defs/DeleteClient",
+          "get_client": "#/$defs/GetClient",
+          "list_client_jobs": "#/$defs/ListClientJobs",
+          "list_clients": "#/$defs/ListClients",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_template_jobs": "#/$defs/ListTemplateJobs",
+          "search_clients": "#/$defs/SearchClients",
+          "update_client": "#/$defs/UpdateClient"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListClients"
+        },
+        {
+          "$ref": "#/$defs/GetClient"
+        },
+        {
+          "$ref": "#/$defs/CreateClient"
+        },
+        {
+          "$ref": "#/$defs/UpdateClient"
+        },
+        {
+          "$ref": "#/$defs/DeleteClient"
+        },
+        {
+          "$ref": "#/$defs/SearchClients"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/ListClientJobs"
+        },
+        {
+          "$ref": "#/$defs/ListTemplateJobs"
+        },
+        {
+          "$ref": "#/$defs/CreateClientNote"
+        },
+        {
+          "$ref": "#/$defs/CreateJobNote"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SentaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Senta Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
