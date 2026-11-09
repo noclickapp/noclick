@@ -2,7 +2,8 @@
 
 import json
 from datetime import datetime, timedelta, timezone
-from urllib.parse import quote
+from pathlib import Path
+from urllib.parse import quote, urlencode
 
 import httpx
 import pytest
@@ -272,3 +273,129 @@ async def test_freshen_passes_context_through_refresh_choke_point(monkeypatch):
     result = await KommoNode.freshen_credential(credential)
     assert result["referer"] == "a.kommo.com"
     assert result["access_token"] == "new"
+
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/kommo/events.json").read_text())
+
+
+def _form_pairs(value, prefix=""):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            yield from _form_pairs(child, f"{prefix}[{key}]" if prefix else key)
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            yield from _form_pairs(child, f"{prefix}[{index}]")
+    else:
+        yield prefix, str(value)
+
+
+@pytest.mark.parametrize("event_type", EVENTS)
+@pytest.mark.parametrize("wire_format", ["json", "form"])
+def test_documented_webhooks_reach_agents(event_type, wire_format):
+    # Official examples: https://developers.kommo.com/docs/webhooks-general
+    body = EVENTS[event_type]["body"]
+    payload = (
+        {"raw": urlencode(list(_form_pairs(body)))} if wire_format == "form" else body
+    )
+    config = module.KommoOnEventConfig(event_type=event_type).model_dump()
+    assert KommoNode.verify_webhook_signature(b"unsigned", {}, config)
+    assert KommoNode.filter_trigger_payload(payload, config)
+    output = KommoNode.resolve_trigger_payload(payload, config)
+    assert output["data"]["records"]
+    event = KommoNode.resolve_agent_event(output)
+    assert "Kommo:" in event["text"]
+    assert event["conversation_key"]
+    assert not KommoNode.filter_trigger_payload({}, config)
+    for other in EVENTS:
+        if other != event_type:
+            assert not KommoNode.filter_trigger_payload(payload, {"event_type": other})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event_type", EVENTS)
+async def test_webhook_registration_and_cleanup_use_destination(
+    monkeypatch, event_type
+):
+    requests = []
+    original = httpx.AsyncClient
+
+    def respond(request):
+        requests.append(request)
+        # Registration only needs successful acknowledgement: the response ID
+        # is not used by Kommo's documented delete-by-destination endpoint.
+        return httpx.Response(204 if request.method == "DELETE" else 200)
+
+    monkeypatch.setattr(
+        module,
+        "guarded_async_client",
+        lambda **kwargs: original(transport=httpx.MockTransport(respond), **kwargs),
+    )
+    credential = KommoLongLivedTokenCredential(
+        subdomain="example", token="token"
+    ).model_dump()
+    url = "https://example.test"
+    result = await KommoNode._register_external_webhook(
+        webhook_url=url,
+        credential=credential,
+        config={"event_type": event_type},
+        node_id="test",
+    )
+    assert result == {"external_webhook_id": url}
+    await KommoNode._unregister_external_webhook(
+        credential=credential, config=result, node_id="test"
+    )
+    assert [r.method for r in requests] == ["POST", "DELETE"]
+    assert all(
+        str(r.url) == "https://example.kommo.com/api/v4/webhooks" for r in requests
+    )
+    assert json.loads(requests[0].content) == {
+        "destination": url,
+        "settings": [event_type],
+    }
+    assert json.loads(requests[1].content) == {"destination": url}
+
+
+@pytest.mark.asyncio
+async def test_trigger_manual_execution_has_no_event():
+    node = KommoNode(
+        "test",
+        "automation-kommo",
+        {},
+        config=KommoNodeConfig(
+            config=module.KommoOnEventConfig(),
+            credentials=KommoLongLivedTokenCredential(
+                subdomain="example", token="token"
+            ),
+        ),
+    )
+    assert (await node.execute({"unrelated": "data"}))["status"] == "no_event"
+
+
+@pytest.mark.asyncio
+async def test_registration_failure_and_invalid_host_are_not_accepted(monkeypatch):
+    original = httpx.AsyncClient
+    monkeypatch.setattr(
+        module,
+        "guarded_async_client",
+        lambda **kwargs: original(
+            transport=httpx.MockTransport(lambda request: httpx.Response(403)), **kwargs
+        ),
+    )
+    credential = KommoLongLivedTokenCredential(
+        subdomain="example", token="token"
+    ).model_dump()
+    with pytest.raises(httpx.HTTPStatusError):
+        await KommoNode._register_external_webhook(
+            webhook_url="https://example.test",
+            credential=credential,
+            config={},
+            node_id="test",
+        )
+    credential["subdomain"] = "evil.example"
+    with pytest.raises(ValueError):
+        await KommoNode._register_external_webhook(
+            webhook_url="https://example.test",
+            credential=credential,
+            config={},
+            node_id="test",
+        )

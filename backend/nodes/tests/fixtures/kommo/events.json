@@ -1,0 +1,354 @@
+{
+  "update_lead": {
+    "body": {
+      "leads": {
+        "update": [
+          {
+            "id": "123456789",
+            "name": "",
+            "status_id": "67548615",
+            "old_status_id": "67548607",
+            "price": "1000",
+            "responsible_user_id": "11000000",
+            "last_modified": "1726567767",
+            "modified_user_id": "11087123",
+            "created_user_id": "11087123",
+            "date_create": "17265663a90",
+            "pipeline_id": "8572511",
+            "account_id": "12345678",
+            "custom_fields": [
+              {
+                "id": "1118164",
+                "name": "Benefit",
+                "values": [
+                  {
+                    "value": "1000"
+                  }
+                ]
+              },
+              {
+                "id": "1246483",
+                "name": "Text",
+                "values": [
+                  {
+                    "value": "Text"
+                  }
+                ]
+              },
+              {
+                "id": "1246485",
+                "name": "Numeric",
+                "values": [
+                  {
+                    "value": "123"
+                  }
+                ]
+              },
+              {
+                "id": "1246487",
+                "name": "Toggle switch",
+                "values": [
+                  {
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "id": "1246491",
+                "name": "Date",
+                "values": [
+                  "1729717200"
+                ]
+              },
+              {
+                "id": "1246493",
+                "name": "Currency",
+                "values": [
+                  {
+                    "value": "200"
+                  }
+                ]
+              }
+            ],
+            "created_at": "1726566390",
+            "updated_at": "1726567767"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.kommo.com/docs/webhooks-general"
+  },
+  "status_lead": {
+    "body": {
+      "leads": {
+        "status": [
+          {
+            "id": "15318175",
+            "name": "",
+            "status_id": "67548619",
+            "old_status_id": "67548607",
+            "price": "1000",
+            "responsible_user_id": "12345678",
+            "last_modified": "1726572758",
+            "modified_user_id": "11087123",
+            "created_user_id": "11087123",
+            "date_create": "1726572752",
+            "pipeline_id": "8572511",
+            "account_id": "12345678",
+            "custom_fields": [
+              {
+                "id": "1118164",
+                "name": "Benefit",
+                "values": [
+                  {
+                    "value": "1000"
+                  }
+                ]
+              },
+              {
+                "id": "1246483",
+                "name": "Text",
+                "values": [
+                  {
+                    "value": "Text"
+                  }
+                ]
+              },
+              {
+                "id": "1246485",
+                "name": "Numeric",
+                "values": [
+                  {
+                    "value": "123"
+                  }
+                ]
+              },
+              {
+                "id": "1246489",
+                "name": "Select",
+                "values": [
+                  {
+                    "value": "2",
+                    "enum": "908107"
+                  }
+                ]
+              },
+              {
+                "id": "1246491",
+                "name": "Date",
+                "values": [
+                  "1725915600"
+                ]
+              }
+            ],
+            "created_at": "1726572752",
+            "updated_at": "1726572758"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.kommo.com/docs/webhooks-general"
+  },
+  "add_contact": {
+    "body": {
+      "contacts": {
+        "add": [
+          {
+            "id": "17611273",
+            "name": "Contact Name",
+            "responsible_user_id": "11087123",
+            "date_create": "1726573127",
+            "last_modified": "1726573127",
+            "created_user_id": "11087123",
+            "modified_user_id": "11087123",
+            "account_id": "32720107",
+            "custom_fields": [
+              {
+                "id": "771906",
+                "name": "Phone",
+                "values": [
+                  {
+                    "value": "1234567890",
+                    "enum": "552476"
+                  }
+                ],
+                "code": "PHONE"
+              },
+              {
+                "id": "771908",
+                "name": "Email",
+                "values": [
+                  {
+                    "value": "mail@gmail.com",
+                    "enum": "552488"
+                  }
+                ],
+                "code": "EMAIL"
+              },
+              {
+                "id": "782386",
+                "name": "Birthday",
+                "values": [
+                  {
+                    "value": "12.01.1980"
+                  }
+                ]
+              },
+              {
+                "id": "791668",
+                "name": "Bio",
+                "values": [
+                  {
+                    "value": "Text"
+                  }
+                ]
+              },
+              {
+                "id": "791730",
+                "name": "Any radiobutton",
+                "values": {
+                  "value": "2",
+                  "enum": "566642"
+                }
+              }
+            ],
+            "created_at": "1726573127",
+            "updated_at": "1726573127",
+            "type": "contact"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.kommo.com/docs/webhooks-general"
+  },
+  "add_task": {
+    "body": {
+      "task": {
+        "add": [
+          {
+            "id": "1564671",
+            "element_id": "15320411",
+            "element_type": "2",
+            "task_type": "1",
+            "date_create": "2024-09-17 13:07:29",
+            "text": "Task text",
+            "status": "0",
+            "account_id": "32720107",
+            "created_user_id": "11087123",
+            "last_modified": "2024-09-17 13:07:29",
+            "responsible_user_id": "11087123",
+            "complete_till": "2025-10-02 20:59:00",
+            "created_at": "1726578449",
+            "updated_at": "1726578449",
+            "complete_before": "1759438740"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.kommo.com/docs/webhooks-general"
+  },
+  "add_message": {
+    "body": {
+      "add": [
+        {
+          "id": "9402b05b-91c0-4daa-a8a6-34b411881f4c",
+          "chat_id": "dfa7f0e5-79bb-4b3d-9647-2f492075e419",
+          "talk_id": "172",
+          "contact_id": "46855094",
+          "text": "Hi!",
+          "created_at": "1782389132",
+          "message_type": "text",
+          "element_type": "2",
+          "entity_type": "lead",
+          "element_id": "50296276",
+          "entity_id": "50296276",
+          "type": "incoming",
+          "author": {
+            "id": "9729f051-1ca6-4fe2-9b3e-3effe4e83f5d",
+            "type": "external"
+          },
+          "origin": "telegram"
+        }
+      ]
+    },
+    "source": "https://developers.kommo.com/docs/webhooks-general"
+  },
+  "add_lead": {
+    "body": {
+      "leads": {
+        "add": [
+          {
+            "id": "1111111",
+            "name": "New Lead",
+            "status_id": "2222222",
+            "price": "500",
+            "responsible_user_id": "3333333",
+            "last_modified": "1726566390",
+            "modified_user_id": "44444444",
+            "created_user_id": "44444444",
+            "date_create": "1726566390",
+            "pipeline_id": "5555555",
+            "account_id": "66666666",
+            "custom_fields": [
+              {
+                "id": "77777777",
+                "name": "Benefit",
+                "values": [
+                  {
+                    "value": "0"
+                  }
+                ]
+              },
+              {
+                "id": "88888888",
+                "name": "Text",
+                "values": [
+                  {
+                    "value": "Text"
+                  }
+                ]
+              },
+              {
+                "id": "9999999",
+                "name": "Numeric",
+                "values": [
+                  {
+                    "value": "123"
+                  }
+                ]
+              },
+              {
+                "id": "12345678",
+                "name": "Toggle switch",
+                "values": [
+                  {
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "id": "87654321",
+                "name": "Date",
+                "values": [
+                  "1729717200"
+                ]
+              },
+              {
+                "id": "12312312",
+                "name": "Currency",
+                "values": [
+                  {
+                    "value": "200"
+                  }
+                ]
+              }
+            ],
+            "created_at": "1726566390",
+            "updated_at": "1726566390"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.kommo.com/docs/webhooks-general"
+  }
+}

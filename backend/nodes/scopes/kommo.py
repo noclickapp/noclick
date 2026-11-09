@@ -8,5 +8,7 @@ from nodes.kommo_operations import KOMMO_OPERATIONS
 
 KOMMO_SCOPES = ScopeRegistry(
     provider="kommo",
-    requirements={operation: ScopeRequirement() for operation in KOMMO_OPERATIONS},
+    requirements={
+        operation: ScopeRequirement() for operation in (*KOMMO_OPERATIONS, "on_event")
+    },
 )

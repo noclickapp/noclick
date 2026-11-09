@@ -14,7 +14,7 @@ const KommoNodeComponent = (props: NodeProps) => (
 export const KommoNode: NodeDefinition = {
     type: 'automation-kommo',
     label: 'Kommo',
-    description: 'Kommo CRM automation',
+    description: 'Kommo CRM actions and event triggers',
     category: 'crm-sales',
     Icon: KommoIcon,
     iconColor: '',
