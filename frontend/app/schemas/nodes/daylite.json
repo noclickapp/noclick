@@ -1,0 +1,1659 @@
+{
+  "$defs": {
+    "CreateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Create Company",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateCompany",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateNote": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Note",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "CreateOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Probability Percent"
+        },
+        "forecasted": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Closing Date"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "operation": {
+          "const": "create_opportunity",
+          "default": "create_opportunity",
+          "title": "Create Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateOpportunity",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daylite task status value; see the Task reference.",
+          "title": "Status"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daylite priority value; see the Task reference.",
+          "title": "Priority"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DaylitePersonalToken": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "daylite_personal_token",
+          "default": "daylite_personal_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Paste the access_token value, without the Bearer prefix. Personal access tokens expire after one hour.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Daylite Personal Token",
+      "type": "object",
+      "x-credential-instructions": "Generate a personal token in Daylite and paste its access_token. Tokens expire after one hour. Refresh it using Daylite's documented personal-token flow, then replace the access token here. Read and write operations require daylite:read and daylite:write respectively.",
+      "x-credential-url": "https://developer.daylite.app/reference/personal-token"
+    },
+    "Email": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "address": {
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "address"
+      ],
+      "title": "Email",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get Company",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetNote": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Get Note",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetNote",
+      "type": "object"
+    },
+    "GetOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_opportunity",
+          "default": "get_opportunity",
+          "title": "Get Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetOpportunity",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "GetTokenMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_token_metadata",
+          "default": "get_token_metadata",
+          "title": "Get Token Metadata",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetTokenMetadata",
+      "type": "object"
+    },
+    "ListCompanies": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List Companies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_trash": {
+          "default": false,
+          "title": "Include Trash",
+          "type": "boolean"
+        }
+      },
+      "title": "ListCompanies",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_trash": {
+          "default": false,
+          "title": "Include Trash",
+          "type": "boolean"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_trash": {
+          "default": false,
+          "title": "Include Trash",
+          "type": "boolean"
+        }
+      },
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListOpportunities": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_opportunities",
+          "default": "list_opportunities",
+          "title": "List Opportunities",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_trash": {
+          "default": false,
+          "title": "Include Trash",
+          "type": "boolean"
+        }
+      },
+      "title": "ListOpportunities",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_trash": {
+          "default": false,
+          "title": "Include Trash",
+          "type": "boolean"
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "UpdateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Update Company",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "UpdateCompany",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateNote": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update Note",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "UpdateOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Probability Percent"
+        },
+        "forecasted": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Closing Date"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_opportunity",
+          "default": "update_opportunity",
+          "title": "Update Opportunity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "UpdateOpportunity",
+      "type": "object"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details",
+          "ui:widget": "textarea"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daylite task status value; see the Task reference.",
+          "title": "Status"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daylite priority value; see the Task reference.",
+          "title": "Priority"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "record_id": {
+          "description": "Numeric identifier from the record's self reference, for example 1000.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "title",
+        "record_id"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_company": "#/$defs/CreateCompany",
+          "create_contact": "#/$defs/CreateContact",
+          "create_note": "#/$defs/CreateNote",
+          "create_opportunity": "#/$defs/CreateOpportunity",
+          "create_project": "#/$defs/CreateProject",
+          "create_task": "#/$defs/CreateTask",
+          "get_company": "#/$defs/GetCompany",
+          "get_contact": "#/$defs/GetContact",
+          "get_note": "#/$defs/GetNote",
+          "get_opportunity": "#/$defs/GetOpportunity",
+          "get_project": "#/$defs/GetProject",
+          "get_task": "#/$defs/GetTask",
+          "get_token_metadata": "#/$defs/GetTokenMetadata",
+          "list_companies": "#/$defs/ListCompanies",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_notes": "#/$defs/ListNotes",
+          "list_opportunities": "#/$defs/ListOpportunities",
+          "list_projects": "#/$defs/ListProjects",
+          "list_tasks": "#/$defs/ListTasks",
+          "update_company": "#/$defs/UpdateCompany",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_note": "#/$defs/UpdateNote",
+          "update_opportunity": "#/$defs/UpdateOpportunity",
+          "update_project": "#/$defs/UpdateProject",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListCompanies"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/CreateCompany"
+        },
+        {
+          "$ref": "#/$defs/UpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/GetNote"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/ListOpportunities"
+        },
+        {
+          "$ref": "#/$defs/GetOpportunity"
+        },
+        {
+          "$ref": "#/$defs/CreateOpportunity"
+        },
+        {
+          "$ref": "#/$defs/UpdateOpportunity"
+        },
+        {
+          "$ref": "#/$defs/GetTokenMetadata"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DaylitePersonalToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Daylite Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
