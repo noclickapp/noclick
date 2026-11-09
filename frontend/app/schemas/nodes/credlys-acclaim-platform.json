@@ -1,0 +1,1117 @@
+{
+  "$defs": {
+    "Activity": {
+      "additionalProperties": false,
+      "properties": {
+        "activity_type": {
+          "enum": [
+            "Application",
+            "Assessment",
+            "Award",
+            "Badge",
+            "Course",
+            "Credential",
+            "Education Experience",
+            "Leadership",
+            "Member",
+            "Other",
+            "Participant",
+            "Payment",
+            "Portfolio",
+            "Presenter",
+            "Project",
+            "Professional Experience",
+            "Schedule / Registration",
+            "Volunteer"
+          ],
+          "title": "Activity Type",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "activity_url": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activity Url"
+        },
+        "required_badge_template_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Badge Template Id"
+        }
+      },
+      "required": [
+        "activity_type",
+        "title"
+      ],
+      "title": "Activity",
+      "type": "object"
+    },
+    "CreateBadgeTemplate": {
+      "additionalProperties": false,
+      "description": "Create a badge template with criteria, skills and an image URL.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_badge_template",
+          "default": "create_badge_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "badge_template_activities": {
+          "items": {
+            "$ref": "#/$defs/Activity"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Badge Template Activities",
+          "type": "array"
+        },
+        "image": {
+          "$ref": "#/$defs/TemplateImage"
+        },
+        "global_activity_url": {
+          "maxLength": 255,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Global Activity Url",
+          "type": "string"
+        },
+        "skills": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 3,
+          "title": "Skills",
+          "type": "array"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "draft",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "draft",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "reporting_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reporting Tags"
+        },
+        "allow_duplicate_badges": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Duplicate Badges"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name",
+        "description",
+        "badge_template_activities",
+        "image",
+        "global_activity_url",
+        "skills"
+      ],
+      "title": "CreateBadgeTemplate",
+      "type": "object"
+    },
+    "CredlyTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "credly_api_token",
+          "default": "credly_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Authorization token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Credly Authorization Token",
+      "type": "object",
+      "x-credential-instructions": "In Credly Organization Management, open Developers and copy an authorization token. Paste the token here. NoClick sends it as the HTTP Basic username with a blank password to api.credly.com. Tokens expire after 180 days by default; replace an expired token here. Write operations need a token with write permissions.",
+      "x-credential-url": "https://docs.credly.com/browse/docs/authentication-methods"
+    },
+    "DeleteBadgeTemplate": {
+      "additionalProperties": false,
+      "description": "Permanently delete a badge template; Credly rejects templates with children.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_template_id": {
+          "format": "uuid",
+          "title": "Badge template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_badge_template",
+          "default": "delete_badge_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_template_id"
+      ],
+      "title": "DeleteBadgeTemplate",
+      "type": "object"
+    },
+    "DeleteIssuedBadge": {
+      "additionalProperties": false,
+      "description": "Permanently delete an issued badge.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_id": {
+          "format": "uuid",
+          "title": "Badge ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_issued_badge",
+          "default": "delete_issued_badge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_id"
+      ],
+      "title": "DeleteIssuedBadge",
+      "type": "object"
+    },
+    "GetBadgeTemplate": {
+      "additionalProperties": false,
+      "description": "Get one badge template.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_template_id": {
+          "format": "uuid",
+          "title": "Badge template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_badge_template",
+          "default": "get_badge_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_template_id"
+      ],
+      "title": "GetBadgeTemplate",
+      "type": "object"
+    },
+    "GetIssuedBadge": {
+      "additionalProperties": false,
+      "description": "Read one issued badge.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_id": {
+          "format": "uuid",
+          "title": "Badge ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_issued_badge",
+          "default": "get_issued_badge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_id"
+      ],
+      "title": "GetIssuedBadge",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "description": "Get an organization's profile.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "IssueBadge": {
+      "additionalProperties": false,
+      "description": "Issue a badge; Credly normally sends an earner notification.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_template_id": {
+          "format": "uuid",
+          "title": "Badge Template Id",
+          "type": "string"
+        },
+        "issued_at": {
+          "description": "Date and time the earner earned the badge, with time zone.",
+          "format": "date-time",
+          "title": "Issued At",
+          "type": "string"
+        },
+        "issued_to_first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Issued To First Name",
+          "type": "string"
+        },
+        "issued_to_last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Issued To Last Name",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "issuer_earner_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issuer Earner Id"
+        },
+        "issued_to_middle_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issued To Middle Name"
+        },
+        "operation": {
+          "const": "issue_badge",
+          "default": "issue_badge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipient_email": {
+          "maxLength": 320,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Recipient Email",
+          "type": "string"
+        },
+        "suppress_badge_notification_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suppress Badge Notification Email"
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_template_id",
+        "issued_at",
+        "issued_to_first_name",
+        "issued_to_last_name",
+        "recipient_email"
+      ],
+      "title": "IssueBadge",
+      "type": "object"
+    },
+    "ListBadgeTemplates": {
+      "additionalProperties": false,
+      "description": "Read one page of badge templates. Increment page for further results.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_badge_templates",
+          "default": "list_badge_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Partial template name match.",
+          "title": "Name"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "draft",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "draft",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ListBadgeTemplates",
+      "type": "object"
+    },
+    "ListIssuedBadges": {
+      "additionalProperties": false,
+      "description": "Read one page of issued badges with optional recipient and state filters.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_issued_badges",
+          "default": "list_issued_badges",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Per",
+          "type": "integer"
+        },
+        "recipient_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Email"
+        },
+        "badge_template_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Badge Template Id"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "accepted",
+                "rejected",
+                "revoked",
+                "pending",
+                "replaced"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "accepted",
+            "rejected",
+            "revoked",
+            "pending",
+            "replaced"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ListIssuedBadges",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "description": "List organizations accessible to the authorization token.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "ReplaceBadge": {
+      "additionalProperties": false,
+      "description": "Replace a badge with corrected fields; an optional message notifies the earner.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_template_id": {
+          "format": "uuid",
+          "title": "Badge Template Id",
+          "type": "string"
+        },
+        "issued_at": {
+          "description": "Date and time the earner earned the badge, with time zone.",
+          "format": "date-time",
+          "title": "Issued At",
+          "type": "string"
+        },
+        "issued_to_first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Issued To First Name",
+          "type": "string"
+        },
+        "issued_to_last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Issued To Last Name",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "issuer_earner_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issuer Earner Id"
+        },
+        "issued_to_middle_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issued To Middle Name"
+        },
+        "operation": {
+          "const": "replace_badge",
+          "default": "replace_badge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "badge_id": {
+          "format": "uuid",
+          "title": "Badge Id",
+          "type": "string"
+        },
+        "notification_message": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notification Message"
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_template_id",
+        "issued_at",
+        "issued_to_first_name",
+        "issued_to_last_name",
+        "badge_id"
+      ],
+      "title": "ReplaceBadge",
+      "type": "object"
+    },
+    "RevokeBadge": {
+      "additionalProperties": false,
+      "description": "Revoke a badge and record the reason; optionally suppress notification.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_id": {
+          "format": "uuid",
+          "title": "Badge ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "revoke_badge",
+          "default": "revoke_badge",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reason": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "suppress_revoke_notification_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suppress Revoke Notification Email"
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_id",
+        "reason"
+      ],
+      "title": "RevokeBadge",
+      "type": "object"
+    },
+    "TemplateImage": {
+      "additionalProperties": false,
+      "properties": {
+        "remote_upload_url": {
+          "description": "Public PNG URL, at least 600 by 600 pixels. Credly fetches the image.",
+          "maxLength": 2048,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Remote Upload Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "remote_upload_url"
+      ],
+      "title": "TemplateImage",
+      "type": "object"
+    },
+    "UpdateBadgeTemplate": {
+      "additionalProperties": false,
+      "description": "Update a template's name and selected template settings.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "badge_template_id": {
+          "format": "uuid",
+          "title": "Badge template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_badge_template",
+          "default": "update_badge_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "badge_template_activities": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Activity"
+              },
+              "maxItems": 100,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Badge Template Activities"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemplateImage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "skills": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "minItems": 3,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skills"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "draft",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "draft",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "reporting_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reporting Tags"
+        },
+        "allow_duplicate_badges": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Duplicate Badges"
+        }
+      },
+      "required": [
+        "organization_id",
+        "badge_template_id",
+        "name"
+      ],
+      "title": "UpdateBadgeTemplate",
+      "type": "object"
+    },
+    "UpdateOrganization": {
+      "additionalProperties": false,
+      "description": "Update the organization's display name and optional public profile.",
+      "properties": {
+        "organization_id": {
+          "description": "UUID from List Organizations.",
+          "format": "uuid",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "UpdateOrganization",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_badge_template": "#/$defs/CreateBadgeTemplate",
+          "delete_badge_template": "#/$defs/DeleteBadgeTemplate",
+          "delete_issued_badge": "#/$defs/DeleteIssuedBadge",
+          "get_badge_template": "#/$defs/GetBadgeTemplate",
+          "get_issued_badge": "#/$defs/GetIssuedBadge",
+          "get_organization": "#/$defs/GetOrganization",
+          "issue_badge": "#/$defs/IssueBadge",
+          "list_badge_templates": "#/$defs/ListBadgeTemplates",
+          "list_issued_badges": "#/$defs/ListIssuedBadges",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "replace_badge": "#/$defs/ReplaceBadge",
+          "revoke_badge": "#/$defs/RevokeBadge",
+          "update_badge_template": "#/$defs/UpdateBadgeTemplate",
+          "update_organization": "#/$defs/UpdateOrganization"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/UpdateOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListBadgeTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetBadgeTemplate"
+        },
+        {
+          "$ref": "#/$defs/CreateBadgeTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateBadgeTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteBadgeTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListIssuedBadges"
+        },
+        {
+          "$ref": "#/$defs/GetIssuedBadge"
+        },
+        {
+          "$ref": "#/$defs/IssueBadge"
+        },
+        {
+          "$ref": "#/$defs/ReplaceBadge"
+        },
+        {
+          "$ref": "#/$defs/RevokeBadge"
+        },
+        {
+          "$ref": "#/$defs/DeleteIssuedBadge"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CredlyTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Credlys-acclaim-platform Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
