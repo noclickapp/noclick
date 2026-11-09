@@ -1,0 +1,1156 @@
+{
+  "$defs": {
+    "AddClassStudentConfig": {
+      "additionalProperties": false,
+      "description": "Enroll a student in a class, with explicit notification and re-enrollment options.",
+      "properties": {
+        "operation": {
+          "const": "add_class_student",
+          "default": "add_class_student",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "send_notification": {
+          "default": false,
+          "description": "Notify the learner of enrollment.",
+          "title": "Send Notification",
+          "type": "boolean"
+        },
+        "reenroll": {
+          "default": "never",
+          "enum": [
+            "never",
+            "only_completed",
+            "always"
+          ],
+          "title": "Reenroll",
+          "type": "string"
+        },
+        "increment_seats": {
+          "default": false,
+          "description": "Add a seat when no seats remain.",
+          "title": "Increment Seats",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "class_id",
+        "user_id"
+      ],
+      "title": "AddClassStudentConfig",
+      "type": "object"
+    },
+    "AddGroupMemberConfig": {
+      "additionalProperties": false,
+      "description": "Add group member.",
+      "properties": {
+        "operation": {
+          "const": "add_group_member",
+          "default": "add_group_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id",
+        "user_id"
+      ],
+      "title": "AddGroupMemberConfig",
+      "type": "object"
+    },
+    "CreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create group.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private"
+        },
+        "team": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Team"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroupConfig",
+      "type": "object"
+    },
+    "CreateUserConfig": {
+      "additionalProperties": false,
+      "description": "Create user.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "roles": {
+          "description": "Portal role names, for example student.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Roles",
+          "type": "array"
+        },
+        "userid": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Login ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "send_login_instructions": {
+          "default": false,
+          "description": "Send an email with login instructions to the new user.",
+          "title": "Send Login Instructions",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "roles"
+      ],
+      "title": "CreateUserConfig",
+      "type": "object"
+    },
+    "CypherLearningAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cypher_learning_api_key",
+          "default": "cypher_learning_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "portal_url": {
+          "description": "Your CYPHER portal HTTPS origin, including a custom domain if configured.",
+          "title": "Portal URL",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "portal_url",
+        "api_key"
+      ],
+      "title": "CYPHER Learning API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your portal's API key and HTTPS portal origin (for example https://school.neolms.com). The key is sent in the x-api-key header. Your key must allow the selected operations; connecting reads one page of your classes.",
+      "x-credential-url": "https://www.neolms.com/api/v3/openapi.json"
+    },
+    "GetClassConfig": {
+      "additionalProperties": false,
+      "description": "Get class.",
+      "properties": {
+        "operation": {
+          "const": "get_class",
+          "default": "get_class",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "class_id"
+      ],
+      "title": "GetClassConfig",
+      "type": "object"
+    },
+    "GetClassStudentConfig": {
+      "additionalProperties": false,
+      "description": "Get class student.",
+      "properties": {
+        "operation": {
+          "const": "get_class_student",
+          "default": "get_class_student",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "class_id",
+        "user_id"
+      ],
+      "title": "GetClassStudentConfig",
+      "type": "object"
+    },
+    "GetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get group.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroupConfig",
+      "type": "object"
+    },
+    "GetOrganizationConfig": {
+      "additionalProperties": false,
+      "description": "Get organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Organization Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "GetOrganizationConfig",
+      "type": "object"
+    },
+    "GetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUserConfig",
+      "type": "object"
+    },
+    "ListAssignmentGradesConfig": {
+      "additionalProperties": false,
+      "description": "List assignment grades.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_assignment_grades",
+          "default": "list_assignment_grades",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "assignment_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Assignment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "class_id",
+        "assignment_id"
+      ],
+      "title": "ListAssignmentGradesConfig",
+      "type": "object"
+    },
+    "ListClassAssignmentsConfig": {
+      "additionalProperties": false,
+      "description": "List class assignments.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_class_assignments",
+          "default": "list_class_assignments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "class_id"
+      ],
+      "title": "ListClassAssignmentsConfig",
+      "type": "object"
+    },
+    "ListClassStudentsConfig": {
+      "additionalProperties": false,
+      "description": "List class students.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_class_students",
+          "default": "list_class_students",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "class_id"
+      ],
+      "title": "ListClassStudentsConfig",
+      "type": "object"
+    },
+    "ListClassesConfig": {
+      "additionalProperties": false,
+      "description": "List classes.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_classes",
+          "default": "list_classes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListClassesConfig",
+      "type": "object"
+    },
+    "ListGroupMembersConfig": {
+      "additionalProperties": false,
+      "description": "List group members.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_group_members",
+          "default": "list_group_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "ListGroupMembersConfig",
+      "type": "object"
+    },
+    "ListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List groups.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGroupsConfig",
+      "type": "object"
+    },
+    "ListOrganizationsConfig": {
+      "additionalProperties": false,
+      "description": "List organizations.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOrganizationsConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Number of records in this page; CYPHER's maximum is 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Skip this many records. Use next_offset for a possible next page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "RemoveClassStudentConfig": {
+      "additionalProperties": false,
+      "description": "Remove class student.",
+      "properties": {
+        "operation": {
+          "const": "remove_class_student",
+          "default": "remove_class_student",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "class_id",
+        "user_id"
+      ],
+      "title": "RemoveClassStudentConfig",
+      "type": "object"
+    },
+    "RemoveGroupMemberConfig": {
+      "additionalProperties": false,
+      "description": "Remove group member.",
+      "properties": {
+        "operation": {
+          "const": "remove_group_member",
+          "default": "remove_group_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id",
+        "user_id"
+      ],
+      "title": "RemoveGroupMemberConfig",
+      "type": "object"
+    },
+    "UpdateClassStudentConfig": {
+      "additionalProperties": false,
+      "description": "Update enrollment status or final score; status changes run as provider background jobs.",
+      "properties": {
+        "operation": {
+          "const": "update_class_student",
+          "default": "update_class_student",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "class_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed"
+        },
+        "deactivated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deactivated"
+        },
+        "unenrolled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unenrolled"
+        },
+        "override_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Override Percent"
+        },
+        "override_comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Override Comment"
+        }
+      },
+      "required": [
+        "class_id",
+        "user_id"
+      ],
+      "title": "UpdateClassStudentConfig",
+      "type": "object"
+    },
+    "UpdateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Update group.",
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "UpdateGroupConfig",
+      "type": "object"
+    },
+    "UpdateUserConfig": {
+      "additionalProperties": false,
+      "description": "Update user.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "UpdateUserConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_class_student": "#/$defs/AddClassStudentConfig",
+          "add_group_member": "#/$defs/AddGroupMemberConfig",
+          "create_group": "#/$defs/CreateGroupConfig",
+          "create_user": "#/$defs/CreateUserConfig",
+          "get_class": "#/$defs/GetClassConfig",
+          "get_class_student": "#/$defs/GetClassStudentConfig",
+          "get_group": "#/$defs/GetGroupConfig",
+          "get_organization": "#/$defs/GetOrganizationConfig",
+          "get_user": "#/$defs/GetUserConfig",
+          "list_assignment_grades": "#/$defs/ListAssignmentGradesConfig",
+          "list_class_assignments": "#/$defs/ListClassAssignmentsConfig",
+          "list_class_students": "#/$defs/ListClassStudentsConfig",
+          "list_classes": "#/$defs/ListClassesConfig",
+          "list_group_members": "#/$defs/ListGroupMembersConfig",
+          "list_groups": "#/$defs/ListGroupsConfig",
+          "list_organizations": "#/$defs/ListOrganizationsConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "remove_class_student": "#/$defs/RemoveClassStudentConfig",
+          "remove_group_member": "#/$defs/RemoveGroupMemberConfig",
+          "update_class_student": "#/$defs/UpdateClassStudentConfig",
+          "update_group": "#/$defs/UpdateGroupConfig",
+          "update_user": "#/$defs/UpdateUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListClassesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetClassConfig"
+        },
+        {
+          "$ref": "#/$defs/ListClassStudentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetClassStudentConfig"
+        },
+        {
+          "$ref": "#/$defs/AddClassStudentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateClassStudentConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveClassStudentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AddGroupMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveGroupMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/ListClassAssignmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListAssignmentGradesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CypherLearningAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cypher-learning Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
