@@ -1,0 +1,194 @@
+{
+  "list_organizations": {
+    "config": {
+      "operation": "list_organizations"
+    },
+    "method": "GET",
+    "path": "/organizations"
+  },
+  "get_organization": {
+    "config": {
+      "operation": "get_organization",
+      "organization": "acme"
+    },
+    "method": "GET",
+    "path": "/organizations/acme"
+  },
+  "list_databases": {
+    "config": {
+      "operation": "list_databases",
+      "organization": "acme"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases"
+  },
+  "create_database": {
+    "config": {
+      "operation": "create_database",
+      "organization": "acme",
+      "name": "test-db",
+      "cluster_size": "PS_10"
+    },
+    "method": "POST",
+    "path": "/organizations/acme/databases"
+  },
+  "get_database": {
+    "config": {
+      "operation": "get_database",
+      "organization": "acme",
+      "database": "app-db"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db"
+  },
+  "delete_database": {
+    "config": {
+      "operation": "delete_database",
+      "organization": "acme",
+      "database": "app-db"
+    },
+    "method": "DELETE",
+    "path": "/organizations/acme/databases/app-db"
+  },
+  "list_branches": {
+    "config": {
+      "operation": "list_branches",
+      "organization": "acme",
+      "database": "app-db"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/branches"
+  },
+  "create_branch": {
+    "config": {
+      "operation": "create_branch",
+      "organization": "acme",
+      "database": "app-db",
+      "name": "test-db"
+    },
+    "method": "POST",
+    "path": "/organizations/acme/databases/app-db/branches"
+  },
+  "get_branch": {
+    "config": {
+      "operation": "get_branch",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/branches/main"
+  },
+  "delete_branch": {
+    "config": {
+      "operation": "delete_branch",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "DELETE",
+    "path": "/organizations/acme/databases/app-db/branches/main"
+  },
+  "list_backups": {
+    "config": {
+      "operation": "list_backups",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/branches/main/backups"
+  },
+  "create_backup": {
+    "config": {
+      "operation": "create_backup",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "POST",
+    "path": "/organizations/acme/databases/app-db/branches/main/backups"
+  },
+  "get_backup": {
+    "config": {
+      "operation": "get_backup",
+      "id": "backup-123",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/branches/main/backups/backup-123"
+  },
+  "delete_backup": {
+    "config": {
+      "operation": "delete_backup",
+      "id": "backup-123",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "DELETE",
+    "path": "/organizations/acme/databases/app-db/branches/main/backups/backup-123"
+  },
+  "get_branch_schema": {
+    "config": {
+      "operation": "get_branch_schema",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/branches/main/schema"
+  },
+  "list_deploy_requests": {
+    "config": {
+      "operation": "list_deploy_requests",
+      "organization": "acme",
+      "database": "app-db"
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/deploy-requests"
+  },
+  "create_deploy_request": {
+    "config": {
+      "operation": "create_deploy_request",
+      "organization": "acme",
+      "database": "app-db",
+      "branch": "main",
+      "into_branch": "main"
+    },
+    "method": "POST",
+    "path": "/organizations/acme/databases/app-db/deploy-requests"
+  },
+  "get_deploy_request": {
+    "config": {
+      "operation": "get_deploy_request",
+      "organization": "acme",
+      "database": "app-db",
+      "number": 1
+    },
+    "method": "GET",
+    "path": "/organizations/acme/databases/app-db/deploy-requests/1"
+  },
+  "close_deploy_request": {
+    "config": {
+      "operation": "close_deploy_request",
+      "organization": "acme",
+      "database": "app-db",
+      "number": 1
+    },
+    "method": "PATCH",
+    "path": "/organizations/acme/databases/app-db/deploy-requests/1"
+  },
+  "queue_deploy_request": {
+    "config": {
+      "operation": "queue_deploy_request",
+      "organization": "acme",
+      "database": "app-db",
+      "number": 1
+    },
+    "method": "POST",
+    "path": "/organizations/acme/databases/app-db/deploy-requests/1/deploy"
+  }
+}
