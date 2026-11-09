@@ -28,7 +28,9 @@ is what a turn whose model answered with nothing (no words, no call) is told,
 once, to run on rather than end there. ``TURN_COMMAND_KEY`` makes the turn one of
 its harness's own commands (``{name, arguments}``) rather than a message: it's
 delivered as that command alone, with none of what a message carries composed in,
-and kept on its persisted message as ``command``."""
+and kept on its persisted message as ``command``. ``TURN_PERMISSION_MODE_KEY`` is the conversation's permission
+mode for a coding harness (``approval-required``, ``auto-accept-edits``, ``auto``, ``full-access``), delivered with
+its message: a person answers what the harness asks."""
 
 from __future__ import annotations
 
@@ -51,6 +53,7 @@ TURN_SO_FAR_KEY = "_turnSoFar"
 TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 TURN_EMPTY_ANSWER_KEY = "_turnEmptyAnswer"
 TURN_COMMAND_KEY = "_turnCommand"
+TURN_PERMISSION_MODE_KEY = "_turnPermissionMode"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
 
@@ -112,6 +115,11 @@ def turn_command_of(node_config: Any) -> Optional[Dict[str, str]]:
         return None
     arguments = value.get("arguments")
     return {"name": value["name"], "arguments": arguments if isinstance(arguments, str) else ""}
+
+
+def turn_permission_mode_of(node_config: Any) -> Optional[str]:
+    """The conversation's permission mode, when a platform bound one (a person answers what the harness asks)."""
+    return _text(node_config, TURN_PERMISSION_MODE_KEY)
 
 
 def turn_trigger_of(node_config: Any) -> Optional[Dict[str, Any]]:
