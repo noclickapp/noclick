@@ -9,6 +9,7 @@ import pytest
 
 from nodes import quickchart_node as qc
 from nodes.core.registry import NodeFactory
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import collect_evidence
 from utils import ssrf
 
@@ -88,18 +89,63 @@ async def test_every_operation_exact_request(wire, operation, arguments, method,
                 assert body[key] == value
     else:
         assert request.url.params["text" if operation == "check_connection" else "url"] == ("Hello world" if operation == "check_connection" else arguments["url"])
-    if "base64" in result:
-        assert base64.b64decode(result["base64"]) == payload
+    if "file" in result:
+        assert isinstance(result["file"], BinaryOutput)
+        assert result["file"].data == payload
+        assert result["file"].content_type == headers["Content-Type"]
+        assert result["file"].filename.startswith("quickchart-" + operation + ".")
+        assert "base64" not in result
     if isinstance(payload, dict):
         assert result["data"] == payload
 
 
-@pytest.mark.parametrize("media,payload", [("image/svg+xml", b"<svg/>"), ("application/pdf", b"%PDF-1.7"), ("image/webp", b"RIFF"), ("text/plain", b"aGVsbG8=")])
+@pytest.mark.parametrize("media,payload,extension", [("image/svg+xml", b"<svg/>", "svg"), ("application/pdf", b"%PDF-1.7", "pdf"), ("image/webp", b"RIFF", "webp"), ("text/plain", b"cG5n", "png")])
 @pytest.mark.asyncio
-async def test_render_media_and_base64_are_preserved(wire, media, payload):
+async def test_render_media_uses_binary_output(wire, media, payload, extension):
     wire[1].append((200, payload, {"Content-Type": media}))
     result = await run("render_chart", {"chart": CHART})
-    assert result["base64"] == (payload.decode() if media == "text/plain" else base64.b64encode(payload).decode())
+    file = result["file"]
+    assert isinstance(file, BinaryOutput)
+    assert file.data == (base64.b64decode(payload) if media == "text/plain" else payload)
+    assert file.content_type == ("image/png" if media == "text/plain" else media)
+    assert file.filename == "quickchart-render_chart." + extension
+
+
+@pytest.mark.asyncio
+async def test_invalid_base64_image_is_rejected(wire):
+    wire[1].append((200, b"not base64!", {"Content-Type": "text/plain"}))
+    with pytest.raises(ValueError, match="invalid base64 image data"):
+        await run("render_chart", {"chart": CHART, "format": "base64"})
+
+
+@pytest.mark.parametrize("operation,arguments,payload,media,filename", [
+    ("render_chart", {"chart": CHART}, b"png", "image/png", "quickchart-render_chart.png"),
+    ("render_chart", {"chart": CHART, "format": "base64"}, b"cG5n", "text/plain", "quickchart-render_chart.png"),
+    ("batch_qr", {"qrCodes": [{"text": "Hello world"}]}, b"PK\x03\x04", "application/zip", "quickchart-batch_qr.zip"),
+])
+@pytest.mark.asyncio
+async def test_workflow_run_returns_stored_media_reference(wire, monkeypatch, operation, arguments, payload, media, filename):
+    from nodes.core import binary_output
+    from utils import credential_approval
+
+    user_id = "00000000-0000-4000-8000-000000000001"
+    workflow_id = "00000000-0000-4000-8000-000000000002"
+    data = base64.b64decode(payload) if media == "text/plain" else payload
+    content_type = "image/png" if media == "text/plain" else media
+    stored = {"download_url": "https://files.example.test/quickchart", "mime_type": content_type,
+        "name": filename, "size_bytes": len(data)}
+    writer = AsyncMock(return_value=stored)
+    monkeypatch.setattr(binary_output, "create_resource_from_bytes", writer)
+    monkeypatch.setattr(credential_approval, "admit_node", AsyncMock(return_value=None))
+    wire[1].append((200, payload, {"Content-Type": media}))
+    node = NodeFactory.create_node(node_id="quickchart-test", node_type="automation-quickchart",
+        node_data={"config": {"operation": operation, **arguments}, "credentials": AUTH},
+        user_id=user_id, workflow_id=workflow_id)
+    result = await node.run({})
+    assert result == {"status": "success", "file": {"url": stored["download_url"],
+        "mime_type": content_type, "name": filename, "size_bytes": len(data)}}
+    writer.assert_awaited_once_with(user_id=user_id, workflow_id=workflow_id, node_id="quickchart-test",
+        organization_id=None, body=data, content_type=content_type, filename=filename)
 
 
 @pytest.mark.parametrize("headers", [{}, {"X-quickchart-verified-key": "0"}])

@@ -1,6 +1,6 @@
 """QuickChart rendering and validation, pinned to the published OpenAPI 1.0.0.
 
-Images and ZIP files are returned as base64 with their media type. Authentication
+Images and ZIP files use the shared binary output resolver. Authentication
 uses a Bearer key, except saved charts which must retain the key in their body.
 https://quickchart.io/documentation/authentication/
 """
@@ -12,6 +12,7 @@ from typing import Annotated, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
@@ -284,7 +285,16 @@ class QuickChartNode(WorkflowNode):
         else:
             if media not in {"image/png", "image/jpeg", "image/svg+xml", "image/webp", "application/pdf", "application/zip", "text/plain"}:
                 raise ValueError("QuickChart returned an unexpected media type")
-            output = {"status": "success", "content_type": media,
-                "base64": response.text if media == "text/plain" else base64.b64encode(response.content).decode("ascii")}
+            data = response.content
+            if media == "text/plain":
+                try:
+                    data = base64.b64decode(data, validate=True)
+                except ValueError:
+                    raise ValueError("QuickChart returned invalid base64 image data") from None
+                media = "image/png"
+            extension = {"image/png": "png", "image/jpeg": "jpg", "image/svg+xml": "svg",
+                "image/webp": "webp", "application/pdf": "pdf", "application/zip": "zip"}[media]
+            output = {"status": "success", "file": BinaryOutput(data=data, content_type=media,
+                filename=f"quickchart-{op.operation}.{extension}")}
         await self.emit(output)
         return output

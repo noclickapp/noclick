@@ -253,7 +253,7 @@
       "endpoint": "POST /wordcloud",
       "kind": "d",
       "source": "https://quickchart.io/documentation/word-cloud-api/",
-      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node preserves those bytes as base64 with the media type.",
+      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node returns BinaryOutput with the raw bytes, media type and filename, so the shared resolver produces a usable file reference.",
       "provider_evidence": "format Image output format - svg or png svg width Image width 600 height Image height 600 backgroundColor Background color of image (rgb, hsl, hex, or name value) transparent fontFamily Font family to use serif fontWeight Font weight to use. Note that not all fonts support all weights normal loadGoogleFonts Google Fonts to load fontScale Size of th",
       "schema_semantics": "https://spec.openapis.org/oas/v3.1.0.html#considerations-for-file-uploads"
     },
@@ -262,7 +262,7 @@
       "endpoint": "POST /v1/table",
       "kind": "d",
       "source": "https://quickchart.io/documentation/apis/table-image-api/",
-      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node preserves those bytes as base64 with the media type.",
+      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node returns BinaryOutput with the raw bytes, media type and filename, so the shared resolver produces a usable file reference.",
       "provider_evidence": "QuickChart provides an API that lets you render a table as a PNG. This format allows the table to be portable, making it easy to embed tables in Slack bots, no-code applications, and more. Getting started \u200b The table API endpoint is available at https://quickchart.io/v1/table . The https://api.quickchart.io/v1/table URL also works. It takes a data ",
       "schema_semantics": "https://spec.openapis.org/oas/v3.1.0.html#considerations-for-file-uploads"
     },
@@ -271,7 +271,7 @@
       "endpoint": "POST /watermark",
       "kind": "d",
       "source": "https://quickchart.io/documentation/add-watermark/",
-      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node preserves those bytes as base64 with the media type.",
+      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node returns BinaryOutput with the raw bytes, media type and filename, so the shared resolver produces a usable file reference.",
       "provider_evidence": "Option 2: Watermark API \u200b The watermark API is more flexible and provides more customization options. Supply the chart URL as the mainImageUrl query parameter, and supply a separate watermark image as markImageUrl . This option is more customizable. Here's an example chart created using the watermark API technique: As you can see, we've set mainIma",
       "schema_semantics": "https://spec.openapis.org/oas/v3.1.0.html#considerations-for-file-uploads"
     },
@@ -280,7 +280,7 @@
       "endpoint": "POST /graphviz",
       "kind": "d",
       "source": "https://quickchart.io/documentation/graphviz-api/",
-      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node preserves those bytes as base64 with the media type.",
+      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node returns BinaryOutput with the raw bytes, media type and filename, so the shared resolver produces a usable file reference.",
       "provider_evidence": "The API takes a graph description in the DOT language and renders it with GraphViz, returning the output as PNG or SVG. To get started, use the https://quickchart.io/graphviz endpoint. Here's a simple example: https://quickchart.io/graphviz?graph= graph{a--b} You'll notice that it defaults to SVG output. Let's change it to PNG and give it some dime",
       "schema_semantics": "https://spec.openapis.org/oas/v3.1.0.html#considerations-for-file-uploads"
     },
@@ -289,7 +289,7 @@
       "endpoint": "POST /barcode",
       "kind": "d",
       "source": "https://quickchart.io/documentation/barcode-api/",
-      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node preserves those bytes as base64 with the media type.",
+      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node returns BinaryOutput with the raw bytes, media type and filename, so the shared resolver produces a usable file reference.",
       "provider_evidence": "format No Output format for the barcode. Defaults to png . png , svg width No Desired width of the barcode in pixels. height No Desired height of the barcode in pixels. scale No A scaling factor for the barcode, affecting both width and height. includeText No Include human-readable text, if supported by the type. Defaults to false . true , false us",
       "schema_semantics": "https://spec.openapis.org/oas/v3.1.0.html#considerations-for-file-uploads"
     },
@@ -298,7 +298,7 @@
       "endpoint": "POST /qr/batch",
       "kind": "d",
       "source": "https://quickchart.io/documentation/qr-codes/",
-      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node preserves those bytes as base64 with the media type.",
+      "defect": "Pinned OpenAPI 3.1 response declares type: string, format: binary. The unmodified validator rejects wire bytes as not a string; provider documentation specifies a binary image or ZIP response. The node returns BinaryOutput with the raw bytes, media type and filename, so the shared resolver produces a usable file reference.",
       "provider_evidence": "I key. Bulk QR code generator \u200b To generate many QR codes in a single request and receive them as a ZIP archive, use the QR Code Batch API . If you're looking to generate codes quickly without writing code, try our web-based bulk QR code generator . To create up to 10,000 editable, trackable codes from a CSV, use dynamic QR bulk creation . Migratin",
       "schema_semantics": "https://spec.openapis.org/oas/v3.1.0.html#considerations-for-file-uploads"
     }
