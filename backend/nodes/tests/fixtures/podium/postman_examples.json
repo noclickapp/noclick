@@ -1,0 +1,2689 @@
+{
+  "create_appointment": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "e9fe1686-fe1f-4eb8-a7b4-338f8f8f58f6",
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"contactName\": \"in occaecat velit amet qui\",\n  \"contactPhoneNumber\": \"Excepteur minim nisi labore\",\n  \"datetime\": \"2015-01-23T23:50:07Z\",\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"durationMin\": -15679024,\n  \"note\": \"et ut\",\n  \"status\": \"unconfirmed\",\n  \"type\": \"in_person\"\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": "{{baseUrl}}/v4/appointments",
+      "description": "Create an appointment."
+    },
+    "response": [
+      {
+        "id": "0c8cece3-918f-4b01-ab2c-eb259e7fec81",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"contactName\": \"in occaecat velit amet qui\",\n  \"contactPhoneNumber\": \"Excepteur minim nisi labore\",\n  \"datetime\": \"2015-01-23T23:50:07Z\",\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"durationMin\": -15679024,\n  \"note\": \"et ut\",\n  \"status\": \"unconfirmed\",\n  \"type\": \"in_person\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/appointments"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"assignedUser\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"contactName\": \"Excepteur ut\",\n    \"contactPhoneNumber\": \"enim laboris anim Ut pariatur\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"datetime\": \"2015-01-23T23:50:07Z\",\n    \"durationMin\": -45576622,\n    \"location\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"note\": \"est aliquip minim mollit\",\n    \"status\": \"no_show\",\n    \"type\": \"in_person\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"updatedAt\": \"2015-01-23T23:50:07Z\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "a3e2ab73-3c9b-43f3-a220-7915498619a3",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"contactName\": \"in occaecat velit amet qui\",\n  \"contactPhoneNumber\": \"Excepteur minim nisi labore\",\n  \"datetime\": \"2015-01-23T23:50:07Z\",\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"durationMin\": -15679024,\n  \"note\": \"et ut\",\n  \"status\": \"unconfirmed\",\n  \"type\": \"in_person\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/appointments"
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_conversations": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "e91f00df-133a-40b8-9fa7-75220b5f8440",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/conversations?cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw&limit=10&locationUid=00000000-0000-0000-0000-000000000000",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "conversations"
+        ],
+        "query": [
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after the `cursor`."
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "locationUid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "Podium unique identifier for location."
+          }
+        ]
+      },
+      "description": "List all conversations. \n\nIf the `cursor` parameter is used then all other parameters will be ignored. This is to avoid confusion if passing both a `cursor` and other parameters which would change what data is being returned."
+    },
+    "response": [
+      {
+        "id": "3775c5d1-d71c-42b8-a259-d4d6cbc74fda",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations?cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw&limit=10&locationUid=00000000-0000-0000-0000-000000000000",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations"
+            ],
+            "query": [
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "locationUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"closed\": false,\n    \"contactName\": \"dol\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"lastItemAt\": \"2015-01-23T23:50:07Z\",\n    \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"updatedAt\": \"2015-01-23T23:50:07Z\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "841fb569-4c47-447e-8d46-fa9afbf2ee99",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations?cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw&limit=10&locationUid=00000000-0000-0000-0000-000000000000",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations"
+            ],
+            "query": [
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "locationUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "get_conversation": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "7163af10-62b5-4b3b-8c12-c7e24ba75c8a",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/conversations/:uid",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "conversations",
+          ":uid"
+        ],
+        "variable": [
+          {
+            "id": "658ddb81-62be-416f-8fd0-17a111de7ff3",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for conversation."
+          }
+        ]
+      },
+      "description": "Gets a conversation that has previously been created."
+    },
+    "response": [
+      {
+        "id": "106f8602-78c7-4d6a-b4e4-d19f98fd9b7c",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for conversation."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"closed\": false,\n    \"contactName\": \"dol\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"lastItemAt\": \"2015-01-23T23:50:07Z\",\n    \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"updatedAt\": \"2015-01-23T23:50:07Z\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "89b6f566-695b-4b90-b68c-ce50f153b2e4",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for conversation."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "update_conversation": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "fcb588f3-a711-4f54-a20d-dc2f11a34590",
+    "request": {
+      "method": "PUT",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"closed\": false\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": {
+        "raw": "{{baseUrl}}/v4/conversations/:uid",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "conversations",
+          ":uid"
+        ],
+        "variable": [
+          {
+            "id": "03f0ae3a-ce6f-4c67-af58-1f6515cd7b66",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for conversation."
+          }
+        ]
+      },
+      "description": "Update a conversation."
+    },
+    "response": [
+      {
+        "id": "8201ae4c-d5cf-4c09-a354-50b1663fc07e",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "PUT",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"closed\": false\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for conversation."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"closed\": false,\n    \"contactName\": \"dol\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"lastItemAt\": \"2015-01-23T23:50:07Z\",\n    \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"updatedAt\": \"2015-01-23T23:50:07Z\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "283bd767-45a3-4275-be36-be4494753081",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "PUT",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"closed\": false\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for conversation."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "create_conversation_note": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "c746a6da-7972-4f2b-a808-d3a093387882",
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"body\": \"anim Excepteur dol\",\n  \"senderName\": \"dolor\"\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": {
+        "raw": "{{baseUrl}}/v4/conversations/:uid/notes",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "conversations",
+          ":uid",
+          "notes"
+        ],
+        "variable": [
+          {
+            "id": "0e96fe29-60ef-43ee-b63d-9851baf94c13",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for conversation."
+          }
+        ]
+      },
+      "description": "Creates a note for the given conversation."
+    },
+    "response": [
+      {
+        "id": "775d4840-795b-44a7-8f6f-aa7bd759f402",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"body\": \"anim Excepteur dol\",\n  \"senderName\": \"dolor\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations/:uid/notes",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations",
+              ":uid",
+              "notes"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for conversation."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"body\": \"cupidatat enim nisi magna\",\n    \"conversation\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"location\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"organization\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"senderName\": \"laborum do sit Lorem\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"updatedAt\": \"2015-01-23T23:50:07Z\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "5e42dd0f-861a-4270-b4e6-04056f04fded",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"body\": \"anim Excepteur dol\",\n  \"senderName\": \"dolor\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/v4/conversations/:uid/notes",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "conversations",
+              ":uid",
+              "notes"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for conversation."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "send_message": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "4259655b-4240-4e2a-b46d-b3b7e095dbf3",
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"body\": \"Just a reminder that your appointment is today!\",\n  \"channel\": {\n    \"identifier\": \"email@email.com\",\n    \"type\": \"email\"\n  },\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"contactName\": \"Joe Orange\",\n  \"senderName\": \"Bot1234\",\n  \"subject\": \"Appointment reminder\"\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": "{{baseUrl}}/v4/messages",
+      "description": "Send a message. A message can only be sent on behalf of a user if they have the necessary permissions to send\nmessages in: conversations assigned to them, conversations assigned to others, and unassigned conversations.\n"
+    },
+    "response": [
+      {
+        "id": "5a0181e3-3fdb-4f78-a368-ca6b781d5cc5",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"body\": \"Just a reminder that your appointment is today!\",\n  \"channel\": {\n    \"identifier\": \"email@email.com\",\n    \"type\": \"email\"\n  },\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"contactName\": \"Joe Orange\",\n  \"senderName\": \"Bot1234\",\n  \"subject\": \"Appointment reminder\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/messages"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"attachmentUrl\": \"https://www.podium.com/\",\n    \"body\": \"Hello there.\",\n    \"contact\": {\n      \"externalIdentifier\": \"123-abc\",\n      \"name\": \"Joe Orange\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"contactName\": \"Joe Orange\",\n    \"conversation\": {\n      \"assignedUserUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"startedAt\": \"2015-01-23T23:50:07Z\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"failureReason\": \"Attempted to send SMS to a landline.\",\n    \"location\": {\n      \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"sender\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"senderUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "5745bd28-8bde-4b0e-b701-32cff740106f",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"body\": \"Just a reminder that your appointment is today!\",\n  \"channel\": {\n    \"identifier\": \"email@email.com\",\n    \"type\": \"email\"\n  },\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"contactName\": \"Joe Orange\",\n  \"senderName\": \"Bot1234\",\n  \"subject\": \"Appointment reminder\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/messages"
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_feedback": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "4effd629-6ed6-47bf-9f92-9a76d8636019",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/feedback?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "feedback"
+        ],
+        "query": [
+          {
+            "key": "createdAt[gt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[gte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after the `cursor`."
+          }
+        ]
+      },
+      "description": "List of all the feedback surveys that the caller has access to. The surveys are sorted by `createdAt` date, with the most recent appearing first.\n\nIf the `cursor` parameter is used then all other parameters will be ignored. This is to avoid confusion if passing both a `cursor` and other parameters which would change what data is being returned."
+    },
+    "response": [
+      {
+        "id": "ee319c7f-2854-4fc5-aa24-f6a99ff45831",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/feedback?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "feedback"
+            ],
+            "query": [
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": [\n    {\n      \"adjustedScore\": 100,\n      \"archived\": false,\n      \"attributions\": [\n        {\n          \"type\": \"integrated_send\",\n          \"userName\": \"John Apple\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"type\": \"integrated_send\",\n          \"userName\": \"John Apple\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"currentStep\": \"final\",\n      \"customerName\": \"Joe Orange\",\n      \"firstResponseReceivedAt\": \"2015-01-23T23:50:07Z\",\n      \"flowUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"location\": {\n        \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"messages\": [\n        \"wonderful.\",\n        \"wonderful.\"\n      ],\n      \"score\": 5,\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    {\n      \"adjustedScore\": 100,\n      \"archived\": false,\n      \"attributions\": [\n        {\n          \"type\": \"final\",\n          \"userName\": \"John Apple\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"type\": \"final\",\n          \"userName\": \"John Apple\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"currentStep\": \"follow_up\",\n      \"customerName\": \"Joe Orange\",\n      \"firstResponseReceivedAt\": \"2015-01-23T23:50:07Z\",\n      \"flowUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"location\": {\n        \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"messages\": [\n        \"wonderful.\",\n        \"wonderful.\"\n      ],\n      \"score\": 5,\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    }\n  ],\n  \"metadata\": {\n    \"nextCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"previousCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"totalItems\": 73354447,\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "fe753bc9-2dc7-488a-a683-f630fbec8d1e",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/feedback?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "feedback"
+            ],
+            "query": [
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_invoices": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "a04aeaca-2f07-47f0-8de9-84add5d54c0b",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/invoices?locationUid=00000000-0000-0000-0000-000000000000&datePaid=2015-01-23T23:50:07Z&dateRefunded=2015-01-23T23:50:07Z&dateCreated=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "invoices"
+        ],
+        "query": [
+          {
+            "key": "locationUid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "Podium unique identifier for location."
+          },
+          {
+            "key": "datePaid",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Return invoices with a payment whose `createdAt` is greater or equal to this date."
+          },
+          {
+            "key": "dateRefunded",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Return invoices with a refund whose `createdAt` is greater or equal to this date."
+          },
+          {
+            "key": "dateCreated",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Return invoices whose `createdAt` is greater or equal to this date."
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after or before the `cursor`."
+          }
+        ]
+      },
+      "description": "List of all invoices that match the query parameters."
+    },
+    "response": [
+      {
+        "id": "3d0bc8bb-5977-42a3-82f9-3aa91f96b27a",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/invoices?locationUid=00000000-0000-0000-0000-000000000000&datePaid=2015-01-23T23:50:07Z&dateRefunded=2015-01-23T23:50:07Z&dateCreated=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "invoices"
+            ],
+            "query": [
+              {
+                "key": "locationUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "key": "datePaid",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "dateRefunded",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "dateCreated",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": [\n    {\n      \"canceledAt\": \"2015-01-23T23:50:07Z\",\n      \"canceledNote\": \"The wrong amount was entered.\",\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"conversationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"currencyRef\": \"USD\",\n      \"customerName\": \"Joe Orange\",\n      \"invoiceNumber\": \"abc-12345-def\",\n      \"lineItems\": [\n        {\n          \"amount\": 1099,\n          \"description\": \"Total\"\n        },\n        {\n          \"amount\": 1099,\n          \"description\": \"Total\"\n        }\n      ],\n      \"location\": {\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"paidAt\": \"2015-01-23T23:50:07Z\",\n      \"paymentNet\": 1000,\n      \"payments\": [\n        {\n          \"bankAccountLast4\": \"1245\",\n          \"bankAccountName\": \"The Bank\",\n          \"cardBrand\": \"visa\",\n          \"cardLast4\": \"4242\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"fee\": 99,\n          \"interchangeFee\": 50,\n          \"refunds\": [\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"requested_by_customer\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_charge_for_pending_refund_disputed\"\n            },\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"requested_by_customer\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_lost_or_stolen\"\n            }\n          ],\n          \"settledAt\": \"2015-01-23T23:50:07Z\",\n          \"status\": \"paid\",\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"bankAccountLast4\": \"1245\",\n          \"bankAccountName\": \"The Bank\",\n          \"cardBrand\": \"visa\",\n          \"cardLast4\": \"4242\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"fee\": 99,\n          \"interchangeFee\": 50,\n          \"refunds\": [\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"fraudulent\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_lost_or_stolen\"\n            },\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"duplicate\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_lost_or_stolen\"\n            }\n          ],\n          \"settledAt\": \"2015-01-23T23:50:07Z\",\n          \"status\": \"paid\",\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"readerUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"requester\": \"John Apple\",\n      \"status\": \"paid\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    {\n      \"canceledAt\": \"2015-01-23T23:50:07Z\",\n      \"canceledNote\": \"The wrong amount was entered.\",\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"conversationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"currencyRef\": \"USD\",\n      \"customerName\": \"Joe Orange\",\n      \"invoiceNumber\": \"abc-12345-def\",\n      \"lineItems\": [\n        {\n          \"amount\": 1099,\n          \"description\": \"Total\"\n        },\n        {\n          \"amount\": 1099,\n          \"description\": \"Total\"\n        }\n      ],\n      \"location\": {\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"paidAt\": \"2015-01-23T23:50:07Z\",\n      \"paymentNet\": 1000,\n      \"payments\": [\n        {\n          \"bankAccountLast4\": \"1245\",\n          \"bankAccountName\": \"The Bank\",\n          \"cardBrand\": \"visa\",\n          \"cardLast4\": \"4242\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"fee\": 99,\n          \"interchangeFee\": 50,\n          \"refunds\": [\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"requested_by_customer\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_expired_or_cancelled\"\n            },\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"duplicate\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_expired_or_cancelled\"\n            }\n          ],\n          \"settledAt\": \"2015-01-23T23:50:07Z\",\n          \"status\": \"paid\",\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"bankAccountLast4\": \"1245\",\n          \"bankAccountName\": \"The Bank\",\n          \"cardBrand\": \"visa\",\n          \"cardLast4\": \"4242\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"fee\": 99,\n          \"interchangeFee\": 50,\n          \"refunds\": [\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"requested_by_customer\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_expired_or_cancelled\"\n            },\n            {\n              \"amount\": 100,\n              \"createdAt\": \"2015-01-23T23:50:07Z\",\n              \"notes\": [\n                \"The product did not function properly.\",\n                \"The product did not function properly.\"\n              ],\n              \"reason\": \"requested_by_customer\",\n              \"settledAt\": \"2015-01-23T23:50:07Z\",\n              \"status\": \"failed_unknown\"\n            }\n          ],\n          \"settledAt\": \"2015-01-23T23:50:07Z\",\n          \"status\": \"paid\",\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"readerUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"requester\": \"John Apple\",\n      \"status\": \"refund_failed\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    }\n  ],\n  \"metadata\": {\n    \"nextCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"previousCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"totalItems\": -46257660,\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "942b3ad5-0d0b-4d5c-80a7-2cfa444f78de",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/invoices?locationUid=00000000-0000-0000-0000-000000000000&datePaid=2015-01-23T23:50:07Z&dateRefunded=2015-01-23T23:50:07Z&dateCreated=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "invoices"
+            ],
+            "query": [
+              {
+                "key": "locationUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "key": "datePaid",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "dateRefunded",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "dateCreated",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "create_invoice": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "eb8ba4cd-5a73-44b4-a8b7-b61006db517a",
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"channelIdentifier\": \"email@email.com\",\n  \"customerName\": \"Barry Grape\",\n  \"lineItems\": [\n    {\n      \"amount\": 4186,\n      \"description\": \"Oil change.\"\n    }\n  ],\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"accountUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"invoiceNumber\": \"abc-12345-def\",\n  \"readerUid\": \"00000000-0000-0000-0000-000000000000\"\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": "{{baseUrl}}/v4/invoices",
+      "description": "Creates an invoice.\n\n### Card Present Invoice\n\nA card-present-invoice used to process an invoice through a card reader. After the invoice\nis created, there is a callback to the card reader to complete the transaction. If no\n`accountUid` is given, the card reader's default account is used.\n\n### Card Not Present Invoice\n\nA card-not-present-invoice is used to process an invoice asynchronously. After the invoice is\ncreated, a payment link is sent to the customer from the merchants Podium account. The customer\ncan click on the link to complete the transaction. If no `accountUid` is given, the most\nrecently created account is used.\n"
+    },
+    "response": [
+      {
+        "id": "4dd98635-099b-480d-b922-a3ec29770673",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"channelIdentifier\": \"email@email.com\",\n  \"customerName\": \"Barry Grape\",\n  \"lineItems\": [\n    {\n      \"amount\": 4186,\n      \"description\": \"Oil change.\"\n    }\n  ],\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"accountUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"invoiceNumber\": \"abc-12345-def\",\n  \"readerUid\": \"00000000-0000-0000-0000-000000000000\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/invoices"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"canceledAt\": \"2015-01-23T23:50:07Z\",\n    \"canceledNote\": \"The wrong amount was entered.\",\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"conversationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"currencyRef\": \"USD\",\n    \"customerName\": \"Joe Orange\",\n    \"invoiceNumber\": \"abc-12345-def\",\n    \"lineItems\": [\n      {\n        \"amount\": 1099,\n        \"description\": \"Total\"\n      },\n      {\n        \"amount\": 1099,\n        \"description\": \"Total\"\n      }\n    ],\n    \"location\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"paidAt\": \"2015-01-23T23:50:07Z\",\n    \"paymentNet\": 1000,\n    \"payments\": [\n      {\n        \"bankAccountLast4\": \"1245\",\n        \"bankAccountName\": \"The Bank\",\n        \"cardBrand\": \"visa\",\n        \"cardLast4\": \"4242\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"fee\": 99,\n        \"interchangeFee\": 50,\n        \"refunds\": [\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"requested_by_customer\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_lost_or_stolen\"\n          },\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"duplicate\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_charge_for_pending_refund_disputed\"\n          }\n        ],\n        \"settledAt\": \"2015-01-23T23:50:07Z\",\n        \"status\": \"refund_pending\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      {\n        \"bankAccountLast4\": \"1245\",\n        \"bankAccountName\": \"The Bank\",\n        \"cardBrand\": \"visa\",\n        \"cardLast4\": \"4242\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"fee\": 99,\n        \"interchangeFee\": 50,\n        \"refunds\": [\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"duplicate\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"succeeded\"\n          },\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"requested_by_customer\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_lost_or_stolen\"\n          }\n        ],\n        \"settledAt\": \"2015-01-23T23:50:07Z\",\n        \"status\": \"refund_failed\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    ],\n    \"readerUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"requester\": \"John Apple\",\n    \"status\": \"refund_pending\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "cfe6e9d2-23d7-413c-bec5-dcf86a34ca8f",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"channelIdentifier\": \"email@email.com\",\n  \"customerName\": \"Barry Grape\",\n  \"lineItems\": [\n    {\n      \"amount\": 4186,\n      \"description\": \"Oil change.\"\n    }\n  ],\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"accountUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"invoiceNumber\": \"abc-12345-def\",\n  \"readerUid\": \"00000000-0000-0000-0000-000000000000\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/invoices"
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "get_invoice": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "ea37b507-c80e-4b32-8bdb-62839c909b59",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/invoices/:uid?locationUid=00000000-0000-0000-0000-000000000000",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "invoices",
+          ":uid"
+        ],
+        "query": [
+          {
+            "key": "locationUid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for location."
+          }
+        ],
+        "variable": [
+          {
+            "id": "4bc95983-f410-49a4-b392-bdab73337a63",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for invoice."
+          }
+        ]
+      },
+      "description": "Gets an invoice that has previously been created."
+    },
+    "response": [
+      {
+        "id": "acc91e04-19c7-4978-9792-836cd5dd616b",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/invoices/:uid?locationUid=00000000-0000-0000-0000-000000000000",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "invoices",
+              ":uid"
+            ],
+            "query": [
+              {
+                "key": "locationUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for invoice."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"canceledAt\": \"2015-01-23T23:50:07Z\",\n    \"canceledNote\": \"The wrong amount was entered.\",\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"conversationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"currencyRef\": \"USD\",\n    \"customerName\": \"Joe Orange\",\n    \"invoiceNumber\": \"abc-12345-def\",\n    \"lineItems\": [\n      {\n        \"amount\": 1099,\n        \"description\": \"Total\"\n      },\n      {\n        \"amount\": 1099,\n        \"description\": \"Total\"\n      }\n    ],\n    \"location\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"paidAt\": \"2015-01-23T23:50:07Z\",\n    \"paymentNet\": 1000,\n    \"payments\": [\n      {\n        \"bankAccountLast4\": \"1245\",\n        \"bankAccountName\": \"The Bank\",\n        \"cardBrand\": \"visa\",\n        \"cardLast4\": \"4242\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"fee\": 99,\n        \"interchangeFee\": 50,\n        \"refunds\": [\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"requested_by_customer\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_lost_or_stolen\"\n          },\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"duplicate\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_charge_for_pending_refund_disputed\"\n          }\n        ],\n        \"settledAt\": \"2015-01-23T23:50:07Z\",\n        \"status\": \"refund_pending\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      {\n        \"bankAccountLast4\": \"1245\",\n        \"bankAccountName\": \"The Bank\",\n        \"cardBrand\": \"visa\",\n        \"cardLast4\": \"4242\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"fee\": 99,\n        \"interchangeFee\": 50,\n        \"refunds\": [\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"duplicate\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"succeeded\"\n          },\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"requested_by_customer\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_lost_or_stolen\"\n          }\n        ],\n        \"settledAt\": \"2015-01-23T23:50:07Z\",\n        \"status\": \"refund_failed\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    ],\n    \"readerUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"requester\": \"John Apple\",\n    \"status\": \"refund_pending\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "318f9976-9913-404e-986f-22e289b85efc",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/invoices/:uid?locationUid=00000000-0000-0000-0000-000000000000",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "invoices",
+              ":uid"
+            ],
+            "query": [
+              {
+                "key": "locationUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for invoice."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "cancel_invoice": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "d4456856-50cc-4145-b1f8-e1d922ac5012",
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"note\": \"Voided invoice.\"\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": {
+        "raw": "{{baseUrl}}/v4/invoices/:uid/cancel",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "invoices",
+          ":uid",
+          "cancel"
+        ],
+        "variable": [
+          {
+            "id": "29fab718-bf5e-4328-a843-4c000971104d",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for invoice."
+          }
+        ]
+      },
+      "description": "Cancels an invoice. The seller cannot collect payments for the canceled invoice."
+    },
+    "response": [
+      {
+        "id": "b01ea76c-96d5-46be-8b2b-958d0c1839ad",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"note\": \"Voided invoice.\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/v4/invoices/:uid/cancel",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "invoices",
+              ":uid",
+              "cancel"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for invoice."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"canceledAt\": \"2015-01-23T23:50:07Z\",\n    \"canceledNote\": \"The wrong amount was entered.\",\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"conversationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"currencyRef\": \"USD\",\n    \"customerName\": \"Joe Orange\",\n    \"invoiceNumber\": \"abc-12345-def\",\n    \"lineItems\": [\n      {\n        \"amount\": 1099,\n        \"description\": \"Total\"\n      },\n      {\n        \"amount\": 1099,\n        \"description\": \"Total\"\n      }\n    ],\n    \"location\": {\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"paidAt\": \"2015-01-23T23:50:07Z\",\n    \"paymentNet\": 1000,\n    \"payments\": [\n      {\n        \"bankAccountLast4\": \"1245\",\n        \"bankAccountName\": \"The Bank\",\n        \"cardBrand\": \"visa\",\n        \"cardLast4\": \"4242\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"fee\": 99,\n        \"interchangeFee\": 50,\n        \"refunds\": [\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"requested_by_customer\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_lost_or_stolen\"\n          },\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"duplicate\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_charge_for_pending_refund_disputed\"\n          }\n        ],\n        \"settledAt\": \"2015-01-23T23:50:07Z\",\n        \"status\": \"refund_pending\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      {\n        \"bankAccountLast4\": \"1245\",\n        \"bankAccountName\": \"The Bank\",\n        \"cardBrand\": \"visa\",\n        \"cardLast4\": \"4242\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"fee\": 99,\n        \"interchangeFee\": 50,\n        \"refunds\": [\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"duplicate\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"succeeded\"\n          },\n          {\n            \"amount\": 100,\n            \"createdAt\": \"2015-01-23T23:50:07Z\",\n            \"notes\": [\n              \"The product did not function properly.\",\n              \"The product did not function properly.\"\n            ],\n            \"reason\": \"requested_by_customer\",\n            \"settledAt\": \"2015-01-23T23:50:07Z\",\n            \"status\": \"failed_lost_or_stolen\"\n          }\n        ],\n        \"settledAt\": \"2015-01-23T23:50:07Z\",\n        \"status\": \"refund_failed\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    ],\n    \"readerUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"requester\": \"John Apple\",\n    \"status\": \"refund_pending\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "929792d3-aefc-4c9f-95ed-4fd8d89313e3",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"note\": \"Voided invoice.\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/v4/invoices/:uid/cancel",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "invoices",
+              ":uid",
+              "cancel"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for invoice."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_reviews": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "a82aa0af-553c-4494-a9af-186b06ed1209",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/reviews?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "reviews"
+        ],
+        "query": [
+          {
+            "key": "createdAt[gt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[gte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after the `cursor`."
+          }
+        ]
+      },
+      "description": "List of all the reviews that you have access to. The reviews are sorted by `createdAt` date, with the most recent appearing first.\n\nIf the `cursor` parameter is used then all other parameters will be ignored. This is to avoid confusion if passing both a `cursor` and other parameters which would change what data is being returned."
+    },
+    "response": [
+      {
+        "id": "a95e6c83-853c-4080-a4c6-8a7f9dd48291",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews"
+            ],
+            "query": [
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": [\n    {\n      \"attributions\": [\n        {\n          \"apiClientUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"reviewInvitationUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"apiClientUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"reviewInvitationUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"author\": {\n        \"id\": \"2412341\",\n        \"name\": \"Joe Orange\"\n      },\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"isRecommendation\": false,\n      \"locations\": [\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"needsResponse\": false,\n      \"responses\": [\n        {\n          \"body\": \"Thanks Joe for leaving us a review!\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"siteAuthorName\": \"John Apple\"\n        },\n        {\n          \"body\": \"Thanks Joe for leaving us a review!\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"siteAuthorName\": \"John Apple\"\n        }\n      ],\n      \"review\": {\n        \"body\": \"We love our new sofa from Sofa Plus! It is comfortable and stylish.\",\n        \"rating\": 5,\n        \"siteName\": \"Google\",\n        \"siteReviewId\": \"2390afs293fj\",\n        \"url\": \"https://www.podium.com/\"\n      },\n      \"uid\": \"00000000-0000-0000-0000-000000000000\",\n      \"updatedAt\": \"2015-01-23T23:50:07Z\"\n    },\n    {\n      \"attributions\": [\n        {\n          \"apiClientUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"reviewInvitationUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"apiClientUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"reviewInvitationUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"author\": {\n        \"id\": \"2412341\",\n        \"name\": \"Joe Orange\"\n      },\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"isRecommendation\": false,\n      \"locations\": [\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"needsResponse\": false,\n      \"responses\": [\n        {\n          \"body\": \"Thanks Joe for leaving us a review!\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"siteAuthorName\": \"John Apple\"\n        },\n        {\n          \"body\": \"Thanks Joe for leaving us a review!\",\n          \"createdAt\": \"2015-01-23T23:50:07Z\",\n          \"siteAuthorName\": \"John Apple\"\n        }\n      ],\n      \"review\": {\n        \"body\": \"We love our new sofa from Sofa Plus! It is comfortable and stylish.\",\n        \"rating\": 5,\n        \"siteName\": \"Google\",\n        \"siteReviewId\": \"2390afs293fj\",\n        \"url\": \"https://www.podium.com/\"\n      },\n      \"uid\": \"00000000-0000-0000-0000-000000000000\",\n      \"updatedAt\": \"2015-01-23T23:50:07Z\"\n    }\n  ],\n  \"metadata\": {\n    \"nextCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"previousCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"totalItems\": -61664327,\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "a28c0208-7303-49cf-97b2-29336570fc32",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews"
+            ],
+            "query": [
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "get_review": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "92026c59-4120-4a5e-b0c5-189859519115",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/reviews/:uid",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "reviews",
+          ":uid"
+        ],
+        "variable": [
+          {
+            "id": "efca42dd-2e47-48f1-8a07-f75334f6beee",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for review."
+          }
+        ]
+      },
+      "description": "Gets a single review by its uid."
+    },
+    "response": [
+      {
+        "id": "6d50a221-e202-4cf3-b251-caf73893e6d1",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for review."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"attributions\": [\n      {\n        \"apiClientUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"reviewInvitationUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      {\n        \"apiClientUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"reviewInvitationUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"userUid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    ],\n    \"author\": {\n      \"id\": \"2412341\",\n      \"name\": \"Joe Orange\"\n    },\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"isRecommendation\": false,\n    \"locations\": [\n      {\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      {\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    ],\n    \"needsResponse\": false,\n    \"responses\": [\n      {\n        \"body\": \"Thanks Joe for leaving us a review!\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"siteAuthorName\": \"John Apple\"\n      },\n      {\n        \"body\": \"Thanks Joe for leaving us a review!\",\n        \"createdAt\": \"2015-01-23T23:50:07Z\",\n        \"siteAuthorName\": \"John Apple\"\n      }\n    ],\n    \"review\": {\n      \"body\": \"We love our new sofa from Sofa Plus! It is comfortable and stylish.\",\n      \"rating\": 5,\n      \"siteName\": \"Google\",\n      \"siteReviewId\": \"2390afs293fj\",\n      \"url\": \"https://www.podium.com/\"\n    },\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"updatedAt\": \"2015-01-23T23:50:07Z\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "f56b8c3e-93df-406a-9222-ef5fb5f464de",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for review."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_review_invites": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "d1c740fd-22c4-4c30-bce8-8ac4f0fea289",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/reviews/invites?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&senderUid=00000000-0000-0000-0000-000000000000&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "reviews",
+          "invites"
+        ],
+        "query": [
+          {
+            "key": "createdAt[gt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[gte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "senderUid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "Filter by the senderUid"
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after the `cursor`."
+          }
+        ]
+      },
+      "description": "List of all the review invites that you have access to. The review invites are sorted by `createdAt` date, with the most recent appearing first.\n\nIf the `cursor` parameter is used then all other parameters will be ignored. This is to avoid confusion if passing both a `cursor` and other parameters which would change what data is being returned."
+    },
+    "response": [
+      {
+        "id": "d8810bb4-a00e-4de5-a158-f883b33a4e96",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews/invites?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&senderUid=00000000-0000-0000-0000-000000000000&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews",
+              "invites"
+            ],
+            "query": [
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "senderUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": [\n    {\n      \"attributions\": [\n        {\n          \"reviewAuthor\": \"Joe Orange\",\n          \"reviewBody\": \"Great service!\",\n          \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n          \"reviewRating\": 5,\n          \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"siteName\": \"google\"\n        },\n        {\n          \"reviewAuthor\": \"Joe Orange\",\n          \"reviewBody\": \"Great service!\",\n          \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n          \"reviewRating\": 5,\n          \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"siteName\": \"google\"\n        }\n      ],\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"conversationItemUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"customerName\": \"John Apple\",\n      \"deliveryStatus\": \"sent\",\n      \"languages\": [\n        \"EN\",\n        \"EN\"\n      ],\n      \"linkClicked\": false,\n      \"linkClickedAt\": \"2015-01-23T23:50:07Z\",\n      \"location\": {\n        \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"sender\": {\n        \"name\": \"Jack Grape\",\n        \"sentThrough\": \"generated_link_only\",\n        \"type\": \"user\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"shortUrl\": \"https://podium.co/QDNrE1v\",\n      \"test\": false,\n      \"uid\": \"00000000-0000-0000-0000-000000000000\",\n      \"url\": \"http://app.podium.com/#/91f85f79-185c-46cb-830d-79f259bb2822?v2=true\"\n    },\n    {\n      \"attributions\": [\n        {\n          \"reviewAuthor\": \"Joe Orange\",\n          \"reviewBody\": \"Great service!\",\n          \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n          \"reviewRating\": 5,\n          \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"siteName\": \"google\"\n        },\n        {\n          \"reviewAuthor\": \"Joe Orange\",\n          \"reviewBody\": \"Great service!\",\n          \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n          \"reviewRating\": 5,\n          \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n          \"siteName\": \"google\"\n        }\n      ],\n      \"channel\": {\n        \"identifier\": \"email@email.com\",\n        \"type\": \"email\"\n      },\n      \"conversationItemUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"customerName\": \"John Apple\",\n      \"deliveryStatus\": \"pending\",\n      \"languages\": [\n        \"EN\",\n        \"EN\"\n      ],\n      \"linkClicked\": false,\n      \"linkClickedAt\": \"2015-01-23T23:50:07Z\",\n      \"location\": {\n        \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"sender\": {\n        \"name\": \"Jack Grape\",\n        \"sentThrough\": \"feedback\",\n        \"type\": \"user\",\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      \"shortUrl\": \"https://podium.co/QDNrE1v\",\n      \"test\": false,\n      \"uid\": \"00000000-0000-0000-0000-000000000000\",\n      \"url\": \"http://app.podium.com/#/91f85f79-185c-46cb-830d-79f259bb2822?v2=true\"\n    }\n  ],\n  \"metadata\": {\n    \"nextCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"previousCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"totalItems\": -71200582,\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "6f9631e7-13e7-4eb5-899e-417b981ded9f",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews/invites?createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&senderUid=00000000-0000-0000-0000-000000000000&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews",
+              "invites"
+            ],
+            "query": [
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "senderUid",
+                "value": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "create_review_invite": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "9c8872f4-294f-469c-a9bb-e1aed49e0507",
+    "request": {
+      "method": "POST",
+      "header": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"email\": \"aute deserunt\",\n  \"phoneNumber\": \"ullamco aute non qui proident\"\n}",
+        "options": {
+          "raw": {
+            "language": "json"
+          }
+        }
+      },
+      "url": "{{baseUrl}}/v4/reviews/invites",
+      "description": "Create a review invite link."
+    },
+    "response": [
+      {
+        "id": "54e92b91-2664-4160-b774-15af1a656f85",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"email\": \"aute deserunt\",\n  \"phoneNumber\": \"ullamco aute non qui proident\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/reviews/invites"
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"attributions\": [\n      {\n        \"reviewAuthor\": \"Joe Orange\",\n        \"reviewBody\": \"Great service!\",\n        \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n        \"reviewRating\": 5,\n        \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"siteName\": \"google\"\n      },\n      {\n        \"reviewAuthor\": \"Joe Orange\",\n        \"reviewBody\": \"Great service!\",\n        \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n        \"reviewRating\": 5,\n        \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"siteName\": \"google\"\n      }\n    ],\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"conversationItemUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"customerName\": \"John Apple\",\n    \"deliveryStatus\": \"pending\",\n    \"languages\": [\n      \"EN\",\n      \"EN\"\n    ],\n    \"linkClicked\": false,\n    \"linkClickedAt\": \"2015-01-23T23:50:07Z\",\n    \"location\": {\n      \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"sender\": {\n      \"name\": \"Jack Grape\",\n      \"sentThrough\": \"payments\",\n      \"type\": \"user\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"shortUrl\": \"https://podium.co/QDNrE1v\",\n    \"test\": false,\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"url\": \"http://app.podium.com/#/91f85f79-185c-46cb-830d-79f259bb2822?v2=true\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "b6156249-0a23-46f2-ac31-e6e219c704f1",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"locationUid\": \"00000000-0000-0000-0000-000000000000\",\n  \"email\": \"aute deserunt\",\n  \"phoneNumber\": \"ullamco aute non qui proident\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": "{{baseUrl}}/v4/reviews/invites"
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "get_review_invite": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "3cbe2a2b-9671-481b-b196-51a2a7671cbc",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/reviews/invites/:uid",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "reviews",
+          "invites",
+          ":uid"
+        ],
+        "variable": [
+          {
+            "id": "d7c5fc45-0939-4482-8565-fb4a5a28cfa6",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for review invite."
+          }
+        ]
+      },
+      "description": "Get a single review invite by its uid."
+    },
+    "response": [
+      {
+        "id": "0326615a-2a7e-45a3-a6f3-67cb043f27ae",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews/invites/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews",
+              "invites",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for review invite."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"attributions\": [\n      {\n        \"reviewAuthor\": \"Joe Orange\",\n        \"reviewBody\": \"Great service!\",\n        \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n        \"reviewRating\": 5,\n        \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"siteName\": \"google\"\n      },\n      {\n        \"reviewAuthor\": \"Joe Orange\",\n        \"reviewBody\": \"Great service!\",\n        \"reviewPublishedAt\": \"2015-01-23T23:50:07Z\",\n        \"reviewRating\": 5,\n        \"reviewUid\": \"00000000-0000-0000-0000-000000000000\",\n        \"siteName\": \"google\"\n      }\n    ],\n    \"channel\": {\n      \"identifier\": \"email@email.com\",\n      \"type\": \"email\"\n    },\n    \"conversationItemUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"customerName\": \"John Apple\",\n    \"deliveryStatus\": \"pending\",\n    \"languages\": [\n      \"EN\",\n      \"EN\"\n    ],\n    \"linkClicked\": false,\n    \"linkClickedAt\": \"2015-01-23T23:50:07Z\",\n    \"location\": {\n      \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"sender\": {\n      \"name\": \"Jack Grape\",\n      \"sentThrough\": \"payments\",\n      \"type\": \"user\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    \"shortUrl\": \"https://podium.co/QDNrE1v\",\n    \"test\": false,\n    \"uid\": \"00000000-0000-0000-0000-000000000000\",\n    \"url\": \"http://app.podium.com/#/91f85f79-185c-46cb-830d-79f259bb2822?v2=true\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "c7058db6-bc17-4d63-a3be-87f6098fc8ec",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/reviews/invites/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "reviews",
+              "invites",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for review invite."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_locations": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "f844a5e7-0533-469e-92d3-3f91c5c48225",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/locations?search=nisi dolor sed ullamco&searchFields=name&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "locations"
+        ],
+        "query": [
+          {
+            "key": "search",
+            "value": "nisi dolor sed ullamco",
+            "description": "String you would like to search for in the `searchFields` parameter."
+          },
+          {
+            "key": "searchFields",
+            "value": "name",
+            "description": "A list of the fields where you want to search for the `search` parameters. e.g. ?searchFields[]=name&searchFields[]=displayname"
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after the `cursor`."
+          }
+        ]
+      },
+      "description": "List of all the locations that the caller has access to.\n\nIf the `cursor` parameter is used then all other parameters will be ignored. This is to avoid confusion if passing both a `cursor` and other parameters which would change what data is being returned."
+    },
+    "response": [
+      {
+        "id": "d076f6a9-467c-4862-a79a-3d4614ba1f3a",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/locations?search=nisi dolor sed ullamco&searchFields=name&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "locations"
+            ],
+            "query": [
+              {
+                "key": "search",
+                "value": "nisi dolor sed ullamco"
+              },
+              {
+                "key": "searchFields",
+                "value": "name"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": [\n    {\n      \"address\": \"1650 Digital Dr, Lehi, UT 84043\",\n      \"archived\": false,\n      \"displayName\": \"Podium, Inc.\",\n      \"name\": \"dolore nisi anim laboris\",\n      \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"podiumPhoneNumber\": \"+18017580580\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    {\n      \"address\": \"1650 Digital Dr, Lehi, UT 84043\",\n      \"archived\": false,\n      \"displayName\": \"Podium, Inc.\",\n      \"name\": \"re\",\n      \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n      \"podiumPhoneNumber\": \"+18017580580\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    }\n  ],\n  \"metadata\": {\n    \"nextCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"previousCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"totalItems\": 9436737,\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "d45a52d6-e108-4727-85c8-babdb1b65eec",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/locations?search=nisi dolor sed ullamco&searchFields=name&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "locations"
+            ],
+            "query": [
+              {
+                "key": "search",
+                "value": "nisi dolor sed ullamco"
+              },
+              {
+                "key": "searchFields",
+                "value": "name"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "get_location": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "64fb7638-1433-4187-ad4a-dbe387e95504",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/locations/:uid",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "locations",
+          ":uid"
+        ],
+        "variable": [
+          {
+            "id": "e924ae5d-9968-4d72-b86b-7423237b44d7",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for location."
+          }
+        ]
+      },
+      "description": "Gets a single location by its uid."
+    },
+    "response": [
+      {
+        "id": "7ff3c027-96bc-4f32-b6b9-e32c4e9ba1ec",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/locations/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "locations",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for location."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"address\": \"1650 Digital Dr, Lehi, UT 84043\",\n    \"archived\": false,\n    \"displayName\": \"Podium, Inc.\",\n    \"name\": \"sed aliqua qu\",\n    \"organizationUid\": \"00000000-0000-0000-0000-000000000000\",\n    \"podiumPhoneNumber\": \"+18017580580\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "ee922929-071e-49fb-ac39-96ddb3397b36",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/locations/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "locations",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for location."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "list_users": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "fc8f9cb2-59d3-4e23-9b57-f21649dbc2e2",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/users?search=nisi dolor sed ullamco&createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&searchFields=fullName&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "users"
+        ],
+        "query": [
+          {
+            "key": "search",
+            "value": "nisi dolor sed ullamco",
+            "description": "String you would like to search for in the `searchFields` parameter."
+          },
+          {
+            "key": "createdAt[gt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[gte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lt]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "createdAt[lte]",
+            "value": "2015-01-23T23:50:07Z",
+            "description": "Filter on the `createdAt` date."
+          },
+          {
+            "key": "searchFields",
+            "value": "fullName",
+            "description": "A list of the fields where you want to search for the `search` parameters. e.g. ?searchFields[]=name&searchFields[]=displayname"
+          },
+          {
+            "key": "limit",
+            "value": "10",
+            "description": "Max number of items to return per request. Defaults to `10`."
+          },
+          {
+            "key": "cursor",
+            "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "description": "Retrieves the page of items that comes after the `cursor`."
+          }
+        ]
+      },
+      "description": "List of all the users that belong to any of the locations that the caller has access to.\n\nIf the `cursor` parameter is used then all other parameters will be ignored. This is to avoid\nconfusion if passing both a `cursor` and other parameters which would change what data is\nbeing returned.\n"
+    },
+    "response": [
+      {
+        "id": "59f4a079-9dfd-4d0a-8a20-afa4904bf486",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/users?search=nisi dolor sed ullamco&createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&searchFields=fullName&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "users"
+            ],
+            "query": [
+              {
+                "key": "search",
+                "value": "nisi dolor sed ullamco"
+              },
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "searchFields",
+                "value": "fullName"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": [\n    {\n      \"archived\": false,\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"email\": \"bob.ross@gmail.com\",\n      \"firstName\": \"Bob\",\n      \"lastName\": \"Ross\",\n      \"locations\": [\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"phone\": \"+18013586533\",\n      \"role\": \"Account Owner\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    },\n    {\n      \"archived\": false,\n      \"createdAt\": \"2015-01-23T23:50:07Z\",\n      \"email\": \"bob.ross@gmail.com\",\n      \"firstName\": \"Bob\",\n      \"lastName\": \"Ross\",\n      \"locations\": [\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        },\n        {\n          \"uid\": \"00000000-0000-0000-0000-000000000000\"\n        }\n      ],\n      \"phone\": \"+18013586533\",\n      \"role\": \"Account Owner\",\n      \"uid\": \"00000000-0000-0000-0000-000000000000\"\n    }\n  ],\n  \"metadata\": {\n    \"nextCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"previousCursor\": \"MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw\",\n    \"totalItems\": 3023745,\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "84f85b69-3180-40c2-821f-a11bdfc800e1",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/users?search=nisi dolor sed ullamco&createdAt[gt]=2015-01-23T23:50:07Z&createdAt[gte]=2015-01-23T23:50:07Z&createdAt[lt]=2015-01-23T23:50:07Z&createdAt[lte]=2015-01-23T23:50:07Z&searchFields=fullName&limit=10&cursor=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "users"
+            ],
+            "query": [
+              {
+                "key": "search",
+                "value": "nisi dolor sed ullamco"
+              },
+              {
+                "key": "createdAt[gt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[gte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lt]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "createdAt[lte]",
+                "value": "2015-01-23T23:50:07Z"
+              },
+              {
+                "key": "searchFields",
+                "value": "fullName"
+              },
+              {
+                "key": "limit",
+                "value": "10"
+              },
+              {
+                "key": "cursor",
+                "value": "MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw"
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  },
+  "get_user": {
+    "source": "https://www.postman.com/collections/19861871-669891a0-1be2-4e5f-bafa-2ec36ad97536?version=2.1.0",
+    "item_id": "b49a8c43-95c7-4226-859c-2d802fdbdf58",
+    "request": {
+      "method": "GET",
+      "header": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "url": {
+        "raw": "{{baseUrl}}/v4/users/:uid",
+        "host": [
+          "{{baseUrl}}"
+        ],
+        "path": [
+          "v4",
+          "users",
+          ":uid"
+        ],
+        "variable": [
+          {
+            "id": "84872a08-b464-479a-92be-38c79dc1bf69",
+            "key": "uid",
+            "value": "00000000-0000-0000-0000-000000000000",
+            "description": "(Required) Podium unique identifier for user."
+          }
+        ]
+      },
+      "description": "Gets a user."
+    },
+    "response": [
+      {
+        "id": "709a47c5-ea20-46af-aee7-3f7694c454ed",
+        "name": "Successful response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/users/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "users",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for user."
+              }
+            ]
+          }
+        },
+        "status": "OK",
+        "code": 200,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"data\": {\n    \"archived\": false,\n    \"createdAt\": \"2015-01-23T23:50:07Z\",\n    \"email\": \"bob.ross@gmail.com\",\n    \"firstName\": \"Bob\",\n    \"lastName\": \"Ross\",\n    \"locations\": [\n      {\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      },\n      {\n        \"uid\": \"00000000-0000-0000-0000-000000000000\"\n      }\n    ],\n    \"phone\": \"+18013586533\",\n    \"role\": \"Account Owner\",\n    \"uid\": \"00000000-0000-0000-0000-000000000000\"\n  },\n  \"metadata\": {\n    \"url\": \"https://www.podium.com/\"\n  }\n}"
+      },
+      {
+        "id": "6cfc91f8-23ee-4928-91eb-516759dc2c11",
+        "name": "Error response.",
+        "originalRequest": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{baseUrl}}/v4/users/:uid",
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "path": [
+              "v4",
+              "users",
+              ":uid"
+            ],
+            "variable": [
+              {
+                "key": "uid",
+                "value": "00000000-0000-0000-0000-000000000000",
+                "description": "(Required) Podium unique identifier for user."
+              }
+            ]
+          }
+        },
+        "status": "Internal Server Error",
+        "code": 500,
+        "_postman_previewlanguage": "json",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "cookie": [],
+        "responseTime": null,
+        "body": "{\n  \"code\": -32788308,\n  \"message\": \"mollit ci\",\n  \"moreInfo\": \"labore\"\n}"
+      }
+    ]
+  }
+}
