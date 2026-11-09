@@ -1,0 +1,875 @@
+{
+  "$defs": {
+    "ConveyorAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "conveyor_api_key",
+          "default": "conveyor_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Conveyor API Key",
+      "type": "object",
+      "x-credential-instructions": "In Conveyor, open Settings > Integrations > Add Integration > Conveyor API. Name the key and grant the portal permissions your workflow needs, including reading folders for the connection check. Paste the API key here. NoClick sends it in X-API-KEY only to api.conveyor.com. Creating an authorization grants Trust Center access and may invite its recipient; nda_bypass skips signing the NDA when enabled.",
+      "x-credential-url": "https://docs.conveyor.com/reference/api-token"
+    },
+    "ConveyorCreateAuthorizationConfig": {
+      "additionalProperties": false,
+      "description": "Creates an authorization based on an email or an existing authorization_request",
+      "properties": {
+        "operation": {
+          "const": "create_authorization",
+          "default": "create_authorization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the authorization request. This OR the \"email\" field must be provided.",
+          "title": "Request Id"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of the person getting access. This OR the \"request_id\" field must be provided.",
+          "title": "Email"
+        },
+        "access_group_ids": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: IDs of access groups that will be granted to the requestor. Leaving this empty will grant the requestor only basic access to your Room. Supply a nonempty JSON array of IDs; clearing all groups is not supported by this action.",
+          "title": "Access Group Ids",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "nda_bypass": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: Whether to bypass the NDA step or not. Defaults to 'false' (i.e. the reviewer will need to sign the NDA).",
+          "title": "Nda Bypass"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: Date of when the authorization will be revoked",
+          "title": "Expires At"
+        }
+      },
+      "title": "ConveyorCreateAuthorizationConfig",
+      "type": "object"
+    },
+    "ConveyorCreateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Creates a folder",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Name of folder",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ConveyorCreateFolderConfig",
+      "type": "object"
+    },
+    "ConveyorDeleteDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Deletes a document",
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "description": "UUID of the document",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ConveyorDeleteDocumentConfig",
+      "type": "object"
+    },
+    "ConveyorDeleteFolderConfig": {
+      "additionalProperties": false,
+      "description": "Deletes a folder",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "description": "UUID of the folder",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ConveyorDeleteFolderConfig",
+      "type": "object"
+    },
+    "ConveyorGetAuthorizationRequestConfig": {
+      "additionalProperties": false,
+      "description": "Gets the authorization request with the ID from the path",
+      "properties": {
+        "operation": {
+          "const": "get_authorization_request",
+          "default": "get_authorization_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "authorization_request_id": {
+          "description": "The ID of the authorization request",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Authorization Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authorization_request_id"
+      ],
+      "title": "ConveyorGetAuthorizationRequestConfig",
+      "type": "object"
+    },
+    "ConveyorIgnoreAuthorizationRequestConfig": {
+      "additionalProperties": false,
+      "description": "Update the status of an authorization request to be ignored",
+      "properties": {
+        "operation": {
+          "const": "ignore_authorization_request",
+          "default": "ignore_authorization_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "authorization_request_id": {
+          "description": "The ID of the authorization request",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Authorization Request Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "ignored",
+          "default": "ignored",
+          "description": "Can only be 'ignored'",
+          "title": "Status",
+          "type": "string"
+        },
+        "reviewer_email": {
+          "description": "Email address of the reviewer",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reviewer Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authorization_request_id",
+        "reviewer_email"
+      ],
+      "title": "ConveyorIgnoreAuthorizationRequestConfig",
+      "type": "object"
+    },
+    "ConveyorListAccessGroupsConfig": {
+      "additionalProperties": false,
+      "description": "Gets all the access groups for a program",
+      "properties": {
+        "operation": {
+          "const": "list_access_groups",
+          "default": "list_access_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConveyorListAccessGroupsConfig",
+      "type": "object"
+    },
+    "ConveyorListAuthorizationRequestQueueConfig": {
+      "additionalProperties": false,
+      "description": "Gets all the open authorization requests for a program.\n\nWARNING: this endpoint can be replicated by hitting the GET Authorization Requests endpoint (https://docs.conveyor.com/reference/get-authorization-requests) with the status parameter 'requested'. As such, we are looking to deprecate this endpoint in the near future. Prefer list_authorization_requests with status requested for new workflows.",
+      "properties": {
+        "operation": {
+          "const": "list_authorization_request_queue",
+          "default": "list_authorization_request_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConveyorListAuthorizationRequestQueueConfig",
+      "type": "object"
+    },
+    "ConveyorListAuthorizationRequestsConfig": {
+      "additionalProperties": false,
+      "description": "Gets authorization requests with an optional status filter",
+      "properties": {
+        "operation": {
+          "const": "list_authorization_requests",
+          "default": "list_authorization_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "initial",
+                "requested",
+                "approved",
+                "ignored"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: If provided, it needs to be one of: 'initial' | 'requested' | 'approved' | 'ignored'",
+          "title": "Status",
+          "enum": [
+            "initial",
+            "requested",
+            "approved",
+            "ignored"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional",
+          "title": "Email"
+        }
+      },
+      "title": "ConveyorListAuthorizationRequestsConfig",
+      "type": "object"
+    },
+    "ConveyorListAuthorizationsConfig": {
+      "additionalProperties": false,
+      "description": "Gets authorizations with an optional status filter",
+      "properties": {
+        "operation": {
+          "const": "list_authorizations",
+          "default": "list_authorizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "gated",
+                "authorized",
+                "revoked"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: If provided, it needs to be one of: 'gated' | 'authorized' | 'revoked'",
+          "title": "Status",
+          "enum": [
+            "gated",
+            "authorized",
+            "revoked"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional",
+          "title": "Email"
+        }
+      },
+      "title": "ConveyorListAuthorizationsConfig",
+      "type": "object"
+    },
+    "ConveyorListDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "Gets all documents",
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConveyorListDocumentsConfig",
+      "type": "object"
+    },
+    "ConveyorListFoldersConfig": {
+      "additionalProperties": false,
+      "description": "Gets all folders",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConveyorListFoldersConfig",
+      "type": "object"
+    },
+    "ConveyorUpdateAuthorizationConfig": {
+      "additionalProperties": false,
+      "description": "Revoke an authorization or update it with new access groups",
+      "properties": {
+        "operation": {
+          "const": "update_authorization",
+          "default": "update_authorization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "authorization_id": {
+          "description": "The ID of the authorization",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Authorization Id",
+          "type": "string"
+        },
+        "access_group_ids": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of Access Group IDs. Remove an Access Group by specifying the Access Groups that should remain. Remove all Access Groups by passing an empty array. Supply a nonempty JSON array of IDs; clearing all groups is not supported by this action.",
+          "title": "Access Group Ids",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "revoked",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to update the status to \"revoked\". Cannot update the status to anything else.",
+          "title": "Status"
+        }
+      },
+      "required": [
+        "authorization_id"
+      ],
+      "title": "ConveyorUpdateAuthorizationConfig",
+      "type": "object"
+    },
+    "ConveyorUpdateDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Updates a document",
+      "properties": {
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the document",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the document",
+          "title": "Description"
+        },
+        "certification": {
+          "anyOf": [
+            {
+              "enum": [
+                "soc1-type-1",
+                "soc1-type-2",
+                "soc2-type-1",
+                "soc2-type-2",
+                "soc3",
+                "iso-9001",
+                "iso-22301-2019",
+                "iso-27001",
+                "iso-27001-2013",
+                "iso-27001-2022",
+                "iso-27017",
+                "iso-27018",
+                "iso-27018-2014",
+                "iso-27701",
+                "iso-14001",
+                "csa",
+                "pci",
+                "gdpr",
+                "sig",
+                "hipaa",
+                "hipaa-ce",
+                "hitrust",
+                "fedramp",
+                "fedramp-high",
+                "fedramp-li-saas",
+                "fedramp-moderate",
+                "cyber-essentials",
+                "cyber-essentials-plus",
+                "nist",
+                "nist-800-171",
+                "ccpa",
+                "21-cfr-11",
+                "fisma",
+                "eu-cloud-coc",
+                "microsoft-365-certified-app",
+                "ico-registered",
+                "iatf-16949",
+                "ens",
+                "tpn",
+                "tpn-blue",
+                "tpn-gold",
+                "cfpb",
+                "eu-us-data-privacy",
+                "pipeda",
+                "tisax",
+                "vpat",
+                "swiss-us-dpf",
+                "uk-extension-to-eu-us-dpf",
+                "tx-ramp",
+                "us-dol-cybersecurity",
+                "casa",
+                "irap soc1-type-1",
+                "irap"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Certification type (badge) of the document",
+          "title": "Certification",
+          "enum": [
+            "soc1-type-1",
+            "soc1-type-2",
+            "soc2-type-1",
+            "soc2-type-2",
+            "soc3",
+            "iso-9001",
+            "iso-22301-2019",
+            "iso-27001",
+            "iso-27001-2013",
+            "iso-27001-2022",
+            "iso-27017",
+            "iso-27018",
+            "iso-27018-2014",
+            "iso-27701",
+            "iso-14001",
+            "csa",
+            "pci",
+            "gdpr",
+            "sig",
+            "hipaa",
+            "hipaa-ce",
+            "hitrust",
+            "fedramp",
+            "fedramp-high",
+            "fedramp-li-saas",
+            "fedramp-moderate",
+            "cyber-essentials",
+            "cyber-essentials-plus",
+            "nist",
+            "nist-800-171",
+            "ccpa",
+            "21-cfr-11",
+            "fisma",
+            "eu-cloud-coc",
+            "microsoft-365-certified-app",
+            "ico-registered",
+            "iatf-16949",
+            "ens",
+            "tpn",
+            "tpn-blue",
+            "tpn-gold",
+            "cfpb",
+            "eu-us-data-privacy",
+            "pipeda",
+            "tisax",
+            "vpat",
+            "swiss-us-dpf",
+            "uk-extension-to-eu-us-dpf",
+            "tx-ramp",
+            "us-dol-cybersecurity",
+            "casa",
+            "irap soc1-type-1",
+            "irap"
+          ],
+          "x-enum-searchable": true
+        },
+        "featured": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to true, this document will be 'featured' on a public profile",
+          "title": "Featured"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID of the folder to place the document in",
+          "title": "Folder Id"
+        },
+        "access_level": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "protected",
+                "need_to_know",
+                "internal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Access level of the document",
+          "title": "Access Level",
+          "enum": [
+            "public",
+            "protected",
+            "need_to_know",
+            "internal"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_line_ids": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated Product Line UUIDs. These are the applicable product lines for the document. Leave blank if applicable to all product lines.",
+          "title": "Product Line Ids"
+        },
+        "access_group_ids": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated Access Group UUIDs",
+          "title": "Access Group Ids"
+        },
+        "disable_downloads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Disable downloads for this document",
+          "title": "Disable Downloads"
+        },
+        "use_for_question_answering": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this document for question answering. If not provided, it will be automatically determined based on whether the document can be used for question answering.",
+          "title": "Use For Question Answering"
+        },
+        "document_id": {
+          "description": "UUID of the document",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ConveyorUpdateDocumentConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_authorization": "#/$defs/ConveyorCreateAuthorizationConfig",
+          "create_folder": "#/$defs/ConveyorCreateFolderConfig",
+          "delete_document": "#/$defs/ConveyorDeleteDocumentConfig",
+          "delete_folder": "#/$defs/ConveyorDeleteFolderConfig",
+          "get_authorization_request": "#/$defs/ConveyorGetAuthorizationRequestConfig",
+          "ignore_authorization_request": "#/$defs/ConveyorIgnoreAuthorizationRequestConfig",
+          "list_access_groups": "#/$defs/ConveyorListAccessGroupsConfig",
+          "list_authorization_request_queue": "#/$defs/ConveyorListAuthorizationRequestQueueConfig",
+          "list_authorization_requests": "#/$defs/ConveyorListAuthorizationRequestsConfig",
+          "list_authorizations": "#/$defs/ConveyorListAuthorizationsConfig",
+          "list_documents": "#/$defs/ConveyorListDocumentsConfig",
+          "list_folders": "#/$defs/ConveyorListFoldersConfig",
+          "update_authorization": "#/$defs/ConveyorUpdateAuthorizationConfig",
+          "update_document": "#/$defs/ConveyorUpdateDocumentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConveyorListAuthorizationRequestQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorGetAuthorizationRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorIgnoreAuthorizationRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorCreateAuthorizationConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorListAuthorizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorListAccessGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorListAuthorizationRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorUpdateAuthorizationConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorUpdateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorDeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/ConveyorDeleteFolderConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConveyorAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Conveyor Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
