@@ -1,0 +1,1586 @@
+{
+  "$defs": {
+    "CreateMembership": {
+      "additionalProperties": false,
+      "description": "Create membership in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "create_membership",
+          "default": "create_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "role_slug": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "WorkOS role slug; omission uses the environment default role.",
+          "title": "Role Slug"
+        }
+      },
+      "required": [
+        "organization_id",
+        "user_id"
+      ],
+      "title": "CreateMembership",
+      "type": "object"
+    },
+    "CreateOrganization": {
+      "additionalProperties": false,
+      "description": "Create organization in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "create_organization",
+          "default": "create_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[\\x00-\\x7F]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 600,
+                "type": "string"
+              },
+              "maxProperties": 50,
+              "propertyNames": {
+                "maxLength": 40
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateOrganization",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "description": "Create user in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[\\x00-\\x7F]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 600,
+                "type": "string"
+              },
+              "maxProperties": 50,
+              "propertyNames": {
+                "maxLength": 40
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "ip_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Originating user IP; required when WorkOS Radar is in Decision mode.",
+          "title": "Ip Address"
+        },
+        "user_agent": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Agent"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "DeleteMembership": {
+      "additionalProperties": false,
+      "description": "Delete membership in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "delete_membership",
+          "default": "delete_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "membership_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Membership Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "membership_id"
+      ],
+      "title": "DeleteMembership",
+      "type": "object"
+    },
+    "DeleteOrganization": {
+      "additionalProperties": false,
+      "description": "Delete organization in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "delete_organization",
+          "default": "delete_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "DeleteOrganization",
+      "type": "object"
+    },
+    "DeleteUser": {
+      "additionalProperties": false,
+      "description": "Delete user in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DeleteUser",
+      "type": "object"
+    },
+    "GetConnection": {
+      "additionalProperties": false,
+      "description": "Get connection in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_connection",
+          "default": "get_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Connection Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "GetConnection",
+      "type": "object"
+    },
+    "GetDirectory": {
+      "additionalProperties": false,
+      "description": "Get directory in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_directory",
+          "default": "get_directory",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "directory_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Directory Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "directory_id"
+      ],
+      "title": "GetDirectory",
+      "type": "object"
+    },
+    "GetDirectoryGroup": {
+      "additionalProperties": false,
+      "description": "Get directory group in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_directory_group",
+          "default": "get_directory_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "directory_group_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Directory Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "directory_group_id"
+      ],
+      "title": "GetDirectoryGroup",
+      "type": "object"
+    },
+    "GetDirectoryUser": {
+      "additionalProperties": false,
+      "description": "Get directory user in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_directory_user",
+          "default": "get_directory_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "directory_user_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Directory User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "directory_user_id"
+      ],
+      "title": "GetDirectoryUser",
+      "type": "object"
+    },
+    "GetMembership": {
+      "additionalProperties": false,
+      "description": "Get membership in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_membership",
+          "default": "get_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "membership_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Membership Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "membership_id"
+      ],
+      "title": "GetMembership",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "description": "Get organization in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Get user in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListConnections": {
+      "additionalProperties": false,
+      "description": "List connections in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_connections",
+          "default": "list_connections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        }
+      },
+      "title": "ListConnections",
+      "type": "object"
+    },
+    "ListDirectories": {
+      "additionalProperties": false,
+      "description": "List directories in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_directories",
+          "default": "list_directories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        }
+      },
+      "title": "ListDirectories",
+      "type": "object"
+    },
+    "ListDirectoryGroups": {
+      "additionalProperties": false,
+      "description": "List directory groups in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_directory_groups",
+          "default": "list_directory_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "directory": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Directory"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User"
+        }
+      },
+      "title": "ListDirectoryGroups",
+      "type": "object"
+    },
+    "ListDirectoryUsers": {
+      "additionalProperties": false,
+      "description": "List directory users in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_directory_users",
+          "default": "list_directory_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "directory": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Directory"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "idp_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idp Id"
+        }
+      },
+      "title": "ListDirectoryUsers",
+      "type": "object"
+    },
+    "ListMemberships": {
+      "additionalProperties": false,
+      "description": "List memberships in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        }
+      },
+      "title": "ListMemberships",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "description": "List organizations in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users in the connected WorkOS environment.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page; use the returned list_metadata cursors for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc",
+                "normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc",
+            "normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "UpdateMembership": {
+      "additionalProperties": false,
+      "description": "Update membership in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "update_membership",
+          "default": "update_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "membership_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Membership Id",
+          "type": "string"
+        },
+        "role_slug": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Role Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "membership_id",
+        "role_slug"
+      ],
+      "title": "UpdateMembership",
+      "type": "object"
+    },
+    "UpdateOrganization": {
+      "additionalProperties": false,
+      "description": "Update organization in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[\\x00-\\x7F]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 600,
+                "type": "string"
+              },
+              "maxProperties": 50,
+              "propertyNames": {
+                "maxLength": 40
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "UpdateOrganization",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "description": "Update user in the connected WorkOS environment.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[\\x00-\\x7F]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 600,
+                "type": "string"
+              },
+              "maxProperties": 50,
+              "propertyNames": {
+                "maxLength": 40
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    },
+    "WorkOSAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "workos_api_key",
+          "default": "workos_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Workos API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste a WorkOS environment API key from the WorkOS dashboard. Select the environment whose organizations and users you want to automate. The key is sent as a Bearer token only to api.workos.com.",
+      "x-credential-url": "https://dashboard.workos.com/api-keys"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_membership": "#/$defs/CreateMembership",
+          "create_organization": "#/$defs/CreateOrganization",
+          "create_user": "#/$defs/CreateUser",
+          "delete_membership": "#/$defs/DeleteMembership",
+          "delete_organization": "#/$defs/DeleteOrganization",
+          "delete_user": "#/$defs/DeleteUser",
+          "get_connection": "#/$defs/GetConnection",
+          "get_directory": "#/$defs/GetDirectory",
+          "get_directory_group": "#/$defs/GetDirectoryGroup",
+          "get_directory_user": "#/$defs/GetDirectoryUser",
+          "get_membership": "#/$defs/GetMembership",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_user": "#/$defs/GetUser",
+          "list_connections": "#/$defs/ListConnections",
+          "list_directories": "#/$defs/ListDirectories",
+          "list_directory_groups": "#/$defs/ListDirectoryGroups",
+          "list_directory_users": "#/$defs/ListDirectoryUsers",
+          "list_memberships": "#/$defs/ListMemberships",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "list_users": "#/$defs/ListUsers",
+          "update_membership": "#/$defs/UpdateMembership",
+          "update_organization": "#/$defs/UpdateOrganization",
+          "update_user": "#/$defs/UpdateUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/CreateOrganization"
+        },
+        {
+          "$ref": "#/$defs/UpdateOrganization"
+        },
+        {
+          "$ref": "#/$defs/DeleteOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUser"
+        },
+        {
+          "$ref": "#/$defs/ListMemberships"
+        },
+        {
+          "$ref": "#/$defs/GetMembership"
+        },
+        {
+          "$ref": "#/$defs/CreateMembership"
+        },
+        {
+          "$ref": "#/$defs/UpdateMembership"
+        },
+        {
+          "$ref": "#/$defs/DeleteMembership"
+        },
+        {
+          "$ref": "#/$defs/ListDirectories"
+        },
+        {
+          "$ref": "#/$defs/GetDirectory"
+        },
+        {
+          "$ref": "#/$defs/ListDirectoryUsers"
+        },
+        {
+          "$ref": "#/$defs/GetDirectoryUser"
+        },
+        {
+          "$ref": "#/$defs/ListDirectoryGroups"
+        },
+        {
+          "$ref": "#/$defs/GetDirectoryGroup"
+        },
+        {
+          "$ref": "#/$defs/ListConnections"
+        },
+        {
+          "$ref": "#/$defs/GetConnection"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WorkOSAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Workos Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a customer organization",
+    "List directory users",
+    "Add a user to an organization"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
