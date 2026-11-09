@@ -1,0 +1,265 @@
+[
+  {
+    "config": {
+      "operation": "get_actor"
+    },
+    "method": "GET",
+    "path": "/actor",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_workspaces"
+    },
+    "method": "GET",
+    "path": "/actor/workspace",
+    "params": {
+      "limit": "25"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_organizations"
+    },
+    "method": "GET",
+    "path": "/actor/org",
+    "params": {
+      "limit": "25"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_org_workspaces",
+      "org_handle": "acme"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace",
+    "params": {
+      "limit": "25"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_workspace",
+      "org_handle": "acme",
+      "workspace_handle": "production"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_workspace",
+      "org_handle": "acme",
+      "handle": "analytics",
+      "desired_state": "enabled"
+    },
+    "method": "POST",
+    "path": "/org/acme/workspace",
+    "params": {},
+    "body": {
+      "handle": "analytics",
+      "desired_state": "enabled"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_workspace",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "desired_state": "disabled"
+    },
+    "method": "PATCH",
+    "path": "/org/acme/workspace/production",
+    "params": {},
+    "body": {
+      "desired_state": "disabled"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_connections",
+      "org_handle": "acme",
+      "workspace_handle": "production"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/connection",
+    "params": {
+      "limit": "25"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_connection",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "connection_handle": "aws_prod"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/connection/aws_prod",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_connection",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "handle": "aws_prod",
+      "plugin": "aws",
+      "plugin_config_json": "{\"regions\":[\"us-east-1\"]}"
+    },
+    "method": "POST",
+    "path": "/org/acme/workspace/production/connection",
+    "params": {},
+    "body": {
+      "handle": "aws_prod",
+      "plugin": "aws",
+      "config": {
+        "regions": [
+          "us-east-1"
+        ]
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_connection",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "connection_handle": "aws_prod"
+    },
+    "method": "DELETE",
+    "path": "/org/acme/workspace/production/connection/aws_prod",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "query_workspace",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "sql": "select name from aws_s3_bucket"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/query",
+    "params": {
+      "sql": "select name from aws_s3_bucket"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_snapshots",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "limit": 10,
+      "next_token": "cursor+42",
+      "where": "dashboard_name='aws_insights.dashboard.aws_account_report'"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/snapshot",
+    "params": {
+      "limit": "10",
+      "next_token": "cursor+42",
+      "where": "dashboard_name='aws_insights.dashboard.aws_account_report'"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_snapshot",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "snapshot_id": "snap_aaaaaaaaaaaaaaaaaaaa_bbbbbbbbbbbbbbbbbbb"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/snapshot/snap_aaaaaaaaaaaaaaaaaaaa_bbbbbbbbbbbbbbbbbbb",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "update_snapshot",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "snapshot_id": "snap_aaaaaaaaaaaaaaaaaaaa_bbbbbbbbbbbbbbbbbbb",
+      "title": "Daily report"
+    },
+    "method": "PATCH",
+    "path": "/org/acme/workspace/production/snapshot/snap_aaaaaaaaaaaaaaaaaaaa_bbbbbbbbbbbbbbbbbbb",
+    "params": {},
+    "body": {
+      "title": "Daily report"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_snapshot",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "snapshot_id": "snap_aaaaaaaaaaaaaaaaaaaa_bbbbbbbbbbbbbbbbbbb"
+    },
+    "method": "DELETE",
+    "path": "/org/acme/workspace/production/snapshot/snap_aaaaaaaaaaaaaaaaaaaa_bbbbbbbbbbbbbbbbbbb",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_schemas",
+      "org_handle": "acme",
+      "workspace_handle": "production"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/schema",
+    "params": {
+      "limit": "25"
+    },
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_schema",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "schema_name": "aws"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/schema/aws",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_tables",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "schema_name": "aws"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/schema/aws/table",
+    "params": {},
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_table",
+      "org_handle": "acme",
+      "workspace_handle": "production",
+      "schema_name": "aws",
+      "table_name": "aws_s3_bucket"
+    },
+    "method": "GET",
+    "path": "/org/acme/workspace/production/schema/aws/table/aws_s3_bucket",
+    "params": {},
+    "body": null
+  }
+]
