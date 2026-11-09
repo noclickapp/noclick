@@ -1,0 +1,320 @@
+{
+  "source": "https://api.swaggerhub.com/apis/swagger-hub/registry-api/1.0.66",
+  "note": "Synthetic account identifiers; request expectations from the pinned Registry API contract.",
+  "cases": [
+    [
+      "list_projects",
+      {},
+      "GET",
+      "/projects",
+      {
+        "page": "0",
+        "limit": "10",
+        "order": "ASC",
+        "sort": "NAME",
+        "nameOnly": "false"
+      },
+      null
+    ],
+    [
+      "list_organization_projects",
+      {
+        "owner": "acme-org"
+      },
+      "GET",
+      "/projects/acme-org",
+      {
+        "page": "0",
+        "limit": "10",
+        "order": "ASC",
+        "nameOnly": "false"
+      },
+      null
+    ],
+    [
+      "get_project",
+      {
+        "owner": "acme-org",
+        "project_id": "CoreServices"
+      },
+      "GET",
+      "/projects/acme-org/CoreServices",
+      {},
+      null
+    ],
+    [
+      "create_project",
+      {
+        "owner": "acme-org",
+        "name": "CoreServices",
+        "apis": [
+          "petstore"
+        ],
+        "domains": [
+          "common-models"
+        ],
+        "description": "APIs for core functionality"
+      },
+      "POST",
+      "/projects/acme-org",
+      {},
+      {
+        "name": "CoreServices",
+        "description": "APIs for core functionality",
+        "apis": [
+          "petstore"
+        ],
+        "domains": [
+          "common-models"
+        ]
+      }
+    ],
+    [
+      "update_project",
+      {
+        "owner": "acme-org",
+        "project_id": "CoreServices",
+        "name": "NewName"
+      },
+      "PUT",
+      "/projects/acme-org/CoreServices",
+      {},
+      {
+        "name": "NewName",
+        "description": "",
+        "apis": [],
+        "domains": []
+      }
+    ],
+    [
+      "delete_project",
+      {
+        "owner": "acme-org",
+        "project_id": "CoreServices"
+      },
+      "DELETE",
+      "/projects/acme-org/CoreServices",
+      {},
+      null
+    ],
+    [
+      "search_definitions",
+      {
+        "query": "petstore",
+        "page": 2,
+        "limit": 25,
+        "spec_type": "API",
+        "visibility": "PRIVATE",
+        "state": "PUBLISHED",
+        "owner": "acme-org"
+      },
+      "GET",
+      "/specs",
+      {
+        "query": "petstore",
+        "page": "2",
+        "limit": "25",
+        "specType": "API",
+        "visibility": "PRIVATE",
+        "state": "PUBLISHED",
+        "owner": "acme-org",
+        "sort": "NAME",
+        "order": "ASC"
+      },
+      null
+    ],
+    [
+      "list_owner_apis",
+      {
+        "owner": "acme-org"
+      },
+      "GET",
+      "/apis/acme-org",
+      {
+        "page": "0",
+        "limit": "10",
+        "sort": "NAME",
+        "order": "ASC"
+      },
+      null
+    ],
+    [
+      "list_api_versions",
+      {
+        "owner": "acme-org",
+        "api": "petstore"
+      },
+      "GET",
+      "/apis/acme-org/petstore",
+      {},
+      null
+    ],
+    [
+      "get_api_definition",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0"
+      },
+      "GET",
+      "/apis/acme-org/petstore/1.0.0/swagger.json",
+      {
+        "resolved": "false",
+        "flatten": "false"
+      },
+      null
+    ],
+    [
+      "clone_api_version",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0",
+        "new_version": "1.0.1",
+        "private": false
+      },
+      "POST",
+      "/apis/acme-org/petstore/1.0.0/clone",
+      {},
+      {
+        "version": "1.0.1",
+        "private": false
+      }
+    ],
+    [
+      "delete_api_version",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0"
+      },
+      "DELETE",
+      "/apis/acme-org/petstore/1.0.0",
+      {},
+      null
+    ],
+    [
+      "rename_api",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "new_name": "petstore2"
+      },
+      "POST",
+      "/apis/acme-org/petstore/rename",
+      {
+        "newName": "petstore2"
+      },
+      null
+    ],
+    [
+      "get_default_api_version",
+      {
+        "owner": "acme-org",
+        "api": "petstore"
+      },
+      "GET",
+      "/apis/acme-org/petstore/settings/default",
+      {},
+      null
+    ],
+    [
+      "set_default_api_version",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0"
+      },
+      "PUT",
+      "/apis/acme-org/petstore/settings/default",
+      {},
+      {
+        "version": "1.0.0"
+      }
+    ],
+    [
+      "get_api_lifecycle",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0"
+      },
+      "GET",
+      "/apis/acme-org/petstore/1.0.0/settings/lifecycle",
+      {},
+      null
+    ],
+    [
+      "set_api_lifecycle",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0",
+        "published": true,
+        "force": true
+      },
+      "PUT",
+      "/apis/acme-org/petstore/1.0.0/settings/lifecycle",
+      {
+        "force": "true"
+      },
+      {
+        "published": true
+      }
+    ],
+    [
+      "get_api_visibility",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0"
+      },
+      "GET",
+      "/apis/acme-org/petstore/1.0.0/settings/private",
+      {},
+      null
+    ],
+    [
+      "set_api_visibility",
+      {
+        "owner": "acme-org",
+        "api": "petstore",
+        "version": "1.0.0",
+        "private": false
+      },
+      "PUT",
+      "/apis/acme-org/petstore/1.0.0/settings/private",
+      {},
+      {
+        "private": false
+      }
+    ],
+    [
+      "list_owner_domains",
+      {
+        "owner": "acme-org"
+      },
+      "GET",
+      "/domains/acme-org",
+      {
+        "page": "0",
+        "limit": "10",
+        "sort": "NAME",
+        "order": "ASC"
+      },
+      null
+    ],
+    [
+      "get_domain_definition",
+      {
+        "owner": "acme-org",
+        "domain": "common-models",
+        "version": "1.0.0"
+      },
+      "GET",
+      "/domains/acme-org/common-models/1.0.0/domain.json",
+      {},
+      null
+    ]
+  ]
+}
