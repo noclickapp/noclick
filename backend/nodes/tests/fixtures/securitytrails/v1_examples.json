@@ -1,0 +1,532 @@
+{
+  "get_usage": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "current_monthly_usage": 100,
+      "allowed_monthly_usage": 10000
+    }
+  },
+  "get_domain": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "hostname": "securitytrails.com",
+      "alexa_rank": 83756,
+      "current_dns": {
+        "a": {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "ip": "200.121.20.1",
+              "ip_count": 10231
+            }
+          ]
+        },
+        "aaaa": {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "ip": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+              "ip_count": 10231
+            }
+          ]
+        },
+        "mx": {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "priority": 50,
+              "host": "aspmx5.googlemail.com",
+              "host_count": 102341
+            },
+            {
+              "priority": 40,
+              "host": "aspmx4.googlemail.com",
+              "host_count": 200123
+            }
+          ]
+        },
+        "ns": {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "nameserver": "ns4.dnsmadeeasy.com",
+              "nameserver_count": 5213
+            },
+            {
+              "nameserver": "ns3.dnsmadeeasy.com",
+              "nameserver_count": 1223
+            }
+          ]
+        },
+        "soa": {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "ttl": 43200,
+              "email": "dns.dnsmadeeasy.com",
+              "email_count": 10
+            }
+          ]
+        },
+        "txt": {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "value": "v=spf1 a mx include:spf.google.com include:sendgrid.net  include:spf.mandrillapp.com"
+            },
+            {
+              "value": "include:datadrivenemail.com ?all, google-site-verification=GbnLta6smBzoW8Oes1WafBhRoBwx4YSnvY8SFoQHmpI"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "explore_ips": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "blocks": [
+        {
+          "ip_count": 3,
+          "ip": "1.1.1.0/32"
+        },
+        {
+          "ip_count": 19247,
+          "ip": "1.1.1.1/32",
+          "current": true
+        },
+        {
+          "ip_count": 64,
+          "ip": "1.1.1.2/32"
+        },
+        {
+          "ip_count": 13,
+          "ip": "1.1.1.3/32"
+        },
+        {
+          "ip_count": 6,
+          "ip": "1.1.1.4/32"
+        },
+        {
+          "ip_count": 7,
+          "ip": "1.1.1.5/32"
+        },
+        {
+          "ip_count": 2,
+          "ip": "1.1.1.6/32"
+        },
+        {
+          "ip_count": 2,
+          "ip": "1.1.1.7/32"
+        },
+        {
+          "ip_count": 2,
+          "ip": "1.1.1.8/32"
+        },
+        {
+          "ip_count": 3,
+          "ip": "1.1.1.9/32"
+        },
+        {
+          "ip_count": 5,
+          "ip": "1.1.1.10/32"
+        },
+        {
+          "sites": 13,
+          "ip": "1.1.1.11/32"
+        },
+        {
+          "ip_count": 332,
+          "ip": "1.1.1.12/32"
+        },
+        {
+          "ip_count": 0,
+          "ip": "1.1.1.13/32"
+        },
+        {
+          "ip_count": 0,
+          "ip": "1.1.1.14/32"
+        },
+        {
+          "ip_count": 0,
+          "ip": "1.1.1.15/32"
+        }
+      ]
+    }
+  },
+  "get_domain_whois": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "updatedDate": "2019-06-22T10:55:40Z",
+      "status": "clientTransferProhibited clientUpdateProhibited clientRenewProhibited clientDeleteProhibited",
+      "registrarName": "MONIKER ONLINE SERVICES LLC",
+      "nameServers": [
+        "NS0.DNSMADEEASY.COM",
+        "NS1.DNSMADEEASY.COM"
+      ],
+      "expiresDate": "2020-06-21T07:45:18Z",
+      "endpoint": "/v1/domain/securitytrails.com/whois",
+      "domain": "securitytrails.com",
+      "createdDate": "2017-06-21T07:45:18Z",
+      "contacts": [
+        {
+          "type": "technicalContact",
+          "countryCode": "US",
+          "country": "UNITED STATES"
+        },
+        {
+          "type": "administrativeContact",
+          "countryCode": "US",
+          "country": "UNITED STATES"
+        },
+        {
+          "type": "registrant",
+          "state": "California",
+          "name_count": 21,
+          "name": "Registrant State/Province: California",
+          "countryCode": "US",
+          "country": "UNITED STATES"
+        }
+      ],
+      "contactEmail": "abuse@godaddy.com"
+    }
+  },
+  "search_domains": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "record_count": 2,
+      "records": [
+        {
+          "mail_providers": [
+            "Google Inc."
+          ],
+          "host_providers": [
+            "Fastly"
+          ],
+          "host": null,
+          "domain": "stackoverflow.com",
+          "alexa_rank": 52
+        },
+        {
+          "mail_providers": [
+            "Google Inc."
+          ],
+          "host_providers": [
+            "Cloudflare Inc"
+          ],
+          "host": null,
+          "domain": "stackovercode.com",
+          "alexa_rank": null
+        }
+      ],
+      "org": [
+        "Google Inc."
+      ]
+    }
+  },
+  "get_subdomains": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "subdomains": [
+        "api",
+        "em",
+        "mail",
+        "www"
+      ]
+    }
+  },
+  "get_domain_statistics": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "tld_count": 54,
+      "hostname_count": 655,
+      "domain_count": 655
+    }
+  },
+  "get_domain_tags": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "tags": [
+        "porn"
+      ]
+    }
+  },
+  "get_dns_history": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "pages": 1,
+      "type": "a/ipv4",
+      "records": [
+        {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "ip": "200.121.20.1",
+              "ip_count": 10231
+            }
+          ],
+          "organizations": [
+            "netDNA"
+          ],
+          "last_seen": "2016-05-31"
+        },
+        {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "ip": "200.121.20.1",
+              "ip_count": 10231
+            }
+          ],
+          "organizations": [
+            "netDNA"
+          ],
+          "last_seen": "2016-05-31"
+        },
+        {
+          "first_seen": "2017-05-26",
+          "values": [
+            {
+              "ip": "200.121.20.1",
+              "ip_count": 10231
+            }
+          ],
+          "organizations": [
+            "netDNA"
+          ],
+          "last_seen": "2016-05-31"
+        }
+      ]
+    }
+  },
+  "get_associated_domains": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "records": [
+        {
+          "whois": {
+            "registrar": "MarkMonitor Inc.",
+            "expiresDate": 1518671592000,
+            "createdDate": 1108444392000
+          },
+          "mail_provider": [
+            "Google Inc."
+          ],
+          "hostname": "youtube.com",
+          "host_provider": [
+            "Google Inc."
+          ],
+          "computed": {
+            "company_name": "Google Inc."
+          },
+          "alexa_rank": 2
+        },
+        {
+          "whois": {
+            "registrar": "MarkMonitor Inc. (R84-AFIN)",
+            "expiresDate": 1498226553000,
+            "createdDate": 1056376953000
+          },
+          "mail_provider": [
+            "Google Inc."
+          ],
+          "hostname": "google.co.in",
+          "host_provider": [
+            "Google Inc."
+          ],
+          "computed": {
+            "company_name": "Google Inc."
+          },
+          "alexa_rank": 7
+        },
+        {
+          "whois": {
+            "registrar": null,
+            "expiresDate": null,
+            "createdDate": null
+          },
+          "mail_provider": [
+            "Google Inc."
+          ],
+          "hostname": "google.de",
+          "host_provider": [
+            "Google Inc."
+          ],
+          "computed": {
+            "company_name": null
+          },
+          "alexa_rank": 23
+        }
+      ],
+      "record_count": 3,
+      "meta": {
+        "total_pages": 1,
+        "query": "whois_email = 'dns-admin@google.com'",
+        "page": 1,
+        "max_page": 100
+      },
+      "endpoint": "/v1/domain/google.com/associated"
+    }
+  },
+  "search_ips": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "records": [
+        {
+          "ptr": "ns1",
+          "ip": "109.73.164.63"
+        },
+        {
+          "ptr": "ns1",
+          "ports": [
+            22
+          ],
+          "ip": "138.128.164.19"
+        },
+        {
+          "ptr": "ns1",
+          "ports": [
+            21,
+            22,
+            80,
+            443
+          ],
+          "ip": "138.128.168.3"
+        }
+      ],
+      "record_count": 3,
+      "meta": {
+        "total_pages": 1,
+        "query": "ptr_part = 'ns1'",
+        "page": 1,
+        "max_page": 100
+      },
+      "endpoint": "/v1/ips/list"
+    }
+  },
+  "get_ip_statistics": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "top_ptr_patterns": [
+        {
+          "key": "x-x.amazon.com",
+          "count": 6787
+        },
+        {
+          "key": "x-x-x-x.amazon.com",
+          "count": 3254
+        },
+        {
+          "key": "smtp-out-x-x.amazon.com",
+          "count": 662
+        },
+        {
+          "key": "freeip.amazon.com",
+          "count": 220
+        }
+      ],
+      "ports": [
+        {
+          "key": 443,
+          "count": 246
+        },
+        {
+          "key": 80,
+          "count": 79
+        },
+        {
+          "key": 22,
+          "count": 5
+        },
+        {
+          "key": 21,
+          "count": 2
+        }
+      ],
+      "total": 11899,
+      "endpoint": "/v1/ips/stats"
+    }
+  },
+  "get_ip_whois": {
+    "source": "https://dash.readme.com/api/v1/api-registry/8jym43um90abqfc",
+    "body": {
+      "endpoint": "/v1/ips/1.1.1.1/whois",
+      "record": {
+        "contact_email": "abuse@apnic.net",
+        "contacts": [
+          {
+            "city": "South Brisbane, QLD 4101",
+            "country": "AUSTRALIA",
+            "country_code": "AU",
+            "email": "helpdesk@apnic.net,research@apnic.net",
+            "fax": "6173858319961738583199",
+            "organization": "APNIC Research and Development",
+            "postal_code": "PO Box 3646",
+            "street1": "6 Cordelia St",
+            "telephone": "6173858310061738583188",
+            "type": "registrant"
+          }
+        ],
+        "ip": "1.1.1.1",
+        "source": "ORG-ARAD1-AP"
+      }
+    }
+  },
+  "get_ip_useragents": {
+    "source": "https://docs.securitytrails.com/reference/get-useragents-for-ip-old-1.md",
+    "body": {
+      "endpoint": "/v1/ips/192.0.2.1/useragents",
+      "meta": {
+        "max_page": 1,
+        "page": 1,
+        "query": "192.0.2.1",
+        "total_pages": 1
+      },
+      "record_count": 6,
+      "records": [
+        {
+          "client": {
+            "engine": "n/a",
+            "engine_version": "n/a",
+            "name": "Facebook",
+            "type": "mobile app",
+            "version": "254.0.0.37.125"
+          },
+          "device": {
+            "brand": "Samsung",
+            "model": "GALAXY J7",
+            "type": "smartphone"
+          },
+          "lastseen": 1580428800,
+          "os": {
+            "name": "Android",
+            "platform": "n/a",
+            "version": "5.1.1"
+          },
+          "user_agent": "Mozilla/5.0 (Linux; Android 5.1.1; SM-J700F Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/79.0.3945.136 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/254.0.0.37.125;]"
+        },
+        {
+          "client": {
+            "engine": "Blink",
+            "engine_version": "n/a",
+            "name": "Chrome",
+            "type": "browser",
+            "version": "79.0.3945.117"
+          },
+          "device": {
+            "brand": "n/a",
+            "model": "n/a",
+            "type": "desktop"
+          },
+          "lastseen": 1580947200,
+          "os": {
+            "name": "GNU/Linux",
+            "platform": "x64",
+            "version": "n/a"
+          },
+          "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36"
+        }
+      ]
+    }
+  }
+}
