@@ -1,0 +1,1670 @@
+{
+  "$defs": {
+    "WodifyAddClientTags": {
+      "properties": {
+        "client_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Client",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "tags": {
+          "description": "Tag names as a JSON array, as required by the Wodify request schema.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "operation": {
+          "const": "add_client_tags",
+          "default": "add_client_tags",
+          "title": "Add Client Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id",
+        "tags"
+      ],
+      "title": "WodifyAddClientTags",
+      "type": "object"
+    },
+    "WodifyAddLeadTags": {
+      "properties": {
+        "lead_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "tags": {
+          "description": "Tag names as a JSON array, as required by the Wodify request schema.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "operation": {
+          "const": "add_lead_tags",
+          "default": "add_lead_tags",
+          "title": "Add Lead Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id",
+        "tags"
+      ],
+      "title": "WodifyAddLeadTags",
+      "type": "object"
+    },
+    "WodifyCoreApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "wodify_core_api_key",
+          "default": "wodify_core_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Wodify Core API Key",
+      "type": "object",
+      "x-credential-instructions": "In Wodify, open Automations \u2192 Integrations and request an API key. Paste the key here. NoClick sends it to api.wodify.com as x-api-key.",
+      "x-credential-url": "https://docs.wodify.com/reference/get_clients"
+    },
+    "WodifyCreateClient": {
+      "properties": {
+        "first_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "date_of_birth": {
+          "format": "date",
+          "title": "Date Of Birth",
+          "type": "string"
+        },
+        "gender_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Gender Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "gender_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_id",
+            "searchable": false
+          }
+        },
+        "lead_source_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_source_id",
+            "searchable": false
+          }
+        },
+        "client_status_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Status Id"
+        },
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create Client",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "date_of_birth",
+        "gender_id"
+      ],
+      "title": "WodifyCreateClient",
+      "type": "object"
+    },
+    "WodifyCreateLead": {
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        },
+        "gender_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gender Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "gender_id",
+            "searchable": false
+          }
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "location_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "lead_source_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_source_id",
+            "searchable": false
+          }
+        },
+        "lead_status_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Status Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_status_id",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Create Lead",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "WodifyCreateLead",
+      "type": "object"
+    },
+    "WodifyGetClass": {
+      "properties": {
+        "class_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Class",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "class_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_class",
+          "default": "get_class",
+          "title": "Get Class",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "class_id"
+      ],
+      "title": "WodifyGetClass",
+      "type": "object"
+    },
+    "WodifyGetClient": {
+      "properties": {
+        "client_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Client",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Client",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "WodifyGetClient",
+      "type": "object"
+    },
+    "WodifyGetLead": {
+      "properties": {
+        "lead_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "WodifyGetLead",
+      "type": "object"
+    },
+    "WodifyGetMembership": {
+      "properties": {
+        "membership_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Membership",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "membership_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_membership",
+          "default": "get_membership",
+          "title": "Get Membership",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "membership_id"
+      ],
+      "title": "WodifyGetMembership",
+      "type": "object"
+    },
+    "WodifyListClasses": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_classes",
+          "default": "list_classes",
+          "title": "List Classes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListClasses",
+      "type": "object"
+    },
+    "WodifyListClientReservations": {
+      "properties": {
+        "client_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Client",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_client_reservations",
+          "default": "list_client_reservations",
+          "title": "List Client Reservations",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "WodifyListClientReservations",
+      "type": "object"
+    },
+    "WodifyListClientSignIns": {
+      "properties": {
+        "client_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Client",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_client_sign_ins",
+          "default": "list_client_sign_ins",
+          "title": "List Client Sign Ins",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "WodifyListClientSignIns",
+      "type": "object"
+    },
+    "WodifyListClients": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List Clients",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListClients",
+      "type": "object"
+    },
+    "WodifyListGenders": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_genders",
+          "default": "list_genders",
+          "title": "List Genders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListGenders",
+      "type": "object"
+    },
+    "WodifyListLeadSources": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_lead_sources",
+          "default": "list_lead_sources",
+          "title": "List Lead Sources",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListLeadSources",
+      "type": "object"
+    },
+    "WodifyListLeadStatuses": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_lead_statuses",
+          "default": "list_lead_statuses",
+          "title": "List Lead Statuses",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListLeadStatuses",
+      "type": "object"
+    },
+    "WodifyListLeads": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListLeads",
+      "type": "object"
+    },
+    "WodifyListLocations": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "List Locations",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListLocations",
+      "type": "object"
+    },
+    "WodifyListMemberships": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "List Memberships",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListMemberships",
+      "type": "object"
+    },
+    "WodifyListPrograms": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_programs",
+          "default": "list_programs",
+          "title": "List Programs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "WodifyListPrograms",
+      "type": "object"
+    },
+    "WodifyRemoveClientTags": {
+      "properties": {
+        "client_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Client",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "tags": {
+          "description": "Tag names as a JSON array, as required by the Wodify request schema.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "operation": {
+          "const": "remove_client_tags",
+          "default": "remove_client_tags",
+          "title": "Remove Client Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id",
+        "tags"
+      ],
+      "title": "WodifyRemoveClientTags",
+      "type": "object"
+    },
+    "WodifyRemoveLeadTags": {
+      "properties": {
+        "lead_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "tags": {
+          "description": "Tag names as a JSON array, as required by the Wodify request schema.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "operation": {
+          "const": "remove_lead_tags",
+          "default": "remove_lead_tags",
+          "title": "Remove Lead Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id",
+        "tags"
+      ],
+      "title": "WodifyRemoveLeadTags",
+      "type": "object"
+    },
+    "WodifySearchClients": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "q": {
+          "description": "Search value sent as the endpoint's documented q parameter.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Search Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_clients",
+          "default": "search_clients",
+          "title": "Search Clients",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "WodifySearchClients",
+      "type": "object"
+    },
+    "WodifySearchLeads": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution returns one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wodify sort expression, for example desc_updated_on.",
+          "title": "Sort"
+        },
+        "q": {
+          "description": "Search value sent as the endpoint's documented q parameter.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Search Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_leads",
+          "default": "search_leads",
+          "title": "Search Leads",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "WodifySearchLeads",
+      "type": "object"
+    },
+    "WodifyUpdateClient": {
+      "properties": {
+        "client_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Client",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        },
+        "gender_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gender Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "gender_id",
+            "searchable": false
+          }
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_id",
+            "searchable": false
+          }
+        },
+        "lead_source_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_source_id",
+            "searchable": false
+          }
+        },
+        "client_status_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Status Id"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Update Client",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "WodifyUpdateClient",
+      "type": "object"
+    },
+    "WodifyUpdateLead": {
+      "properties": {
+        "lead_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        },
+        "gender_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gender Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "gender_id",
+            "searchable": false
+          }
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_id",
+            "searchable": false
+          }
+        },
+        "lead_source_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_source_id",
+            "searchable": false
+          }
+        },
+        "lead_status_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Status Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_status_id",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update Lead",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "WodifyUpdateLead",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_client_tags": "#/$defs/WodifyAddClientTags",
+          "add_lead_tags": "#/$defs/WodifyAddLeadTags",
+          "create_client": "#/$defs/WodifyCreateClient",
+          "create_lead": "#/$defs/WodifyCreateLead",
+          "get_class": "#/$defs/WodifyGetClass",
+          "get_client": "#/$defs/WodifyGetClient",
+          "get_lead": "#/$defs/WodifyGetLead",
+          "get_membership": "#/$defs/WodifyGetMembership",
+          "list_classes": "#/$defs/WodifyListClasses",
+          "list_client_reservations": "#/$defs/WodifyListClientReservations",
+          "list_client_sign_ins": "#/$defs/WodifyListClientSignIns",
+          "list_clients": "#/$defs/WodifyListClients",
+          "list_genders": "#/$defs/WodifyListGenders",
+          "list_lead_sources": "#/$defs/WodifyListLeadSources",
+          "list_lead_statuses": "#/$defs/WodifyListLeadStatuses",
+          "list_leads": "#/$defs/WodifyListLeads",
+          "list_locations": "#/$defs/WodifyListLocations",
+          "list_memberships": "#/$defs/WodifyListMemberships",
+          "list_programs": "#/$defs/WodifyListPrograms",
+          "remove_client_tags": "#/$defs/WodifyRemoveClientTags",
+          "remove_lead_tags": "#/$defs/WodifyRemoveLeadTags",
+          "search_clients": "#/$defs/WodifySearchClients",
+          "search_leads": "#/$defs/WodifySearchLeads",
+          "update_client": "#/$defs/WodifyUpdateClient",
+          "update_lead": "#/$defs/WodifyUpdateLead"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WodifyListClients"
+        },
+        {
+          "$ref": "#/$defs/WodifySearchClients"
+        },
+        {
+          "$ref": "#/$defs/WodifyGetClient"
+        },
+        {
+          "$ref": "#/$defs/WodifyCreateClient"
+        },
+        {
+          "$ref": "#/$defs/WodifyUpdateClient"
+        },
+        {
+          "$ref": "#/$defs/WodifyAddClientTags"
+        },
+        {
+          "$ref": "#/$defs/WodifyRemoveClientTags"
+        },
+        {
+          "$ref": "#/$defs/WodifyListLeads"
+        },
+        {
+          "$ref": "#/$defs/WodifySearchLeads"
+        },
+        {
+          "$ref": "#/$defs/WodifyGetLead"
+        },
+        {
+          "$ref": "#/$defs/WodifyCreateLead"
+        },
+        {
+          "$ref": "#/$defs/WodifyUpdateLead"
+        },
+        {
+          "$ref": "#/$defs/WodifyAddLeadTags"
+        },
+        {
+          "$ref": "#/$defs/WodifyRemoveLeadTags"
+        },
+        {
+          "$ref": "#/$defs/WodifyListClasses"
+        },
+        {
+          "$ref": "#/$defs/WodifyGetClass"
+        },
+        {
+          "$ref": "#/$defs/WodifyListMemberships"
+        },
+        {
+          "$ref": "#/$defs/WodifyGetMembership"
+        },
+        {
+          "$ref": "#/$defs/WodifyListClientReservations"
+        },
+        {
+          "$ref": "#/$defs/WodifyListClientSignIns"
+        },
+        {
+          "$ref": "#/$defs/WodifyListPrograms"
+        },
+        {
+          "$ref": "#/$defs/WodifyListLeadSources"
+        },
+        {
+          "$ref": "#/$defs/WodifyListLeadStatuses"
+        },
+        {
+          "$ref": "#/$defs/WodifyListLocations"
+        },
+        {
+          "$ref": "#/$defs/WodifyListGenders"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WodifyCoreApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wodify-core Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
