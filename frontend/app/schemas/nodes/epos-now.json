@@ -1,0 +1,1696 @@
+{
+  "$defs": {
+    "EposNowAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "epos_now_api_key",
+          "default": "epos_now_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Epos Now API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Epos Now Back Office, open App Store \u2192 API Device and copy its access key. Paste the key only, without Basic. NoClick sends Authorization: Basic followed by that key, without encoding it again. Keys are location specific; choose the API device for the location you want to automate.",
+      "x-credential-url": "https://developer.eposnowhq.com/Docs/Api"
+    },
+    "EposNowCreateCategoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_category",
+          "default": "create_category",
+          "title": "Create Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Create Category",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Category name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent category ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "EposNowCreateCategoryConfig",
+      "type": "object"
+    },
+    "EposNowCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Create Customer",
+          "x-is-trigger": false
+        },
+        "forename": {
+          "description": "",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Last name"
+        },
+        "businessName": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Business name"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email address"
+        },
+        "contactNumber": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "pattern": "^[\\+]?[0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone number"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Notes"
+        },
+        "referenceCode": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Reference code"
+        }
+      },
+      "required": [
+        "forename"
+      ],
+      "title": "EposNowCreateCustomerConfig",
+      "type": "object"
+    },
+    "EposNowCreateProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Create Product",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Product name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        },
+        "costPrice": {
+          "title": "Cost price",
+          "type": "number"
+        },
+        "salePrice": {
+          "title": "Sale price",
+          "type": "number"
+        },
+        "eatOutPrice": {
+          "title": "Eat out price",
+          "type": "number"
+        },
+        "categoryId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category ID"
+        },
+        "barcode": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Barcode"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "maxLength": 34,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "SKU"
+        },
+        "brandId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand ID"
+        },
+        "supplierId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "sellOnWeb": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sell on web"
+        },
+        "sellOnTill": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sell on till"
+        },
+        "isCostPriceIncTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost price includes tax"
+        },
+        "isSalePriceIncTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sale price includes tax"
+        },
+        "isEatOutPriceIncTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eat out price includes tax"
+        }
+      },
+      "required": [
+        "name",
+        "costPrice",
+        "salePrice",
+        "eatOutPrice"
+      ],
+      "title": "EposNowCreateProductConfig",
+      "type": "object"
+    },
+    "EposNowFindCustomersByEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_customers_by_email",
+          "default": "find_customers_by_email",
+          "title": "Find Customers By Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Find Customers By Email",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "EposNowFindCustomersByEmailConfig",
+      "type": "object"
+    },
+    "EposNowGetCategoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Get Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Get Category",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Category ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EposNowGetCategoryConfig",
+      "type": "object"
+    },
+    "EposNowGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Get Customer",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EposNowGetCustomerConfig",
+      "type": "object"
+    },
+    "EposNowGetLocationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Get Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Locations",
+          "x-display-name": "Get Location",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Location ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EposNowGetLocationConfig",
+      "type": "object"
+    },
+    "EposNowGetProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Get Product",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EposNowGetProductConfig",
+      "type": "object"
+    },
+    "EposNowGetProductStockConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product_stock",
+          "default": "get_product_stock",
+          "title": "Get Product Stock",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get Product Stock",
+          "x-is-trigger": false
+        },
+        "productId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        },
+        "locationId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Location ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "productId",
+        "locationId"
+      ],
+      "title": "EposNowGetProductStockConfig",
+      "type": "object"
+    },
+    "EposNowGetTransactionByReferenceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_transaction_by_reference",
+          "default": "get_transaction_by_reference",
+          "title": "Get Transaction By Reference",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sales",
+          "x-display-name": "Get Transaction By Reference",
+          "x-is-trigger": false
+        },
+        "referenceCode": {
+          "description": "",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Reference code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "referenceCode"
+      ],
+      "title": "EposNowGetTransactionByReferenceConfig",
+      "type": "object"
+    },
+    "EposNowListCategoriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "List Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "List Categories",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "EposNowListCategoriesConfig",
+      "type": "object"
+    },
+    "EposNowListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Customers",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "EposNowListCustomersConfig",
+      "type": "object"
+    },
+    "EposNowListEndOfDaysConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_end_of_days",
+          "default": "list_end_of_days",
+          "title": "List End Of Days",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sales",
+          "x-display-name": "List End Of Days",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "EposNowListEndOfDaysConfig",
+      "type": "object"
+    },
+    "EposNowListLocationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "List Locations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Locations",
+          "x-display-name": "List Locations",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "EposNowListLocationsConfig",
+      "type": "object"
+    },
+    "EposNowListProductStockConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_product_stock",
+          "default": "list_product_stock",
+          "title": "List Product Stock",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "List Product Stock",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "EposNowListProductStockConfig",
+      "type": "object"
+    },
+    "EposNowListProductsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "List Products",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "EposNowListProductsConfig",
+      "type": "object"
+    },
+    "EposNowListTransactionsByDateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_transactions_by_date",
+          "default": "list_transactions_by_date",
+          "title": "List Transactions By Date",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sales",
+          "x-display-name": "List Transactions By Date",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "format": "date-time",
+          "title": "Start date",
+          "type": "string"
+        },
+        "end_date": {
+          "format": "date-time",
+          "title": "End date",
+          "type": "string"
+        },
+        "device_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                7,
+                8
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 completed, 7 held, 8 ordered",
+          "title": "Transaction status"
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "EposNowListTransactionsByDateConfig",
+      "type": "object"
+    },
+    "EposNowListTransactionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sales",
+          "x-display-name": "List Transactions",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One provider page. Advance the returned next_page until an empty page; no total is supplied.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                7,
+                8
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 completed, 7 held, 8 ordered",
+          "title": "Transaction status"
+        }
+      },
+      "title": "EposNowListTransactionsConfig",
+      "type": "object"
+    },
+    "EposNowOnNewTransactionConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_transaction",
+          "default": "on_new_transaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Transaction",
+          "x-is-trigger": true
+        },
+        "lookback_hours": {
+          "default": 24,
+          "description": "Poll transactions dated within this rolling window. The first poll baselines existing IDs; later polls emit previously unseen IDs. Transactions backdated beyond this window are not detected.",
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Lookback Hours",
+          "type": "integer"
+        },
+        "device_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                7,
+                8
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 completed, 7 held, 8 ordered",
+          "title": "Transaction status"
+        }
+      },
+      "title": "EposNowOnNewTransactionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "EposNowUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Full replacement: Epos Now resets omitted optional properties to their defaults. Supply all values you want to retain.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Update Customer",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "forename": {
+          "description": "",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Last name"
+        },
+        "businessName": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Business name"
+        },
+        "emailAddress": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email address"
+        },
+        "contactNumber": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "pattern": "^[\\+]?[0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone number"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id",
+        "forename"
+      ],
+      "title": "EposNowUpdateCustomerConfig",
+      "type": "object"
+    },
+    "EposNowUpdateProductConfig": {
+      "additionalProperties": false,
+      "description": "Full replacement: Epos Now resets omitted optional properties to their defaults. Supply all values you want to retain.",
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Update Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Products",
+          "x-display-name": "Update Product",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Product ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Product name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        },
+        "costPrice": {
+          "title": "Cost price",
+          "type": "number"
+        },
+        "salePrice": {
+          "title": "Sale price",
+          "type": "number"
+        },
+        "eatOutPrice": {
+          "title": "Eat out price",
+          "type": "number"
+        },
+        "categoryId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category ID"
+        },
+        "barcode": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Barcode"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "maxLength": 34,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "SKU"
+        },
+        "brandId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand ID"
+        },
+        "supplierId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier ID"
+        },
+        "sellOnWeb": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sell on web"
+        },
+        "sellOnTill": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sell on till"
+        },
+        "isCostPriceIncTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost price includes tax"
+        },
+        "isSalePriceIncTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sale price includes tax"
+        },
+        "isEatOutPriceIncTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eat out price includes tax"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "costPrice",
+        "salePrice",
+        "eatOutPrice"
+      ],
+      "title": "EposNowUpdateProductConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_category": "#/$defs/EposNowCreateCategoryConfig",
+          "create_customer": "#/$defs/EposNowCreateCustomerConfig",
+          "create_product": "#/$defs/EposNowCreateProductConfig",
+          "find_customers_by_email": "#/$defs/EposNowFindCustomersByEmailConfig",
+          "get_category": "#/$defs/EposNowGetCategoryConfig",
+          "get_customer": "#/$defs/EposNowGetCustomerConfig",
+          "get_location": "#/$defs/EposNowGetLocationConfig",
+          "get_product": "#/$defs/EposNowGetProductConfig",
+          "get_product_stock": "#/$defs/EposNowGetProductStockConfig",
+          "get_transaction_by_reference": "#/$defs/EposNowGetTransactionByReferenceConfig",
+          "list_categories": "#/$defs/EposNowListCategoriesConfig",
+          "list_customers": "#/$defs/EposNowListCustomersConfig",
+          "list_end_of_days": "#/$defs/EposNowListEndOfDaysConfig",
+          "list_locations": "#/$defs/EposNowListLocationsConfig",
+          "list_product_stock": "#/$defs/EposNowListProductStockConfig",
+          "list_products": "#/$defs/EposNowListProductsConfig",
+          "list_transactions": "#/$defs/EposNowListTransactionsConfig",
+          "list_transactions_by_date": "#/$defs/EposNowListTransactionsByDateConfig",
+          "on_new_transaction": "#/$defs/EposNowOnNewTransactionConfig",
+          "update_customer": "#/$defs/EposNowUpdateCustomerConfig",
+          "update_product": "#/$defs/EposNowUpdateProductConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/EposNowListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowFindCustomersByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowUpdateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowCreateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListProductStockConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowGetProductStockConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListTransactionsByDateConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowGetTransactionByReferenceConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowListEndOfDaysConfig"
+        },
+        {
+          "$ref": "#/$defs/EposNowOnNewTransactionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EposNowAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Epos-now Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a customer in Epos Now",
+    "Look up stock for this product and location",
+    "Run when a new transaction appears"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
