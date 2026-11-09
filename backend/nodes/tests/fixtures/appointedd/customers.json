@@ -1,0 +1,38 @@
+{
+  "links": {
+    "self": "https://json-api.appointedd.com/v2/bookings",
+    "next": null,
+    "prev": null
+  },
+  "data": [
+    {
+      "type": "Customer",
+      "id": "0123456789abcdef01234567",
+      "attributes": {
+        "created": "2026-05-01T10:00:00Z",
+        "firstname": "Ada",
+        "lastname": "Lovelace",
+        "updated": null,
+        "email": "ada@example.test"
+      },
+      "relationships": {
+        "account": {
+          "links": {
+            "related": null
+          },
+          "data": null,
+          "meta": {}
+        },
+        "bookings": {
+          "data": [],
+          "meta": {
+            "total": 0
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total": 1
+  }
+}
