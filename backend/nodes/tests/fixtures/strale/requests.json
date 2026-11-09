@@ -1,0 +1,240 @@
+{
+  "execute_capability": {
+    "method": "POST",
+    "path": "/v1/do",
+    "config": {
+      "operation": "execute_capability",
+      "capability_slug": "iban-validate",
+      "inputs": {
+        "iban": "DE89370400440532013000"
+      },
+      "max_price_cents": 5
+    },
+    "body": {
+      "capability_slug": "iban-validate",
+      "inputs": {
+        "iban": "DE89370400440532013000"
+      },
+      "max_price_cents": 5,
+      "timeout_seconds": 30,
+      "dry_run": false
+    }
+  },
+  "execute_batch": {
+    "method": "POST",
+    "path": "/v1/do/batch",
+    "config": {
+      "operation": "execute_batch",
+      "capability_slug": "vat-validate",
+      "inputs": [
+        {
+          "vat_number": "SE556703748501"
+        },
+        {
+          "vat_number": "DE811569869"
+        }
+      ],
+      "max_total_price_cents": 100
+    },
+    "body": {
+      "capability_slug": "vat-validate",
+      "inputs": [
+        {
+          "vat_number": "SE556703748501"
+        },
+        {
+          "vat_number": "DE811569869"
+        }
+      ],
+      "max_total_price_cents": 100,
+      "timeout_seconds": 30,
+      "dry_run": false
+    }
+  },
+  "execute_solution": {
+    "method": "POST",
+    "path": "/v1/solutions/kyb-essentials-se/execute",
+    "config": {
+      "operation": "execute_solution",
+      "slug": "kyb-essentials-se",
+      "inputs": {
+        "company": "Example"
+      },
+      "max_price_cents": 100
+    },
+    "body": {
+      "inputs": {
+        "company": "Example"
+      },
+      "max_price_cents": 100
+    }
+  },
+  "list_capabilities": {
+    "method": "GET",
+    "path": "/v1/capabilities",
+    "config": {
+      "operation": "list_capabilities"
+    }
+  },
+  "get_capability": {
+    "method": "GET",
+    "path": "/v1/capabilities/iban-validate",
+    "config": {
+      "operation": "get_capability",
+      "slug": "iban-validate"
+    }
+  },
+  "list_solutions": {
+    "method": "GET",
+    "path": "/v1/solutions",
+    "config": {
+      "operation": "list_solutions",
+      "category": "compliance"
+    }
+  },
+  "get_solution": {
+    "method": "GET",
+    "path": "/v1/solutions/kyb-essentials-se",
+    "config": {
+      "operation": "get_solution",
+      "slug": "kyb-essentials-se"
+    }
+  },
+  "get_wallet_balance": {
+    "method": "GET",
+    "path": "/v1/wallet/balance",
+    "config": {
+      "operation": "get_wallet_balance"
+    }
+  },
+  "list_wallet_transactions": {
+    "method": "GET",
+    "path": "/v1/wallet/transactions",
+    "config": {
+      "operation": "list_wallet_transactions"
+    }
+  },
+  "list_transactions": {
+    "method": "GET",
+    "path": "/v1/transactions",
+    "config": {
+      "operation": "list_transactions"
+    }
+  },
+  "get_transaction": {
+    "method": "GET",
+    "path": "/v1/transactions/123e4567-e89b-12d3-a456-426614174000",
+    "config": {
+      "operation": "get_transaction",
+      "id": "123e4567-e89b-12d3-a456-426614174000"
+    }
+  },
+  "get_dispute": {
+    "method": "GET",
+    "path": "/v1/transactions/123e4567-e89b-12d3-a456-426614174000/dispute",
+    "config": {
+      "operation": "get_dispute",
+      "id": "123e4567-e89b-12d3-a456-426614174000"
+    }
+  },
+  "create_dispute": {
+    "method": "POST",
+    "path": "/v1/transactions/123e4567-e89b-12d3-a456-426614174000/dispute",
+    "config": {
+      "operation": "create_dispute",
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "reason": "Incorrect result",
+      "affected_field": "company_name"
+    },
+    "body": {
+      "reason": "Incorrect result",
+      "affected_field": "company_name"
+    }
+  },
+  "create_audit_token": {
+    "method": "POST",
+    "path": "/v1/transactions/123e4567-e89b-12d3-a456-426614174000/audit-token",
+    "config": {
+      "operation": "create_audit_token",
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "expires_in_days": 30
+    },
+    "body": {
+      "expires_in_days": 30
+    }
+  },
+  "delete_transaction": {
+    "method": "DELETE",
+    "path": "/v1/transactions/123e4567-e89b-12d3-a456-426614174000",
+    "config": {
+      "operation": "delete_transaction",
+      "id": "123e4567-e89b-12d3-a456-426614174000"
+    }
+  },
+  "list_api_keys": {
+    "method": "GET",
+    "path": "/v1/api-keys",
+    "config": {
+      "operation": "list_api_keys"
+    }
+  },
+  "create_api_key": {
+    "method": "POST",
+    "path": "/v1/api-keys",
+    "config": {
+      "operation": "create_api_key",
+      "label": "Automation",
+      "max_spend_per_hour_cents": 0
+    },
+    "body": {
+      "label": "Automation",
+      "max_spend_per_hour_cents": 0
+    }
+  },
+  "update_api_key": {
+    "method": "PATCH",
+    "path": "/v1/api-keys/123e4567-e89b-12d3-a456-426614174000",
+    "config": {
+      "operation": "update_api_key",
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "max_spend_total_cents": null,
+      "max_spend_per_hour_cents": 0
+    },
+    "body": {
+      "max_spend_total_cents": null,
+      "max_spend_per_hour_cents": 0
+    }
+  },
+  "revoke_api_key": {
+    "method": "DELETE",
+    "path": "/v1/api-keys/123e4567-e89b-12d3-a456-426614174000",
+    "config": {
+      "operation": "revoke_api_key",
+      "id": "123e4567-e89b-12d3-a456-426614174000"
+    }
+  },
+  "suggest_capabilities": {
+    "method": "POST",
+    "path": "/v1/suggest",
+    "config": {
+      "operation": "suggest_capabilities",
+      "query": "validate a Swedish company's VAT number",
+      "limit": 3
+    },
+    "body": {
+      "query": "validate a Swedish company's VAT number",
+      "limit": 3
+    }
+  },
+  "search_catalogue": {
+    "method": "GET",
+    "path": "/v1/suggest/typeahead",
+    "config": {
+      "operation": "search_catalogue",
+      "q": "company",
+      "geo": "SE",
+      "type": "capability",
+      "limit": 6
+    }
+  }
+}
