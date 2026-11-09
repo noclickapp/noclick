@@ -1,0 +1,11 @@
+{
+  "processed": [
+    {
+      "RowKey": "contact-1",
+      "FirstName": "Ada",
+      "LastName": "Lovelace",
+      "PhoneNumber": "+14155552671"
+    }
+  ],
+  "invalid": []
+}
