@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "id": 1337,
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "jdoe@gmail.com",
+      "phone": "5555555555",
+      "lifetime_value": 95025,
+      "updated_at": "2020-03-04 00:18:35",
+      "created_at": "2020-03-04 00:18:35"
+    }
+  ],
+  "pagination": {
+    "next": null,
+    "prev": null
+  }
+}
