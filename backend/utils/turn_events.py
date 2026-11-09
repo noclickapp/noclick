@@ -25,7 +25,10 @@ started: the run meets those limits from there.
 ``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
 for one someone waits on: its first words come sooner. ``TURN_EMPTY_ANSWER_KEY``
 is what a turn whose model answered with nothing (no words, no call) is told,
-once, to run on rather than end there."""
+once, to run on rather than end there. ``TURN_COMMAND_KEY`` makes the turn one of
+its harness's own commands (``{name, arguments}``) rather than a message: it's
+delivered as that command alone, with none of what a message carries composed in,
+and kept on its persisted message as ``command``."""
 
 from __future__ import annotations
 
@@ -47,6 +50,7 @@ TURN_LIMITS_KEY = "_turnLimits"
 TURN_SO_FAR_KEY = "_turnSoFar"
 TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 TURN_EMPTY_ANSWER_KEY = "_turnEmptyAnswer"
+TURN_COMMAND_KEY = "_turnCommand"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
 
@@ -99,6 +103,15 @@ def turn_first_effort_of(node_config: Any) -> Optional[str]:
 def turn_empty_answer_of(node_config: Any) -> Optional[str]:
     """What the turn is told when its model answers with nothing, when a platform set it."""
     return _text(node_config, TURN_EMPTY_ANSWER_KEY)
+
+
+def turn_command_of(node_config: Any) -> Optional[Dict[str, str]]:
+    """The harness command a turn runs (``{name, arguments}``), when a platform made the turn one."""
+    value = node_config.get(TURN_COMMAND_KEY) if isinstance(node_config, dict) else None
+    if not isinstance(value, dict) or not isinstance(value.get("name"), str) or not value["name"]:
+        return None
+    arguments = value.get("arguments")
+    return {"name": value["name"], "arguments": arguments if isinstance(arguments, str) else ""}
 
 
 def turn_trigger_of(node_config: Any) -> Optional[Dict[str, Any]]:
