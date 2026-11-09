@@ -1,0 +1,458 @@
+{
+  "list_accounts": {
+    "config": {},
+    "method": "GET",
+    "path": "/accounts",
+    "status": 200,
+    "response": {
+      "accounts": [],
+      "page": {}
+    }
+  },
+  "get_account": {
+    "config": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/account/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "accountNumber": "Fixture",
+      "availableBalance": 1,
+      "canSendRealTimePayments": false,
+      "createdAt": "Fixture",
+      "currentBalance": 1,
+      "dashboardLink": "Fixture",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "kind": "Fixture",
+      "legalBusinessName": "Fixture",
+      "name": "Fixture",
+      "routingNumber": "Fixture",
+      "status": "active",
+      "type": "mercury"
+    }
+  },
+  "list_transactions": {
+    "config": {},
+    "method": "GET",
+    "path": "/transactions",
+    "status": 200,
+    "response": {
+      "page": {},
+      "transactions": []
+    }
+  },
+  "list_account_transactions": {
+    "config": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/account/4d153fec-30ce-4460-a1ac-89beb8caba1e/transactions",
+    "status": 200,
+    "response": {
+      "total": 1,
+      "transactions": []
+    }
+  },
+  "get_transaction": {
+    "config": {
+      "transactionId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/transaction/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "amount": 1,
+      "attachments": [],
+      "compliantWithReceiptPolicy": false,
+      "counterpartyId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "counterpartyName": "Fixture",
+      "createdAt": "Fixture",
+      "dashboardLink": "Fixture",
+      "estimatedDeliveryDate": "Fixture",
+      "glAllocations": [],
+      "hasGeneratedReceipt": false,
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "kind": "externalTransfer",
+      "relatedTransactions": [],
+      "status": "pending"
+    }
+  },
+  "update_transaction": {
+    "config": {
+      "transactionId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "PATCH",
+    "path": "/transaction/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "amount": 1,
+      "attachments": [],
+      "compliantWithReceiptPolicy": false,
+      "counterpartyId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "counterpartyName": "Fixture",
+      "createdAt": "Fixture",
+      "dashboardLink": "Fixture",
+      "estimatedDeliveryDate": "Fixture",
+      "glAllocations": [],
+      "hasGeneratedReceipt": false,
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "kind": "externalTransfer",
+      "relatedTransactions": [],
+      "status": "pending"
+    }
+  },
+  "list_recipients": {
+    "config": {},
+    "method": "GET",
+    "path": "/recipients",
+    "status": 200,
+    "response": {
+      "page": {},
+      "recipients": [],
+      "total": 1
+    }
+  },
+  "get_recipient": {
+    "config": {
+      "recipientId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/recipient/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "attachments": [],
+      "defaultPaymentMethod": "ach",
+      "emails": [],
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "name": "Fixture",
+      "status": "active"
+    }
+  },
+  "create_recipient": {
+    "config": {
+      "emails": [],
+      "name": "Fixture"
+    },
+    "method": "POST",
+    "path": "/recipients",
+    "status": 200,
+    "response": {
+      "attachments": [],
+      "defaultPaymentMethod": "ach",
+      "emails": [],
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "name": "Fixture",
+      "status": "active"
+    }
+  },
+  "update_recipient": {
+    "config": {
+      "recipientId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "POST",
+    "path": "/recipient/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "attachments": [],
+      "defaultPaymentMethod": "ach",
+      "emails": [],
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "name": "Fixture",
+      "status": "active"
+    }
+  },
+  "delete_recipient": {
+    "config": {
+      "recipientId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "DELETE",
+    "path": "/recipient/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 204,
+    "response": null
+  },
+  "send_money": {
+    "config": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "amount": 1,
+      "idempotencyKey": "fixture-idempotency-key",
+      "paymentMethod": "ach",
+      "recipientId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "POST",
+    "path": "/account/4d153fec-30ce-4460-a1ac-89beb8caba1e/transactions",
+    "status": 200,
+    "response": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "amount": 1,
+      "attachments": [],
+      "compliantWithReceiptPolicy": false,
+      "counterpartyId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "counterpartyName": "Fixture",
+      "createdAt": "Fixture",
+      "dashboardLink": "Fixture",
+      "estimatedDeliveryDate": "Fixture",
+      "glAllocations": [],
+      "hasGeneratedReceipt": false,
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "kind": "externalTransfer",
+      "relatedTransactions": [],
+      "status": "pending"
+    }
+  },
+  "create_transfer": {
+    "config": {
+      "amount": 1,
+      "destinationAccountId": "d1dd44d7-23bb-4ac9-8104-3e0e05e15b3e",
+      "idempotencyKey": "fixture-idempotency-key",
+      "sourceAccountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "POST",
+    "path": "/transfer",
+    "status": 200,
+    "response": {
+      "creditTransaction": {
+        "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "amount": 1,
+        "attachments": [],
+        "compliantWithReceiptPolicy": false,
+        "counterpartyId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "counterpartyName": "Fixture",
+        "createdAt": "Fixture",
+        "dashboardLink": "Fixture",
+        "estimatedDeliveryDate": "Fixture",
+        "glAllocations": [],
+        "hasGeneratedReceipt": false,
+        "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "kind": "externalTransfer",
+        "relatedTransactions": [],
+        "status": "pending"
+      },
+      "debitTransaction": {
+        "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "amount": 1,
+        "attachments": [],
+        "compliantWithReceiptPolicy": false,
+        "counterpartyId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "counterpartyName": "Fixture",
+        "createdAt": "Fixture",
+        "dashboardLink": "Fixture",
+        "estimatedDeliveryDate": "Fixture",
+        "glAllocations": [],
+        "hasGeneratedReceipt": false,
+        "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "kind": "externalTransfer",
+        "relatedTransactions": [],
+        "status": "pending"
+      }
+    }
+  },
+  "list_customers": {
+    "config": {},
+    "method": "GET",
+    "path": "/ar/customers",
+    "status": 200,
+    "response": {
+      "customers": [],
+      "page": {}
+    }
+  },
+  "get_customer": {
+    "config": {
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/ar/customers/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "email": "finance@example.com",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "name": "Fixture"
+    }
+  },
+  "create_customer": {
+    "config": {
+      "email": "finance@example.com",
+      "name": "Fixture"
+    },
+    "method": "POST",
+    "path": "/ar/customers",
+    "status": 200,
+    "response": {
+      "email": "finance@example.com",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "name": "Fixture"
+    }
+  },
+  "update_customer": {
+    "config": {
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "email": "finance@example.com",
+      "name": "Fixture",
+      "resendOpenInvoices": false
+    },
+    "method": "POST",
+    "path": "/ar/customers/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "email": "finance@example.com",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "name": "Fixture"
+    }
+  },
+  "delete_customer": {
+    "config": {
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "DELETE",
+    "path": "/ar/customers/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": null
+  },
+  "list_invoices": {
+    "config": {},
+    "method": "GET",
+    "path": "/ar/invoices",
+    "status": 200,
+    "response": {
+      "invoices": [],
+      "page": {}
+    }
+  },
+  "get_invoice": {
+    "config": {
+      "invoiceId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/ar/invoices/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "achDebitEnabled": false,
+      "amount": 1,
+      "ccEmails": [],
+      "createdAt": "Fixture",
+      "creditCardEnabled": false,
+      "currencyCode": "Fixture",
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "destinationAccountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "dueDate": "2026-11-01",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "invoiceDate": "2026-11-01",
+      "invoiceNumber": "Fixture",
+      "lineItems": [],
+      "slug": "Fixture",
+      "status": "Unpaid",
+      "updatedAt": "Fixture",
+      "useRealAccountNumber": false
+    }
+  },
+  "create_invoice": {
+    "config": {
+      "achDebitEnabled": false,
+      "ccEmails": [],
+      "creditCardEnabled": false,
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "destinationAccountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "dueDate": "2026-11-01",
+      "invoiceDate": "2026-11-01",
+      "lineItems": [],
+      "useRealAccountNumber": false
+    },
+    "method": "POST",
+    "path": "/ar/invoices",
+    "status": 200,
+    "response": {
+      "achDebitEnabled": false,
+      "amount": 1,
+      "ccEmails": [],
+      "createdAt": "Fixture",
+      "creditCardEnabled": false,
+      "currencyCode": "Fixture",
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "destinationAccountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "dueDate": "2026-11-01",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "invoiceDate": "2026-11-01",
+      "invoiceNumber": "Fixture",
+      "lineItems": [],
+      "slug": "Fixture",
+      "status": "Unpaid",
+      "updatedAt": "Fixture",
+      "useRealAccountNumber": false
+    }
+  },
+  "update_invoice": {
+    "config": {
+      "invoiceId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "achDebitEnabled": false,
+      "ccEmails": [],
+      "creditCardEnabled": false,
+      "dueDate": "2026-11-01",
+      "invoiceDate": "2026-11-01",
+      "invoiceNumber": "Fixture",
+      "lineItems": [],
+      "useRealAccountNumber": false
+    },
+    "method": "POST",
+    "path": "/ar/invoices/4d153fec-30ce-4460-a1ac-89beb8caba1e",
+    "status": 200,
+    "response": {
+      "achDebitEnabled": false,
+      "amount": 1,
+      "ccEmails": [],
+      "createdAt": "Fixture",
+      "creditCardEnabled": false,
+      "currencyCode": "Fixture",
+      "customerId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "destinationAccountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "dueDate": "2026-11-01",
+      "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+      "invoiceDate": "2026-11-01",
+      "invoiceNumber": "Fixture",
+      "lineItems": [],
+      "slug": "Fixture",
+      "status": "Unpaid",
+      "updatedAt": "Fixture",
+      "useRealAccountNumber": false
+    }
+  },
+  "cancel_invoice": {
+    "config": {
+      "invoiceId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "POST",
+    "path": "/ar/invoices/4d153fec-30ce-4460-a1ac-89beb8caba1e/cancel",
+    "status": 200,
+    "response": null
+  },
+  "list_account_statements": {
+    "config": {
+      "accountId": "4d153fec-30ce-4460-a1ac-89beb8caba1e"
+    },
+    "method": "GET",
+    "path": "/account/4d153fec-30ce-4460-a1ac-89beb8caba1e/statements",
+    "status": 200,
+    "response": {
+      "page": {},
+      "statements": []
+    }
+  },
+  "get_organization": {
+    "config": {},
+    "method": "GET",
+    "path": "/organization",
+    "status": 200,
+    "response": {
+      "organization": {
+        "billingCadence": "monthly",
+        "dbas": [],
+        "id": "4d153fec-30ce-4460-a1ac-89beb8caba1e",
+        "kind": "personal",
+        "legalBusinessName": "Fixture",
+        "subscriptionTier": "free"
+      }
+    }
+  }
+}
