@@ -1,0 +1,71 @@
+{
+  "POST /v2/guard": {
+    "body": {
+      "flagged": true,
+      "action": "enforce",
+      "metadata": {
+        "request_uuid": "abcd5678-ab42-42e4-8d80-af44ca72e975"
+      }
+    },
+    "source": "https://docs.lakera.ai/docs/api/guard"
+  },
+  "POST /v2/guard/results": {
+    "body": {
+      "results": [
+        {
+          "project_id": "string",
+          "policy_id": "string",
+          "detector_id": "string",
+          "detector_type": "string",
+          "result": "string",
+          "custom_matched": true,
+          "message_id": 1
+        }
+      ],
+      "tools": {
+        "flagged": true,
+        "results": [
+          {
+            "project_id": "string",
+            "policy_id": "string",
+            "detector_id": "string",
+            "detector_type": "string",
+            "result": "string",
+            "custom_matched": true,
+            "tool_id": 1
+          }
+        ]
+      }
+    },
+    "source": "https://docs.lakera.ai/api-reference/lakera-api/guard-results/get-results"
+  },
+  "POST /v2/policies/health": {
+    "body": {
+      "status": "ok",
+      "is_default": true,
+      "message": "string",
+      "lint": {
+        "passed": true,
+        "errors": [
+          {
+            "message": "string",
+            "severity": "error"
+          }
+        ]
+      }
+    },
+    "source": "https://docs.lakera.ai/api-reference/lakera-api/policies-health/check-policy-health"
+  },
+  "POST /v2/policies/lint": {
+    "body": {
+      "passed": true,
+      "errors": [
+        {
+          "message": "string",
+          "severity": "error"
+        }
+      ]
+    },
+    "source": "https://docs.lakera.ai/api-reference/lakera-api/policies-linter/lint-policy"
+  }
+}
