@@ -1,0 +1,1230 @@
+{
+  "$defs": {
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateLanguage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_language",
+          "default": "create_language",
+          "title": "Create Language",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "CreateLanguage",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 16,
+          "minLength": 2,
+          "pattern": "^[A-Za-z0-9\\s_.-]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Six hexadecimal digits without #.",
+          "title": "Color"
+        },
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "CreateTranslationKey": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "code_description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code Description"
+        },
+        "characters_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Characters Limit"
+        },
+        "lock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lock"
+        },
+        "deprecated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deprecated"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "operation": {
+          "const": "create_translation_key",
+          "default": "create_translation_key",
+          "title": "Create Translation Key",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "CreateTranslationKey",
+      "type": "object"
+    },
+    "DeleteCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_key": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Existing customer key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Delete Customer",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer_key"
+      ],
+      "title": "DeleteCustomer",
+      "type": "object"
+    },
+    "DeleteLanguage": {
+      "additionalProperties": false,
+      "properties": {
+        "language_key": {
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Existing language key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_language",
+          "default": "delete_language",
+          "description": "Also removes all translations for this language.",
+          "title": "Delete Language",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "language_key"
+      ],
+      "title": "DeleteLanguage",
+      "type": "object"
+    },
+    "DeleteTag": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_name": {
+          "maxLength": 16,
+          "minLength": 2,
+          "pattern": "^[A-Za-z0-9\\s_.-]+$",
+          "title": "Existing tag name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "tag_name"
+      ],
+      "title": "DeleteTag",
+      "type": "object"
+    },
+    "DeleteTranslationKey": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "operation": {
+          "const": "delete_translation_key",
+          "default": "delete_translation_key",
+          "description": "Deletes the key and its translations.",
+          "title": "Delete Translation Key",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "DeleteTranslationKey",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_key": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Existing customer key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer_key"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetLanguage": {
+      "additionalProperties": false,
+      "properties": {
+        "language_key": {
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Existing language key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_language",
+          "default": "get_language",
+          "title": "Get Language",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "language_key"
+      ],
+      "title": "GetLanguage",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project Details",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetProject",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListLanguages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_languages",
+          "default": "list_languages",
+          "title": "List Project Languages",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLanguages",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListTranslationKeys": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_translation_keys",
+          "default": "list_translation_keys",
+          "description": "Returns all keys without metadata; provider does not paginate this endpoint.",
+          "title": "List Translation Keys",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter by key ID"
+        }
+      },
+      "title": "ListTranslationKeys",
+      "type": "object"
+    },
+    "ListTranslations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_translations",
+          "default": "list_translations",
+          "description": "Returns one page with provider pagination metadata. Increment page for subsequent pages.",
+          "title": "List Translations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contains search; provider limits results to 10.",
+          "title": "Text"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search text or key; provider limits results to 10.",
+          "title": "Query"
+        },
+        "text_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "EMPTY",
+                "NOT_EMPTY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Status",
+          "enum": [
+            "EMPTY",
+            "NOT_EMPTY"
+          ],
+          "x-enum-searchable": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer key; Business plan only.",
+          "title": "Customer Id"
+        },
+        "base_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Only"
+        },
+        "review_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "REVIEWED",
+                "NOT_REVIEWED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Status",
+          "enum": [
+            "REVIEWED",
+            "NOT_REVIEWED"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 100,
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "const": "lastModifiedAt",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "const": "REVIEWED",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last reviewed version, or empty text when absent.",
+          "title": "Version"
+        }
+      },
+      "title": "ListTranslations",
+      "type": "object"
+    },
+    "SimpleLocalizeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "simple_localize_api_key",
+          "default": "simple_localize_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Project API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SimpleLocalize API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the project API key from Settings > Credentials > API Key. NoClick sends it in X-SimpleLocalize-Token. Use a project API key, not an account personal token. Customer translations require the provider's Business plan.",
+      "x-credential-url": "https://simplelocalize.io/docs/api/get-started/"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "customer_key": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Existing customer key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New customer key"
+        }
+      },
+      "required": [
+        "customer_key"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdateLanguage": {
+      "additionalProperties": false,
+      "properties": {
+        "language_key": {
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Existing language key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_language",
+          "default": "update_language",
+          "title": "Update Language",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New language key"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "language_key"
+      ],
+      "title": "UpdateLanguage",
+      "type": "object"
+    },
+    "UpdateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 2,
+              "pattern": "^[A-Za-z0-9\\s_.-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Six hexadecimal digits without #.",
+          "title": "Color"
+        },
+        "tag_name": {
+          "maxLength": 16,
+          "minLength": 2,
+          "pattern": "^[A-Za-z0-9\\s_.-]+$",
+          "title": "Existing tag name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Update Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "tag_name"
+      ],
+      "title": "UpdateTag",
+      "type": "object"
+    },
+    "UpdateTranslation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_translation",
+          "default": "update_translation",
+          "description": "The key and language must exist. If review status is omitted, the provider marks the translation NOT_REVIEWED.",
+          "title": "Update Translation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "language": {
+          "minLength": 1,
+          "title": "Language",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 30000,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer key; Business plan only.",
+          "title": "Customer Id"
+        },
+        "review_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "REVIEWED",
+                "NOT_REVIEWED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Status",
+          "enum": [
+            "REVIEWED",
+            "NOT_REVIEWED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "key",
+        "language",
+        "text"
+      ],
+      "title": "UpdateTranslation",
+      "type": "object"
+    },
+    "UpdateTranslationKey": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "code_description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code Description"
+        },
+        "characters_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Characters Limit"
+        },
+        "lock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lock"
+        },
+        "deprecated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deprecated"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "operation": {
+          "const": "update_translation_key",
+          "default": "update_translation_key",
+          "description": "Key and namespace identify the original key; new key and new namespace rename it.",
+          "title": "Update Translation Key",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "new_key": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Key"
+        },
+        "new_namespace": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Namespace"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "UpdateTranslationKey",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_language": "#/$defs/CreateLanguage",
+          "create_tag": "#/$defs/CreateTag",
+          "create_translation_key": "#/$defs/CreateTranslationKey",
+          "delete_customer": "#/$defs/DeleteCustomer",
+          "delete_language": "#/$defs/DeleteLanguage",
+          "delete_tag": "#/$defs/DeleteTag",
+          "delete_translation_key": "#/$defs/DeleteTranslationKey",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_language": "#/$defs/GetLanguage",
+          "get_project": "#/$defs/GetProject",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_languages": "#/$defs/ListLanguages",
+          "list_tags": "#/$defs/ListTags",
+          "list_translation_keys": "#/$defs/ListTranslationKeys",
+          "list_translations": "#/$defs/ListTranslations",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_language": "#/$defs/UpdateLanguage",
+          "update_tag": "#/$defs/UpdateTag",
+          "update_translation": "#/$defs/UpdateTranslation",
+          "update_translation_key": "#/$defs/UpdateTranslationKey"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListTranslations"
+        },
+        {
+          "$ref": "#/$defs/UpdateTranslation"
+        },
+        {
+          "$ref": "#/$defs/ListTranslationKeys"
+        },
+        {
+          "$ref": "#/$defs/CreateTranslationKey"
+        },
+        {
+          "$ref": "#/$defs/UpdateTranslationKey"
+        },
+        {
+          "$ref": "#/$defs/DeleteTranslationKey"
+        },
+        {
+          "$ref": "#/$defs/ListLanguages"
+        },
+        {
+          "$ref": "#/$defs/GetLanguage"
+        },
+        {
+          "$ref": "#/$defs/CreateLanguage"
+        },
+        {
+          "$ref": "#/$defs/UpdateLanguage"
+        },
+        {
+          "$ref": "#/$defs/DeleteLanguage"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/UpdateTag"
+        },
+        {
+          "$ref": "#/$defs/DeleteTag"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomer"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SimpleLocalizeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Simple-localize Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,381 @@
+[
+  [
+    {
+      "operation": "get_project"
+    },
+    "GET",
+    "/api/v2/project",
+    {},
+    null,
+    {
+      "name": "Website",
+      "projectToken": "project-1",
+      "keys": 20
+    }
+  ],
+  [
+    {
+      "operation": "list_translations",
+      "language": "en",
+      "page": 2,
+      "size": 10,
+      "base_only": false,
+      "review_status": "REVIEWED",
+      "customer_id": "acme"
+    },
+    "GET",
+    "/api/v2/translations",
+    {
+      "language": "en",
+      "page": "2",
+      "size": "10",
+      "baseOnly": "false",
+      "reviewStatus": "REVIEWED",
+      "customerId": "acme",
+      "sortOrder": "desc"
+    },
+    null,
+    {
+      "content": [
+        {
+          "key": "HOME",
+          "language": "en",
+          "text": "Home"
+        }
+      ],
+      "page": {
+        "number": 2,
+        "size": 10,
+        "totalPages": 4,
+        "totalElements": 35
+      }
+    }
+  ],
+  [
+    {
+      "operation": "update_translation",
+      "key": "HOME",
+      "language": "en",
+      "text": "Welcome",
+      "namespace": "web",
+      "review_status": "REVIEWED"
+    },
+    "PATCH",
+    "/api/v2/translations",
+    {},
+    {
+      "key": "HOME",
+      "language": "en",
+      "text": "Welcome",
+      "namespace": "web",
+      "reviewStatus": "REVIEWED"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "list_translation_keys"
+    },
+    "GET",
+    "/api/v2/translation-keys/list",
+    {},
+    null,
+    [
+      {
+        "id": "key-1",
+        "key": "HOME",
+        "namespace": "web"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "create_translation_key",
+      "key": "HOME",
+      "description": "Home page",
+      "code_description": "From component",
+      "characters_limit": 80,
+      "lock": false,
+      "deprecated": false,
+      "tags": [
+        "website"
+      ],
+      "attributes": {
+        "owner": "web"
+      }
+    },
+    "POST",
+    "/api/v1/translation-keys",
+    {},
+    {
+      "key": "HOME",
+      "description": "Home page",
+      "codeDescription": "From component",
+      "charactersLimit": 80,
+      "lock": false,
+      "deprecated": false,
+      "tags": [
+        "website"
+      ],
+      "attributes": {
+        "owner": "web"
+      }
+    },
+    null
+  ],
+  [
+    {
+      "operation": "update_translation_key",
+      "key": "HOME",
+      "namespace": "web",
+      "new_key": "WELCOME",
+      "new_namespace": "app",
+      "description": "Welcome page"
+    },
+    "PATCH",
+    "/api/v1/translation-keys",
+    {
+      "key": "HOME",
+      "namespace": "web"
+    },
+    {
+      "key": "WELCOME",
+      "namespace": "app",
+      "description": "Welcome page"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "delete_translation_key",
+      "key": "HOME + / intro",
+      "namespace": "web"
+    },
+    "DELETE",
+    "/api/v1/translation-keys",
+    {
+      "key": "HOME + / intro",
+      "namespace": "web"
+    },
+    null,
+    null
+  ],
+  [
+    {
+      "operation": "list_languages"
+    },
+    "GET",
+    "/api/v1/languages",
+    {},
+    null,
+    [
+      {
+        "key": "pl",
+        "description": "Polski"
+      },
+      {
+        "key": "fr",
+        "description": "French"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "get_language",
+      "language_key": "pl"
+    },
+    "GET",
+    "/api/v1/languages/pl",
+    {},
+    null,
+    {
+      "key": "pl",
+      "name": "Polish"
+    }
+  ],
+  [
+    {
+      "operation": "create_language",
+      "key": "pl-PL",
+      "name": "Polish"
+    },
+    "POST",
+    "/api/v1/languages",
+    {},
+    {
+      "key": "pl-PL",
+      "name": "Polish"
+    },
+    {
+      "key": "pl-PL",
+      "name": "Polish"
+    }
+  ],
+  [
+    {
+      "operation": "update_language",
+      "language_key": "pl",
+      "key": "pl-PL",
+      "name": "Polish Locale"
+    },
+    "PATCH",
+    "/api/v1/languages/pl",
+    {},
+    {
+      "key": "pl-PL",
+      "name": "Polish Locale"
+    },
+    {
+      "key": "pl-PL",
+      "name": "Polish Locale"
+    }
+  ],
+  [
+    {
+      "operation": "delete_language",
+      "language_key": "pl"
+    },
+    "DELETE",
+    "/api/v1/languages/pl",
+    {},
+    null,
+    null
+  ],
+  [
+    {
+      "operation": "list_tags"
+    },
+    "GET",
+    "/api/v1/tags",
+    {},
+    null,
+    [
+      {
+        "name": "my-feature",
+        "color": "6e56ce"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "create_tag",
+      "name": "my-feature",
+      "color": "6e56ce"
+    },
+    "POST",
+    "/api/v1/tags",
+    {},
+    {
+      "name": "my-feature",
+      "color": "6e56ce"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "update_tag",
+      "tag_name": "my-feature",
+      "name": "website",
+      "color": "123456"
+    },
+    "PATCH",
+    "/api/v1/tags/my-feature",
+    {},
+    {
+      "name": "website",
+      "color": "123456"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "delete_tag",
+      "tag_name": "my-feature"
+    },
+    "DELETE",
+    "/api/v1/tags/my-feature",
+    {},
+    null,
+    null
+  ],
+  [
+    {
+      "operation": "list_customers"
+    },
+    "GET",
+    "/api/v1/customers",
+    {},
+    null,
+    [
+      {
+        "key": "acme",
+        "displayName": "Acme"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "get_customer",
+      "customer_key": "acme"
+    },
+    "GET",
+    "/api/v1/customers/acme",
+    {},
+    null,
+    {
+      "key": "acme",
+      "displayName": "Acme"
+    }
+  ],
+  [
+    {
+      "operation": "create_customer",
+      "key": "acme",
+      "display_name": "Acme",
+      "description": "Customer"
+    },
+    "POST",
+    "/api/v1/customers",
+    {},
+    {
+      "key": "acme",
+      "displayName": "Acme",
+      "description": "Customer"
+    },
+    {
+      "key": "acme",
+      "displayName": "Acme",
+      "description": "Customer"
+    }
+  ],
+  [
+    {
+      "operation": "update_customer",
+      "customer_key": "acme",
+      "key": "acme-new",
+      "display_name": "Acme Ltd"
+    },
+    "PATCH",
+    "/api/v1/customers/acme",
+    {},
+    {
+      "key": "acme-new",
+      "displayName": "Acme Ltd"
+    },
+    {
+      "key": "acme-new",
+      "displayName": "Acme Ltd"
+    }
+  ],
+  [
+    {
+      "operation": "delete_customer",
+      "customer_key": "acme"
+    },
+    "DELETE",
+    "/api/v1/customers/acme",
+    {},
+    null,
+    null
+  ]
+]
