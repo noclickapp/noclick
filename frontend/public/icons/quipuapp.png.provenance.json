@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/quipuapp.png",
+  "source": "https://raw.githubusercontent.com/quipuapp/api-v1-docs/main/logo.png (official OpenAPI info.x-logo.url: ./logo.png)",
+  "license": "Quipu brand mark, used nominatively to identify the connected service; trademark rights remain with Quipu.",
+  "sha256": "47ed7e2a6b9d573fd5f23ba10a8d6913a756a250aac0c0cf6f7b6179de4e9a58"
+}

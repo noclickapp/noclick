@@ -1,0 +1,2653 @@
+{
+  "$defs": {
+    "CreateAdditionalIncome": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_date": {
+          "format": "date",
+          "title": "Issue Date",
+          "type": "string"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "complete_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete Number"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment date. Explicit null on an update clears the payment date.",
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names.",
+          "title": "Tags"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "numeration_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numbering series ID"
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        },
+        "accounting_subcategory_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Subcategory Id"
+        },
+        "items_json": {
+          "description": "Array of line objects, e.g. [{\"concept\":\"Consulting services\",\"unitary_amount\":\"1500.00\",\"quantity\":1,\"vat_percent\":21}]. On update this REPLACES all lines: retain existing line IDs to update them, and repeat their accounting category/subcategory IDs to preserve them.",
+          "maxLength": 100000,
+          "title": "Line items (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "recipient_name": {
+          "minLength": 1,
+          "title": "Recipient Name",
+          "type": "string"
+        },
+        "target_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Country"
+        },
+        "operation": {
+          "const": "create_additional_income",
+          "default": "create_additional_income",
+          "title": "Create Additional Income",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "issue_date",
+        "items_json",
+        "recipient_name"
+      ],
+      "title": "CreateAdditionalIncome",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "country_code": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Country Code",
+          "type": "string"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        },
+        "document_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "NIF",
+                "passport",
+                "official_id_from_residence_country",
+                "residence_permit",
+                "other",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Type",
+          "enum": [
+            "NIF",
+            "passport",
+            "official_id_from_residence_country",
+            "residence_permit",
+            "other",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "town": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Town"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip Code"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "client_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Number"
+        },
+        "supplier_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Number"
+        },
+        "employee_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Number"
+        },
+        "is_supplier_of_direct_goods": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Supplier Of Direct Goods"
+        },
+        "bank_account_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Number"
+        },
+        "bank_account_swift_bic": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Swift Bic"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "country_code"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "complete_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete Number"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment date. Explicit null on an update clears the payment date.",
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names.",
+          "title": "Tags"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "numeration_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numbering series ID"
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        },
+        "accounting_subcategory_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Subcategory Id"
+        },
+        "items_json": {
+          "description": "Array of line objects, e.g. [{\"concept\":\"Consulting services\",\"unitary_amount\":\"1500.00\",\"quantity\":1,\"vat_percent\":21}]. On update this REPLACES all lines: retain existing line IDs to update them, and repeat their accounting category/subcategory IDs to preserve them.",
+          "maxLength": 100000,
+          "title": "Line items (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "kind": {
+          "default": "income",
+          "enum": [
+            "income",
+            "expenses"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "operation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operation Date"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Create Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "items_json",
+        "contact_id"
+      ],
+      "title": "CreateInvoice",
+      "type": "object"
+    },
+    "CreatePaysheet": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_paysheet",
+          "default": "create_paysheet",
+          "title": "Create Paysheet",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_date": {
+          "format": "date",
+          "title": "Issue Date",
+          "type": "string"
+        },
+        "contact_id": {
+          "description": "Employee contact ID; the employee must have a tax ID in Quipu.",
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "net_pay": {
+          "title": "Net Pay",
+          "type": "number"
+        },
+        "employee_ss_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Ss Amount"
+        },
+        "employee_retention": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Retention"
+        },
+        "company_ss_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Ss Amount"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "issue_date",
+        "contact_id",
+        "net_pay"
+      ],
+      "title": "CreatePaysheet",
+      "type": "object"
+    },
+    "CreateSimplifiedInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "complete_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete Number"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment date. Explicit null on an update clears the payment date.",
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names.",
+          "title": "Tags"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "numeration_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numbering series ID"
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        },
+        "accounting_subcategory_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Subcategory Id"
+        },
+        "items_json": {
+          "description": "Array of line objects, e.g. [{\"concept\":\"Consulting services\",\"unitary_amount\":\"1500.00\",\"quantity\":1,\"vat_percent\":21}]. On update this REPLACES all lines: retain existing line IDs to update them, and repeat their accounting category/subcategory IDs to preserve them.",
+          "maxLength": 100000,
+          "title": "Line items (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "kind": {
+          "default": "income",
+          "enum": [
+            "income",
+            "expenses"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "operation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operation Date"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "recipient_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Name"
+        },
+        "target_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Country"
+        },
+        "operation": {
+          "const": "create_simplified_invoice",
+          "default": "create_simplified_invoice",
+          "title": "Create Simplified Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "items_json"
+      ],
+      "title": "CreateSimplifiedInvoice",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_invoice",
+          "default": "delete_invoice",
+          "title": "Delete Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteInvoice",
+      "type": "object"
+    },
+    "DeleteSimplifiedInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_simplified_invoice",
+          "default": "delete_simplified_invoice",
+          "title": "Delete Simplified Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteSimplifiedInvoice",
+      "type": "object"
+    },
+    "GetAdditionalIncome": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_additional_income",
+          "default": "get_additional_income",
+          "title": "Get Additional Income",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetAdditionalIncome",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetPaysheet": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_paysheet",
+          "default": "get_paysheet",
+          "title": "Get Paysheet",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetPaysheet",
+      "type": "object"
+    },
+    "GetSimplifiedInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_simplified_invoice",
+          "default": "get_simplified_invoice",
+          "title": "Get Simplified Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetSimplifiedInvoice",
+      "type": "object"
+    },
+    "ListAccountingCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_accounting_categories",
+          "default": "list_accounting_categories",
+          "title": "List Accounting Categories",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prefix"
+        }
+      },
+      "title": "ListAccountingCategories",
+      "type": "object"
+    },
+    "ListAccountingSubcategories": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_accounting_subcategories",
+          "default": "list_accounting_subcategories",
+          "title": "List Accounting Subcategories",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        }
+      },
+      "title": "ListAccountingSubcategories",
+      "type": "object"
+    },
+    "ListAdditionalIncomes": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_additional_incomes",
+          "default": "list_additional_incomes",
+          "title": "List Additional Incomes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAdditionalIncomes",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "client",
+                "supplier",
+                "employee"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "client",
+            "supplier",
+            "employee"
+          ],
+          "x-enum-searchable": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "name",
+                "-name",
+                "total_paid_income",
+                "-total_paid_income",
+                "total_unpaid_income",
+                "-total_unpaid_income",
+                "total_paid_expenses",
+                "-total_paid_expenses",
+                "total_unpaid_expenses",
+                "-total_unpaid_expenses"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "name",
+            "-name",
+            "total_paid_income",
+            "-total_paid_income",
+            "total_unpaid_income",
+            "-total_unpaid_income",
+            "total_paid_expenses",
+            "-total_paid_expenses",
+            "total_unpaid_expenses",
+            "-total_unpaid_expenses"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListInvoices": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "income",
+                "expenses"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "income",
+            "expenses"
+          ],
+          "x-enum-searchable": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Quipu accounting period filter.",
+          "title": "Period"
+        },
+        "payment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "unpaid",
+                "due",
+                "pending"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Status",
+          "enum": [
+            "paid",
+            "unpaid",
+            "due",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        }
+      },
+      "title": "ListInvoices",
+      "type": "object"
+    },
+    "ListNumberingSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_numbering_series",
+          "default": "list_numbering_series",
+          "title": "List Numbering Series",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "applicable_to": {
+          "anyOf": [
+            {
+              "enum": [
+                "invoices",
+                "tickets",
+                "additional_incomes",
+                "budgets",
+                "orders",
+                "delivery_notes"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Applicable To",
+          "enum": [
+            "invoices",
+            "tickets",
+            "additional_incomes",
+            "budgets",
+            "orders",
+            "delivery_notes"
+          ],
+          "x-enum-searchable": true
+        },
+        "amending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amending"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prefix"
+        },
+        "applies_to": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "existing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Applies To",
+          "enum": [
+            "new",
+            "existing"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListNumberingSeries",
+      "type": "object"
+    },
+    "ListPaysheets": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_paysheets",
+          "default": "list_paysheets",
+          "title": "List Paysheets",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPaysheets",
+      "type": "object"
+    },
+    "ListSimplifiedInvoices": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_simplified_invoices",
+          "default": "list_simplified_invoices",
+          "title": "List Simplified Invoices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "income",
+                "expenses"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "income",
+            "expenses"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSimplifiedInvoices",
+      "type": "object"
+    },
+    "QuipuAPICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "quipuapp_api_credentials",
+          "default": "quipuapp_api_credentials",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "client_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "owner_slug": {
+          "description": "The account/business URL slug, without the host or slashes.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Business account slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret",
+        "owner_slug"
+      ],
+      "title": "Quipu API Client",
+      "type": "object",
+      "x-credential-instructions": "Copy the client ID and client secret from your Quipu API application, and the business account slug from its Quipu URL. NoClick exchanges these for a two-hour access token using the ecommerce scope whenever an operation runs. These are API application credentials; no browser sign-in is needed.",
+      "x-credential-url": "https://quipuapp.github.io/api-v1-docs/"
+    },
+    "UpdateAdditionalIncome": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "complete_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete Number"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment date. Explicit null on an update clears the payment date.",
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names.",
+          "title": "Tags"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "numeration_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numbering series ID"
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        },
+        "accounting_subcategory_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Subcategory Id"
+        },
+        "items_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of line objects, e.g. [{\"concept\":\"Consulting services\",\"unitary_amount\":\"1500.00\",\"quantity\":1,\"vat_percent\":21}]. On update this REPLACES all lines: retain existing line IDs to update them, and repeat their accounting category/subcategory IDs to preserve them.",
+          "title": "Line items (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "recipient_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Name"
+        },
+        "target_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Country"
+        },
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_additional_income",
+          "default": "update_additional_income",
+          "title": "Update Additional Income",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateAdditionalIncome",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        },
+        "document_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "NIF",
+                "passport",
+                "official_id_from_residence_country",
+                "residence_permit",
+                "other",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Type",
+          "enum": [
+            "NIF",
+            "passport",
+            "official_id_from_residence_country",
+            "residence_permit",
+            "other",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "town": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Town"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip Code"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "client_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Number"
+        },
+        "supplier_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Number"
+        },
+        "employee_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Number"
+        },
+        "is_supplier_of_direct_goods": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Supplier Of Direct Goods"
+        },
+        "bank_account_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Number"
+        },
+        "bank_account_swift_bic": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Swift Bic"
+        },
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "complete_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete Number"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment date. Explicit null on an update clears the payment date.",
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names.",
+          "title": "Tags"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "numeration_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numbering series ID"
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        },
+        "accounting_subcategory_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Subcategory Id"
+        },
+        "items_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of line objects, e.g. [{\"concept\":\"Consulting services\",\"unitary_amount\":\"1500.00\",\"quantity\":1,\"vat_percent\":21}]. On update this REPLACES all lines: retain existing line IDs to update them, and repeat their accounting category/subcategory IDs to preserve them.",
+          "title": "Line items (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "income",
+                "expenses"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "income",
+            "expenses"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operation Date"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_invoice",
+          "default": "update_invoice",
+          "title": "Update Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateInvoice",
+      "type": "object"
+    },
+    "UpdateSimplifiedInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Number"
+        },
+        "complete_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete Number"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment date. Explicit null on an update clears the payment date.",
+          "title": "Paid At"
+        },
+        "payment_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names.",
+          "title": "Tags"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "numeration_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Numbering series ID"
+        },
+        "accounting_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Category Id"
+        },
+        "accounting_subcategory_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accounting Subcategory Id"
+        },
+        "items_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of line objects, e.g. [{\"concept\":\"Consulting services\",\"unitary_amount\":\"1500.00\",\"quantity\":1,\"vat_percent\":21}]. On update this REPLACES all lines: retain existing line IDs to update them, and repeat their accounting category/subcategory IDs to preserve them.",
+          "title": "Line items (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "income",
+                "expenses"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "income",
+            "expenses"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operation Date"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "recipient_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Name"
+        },
+        "target_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Country"
+        },
+        "resource_id": {
+          "description": "The numeric Quipu ID returned by a list or create operation.",
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_simplified_invoice",
+          "default": "update_simplified_invoice",
+          "title": "Update Simplified Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateSimplifiedInvoice",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_additional_income": "#/$defs/CreateAdditionalIncome",
+          "create_contact": "#/$defs/CreateContact",
+          "create_invoice": "#/$defs/CreateInvoice",
+          "create_paysheet": "#/$defs/CreatePaysheet",
+          "create_simplified_invoice": "#/$defs/CreateSimplifiedInvoice",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_invoice": "#/$defs/DeleteInvoice",
+          "delete_simplified_invoice": "#/$defs/DeleteSimplifiedInvoice",
+          "get_additional_income": "#/$defs/GetAdditionalIncome",
+          "get_contact": "#/$defs/GetContact",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_paysheet": "#/$defs/GetPaysheet",
+          "get_simplified_invoice": "#/$defs/GetSimplifiedInvoice",
+          "list_accounting_categories": "#/$defs/ListAccountingCategories",
+          "list_accounting_subcategories": "#/$defs/ListAccountingSubcategories",
+          "list_additional_incomes": "#/$defs/ListAdditionalIncomes",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_invoices": "#/$defs/ListInvoices",
+          "list_numbering_series": "#/$defs/ListNumberingSeries",
+          "list_paysheets": "#/$defs/ListPaysheets",
+          "list_simplified_invoices": "#/$defs/ListSimplifiedInvoices",
+          "update_additional_income": "#/$defs/UpdateAdditionalIncome",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_invoice": "#/$defs/UpdateInvoice",
+          "update_simplified_invoice": "#/$defs/UpdateSimplifiedInvoice"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        },
+        {
+          "$ref": "#/$defs/CreateInvoice"
+        },
+        {
+          "$ref": "#/$defs/UpdateInvoice"
+        },
+        {
+          "$ref": "#/$defs/DeleteInvoice"
+        },
+        {
+          "$ref": "#/$defs/ListSimplifiedInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetSimplifiedInvoice"
+        },
+        {
+          "$ref": "#/$defs/CreateSimplifiedInvoice"
+        },
+        {
+          "$ref": "#/$defs/UpdateSimplifiedInvoice"
+        },
+        {
+          "$ref": "#/$defs/DeleteSimplifiedInvoice"
+        },
+        {
+          "$ref": "#/$defs/ListAdditionalIncomes"
+        },
+        {
+          "$ref": "#/$defs/GetAdditionalIncome"
+        },
+        {
+          "$ref": "#/$defs/CreateAdditionalIncome"
+        },
+        {
+          "$ref": "#/$defs/UpdateAdditionalIncome"
+        },
+        {
+          "$ref": "#/$defs/ListPaysheets"
+        },
+        {
+          "$ref": "#/$defs/GetPaysheet"
+        },
+        {
+          "$ref": "#/$defs/CreatePaysheet"
+        },
+        {
+          "$ref": "#/$defs/ListNumberingSeries"
+        },
+        {
+          "$ref": "#/$defs/ListAccountingCategories"
+        },
+        {
+          "$ref": "#/$defs/ListAccountingSubcategories"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuipuAPICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Quipuapp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
