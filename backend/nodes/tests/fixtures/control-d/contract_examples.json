@@ -1,0 +1,1172 @@
+{
+  "source": "https://dash.readme.com/api/v1/api-registry/clbxkkmvl2tjcp",
+  "version": "1.0.1",
+  "operations": {
+    "get_user": {
+      "config": {},
+      "method": "GET",
+      "path": "/users",
+      "form": {},
+      "response": {
+        "body": {
+          "last_active": 1669595046,
+          "proxy_access": 1,
+          "email_status": 1,
+          "status": 1,
+          "email": "username@email.com",
+          "date": "2022-11-27",
+          "PK": "4034dvb354",
+          "twofa": 0
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "list_profiles": {
+      "config": {},
+      "method": "GET",
+      "path": "/profiles",
+      "form": {},
+      "response": {
+        "body": {
+          "profiles": [
+            {
+              "PK": "52wtfl4k",
+              "updated": 1660958788,
+              "name": "Test Profile",
+              "stats": 0,
+              "profile": {
+                "flt": {
+                  "count": 0
+                },
+                "cflt": {
+                  "count": 0
+                },
+                "ipflt": {
+                  "count": 0
+                },
+                "rule": {
+                  "count": 0
+                },
+                "svc": {
+                  "count": 0
+                },
+                "grp": {
+                  "count": 0
+                },
+                "opt": {
+                  "count": 0,
+                  "data": []
+                },
+                "da": []
+              }
+            },
+            {
+              "PK": "44wtfuyd",
+              "updated": 1657322386,
+              "name": "Cloned Profile - 9u7",
+              "stats": 0,
+              "profile": {
+                "flt": {
+                  "count": 3
+                },
+                "cflt": {
+                  "count": 1
+                },
+                "ipflt": {
+                  "count": 1
+                },
+                "rule": {
+                  "count": 16
+                },
+                "svc": {
+                  "count": 3
+                },
+                "grp": {
+                  "count": 4
+                },
+                "opt": {
+                  "count": 2,
+                  "data": [
+                    {
+                      "PK": "block_rfc1918",
+                      "value": 1
+                    },
+                    {
+                      "PK": "spoof_ipv6",
+                      "value": 1
+                    }
+                  ]
+                },
+                "da": {
+                  "do": 3,
+                  "via": "YYZ",
+                  "status": 1
+                }
+              }
+            },
+            {
+              "PK": "8wtffms",
+              "updated": 1650919383,
+              "name": "Other Profile",
+              "stats": 0,
+              "profile": {
+                "flt": {
+                  "count": 0
+                },
+                "cflt": {
+                  "count": 0
+                },
+                "ipflt": {
+                  "count": 0
+                },
+                "rule": {
+                  "count": 10
+                },
+                "svc": {
+                  "count": 0
+                },
+                "grp": {
+                  "count": 6
+                },
+                "opt": {
+                  "count": 0,
+                  "data": []
+                },
+                "da": []
+              }
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "create_profile": {
+      "config": {
+        "name": "My Profile Name",
+        "clone_profile_id": "abcd1234"
+      },
+      "method": "POST",
+      "path": "/profiles",
+      "form": {
+        "name": "My Profile Name",
+        "clone_profile_id": "abcd1234"
+      },
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "update_profile": {
+      "config": {
+        "profile_id": "abcd123",
+        "name": "New Profile Name",
+        "disable_ttl": 0
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123",
+      "form": {
+        "name": "New Profile Name",
+        "disable_ttl": 0
+      },
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "delete_profile": {
+      "config": {
+        "profile_id": "abcd123"
+      },
+      "method": "DELETE",
+      "path": "/profiles/abcd123",
+      "form": {},
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "list_profile_options": {
+      "config": {},
+      "method": "GET",
+      "path": "/profiles/options",
+      "form": {},
+      "response": {
+        "body": {
+          "options": [
+            {
+              "PK": "block_rfc1918",
+              "title": "DNS Rebind Protection",
+              "description": "Blocks domains that point to RFC1918 addresses.",
+              "type": "toggle",
+              "default_value": 0,
+              "info_url": "https://kb.controld.com/en/profile-options#dns-rebind-protection"
+            },
+            {
+              "PK": "spoof_ipv6",
+              "title": "IPv4/IPv6 Compatibility Mode",
+              "description": "Redirect A records via IPv6 resolver and vice versa.",
+              "type": "toggle",
+              "default_value": 0,
+              "info_url": "https://kb.controld.com/en/profile-options#ipv4ipv6-compatibility-mode"
+            },
+            {
+              "PK": "no_dnssec",
+              "title": "Disable DNSSEC",
+              "description": "Turn off DNSSEC validation and ECS support for compatibility.",
+              "type": "toggle",
+              "default_value": 0,
+              "info_url": "https://kb.controld.com/en/profile-options#disable-dnssec"
+            },
+            {
+              "PK": "ml_filter",
+              "title": "AI Malware Filter",
+              "description": "EXPERIMENTAL - Blocks malicious domains using machine learning.",
+              "type": "toggle",
+              "default_value": 0,
+              "info_url": "https://kb.controld.com/en/profile-options#ai-malware-filter"
+            },
+            {
+              "PK": "ttl_blck",
+              "title": "Block TTL",
+              "description": "DNS record TTL (in seconds) when blocking.",
+              "type": "field",
+              "default_value": 10,
+              "info_url": "https://kb.controld.com/en/profile-options#block-ttl"
+            },
+            {
+              "PK": "ttl_spff",
+              "title": "Redirect TTL",
+              "description": "DNS record TTL (in seconds) when redirecting.",
+              "type": "field",
+              "default_value": 20,
+              "info_url": "https://kb.controld.com/en/profile-options#redirect-ttl"
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "update_profile_option": {
+      "config": {
+        "profile_id": "abcd123",
+        "option": "block_rfc1918",
+        "status": 1,
+        "value": "something"
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123/options/block_rfc1918",
+      "form": {
+        "status": 1,
+        "value": "something"
+      },
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "list_filters": {
+      "config": {
+        "profile_id": "abcd123"
+      },
+      "method": "GET",
+      "path": "/profiles/abcd123/filters",
+      "form": {},
+      "response": {
+        "body": {
+          "filters": [
+            {
+              "PK": "ads",
+              "name": "Ads & Trackers",
+              "description": "One of the most comprehensive ad and tracker blocking lists out there. Contains over 900,000 wildcard domains derived from over 2 dozen block lists, hand curated to remove thousands of false positives that plague most community maintained lists.",
+              "additional": "<p><strong>Relaxed Mode</strong></p>Filter will allow affiliate marketing links and email tracking links to work. <p><strong>Strict Mode</strong></p>Filter will block all tracking and ad domains, regardless of type.",
+              "sources": [],
+              "options": [
+                {
+                  "title": "Allow Email Tracking and Affiliate Links",
+                  "description": "This is useful to be able to click links and see images in newsletters.",
+                  "type": "counterfilter",
+                  "name": "cbl_tracking",
+                  "status": 1
+                }
+              ],
+              "status": 1
+            },
+            {
+              "PK": "porn",
+              "name": "Adult Content",
+              "description": "This filter blocks sexually explicit content. Handy on kid-friendly networks and those morally opposed to pornography. Be sure to enable Safe Search via the gear icon to prevent search engines and Youtube from showing adult results.",
+              "additional": "<p><strong>Relaxed Mode</strong></p>Filter will only block domains that contain adult content. <p><strong>Strict Mode</strong></p>Filter will also prevent search engines and Youtube from showing mature content.",
+              "sources": [],
+              "options": [
+                {
+                  "title": "Enable Safe Search",
+                  "description": "Prevents search engines and Youtube from showing mature content.",
+                  "type": "service",
+                  "name": "safesearch",
+                  "status": 1
+                }
+              ],
+              "status": 0
+            },
+            {
+              "PK": "fakenews",
+              "name": "Clickbait",
+              "description": "Sites that intentionally, but not necessarily exclusively, publish hoaxes and disinformation for purposes other than satire.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "cryptominers",
+              "name": "Crypto",
+              "description": "This filter blocks all cryptocurrency exchanges, crypto news sites and cryptomining services that mine cryptocurrency in your browser.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "dating",
+              "name": "Dating",
+              "description": "Not looking to meet local singles/bots in your area? This filter will help you achieve this goal.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "drugs",
+              "name": "Drugs",
+              "description": "This filter contains sites that legally and illegally sell drugs, alcohol, tobacco and vape products.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "gambling",
+              "name": "Gambling",
+              "description": "Blocks gambling sites. Prevent yourself, your employees or family members from gambling away their life savings.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "gov",
+              "name": "Government Sites",
+              "description": "This filter contains all government TLDs and various government websites in most countries. Enabling this filter will not prevent you from paying taxes.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "iot",
+              "name": "IoT Telemetry",
+              "description": "You know that smart TV/fridge/toaster you have? It's probably reporting on your activities to a bunch of servers in China. This filter prevents your Internet-of-Things/\"smart\" devices from sending tracking and telemetry data to the manufacturer. This can break some (terribly made) IoT devices that don't work without telemetry being sent.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "malware",
+              "name": "Malware",
+              "description": "Contain the worst of the worst. Sites that are known to distribute malware, launch phishing attacks or botnet command-and-control servers used to communicate with already infected machines. There is no reason to ever disable this list unless you\u2019re doing malware research.",
+              "additional": "<p><strong>Relaxed Mode</strong></p>Filter will block only malicious domains. <p><strong>Strict Mode</strong></p>Filter will also block domains that resolve to malicious IP addresses.",
+              "sources": [],
+              "options": [
+                {
+                  "title": "Block Malicious IPs",
+                  "description": "Blocks domains that get resolved to malware distributing and botnet control IP addresses.",
+                  "type": "ipfilter",
+                  "name": "ip_malware",
+                  "status": 1
+                }
+              ],
+              "status": 1
+            },
+            {
+              "PK": "nrd",
+              "name": "New Domains",
+              "description": "Contains new domains that were just registered. Many of these could be used for badware distribution, procedurally generated domains for malware command and control servers, etc. This could also cause collateral damage and block legitimate brand new domains.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "typo",
+              "name": "Phishing",
+              "description": "This list blocks phishing domains as well as domains that are similar to common websites you may be visiting. They are typically associated with phishing attacks that are meant to fool you into thinking that you're visit a website you're familiar with, in order to steal private information. For example playpal.com can look a lot like paypal.com, which you may not notice unless you're paying attention.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "social",
+              "name": "Social",
+              "description": "Social networks are one of the most pervasive privacy violators out there. This filter will block all social networks and their associated trackers. If you must use 1 of them, you can bypass it via a custom rule or a service rule.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "torrents",
+              "name": "Torrents",
+              "description": "This filter contains most common torrent trackers and indexing sites. This will have no impact on the actual torrent protocol, it will simply prevent access to the indexing/search sites and block common trackers that are used to discover peers.",
+              "sources": [],
+              "status": 0
+            },
+            {
+              "PK": "dnsvpn",
+              "name": "VPN & DNS",
+              "description": "This filter will block all common VPN and DNS-over-HTTPS providers (except CONTROL D). Some malware uses DoH to bypass network security systems. Or you may want to restrict VPN activity on your network.",
+              "sources": [],
+              "status": 0
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "update_filter": {
+      "config": {
+        "profile_id": "abcd123",
+        "filter": "ads",
+        "status": 1
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123/filters/filter/ads",
+      "form": {
+        "status": 1
+      },
+      "response": {
+        "body": {
+          "filters": [
+            "malware",
+            "ads"
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "list_external_filters": {
+      "config": {
+        "profile_id": "abcd123"
+      },
+      "method": "GET",
+      "path": "/profiles/abcd123/filters/external",
+      "form": {},
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "list_services": {
+      "config": {
+        "profile_id": "abcd123"
+      },
+      "method": "GET",
+      "path": "/profiles/abcd123/services",
+      "form": {},
+      "response": {
+        "body": {
+          "services": [
+            {
+              "locations": [
+                "SYD"
+              ],
+              "name": "10play",
+              "unlock_location": "SYD",
+              "warning": "You'll need to change your device's time zone to Australia. Enabling this service will allow certain Google ad and tracking domains to be loaded in order for it to function.",
+              "category": "video",
+              "PK": "10play",
+              "action": {
+                "do": 1,
+                "status": 0
+              }
+            },
+            {
+              "category": "gaming",
+              "unlock_location": "JFK",
+              "name": "Battle.net",
+              "PK": "blizzard",
+              "action": {
+                "do": 1,
+                "status": 0
+              }
+            },
+            {
+              "name": "Discord",
+              "unlock_location": "JFK",
+              "category": "social",
+              "PK": "discord",
+              "action": {
+                "do": 1,
+                "status": 0
+              }
+            },
+            {
+              "category": "video",
+              "name": "Discovery+",
+              "unlock_location": "JFK",
+              "PK": "discoveryplus",
+              "action": {
+                "do": 1,
+                "status": 0
+              }
+            },
+            {
+              "name": "Disney Plus",
+              "unlock_location": "JFK",
+              "category": "video",
+              "PK": "disney",
+              "action": {
+                "do": 0,
+                "status": 0
+              }
+            },
+            {
+              "unlock_location": "JFK",
+              "category": "shop",
+              "name": "EBay",
+              "PK": "ebay",
+              "action": {
+                "do": 3,
+                "via": "JFK",
+                "status": 0
+              }
+            },
+            {
+              "category": "video",
+              "name": "ESPN+",
+              "unlock_location": "JFK",
+              "PK": "espn",
+              "action": {
+                "do": 3,
+                "via": "JFK",
+                "status": 0
+              }
+            },
+            {
+              "name": "Facebook",
+              "unlock_location": "JFK",
+              "category": "social",
+              "PK": "facebook",
+              "action": {
+                "do": 0,
+                "status": 0
+              }
+            },
+            {
+              "category": "tools",
+              "name": "Google",
+              "unlock_location": "JFK",
+              "PK": "google",
+              "action": {
+                "do": 0,
+                "status": 0
+              }
+            },
+            {
+              "category": "video",
+              "name": "Hulu",
+              "locations": [
+                "RES_ORD",
+                "JFK",
+                "LAX"
+              ],
+              "unlock_location": "RES_ORD",
+              "PK": "hulu",
+              "action": {
+                "do": 3,
+                "via": "RES_ORD",
+                "status": 0
+              }
+            },
+            {
+              "unlock_location": "JFK",
+              "category": "social",
+              "name": "Instagram",
+              "PK": "instagram",
+              "action": {
+                "do": 3,
+                "via": "JFK",
+                "status": 0
+              }
+            },
+            {
+              "unlock_location": "JFK",
+              "category": "tools",
+              "name": "Skype",
+              "PK": "skype",
+              "action": {
+                "do": 0,
+                "status": 0
+              }
+            },
+            {
+              "category": "tools",
+              "unlock_location": "JFK",
+              "name": "Zoom",
+              "PK": "zoom",
+              "action": {
+                "do": 0,
+                "status": 0
+              }
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "update_service": {
+      "config": {
+        "profile_id": "abcd123",
+        "service": "zoom",
+        "do": 3,
+        "status": 1,
+        "via": "YYZ",
+        "via_v6": "a:bc:d:e:f::"
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123/services/zoom",
+      "form": {
+        "do": 3,
+        "status": 1,
+        "via": "YYZ",
+        "via_v6": "a:bc:d:e:f::"
+      },
+      "response": {
+        "body": {
+          "services": [
+            {
+              "do": 3,
+              "via": "YYZ",
+              "status": 1
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "list_folders": {
+      "config": {
+        "profile_id": "abcd123"
+      },
+      "method": "GET",
+      "path": "/profiles/abcd123/groups",
+      "form": {},
+      "response": {
+        "body": {
+          "groups": [
+            {
+              "PK": 2,
+              "group": "Abc 123",
+              "action": {
+                "status": 1
+              },
+              "count": 3
+            },
+            {
+              "PK": 3,
+              "group": "Block Everything",
+              "action": {
+                "do": 0,
+                "status": 1
+              },
+              "count": 1
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "create_folder": {
+      "config": {
+        "profile_id": "abcd123",
+        "name": "Folder Name",
+        "do": 3,
+        "via": "YYZ",
+        "status": 1
+      },
+      "method": "POST",
+      "path": "/profiles/abcd123/groups",
+      "form": {
+        "name": "Folder Name",
+        "do": 3,
+        "via": "YYZ",
+        "status": 1
+      },
+      "response": {
+        "body": {
+          "groups": [
+            {
+              "PK": 5,
+              "group": "Folder Name 2",
+              "action": {
+                "do": 3,
+                "via": "YYZ",
+                "status": 1
+              },
+              "count": 0
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "update_folder": {
+      "config": {
+        "profile_id": "abcd123",
+        "folder": "2",
+        "name": "New Folder Name",
+        "do": 3,
+        "via": "YYZ",
+        "status": 1
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123/groups/2",
+      "form": {
+        "name": "New Folder Name",
+        "do": 3,
+        "via": "YYZ",
+        "status": 1
+      },
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "list_rules": {
+      "config": {
+        "profile_id": "abcd123",
+        "folder_id": "0"
+      },
+      "method": "GET",
+      "path": "/profiles/abcd123/rules/0",
+      "form": {},
+      "response": {
+        "body": {
+          "rules": [
+            {
+              "PK": "ipinfo.io",
+              "order": 8,
+              "group": 0,
+              "action": {
+                "do": 3,
+                "via": "BRU",
+                "status": 1
+              }
+            },
+            {
+              "PK": "wtfismyip.com",
+              "order": 9,
+              "group": 0,
+              "action": {
+                "do": 2,
+                "via": "www.google.com",
+                "status": 1
+              }
+            },
+            {
+              "PK": "test.com",
+              "order": 10,
+              "group": 0,
+              "action": {
+                "do": 0,
+                "status": 1
+              }
+            },
+            {
+              "PK": "derp123.com",
+              "order": 12,
+              "group": 0,
+              "action": {
+                "do": 2,
+                "via": "1.2.3.4",
+                "status": 1
+              }
+            },
+            {
+              "PK": "ads.com",
+              "order": 13,
+              "group": 0,
+              "action": {
+                "do": 1,
+                "status": 1
+              }
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "create_rules": {
+      "config": {
+        "profile_id": "abcd123",
+        "do": 3,
+        "status": 1,
+        "via": "JFK",
+        "via_v6": "a:b:c:d:e:f::",
+        "group": 2,
+        "comment": "Comment goes here",
+        "hostnames[]": [
+          "domain1.com",
+          "domain2.com"
+        ]
+      },
+      "method": "POST",
+      "path": "/profiles/abcd123/rules",
+      "form": {
+        "do": 3,
+        "status": 1,
+        "via": "JFK",
+        "via_v6": "a:b:c:d:e:f::",
+        "group": 2,
+        "comment": "Comment goes here",
+        "hostnames[]": [
+          "domain1.com",
+          "domain2.com"
+        ]
+      },
+      "response": {
+        "body": {
+          "rules": [
+            {
+              "do": 3,
+              "status": 1,
+              "via": "JFK",
+              "group": 0,
+              "order": 26
+            }
+          ]
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "update_rules": {
+      "config": {
+        "profile_id": "abcd123",
+        "do": 3,
+        "status": 1,
+        "via": "JFK",
+        "via_v6": "a:b:c:d:e:f::",
+        "group": 2,
+        "comment": "Comment goes here",
+        "hostnames[]": [
+          "domain1.com"
+        ]
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123/rules",
+      "form": {
+        "do": 3,
+        "status": 1,
+        "via": "JFK",
+        "via_v6": "a:b:c:d:e:f::",
+        "group": 2,
+        "comment": "Comment goes here",
+        "hostnames[]": [
+          "domain1.com"
+        ]
+      },
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "delete_rule": {
+      "config": {
+        "profile_id": "abcd123",
+        "hostname": "domain.com"
+      },
+      "method": "DELETE",
+      "path": "/profiles/abcd123/rules/domain.com",
+      "form": {},
+      "response": {
+        "success": true,
+        "body": []
+      },
+      "response_source": "synthetic"
+    },
+    "get_default_rule": {
+      "config": {
+        "profile_id": "abcd123"
+      },
+      "method": "GET",
+      "path": "/profiles/abcd123/default",
+      "form": {},
+      "response": {
+        "body": {
+          "default": {
+            "do": 3,
+            "via": "LOCAL",
+            "status": 1
+          }
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "update_default_rule": {
+      "config": {
+        "profile_id": "abcd123",
+        "do": 3,
+        "via": "JFK",
+        "status": 1
+      },
+      "method": "PUT",
+      "path": "/profiles/abcd123/default",
+      "form": {
+        "do": 3,
+        "via": "JFK",
+        "status": 1
+      },
+      "response": {
+        "body": {
+          "default": {
+            "do": 3,
+            "via": "JFK",
+            "status": 1
+          }
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "list_devices": {
+      "config": {},
+      "method": "GET",
+      "path": "/devices",
+      "form": {},
+      "response": {
+        "body": {
+          "devices": [
+            {
+              "PK": "2bmen1byrpr",
+              "ts": 1669593191,
+              "name": "not-default-device",
+              "stats": 2,
+              "device_id": "2bmen1byrpr",
+              "status": 1,
+              "restricted": 0,
+              "learn_ip": 1,
+              "desc": "Comment goes here 2",
+              "ddns": {
+                "status": 1,
+                "subdomain": "my-private-subdomain2",
+                "hostname": "my-private-subdomain2.controld.xyz",
+                "record": "2607:f0c8:8000:8210:1c7b:b482:1c88:e893"
+              },
+              "ddns_ext": {
+                "status": 1,
+                "host": "test.com"
+              },
+              "resolvers": {
+                "uid": "2bmen1byrpr",
+                "doh": "https://dns.controld.dev/2bmen1byrpr",
+                "dot": "2bmen1byrpr.dns.controld.dev",
+                "v4": [
+                  "176.125.239.187",
+                  "176.125.53.187"
+                ],
+                "v6": [
+                  "2606:1a40:f000:1e:2c0e:761:3fcf:0",
+                  "2606:1a40:f001:1e:2c0e:761:3fcf:0"
+                ]
+              },
+              "legacy_ipv4": {
+                "resolver": "176.125.239.187",
+                "status": 1
+              },
+              "profile": {
+                "PK": "4054dvb42i",
+                "updated": 1670294164,
+                "name": "Totally Not Default Profile"
+              }
+            },
+            {
+              "PK": "hl7r34ku0f",
+              "ts": 1670036258,
+              "name": "test-01",
+              "device_id": "hl7r34ku0f",
+              "status": 1,
+              "icon": "desktop-windows",
+              "learn_ip": 1,
+              "resolvers": {
+                "uid": "hl7r34ku0f",
+                "doh": "https://dns.controld.dev/hl7r34ku0f",
+                "dot": "hl7r34ku0f.dns.controld.dev"
+              },
+              "profile": {
+                "PK": "4054dvb42i",
+                "updated": 1670294164,
+                "name": "Totally Not Default Profile"
+              }
+            }
+          ],
+          "activity": false
+        },
+        "success": true
+      },
+      "response_source": "spec_example"
+    },
+    "create_device": {
+      "config": {
+        "name": "Bobs-Phone",
+        "client_count": "10",
+        "profile_id": "abcd1234",
+        "icon": "mobile-android",
+        "stats": 2,
+        "legacy_ipv4_status": 1,
+        "learn_ip": 1,
+        "restricted": 1,
+        "desc": "Comment goes here"
+      },
+      "method": "POST",
+      "path": "/devices",
+      "form": {
+        "name": "Bobs-Phone",
+        "client_count": "10",
+        "profile_id": "abcd1234",
+        "icon": "mobile-android",
+        "stats": 2,
+        "legacy_ipv4_status": 1,
+        "learn_ip": 1,
+        "restricted": 1,
+        "desc": "Comment goes here"
+      },
+      "response": {
+        "body": {
+          "PK": "149grhplae4",
+          "ts": 1670354331,
+          "name": "bobs-phone",
+          "stats": 2,
+          "device_id": "149grhplae4",
+          "status": 0,
+          "icon": "mobile-android",
+          "restricted": 1,
+          "learn_ip": 1,
+          "bump_tls": 1,
+          "desc": "Comment goes here",
+          "resolvers": {
+            "uid": "149grhplae4",
+            "doh": "https://dns.controld.dev/149grhplae4",
+            "dot": "149grhplae4.dns.controld.dev",
+            "v4": [
+              "176.125.239.185",
+              "176.125.53.185"
+            ],
+            "v6": [
+              "2606:1a40:f000:e:8704:3bc8:74dc:0",
+              "2606:1a40:f001:e:8704:3bc8:74dc:0"
+            ]
+          },
+          "legacy_ipv4": {
+            "resolver": "176.125.239.185",
+            "status": 1
+          },
+          "profile": {
+            "PK": "4054dvb42i",
+            "updated": 1670294164,
+            "name": "Totally Not Default Profile"
+          }
+        },
+        "success": true,
+        "message": "Device has been added"
+      },
+      "response_source": "spec_example"
+    },
+    "update_device": {
+      "config": {
+        "device_id": "abcdefg",
+        "name": "New-Name",
+        "profile_id": "123457qwerty",
+        "stats": 0,
+        "legacy_ipv4_status": 1,
+        "learn_ip": 0,
+        "restricted": 1,
+        "desc": "Comment goes here",
+        "status": 1
+      },
+      "method": "PUT",
+      "path": "/devices/abcdefg",
+      "form": {
+        "name": "New-Name",
+        "profile_id": "123457qwerty",
+        "stats": 0,
+        "legacy_ipv4_status": 1,
+        "learn_ip": 0,
+        "restricted": 1,
+        "desc": "Comment goes here",
+        "status": 1
+      },
+      "response": {
+        "body": {
+          "PK": "2bmen1byrpr",
+          "ts": 1669593191,
+          "name": "not-default-device",
+          "stats": 2,
+          "device_id": "2bmen1byrpr",
+          "status": 1,
+          "restricted": 0,
+          "learn_ip": 1,
+          "desc": "Comment goes here 2",
+          "ddns": {
+            "status": 1,
+            "subdomain": "my-private-subdomain2",
+            "hostname": "my-private-subdomain2.controld.xyz",
+            "record": "2607:f0c8:8000:8210:1c7b:b482:1c88:e893"
+          },
+          "ddns_ext": {
+            "status": 1,
+            "host": "test.com"
+          },
+          "resolvers": {
+            "uid": "2bmen1byrpr",
+            "doh": "https://dns.controld.dev/2bmen1byrpr",
+            "dot": "2bmen1byrpr.dns.controld.dev",
+            "v4": [
+              "176.125.239.187",
+              "176.125.53.187"
+            ],
+            "v6": [
+              "2606:1a40:f000:1e:2c0e:761:3fcf:0",
+              "2606:1a40:f001:1e:2c0e:761:3fcf:0"
+            ]
+          },
+          "legacy_ipv4": {
+            "resolver": "176.125.239.187",
+            "status": 1
+          },
+          "profile": {
+            "PK": "4054dvb42i",
+            "updated": 1670294164,
+            "name": "Totally Not Default Profile"
+          }
+        },
+        "success": true,
+        "message": "Device has been updated"
+      },
+      "response_source": "spec_example"
+    },
+    "delete_device": {
+      "config": {
+        "device_id": "abcdefg"
+      },
+      "method": "DELETE",
+      "path": "/devices/abcdefg",
+      "form": {},
+      "response": {
+        "body": [],
+        "success": true,
+        "message": "Device has been deleted"
+      },
+      "response_source": "spec_example"
+    }
+  }
+}
