@@ -1,0 +1,14 @@
+{
+ "provider": "zep",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 25,
+  "skipped": 0,
+  "request_ok": 25,
+  "authored_parser_ok": 0,
+  "generated_only": 25,
+  "local_ok": 0
+ }
+}

@@ -1,0 +1,548 @@
+[
+  {
+    "config": {
+      "operation": "get_project"
+    },
+    "method": "GET",
+    "path": "/api/v4/project",
+    "body": null,
+    "params": {},
+    "response": {
+      "uuid": "project-123",
+      "name": "My project"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "create_user",
+      "user_id": "jane + external",
+      "first_name": "Jane",
+      "metadata": "{\"team\":\"support\"}"
+    },
+    "method": "POST",
+    "path": "/api/v4/users",
+    "body": {
+      "user_id": "jane + external",
+      "first_name": "Jane",
+      "metadata": {
+        "team": "support"
+      }
+    },
+    "params": {},
+    "response": {
+      "uuid": "user-123",
+      "first_name": "Jane",
+      "email": "jane@example.com",
+      "metadata": {
+        "team": "support"
+      }
+    },
+    "status": 201
+  },
+  {
+    "config": {
+      "operation": "list_users",
+      "search": "Jane",
+      "cursor": "opaque +/=",
+      "order": "asc",
+      "order_by": "email"
+    },
+    "method": "POST",
+    "path": "/api/v4/users/list",
+    "body": {
+      "search": "Jane"
+    },
+    "params": {
+      "page_size": "50",
+      "cursor": "opaque +/=",
+      "order": "asc",
+      "order_by": "email"
+    },
+    "response": {
+      "items": [
+        {
+          "uuid": "user-123",
+          "first_name": "Jane",
+          "email": "jane@example.com",
+          "metadata": {
+            "team": "support"
+          }
+        }
+      ],
+      "next_cursor": "next +/="
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_user",
+      "user_uuid": "user-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/users/user-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "uuid": "user-123",
+      "first_name": "Jane",
+      "email": "jane@example.com",
+      "metadata": {
+        "team": "support"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "lookup_user",
+      "user_id": "jane + external"
+    },
+    "method": "POST",
+    "path": "/api/v4/users/lookup",
+    "body": {
+      "user_id": "jane + external"
+    },
+    "params": {},
+    "response": {
+      "uuid": "user-123",
+      "first_name": "Jane",
+      "email": "jane@example.com",
+      "metadata": {
+        "team": "support"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "update_user",
+      "user_uuid": "user-123",
+      "first_name": "Janet",
+      "metadata": "{\"team\":null}"
+    },
+    "method": "PATCH",
+    "path": "/api/v4/users/user-123",
+    "body": {
+      "first_name": "Janet",
+      "metadata": {
+        "team": null
+      }
+    },
+    "params": {},
+    "response": {
+      "uuid": "user-123",
+      "first_name": "Jane",
+      "email": "jane@example.com",
+      "metadata": {
+        "team": "support"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "delete_user",
+      "user_uuid": "user-123"
+    },
+    "method": "DELETE",
+    "path": "/api/v4/users/user-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "task": {
+        "uuid": "task-123",
+        "status": "pending",
+        "type": "thread.delete"
+      }
+    },
+    "status": 202
+  },
+  {
+    "config": {
+      "operation": "create_thread",
+      "user_uuid": "user-123"
+    },
+    "method": "POST",
+    "path": "/api/v4/threads",
+    "body": {
+      "user_uuid": "user-123"
+    },
+    "params": {},
+    "response": {
+      "uuid": "thread-123",
+      "user_uuid": "user-123",
+      "graph_uuid": "graph-123"
+    },
+    "status": 201
+  },
+  {
+    "config": {
+      "operation": "list_threads",
+      "user_uuid": "user-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/threads",
+    "body": null,
+    "params": {
+      "page_size": "50",
+      "user_uuid": "user-123"
+    },
+    "response": {
+      "items": [
+        {
+          "uuid": "thread-123",
+          "user_uuid": "user-123",
+          "graph_uuid": "graph-123"
+        }
+      ]
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_thread",
+      "thread_uuid": "thread-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/threads/thread-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "uuid": "thread-123",
+      "user_uuid": "user-123",
+      "graph_uuid": "graph-123"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "delete_thread",
+      "thread_uuid": "thread-123"
+    },
+    "method": "DELETE",
+    "path": "/api/v4/threads/thread-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "task": {
+        "uuid": "task-123",
+        "status": "pending",
+        "type": "thread.delete"
+      }
+    },
+    "status": 202
+  },
+  {
+    "config": {
+      "operation": "add_messages",
+      "thread_uuid": "thread-123",
+      "messages": "[{\"role\":\"user\",\"content\":\"Hello\"}]",
+      "return_context": false,
+      "ignore_roles": "[\"system\"]"
+    },
+    "method": "POST",
+    "path": "/api/v4/threads/thread-123/messages",
+    "body": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Hello"
+        }
+      ],
+      "return_context": false,
+      "ignore_roles": [
+        "system"
+      ]
+    },
+    "params": {},
+    "response": {
+      "messages": [
+        {
+          "uuid": "message-123",
+          "role": "user",
+          "content": "Hello"
+        }
+      ],
+      "task": {
+        "uuid": "task-123",
+        "status": "pending",
+        "type": "thread.delete"
+      }
+    },
+    "status": 202
+  },
+  {
+    "config": {
+      "operation": "list_messages",
+      "thread_uuid": "thread-123",
+      "order_by": "created_at",
+      "order": "desc"
+    },
+    "method": "GET",
+    "path": "/api/v4/threads/thread-123/messages",
+    "body": null,
+    "params": {
+      "page_size": "50",
+      "order_by": "created_at",
+      "order": "desc"
+    },
+    "response": {
+      "items": [
+        {
+          "uuid": "message-123",
+          "role": "user",
+          "content": "Hello"
+        }
+      ],
+      "total_size": 1
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_message",
+      "thread_uuid": "thread-123",
+      "message_uuid": "message-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/threads/thread-123/messages/message-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "uuid": "message-123",
+      "role": "user",
+      "content": "Hello"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "update_message",
+      "thread_uuid": "thread-123",
+      "message_uuid": "message-123",
+      "metadata": "{\"topic\":[\"sales\",\"support\"],\"old\":null}"
+    },
+    "method": "PATCH",
+    "path": "/api/v4/threads/thread-123/messages/message-123",
+    "body": {
+      "metadata": {
+        "topic": [
+          "sales",
+          "support"
+        ],
+        "old": null
+      }
+    },
+    "params": {},
+    "response": {
+      "uuid": "message-123",
+      "role": "user",
+      "content": "Hello"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_thread_context",
+      "thread_uuid": "thread-123",
+      "template_uuid": "template-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/threads/thread-123/context",
+    "body": null,
+    "params": {
+      "template_uuid": "template-123"
+    },
+    "response": {
+      "context": "Jane prefers email"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_thread_summary",
+      "thread_uuid": "thread-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/threads/thread-123/summary",
+    "body": null,
+    "params": {},
+    "response": {
+      "summary": "Conversation about support",
+      "thread_uuid": "thread-123"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "create_graph",
+      "name": "Support",
+      "description": "Shared support context"
+    },
+    "method": "POST",
+    "path": "/api/v4/graphs",
+    "body": {
+      "name": "Support",
+      "description": "Shared support context"
+    },
+    "params": {},
+    "response": {
+      "uuid": "graph-123",
+      "name": "Support",
+      "type": "standard"
+    },
+    "status": 201
+  },
+  {
+    "config": {
+      "operation": "list_graphs",
+      "search": "support"
+    },
+    "method": "POST",
+    "path": "/api/v4/graphs/list",
+    "body": {
+      "search": "support"
+    },
+    "params": {
+      "page_size": "50"
+    },
+    "response": {
+      "items": [
+        {
+          "uuid": "graph-123",
+          "name": "Support",
+          "type": "standard"
+        }
+      ]
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_graph",
+      "graph_uuid": "graph-123"
+    },
+    "method": "GET",
+    "path": "/api/v4/graphs/graph-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "uuid": "graph-123",
+      "name": "Support",
+      "type": "standard"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "update_graph",
+      "graph_uuid": "graph-123",
+      "name": "New name"
+    },
+    "method": "PATCH",
+    "path": "/api/v4/graphs/graph-123",
+    "body": {
+      "name": "New name"
+    },
+    "params": {},
+    "response": {
+      "uuid": "graph-123",
+      "name": "Support",
+      "type": "standard"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "delete_graph",
+      "graph_uuid": "graph-123"
+    },
+    "method": "DELETE",
+    "path": "/api/v4/graphs/graph-123",
+    "body": null,
+    "params": {},
+    "response": {
+      "task": {
+        "uuid": "task-123",
+        "status": "pending",
+        "type": "thread.delete"
+      }
+    },
+    "status": 202
+  },
+  {
+    "config": {
+      "operation": "add_episode",
+      "graph_uuid": "graph-123",
+      "data": "Jane prefers email",
+      "metadata": "{\"source\":\"crm\"}"
+    },
+    "method": "POST",
+    "path": "/api/v4/graphs/graph-123/episodes",
+    "body": {
+      "data": "Jane prefers email",
+      "type": "text",
+      "metadata": {
+        "source": "crm"
+      }
+    },
+    "params": {},
+    "response": {
+      "episode": {
+        "uuid": "episode-123",
+        "processed": false
+      },
+      "task": {
+        "uuid": "task-123",
+        "status": "pending",
+        "type": "thread.delete"
+      }
+    },
+    "status": 202
+  },
+  {
+    "config": {
+      "operation": "search_edges",
+      "graph_uuid": "graph-123",
+      "query": "Jane preferences",
+      "page_size": 10,
+      "cursor": "next +/="
+    },
+    "method": "POST",
+    "path": "/api/v4/graphs/graph-123/search/edges",
+    "body": {
+      "query": "Jane preferences"
+    },
+    "params": {
+      "page_size": "10",
+      "cursor": "next +/="
+    },
+    "response": {
+      "items": []
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "search_nodes",
+      "graph_uuid": "graph-123",
+      "query": "Jane preferences",
+      "page_size": 10,
+      "cursor": "next +/="
+    },
+    "method": "POST",
+    "path": "/api/v4/graphs/graph-123/search/nodes",
+    "body": {
+      "query": "Jane preferences"
+    },
+    "params": {
+      "page_size": "10",
+      "cursor": "next +/="
+    },
+    "response": {
+      "items": []
+    },
+    "status": 200
+  }
+]

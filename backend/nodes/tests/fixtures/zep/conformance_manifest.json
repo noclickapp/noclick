@@ -1,0 +1,29 @@
+{
+  "zep": {
+    "node_type": "automation-zep",
+    "credential": {
+      "credential_type": "zep_api_key",
+      "api_key": "<token>"
+    },
+    "specs": [
+      {
+        "file": "zep-contract-v4.json",
+        "sha256": "cc0366ea704882ff0cbf8e0d9283796e27d9e835d5d9ee8689ecaa9e865f5295",
+        "version": "1.0.0",
+        "source_url": "https://help.getzep.com/openapi/sdk-reference.json"
+      },
+      {
+        "file": "zep-contract-v3.json",
+        "sha256": "43cd009ddad373dd843fd45ae63e3e50c700777ddc5b982200b1de3664605ffc",
+        "version": "1.0.0",
+        "source_url": "https://help.getzep.com/openapi/sdk-reference-2.json"
+      },
+      {
+        "file": "zep-contract-v2.json",
+        "sha256": "e7f8e7b1255d5da14f2878fcc0e2707e32e48f56d3d1ca21ce97a62970f1382d",
+        "version": "1.0.0",
+        "source_url": "https://help.getzep.com/openapi/sdk-reference-3.json"
+      }
+    ]
+  }
+}

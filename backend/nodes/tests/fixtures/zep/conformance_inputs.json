@@ -1,0 +1,40 @@
+{
+  "create_user": {
+    "config": {
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "email": "jane.smith@example.com"
+    },
+    "source": "https://help.getzep.com/v4/quick-start-guide.md"
+  },
+  "update_user": {
+    "config": {
+      "user_uuid": "zep_user_uuid",
+      "first_name": "Jane"
+    },
+    "source": "https://help.getzep.com/v4/quick-start-guide.md"
+  },
+  "add_messages": {
+    "config": {
+      "thread_uuid": "zep_thread_uuid",
+      "messages": "[{\"name\": \"Jane\", \"role\": \"user\", \"content\": \"Who was Octavia Butler?\"}]"
+    },
+    "source": "https://help.getzep.com/v4/adding-messages.md"
+  },
+  "update_message": {
+    "config": {
+      "thread_uuid": "zep_thread_uuid",
+      "message_uuid": "message_uuid",
+      "metadata": "{\"sentiment\": \"positive\", \"resolved\": true, \"resolution_time\": \"2m 30s\"}"
+    },
+    "source": "https://help.getzep.com/v4/adding-messages.md"
+  },
+  "add_episode": {
+    "config": {
+      "graph_uuid": "zep_user_uuid",
+      "type": "text",
+      "data": "User Jane Smith listened to 'Bohemian Rhapsody' by Queen"
+    },
+    "source": "https://help.getzep.com/v4/quick-start-guide.md"
+  }
+}
