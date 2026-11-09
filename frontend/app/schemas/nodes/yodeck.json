@@ -311,7 +311,7 @@
       "type": "object",
       "x-credential-help-url": "https://app.yodeck.com/api-docs/",
       "x-credential-instructions": "Supply an existing Yodeck API token value, a nonsecret label and an existing accessible workspace ID. Requests use Authorization: Token label:value. This integration does not issue tokens or log in. The selected workspace is an access witness, not account or actor identity. Permissions and entitlement remain specific to the token's role.",
-      "x-credential-type": "yodeck_token"
+      "x-credential-type": "api_key"
     }
   },
   "properties": {

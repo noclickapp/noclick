@@ -63,7 +63,7 @@ def token(value):
 
 class YodeckTokenCredential(BaseModel):
     model_config = ConfigDict(title="Yodeck API Token", extra="ignore", hide_input_in_errors=True, json_schema_extra={
-        "x-credential-type": TYPE,
+        "x-credential-type": "api_key",
         "x-credential-help-url": "https://app.yodeck.com/api-docs/",
         "x-credential-instructions": "Supply an existing Yodeck API token value, a nonsecret label and an existing accessible workspace ID. Requests use Authorization: Token label:value. This integration does not issue tokens or log in. The selected workspace is an access witness, not account or actor identity. Permissions and entitlement remain specific to the token's role.",
     })
