@@ -1,0 +1,321 @@
+[
+  {
+    "config": {
+      "operation": "list_projects",
+      "count": 2,
+      "page": 1
+    },
+    "method": "GET",
+    "path": "/v2/ListProjects/2/1",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "get_project",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetProjectDetails/project-owned",
+    "body": null,
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "get_nft_counts",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetCounts/project-owned",
+    "body": null,
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "get_discounts",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetDiscounts/project-owned",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "get_sale_conditions",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetSaleConditions/project-owned",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "get_notifications",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetNotifications/project-owned",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "list_whitelist",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/ManageWhitelist/project-owned",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "list_nfts",
+      "projectuid": "project-owned",
+      "state": "all",
+      "count": 2,
+      "page": 1
+    },
+    "method": "GET",
+    "path": "/v2/GetNfts/project-owned/all/2/1",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "get_nft",
+      "nftuid": "nft-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetNftDetailsById/nft-owned",
+    "body": null,
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "check_metadata",
+      "nftuid": "nft-owned"
+    },
+    "method": "GET",
+    "path": "/v2/CheckMetadata/nft-owned",
+    "body": null,
+    "response": {
+      "resultState": "Ok"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_pricelist",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetPricelist/project-owned",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "list_project_transactions",
+      "projectuid": "project-owned"
+    },
+    "method": "GET",
+    "path": "/v2/GetProjectTransactions/project-owned",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "list_payout_wallets"
+    },
+    "method": "GET",
+    "path": "/v2/GetPayoutWallets",
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "get_mint_coupon_balance"
+    },
+    "method": "GET",
+    "path": "/v2/GetMintCouponBalance",
+    "body": null,
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "add_whitelist_entry",
+      "projectuid": "project-owned",
+      "address": "addr_test_holder",
+      "countofnfts": 2
+    },
+    "method": "POST",
+    "path": "/v2/ManageWhitelist/project-owned/addr_test_holder/2",
+    "body": null,
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "remove_whitelist_entry",
+      "projectuid": "project-owned",
+      "address": "addr_test_holder"
+    },
+    "method": "DELETE",
+    "path": "/v2/ManageWhitelist/project-owned/addr_test_holder",
+    "body": null,
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "set_nft_blocked",
+      "nftuid": "nft-owned",
+      "blockNft": true
+    },
+    "method": "GET",
+    "path": "/v2/BlockUnblockNft/nft-owned/true",
+    "body": null,
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "delete_nft",
+      "nftuid": "nft-owned"
+    },
+    "method": "GET",
+    "path": "/v2/DeleteNft/nft-owned",
+    "body": null,
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "replace_pricelist",
+      "projectuid": "project-owned",
+      "entries": [
+        {
+          "countNft": 1,
+          "price": 10.5,
+          "currency": "ADA",
+          "isActive": true
+        }
+      ]
+    },
+    "method": "PUT",
+    "path": "/v2/UpdatePricelist/project-owned",
+    "body": [
+      {
+        "countNft": 1,
+        "price": 10.5,
+        "currency": "ADA",
+        "isActive": true
+      }
+    ],
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "replace_discounts",
+      "projectuid": "project-owned",
+      "entries": [
+        {
+          "condition": "couponcode",
+          "couponcode": "LOYAL",
+          "sendbackDiscount": 5,
+          "isActive": true
+        }
+      ]
+    },
+    "method": "PUT",
+    "path": "/v2/UpdateDiscounts/project-owned",
+    "body": [
+      {
+        "condition": "couponcode",
+        "couponcode": "LOYAL",
+        "sendbackDiscount": 5,
+        "isActive": true
+      }
+    ],
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "replace_notifications",
+      "projectuid": "project-owned",
+      "entries": [
+        {
+          "notificationType": "webhook",
+          "address": "https://example.com/nft-hook",
+          "isActive": true
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/v2/UpdateNotifications/project-owned",
+    "body": [
+      {
+        "notificationType": "webhook",
+        "address": "https://example.com/nft-hook",
+        "isActive": true
+      }
+    ],
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "replace_sale_conditions",
+      "projectuid": "project-owned",
+      "entries": [
+        {
+          "condition": "countedwhitelistedaddresses",
+          "countedWhitelistAddresses": [
+            {
+              "address": "addr_test_holder",
+              "maxCount": 2
+            }
+          ],
+          "isActive": true
+        }
+      ]
+    },
+    "method": "PUT",
+    "path": "/v2/UpdateSaleConditions/project-owned",
+    "body": [
+      {
+        "condition": "countedwhitelistedaddresses",
+        "countedWhitelistAddresses": [
+          {
+            "address": "addr_test_holder",
+            "maxCount": 2
+          }
+        ],
+        "isActive": true
+      }
+    ],
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "mint_and_send_random",
+      "projectuid": "project-owned",
+      "countnft": 2,
+      "receiveraddress": "addr_test_receiver"
+    },
+    "method": "GET",
+    "path": "/v2/MintAndSendRandom/project-owned/2/addr_test_receiver",
+    "body": null,
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "mint_and_send_specific",
+      "projectuid": "project-owned",
+      "nftuid": "nft-owned",
+      "tokencount": 2,
+      "receiveraddress": "addr_test_receiver"
+    },
+    "method": "GET",
+    "path": "/v2/MintAndSendSpecific/project-owned/nft-owned/2/addr_test_receiver",
+    "body": null,
+    "response": {}
+  }
+]
