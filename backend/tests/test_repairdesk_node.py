@@ -108,16 +108,17 @@ def test_manual_token_rejects_wrong_paste(token):
 async def test_provider_errors_do_not_echo_body_or_retry(transport, status):
     calls, overrides = transport
     overrides["GET /purchase-orders/statuses"] = {"status": status, "body": {"message": RAW["api_key"]}}
-    result = await run("list_purchase_order_statuses")
-    assert result["status"] == "error" and str(status) in str(result)
-    assert RAW["api_key"] not in json.dumps(result) and len(calls) == 1
+    with pytest.raises(ValueError, match=str(status)) as error:
+        await run("list_purchase_order_statuses")
+    assert RAW["api_key"] not in str(error.value) and len(calls) == 1
 
 
 @pytest.mark.asyncio
 async def test_malformed_envelope_refused(transport):
     _, overrides = transport
     overrides["GET /purchase-orders/statuses"] = {"status": 200, "body": {"statusCode": 201, "data": []}}
-    assert (await run("list_purchase_order_statuses"))["status"] == "error"
+    with pytest.raises(ValueError, match="envelope"):
+        await run("list_purchase_order_statuses")
 
 
 def poll(operation, **args):
