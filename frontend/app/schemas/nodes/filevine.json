@@ -1,0 +1,1023 @@
+{
+  "$defs": {
+    "FilevineAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "filevine_access_token",
+          "default": "filevine_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "org_id": {
+          "description": "The numeric Filevine organisation ID sent as x-fv-orgid.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organisation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "access_token",
+        "org_id"
+      ],
+      "title": "Filevine Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a Filevine Identity bearer access token and your Filevine organisation ID. Use the access_token returned by the Identity token exchange, not the personal access token used to obtain it. The token needs fv.api.gateway.access, tenant and filevine.v2.api.* access. Paste only the token without Bearer. Access tokens expire; replace it here when it expires. NoClick does not renew this token.",
+      "x-credential-url": "https://developer.filevine.io/"
+    },
+    "FilevineAssignTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "assign_task",
+          "default": "assign_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "assignee_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Assignee Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "assignee_id"
+      ],
+      "title": "FilevineAssignTaskConfig",
+      "type": "object"
+    },
+    "FilevineCreateCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "body"
+      ],
+      "title": "FilevineCreateCommentConfig",
+      "type": "object"
+    },
+    "FilevineCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Email"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "first_name"
+      ],
+      "title": "FilevineCreateContactConfig",
+      "type": "object"
+    },
+    "FilevineCreateNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        }
+      },
+      "required": [
+        "project_id",
+        "body"
+      ],
+      "title": "FilevineCreateNoteConfig",
+      "type": "object"
+    },
+    "FilevineCreateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_type_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Type Id",
+          "type": "string"
+        },
+        "client_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "project_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "project_type_id",
+        "client_id",
+        "project_name"
+      ],
+      "title": "FilevineCreateProjectConfig",
+      "type": "object"
+    },
+    "FilevineCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "assignee_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Assignee Id",
+          "type": "string"
+        },
+        "target_date": {
+          "description": "Task due date in ISO 8601 date-time format.",
+          "format": "date-time",
+          "title": "Target Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "body",
+        "assignee_id",
+        "target_date"
+      ],
+      "title": "FilevineCreateTaskConfig",
+      "type": "object"
+    },
+    "FilevineGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FilevineGetContactConfig",
+      "type": "object"
+    },
+    "FilevineGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FilevineGetCurrentUserConfig",
+      "type": "object"
+    },
+    "FilevineGetNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "FilevineGetNoteConfig",
+      "type": "object"
+    },
+    "FilevineGetProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FilevineGetProjectConfig",
+      "type": "object"
+    },
+    "FilevineGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "FilevineGetTaskConfig",
+      "type": "object"
+    },
+    "FilevineListCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records for this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "FilevineListCommentsConfig",
+      "type": "object"
+    },
+    "FilevineListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records for this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_term": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Term"
+        }
+      },
+      "title": "FilevineListContactsConfig",
+      "type": "object"
+    },
+    "FilevineListNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FilevineListNotesConfig",
+      "type": "object"
+    },
+    "FilevineListProjectNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_project_notes",
+          "default": "list_project_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FilevineListProjectNotesConfig",
+      "type": "object"
+    },
+    "FilevineListProjectPhasesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records for this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_project_phases",
+          "default": "list_project_phases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_type_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Type Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_type_id"
+      ],
+      "title": "FilevineListProjectPhasesConfig",
+      "type": "object"
+    },
+    "FilevineListProjectTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_project_tasks",
+          "default": "list_project_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FilevineListProjectTasksConfig",
+      "type": "object"
+    },
+    "FilevineListProjectTypesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records for this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_project_types",
+          "default": "list_project_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FilevineListProjectTypesConfig",
+      "type": "object"
+    },
+    "FilevineListProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records for this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_term": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Term"
+        }
+      },
+      "title": "FilevineListProjectsConfig",
+      "type": "object"
+    },
+    "FilevineListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Zero-based offset. Read next_offset from the previous page; no automatic pagination.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FilevineListTasksConfig",
+      "type": "object"
+    },
+    "FilevineUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Email"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FilevineUpdateContactConfig",
+      "type": "object"
+    },
+    "FilevineUpdateProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "Filevine native numeric ID.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "project_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "phase_id": {
+          "anyOf": [
+            {
+              "description": "Filevine native numeric ID.",
+              "maxLength": 10,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Id"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FilevineUpdateProjectConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_task": "#/$defs/FilevineAssignTaskConfig",
+          "create_comment": "#/$defs/FilevineCreateCommentConfig",
+          "create_contact": "#/$defs/FilevineCreateContactConfig",
+          "create_note": "#/$defs/FilevineCreateNoteConfig",
+          "create_project": "#/$defs/FilevineCreateProjectConfig",
+          "create_task": "#/$defs/FilevineCreateTaskConfig",
+          "get_contact": "#/$defs/FilevineGetContactConfig",
+          "get_current_user": "#/$defs/FilevineGetCurrentUserConfig",
+          "get_note": "#/$defs/FilevineGetNoteConfig",
+          "get_project": "#/$defs/FilevineGetProjectConfig",
+          "get_task": "#/$defs/FilevineGetTaskConfig",
+          "list_comments": "#/$defs/FilevineListCommentsConfig",
+          "list_contacts": "#/$defs/FilevineListContactsConfig",
+          "list_notes": "#/$defs/FilevineListNotesConfig",
+          "list_project_notes": "#/$defs/FilevineListProjectNotesConfig",
+          "list_project_phases": "#/$defs/FilevineListProjectPhasesConfig",
+          "list_project_tasks": "#/$defs/FilevineListProjectTasksConfig",
+          "list_project_types": "#/$defs/FilevineListProjectTypesConfig",
+          "list_projects": "#/$defs/FilevineListProjectsConfig",
+          "list_tasks": "#/$defs/FilevineListTasksConfig",
+          "update_contact": "#/$defs/FilevineUpdateContactConfig",
+          "update_project": "#/$defs/FilevineUpdateProjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FilevineListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListProjectNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineAssignTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListProjectTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListProjectTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineListProjectPhasesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FilevineAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Filevine Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
