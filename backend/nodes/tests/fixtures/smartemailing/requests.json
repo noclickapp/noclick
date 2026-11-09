@@ -1,0 +1,366 @@
+{
+  "source": "https://app.smartemailing.cz/docs/api/v3/openapi.json",
+  "description": "Request routing regression cases based on the pinned provider contract and its example values. Pagination and contact email test cases also exercise synthetic boundaries.",
+  "cases": [
+    {
+      "operation": "get_account_info",
+      "config": {
+        "operation": "get_account_info"
+      },
+      "method": "GET",
+      "path": "/account-info",
+      "expected": {}
+    },
+    {
+      "operation": "list_contacts",
+      "config": {
+        "operation": "list_contacts",
+        "limit": 2,
+        "offset": 5,
+        "emailaddress": "test@example.com"
+      },
+      "method": "GET",
+      "path": "/contacts",
+      "expected": {
+        "limit": "2",
+        "offset": "5",
+        "emailaddress": "test@example.com"
+      }
+    },
+    {
+      "operation": "get_contact",
+      "config": {
+        "operation": "get_contact",
+        "emailaddress": "test+tag@example.com"
+      },
+      "method": "GET",
+      "path": "/contacts/test+tag@example.com",
+      "expected": {}
+    },
+    {
+      "operation": "import_contacts",
+      "config": {
+        "operation": "import_contacts",
+        "data": [
+          {
+            "emailaddress": "martin@smartemailing.cz",
+            "name": "Martin",
+            "contactlists": [
+              {
+                "id": 1,
+                "status": "confirmed"
+              }
+            ],
+            "customfields": [
+              {
+                "id": 8,
+                "value": "2016-01-10 13:53:03"
+              }
+            ]
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/import",
+      "expected": {
+        "settings": {
+          "update": true,
+          "preserve_unsubscribed": true,
+          "skip_invalid_emails": false
+        },
+        "data": [
+          {
+            "emailaddress": "martin@smartemailing.cz",
+            "name": "Martin",
+            "contactlists": [
+              {
+                "id": 1,
+                "status": "confirmed"
+              }
+            ],
+            "customfields": [
+              {
+                "id": 8,
+                "value": "2016-01-10 13:53:03"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "operation": "change_email_address",
+      "config": {
+        "operation": "change_email_address",
+        "from_address": "martin@smartemailing.cz",
+        "to_address": "spock@smartemailing.cz"
+      },
+      "method": "POST",
+      "path": "/change-emailaddress",
+      "expected": {
+        "from": "martin@smartemailing.cz",
+        "to": "spock@smartemailing.cz"
+      }
+    },
+    {
+      "operation": "list_contact_lists",
+      "config": {
+        "operation": "list_contact_lists"
+      },
+      "method": "GET",
+      "path": "/contactlists",
+      "expected": {
+        "limit": "100",
+        "offset": "0"
+      }
+    },
+    {
+      "operation": "get_contact_list",
+      "config": {
+        "operation": "get_contact_list",
+        "id": 1
+      },
+      "method": "GET",
+      "path": "/contactlists/1",
+      "expected": {}
+    },
+    {
+      "operation": "create_contact_list",
+      "config": {
+        "operation": "create_contact_list",
+        "name": "Internal name of this list",
+        "publicname": "Going public!"
+      },
+      "method": "POST",
+      "path": "/contactlists",
+      "expected": {
+        "name": "Internal name of this list",
+        "publicname": "Going public!"
+      }
+    },
+    {
+      "operation": "update_contact_list",
+      "config": {
+        "operation": "update_contact_list",
+        "id": 1,
+        "name": "Changed name"
+      },
+      "method": "PUT",
+      "path": "/contactlists/1",
+      "expected": {
+        "name": "Changed name"
+      }
+    },
+    {
+      "operation": "list_contacts_in_list",
+      "config": {
+        "operation": "list_contacts_in_list",
+        "id": 1
+      },
+      "method": "GET",
+      "path": "/contactlists/1/contacts",
+      "expected": {}
+    },
+    {
+      "operation": "list_custom_fields",
+      "config": {
+        "operation": "list_custom_fields"
+      },
+      "method": "GET",
+      "path": "/customfields",
+      "expected": {
+        "limit": "100",
+        "offset": "0"
+      }
+    },
+    {
+      "operation": "get_custom_field",
+      "config": {
+        "operation": "get_custom_field",
+        "id": 1
+      },
+      "method": "GET",
+      "path": "/customfields/1",
+      "expected": {}
+    },
+    {
+      "operation": "create_custom_field",
+      "config": {
+        "operation": "create_custom_field",
+        "name": "Fruit",
+        "type": "text"
+      },
+      "method": "POST",
+      "path": "/customfields",
+      "expected": {
+        "name": "Fruit",
+        "type": "text"
+      }
+    },
+    {
+      "operation": "list_custom_field_options",
+      "config": {
+        "operation": "list_custom_field_options"
+      },
+      "method": "GET",
+      "path": "/customfield-options",
+      "expected": {
+        "limit": "100",
+        "offset": "0"
+      }
+    },
+    {
+      "operation": "create_custom_field_option",
+      "config": {
+        "operation": "create_custom_field_option",
+        "customfield_id": 1,
+        "order": 6,
+        "name": "Tokyo"
+      },
+      "method": "POST",
+      "path": "/customfield-options",
+      "expected": {
+        "customfield_id": 1,
+        "order": 6,
+        "name": "Tokyo"
+      }
+    },
+    {
+      "operation": "list_emails",
+      "config": {
+        "operation": "list_emails"
+      },
+      "method": "GET",
+      "path": "/emails",
+      "expected": {
+        "limit": "100",
+        "offset": "0"
+      }
+    },
+    {
+      "operation": "get_email",
+      "config": {
+        "operation": "get_email",
+        "id": 40
+      },
+      "method": "GET",
+      "path": "/emails/40",
+      "expected": {}
+    },
+    {
+      "operation": "create_email",
+      "config": {
+        "operation": "create_email",
+        "title": "Hello world, this is Subject!",
+        "htmlbody": "<span>Hello!</span>"
+      },
+      "method": "POST",
+      "path": "/emails",
+      "expected": {
+        "title": "Hello world, this is Subject!",
+        "htmlbody": "<span>Hello!</span>",
+        "template": 0
+      }
+    },
+    {
+      "operation": "send_transactional_emails",
+      "config": {
+        "operation": "send_transactional_emails",
+        "sender_credentials": {
+          "from": "martin@smartemailing.cz",
+          "reply_to": "martin@smartemailing.cz",
+          "sender_name": "Martin"
+        },
+        "tag": "transactional_1",
+        "email_id": 14,
+        "tasks": [
+          {
+            "recipient": {
+              "emailaddress": "martin@smartemailing.cz"
+            }
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/send/transactional-emails-bulk",
+      "expected": {
+        "sender_credentials": {
+          "from": "martin@smartemailing.cz",
+          "reply_to": "martin@smartemailing.cz",
+          "sender_name": "Martin"
+        },
+        "tag": "transactional_1",
+        "email_id": 14,
+        "tasks": [
+          {
+            "recipient": {
+              "emailaddress": "martin@smartemailing.cz"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_automations",
+      "config": {
+        "operation": "list_automations"
+      },
+      "method": "GET",
+      "path": "/automations",
+      "expected": {
+        "limit": "100",
+        "offset": "0"
+      }
+    },
+    {
+      "operation": "get_automation",
+      "config": {
+        "operation": "get_automation",
+        "id": "a3ac238ccfa94b3e979aea2cb78c48c2"
+      },
+      "method": "GET",
+      "path": "/automations/a3ac238ccfa94b3e979aea2cb78c48c2",
+      "expected": {}
+    },
+    {
+      "operation": "trigger_events",
+      "config": {
+        "operation": "trigger_events",
+        "events": [
+          {
+            "emailaddress": "michal@smartemailing.cz",
+            "name": "filled-form",
+            "payload": {
+              "form-name": "some form name",
+              "referer": "google"
+            }
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/trigger-event",
+      "expected": [
+        {
+          "emailaddress": "michal@smartemailing.cz",
+          "name": "filled-form",
+          "payload": {
+            "form-name": "some form name",
+            "referer": "google"
+          }
+        }
+      ]
+    },
+    {
+      "operation": "list_newsletter_statistics",
+      "config": {
+        "operation": "list_newsletter_statistics"
+      },
+      "method": "GET",
+      "path": "/newsletter-stats-summary",
+      "expected": {
+        "limit": "100",
+        "offset": "0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1417 @@
+{
+  "$defs": {
+    "AutomationEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "emailaddress": {
+          "format": "email",
+          "title": "Emailaddress",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        }
+      },
+      "required": [
+        "emailaddress",
+        "name",
+        "payload"
+      ],
+      "title": "AutomationEvent",
+      "type": "object"
+    },
+    "Contact": {
+      "additionalProperties": false,
+      "properties": {
+        "emailaddress": {
+          "format": "email",
+          "title": "Emailaddress",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surname"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "cellphone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cellphone"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "blacklisted": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blacklisted"
+        },
+        "contactlists": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactListMembership"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contactlists"
+        },
+        "customfields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactCustomField"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        }
+      },
+      "required": [
+        "emailaddress"
+      ],
+      "title": "Contact",
+      "type": "object"
+    },
+    "ContactCustomField": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ContactCustomField",
+      "type": "object"
+    },
+    "ContactListMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact list ID",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "unsubscribed",
+            "removed"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status"
+      ],
+      "title": "ContactListMembership",
+      "type": "object"
+    },
+    "ImportSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "update": {
+          "default": true,
+          "title": "Update",
+          "type": "boolean"
+        },
+        "preserve_unsubscribed": {
+          "default": true,
+          "description": "Keep existing unsubscribed contacts unsubscribed.",
+          "title": "Preserve Unsubscribed",
+          "type": "boolean"
+        },
+        "skip_invalid_emails": {
+          "default": false,
+          "title": "Skip Invalid Emails",
+          "type": "boolean"
+        }
+      },
+      "title": "ImportSettings",
+      "type": "object"
+    },
+    "Recipient": {
+      "additionalProperties": false,
+      "properties": {
+        "emailaddress": {
+          "format": "email",
+          "title": "Emailaddress",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emailaddress"
+      ],
+      "title": "Recipient",
+      "type": "object"
+    },
+    "Replacement": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 65536,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "content"
+      ],
+      "title": "Replacement",
+      "type": "object"
+    },
+    "SendTask": {
+      "additionalProperties": false,
+      "properties": {
+        "recipient": {
+          "$ref": "#/$defs/Recipient"
+        },
+        "replace": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Replacement"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replace"
+        }
+      },
+      "required": [
+        "recipient"
+      ],
+      "title": "SendTask",
+      "type": "object"
+    },
+    "Sender": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "description": "Must be a confirmed sender address.",
+          "format": "email",
+          "title": "From email",
+          "type": "string"
+        },
+        "reply_to": {
+          "format": "email",
+          "title": "Reply To",
+          "type": "string"
+        },
+        "sender_name": {
+          "minLength": 1,
+          "title": "Sender Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "reply_to",
+        "sender_name"
+      ],
+      "title": "Sender",
+      "type": "object"
+    },
+    "SmartEmailingChangeEmailAddress": {
+      "additionalProperties": false,
+      "description": "Change email address.",
+      "properties": {
+        "operation": {
+          "const": "change_email_address",
+          "default": "change_email_address",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_address": {
+          "format": "email",
+          "title": "Original email",
+          "type": "string"
+        },
+        "to_address": {
+          "format": "email",
+          "title": "New email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_address",
+        "to_address"
+      ],
+      "title": "SmartEmailingChangeEmailAddress",
+      "type": "object"
+    },
+    "SmartEmailingCreateContactList": {
+      "additionalProperties": false,
+      "description": "Create contact list.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_list",
+          "default": "create_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "publicname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publicname"
+        },
+        "sendername": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendername"
+        },
+        "senderemail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Senderemail"
+        },
+        "replyto": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replyto"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SmartEmailingCreateContactList",
+      "type": "object"
+    },
+    "SmartEmailingCreateCustomField": {
+      "additionalProperties": false,
+      "description": "Create custom field.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "text",
+            "textarea",
+            "bool",
+            "numeric",
+            "date",
+            "checkbox",
+            "radio",
+            "select"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "SmartEmailingCreateCustomField",
+      "type": "object"
+    },
+    "SmartEmailingCreateCustomFieldOption": {
+      "additionalProperties": false,
+      "description": "Create custom field option.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_field_option",
+          "default": "create_custom_field_option",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customfield_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customfield Id",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "order": {
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customfield_id",
+        "name",
+        "order"
+      ],
+      "title": "SmartEmailingCreateCustomFieldOption",
+      "type": "object"
+    },
+    "SmartEmailingCreateEmail": {
+      "additionalProperties": false,
+      "description": "Create email.",
+      "properties": {
+        "operation": {
+          "const": "create_email",
+          "default": "create_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "htmlbody": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Htmlbody"
+        },
+        "textbody": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Textbody"
+        },
+        "template": {
+          "default": 0,
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Template",
+          "type": "integer"
+        },
+        "footer_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Footer Id"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "SmartEmailingCreateEmail",
+      "type": "object"
+    },
+    "SmartEmailingCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smartemailing_api_key",
+          "default": "smartemailing_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "api_key"
+      ],
+      "title": "SmartEmailing API Key",
+      "type": "object",
+      "x-credential-instructions": "Enter your SmartEmailing username and API key from your account's API settings. The key is sent with HTTP Basic authentication. Your account permissions apply to all operations.",
+      "x-credential-url": "https://app.smartemailing.cz/docs/api/v3/index.html"
+    },
+    "SmartEmailingGetAccountInfo": {
+      "additionalProperties": false,
+      "description": "Get account info.",
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SmartEmailingGetAccountInfo",
+      "type": "object"
+    },
+    "SmartEmailingGetAutomation": {
+      "additionalProperties": false,
+      "description": "Get automation.",
+      "properties": {
+        "operation": {
+          "const": "get_automation",
+          "default": "get_automation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SmartEmailingGetAutomation",
+      "type": "object"
+    },
+    "SmartEmailingGetContact": {
+      "additionalProperties": false,
+      "description": "Get contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "emailaddress": {
+          "description": "Contact ID or email address.",
+          "minLength": 1,
+          "title": "Emailaddress",
+          "type": "string"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "const": "customfields",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        }
+      },
+      "required": [
+        "emailaddress"
+      ],
+      "title": "SmartEmailingGetContact",
+      "type": "object"
+    },
+    "SmartEmailingGetContactList": {
+      "additionalProperties": false,
+      "description": "Get contact list.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_list",
+          "default": "get_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SmartEmailingGetContactList",
+      "type": "object"
+    },
+    "SmartEmailingGetCustomField": {
+      "additionalProperties": false,
+      "description": "Get custom field.",
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SmartEmailingGetCustomField",
+      "type": "object"
+    },
+    "SmartEmailingGetEmail": {
+      "additionalProperties": false,
+      "description": "Get email.",
+      "properties": {
+        "operation": {
+          "const": "get_email",
+          "default": "get_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SmartEmailingGetEmail",
+      "type": "object"
+    },
+    "SmartEmailingImportContacts": {
+      "additionalProperties": false,
+      "description": "Insert or update up to 500 contacts, memberships and custom fields.",
+      "properties": {
+        "operation": {
+          "const": "import_contacts",
+          "default": "import_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data": {
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        },
+        "settings": {
+          "$ref": "#/$defs/ImportSettings"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "SmartEmailingImportContacts",
+      "type": "object"
+    },
+    "SmartEmailingListAutomations": {
+      "additionalProperties": false,
+      "description": "List automations.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_automations",
+          "default": "list_automations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "SmartEmailingListAutomations",
+      "type": "object"
+    },
+    "SmartEmailingListContactLists": {
+      "additionalProperties": false,
+      "description": "List contact lists.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contact_lists",
+          "default": "list_contact_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SmartEmailingListContactLists",
+      "type": "object"
+    },
+    "SmartEmailingListContacts": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "emailaddress": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surname"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "const": "customfields",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        }
+      },
+      "title": "SmartEmailingListContacts",
+      "type": "object"
+    },
+    "SmartEmailingListContactsInList": {
+      "additionalProperties": false,
+      "description": "List contacts in list.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts_in_list",
+          "default": "list_contacts_in_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SmartEmailingListContactsInList",
+      "type": "object"
+    },
+    "SmartEmailingListCustomFieldOptions": {
+      "additionalProperties": false,
+      "description": "List custom field options.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_custom_field_options",
+          "default": "list_custom_field_options",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SmartEmailingListCustomFieldOptions",
+      "type": "object"
+    },
+    "SmartEmailingListCustomFields": {
+      "additionalProperties": false,
+      "description": "List custom fields.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "const": "customfield_options",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        }
+      },
+      "title": "SmartEmailingListCustomFields",
+      "type": "object"
+    },
+    "SmartEmailingListEmails": {
+      "additionalProperties": false,
+      "description": "List emails.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_emails",
+          "default": "list_emails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SmartEmailingListEmails",
+      "type": "object"
+    },
+    "SmartEmailingListNewsletterStatistics": {
+      "additionalProperties": false,
+      "description": "List newsletter statistics.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page, at most 500. This operation fetches one page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip; use next_offset for the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_newsletter_statistics",
+          "default": "list_newsletter_statistics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SmartEmailingListNewsletterStatistics",
+      "type": "object"
+    },
+    "SmartEmailingSendTransactionalEmails": {
+      "additionalProperties": false,
+      "description": "Send transactional emails.",
+      "properties": {
+        "operation": {
+          "const": "send_transactional_emails",
+          "default": "send_transactional_emails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sender_credentials": {
+          "$ref": "#/$defs/Sender"
+        },
+        "tag": {
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        },
+        "email_id": {
+          "description": "Existing email/template ID. Transactional sending must be enabled by SmartEmailing support.",
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "tasks": {
+          "description": "Non-advertising transactional messages; sent even to unsubscribed or blacklisted contacts. Acknowledgement means queued, not delivered.",
+          "items": {
+            "$ref": "#/$defs/SendTask"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Tasks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sender_credentials",
+        "tag",
+        "email_id",
+        "tasks"
+      ],
+      "title": "SmartEmailingSendTransactionalEmails",
+      "type": "object"
+    },
+    "SmartEmailingTriggerEvents": {
+      "additionalProperties": false,
+      "description": "Trigger events.",
+      "properties": {
+        "operation": {
+          "const": "trigger_events",
+          "default": "trigger_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "events": {
+          "description": "Events without a matching trigger are ignored by the provider.",
+          "items": {
+            "$ref": "#/$defs/AutomationEvent"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "title": "SmartEmailingTriggerEvents",
+      "type": "object"
+    },
+    "SmartEmailingUpdateContactList": {
+      "additionalProperties": false,
+      "description": "Update contact list.",
+      "properties": {
+        "operation": {
+          "const": "update_contact_list",
+          "default": "update_contact_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "publicname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publicname"
+        },
+        "sendername": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendername"
+        },
+        "senderemail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Senderemail"
+        },
+        "replyto": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replyto"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "SmartEmailingUpdateContactList",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "change_email_address": "#/$defs/SmartEmailingChangeEmailAddress",
+          "create_contact_list": "#/$defs/SmartEmailingCreateContactList",
+          "create_custom_field": "#/$defs/SmartEmailingCreateCustomField",
+          "create_custom_field_option": "#/$defs/SmartEmailingCreateCustomFieldOption",
+          "create_email": "#/$defs/SmartEmailingCreateEmail",
+          "get_account_info": "#/$defs/SmartEmailingGetAccountInfo",
+          "get_automation": "#/$defs/SmartEmailingGetAutomation",
+          "get_contact": "#/$defs/SmartEmailingGetContact",
+          "get_contact_list": "#/$defs/SmartEmailingGetContactList",
+          "get_custom_field": "#/$defs/SmartEmailingGetCustomField",
+          "get_email": "#/$defs/SmartEmailingGetEmail",
+          "import_contacts": "#/$defs/SmartEmailingImportContacts",
+          "list_automations": "#/$defs/SmartEmailingListAutomations",
+          "list_contact_lists": "#/$defs/SmartEmailingListContactLists",
+          "list_contacts": "#/$defs/SmartEmailingListContacts",
+          "list_contacts_in_list": "#/$defs/SmartEmailingListContactsInList",
+          "list_custom_field_options": "#/$defs/SmartEmailingListCustomFieldOptions",
+          "list_custom_fields": "#/$defs/SmartEmailingListCustomFields",
+          "list_emails": "#/$defs/SmartEmailingListEmails",
+          "list_newsletter_statistics": "#/$defs/SmartEmailingListNewsletterStatistics",
+          "send_transactional_emails": "#/$defs/SmartEmailingSendTransactionalEmails",
+          "trigger_events": "#/$defs/SmartEmailingTriggerEvents",
+          "update_contact_list": "#/$defs/SmartEmailingUpdateContactList"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SmartEmailingGetAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListContacts"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingGetContact"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingImportContacts"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingChangeEmailAddress"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListContactLists"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingGetContactList"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingCreateContactList"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingUpdateContactList"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListContactsInList"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListCustomFields"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingGetCustomField"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingCreateCustomField"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListCustomFieldOptions"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingCreateCustomFieldOption"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListEmails"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingGetEmail"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingCreateEmail"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingSendTransactionalEmails"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListAutomations"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingGetAutomation"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingTriggerEvents"
+        },
+        {
+          "$ref": "#/$defs/SmartEmailingListNewsletterStatistics"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SmartEmailingCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smartemailing Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
