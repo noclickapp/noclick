@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/youtube-transcript.svg",
+  "source": "https://www.youtubetranscript.dev/logo.svg (official info.x-logo.url in https://www.youtubetranscript.dev/api/v2/openapi.json)",
+  "license": "YouTubeTranscript.dev brand mark, used nominatively to identify the connected service; trademark rights remain with its owner.",
+  "sha256": "948e5fdb43508899cf2fa84aa62dfe56209e0525dc7dbf5a8ee7796d1f7ebc69"
+}

@@ -1,0 +1,50 @@
+{
+  "POST /transcribe": {
+    "body": {
+      "request_id": "req_abc123",
+      "status": "completed",
+      "data": {
+        "video_id": "dQw4w9WgXcQ",
+        "video_title": "Example video",
+        "transcript": {
+          "text": "Welcome to this tutorial...",
+          "language": "en",
+          "source": "auto",
+          "segments": [
+            {
+              "text": "Welcome to this tutorial.",
+              "start": 0,
+              "end": 2500
+            }
+          ]
+        }
+      },
+      "credits_used": 1,
+      "mode": "auto"
+    },
+    "source": "https://www.youtubetranscript.dev/api-docs"
+  },
+  "GET /jobs/{job_id}": {
+    "body": {
+      "request_id": "req_abc123",
+      "status": "completed",
+      "data": {
+        "video_id": "dQw4w9WgXcQ",
+        "transcript": {
+          "text": "Welcome to this tutorial...",
+          "language": "en",
+          "source": "asr",
+          "segments": [
+            {
+              "text": "Welcome to this tutorial.",
+              "start": 0,
+              "end": 2500
+            }
+          ]
+        }
+      },
+      "credits_used": 6
+    },
+    "source": "https://www.youtubetranscript.dev/api-docs"
+  }
+}

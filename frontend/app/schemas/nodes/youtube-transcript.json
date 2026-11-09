@@ -1,0 +1,1940 @@
+{
+  "$defs": {
+    "AddFolderVideosConfig": {
+      "additionalProperties": false,
+      "description": "Add videos to a folder (free).",
+      "properties": {
+        "operation": {
+          "const": "add_folder_videos",
+          "default": "add_folder_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "format": "uuid",
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "video_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Video Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "folder_id",
+        "video_ids"
+      ],
+      "title": "AddFolderVideosConfig",
+      "type": "object"
+    },
+    "AsrOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source audio language as an ISO code (any of the 99 supported languages",
+          "title": "Language"
+        },
+        "codeSwitching": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transcribe mid-sentence language switches. Only applies when language=\"auto\"",
+          "title": "Codeswitching"
+        },
+        "medicalMode": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boost accuracy for medical terminology (EN/ES/DE/FR only)",
+          "title": "Medicalmode"
+        },
+        "keyTerms": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 200,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Words/phrases (max 6 words each) to boost recognition accuracy, e.g. product names or jargon. Beta - English audio only (ignored for other languages)",
+          "title": "Keyterms"
+        },
+        "translateTo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Translate transcript to this language",
+          "title": "Translateto"
+        },
+        "speakerLabels": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Speaker diarization (billable). Mutually exclusive with multichannel - multichannel wins when both are set",
+          "title": "Speakerlabels"
+        },
+        "speakerId": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Map speaker labels to real names/roles (billable",
+          "title": "Speakerid"
+        },
+        "speakerIdType": {
+          "anyOf": [
+            {
+              "enum": [
+                "name",
+                "role"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identify speakers by name or by role",
+          "title": "Speakeridtype",
+          "enum": [
+            "name",
+            "role"
+          ],
+          "x-enum-searchable": true
+        },
+        "speakerIdKnownValues": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 35,
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Known speaker names or roles to match against. Optional for \"name\" (inferred from conversation); REQUIRED for \"role\" - role-type speaker ID is skipped without at least one value",
+          "title": "Speakeridknownvalues"
+        },
+        "multichannel": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Per-channel transcription (billable). Mutually exclusive with speakerLabels and speakerId - setting it disables both",
+          "title": "Multichannel"
+        },
+        "speakersExpected": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact speaker count. Null to auto-detect or use the min/max range",
+          "title": "Speakersexpected"
+        },
+        "speakersExpectedMin": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hard lower bound on speaker labels (ignored when speakersExpected is set)",
+          "title": "Speakersexpectedmin"
+        },
+        "speakersExpectedMax": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hard upper bound on speaker labels (ignored when speakersExpected is set)",
+          "title": "Speakersexpectedmax"
+        },
+        "topicDetection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IAB topic categories (billable)",
+          "title": "Topicdetection"
+        },
+        "summarization": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto summary (billable)",
+          "title": "Summarization"
+        },
+        "contentModeration": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content safety detection (billable)",
+          "title": "Contentmoderation"
+        },
+        "piiRedaction": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Redact personally identifiable information (billable)",
+          "title": "Piiredaction"
+        },
+        "profanityFiltering": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter profanity (billable)",
+          "title": "Profanityfiltering"
+        },
+        "sentimentAnalysis": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Per-segment sentiment (billable)",
+          "title": "Sentimentanalysis"
+        },
+        "autoPunctuation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatic punctuation",
+          "title": "Autopunctuation"
+        },
+        "textFormatting": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text formatting",
+          "title": "Textformatting"
+        },
+        "fillerWords": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keep filler words (disfluencies)",
+          "title": "Fillerwords"
+        },
+        "customFormatting": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reformat dates/phones/emails using the patterns below (billable)",
+          "title": "Customformatting"
+        },
+        "customFormatDate": {
+          "anyOf": [
+            {
+              "enum": [
+                "mm/dd/yyyy",
+                "dd/mm/yyyy",
+                "yyyy-mm-dd",
+                "mm-dd-yyyy",
+                "dd.mm.yyyy"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date pattern applied when customFormatting is on",
+          "title": "Customformatdate",
+          "enum": [
+            "mm/dd/yyyy",
+            "dd/mm/yyyy",
+            "yyyy-mm-dd",
+            "mm-dd-yyyy",
+            "dd.mm.yyyy"
+          ],
+          "x-enum-searchable": true
+        },
+        "customFormatPhone": {
+          "anyOf": [
+            {
+              "enum": [
+                "(xxx)xxx-xxxx",
+                "xxx-xxx-xxxx",
+                "xxx.xxx.xxxx",
+                "+x(xxx)xxx-xxxx"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone pattern applied when customFormatting is on",
+          "title": "Customformatphone",
+          "enum": [
+            "(xxx)xxx-xxxx",
+            "xxx-xxx-xxxx",
+            "xxx.xxx.xxxx",
+            "+x(xxx)xxx-xxxx"
+          ],
+          "x-enum-searchable": true
+        },
+        "customFormatEmail": {
+          "anyOf": [
+            {
+              "enum": [
+                "username@domain.com",
+                "firstname.lastname@domain.com"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email pattern applied when customFormatting is on",
+          "title": "Customformatemail",
+          "enum": [
+            "username@domain.com",
+            "firstname.lastname@domain.com"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AsrOptions",
+      "type": "object"
+    },
+    "BulkDeleteTranscriptsConfig": {
+      "additionalProperties": false,
+      "description": "Delete transcripts by id.",
+      "properties": {
+        "operation": {
+          "const": "bulk_delete_transcripts",
+          "default": "bulk_delete_transcripts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "BulkDeleteTranscriptsConfig",
+      "type": "object"
+    },
+    "CreateBatchConfig": {
+      "additionalProperties": false,
+      "description": "Transcribe multiple videos.",
+      "properties": {
+        "operation": {
+          "const": "create_batch",
+          "default": "create_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3000,
+          "title": "Video Ids",
+          "type": "array"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Preferred language for every video",
+          "title": "Language"
+        },
+        "mode": {
+          "default": "captions_only",
+          "description": "Where the transcript comes from. Replaces the legacy source + allow_asr\npair (still supported, but not in the same request as mode). Note that\nmode=auto is not legacy source=auto: source=auto alone never uses ASR\n(that is mode=captions_only).\n  - auto: captions first; speech-to-text (ASR) only when the video has none. Can charge ASR credits.\n  - captions_only: any captions (human or YouTube auto-generated), never ASR. When mode is omitted, the account default from the API Dashboard applies (auto for accounts created from October 2026, captions_only for older ones unless changed).\n  - human_captions_only: human-made captions only, never ASR.\n  - speech_to_text_only: always transcribe the audio with ASR. Charges ASR credits.\nOn /transcribe, ASR modes return status processing with a job_id to poll\nat GET /jobs/{job_id} when no webhook_url is given. Responses echo the\nmode the request ran with (for legacy requests, the equivalent mode).\n",
+          "enum": [
+            "auto",
+            "captions_only",
+            "human_captions_only",
+            "speech_to_text_only"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which extras to include in the transcript payload."
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when mode is auto or speech_to_text_only (legacy - source=\"asr\" or allow_asr=true)",
+          "title": "Webhook Url"
+        },
+        "asr_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AsrOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rich ASR configuration. Only applies when the\nvideo is transcribed via ASR (mode speech_to_text_only or auto fallback; legacy source=\"asr\" or allow_asr). Billable\nadd-ons increase credit cost proportional to duration - use\n/transcribe/estimate to preview.\n"
+        }
+      },
+      "required": [
+        "video_ids"
+      ],
+      "title": "CreateBatchConfig",
+      "type": "object"
+    },
+    "CreateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Create a folder (free).",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFolderConfig",
+      "type": "object"
+    },
+    "DeleteFolderConfig": {
+      "additionalProperties": false,
+      "description": "Delete a folder; its videos and transcripts stay (free).",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "format": "uuid",
+          "title": "Folder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "DeleteFolderConfig",
+      "type": "object"
+    },
+    "DeleteTranscriptConfig": {
+      "additionalProperties": false,
+      "description": "Delete a stored transcript.",
+      "properties": {
+        "operation": {
+          "const": "delete_transcript",
+          "default": "delete_transcript",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "minLength": 1,
+          "title": "Video Id",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "manual",
+                "asr"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "auto",
+            "manual",
+            "asr"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "DeleteTranscriptConfig",
+      "type": "object"
+    },
+    "EstimateTranscriptionConfig": {
+      "additionalProperties": false,
+      "description": "Estimate credit cost (dry run).",
+      "properties": {
+        "operation": {
+          "const": "estimate_transcription",
+          "default": "estimate_transcription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video": {
+          "minLength": 1,
+          "title": "Video",
+          "type": "string"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "captions_only",
+                "human_captions_only",
+                "speech_to_text_only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the transcript comes from. Replaces the legacy source + allow_asr\npair (still supported, but not in the same request as mode). Note that\nmode=auto is not legacy source=auto: source=auto alone never uses ASR\n(that is mode=captions_only).\n  - auto: captions first; speech-to-text (ASR) only when the video has none. Can charge ASR credits.\n  - captions_only: any captions (human or YouTube auto-generated), never ASR. When mode is omitted, the account default from the API Dashboard applies (auto for accounts created from October 2026, captions_only for older ones unless changed).\n  - human_captions_only: human-made captions only, never ASR.\n  - speech_to_text_only: always transcribe the audio with ASR. Charges ASR credits.\nOn /transcribe, ASR modes return status processing with a job_id to poll\nat GET /jobs/{job_id} when no webhook_url is given. Responses echo the\nmode the request ran with (for legacy requests, the equivalent mode).\n",
+          "title": "Mode",
+          "enum": [
+            "auto",
+            "captions_only",
+            "human_captions_only",
+            "speech_to_text_only"
+          ],
+          "x-enum-searchable": true
+        },
+        "asr_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AsrOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rich ASR configuration. Only applies when the\nvideo is transcribed via ASR (mode speech_to_text_only or auto fallback; legacy source=\"asr\" or allow_asr). Billable\nadd-ons increase credit cost proportional to duration - use\n/transcribe/estimate to preview.\n"
+        }
+      },
+      "required": [
+        "video"
+      ],
+      "title": "EstimateTranscriptionConfig",
+      "type": "object"
+    },
+    "FormatOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include timestamped segments",
+          "title": "Timestamp"
+        },
+        "paragraphs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include paragraph groupings",
+          "title": "Paragraphs"
+        },
+        "words": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include word-level timestamps",
+          "title": "Words"
+        }
+      },
+      "title": "FormatOptions",
+      "type": "object"
+    },
+    "GetBatchConfig": {
+      "additionalProperties": false,
+      "description": "Poll a V2 batch job.",
+      "properties": {
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "GetBatchConfig",
+      "type": "object"
+    },
+    "GetCreditsConfig": {
+      "additionalProperties": false,
+      "description": "Get credit balance and plan.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCreditsConfig",
+      "type": "object"
+    },
+    "GetFolderConfig": {
+      "additionalProperties": false,
+      "description": "Get one folder (free).",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "format": "uuid",
+          "title": "Folder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolderConfig",
+      "type": "object"
+    },
+    "GetJobConfig": {
+      "additionalProperties": false,
+      "description": "Poll a V2 transcription job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "include_segments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Segments"
+        },
+        "include_paragraphs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Paragraphs"
+        },
+        "include_words": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Words"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobConfig",
+      "type": "object"
+    },
+    "GetTranscriptConfig": {
+      "additionalProperties": false,
+      "description": "Fetch a stored transcript.",
+      "properties": {
+        "operation": {
+          "const": "get_transcript",
+          "default": "get_transcript",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "minLength": 1,
+          "title": "Video Id",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "manual",
+                "asr"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "auto",
+            "manual",
+            "asr"
+          ],
+          "x-enum-searchable": true
+        },
+        "include_timestamps": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Timestamps"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "GetTranscriptConfig",
+      "type": "object"
+    },
+    "GetTranscriptThemesConfig": {
+      "additionalProperties": false,
+      "description": "Read unlocked key moments, themes & keywords (free).",
+      "properties": {
+        "operation": {
+          "const": "get_transcript_themes",
+          "default": "get_transcript_themes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "minLength": 1,
+          "title": "Video Id",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "manual",
+                "asr"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "auto",
+            "manual",
+            "asr"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "GetTranscriptThemesConfig",
+      "type": "object"
+    },
+    "ListFolderVideosConfig": {
+      "additionalProperties": false,
+      "description": "List a folder's videos (same shape as GET /videos) (free).",
+      "properties": {
+        "operation": {
+          "const": "list_folder_videos",
+          "default": "list_folder_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "format": "uuid",
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ListFolderVideosConfig",
+      "type": "object"
+    },
+    "ListFoldersConfig": {
+      "additionalProperties": false,
+      "description": "List your folders with video counts (free).",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListFoldersConfig",
+      "type": "object"
+    },
+    "ListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List transcription jobs.",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "completed",
+                "processing",
+                "failed",
+                "requires_asr_confirmation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "completed",
+            "processing",
+            "failed",
+            "requires_asr_confirmation"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListJobsConfig",
+      "type": "object"
+    },
+    "ListTranscriptLanguagesConfig": {
+      "additionalProperties": false,
+      "description": "List available languages for a video.",
+      "properties": {
+        "operation": {
+          "const": "list_transcript_languages",
+          "default": "list_transcript_languages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "minLength": 1,
+          "title": "Video Id",
+          "type": "string"
+        },
+        "include_youtube_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Youtube Default"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "ListTranscriptLanguagesConfig",
+      "type": "object"
+    },
+    "ListTranscriptsConfig": {
+      "additionalProperties": false,
+      "description": "List stored transcripts.",
+      "properties": {
+        "operation": {
+          "const": "list_transcripts",
+          "default": "list_transcripts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date To"
+        },
+        "include_segments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Segments"
+        }
+      },
+      "title": "ListTranscriptsConfig",
+      "type": "object"
+    },
+    "ListVideosConfig": {
+      "additionalProperties": false,
+      "description": "List your videos with their folders and existing outputs (free).",
+      "properties": {
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "unfiled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unfiled"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "recent",
+                "oldest",
+                "longest",
+                "shortest",
+                "title"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "recent",
+            "oldest",
+            "longest",
+            "shortest",
+            "title"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "title": "ListVideosConfig",
+      "type": "object"
+    },
+    "RemoveFolderVideosConfig": {
+      "additionalProperties": false,
+      "description": "Remove videos from a folder; transcripts are kept (free).",
+      "properties": {
+        "operation": {
+          "const": "remove_folder_videos",
+          "default": "remove_folder_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "format": "uuid",
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "video_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Video Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "folder_id",
+        "video_ids"
+      ],
+      "title": "RemoveFolderVideosConfig",
+      "type": "object"
+    },
+    "RenameFolderConfig": {
+      "additionalProperties": false,
+      "description": "Rename a folder (free).",
+      "properties": {
+        "operation": {
+          "const": "rename_folder",
+          "default": "rename_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "format": "uuid",
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "name"
+      ],
+      "title": "RenameFolderConfig",
+      "type": "object"
+    },
+    "ResolvePlaylistConfig": {
+      "additionalProperties": false,
+      "description": "Resolve playlist videos.",
+      "properties": {
+        "operation": {
+          "const": "resolve_playlist",
+          "default": "resolve_playlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "playlist_id": {
+          "description": "YouTube playlist ID to resolve",
+          "minLength": 1,
+          "title": "Playlist Id",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "ResolvePlaylistConfig",
+      "type": "object"
+    },
+    "TranscribeVideoConfig": {
+      "additionalProperties": false,
+      "description": "Transcribe a single YouTube video.",
+      "properties": {
+        "operation": {
+          "const": "transcribe_video",
+          "default": "transcribe_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video": {
+          "description": "YouTube URL or 11-char ID. Required unless upload_id is set.",
+          "minLength": 1,
+          "title": "Video",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Preferred transcript language (e.g. en, es). If unavailable, captions in another language may be returned; transcript.language reports the actual language.",
+          "title": "Language"
+        },
+        "mode": {
+          "default": "captions_only",
+          "description": "Where the transcript comes from. Replaces the legacy source + allow_asr\npair (still supported, but not in the same request as mode). Note that\nmode=auto is not legacy source=auto: source=auto alone never uses ASR\n(that is mode=captions_only).\n  - auto: captions first; speech-to-text (ASR) only when the video has none. Can charge ASR credits.\n  - captions_only: any captions (human or YouTube auto-generated), never ASR. When mode is omitted, the account default from the API Dashboard applies (auto for accounts created from October 2026, captions_only for older ones unless changed).\n  - human_captions_only: human-made captions only, never ASR.\n  - speech_to_text_only: always transcribe the audio with ASR. Charges ASR credits.\nOn /transcribe, ASR modes return status processing with a job_id to poll\nat GET /jobs/{job_id} when no webhook_url is given. Responses echo the\nmode the request ran with (for legacy requests, the equivalent mode).\n",
+          "enum": [
+            "auto",
+            "captions_only",
+            "human_captions_only",
+            "speech_to_text_only"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which extras to include in the transcript payload."
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where ASR results are POSTed. Required for legacy ASR (source=\"asr\" or upload_id) unless run from the dashboard. Optional with mode=auto or speech_to_text_only: poll GET /jobs/{job_id} instead. Ignored by captions_only and human_captions_only.",
+          "title": "Webhook Url"
+        },
+        "asr_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AsrOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rich ASR configuration. Only applies when the\nvideo is transcribed via ASR (mode speech_to_text_only or auto fallback; legacy source=\"asr\" or allow_asr). Billable\nadd-ons increase credit cost proportional to duration - use\n/transcribe/estimate to preview.\n"
+        }
+      },
+      "required": [
+        "video"
+      ],
+      "title": "TranscribeVideoConfig",
+      "type": "object"
+    },
+    "TranslateTranscriptConfig": {
+      "additionalProperties": false,
+      "description": "Translate a stored transcript.",
+      "properties": {
+        "operation": {
+          "const": "translate_transcript",
+          "default": "translate_transcript",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "minLength": 1,
+          "title": "Video Id",
+          "type": "string"
+        },
+        "target_language": {
+          "minLength": 1,
+          "title": "Target Language",
+          "type": "string"
+        },
+        "source_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Language"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "ai",
+                "youtube"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider",
+          "enum": [
+            "ai",
+            "youtube"
+          ],
+          "x-enum-searchable": true
+        },
+        "allow_ai_fallback": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Ai Fallback"
+        }
+      },
+      "required": [
+        "video_id",
+        "target_language"
+      ],
+      "title": "TranslateTranscriptConfig",
+      "type": "object"
+    },
+    "UnlockTranscriptThemesConfig": {
+      "additionalProperties": false,
+      "description": "Unlock key moments, themes & keywords (1 credit, once per transcript).",
+      "properties": {
+        "operation": {
+          "const": "unlock_transcript_themes",
+          "default": "unlock_transcript_themes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "video_id": {
+          "minLength": 1,
+          "title": "Video Id",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "manual",
+                "asr"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "auto",
+            "manual",
+            "asr"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "UnlockTranscriptThemesConfig",
+      "type": "object"
+    },
+    "YoutubeTranscriptAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "youtube_transcript_api_key",
+          "default": "youtube_transcript_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "YouTube Transcript API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy an API key from your YouTubeTranscript.dev dashboard and paste it here. NoClick sends it as a Bearer token to www.youtubetranscript.dev. Transcription, translation and theme unlocking can use credits.",
+      "x-credential-url": "https://www.youtubetranscript.dev/dashboard"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_folder_videos": "#/$defs/AddFolderVideosConfig",
+          "bulk_delete_transcripts": "#/$defs/BulkDeleteTranscriptsConfig",
+          "create_batch": "#/$defs/CreateBatchConfig",
+          "create_folder": "#/$defs/CreateFolderConfig",
+          "delete_folder": "#/$defs/DeleteFolderConfig",
+          "delete_transcript": "#/$defs/DeleteTranscriptConfig",
+          "estimate_transcription": "#/$defs/EstimateTranscriptionConfig",
+          "get_batch": "#/$defs/GetBatchConfig",
+          "get_credits": "#/$defs/GetCreditsConfig",
+          "get_folder": "#/$defs/GetFolderConfig",
+          "get_job": "#/$defs/GetJobConfig",
+          "get_transcript": "#/$defs/GetTranscriptConfig",
+          "get_transcript_themes": "#/$defs/GetTranscriptThemesConfig",
+          "list_folder_videos": "#/$defs/ListFolderVideosConfig",
+          "list_folders": "#/$defs/ListFoldersConfig",
+          "list_jobs": "#/$defs/ListJobsConfig",
+          "list_transcript_languages": "#/$defs/ListTranscriptLanguagesConfig",
+          "list_transcripts": "#/$defs/ListTranscriptsConfig",
+          "list_videos": "#/$defs/ListVideosConfig",
+          "remove_folder_videos": "#/$defs/RemoveFolderVideosConfig",
+          "rename_folder": "#/$defs/RenameFolderConfig",
+          "resolve_playlist": "#/$defs/ResolvePlaylistConfig",
+          "transcribe_video": "#/$defs/TranscribeVideoConfig",
+          "translate_transcript": "#/$defs/TranslateTranscriptConfig",
+          "unlock_transcript_themes": "#/$defs/UnlockTranscriptThemesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TranscribeVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/EstimateTranscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/GetBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/ListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTranscriptsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTranscriptConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteTranscriptConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTranscriptLanguagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTranscriptThemesConfig"
+        },
+        {
+          "$ref": "#/$defs/UnlockTranscriptThemesConfig"
+        },
+        {
+          "$ref": "#/$defs/TranslateTranscriptConfig"
+        },
+        {
+          "$ref": "#/$defs/BulkDeleteTranscriptsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/RenameFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFolderVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/AddFolderVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveFolderVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/ListVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/ResolvePlaylistConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YoutubeTranscriptAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Youtube-transcript Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
