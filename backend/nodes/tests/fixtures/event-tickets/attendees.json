@@ -1,0 +1,10 @@
+{
+  "source": "https://dev.theeventscalendar.com/knowledgebase/rest-api-authentication/",
+  "note": "Subset of the published response, preserving documented attendee and pagination fields.",
+  "body": {
+    "rest_url": "https://stable.dev.lndo.site/wp-json/tribe/tickets/v1/attendees/",
+    "total": 1,
+    "total_pages": 1,
+    "attendees": [{"id": 33, "post_id": 29, "ticket_id": 30, "title": "Steve Harvey", "email": "steve@test.com", "checked_in": false, "checkin_details": false, "author": "1"}]
+  }
+}
