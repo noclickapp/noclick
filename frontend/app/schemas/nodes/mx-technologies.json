@@ -1,0 +1,1025 @@
+{
+  "$defs": {
+    "AggregateMember": {
+      "additionalProperties": false,
+      "description": "Aggregate member using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "member_identifier": {
+          "description": "MX member GUID or partner-defined member ID.",
+          "minLength": 1,
+          "title": "Member Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "aggregate_member",
+          "default": "aggregate_member",
+          "title": "Aggregate Member",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier",
+        "member_identifier"
+      ],
+      "title": "AggregateMember",
+      "type": "object"
+    },
+    "CreateManualTransaction": {
+      "additionalProperties": false,
+      "description": "Create manual transaction using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_manual_transaction",
+          "default": "create_manual_transaction",
+          "title": "Create Manual Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_guid": {
+          "minLength": 1,
+          "title": "Account GUID",
+          "type": "string"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "number"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "CREDIT",
+            "DEBIT"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "category_guid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Guid"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency Code"
+        },
+        "memo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memo"
+        }
+      },
+      "required": [
+        "user_identifier",
+        "account_guid",
+        "amount",
+        "date",
+        "description",
+        "type"
+      ],
+      "title": "CreateManualTransaction",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "description": "Create user using the MX Platform API.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partner User ID"
+        },
+        "is_disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Disabled"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MX stores metadata as a string, including JSON encoded as a string.",
+          "title": "Metadata"
+        },
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Create User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "DeleteMember": {
+      "additionalProperties": false,
+      "description": "Delete member using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "member_identifier": {
+          "description": "MX member GUID or partner-defined member ID.",
+          "minLength": 1,
+          "title": "Member Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_member",
+          "default": "delete_member",
+          "title": "Delete Member",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier",
+        "member_identifier"
+      ],
+      "title": "DeleteMember",
+      "type": "object"
+    },
+    "DeleteUser": {
+      "additionalProperties": false,
+      "description": "Delete user using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "title": "Delete User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier"
+      ],
+      "title": "DeleteUser",
+      "type": "object"
+    },
+    "ListAccountTransactions": {
+      "additionalProperties": false,
+      "description": "List account transactions using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start date (YYYY-MM-DD).",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end date (YYYY-MM-DD).",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_account_transactions",
+          "default": "list_account_transactions",
+          "title": "List Account Transactions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_guid": {
+          "minLength": 1,
+          "title": "Account GUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_identifier",
+        "account_guid"
+      ],
+      "title": "ListAccountTransactions",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "description": "List accounts using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier"
+      ],
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListInstitutions": {
+      "additionalProperties": false,
+      "description": "List institutions using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_institutions",
+          "default": "list_institutions",
+          "title": "List Institutions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "iso_country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iso Country Code"
+        }
+      },
+      "title": "ListInstitutions",
+      "type": "object"
+    },
+    "ListMemberAccounts": {
+      "additionalProperties": false,
+      "description": "List member accounts using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "member_identifier": {
+          "description": "MX member GUID or partner-defined member ID.",
+          "minLength": 1,
+          "title": "Member Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_member_accounts",
+          "default": "list_member_accounts",
+          "title": "List Member Accounts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier",
+        "member_identifier"
+      ],
+      "title": "ListMemberAccounts",
+      "type": "object"
+    },
+    "ListMembers": {
+      "additionalProperties": false,
+      "description": "List members using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier"
+      ],
+      "title": "ListMembers",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "additionalProperties": false,
+      "description": "List transactions using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start date (YYYY-MM-DD).",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end date (YYYY-MM-DD).",
+          "title": "To Date"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier"
+      ],
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users using the MX Platform API.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "records_per_page": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 10,
+          "title": "Records Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "MxTechnologiesApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mx_technologies_api_key",
+          "default": "mx_technologies_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "integration",
+          "enum": [
+            "integration",
+            "production"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id",
+        "api_key"
+      ],
+      "title": "MX Technologies API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your MX client ID and API key from the MX dashboard. Select the environment that issued the key. NoClick uses HTTP Basic authentication with this pair.",
+      "x-credential-url": "https://dashboard.mx.com/"
+    },
+    "ReadAccount": {
+      "additionalProperties": false,
+      "description": "Read account using the MX Platform API.",
+      "properties": {
+        "user_guid": {
+          "minLength": 1,
+          "title": "User GUID",
+          "type": "string"
+        },
+        "account_guid": {
+          "minLength": 1,
+          "title": "Account GUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "read_account",
+          "default": "read_account",
+          "title": "Read Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_guid",
+        "account_guid"
+      ],
+      "title": "ReadAccount",
+      "type": "object"
+    },
+    "ReadMember": {
+      "additionalProperties": false,
+      "description": "Read member using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "member_identifier": {
+          "description": "MX member GUID or partner-defined member ID.",
+          "minLength": 1,
+          "title": "Member Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "read_member",
+          "default": "read_member",
+          "title": "Read Member",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier",
+        "member_identifier"
+      ],
+      "title": "ReadMember",
+      "type": "object"
+    },
+    "ReadMemberStatus": {
+      "additionalProperties": false,
+      "description": "Read member status using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "member_identifier": {
+          "description": "MX member GUID or partner-defined member ID.",
+          "minLength": 1,
+          "title": "Member Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "read_member_status",
+          "default": "read_member_status",
+          "title": "Read Member Status",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier",
+        "member_identifier"
+      ],
+      "title": "ReadMemberStatus",
+      "type": "object"
+    },
+    "ReadTransaction": {
+      "additionalProperties": false,
+      "description": "Read transaction using the MX Platform API.",
+      "properties": {
+        "user_guid": {
+          "minLength": 1,
+          "title": "User GUID",
+          "type": "string"
+        },
+        "transaction_guid": {
+          "minLength": 1,
+          "title": "Transaction GUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "read_transaction",
+          "default": "read_transaction",
+          "title": "Read Transaction",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_guid",
+        "transaction_guid"
+      ],
+      "title": "ReadTransaction",
+      "type": "object"
+    },
+    "ReadUser": {
+      "additionalProperties": false,
+      "description": "Read user using the MX Platform API.",
+      "properties": {
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "read_user",
+          "default": "read_user",
+          "title": "Read User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier"
+      ],
+      "title": "ReadUser",
+      "type": "object"
+    },
+    "UpdateTransaction": {
+      "additionalProperties": false,
+      "description": "Update transaction using the MX Platform API.",
+      "properties": {
+        "user_guid": {
+          "minLength": 1,
+          "title": "User GUID",
+          "type": "string"
+        },
+        "transaction_guid": {
+          "minLength": 1,
+          "title": "Transaction GUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_transaction",
+          "default": "update_transaction",
+          "title": "Update Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "memo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memo"
+        },
+        "category_guid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Guid"
+        }
+      },
+      "required": [
+        "user_guid",
+        "transaction_guid"
+      ],
+      "title": "UpdateTransaction",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "description": "Update user using the MX Platform API.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partner User ID"
+        },
+        "is_disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Disabled"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MX stores metadata as a string, including JSON encoded as a string.",
+          "title": "Metadata"
+        },
+        "user_identifier": {
+          "description": "MX user GUID or your partner-defined user ID.",
+          "minLength": 1,
+          "title": "User Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Update User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_identifier"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "aggregate_member": "#/$defs/AggregateMember",
+          "create_manual_transaction": "#/$defs/CreateManualTransaction",
+          "create_user": "#/$defs/CreateUser",
+          "delete_member": "#/$defs/DeleteMember",
+          "delete_user": "#/$defs/DeleteUser",
+          "list_account_transactions": "#/$defs/ListAccountTransactions",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_institutions": "#/$defs/ListInstitutions",
+          "list_member_accounts": "#/$defs/ListMemberAccounts",
+          "list_members": "#/$defs/ListMembers",
+          "list_transactions": "#/$defs/ListTransactions",
+          "list_users": "#/$defs/ListUsers",
+          "read_account": "#/$defs/ReadAccount",
+          "read_member": "#/$defs/ReadMember",
+          "read_member_status": "#/$defs/ReadMemberStatus",
+          "read_transaction": "#/$defs/ReadTransaction",
+          "read_user": "#/$defs/ReadUser",
+          "update_transaction": "#/$defs/UpdateTransaction",
+          "update_user": "#/$defs/UpdateUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/ReadUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUser"
+        },
+        {
+          "$ref": "#/$defs/ListMembers"
+        },
+        {
+          "$ref": "#/$defs/ReadMember"
+        },
+        {
+          "$ref": "#/$defs/DeleteMember"
+        },
+        {
+          "$ref": "#/$defs/ReadMemberStatus"
+        },
+        {
+          "$ref": "#/$defs/AggregateMember"
+        },
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/ReadAccount"
+        },
+        {
+          "$ref": "#/$defs/ListMemberAccounts"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/ListAccountTransactions"
+        },
+        {
+          "$ref": "#/$defs/ReadTransaction"
+        },
+        {
+          "$ref": "#/$defs/UpdateTransaction"
+        },
+        {
+          "$ref": "#/$defs/CreateManualTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListInstitutions"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MxTechnologiesApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mx-technologies Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
