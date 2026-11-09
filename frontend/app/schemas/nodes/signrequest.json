@@ -1,0 +1,1994 @@
+{
+  "$defs": {
+    "CancelSignrequestConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a SignRequest.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_signrequest",
+          "default": "cancel_signrequest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "CancelSignrequestConfig",
+      "type": "object"
+    },
+    "CreateDocumentAttachmentConfig": {
+      "additionalProperties": false,
+      "description": "Create a Document Attachment.",
+      "properties": {
+        "operation": {
+          "const": "create_document_attachment",
+          "default": "create_document_attachment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document": {
+          "format": "uri",
+          "title": "Document",
+          "type": "string"
+        },
+        "file_from_url": {
+          "description": "Publicly accessible URL of document to be downloaded by SignRequest",
+          "format": "uri",
+          "maxLength": 2100,
+          "title": "File From Url",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to filename, including extension",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "document",
+        "file_from_url"
+      ],
+      "title": "CreateDocumentAttachmentConfig",
+      "type": "object"
+    },
+    "CreateDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Create a Document.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to filename, including extension",
+          "title": "Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID used to reference document in external system",
+          "title": "External Id"
+        },
+        "file_from_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publicly accessible URL of document to be downloaded by SignRequest",
+          "format": "uri",
+          "title": "File From Url"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Template"
+        },
+        "prefill_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PrefillTag"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefill signer input data, see [prefill tags](#section/Preparing-a-document/Prefill-tags-templates)",
+          "title": "Prefill Tags"
+        },
+        "events_callback_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL at which to receive [event callbacks](#section/Events/Events-callback) for this document",
+          "format": "uri",
+          "title": "Events Callback Url"
+        },
+        "auto_delete_days": {
+          "anyOf": [
+            {
+              "maximum": 730,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days after which a finished document (signed/cancelled/declined) will be automatically deleted",
+          "title": "Auto Delete Days"
+        },
+        "auto_expire_days": {
+          "anyOf": [
+            {
+              "maximum": 730,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days after which a non finished document will be automatically expired",
+          "title": "Auto Expire Days"
+        },
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateDocumentConfig",
+      "type": "object"
+    },
+    "CreateSignrequestConfig": {
+      "additionalProperties": false,
+      "description": "Create a SignRequest.",
+      "properties": {
+        "document": {
+          "format": "uri",
+          "title": "Document",
+          "type": "string"
+        },
+        "from_email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email of user sending the SignRequest (must be a validated email)",
+          "format": "email",
+          "title": "From Email"
+        },
+        "from_email_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name to be used in the `From` email header, e.g. `{from_email_name} <no-reply@signrequest.com>`",
+          "title": "From Email Name"
+        },
+        "signers": {
+          "items": {
+            "$ref": "#/$defs/Signer"
+          },
+          "minItems": 1,
+          "title": "Signers",
+          "type": "array"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subject of SignRequest email",
+          "title": "Subject"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message to include in SignRequest email, may contain the following html tags: `a`, `abbr`, `acronym`, `b`, `blockquote`, `code`, `em`, `i`, `ul`, `li`, `ol`, and `strong`",
+          "title": "Message"
+        },
+        "who": {
+          "anyOf": [
+            {
+              "enum": [
+                "m",
+                "mo",
+                "o"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`m`: only me, `mo`: me and others, `o`: only others",
+          "title": "Who",
+          "enum": [
+            "m",
+            "mo",
+            "o"
+          ],
+          "x-enum-searchable": true
+        },
+        "send_reminders": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically remind signers to sign a document, see: [automatic reminders](#section/Working-with-a-SignRequest/Automatic-reminders)",
+          "title": "Send Reminders"
+        },
+        "is_being_prepared": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Have the sender of a SignRequest prepare the document before sending the request out, see: [prepare using the web interface](#section/Preparing-a-document/Prepare-using-the-web-interface)",
+          "title": "Is Being Prepared"
+        },
+        "disable_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Disable all SignRequest status emails as well as the email that contains the signed documents",
+          "title": "Disable Emails"
+        },
+        "redirect_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL at which SignRequest will redirect to when a document is signed",
+          "format": "uri",
+          "title": "Redirect Url"
+        },
+        "redirect_url_declined": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL at which SignRequest will redirect to when a document is declined",
+          "format": "uri",
+          "title": "Redirect Url Declined"
+        },
+        "operation": {
+          "const": "create_signrequest",
+          "default": "create_signrequest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "document",
+        "signers"
+      ],
+      "title": "CreateSignrequestConfig",
+      "type": "object"
+    },
+    "DeleteDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Delete a Document.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "DeleteDocumentConfig",
+      "type": "object"
+    },
+    "ForwardSignerConfig": {
+      "additionalProperties": false,
+      "description": "Forward a SignRequest to a different signer by email.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "forward_signer",
+          "default": "forward_signer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "signer_email_to_forward": {
+          "description": "Email of the signer that forwards the SignRequest.",
+          "format": "email",
+          "minLength": 1,
+          "title": "Signer Email To Forward",
+          "type": "string"
+        },
+        "signer_email_to_forward_to": {
+          "description": "Email of the new signer to forward this SignRequest to.",
+          "format": "email",
+          "minLength": 1,
+          "title": "Signer Email To Forward To",
+          "type": "string"
+        },
+        "forwarded_reason": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A reason why this SignRequest is forwarded (optional), this will be visible to all parties involved",
+          "title": "Forwarded Reason"
+        }
+      },
+      "required": [
+        "uuid",
+        "signer_email_to_forward",
+        "signer_email_to_forward_to"
+      ],
+      "title": "ForwardSignerConfig",
+      "type": "object"
+    },
+    "GetDocumentAttachmentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Document Attachment.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document_attachment",
+          "default": "get_document_attachment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetDocumentAttachmentConfig",
+      "type": "object"
+    },
+    "GetDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Document.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetDocumentConfig",
+      "type": "object"
+    },
+    "GetEventConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an Event.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetEventConfig",
+      "type": "object"
+    },
+    "GetSignrequestConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a SignRequest.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_signrequest",
+          "default": "get_signrequest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetSignrequestConfig",
+      "type": "object"
+    },
+    "GetTeamConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Team.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*$",
+          "title": "Subdomain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subdomain"
+      ],
+      "title": "GetTeamConfig",
+      "type": "object"
+    },
+    "GetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Template.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetTemplateConfig",
+      "type": "object"
+    },
+    "ListDocumentAttachmentsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of Document Attachments.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_document_attachments",
+          "default": "list_document_attachments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document__uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  Uuid"
+        },
+        "document__external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  External Id"
+        },
+        "created": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created"
+        }
+      },
+      "title": "ListDocumentAttachmentsConfig",
+      "type": "object"
+    },
+    "ListDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of Documents.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "signrequest__who": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signrequest  Who"
+        },
+        "signrequest__from_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signrequest  From Email"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "user__email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User  Email"
+        },
+        "user__first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User  First Name"
+        },
+        "user__last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User  Last Name"
+        },
+        "created": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created"
+        },
+        "modified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified"
+        }
+      },
+      "title": "ListDocumentsConfig",
+      "type": "object"
+    },
+    "ListEventsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of Events.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document__uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  Uuid"
+        },
+        "document__external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  External Id"
+        },
+        "document__signrequest__who": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  Signrequest  Who"
+        },
+        "document__signrequest__from_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  Signrequest  From Email"
+        },
+        "document__status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  Status"
+        },
+        "document__user__email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  User  Email"
+        },
+        "document__user__first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  User  First Name"
+        },
+        "document__user__last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document  User  Last Name"
+        },
+        "delivered": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivered"
+        },
+        "delivered_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivered On"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timestamp"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "event_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Type"
+        }
+      },
+      "title": "ListEventsConfig",
+      "type": "object"
+    },
+    "ListSignrequestsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of SignRequests.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_signrequests",
+          "default": "list_signrequests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "who": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Who"
+        },
+        "from_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Email"
+        }
+      },
+      "title": "ListSignrequestsConfig",
+      "type": "object"
+    },
+    "ListTeamsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of Teams.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeamsConfig",
+      "type": "object"
+    },
+    "ListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of Templates.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplatesConfig",
+      "type": "object"
+    },
+    "PrefillTag": {
+      "additionalProperties": false,
+      "properties": {
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "checkbox_value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checkbox Value"
+        },
+        "date_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date",
+          "title": "Date Value"
+        }
+      },
+      "title": "PrefillTag",
+      "type": "object"
+    },
+    "QuickCreateSignrequestConfig": {
+      "additionalProperties": false,
+      "description": "Quick create a SignRequest.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to filename, including extension",
+          "title": "Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID used to reference document in external system",
+          "title": "External Id"
+        },
+        "file_from_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publicly accessible URL of document to be downloaded by SignRequest",
+          "format": "uri",
+          "title": "File From Url"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Template"
+        },
+        "prefill_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PrefillTag"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefill signer input data, see [prefill tags](#section/Preparing-a-document/Prefill-tags-templates)",
+          "title": "Prefill Tags"
+        },
+        "events_callback_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL at which to receive [event callbacks](#section/Events/Events-callback) for this document",
+          "format": "uri",
+          "title": "Events Callback Url"
+        },
+        "auto_delete_days": {
+          "anyOf": [
+            {
+              "maximum": 730,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days after which a finished document (signed/cancelled/declined) will be automatically deleted",
+          "title": "Auto Delete Days"
+        },
+        "auto_expire_days": {
+          "anyOf": [
+            {
+              "maximum": 730,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of days after which a non finished document will be automatically expired",
+          "title": "Auto Expire Days"
+        },
+        "operation": {
+          "const": "quick_create_signrequest",
+          "default": "quick_create_signrequest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email of user sending the SignRequest (must be a validated email)",
+          "format": "email",
+          "title": "From Email"
+        },
+        "from_email_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name to be used in the `From` email header, e.g. `{from_email_name} <no-reply@signrequest.com>`",
+          "title": "From Email Name"
+        },
+        "signers": {
+          "items": {
+            "$ref": "#/$defs/Signer"
+          },
+          "minItems": 1,
+          "title": "Signers",
+          "type": "array"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subject of SignRequest email",
+          "title": "Subject"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message to include in SignRequest email, may contain the following html tags: `a`, `abbr`, `acronym`, `b`, `blockquote`, `code`, `em`, `i`, `ul`, `li`, `ol`, and `strong`",
+          "title": "Message"
+        },
+        "who": {
+          "anyOf": [
+            {
+              "enum": [
+                "m",
+                "mo",
+                "o"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`m`: only me, `mo`: me and others, `o`: only others",
+          "title": "Who",
+          "enum": [
+            "m",
+            "mo",
+            "o"
+          ],
+          "x-enum-searchable": true
+        },
+        "send_reminders": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically remind signers to sign a document, see: [automatic reminders](#section/Working-with-a-SignRequest/Automatic-reminders)",
+          "title": "Send Reminders"
+        },
+        "is_being_prepared": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Have the sender of a SignRequest prepare the document before sending the request out, see: [prepare using the web interface](#section/Preparing-a-document/Prepare-using-the-web-interface)",
+          "title": "Is Being Prepared"
+        },
+        "disable_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Disable all SignRequest status emails as well as the email that contains the signed documents",
+          "title": "Disable Emails"
+        },
+        "redirect_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL at which SignRequest will redirect to when a document is signed",
+          "format": "uri",
+          "title": "Redirect Url"
+        },
+        "redirect_url_declined": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL at which SignRequest will redirect to when a document is declined",
+          "format": "uri",
+          "title": "Redirect Url Declined"
+        }
+      },
+      "required": [
+        "signers"
+      ],
+      "title": "QuickCreateSignrequestConfig",
+      "type": "object"
+    },
+    "ResendSignrequestEmailConfig": {
+      "additionalProperties": false,
+      "description": "Resend a SignRequest.",
+      "properties": {
+        "uuid": {
+          "description": "Resource UUID from a previous list or create operation.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resend_signrequest_email",
+          "default": "resend_signrequest_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "ResendSignrequestEmailConfig",
+      "type": "object"
+    },
+    "SearchDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "Search documents.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Each execution returns one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum results requested per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_documents",
+          "default": "search_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Normal search query",
+          "title": "Q"
+        },
+        "autocomplete": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Partial search query",
+          "title": "Autocomplete"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document name",
+          "title": "Name"
+        },
+        "subdomain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subdomain"
+        },
+        "signer_emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email needed to sign/approve",
+          "title": "Signer Emails"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`co`: converting, `ne`: new, `se`: sent, `vi`: viewed, `si`: signed, `do`: downloaded, `sd`: signed and downloaded, `ca`: cancelled, `de`: declined, `ec`: error converting, `es`: error sending, `xp`: expired",
+          "title": "Status"
+        },
+        "who": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`m`: only me, `mo`: me and others, `o`: only others",
+          "title": "Who"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Export format, can be `json` (default), `csv`, or `xls`",
+          "title": "Format"
+        },
+        "signer_data": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `1` to export with each signer on a separate row",
+          "title": "Signer Data"
+        }
+      },
+      "title": "SearchDocumentsConfig",
+      "type": "object"
+    },
+    "SignRequestTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "signrequest_api_token",
+          "default": "signrequest_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "SignRequest API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in your SignRequest team's API settings and paste the token here. NoClick sends it to signrequest.com using Authorization: Token. Use a sandbox team's token for testing; production sends can incur SignRequest charges.",
+      "x-credential-url": "https://signrequest.com/#/teams"
+    },
+    "Signer": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "needs_to_sign": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When `false` user does not need to sign, but will receive a copy of the signed document and signing log, see: [Copy only](#section/Additional-signing-methods/Copy-only)",
+          "title": "Needs To Sign"
+        },
+        "approve_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require user to approve the document (without adding a signature), see: [Approve only](#section/Additional-signing-methods/Approve-only)",
+          "title": "Approve Only"
+        },
+        "notify_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send notifications about the document and a copy of the signed document and signing log, but don't require them to take any action, see: [Notify only](#section/Additional-signing-methods/Notify-only)",
+          "title": "Notify Only"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "en-gb",
+                "nl",
+                "fr",
+                "de",
+                "he",
+                "da",
+                "fi",
+                "hu",
+                "it",
+                "no",
+                "pl",
+                "pt",
+                "es",
+                "sv",
+                "ru",
+                "ja"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language",
+          "enum": [
+            "en",
+            "en-gb",
+            "nl",
+            "fr",
+            "de",
+            "he",
+            "da",
+            "fi",
+            "hu",
+            "it",
+            "no",
+            "pl",
+            "pt",
+            "es",
+            "sv",
+            "ru",
+            "ja"
+          ],
+          "x-enum-searchable": true
+        },
+        "force_language": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Force Language"
+        },
+        "redirect_url": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Redirect Url"
+        },
+        "redirect_url_declined": {
+          "anyOf": [
+            {
+              "maxLength": 2100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Redirect Url Declined"
+        },
+        "embed_url_user_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Embed Url User Id"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Signer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_signrequest": "#/$defs/CancelSignrequestConfig",
+          "create_document": "#/$defs/CreateDocumentConfig",
+          "create_document_attachment": "#/$defs/CreateDocumentAttachmentConfig",
+          "create_signrequest": "#/$defs/CreateSignrequestConfig",
+          "delete_document": "#/$defs/DeleteDocumentConfig",
+          "forward_signer": "#/$defs/ForwardSignerConfig",
+          "get_document": "#/$defs/GetDocumentConfig",
+          "get_document_attachment": "#/$defs/GetDocumentAttachmentConfig",
+          "get_event": "#/$defs/GetEventConfig",
+          "get_signrequest": "#/$defs/GetSignrequestConfig",
+          "get_team": "#/$defs/GetTeamConfig",
+          "get_template": "#/$defs/GetTemplateConfig",
+          "list_document_attachments": "#/$defs/ListDocumentAttachmentsConfig",
+          "list_documents": "#/$defs/ListDocumentsConfig",
+          "list_events": "#/$defs/ListEventsConfig",
+          "list_signrequests": "#/$defs/ListSignrequestsConfig",
+          "list_teams": "#/$defs/ListTeamsConfig",
+          "list_templates": "#/$defs/ListTemplatesConfig",
+          "quick_create_signrequest": "#/$defs/QuickCreateSignrequestConfig",
+          "resend_signrequest_email": "#/$defs/ResendSignrequestEmailConfig",
+          "search_documents": "#/$defs/SearchDocumentsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListDocumentAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDocumentAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateDocumentAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSignrequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSignrequestConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateSignrequestConfig"
+        },
+        {
+          "$ref": "#/$defs/QuickCreateSignrequestConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelSignrequestConfig"
+        },
+        {
+          "$ref": "#/$defs/ResendSignrequestEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ForwardSignerConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTeamConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SignRequestTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Signrequest Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
