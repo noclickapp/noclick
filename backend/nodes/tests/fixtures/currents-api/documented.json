@@ -1,0 +1,126 @@
+{
+  "source": "https://currentsapi.services/json/swagger.json",
+  "responses": {
+    "/search": {
+      "status": "ok",
+      "news": [
+        {
+          "id": "ac4062d1-5fbb-4784-bf1d-6b50f5f643a0",
+          "title": "Investors are taking a gamble on Bitcoin",
+          "description": "Cryptocurrency markets rallied again this week as institutional buyers returned in force. Analysts caution that volatility remains high, and regulators continue to review the sector...",
+          "url": "https://example.com/news/bitcoin-markets",
+          "author": "example.com",
+          "image": "https://example.com/img/bitcoin.jpg",
+          "language": "en",
+          "category": [
+            "finance"
+          ],
+          "source_category": [
+            "finance"
+          ],
+          "published": "2026-09-07 14:22:08 +0000"
+        },
+        {
+          "id": "713f0c68-9bac-4168-9880-c94eecaf735f",
+          "title": "City council approves new transit plan",
+          "description": "The council voted 8-3 to adopt the five-year transit expansion plan after a late-night session...",
+          "url": "https://example.com/news/transit-plan",
+          "author": "example.com",
+          "image": "None",
+          "language": "en",
+          "category": [
+            "general"
+          ],
+          "source_category": [
+            "regional"
+          ],
+          "published": "2026-09-07 12:10:31 +0000"
+        }
+      ],
+      "page": 1
+    },
+    "/latest-news": {
+      "status": "ok",
+      "news": [
+        {
+          "id": "ac4062d1-5fbb-4784-bf1d-6b50f5f643a0",
+          "title": "Investors are taking a gamble on Bitcoin",
+          "description": "Cryptocurrency markets rallied again this week as institutional buyers returned in force...",
+          "url": "https://example.com/news/bitcoin-markets",
+          "author": "example.com",
+          "image": "https://example.com/img/bitcoin.jpg",
+          "language": "en",
+          "category": [
+            "finance"
+          ],
+          "source_category": [
+            "finance"
+          ],
+          "published": "2026-09-07 14:22:08 +0000"
+        }
+      ],
+      "page": 1
+    },
+    "/available/languages": {
+      "languages": {
+        "Arabic": "ar",
+        "Chinese": "zh",
+        "Dutch": "nl",
+        "English": "en",
+        "Finnish": "fi",
+        "French": "fr",
+        "German": "de",
+        "Hindi": "hi",
+        "Italian": "it",
+        "Japanese": "ja",
+        "Korean": "ko",
+        "Malay": "ms",
+        "Portuguese": "pt",
+        "Russian": "ru",
+        "Spanish": "es"
+      },
+      "description": "available languages followed by query code",
+      "status": "ok"
+    },
+    "/available/regions": {
+      "regions": {
+        "Australia": "AU",
+        "Canada": "CA",
+        "China": "CN",
+        "Finland": "FI",
+        "German": "DE",
+        "Italy": "IT",
+        "South Korea": "KR",
+        "Taiwan": "TW",
+        "Thailand": "TH",
+        "Vietnam": "VN",
+        "Zimbabwe": "ZW"
+      },
+      "description": "available regions followed by query code",
+      "status": "ok"
+    },
+    "/available/categories": {
+      "categories": [
+        "regional",
+        "technology",
+        "lifestyle",
+        "business",
+        "general",
+        "programming",
+        "science",
+        "entertainment",
+        "world",
+        "sports",
+        "finance",
+        "academia",
+        "politics",
+        "health",
+        "opinion",
+        "food",
+        "game"
+      ],
+      "description": "order by source count in descending order",
+      "status": "ok"
+    }
+  }
+}

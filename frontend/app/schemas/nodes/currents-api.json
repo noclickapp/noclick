@@ -1,0 +1,454 @@
+{
+  "$defs": {
+    "CurrentsApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "currents_api_key",
+          "default": "currents_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Currents API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Currents account dashboard. Paste the key without the Bearer prefix. A latest-news read checks key acceptance; it does not identify your account.",
+      "x-credential-url": "https://currentsapi.services/en/profile"
+    },
+    "GetLatestNews": {
+      "additionalProperties": false,
+      "description": "Get recent headlines with language, country, category and source filters.",
+      "properties": {
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code from List Languages. Provider default: en.",
+          "title": "Language"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated legacy v1 categories from List Categories.",
+          "title": "Category"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country code from List Regions.",
+          "title": "Country"
+        },
+        "page_number": {
+          "default": 1,
+          "description": "One page per run. Increase explicitly to retrieve another page.",
+          "maximum": 180,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Free plan supports up to 20; larger pages need a paid plan.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1: news, 2: articles, 3: discussion.",
+          "title": "Article Type"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include a source domain, for example reuters.com.",
+          "title": "Domain"
+        },
+        "domain_not": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude a source domain.",
+          "title": "Domain Not"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "operation": {
+          "const": "get_latest_news",
+          "default": "get_latest_news",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetLatestNews",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "description": "List the legacy v1 category codes in source-count order.",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListLanguages": {
+      "additionalProperties": false,
+      "description": "List language names and query codes.",
+      "properties": {
+        "operation": {
+          "const": "list_languages",
+          "default": "list_languages",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLanguages",
+      "type": "object"
+    },
+    "ListRegions": {
+      "additionalProperties": false,
+      "description": "List region names and country query codes.",
+      "properties": {
+        "operation": {
+          "const": "list_regions",
+          "default": "list_regions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRegions",
+      "type": "object"
+    },
+    "SearchNews": {
+      "additionalProperties": false,
+      "description": "Search news by keywords, boolean query, date range and source filters.",
+      "properties": {
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code from List Languages. Provider default: en.",
+          "title": "Language"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated legacy v1 categories from List Categories.",
+          "title": "Category"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country code from List Regions.",
+          "title": "Country"
+        },
+        "page_number": {
+          "default": 1,
+          "description": "One page per run. Increase explicitly to retrieve another page.",
+          "maximum": 180,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Free plan supports up to 20; larger pages need a paid plan.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1: news, 2: articles, 3: discussion.",
+          "title": "Article Type"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include a source domain, for example reuters.com.",
+          "title": "Domain"
+        },
+        "domain_not": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude a source domain.",
+          "title": "Domain Not"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "operation": {
+          "const": "search_news",
+          "default": "search_news",
+          "title": "Operation",
+          "type": "string"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Words, quoted phrases, OR and -exclusions. Takes priority over query.",
+          "title": "Keywords"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean AND, OR, NOT, parentheses and quoted phrases.",
+          "title": "Query"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp; history and date span depend on your plan.",
+          "format": "date-time",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp.",
+          "format": "date-time",
+          "title": "End Date"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 300,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional result cap, still limited by your plan.",
+          "title": "Limit"
+        },
+        "has_image": {
+          "default": false,
+          "description": "Only include articles with images. Disabled omits this presence filter.",
+          "title": "Has Image",
+          "type": "boolean"
+        },
+        "has_description": {
+          "default": false,
+          "description": "Only include articles with descriptions. Disabled omits this presence filter.",
+          "title": "Has Description",
+          "type": "boolean"
+        }
+      },
+      "title": "SearchNews",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_latest_news": "#/$defs/GetLatestNews",
+          "list_categories": "#/$defs/ListCategories",
+          "list_languages": "#/$defs/ListLanguages",
+          "list_regions": "#/$defs/ListRegions",
+          "search_news": "#/$defs/SearchNews"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchNews"
+        },
+        {
+          "$ref": "#/$defs/GetLatestNews"
+        },
+        {
+          "$ref": "#/$defs/ListLanguages"
+        },
+        {
+          "$ref": "#/$defs/ListRegions"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CurrentsApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Currents-api Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

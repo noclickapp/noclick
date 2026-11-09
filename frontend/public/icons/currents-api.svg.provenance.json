@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/currents-api.svg",
+  "source": "https://currentsapi.services/favicon.ico",
+  "license": "Currents API brand mark, used nominatively to identify the service. Trademark rights remain with Currents API.",
+  "sha256": "dc3b9f49642daacb4be009c62f65d311674f8451cf1454b5798c12bdfe708761",
+  "modifications": "Trailing whitespace normalized; SVG artwork preserved."
+}
