@@ -1,0 +1,11 @@
+{
+  "statusCode": 200,
+  "data": [
+    {
+      "location_id": "12",
+      "location_name": "Downtown Studio",
+      "address": "123 Example Street"
+    }
+  ],
+  "extra": []
+}

@@ -1,0 +1,342 @@
+[
+  {
+    "operation": "list_locations",
+    "method": "GET",
+    "path": "/api/public/v3/locations",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_leads",
+    "method": "GET",
+    "path": "/api/public/v3/leads",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_converted_leads",
+    "method": "GET",
+    "path": "/api/public/v3/leads/converted",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_lost_leads",
+    "method": "GET",
+    "path": "/api/public/v3/leads/lost",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_lead_statuses",
+    "method": "GET",
+    "path": "/api/public/v3/statuses",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_lead_sources",
+    "method": "GET",
+    "path": "/api/public/v3/sources",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_lost_reasons",
+    "method": "GET",
+    "path": "/api/public/v3/lostReasons",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_task_types",
+    "method": "GET",
+    "path": "/api/public/v3/tasks/types",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_staff_members",
+    "method": "GET",
+    "path": "/api/public/v3/users/allStaffMembers",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_users",
+    "method": "GET",
+    "path": "/api/public/v3/users",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_membership_types",
+    "method": "GET",
+    "path": "/api/public/v3/membershipTypes",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_user_memberships",
+    "method": "GET",
+    "path": "/api/public/v3/users/memberships",
+    "arguments": {},
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc"
+    },
+    "body": null
+  },
+  {
+    "operation": "create_lead",
+    "method": "POST",
+    "path": "/api/public/v3/leads",
+    "arguments": {
+      "first_name": "Jane",
+      "phone": "+15550102030",
+      "location_id": 12
+    },
+    "query": {},
+    "body": {
+      "first_name": "Jane",
+      "phone": "+15550102030",
+      "location_id": 12
+    }
+  },
+  {
+    "operation": "update_lead_status",
+    "method": "POST",
+    "path": "/api/public/v3/leads/updateStatus",
+    "arguments": {
+      "user_id": 42,
+      "status_id": 3
+    },
+    "query": {},
+    "body": {
+      "user_id": 42,
+      "status_id": 3
+    }
+  },
+  {
+    "operation": "mark_lead_lost",
+    "method": "POST",
+    "path": "/api/public/v3/leads/markAsLost",
+    "arguments": {
+      "user_id": 42,
+      "lost_reason_id": 4
+    },
+    "query": {},
+    "body": {
+      "user_id": 42,
+      "lost_reason_id": 4
+    }
+  },
+  {
+    "operation": "add_lead_note",
+    "method": "POST",
+    "path": "/api/public/v3/leads/createNote",
+    "arguments": {
+      "user_id": 42,
+      "description": "Follow up next week"
+    },
+    "query": {},
+    "body": {
+      "user_id": 42,
+      "description": "Follow up next week"
+    }
+  },
+  {
+    "operation": "add_user_note",
+    "method": "POST",
+    "path": "/api/public/v3/users/createNote",
+    "arguments": {
+      "user_id": 42,
+      "description": "Prefers evenings"
+    },
+    "query": {},
+    "body": {
+      "user_id": 42,
+      "description": "Prefers evenings"
+    }
+  },
+  {
+    "operation": "update_user",
+    "method": "PATCH",
+    "path": "/api/public/v3/users",
+    "arguments": {
+      "user_id": 42,
+      "first_name": "Janet",
+      "allow_email": "no"
+    },
+    "query": {},
+    "body": {
+      "user_id": 42,
+      "first_name": "Janet",
+      "allow_email": "no"
+    }
+  },
+  {
+    "operation": "create_user",
+    "method": "POST",
+    "path": "/api/public/v3/users",
+    "arguments": {
+      "first_name": "Jane",
+      "last_name": "Smith"
+    },
+    "query": {},
+    "body": {
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "send_welcome_email": false
+    }
+  },
+  {
+    "operation": "get_user",
+    "method": "GET",
+    "path": "/api/public/v3/users/42",
+    "arguments": {
+      "user_id": 42
+    },
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "complete_task",
+    "method": "POST",
+    "path": "/api/public/v3/tasks/markAsCompleted/7",
+    "arguments": {
+      "task_id": 7
+    },
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "list_tasks",
+    "method": "GET",
+    "path": "/api/public/v3/tasks",
+    "arguments": {
+      "from_date": "2026-11-01",
+      "to_date": "2026-11-30"
+    },
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc",
+      "from_date": "2026-11-01",
+      "to_date": "2026-11-30"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_schedule",
+    "method": "GET",
+    "path": "/api/public/v3/schedule",
+    "arguments": {
+      "from_date": "2026-11-01",
+      "to_date": "2026-11-30"
+    },
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc",
+      "from_date": "2026-11-01",
+      "to_date": "2026-11-30"
+    },
+    "body": null
+  },
+  {
+    "operation": "search_users",
+    "method": "GET",
+    "path": "/api/public/v3/users/searchUser",
+    "arguments": {
+      "type": "email",
+      "value": "jane@example.test"
+    },
+    "query": {
+      "page": 1,
+      "limit": 100,
+      "sort": "asc",
+      "type": "email",
+      "value": "jane@example.test"
+    },
+    "body": null
+  },
+  {
+    "operation": "create_task",
+    "method": "POST",
+    "path": "/api/public/v3/tasks",
+    "arguments": {
+      "location_id": 12,
+      "task_type_id": 2,
+      "reminder_date": "2026-11-10",
+      "reminder_time": "09:30",
+      "user_id": 42
+    },
+    "query": {},
+    "body": {
+      "location_id": 12,
+      "task_type_id": 2,
+      "reminder": {
+        "date": "2026-11-10",
+        "time": "09:30"
+      },
+      "user_id": 42
+    }
+  }
+]
