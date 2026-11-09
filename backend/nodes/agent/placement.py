@@ -9,17 +9,21 @@ names): both runtimes mount each one read-write beside the workspace.
 ``execute_bash``. ``_sandboxNetwork`` is the hosts its sandboxes' code may
 reach (``*.d`` covers ``d`` and the names under it; none: no network beyond
 what the agent itself needs, which the runtime adds); unset, anywhere. A
-runtime that can't enforce it never takes it.
+runtime that can't enforce it never takes it. ``_sandboxSkills`` is the
+skills a coding harness finds where it reads skills (``[{skill_id,
+account_user_id, version, name, digest, files}]``, ``files`` each version's
+``[{path, size, sha256}]``), written at its sandbox's cold start.
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 SANDBOX_REGION_KEY = "_sandboxRegion"
 SANDBOX_VOLUMES_KEY = "_sandboxVolumes"
 NO_SHELL_KEY = "_noShell"
 SANDBOX_NETWORK_KEY = "_sandboxNetwork"
+SANDBOX_SKILLS_KEY = "_sandboxSkills"
 
 
 def _runtime_value(node: Any, key: str) -> Any:
@@ -38,6 +42,11 @@ def sandbox_volumes_of(node: Any) -> Dict[str, str]:
     if not isinstance(volumes, dict):
         return {}
     return {str(path): str(name) for path, name in sorted(volumes.items()) if path and name}
+
+
+def sandbox_skills_of(node: Any) -> List[Dict[str, Any]]:
+    skills = _runtime_value(node, SANDBOX_SKILLS_KEY)
+    return [s for s in skills if isinstance(s, dict) and s.get("name")] if isinstance(skills, list) else []
 
 
 def shell_of(node: Any) -> bool:

@@ -68,7 +68,7 @@ _KEY = "nc:rehearsal:{conversation_id}"
 # during a rehearsal; fabricating it would have the agent reason about a
 # workflow that does not exist. Reading the agent's memory is exempt for the
 # same reason (a rehearsal sees what the agent knows); saving to it is not.
-REHEARSAL_PASSTHROUGH_TOOL_TYPES = frozenset({"describe_workflow", "memory_read"})
+REHEARSAL_PASSTHROUGH_TOOL_TYPES = frozenset({"describe_workflow", "memory_read", "skill_read"})
 
 
 @dataclass(frozen=True)

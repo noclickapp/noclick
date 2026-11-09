@@ -316,6 +316,10 @@ PLATFORM_TOOLS = "agent.platform_tools"
 # provider the tools are never offered.
 AGENT_MEMORY = "agent.memory"
 
+# A platform agent reads one of its skills (``nodes.agent.agent_skills``): async (pool, *, spec, arguments) ->
+# result dict. ``spec`` is the turn's ``_agentSkills`` runtime config; without a provider the tool is never offered.
+AGENT_SKILLS = "agent.skills"
+
 # Text steered into an in-process agent's running turn before its next model
 # call (a question asked mid-turn, a progress check): async (conversation_id)
 # -> [text], each taken once. Asked before every model call, so it must

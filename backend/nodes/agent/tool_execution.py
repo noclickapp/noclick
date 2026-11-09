@@ -276,6 +276,10 @@ async def execute_tool(
                 from nodes.agent.agent_memory import execute_memory_tool
 
                 result = await execute_memory_tool(node, dispatch_arguments, tool_info)
+            elif tool_type == "skill_read":
+                from nodes.agent.agent_skills import execute_skill_tool
+
+                result = await execute_skill_tool(node, dispatch_arguments, tool_info)
             else:
                 result = await _execute_workflow_tool(
                     node, tool_name, dispatch_arguments, tool_info

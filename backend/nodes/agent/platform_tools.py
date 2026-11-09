@@ -13,6 +13,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
 from nodes.agent.agent_memory import MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE
+from nodes.agent.agent_skills import SKILL_READ_TOOL_TYPE
 from utils.edition import is_local_edition
 from utils.prompts import PromptPack
 
@@ -40,7 +41,7 @@ PLATFORM_TOOL_TYPES = {
     "submit_feedback", "prompt_builder", "builder_respond", "describe_workflow",
     "email_user", "message_coordinator", "request_connection", "wake_me", "tell_parent", AGENTS_TOOL_TYPE,
     PLATFORM_TOOL_TYPE, RENDER_TOOL,
-    MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE,
+    MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE, SKILL_READ_TOOL_TYPE,
 }
 # The runtime config key a platform sets on an agent's turn to offer
 # request_connection: {"integrations": [names] | "*", ...whatever it needs back}.
@@ -266,6 +267,7 @@ def build_platform_tools(
     connection_requests: Optional[Dict[str, Any]] = None, wake_me: Optional[Dict[str, Any]] = None,
     tell_parent: Optional[Dict[str, Any]] = None, agent_tools: Optional[Dict[str, Any]] = None,
     agent_memory: Optional[Dict[str, Any]] = None,
+    agent_skills: Optional[Dict[str, Any]] = None,
     platform_tools: Optional[Dict[str, Any]] = None,
     answer_pictures: bool = False,
 ) -> list:
@@ -274,9 +276,10 @@ def build_platform_tools(
     execution context comes from the active agent turn. ``answer_pictures``:
     the turn draws pictures for its replies (``answer_pictures_offered``)."""
     from nodes.agent.agent_memory import memory_params
+    from nodes.agent.agent_skills import skill_params
     from utils.capabilities import (
-        AGENT_COORDINATION, AGENT_MEMORY, ANSWER_PICTURES, CONNECTION_REQUESTS, PARENT_UPDATES, PLATFORM_TOOLS,
-        WAKEUPS, capability,
+        AGENT_COORDINATION, AGENT_MEMORY, AGENT_SKILLS, ANSWER_PICTURES, CONNECTION_REQUESTS, PARENT_UPDATES,
+        PLATFORM_TOOLS, WAKEUPS, capability,
     )
 
     pairs = [_platform_pair(submit_feedback_param(), "submit_feedback")]
@@ -304,6 +307,10 @@ def build_platform_tools(
         for param, tool_type in memory_params(agent_memory):
             param, cfg = _platform_pair(param, tool_type)
             pairs.append((param, {**cfg, "spec": {**agent_memory, "tool": param["function"]["name"]}}))
+    if agent_skills and capability(AGENT_SKILLS) is not None:
+        for param, tool_type in skill_params(agent_skills):
+            param, cfg = _platform_pair(param, tool_type)
+            pairs.append((param, {**cfg, "spec": agent_skills}))
     if platform_tools and capability(PLATFORM_TOOLS) is not None:
         from nodes.agent.tool_binding import BOUND_ARGUMENTS_KEY
 
@@ -1110,6 +1117,10 @@ async def execute_platform_tool_from_ctx(
         from nodes.agent.agent_memory import memory_impl
 
         return await memory_impl(pool, st_config.get("spec"), arguments)
+    if tool_type == SKILL_READ_TOOL_TYPE:
+        from nodes.agent.agent_skills import skill_impl
+
+        return await skill_impl(pool, st_config.get("spec"), arguments)
     if tool_type == "submit_feedback":
         return await submit_feedback_impl(
             pool=pool,
