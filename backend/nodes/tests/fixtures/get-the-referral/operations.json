@@ -1,0 +1,497 @@
+{
+  "list_advocates": {
+    "config": {
+      "operation": "list_advocates"
+    },
+    "method": "GET",
+    "path": "/advocates",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "email",
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "mlm_code",
+      "xtrm_pat_user_id",
+      "email_verified",
+      "added_on",
+      "search",
+      "page_size",
+      "sort_by",
+      "sort_descending",
+      "added_after",
+      "added_before",
+      "updated_after",
+      "updated_before"
+    ],
+    "response": {
+      "advocates": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  },
+  "create_advocate": {
+    "config": {
+      "operation": "create_advocate",
+      "email": "person@example.com",
+      "firstname": "Example value",
+      "lastname": "Example value",
+      "password": "Example value"
+    },
+    "method": "POST",
+    "path": "/advocates",
+    "body_fields": [
+      "sales_rep_id",
+      "salesrepemail",
+      "email",
+      "firstname",
+      "lastname",
+      "password",
+      "country_code",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "parent_advocate_id",
+      "refer_code",
+      "xtrm_user_id",
+      "company_cam_project_id",
+      "installer"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "get_advocate": {
+    "config": {
+      "operation": "get_advocate",
+      "advocate_id": 123
+    },
+    "method": "GET",
+    "path": "/advocates/123",
+    "body_fields": [],
+    "query_fields": [],
+    "response": []
+  },
+  "update_advocate": {
+    "config": {
+      "operation": "update_advocate",
+      "advocate_id": 123
+    },
+    "method": "PATCH",
+    "path": "/advocates/123",
+    "body_fields": [
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "company_cam_id",
+      "installer"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "list_leads": {
+    "config": {
+      "operation": "list_leads"
+    },
+    "method": "GET",
+    "path": "/leads",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "page_size",
+      "sort_by",
+      "sort_descending",
+      "status",
+      "email",
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "time_to_contact",
+      "added_on",
+      "search",
+      "added_after",
+      "added_before",
+      "updated_after",
+      "updated_before"
+    ],
+    "response": {
+      "leads": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  },
+  "create_lead": {
+    "config": {
+      "operation": "create_lead",
+      "advocate_id": 123,
+      "product_id": 123,
+      "email": "person@example.com"
+    },
+    "method": "POST",
+    "path": "/leads",
+    "body_fields": [
+      "advocate_id",
+      "product_id",
+      "email",
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "state",
+      "city",
+      "zip",
+      "time_to_contact",
+      "crm_lead_id",
+      "is_lead_from_crm",
+      "note"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "get_lead": {
+    "config": {
+      "operation": "get_lead",
+      "lead_id": "123"
+    },
+    "method": "GET",
+    "path": "/leads/123",
+    "body_fields": [],
+    "query_fields": [],
+    "response": []
+  },
+  "update_lead": {
+    "config": {
+      "operation": "update_lead",
+      "lead_id": "123"
+    },
+    "method": "PATCH",
+    "path": "/leads/123",
+    "body_fields": [
+      "status_id",
+      "email",
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "list_contacts": {
+    "config": {
+      "operation": "list_contacts"
+    },
+    "method": "GET",
+    "path": "/contacts",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "email",
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "added_before",
+      "search",
+      "page_size",
+      "sort_by",
+      "sort_decending",
+      "salesrep_id",
+      "added_after"
+    ],
+    "response": {
+      "contacts": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  },
+  "create_contact": {
+    "config": {
+      "operation": "create_contact",
+      "firstname": "Example value",
+      "lastname": "Example value",
+      "email": "person@example.com"
+    },
+    "method": "POST",
+    "path": "/contacts",
+    "body_fields": [
+      "salesrep_id",
+      "firstname",
+      "lastname",
+      "email",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "get_contact": {
+    "config": {
+      "operation": "get_contact",
+      "contact_id": "123"
+    },
+    "method": "GET",
+    "path": "/contacts/123",
+    "body_fields": [],
+    "query_fields": [],
+    "response": []
+  },
+  "update_contact": {
+    "config": {
+      "operation": "update_contact",
+      "contact_id": "123"
+    },
+    "method": "PATCH",
+    "path": "/contacts/123",
+    "body_fields": [
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "email",
+      "salesrep_id",
+      "is_active"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "delete_contact": {
+    "config": {
+      "operation": "delete_contact",
+      "contact_id": "123"
+    },
+    "method": "DELETE",
+    "path": "/contacts/123",
+    "body_fields": [],
+    "query_fields": [],
+    "response": null
+  },
+  "list_sales_reps": {
+    "config": {
+      "operation": "list_sales_reps"
+    },
+    "method": "GET",
+    "path": "/salesreps",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "email",
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip",
+      "email_verified",
+      "added_on",
+      "search",
+      "page_size",
+      "sort_by",
+      "sort_decending"
+    ],
+    "response": {
+      "salesreps": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  },
+  "create_sales_rep": {
+    "config": {
+      "operation": "create_sales_rep",
+      "firstname": "Example value",
+      "lastname": "Example value",
+      "email": "person@example.com",
+      "phone": "Example value",
+      "password": "Example value"
+    },
+    "method": "POST",
+    "path": "/salesreps",
+    "body_fields": [
+      "sales_manager_id",
+      "sales_manager_email",
+      "firstname",
+      "lastname",
+      "email",
+      "phone",
+      "password",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "get_sales_rep": {
+    "config": {
+      "operation": "get_sales_rep",
+      "sales_rep_id": "123"
+    },
+    "method": "GET",
+    "path": "/salesreps/123",
+    "body_fields": [],
+    "query_fields": [],
+    "response": []
+  },
+  "update_sales_rep": {
+    "config": {
+      "operation": "update_sales_rep",
+      "sales_rep_id": "123"
+    },
+    "method": "PATCH",
+    "path": "/salesreps/123",
+    "body_fields": [
+      "firstname",
+      "lastname",
+      "phone",
+      "street1",
+      "street2",
+      "city",
+      "state",
+      "zip"
+    ],
+    "query_fields": [],
+    "response": []
+  },
+  "update_lead_status": {
+    "config": {
+      "operation": "update_lead_status",
+      "lead_id": "Example value",
+      "lead_status": "Example value"
+    },
+    "method": "POST",
+    "path": "/leads/updateStatus",
+    "body_fields": [
+      "lead_id",
+      "lead_status",
+      "amount",
+      "job_id",
+      "install_date"
+    ],
+    "query_fields": [],
+    "response": {
+      "id": "123",
+      "status_id": "3",
+      "external_ids": []
+    }
+  },
+  "list_pending_payments": {
+    "config": {
+      "operation": "list_pending_payments"
+    },
+    "method": "GET",
+    "path": "/payments/pending",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "page_size",
+      "search",
+      "sort_by",
+      "sort_descending"
+    ],
+    "response": {
+      "advocates": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  },
+  "list_paid_payments": {
+    "config": {
+      "operation": "list_paid_payments"
+    },
+    "method": "GET",
+    "path": "/payments/paid",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "page_size",
+      "search",
+      "sort_by",
+      "sort_descending"
+    ],
+    "response": {
+      "advocates": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  },
+  "list_wallet_transactions": {
+    "config": {
+      "operation": "list_wallet_transactions"
+    },
+    "method": "GET",
+    "path": "/payments/xtrm",
+    "body_fields": [],
+    "query_fields": [
+      "page",
+      "page_size",
+      "start_date",
+      "end_date",
+      "transaction_type"
+    ],
+    "response": {
+      "transactions": [],
+      "pagination": {
+        "currentPage": "1",
+        "lastPage": 1,
+        "pageSize": 50
+      }
+    }
+  }
+}
