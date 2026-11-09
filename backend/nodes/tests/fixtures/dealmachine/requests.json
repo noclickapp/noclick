@@ -1,0 +1,274 @@
+{
+  "get_account": [
+    {},
+    "GET",
+    "/v1/account",
+    null
+  ],
+  "search_properties": [
+    {
+      "zip_code": "02108"
+    },
+    "POST",
+    "/v1/properties/search",
+    {
+      "page": 1,
+      "per_page": 25,
+      "locations": [
+        {
+          "type": "zip_code",
+          "code": "02108"
+        }
+      ],
+      "anchor": "properties",
+      "contact_audience": "none"
+    }
+  ],
+  "get_property": [
+    {
+      "property_id": "prop_12345"
+    },
+    "GET",
+    "/v1/properties/prop_12345",
+    null
+  ],
+  "list_prospects": [
+    {},
+    "GET",
+    "/v1/prospects",
+    null
+  ],
+  "add_prospects": [
+    {
+      "record_ids": [
+        "prop_12345"
+      ]
+    },
+    "POST",
+    "/v1/prospects",
+    {
+      "record_type": "property",
+      "record_ids": [
+        "prop_12345"
+      ],
+      "favorite": false
+    }
+  ],
+  "get_prospect": [
+    {
+      "prospect_id": "prospect_123"
+    },
+    "GET",
+    "/v1/prospects/prospect_123",
+    null
+  ],
+  "update_prospect": [
+    {
+      "prospect_id": "prospect_123",
+      "lifecycle": "opportunity",
+      "favorite": false
+    },
+    "PATCH",
+    "/v1/prospects/prospect_123",
+    {
+      "lifecycle": "opportunity",
+      "favorite": false,
+      "cascade": true
+    }
+  ],
+  "archive_prospect": [
+    {
+      "prospect_id": "prospect_123",
+      "cascade": false
+    },
+    "DELETE",
+    "/v1/prospects/prospect_123",
+    null
+  ],
+  "list_prospect_notes": [
+    {
+      "prospect_id": "prospect_123"
+    },
+    "GET",
+    "/v1/prospects/prospect_123/notes",
+    null
+  ],
+  "add_prospect_note": [
+    {
+      "prospect_id": "prospect_123",
+      "body": "Call after inspection"
+    },
+    "POST",
+    "/v1/prospects/prospect_123/notes",
+    {
+      "body": "Call after inspection"
+    }
+  ],
+  "list_lists": [
+    {},
+    "GET",
+    "/v1/lists",
+    null
+  ],
+  "create_list": [
+    {
+      "name": "Follow ups"
+    },
+    "POST",
+    "/v1/lists",
+    {
+      "name": "Follow ups",
+      "source_type": "properties"
+    }
+  ],
+  "get_list": [
+    {
+      "list_id": "df747456-e367-4d04-a258-77739ae0ec57"
+    },
+    "GET",
+    "/v1/lists/df747456-e367-4d04-a258-77739ae0ec57",
+    null
+  ],
+  "rename_list": [
+    {
+      "list_id": "df747456-e367-4d04-a258-77739ae0ec57",
+      "name": "New name"
+    },
+    "PATCH",
+    "/v1/lists/df747456-e367-4d04-a258-77739ae0ec57",
+    {
+      "name": "New name"
+    }
+  ],
+  "list_list_items": [
+    {
+      "list_id": "df747456-e367-4d04-a258-77739ae0ec57"
+    },
+    "GET",
+    "/v1/lists/df747456-e367-4d04-a258-77739ae0ec57/items",
+    null
+  ],
+  "add_list_items": [
+    {
+      "list_id": "df747456-e367-4d04-a258-77739ae0ec57",
+      "ids": [
+        "4611686018455854538"
+      ],
+      "id_type": "internal_person_id",
+      "add_as_prospects": false
+    },
+    "POST",
+    "/v1/lists/df747456-e367-4d04-a258-77739ae0ec57/items",
+    {
+      "ids": [
+        "4611686018455854538"
+      ],
+      "id_type": "internal_person_id",
+      "add_as_prospects": false
+    }
+  ],
+  "remove_list_items": [
+    {
+      "list_id": "df747456-e367-4d04-a258-77739ae0ec57",
+      "ids": [
+        "123"
+      ]
+    },
+    "DELETE",
+    "/v1/lists/df747456-e367-4d04-a258-77739ae0ec57/items",
+    {
+      "ids": [
+        "123"
+      ],
+      "id_type": "internal_property_id"
+    }
+  ],
+  "list_tasks": [
+    {
+      "page": 2,
+      "per_page": 10,
+      "status": "open"
+    },
+    "GET",
+    "/v1/tasks",
+    null
+  ],
+  "create_task": [
+    {
+      "title": "Inspect",
+      "property_id": "prop_12345",
+      "assigned_to_user_id": 7
+    },
+    "POST",
+    "/v1/tasks",
+    {
+      "title": "Inspect",
+      "property_id": "prop_12345",
+      "assigned_to_user_id": 7
+    }
+  ],
+  "get_task": [
+    {
+      "task_id": "123"
+    },
+    "GET",
+    "/v1/tasks/123",
+    null
+  ],
+  "update_task": [
+    {
+      "task_id": "123",
+      "is_completed": false,
+      "clear_fields": [
+        "due_date",
+        "assigned_to_user_id"
+      ]
+    },
+    "PATCH",
+    "/v1/tasks/123",
+    {
+      "is_completed": false,
+      "due_date": null,
+      "assigned_to_user_id": null
+    }
+  ],
+  "delete_task": [
+    {
+      "task_id": "123"
+    },
+    "DELETE",
+    "/v1/tasks/123",
+    null
+  ],
+  "list_tags": [
+    {
+      "include_inactive": true
+    },
+    "GET",
+    "/v1/tags",
+    null
+  ],
+  "create_tag": [
+    {
+      "name": "Hot",
+      "badge_variant": "warning",
+      "sort_order": 0
+    },
+    "POST",
+    "/v1/tags",
+    {
+      "name": "Hot",
+      "badge_variant": "warning",
+      "sort_order": 0
+    }
+  ],
+  "add_prospect_tag": [
+    {
+      "prospect_id": "prospect_123",
+      "tag_id": "tag_31"
+    },
+    "POST",
+    "/v1/prospects/prospect_123/tags/tag_31",
+    null
+  ]
+}

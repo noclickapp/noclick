@@ -1,0 +1,1389 @@
+{
+  "$defs": {
+    "AddListItems": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "ids": {
+          "items": {
+            "description": "Positive decimal record ID; strings preserve large person IDs.",
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        },
+        "id_type": {
+          "default": "internal_property_id",
+          "enum": [
+            "internal_property_id",
+            "internal_person_id"
+          ],
+          "title": "Id Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_list_items",
+          "default": "add_list_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "add_as_prospects": {
+          "default": true,
+          "description": "Also track records as prospects; counts toward prospect allowance.",
+          "title": "Add As Prospects",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_id",
+        "ids"
+      ],
+      "title": "AddListItems",
+      "type": "object"
+    },
+    "AddProspectNote": {
+      "additionalProperties": false,
+      "properties": {
+        "prospect_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_prospect_note",
+          "default": "add_prospect_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prospect_id",
+        "body"
+      ],
+      "title": "AddProspectNote",
+      "type": "object"
+    },
+    "AddProspectTag": {
+      "additionalProperties": false,
+      "properties": {
+        "prospect_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_prospect_tag",
+          "default": "add_prospect_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prospect_id",
+        "tag_id"
+      ],
+      "title": "AddProspectTag",
+      "type": "object"
+    },
+    "AddProspects": {
+      "additionalProperties": false,
+      "description": "Track records as prospects; consumes prospect allowance.",
+      "properties": {
+        "operation": {
+          "const": "add_prospects",
+          "default": "add_prospects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "record_type": {
+          "default": "property",
+          "enum": [
+            "property",
+            "person",
+            "company"
+          ],
+          "title": "Record Type",
+          "type": "string"
+        },
+        "record_ids": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Record Ids",
+          "type": "array"
+        },
+        "favorite": {
+          "default": false,
+          "title": "Favorite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "record_ids"
+      ],
+      "title": "AddProspects",
+      "type": "object"
+    },
+    "ArchiveProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "prospect_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "archive_prospect",
+          "default": "archive_prospect",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cascade": {
+          "default": true,
+          "description": "Provider archive cascade; mail always ends.",
+          "title": "Cascade",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "prospect_id"
+      ],
+      "title": "ArchiveProspect",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "source_type": {
+          "default": "properties",
+          "enum": [
+            "properties",
+            "people"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "badge_variant": {
+          "anyOf": [
+            {
+              "enum": [
+                "default",
+                "secondary",
+                "info",
+                "warning",
+                "destructive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Badge Variant",
+          "enum": [
+            "default",
+            "secondary",
+            "info",
+            "warning",
+            "destructive"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opportunity Id"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Id"
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Id"
+        },
+        "assigned_to_user_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To User Id"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DealMachineAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dealmachine_api_key",
+          "default": "dealmachine_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "DealMachine API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the DealMachine developer portal and paste it here. The key is sent as a Bearer token. Connection reads your workspace account. Property lookups and searches can consume data credits; adding prospects uses your prospect allowance.",
+      "x-credential-url": "https://api.docs.dealmachine.com"
+    },
+    "DeleteTask": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "DeleteTask",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetProperty": {
+      "additionalProperties": false,
+      "description": "Read a property; enrichment can consume credits.",
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string"
+        },
+        "property_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "enrich": {
+          "default": false,
+          "description": "Enable paid enrichment; false returns base fields.",
+          "title": "Enrich",
+          "type": "boolean"
+        },
+        "contact_audience": {
+          "default": "none",
+          "enum": [
+            "owners",
+            "owners_and_family",
+            "renters",
+            "residents",
+            "all",
+            "none"
+          ],
+          "title": "Contact Audience",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated property field IDs.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "GetProperty",
+      "type": "object"
+    },
+    "GetProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "prospect_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_prospect",
+          "default": "get_prospect",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prospect_id"
+      ],
+      "title": "GetProspect",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "ListListItems": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "list_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_list_items",
+          "default": "list_list_items",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ListListItems",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "source_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "properties",
+                "people"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Type",
+          "enum": [
+            "properties",
+            "people"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort": {
+          "default": "newest",
+          "enum": [
+            "newest",
+            "oldest",
+            "name",
+            "name_desc",
+            "count",
+            "count_asc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListProspectNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "prospect_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_prospect_notes",
+          "default": "list_prospect_notes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prospect_id"
+      ],
+      "title": "ListProspectNotes",
+      "type": "object"
+    },
+    "ListProspects": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_prospects",
+          "default": "list_prospects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "record_type": {
+          "default": "property",
+          "enum": [
+            "property",
+            "person"
+          ],
+          "title": "Record Type",
+          "type": "string"
+        },
+        "lifecycle": {
+          "default": "active",
+          "enum": [
+            "active",
+            "opportunity",
+            "archived"
+          ],
+          "title": "Lifecycle",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "tag_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Id"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "List Id"
+        },
+        "sort": {
+          "default": "newest",
+          "enum": [
+            "newest",
+            "oldest"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "ListProspects",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "include_inactive": {
+          "default": false,
+          "title": "Include Inactive",
+          "type": "boolean"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "default": "all",
+          "enum": [
+            "open",
+            "completed",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "assigned_to_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To User Id"
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "RemoveListItems": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "ids": {
+          "items": {
+            "description": "Positive decimal record ID; strings preserve large person IDs.",
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        },
+        "id_type": {
+          "default": "internal_property_id",
+          "enum": [
+            "internal_property_id",
+            "internal_person_id"
+          ],
+          "title": "Id Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_list_items",
+          "default": "remove_list_items",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "ids"
+      ],
+      "title": "RemoveListItems",
+      "type": "object"
+    },
+    "RenameList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rename_list",
+          "default": "rename_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "RenameList",
+      "type": "object"
+    },
+    "SearchProperties": {
+      "additionalProperties": false,
+      "description": "Search property records within a ZIP code; data credits may apply.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_properties",
+          "default": "search_properties",
+          "title": "Operation",
+          "type": "string"
+        },
+        "zip_code": {
+          "pattern": "^[0-9]{5}$",
+          "title": "Zip Code",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Property field IDs from the provider field catalog.",
+          "title": "Fields"
+        },
+        "result_session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the previous page's result session unchanged.",
+          "title": "Result Session Id"
+        }
+      },
+      "required": [
+        "zip_code"
+      ],
+      "title": "SearchProperties",
+      "type": "object"
+    },
+    "UpdateProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "prospect_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_prospect",
+          "default": "update_prospect",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lifecycle": {
+          "enum": [
+            "active",
+            "opportunity",
+            "archived"
+          ],
+          "title": "Lifecycle",
+          "type": "string"
+        },
+        "favorite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favorite"
+        },
+        "cascade": {
+          "default": true,
+          "description": "Archiving removes list memberships and closes opportunities; mail always ends.",
+          "title": "Cascade",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "prospect_id",
+        "lifecycle"
+      ],
+      "title": "UpdateProspect",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "additionalProperties": false,
+      "description": "Edit supplied task fields; use clear_fields to explicitly send null.",
+      "properties": {
+        "task_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opportunity Id"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Id"
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Id"
+        },
+        "assigned_to_user_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To User Id"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "is_completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Completed"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order"
+        },
+        "clear_fields": {
+          "items": {
+            "enum": [
+              "description",
+              "opportunity_id",
+              "property_id",
+              "person_id",
+              "assigned_to_user_id",
+              "due_date"
+            ],
+            "type": "string"
+          },
+          "title": "Clear Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_list_items": "#/$defs/AddListItems",
+          "add_prospect_note": "#/$defs/AddProspectNote",
+          "add_prospect_tag": "#/$defs/AddProspectTag",
+          "add_prospects": "#/$defs/AddProspects",
+          "archive_prospect": "#/$defs/ArchiveProspect",
+          "create_list": "#/$defs/CreateList",
+          "create_tag": "#/$defs/CreateTag",
+          "create_task": "#/$defs/CreateTask",
+          "delete_task": "#/$defs/DeleteTask",
+          "get_account": "#/$defs/GetAccount",
+          "get_list": "#/$defs/GetList",
+          "get_property": "#/$defs/GetProperty",
+          "get_prospect": "#/$defs/GetProspect",
+          "get_task": "#/$defs/GetTask",
+          "list_list_items": "#/$defs/ListListItems",
+          "list_lists": "#/$defs/ListLists",
+          "list_prospect_notes": "#/$defs/ListProspectNotes",
+          "list_prospects": "#/$defs/ListProspects",
+          "list_tags": "#/$defs/ListTags",
+          "list_tasks": "#/$defs/ListTasks",
+          "remove_list_items": "#/$defs/RemoveListItems",
+          "rename_list": "#/$defs/RenameList",
+          "search_properties": "#/$defs/SearchProperties",
+          "update_prospect": "#/$defs/UpdateProspect",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/SearchProperties"
+        },
+        {
+          "$ref": "#/$defs/GetProperty"
+        },
+        {
+          "$ref": "#/$defs/ListProspects"
+        },
+        {
+          "$ref": "#/$defs/AddProspects"
+        },
+        {
+          "$ref": "#/$defs/GetProspect"
+        },
+        {
+          "$ref": "#/$defs/UpdateProspect"
+        },
+        {
+          "$ref": "#/$defs/ArchiveProspect"
+        },
+        {
+          "$ref": "#/$defs/ListProspectNotes"
+        },
+        {
+          "$ref": "#/$defs/AddProspectNote"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/RenameList"
+        },
+        {
+          "$ref": "#/$defs/ListListItems"
+        },
+        {
+          "$ref": "#/$defs/AddListItems"
+        },
+        {
+          "$ref": "#/$defs/RemoveListItems"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/DeleteTask"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/AddProspectTag"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DealMachineAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dealmachine Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
