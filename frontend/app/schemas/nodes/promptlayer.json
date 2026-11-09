@@ -1,0 +1,1546 @@
+{
+  "$defs": {
+    "PromptLayerAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "promptlayer_api_key",
+          "default": "promptlayer_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "PromptLayer API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in PromptLayer Settings, then paste it here. NoClick checks the key by reading AI workflows in its workspace. Use a key with permissions for the operations you need.",
+      "x-credential-url": "https://docs.promptlayer.com/reference/introduction"
+    },
+    "PromptLayerAddRowsConfig": {
+      "additionalProperties": false,
+      "description": "Append rows; computed cells remain stale until explicitly recalculated.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "sheet_id": {
+          "description": "Sheet UUID within the table.",
+          "format": "uuid",
+          "title": "Sheet Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_rows",
+          "default": "add_rows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "count": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One map of text-column UUID to value per appended row.",
+          "title": "Values"
+        }
+      },
+      "required": [
+        "table_id",
+        "sheet_id"
+      ],
+      "title": "PromptLayerAddRowsConfig",
+      "type": "object"
+    },
+    "PromptLayerCreateLabelConfig": {
+      "additionalProperties": false,
+      "description": "Create a release label pointing to a prompt version.",
+      "properties": {
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt_id": {
+          "minimum": 1,
+          "title": "Prompt Id",
+          "type": "integer"
+        },
+        "prompt_version_number": {
+          "minimum": 1,
+          "title": "Prompt Version Number",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt_id",
+        "prompt_version_number",
+        "name"
+      ],
+      "title": "PromptLayerCreateLabelConfig",
+      "type": "object"
+    },
+    "PromptLayerCreateSheetConfig": {
+      "additionalProperties": false,
+      "description": "Create a blank sheet with the provider's default text column scaffold.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_sheet",
+          "default": "create_sheet",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Index"
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "PromptLayerCreateSheetConfig",
+      "type": "object"
+    },
+    "PromptLayerCreateTableConfig": {
+      "additionalProperties": false,
+      "description": "Create a table, optionally including a default sheet and text column.",
+      "properties": {
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "create_default_sheet": {
+          "default": true,
+          "title": "Create Default Sheet",
+          "type": "boolean"
+        }
+      },
+      "title": "PromptLayerCreateTableConfig",
+      "type": "object"
+    },
+    "PromptLayerDeleteLabelConfig": {
+      "additionalProperties": false,
+      "description": "Delete a release label without deleting its prompt.",
+      "properties": {
+        "operation": {
+          "const": "delete_label",
+          "default": "delete_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt_label_id": {
+          "minimum": 1,
+          "title": "Prompt Label Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt_label_id"
+      ],
+      "title": "PromptLayerDeleteLabelConfig",
+      "type": "object"
+    },
+    "PromptLayerGetPromptConfig": {
+      "additionalProperties": false,
+      "description": "Get raw chat or completion content and version metadata.",
+      "properties": {
+        "version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific prompt version; mutually exclusive with label.",
+          "title": "Version"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release label; mutually exclusive with version.",
+          "title": "Label"
+        },
+        "identifier": {
+          "description": "Prompt name or ID.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_prompt",
+          "default": "get_prompt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "resolve_snippets": {
+          "default": true,
+          "title": "Resolve Snippets",
+          "type": "boolean"
+        },
+        "include_llm_kwargs": {
+          "default": false,
+          "title": "Include Llm Kwargs",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "PromptLayerGetPromptConfig",
+      "type": "object"
+    },
+    "PromptLayerGetRequestConfig": {
+      "additionalProperties": false,
+      "description": "Read a logged request's prompt, usage, timing and cost.",
+      "properties": {
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "minimum": 1,
+          "title": "Request Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "PromptLayerGetRequestConfig",
+      "type": "object"
+    },
+    "PromptLayerGetSheetConfig": {
+      "additionalProperties": false,
+      "description": "Read sheet details and version count.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "sheet_id": {
+          "description": "Sheet UUID within the table.",
+          "format": "uuid",
+          "title": "Sheet Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sheet",
+          "default": "get_sheet",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "table_id",
+        "sheet_id"
+      ],
+      "title": "PromptLayerGetSheetConfig",
+      "type": "object"
+    },
+    "PromptLayerGetSheetOperationConfig": {
+      "additionalProperties": false,
+      "description": "Poll a queued sheet recalculation without starting another run.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "sheet_id": {
+          "description": "Sheet UUID within the table.",
+          "format": "uuid",
+          "title": "Sheet Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sheet_operation",
+          "default": "get_sheet_operation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "operation_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Operation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_id",
+        "sheet_id",
+        "operation_id"
+      ],
+      "title": "PromptLayerGetSheetOperationConfig",
+      "type": "object"
+    },
+    "PromptLayerGetSheetScoreConfig": {
+      "additionalProperties": false,
+      "description": "Read aggregate and per-column scores and calculation status.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "sheet_id": {
+          "description": "Sheet UUID within the table.",
+          "format": "uuid",
+          "title": "Sheet Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sheet_score",
+          "default": "get_sheet_score",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "table_id",
+        "sheet_id"
+      ],
+      "title": "PromptLayerGetSheetScoreConfig",
+      "type": "object"
+    },
+    "PromptLayerGetTableConfig": {
+      "additionalProperties": false,
+      "description": "Read a table and its sheet metadata.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "PromptLayerGetTableConfig",
+      "type": "object"
+    },
+    "PromptLayerGetTraceConfig": {
+      "additionalProperties": false,
+      "description": "Read the spans belonging to a trace.",
+      "properties": {
+        "operation": {
+          "const": "get_trace",
+          "default": "get_trace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "trace_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Trace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trace_id"
+      ],
+      "title": "PromptLayerGetTraceConfig",
+      "type": "object"
+    },
+    "PromptLayerListLabelsConfig": {
+      "additionalProperties": false,
+      "description": "List release labels for one prompt.",
+      "properties": {
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "PromptLayerListLabelsConfig",
+      "type": "object"
+    },
+    "PromptLayerListRowsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of rows with optional column and execution metadata.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_cursor from the previous page with the same filters.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "sheet_id": {
+          "description": "Sheet UUID within the table.",
+          "format": "uuid",
+          "title": "Sheet Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_rows",
+          "default": "list_rows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_columns": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Columns"
+        },
+        "include_row_count": {
+          "default": true,
+          "title": "Include Row Count",
+          "type": "boolean"
+        },
+        "include_system_columns": {
+          "default": false,
+          "title": "Include System Columns",
+          "type": "boolean"
+        },
+        "include_execution_metadata_aggregates": {
+          "default": false,
+          "title": "Include Execution Metadata Aggregates",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "table_id",
+        "sheet_id"
+      ],
+      "title": "PromptLayerListRowsConfig",
+      "type": "object"
+    },
+    "PromptLayerListSheetsConfig": {
+      "additionalProperties": false,
+      "description": "List sheets belonging to one table.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_cursor from the previous page with the same filters.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_sheets",
+          "default": "list_sheets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "table_id"
+      ],
+      "title": "PromptLayerListSheetsConfig",
+      "type": "object"
+    },
+    "PromptLayerListTablesConfig": {
+      "additionalProperties": false,
+      "description": "List tables in the key's workspace, retaining the next cursor.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_cursor from the previous page with the same filters.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "prompt_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Id"
+        }
+      },
+      "title": "PromptLayerListTablesConfig",
+      "type": "object"
+    },
+    "PromptLayerListWorkflowsConfig": {
+      "additionalProperties": false,
+      "description": "List workspace AI workflows and retain provider pagination.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. This operation returns one page; use provider pagination for the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "created_at",
+                "updated_at",
+                "name",
+                "id"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "name",
+            "id"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "title": "PromptLayerListWorkflowsConfig",
+      "type": "object"
+    },
+    "PromptLayerMoveLabelConfig": {
+      "additionalProperties": false,
+      "description": "Move an existing release label to a different version.",
+      "properties": {
+        "operation": {
+          "const": "move_label",
+          "default": "move_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt_label_id": {
+          "minimum": 1,
+          "title": "Prompt Label Id",
+          "type": "integer"
+        },
+        "prompt_version_number": {
+          "minimum": 1,
+          "title": "Prompt Version Number",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt_label_id",
+        "prompt_version_number"
+      ],
+      "title": "PromptLayerMoveLabelConfig",
+      "type": "object"
+    },
+    "PromptLayerPatchPromptConfig": {
+      "additionalProperties": false,
+      "description": "Create a version from a base version or label, replacing selected fields.",
+      "properties": {
+        "version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific prompt version; mutually exclusive with label.",
+          "title": "Version"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release label; mutually exclusive with version.",
+          "title": "Label"
+        },
+        "identifier": {
+          "description": "Prompt name or ID.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "patch_prompt",
+          "default": "patch_prompt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "messages": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array replaces all chat messages; object patches string message indices.",
+          "title": "Messages"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Completion content replacement or index patch.",
+          "title": "Content"
+        },
+        "model_parameters": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Parameters"
+        },
+        "commit_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit Message"
+        },
+        "release_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Labels"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "PromptLayerPatchPromptConfig",
+      "type": "object"
+    },
+    "PromptLayerPublishPromptConfig": {
+      "additionalProperties": false,
+      "description": "Publish a new prompt or version, optionally moving release labels to it.",
+      "properties": {
+        "operation": {
+          "const": "publish_prompt",
+          "default": "publish_prompt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Prompt Name",
+          "type": "string"
+        },
+        "prompt_template": {
+          "additionalProperties": true,
+          "description": "PromptLayer template object: type chat with messages, or type completion with content. Use PromptLayer content blocks from the publish API docs.",
+          "title": "Prompt Template",
+          "type": "object"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "commit_message": {
+          "anyOf": [
+            {
+              "maxLength": 72,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit Message"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "release_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Labels"
+        }
+      },
+      "required": [
+        "prompt_name",
+        "prompt_template"
+      ],
+      "title": "PromptLayerPublishPromptConfig",
+      "type": "object"
+    },
+    "PromptLayerRecalculateSheetConfig": {
+      "additionalProperties": false,
+      "description": "Queue recalculation; preserve any confirmation request instead of approving it automatically.",
+      "properties": {
+        "table_id": {
+          "description": "Table UUID from PromptLayer.",
+          "format": "uuid",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "sheet_id": {
+          "description": "Sheet UUID within the table.",
+          "format": "uuid",
+          "title": "Sheet Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "recalculate_sheet",
+          "default": "recalculate_sheet",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "column_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column Ids"
+        },
+        "row_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Ids"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "STALE",
+                  "QUEUED",
+                  "DISPATCHED",
+                  "RUNNING",
+                  "COMPLETED",
+                  "FAILED"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for stale cells, or pass an empty list for all statuses. Recalculation can consume provider credits.",
+          "title": "Statuses"
+        },
+        "confirmation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token explicitly returned by a prior confirmation response for this request.",
+          "title": "Confirmation Token"
+        }
+      },
+      "required": [
+        "table_id",
+        "sheet_id"
+      ],
+      "title": "PromptLayerRecalculateSheetConfig",
+      "type": "object"
+    },
+    "PromptLayerRenderPromptConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a template with input variables applied; does not run an LLM.",
+      "properties": {
+        "version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific prompt version; mutually exclusive with label.",
+          "title": "Version"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release label; mutually exclusive with version.",
+          "title": "Label"
+        },
+        "identifier": {
+          "description": "Prompt name or ID.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "render_prompt",
+          "default": "render_prompt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "input_variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Variables"
+        },
+        "metadata_filters": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata Filters"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "openai",
+                "anthropic"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider",
+          "enum": [
+            "openai",
+            "anthropic"
+          ],
+          "x-enum-searchable": true
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "model_parameter_overrides": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Parameter Overrides"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "PromptLayerRenderPromptConfig",
+      "type": "object"
+    },
+    "PromptLayerTrackMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Associate custom metadata with a logged request.",
+      "properties": {
+        "operation": {
+          "const": "track_metadata",
+          "default": "track_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "minimum": 1,
+          "title": "Request Id",
+          "type": "integer"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "request_id",
+        "metadata"
+      ],
+      "title": "PromptLayerTrackMetadataConfig",
+      "type": "object"
+    },
+    "PromptLayerTrackPromptConfig": {
+      "additionalProperties": false,
+      "description": "Associate a request with a prompt and its input variables.",
+      "properties": {
+        "version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific prompt version; mutually exclusive with label.",
+          "title": "Version"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release label; mutually exclusive with version.",
+          "title": "Label"
+        },
+        "operation": {
+          "const": "track_prompt",
+          "default": "track_prompt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "minimum": 1,
+          "title": "Request Id",
+          "type": "integer"
+        },
+        "prompt_name": {
+          "minLength": 1,
+          "title": "Prompt Name",
+          "type": "string"
+        },
+        "prompt_input_variables": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Input Variables"
+        }
+      },
+      "required": [
+        "request_id",
+        "prompt_name"
+      ],
+      "title": "PromptLayerTrackPromptConfig",
+      "type": "object"
+    },
+    "PromptLayerTrackScoreConfig": {
+      "additionalProperties": false,
+      "description": "Track a named or default score from 0 to 100.",
+      "properties": {
+        "operation": {
+          "const": "track_score",
+          "default": "track_score",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "minimum": 1,
+          "title": "Request Id",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "request_id",
+        "score"
+      ],
+      "title": "PromptLayerTrackScoreConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_rows": "#/$defs/PromptLayerAddRowsConfig",
+          "create_label": "#/$defs/PromptLayerCreateLabelConfig",
+          "create_sheet": "#/$defs/PromptLayerCreateSheetConfig",
+          "create_table": "#/$defs/PromptLayerCreateTableConfig",
+          "delete_label": "#/$defs/PromptLayerDeleteLabelConfig",
+          "get_prompt": "#/$defs/PromptLayerGetPromptConfig",
+          "get_request": "#/$defs/PromptLayerGetRequestConfig",
+          "get_sheet": "#/$defs/PromptLayerGetSheetConfig",
+          "get_sheet_operation": "#/$defs/PromptLayerGetSheetOperationConfig",
+          "get_sheet_score": "#/$defs/PromptLayerGetSheetScoreConfig",
+          "get_table": "#/$defs/PromptLayerGetTableConfig",
+          "get_trace": "#/$defs/PromptLayerGetTraceConfig",
+          "list_labels": "#/$defs/PromptLayerListLabelsConfig",
+          "list_rows": "#/$defs/PromptLayerListRowsConfig",
+          "list_sheets": "#/$defs/PromptLayerListSheetsConfig",
+          "list_tables": "#/$defs/PromptLayerListTablesConfig",
+          "list_workflows": "#/$defs/PromptLayerListWorkflowsConfig",
+          "move_label": "#/$defs/PromptLayerMoveLabelConfig",
+          "patch_prompt": "#/$defs/PromptLayerPatchPromptConfig",
+          "publish_prompt": "#/$defs/PromptLayerPublishPromptConfig",
+          "recalculate_sheet": "#/$defs/PromptLayerRecalculateSheetConfig",
+          "render_prompt": "#/$defs/PromptLayerRenderPromptConfig",
+          "track_metadata": "#/$defs/PromptLayerTrackMetadataConfig",
+          "track_prompt": "#/$defs/PromptLayerTrackPromptConfig",
+          "track_score": "#/$defs/PromptLayerTrackScoreConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PromptLayerListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetPromptConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerRenderPromptConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerPublishPromptConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerPatchPromptConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerMoveLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerDeleteLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerTrackMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerTrackScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerTrackPromptConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetTraceConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerCreateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerListSheetsConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerCreateSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerListRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerAddRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerRecalculateSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetSheetOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/PromptLayerGetSheetScoreConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PromptLayerAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Promptlayer Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
