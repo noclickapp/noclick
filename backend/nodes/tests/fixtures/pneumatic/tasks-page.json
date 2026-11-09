@@ -1,0 +1,1 @@
+{"count": 7, "next": "https://api.pneumatic.app/v3/tasks?limit=2&offset=6", "previous": "https://api.pneumatic.app/v3/tasks?limit=2&offset=2", "results": [{"id": 7, "name": "Review customer", "is_completed": false}]}
