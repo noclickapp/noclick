@@ -1,0 +1,90 @@
+{
+  "get_current_user": [
+    "GET",
+    "/v1/users/me"
+  ],
+  "list_sequences": [
+    "GET",
+    "/v1/sequences"
+  ],
+  "list_sequence_recipients": [
+    "GET",
+    "/v1/sequences/{id}/recipients/"
+  ],
+  "add_sequence_recipients": [
+    "POST",
+    "/v1/sequences/{id}/recipients/"
+  ],
+  "cancel_sequence_recipients": [
+    "POST",
+    "/v1/sequences/{id}/cancel"
+  ],
+  "list_sequence_folders": [
+    "GET",
+    "/v1/sequencefolders"
+  ],
+  "create_sequence_folder": [
+    "POST",
+    "/v1/sequencefolders"
+  ],
+  "get_sequence_folder": [
+    "GET",
+    "/v1/sequencefolders/{id}"
+  ],
+  "update_sequence_folder": [
+    "PATCH",
+    "/v1/sequencefolders/{id}"
+  ],
+  "delete_sequence_folder": [
+    "DELETE",
+    "/v1/sequencefolders/{id}"
+  ],
+  "list_templates": [
+    "GET",
+    "/v1/snippets"
+  ],
+  "get_template": [
+    "GET",
+    "/v1/snippets/{id}"
+  ],
+  "update_template": [
+    "PATCH",
+    "/v1/snippets/{id}"
+  ],
+  "list_messages": [
+    "GET",
+    "/v1/messages"
+  ],
+  "get_message": [
+    "GET",
+    "/v1/messages/{id}"
+  ],
+  "create_draft": [
+    "POST",
+    "/v1/messages"
+  ],
+  "update_message": [
+    "PATCH",
+    "/v1/messages/{id}"
+  ],
+  "send_draft": [
+    "POST",
+    "/v1/messages/{id}/send"
+  ],
+  "list_unsubscribes": [
+    "GET",
+    "/v1/unsubscribes"
+  ],
+  "add_unsubscribe": [
+    "POST",
+    "/v1/unsubscribes"
+  ],
+  "remove_unsubscribe": [
+    "DELETE",
+    "/v1/unsubscribes"
+  ],
+  "list_meeting_invites": [
+    "GET",
+    "/v1/meetinginvites"
+  ]
+}

@@ -1,0 +1,1143 @@
+{
+  "$defs": {
+    "MixmaxAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mixmax_api_token",
+          "default": "mixmax_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Mixmax API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in Mixmax Settings > Integrations and paste it here. NoClick sends it in X-API-Token to api.mixmax.com. Use a personal API token; managed keys cannot access some account endpoints.",
+      "x-credential-url": "https://app.mixmax.com/dashboard/settings/integrations"
+    },
+    "MixmaxAddSequenceRecipientsConfig": {
+      "additionalProperties": false,
+      "description": "Add sequence recipients; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "add_sequence_recipients",
+          "default": "add_sequence_recipients",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "recipients": {
+          "items": {
+            "$ref": "#/$defs/MixmaxRecipient"
+          },
+          "minItems": 1,
+          "title": "Recipients",
+          "type": "array"
+        },
+        "scheduledAt": {
+          "anyOf": [
+            {
+              "maximum": 9999999999999,
+              "minimum": 1000000000000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduledat"
+        },
+        "enrich": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enrich"
+        },
+        "allowMissingVariables": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allowmissingvariables"
+        }
+      },
+      "required": [
+        "id",
+        "recipients"
+      ],
+      "title": "MixmaxAddSequenceRecipientsConfig",
+      "type": "object"
+    },
+    "MixmaxAddUnsubscribeConfig": {
+      "additionalProperties": false,
+      "description": "Add unsubscribe; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "add_unsubscribe",
+          "default": "add_unsubscribe",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MixmaxAddUnsubscribeConfig",
+      "type": "object"
+    },
+    "MixmaxAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MixmaxAddress",
+      "type": "object"
+    },
+    "MixmaxCancelSequenceRecipientsConfig": {
+      "additionalProperties": false,
+      "description": "Cancel sequence recipients; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "cancel_sequence_recipients",
+          "default": "cancel_sequence_recipients",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "emails"
+      ],
+      "title": "MixmaxCancelSequenceRecipientsConfig",
+      "type": "object"
+    },
+    "MixmaxCreateDraftConfig": {
+      "additionalProperties": false,
+      "description": "Create draft; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "create_draft",
+          "default": "create_draft",
+          "title": "Operation",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MixmaxAddress"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MixmaxAddress"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MixmaxAddress"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "trackingEnabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trackingenabled"
+        }
+      },
+      "title": "MixmaxCreateDraftConfig",
+      "type": "object"
+    },
+    "MixmaxCreateSequenceFolderConfig": {
+      "additionalProperties": false,
+      "description": "Create sequence folder; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "create_sequence_folder",
+          "default": "create_sequence_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "MixmaxCreateSequenceFolderConfig",
+      "type": "object"
+    },
+    "MixmaxDeleteSequenceFolderConfig": {
+      "additionalProperties": false,
+      "description": "Delete sequence folder; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "delete_sequence_folder",
+          "default": "delete_sequence_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxDeleteSequenceFolderConfig",
+      "type": "object"
+    },
+    "MixmaxGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Get current user; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "MixmaxGetCurrentUserConfig",
+      "type": "object"
+    },
+    "MixmaxGetMessageConfig": {
+      "additionalProperties": false,
+      "description": "Get message; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxGetMessageConfig",
+      "type": "object"
+    },
+    "MixmaxGetSequenceFolderConfig": {
+      "additionalProperties": false,
+      "description": "Get sequence folder; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "get_sequence_folder",
+          "default": "get_sequence_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxGetSequenceFolderConfig",
+      "type": "object"
+    },
+    "MixmaxGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get template; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxGetTemplateConfig",
+      "type": "object"
+    },
+    "MixmaxListMeetingInvitesConfig": {
+      "additionalProperties": false,
+      "description": "List meeting invites; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_meeting_invites",
+          "default": "list_meeting_invites",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 300,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "title": "MixmaxListMeetingInvitesConfig",
+      "type": "object"
+    },
+    "MixmaxListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "List messages; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 300,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "title": "MixmaxListMessagesConfig",
+      "type": "object"
+    },
+    "MixmaxListSequenceFoldersConfig": {
+      "additionalProperties": false,
+      "description": "List sequence folders; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_sequence_folders",
+          "default": "list_sequence_folders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "MixmaxListSequenceFoldersConfig",
+      "type": "object"
+    },
+    "MixmaxListSequenceRecipientsConfig": {
+      "additionalProperties": false,
+      "description": "List sequence recipients; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_sequence_recipients",
+          "default": "list_sequence_recipients",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxListSequenceRecipientsConfig",
+      "type": "object"
+    },
+    "MixmaxListSequencesConfig": {
+      "additionalProperties": false,
+      "description": "List sequences; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_sequences",
+          "default": "list_sequences",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "title": "MixmaxListSequencesConfig",
+      "type": "object"
+    },
+    "MixmaxListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List templates; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 300,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "title": "MixmaxListTemplatesConfig",
+      "type": "object"
+    },
+    "MixmaxListUnsubscribesConfig": {
+      "additionalProperties": false,
+      "description": "List unsubscribes; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "list_unsubscribes",
+          "default": "list_unsubscribes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 300,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "title": "MixmaxListUnsubscribesConfig",
+      "type": "object"
+    },
+    "MixmaxRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "scheduledAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "const": false,
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix milliseconds, or false to keep this recipient in draft.",
+          "title": "Scheduledat"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MixmaxRecipient",
+      "type": "object"
+    },
+    "MixmaxRemoveUnsubscribeConfig": {
+      "additionalProperties": false,
+      "description": "Remove unsubscribe; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "remove_unsubscribe",
+          "default": "remove_unsubscribe",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MixmaxRemoveUnsubscribeConfig",
+      "type": "object"
+    },
+    "MixmaxSendDraftConfig": {
+      "additionalProperties": false,
+      "description": "Send draft; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "send_draft",
+          "default": "send_draft",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxSendDraftConfig",
+      "type": "object"
+    },
+    "MixmaxUpdateMessageConfig": {
+      "additionalProperties": false,
+      "description": "Update message; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MixmaxAddress"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MixmaxAddress"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MixmaxAddress"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "trackingEnabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trackingenabled"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxUpdateMessageConfig",
+      "type": "object"
+    },
+    "MixmaxUpdateSequenceFolderConfig": {
+      "additionalProperties": false,
+      "description": "Update sequence folder; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "update_sequence_folder",
+          "default": "update_sequence_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "MixmaxUpdateSequenceFolderConfig",
+      "type": "object"
+    },
+    "MixmaxUpdateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Update template; performs one API request.",
+      "properties": {
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MixmaxUpdateTemplateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_sequence_recipients": "#/$defs/MixmaxAddSequenceRecipientsConfig",
+          "add_unsubscribe": "#/$defs/MixmaxAddUnsubscribeConfig",
+          "cancel_sequence_recipients": "#/$defs/MixmaxCancelSequenceRecipientsConfig",
+          "create_draft": "#/$defs/MixmaxCreateDraftConfig",
+          "create_sequence_folder": "#/$defs/MixmaxCreateSequenceFolderConfig",
+          "delete_sequence_folder": "#/$defs/MixmaxDeleteSequenceFolderConfig",
+          "get_current_user": "#/$defs/MixmaxGetCurrentUserConfig",
+          "get_message": "#/$defs/MixmaxGetMessageConfig",
+          "get_sequence_folder": "#/$defs/MixmaxGetSequenceFolderConfig",
+          "get_template": "#/$defs/MixmaxGetTemplateConfig",
+          "list_meeting_invites": "#/$defs/MixmaxListMeetingInvitesConfig",
+          "list_messages": "#/$defs/MixmaxListMessagesConfig",
+          "list_sequence_folders": "#/$defs/MixmaxListSequenceFoldersConfig",
+          "list_sequence_recipients": "#/$defs/MixmaxListSequenceRecipientsConfig",
+          "list_sequences": "#/$defs/MixmaxListSequencesConfig",
+          "list_templates": "#/$defs/MixmaxListTemplatesConfig",
+          "list_unsubscribes": "#/$defs/MixmaxListUnsubscribesConfig",
+          "remove_unsubscribe": "#/$defs/MixmaxRemoveUnsubscribeConfig",
+          "send_draft": "#/$defs/MixmaxSendDraftConfig",
+          "update_message": "#/$defs/MixmaxUpdateMessageConfig",
+          "update_sequence_folder": "#/$defs/MixmaxUpdateSequenceFolderConfig",
+          "update_template": "#/$defs/MixmaxUpdateTemplateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MixmaxGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListSequencesConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListSequenceRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxAddSequenceRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxCancelSequenceRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListSequenceFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxCreateSequenceFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxGetSequenceFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxUpdateSequenceFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxDeleteSequenceFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxCreateDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxUpdateMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxSendDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListUnsubscribesConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxAddUnsubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxRemoveUnsubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/MixmaxListMeetingInvitesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MixmaxAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mixmax Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
