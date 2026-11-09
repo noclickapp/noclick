@@ -1,0 +1,1335 @@
+{
+  "$defs": {
+    "CallBody": {
+      "additionalProperties": false,
+      "properties": {
+        "dialString": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Number to Dial",
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/CallFrom",
+          "title": "Calling Line"
+        },
+        "autoAnswer": {
+          "default": false,
+          "description": "Automatically answer the initiating line where supported; requires intercom on the line.",
+          "title": "Auto Answer",
+          "type": "boolean"
+        },
+        "phoneNumberId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caller ID Phone Number ID"
+        }
+      },
+      "required": [
+        "dialString",
+        "from"
+      ],
+      "title": "CallBody",
+      "type": "object"
+    },
+    "CallFrom": {
+      "additionalProperties": false,
+      "properties": {
+        "lineId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Calling Line ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lineId"
+      ],
+      "title": "CallFrom",
+      "type": "object"
+    },
+    "GoToConnectDeleteConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_conversation",
+          "default": "delete_conversation",
+          "description": "Delete a specific conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete a specific conversation",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "ownerPhoneNumber": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Owner Phone Number",
+          "type": "string"
+        },
+        "contactPhoneNumber": {
+          "items": {
+            "pattern": "^\\+[1-9][0-9]{1,14}$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Contact Phone Number",
+          "type": "array"
+        },
+        "userKey": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Key"
+        }
+      },
+      "required": [
+        "ownerPhoneNumber",
+        "contactPhoneNumber"
+      ],
+      "title": "GoToConnectDeleteConversationConfig",
+      "type": "object"
+    },
+    "GoToConnectDeleteMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "description": "Delete a specific message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete a specific message",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "messageId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "userKey": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Key"
+        }
+      },
+      "required": [
+        "messageId"
+      ],
+      "title": "GoToConnectDeleteMessageConfig",
+      "type": "object"
+    },
+    "GoToConnectDeleteVoicemailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_voicemail",
+          "default": "delete_voicemail",
+          "description": "Delete a voicemail",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete a voicemail",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "voicemailId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Voicemail Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "voicemailId"
+      ],
+      "title": "GoToConnectDeleteVoicemailConfig",
+      "type": "object"
+    },
+    "GoToConnectGetMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "description": "Get a specific message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get a specific message",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "messageId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "userKey": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Key"
+        }
+      },
+      "required": [
+        "messageId"
+      ],
+      "title": "GoToConnectGetMessageConfig",
+      "type": "object"
+    },
+    "GoToConnectGetMyPresenceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_my_presence",
+          "default": "get_my_presence",
+          "description": "Get user presence fields for the current user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get user presence fields for the current user",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "GoToConnectGetMyPresenceConfig",
+      "type": "object"
+    },
+    "GoToConnectGetMySetupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_my_setup",
+          "default": "get_my_setup",
+          "description": "Get my Goto Connect setup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get my Goto Connect setup",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "GoToConnectGetMySetupConfig",
+      "type": "object"
+    },
+    "GoToConnectGetPresenceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_presence",
+          "default": "get_presence",
+          "description": "Get the presence of the specified user(s)",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get the presence of the specified user(s)",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "userKey": {
+          "items": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_=-]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Key",
+          "type": "array"
+        }
+      },
+      "required": [
+        "userKey"
+      ],
+      "title": "GoToConnectGetPresenceConfig",
+      "type": "object"
+    },
+    "GoToConnectGetVoicemailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_voicemail",
+          "default": "get_voicemail",
+          "description": "Fetch a voicemail in a user voicemailbox.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Fetch a voicemail in a user voicemailbox.",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "voicemailId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Voicemail Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "voicemailId"
+      ],
+      "title": "GoToConnectGetVoicemailConfig",
+      "type": "object"
+    },
+    "GoToConnectGetVoicemailTranscriptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_voicemail_transcription",
+          "default": "get_voicemail_transcription",
+          "description": "Get transcription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get transcription",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "voicemailId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Voicemail Id",
+          "type": "string"
+        },
+        "showArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Show Archived"
+        }
+      },
+      "required": [
+        "voicemailId"
+      ],
+      "title": "GoToConnectGetVoicemailTranscriptionConfig",
+      "type": "object"
+    },
+    "GoToConnectInitiateCallConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "initiate_call",
+          "default": "initiate_call",
+          "description": "Initiate a call",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Initiate a call",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "body": {
+          "$ref": "#/$defs/CallBody",
+          "title": "Details"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "GoToConnectInitiateCallConfig",
+      "type": "object"
+    },
+    "GoToConnectListConversationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "description": "Get conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get conversations",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "ownerPhoneNumber": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Owner Phone Number",
+          "type": "string"
+        },
+        "contactPhoneNumber": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^\\+[1-9][0-9]{1,14}$",
+                "type": "string"
+              },
+              "maxItems": 10,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Phone Number"
+        },
+        "oldestTimestamp": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Oldest Timestamp"
+        },
+        "newestTimestamp": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Newest Timestamp"
+        },
+        "pageMarker": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Marker"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "unreadOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unread Only"
+        },
+        "userKey": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Key"
+        }
+      },
+      "required": [
+        "ownerPhoneNumber"
+      ],
+      "title": "GoToConnectListConversationsConfig",
+      "type": "object"
+    },
+    "GoToConnectListMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "description": "Get messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get messages",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "ownerPhoneNumber": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Owner Phone Number",
+          "type": "string"
+        },
+        "contactPhoneNumber": {
+          "items": {
+            "pattern": "^\\+[1-9][0-9]{1,14}$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Contact Phone Number",
+          "type": "array"
+        },
+        "oldestTimestamp": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Oldest Timestamp"
+        },
+        "newestTimestamp": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Newest Timestamp"
+        },
+        "pageMarker": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Marker"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "userKey": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Key"
+        }
+      },
+      "required": [
+        "ownerPhoneNumber",
+        "contactPhoneNumber"
+      ],
+      "title": "GoToConnectListMessagesConfig",
+      "type": "object"
+    },
+    "GoToConnectListMyLinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_my_lines",
+          "default": "list_my_lines",
+          "description": "List my lines",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List my lines",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "GoToConnectListMyLinesConfig",
+      "type": "object"
+    },
+    "GoToConnectListUserLinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_user_lines",
+          "default": "list_user_lines",
+          "description": "List the lines of a specific user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List the lines of a specific user",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "userKey": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "User Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "userKey"
+      ],
+      "title": "GoToConnectListUserLinesConfig",
+      "type": "object"
+    },
+    "GoToConnectListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "description": "List Users of an Account (Organization)",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Users of an Account (Organization)",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "accountKey": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Account Key",
+          "type": "string"
+        },
+        "pageMarker": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Marker"
+        }
+      },
+      "required": [
+        "accountKey"
+      ],
+      "title": "GoToConnectListUsersConfig",
+      "type": "object"
+    },
+    "GoToConnectListVoicemailboxesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_voicemailboxes",
+          "default": "list_voicemailboxes",
+          "description": "Get voicemail boxes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get voicemail boxes",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "organizationId": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization Id"
+        },
+        "accountKey": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Account Key",
+          "type": "string"
+        },
+        "extensionNumber": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extension Number"
+        },
+        "pageMarker": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Marker"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "accountKey"
+      ],
+      "title": "GoToConnectListVoicemailboxesConfig",
+      "type": "object"
+    },
+    "GoToConnectListVoicemailsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_voicemails",
+          "default": "list_voicemails",
+          "description": "Get voicemails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get voicemails",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        },
+        "voicemailboxId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Voicemailbox Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "NEW",
+                "READ"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "NEW",
+            "READ"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "+timestamp",
+                "-timestamp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "+timestamp",
+            "-timestamp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "voicemailboxId"
+      ],
+      "title": "GoToConnectListVoicemailsConfig",
+      "type": "object"
+    },
+    "GoToConnectOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "go_to_connect_oauth",
+          "default": "go_to_connect_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "maxLength": 4096,
+          "title": "Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token"
+      ],
+      "title": "GoTo Connect Account",
+      "type": "object",
+      "x-credential-instructions": "Connect your GoTo Connect account. Enable the requested GoTo Connect scopes on your OAuth client. Listing account users requires super admin or configure PBX permission; other actions use the signed-in user's permissions.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developer.logmeininc.com/clients",
+      "x-oauth-provider": "go_to_connect",
+      "x-oauth-scopes": [
+        "calls.v2.initiate",
+        "messaging.v1.read",
+        "messaging.v1.send",
+        "messaging.v1.write",
+        "presence.v1.read",
+        "presence.v1.write",
+        "users.v1.lines.read",
+        "users.v1.read",
+        "voicemail.v1.voicemails.read",
+        "voicemail.v1.voicemails.write"
+      ]
+    },
+    "GoToConnectSendMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "description": "Send a message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send a message",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "body": {
+          "$ref": "#/$defs/MessageBody",
+          "title": "Details"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "GoToConnectSendMessageConfig",
+      "type": "object"
+    },
+    "GoToConnectSetMyPresenceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_my_presence",
+          "default": "set_my_presence",
+          "description": "Set presence fields for a user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set presence fields for a user",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "body": {
+          "$ref": "#/$defs/PresenceBody",
+          "title": "Details"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "GoToConnectSetMyPresenceConfig",
+      "type": "object"
+    },
+    "GoToConnectUpdateVoicemailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_voicemail",
+          "default": "update_voicemail",
+          "description": "Update properties of a given voicemail.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update properties of a given voicemail.",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        },
+        "voicemailId": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_=-]+$",
+          "title": "Voicemail Id",
+          "type": "string"
+        },
+        "body": {
+          "items": {
+            "$ref": "#/$defs/VoicemailStatus"
+          },
+          "minItems": 1,
+          "title": "Details",
+          "type": "array"
+        }
+      },
+      "required": [
+        "voicemailId",
+        "body"
+      ],
+      "title": "GoToConnectUpdateVoicemailConfig",
+      "type": "object"
+    },
+    "MessageBody": {
+      "additionalProperties": false,
+      "properties": {
+        "ownerPhoneNumber": {
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "Sending Phone Number",
+          "type": "string"
+        },
+        "contactPhoneNumbers": {
+          "items": {
+            "pattern": "^\\+[1-9][0-9]{1,14}$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Recipient Phone Numbers",
+          "type": "array"
+        },
+        "body": {
+          "maxLength": 1000,
+          "title": "Message Text",
+          "type": "string"
+        },
+        "userKey": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_=-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requires super admin permission; omit to send as yourself.",
+          "title": "Send on Behalf of User"
+        }
+      },
+      "required": [
+        "ownerPhoneNumber",
+        "contactPhoneNumbers",
+        "body"
+      ],
+      "title": "MessageBody",
+      "type": "object"
+    },
+    "PresenceBody": {
+      "additionalProperties": false,
+      "properties": {
+        "userAppearance": {
+          "anyOf": [
+            {
+              "enum": [
+                "NONE",
+                "ONLINE",
+                "OFFLINE",
+                "AWAY",
+                "BUSY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userappearance",
+          "enum": [
+            "NONE",
+            "ONLINE",
+            "OFFLINE",
+            "AWAY",
+            "BUSY"
+          ],
+          "x-enum-searchable": true
+        },
+        "userDoNotDisturb": {
+          "anyOf": [
+            {
+              "enum": [
+                "NONE",
+                "DO_NOT_DISTURB"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userdonotdisturb",
+          "enum": [
+            "NONE",
+            "DO_NOT_DISTURB"
+          ],
+          "x-enum-searchable": true
+        },
+        "userDoNotDisturbExpiration": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userdonotdisturbexpiration"
+        },
+        "userStatus": {
+          "anyOf": [
+            {
+              "enum": [
+                "NONE",
+                "IN_A_MEETING"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IN_A_MEETING expires after 60 seconds unless refreshed. NONE resets it.",
+          "title": "Userstatus",
+          "enum": [
+            "NONE",
+            "IN_A_MEETING"
+          ],
+          "x-enum-searchable": true
+        },
+        "userNote": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An empty string clears the note.",
+          "title": "Usernote"
+        }
+      },
+      "title": "PresenceBody",
+      "type": "object"
+    },
+    "VoicemailStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "status",
+          "default": "status",
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "enum": [
+            "READ",
+            "NEW"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "VoicemailStatus",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete_conversation": "#/$defs/GoToConnectDeleteConversationConfig",
+          "delete_message": "#/$defs/GoToConnectDeleteMessageConfig",
+          "delete_voicemail": "#/$defs/GoToConnectDeleteVoicemailConfig",
+          "get_message": "#/$defs/GoToConnectGetMessageConfig",
+          "get_my_presence": "#/$defs/GoToConnectGetMyPresenceConfig",
+          "get_my_setup": "#/$defs/GoToConnectGetMySetupConfig",
+          "get_presence": "#/$defs/GoToConnectGetPresenceConfig",
+          "get_voicemail": "#/$defs/GoToConnectGetVoicemailConfig",
+          "get_voicemail_transcription": "#/$defs/GoToConnectGetVoicemailTranscriptionConfig",
+          "initiate_call": "#/$defs/GoToConnectInitiateCallConfig",
+          "list_conversations": "#/$defs/GoToConnectListConversationsConfig",
+          "list_messages": "#/$defs/GoToConnectListMessagesConfig",
+          "list_my_lines": "#/$defs/GoToConnectListMyLinesConfig",
+          "list_user_lines": "#/$defs/GoToConnectListUserLinesConfig",
+          "list_users": "#/$defs/GoToConnectListUsersConfig",
+          "list_voicemailboxes": "#/$defs/GoToConnectListVoicemailboxesConfig",
+          "list_voicemails": "#/$defs/GoToConnectListVoicemailsConfig",
+          "send_message": "#/$defs/GoToConnectSendMessageConfig",
+          "set_my_presence": "#/$defs/GoToConnectSetMyPresenceConfig",
+          "update_voicemail": "#/$defs/GoToConnectUpdateVoicemailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoToConnectGetMySetupConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListMyLinesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListUserLinesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectInitiateCallConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectDeleteConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListVoicemailboxesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectListVoicemailsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectGetVoicemailConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectUpdateVoicemailConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectDeleteVoicemailConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectGetVoicemailTranscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectGetMyPresenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectSetMyPresenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoToConnectGetPresenceConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoToConnectOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Go-to-connect Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
