@@ -1,0 +1,678 @@
+{
+  "$defs": {
+    "DeleteList": {
+      "additionalProperties": false,
+      "description": "Delete the single list.",
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "description": "",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteList",
+      "type": "object"
+    },
+    "DownloadCsv": {
+      "additionalProperties": false,
+      "description": "Download lists results as a csv file.",
+      "properties": {
+        "operation": {
+          "const": "download_csv",
+          "default": "download_csv",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "description": "",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "A type can be clean, dirty, unknown",
+          "enum": [
+            "clean",
+            "dirty",
+            "unknown"
+          ],
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "type"
+      ],
+      "title": "DownloadCsv",
+      "type": "object"
+    },
+    "DownloadJson": {
+      "additionalProperties": false,
+      "description": "Download lists results as a json.",
+      "properties": {
+        "operation": {
+          "const": "download_json",
+          "default": "download_json",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "description": "",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "A type can be clean, dirty, unknown",
+          "enum": [
+            "clean",
+            "dirty",
+            "unknown"
+          ],
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "type"
+      ],
+      "title": "DownloadJson",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Get credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "description": "Get the single list info.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "description": "",
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetUpload": {
+      "additionalProperties": false,
+      "description": "Get status of a Upload.",
+      "properties": {
+        "operation": {
+          "const": "get_upload",
+          "default": "get_upload",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "upload_id": {
+          "description": "",
+          "minimum": 1,
+          "title": "Upload Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "upload_id"
+      ],
+      "title": "GetUpload",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "description": "Get the all list info.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListLogs": {
+      "additionalProperties": false,
+      "description": "Get logs for all the single email verified.",
+      "properties": {
+        "operation": {
+          "const": "list_logs",
+          "default": "list_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "description": "Start date of the report range. The maximum date range is 30 days.",
+          "examples": [
+            "2026-11-01"
+          ],
+          "format": "date",
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date of the report range. It cannot be in the future.",
+          "examples": [
+            "2026-11-05"
+          ],
+          "format": "date",
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional email-address filter.",
+          "title": "Email"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "api",
+                "file_upload",
+                "single_email"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional verification-source filter.",
+          "title": "Source",
+          "enum": [
+            "api",
+            "file_upload",
+            "single_email"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "clean",
+                "dirty",
+                "unknown",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional verification-status filter.",
+          "title": "Status",
+          "enum": [
+            "clean",
+            "dirty",
+            "unknown",
+            "error"
+          ],
+          "x-enum-searchable": true
+        },
+        "start": {
+          "default": 0,
+          "description": "Zero-based pagination offset.",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of log records to return.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "ListLogs",
+      "type": "object"
+    },
+    "ListUploads": {
+      "additionalProperties": false,
+      "description": "Get the list of uploads (csv upload).",
+      "properties": {
+        "operation": {
+          "const": "list_uploads",
+          "default": "list_uploads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUploads",
+      "type": "object"
+    },
+    "ListcleanAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "listclean_api_key",
+          "default": "listclean_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Listclean API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an API token from your Listclean account's API access page. NoClick sends it in the X-Auth-Token header to api.listclean.xyz. Connecting reads your email lists.",
+      "x-credential-url": "https://app.listclean.xyz"
+    },
+    "StartUpload": {
+      "additionalProperties": false,
+      "description": "Start the Upload (csv upload).",
+      "properties": {
+        "operation": {
+          "const": "start_upload",
+          "default": "start_upload",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filename": {
+          "description": "",
+          "examples": [
+            "My file.csv"
+          ],
+          "minLength": 1,
+          "title": "Filename",
+          "type": "string"
+        },
+        "file_type": {
+          "description": "",
+          "examples": [
+            "csv"
+          ],
+          "minLength": 1,
+          "title": "File Type",
+          "type": "string"
+        },
+        "total_chunk_count": {
+          "description": "",
+          "examples": [
+            24
+          ],
+          "minimum": 1,
+          "title": "Total Chunk Count",
+          "type": "integer"
+        },
+        "max_chunk_size": {
+          "description": "max size of a chunk in bytes",
+          "examples": [
+            64000
+          ],
+          "minimum": 1,
+          "title": "Max Chunk Size",
+          "type": "integer"
+        },
+        "separator_char": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "character separator for csv file format",
+          "examples": [
+            ","
+          ],
+          "title": "Separator Char"
+        },
+        "enclosure_char": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The optional enclosure parameter sets the field enclosure character (one single-byte character only).",
+          "examples": [
+            "\""
+          ],
+          "title": "Enclosure Char"
+        },
+        "escape_char": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The optional escape parameter sets the escape character (at most one single-byte character). An empty value disables the escape mechanism.",
+          "examples": [
+            ""
+          ],
+          "title": "Escape Char"
+        },
+        "fast_process": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use 1 for fast processing without slow checks such as SMTP; 0 for full processing.",
+          "title": "Fast Process"
+        }
+      },
+      "required": [
+        "filename",
+        "file_type",
+        "total_chunk_count",
+        "max_chunk_size"
+      ],
+      "title": "StartUpload",
+      "type": "object"
+    },
+    "UploadChunk": {
+      "additionalProperties": false,
+      "description": "Upload a Chunk [CHUNKS] (csv upload).",
+      "properties": {
+        "operation": {
+          "const": "upload_chunk",
+          "default": "upload_chunk",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "chunk_sequence_number": {
+          "description": "",
+          "examples": [
+            24
+          ],
+          "minimum": 1,
+          "title": "Chunk Sequence Number",
+          "type": "integer"
+        },
+        "content": {
+          "description": "The base64-encoded contents of the file",
+          "examples": [
+            "====DYscs...=="
+          ],
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "md5_checksum": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "md5 hash of file to check the integrity of the file",
+          "examples": [
+            "0a52067b38f4485d42eb5f7040d476b3"
+          ],
+          "title": "Md5 Checksum"
+        },
+        "upload_id": {
+          "description": "",
+          "minimum": 1,
+          "title": "Upload Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "chunk_sequence_number",
+        "content",
+        "upload_id"
+      ],
+      "title": "UploadChunk",
+      "type": "object"
+    },
+    "VerifyBatch": {
+      "additionalProperties": false,
+      "description": "Verify batch of emails (max 3000 emails).",
+      "properties": {
+        "operation": {
+          "const": "verify_batch",
+          "default": "verify_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional source filename. If omitted, the API generates a UTC filename in the format batch_upload-DD-MM-YYYY-HHMMSS-utc.csv (for example, batch_upload-05-10-2026-143025-utc.csv). A .csv extension is added when a supplied filename has no extension.",
+          "examples": [
+            "october-leads.csv"
+          ],
+          "title": "Filename"
+        },
+        "emails": {
+          "description": "Email addresses to verify. The default limit is 3,000 addresses per request.",
+          "examples": [
+            [
+              "user1@example.com",
+              "user2@example.com"
+            ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "VerifyBatch",
+      "type": "object"
+    },
+    "VerifyEmail": {
+      "additionalProperties": false,
+      "description": "Verify single email address at a time.",
+      "properties": {
+        "operation": {
+          "const": "verify_email",
+          "default": "verify_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "",
+          "examples": [
+            "test@example.com"
+          ],
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "VerifyEmail",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete_list": "#/$defs/DeleteList",
+          "download_csv": "#/$defs/DownloadCsv",
+          "download_json": "#/$defs/DownloadJson",
+          "get_credits": "#/$defs/GetCredits",
+          "get_list": "#/$defs/GetList",
+          "get_upload": "#/$defs/GetUpload",
+          "list_lists": "#/$defs/ListLists",
+          "list_logs": "#/$defs/ListLogs",
+          "list_uploads": "#/$defs/ListUploads",
+          "start_upload": "#/$defs/StartUpload",
+          "upload_chunk": "#/$defs/UploadChunk",
+          "verify_batch": "#/$defs/VerifyBatch",
+          "verify_email": "#/$defs/VerifyEmail"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VerifyEmail"
+        },
+        {
+          "$ref": "#/$defs/VerifyBatch"
+        },
+        {
+          "$ref": "#/$defs/ListLogs"
+        },
+        {
+          "$ref": "#/$defs/ListUploads"
+        },
+        {
+          "$ref": "#/$defs/StartUpload"
+        },
+        {
+          "$ref": "#/$defs/UploadChunk"
+        },
+        {
+          "$ref": "#/$defs/GetUpload"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/DeleteList"
+        },
+        {
+          "$ref": "#/$defs/DownloadCsv"
+        },
+        {
+          "$ref": "#/$defs/DownloadJson"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ListcleanAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Listclean Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
