@@ -1,0 +1,1298 @@
+{
+  "$defs": {
+    "BatchItem": {
+      "additionalProperties": false,
+      "properties": {
+        "product": {
+          "description": "Enrichment product slug, for example email_validation.",
+          "minLength": 1,
+          "title": "Product",
+          "type": "string"
+        },
+        "input": {
+          "additionalProperties": true,
+          "description": "Product-specific input fields, for example {\"email\": \"alex.rivera@example.com\"}.",
+          "title": "Input",
+          "type": "object"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "client_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "product",
+        "input"
+      ],
+      "title": "BatchItem",
+      "type": "object"
+    },
+    "CheckCreditsConfig": {
+      "additionalProperties": false,
+      "description": "Check your current credit balance.",
+      "properties": {
+        "operation": {
+          "const": "check_credits",
+          "default": "check_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CheckCreditsConfig",
+      "type": "object"
+    },
+    "CreateClientConfig": {
+      "additionalProperties": false,
+      "description": "Create an organization-scoped client for segmenting downstream batch work.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Unique client identifier (slug). Lowercase, alphanumeric with hyphens.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable display name.",
+          "title": "Display Name"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email for notifications.",
+          "title": "Contact Email"
+        },
+        "billing_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional billing rate applied to this client.",
+          "title": "Billing Rate"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal notes.",
+          "title": "Notes"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Industry classification.",
+          "title": "Industry"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client website.",
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number.",
+          "title": "Phone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Physical address object.",
+          "title": "Address",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Arbitrary custom fields stored with the client.",
+          "title": "Custom Fields",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateClientConfig",
+      "type": "object"
+    },
+    "DetectJobChangeConfig": {
+      "additionalProperties": false,
+      "description": "Job Change Detector.",
+      "properties": {
+        "operation": {
+          "const": "detect_job_change",
+          "default": "detect_job_change",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_url": {
+          "description": "Professional profile URL or identifier",
+          "minLength": 1,
+          "title": "Profile Url",
+          "type": "string"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected company name (either company_name or company_domain is required)",
+          "title": "Company Name"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected company domain (either company_name or company_domain is required)",
+          "title": "Company Domain"
+        }
+      },
+      "required": [
+        "profile_url"
+      ],
+      "title": "DetectJobChangeConfig",
+      "type": "object"
+    },
+    "FindCompetitorsConfig": {
+      "additionalProperties": false,
+      "description": "Find competitors of a company by analyzing market position and industry data.",
+      "properties": {
+        "operation": {
+          "const": "find_competitors",
+          "default": "find_competitors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company website domain",
+          "title": "Company Domain"
+        },
+        "company_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company profile URL or identifier (optional)",
+          "title": "Company Url"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name",
+          "title": "Company Name"
+        }
+      },
+      "title": "FindCompetitorsConfig",
+      "type": "object"
+    },
+    "FindEmailConfig": {
+      "additionalProperties": false,
+      "description": "Find a person's work email address using their name and company information.",
+      "properties": {
+        "operation": {
+          "const": "find_email",
+          "default": "find_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name of the person (optional if full_name provided). A single initial (`J`) is accepted when `last_name` is a full surname.\n",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name of the person (optional)",
+          "title": "Last Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full name of the person (alternative to first_name + last_name). An initial plus a surname (`J Orjuela`) is accepted.\n",
+          "title": "Full Name"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domain name (required if company_name not provided; aliases company_domain, website, url accepted)",
+          "title": "Domain"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name (required if domain not provided; aliases company, organization, employer accepted)",
+          "title": "Company Name"
+        },
+        "profile_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "B2B profile URL or username. Identifies the person and their company on its own, then the email is validated the same way as a name plus domain.\n",
+          "title": "Profile Url"
+        },
+        "allow_domain_mismatch": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "By default, an email found on a domain unrelated to the requested one is returned as a free not-found (`domain_mismatch: true`, `credits_consumed: 0`). Set to `true` to return that email instead, flagged `domain_mismatch: true` and charged like any other valid find.\n",
+          "title": "Allow Domain Mismatch"
+        }
+      },
+      "title": "FindEmailConfig",
+      "type": "object"
+    },
+    "FindEmployeesConfig": {
+      "additionalProperties": false,
+      "description": "Find employees at a company. Returns a list of employees with their profiles, titles, and locations. Costs 0.05 credits per employee returned: free when no employees are found.",
+      "properties": {
+        "operation": {
+          "const": "find_employees",
+          "default": "find_employees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company website domain (preferred: more accurate than company_name)",
+          "title": "Company Domain"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company name. Use if domain is not available.",
+          "title": "Company Name"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of employees to return",
+          "title": "Limit"
+        }
+      },
+      "title": "FindEmployeesConfig",
+      "type": "object"
+    },
+    "FindMobileConfig": {
+      "additionalProperties": false,
+      "description": "Find a person's mobile phone number using their profile URL or email address.",
+      "properties": {
+        "operation": {
+          "const": "find_mobile",
+          "default": "find_mobile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide their Social Media URL",
+          "title": "Profile Url"
+        },
+        "work_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide the Work Email of the person",
+          "title": "Work Email"
+        },
+        "personal_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide the Personal Email of the person",
+          "title": "Personal Email"
+        }
+      },
+      "title": "FindMobileConfig",
+      "type": "object"
+    },
+    "FindPersonalEmailConfig": {
+      "additionalProperties": false,
+      "description": "Provide a B2B Profile URL and get back the personal emails of the person.",
+      "properties": {
+        "operation": {
+          "const": "find_personal_email",
+          "default": "find_personal_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_url": {
+          "description": "Professional profile URL or identifier",
+          "minLength": 1,
+          "title": "Profile Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_url"
+      ],
+      "title": "FindPersonalEmailConfig",
+      "type": "object"
+    },
+    "FindProfileEmailConfig": {
+      "additionalProperties": false,
+      "description": "Provide a B2B person profile and get back the work email of the person.",
+      "properties": {
+        "operation": {
+          "const": "find_profile_email",
+          "default": "find_profile_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_url": {
+          "description": "B2B person profile URL or slug",
+          "minLength": 1,
+          "title": "Profile Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_url"
+      ],
+      "title": "FindProfileEmailConfig",
+      "type": "object"
+    },
+    "FindRoleConfig": {
+      "additionalProperties": false,
+      "description": "Provide the company name or domain and the required job title, and retrieve the corresponding person.",
+      "properties": {
+        "operation": {
+          "const": "find_role",
+          "default": "find_role",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business Profile URL (with url or public_identifier)",
+          "title": "Company Name"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domain",
+          "title": "Company Domain"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the job title you want to find in the company.",
+          "title": "Job Title"
+        }
+      },
+      "title": "FindRoleConfig",
+      "type": "object"
+    },
+    "GetBatchConfig": {
+      "additionalProperties": false,
+      "description": "Return status, progress, cost, and metadata for a mixed-product batch.",
+      "properties": {
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batchId": {
+          "description": "Identifier of the batch returned when it was submitted.",
+          "minLength": 1,
+          "title": "Batchid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batchId"
+      ],
+      "title": "GetBatchConfig",
+      "type": "object"
+    },
+    "GetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Search for companies and retrieve comprehensive company intelligence including funding, employees, industry, and more.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business company profile URL or identifier",
+          "title": "Profile Url"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide Company Domain",
+          "title": "Company Domain"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide Company Name",
+          "title": "Company Name"
+        }
+      },
+      "title": "GetCompanyConfig",
+      "type": "object"
+    },
+    "GetCompanyFundingConfig": {
+      "additionalProperties": false,
+      "description": "Provide the Company Domain or Company Name and get back the complete funding details of the company.",
+      "properties": {
+        "operation": {
+          "const": "get_company_funding",
+          "default": "get_company_funding",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide Company Name",
+          "title": "Company Name"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide Company Domain",
+          "title": "Company Domain"
+        }
+      },
+      "title": "GetCompanyFundingConfig",
+      "type": "object"
+    },
+    "GetEmailProfileConfig": {
+      "additionalProperties": false,
+      "description": "Use this endpoint to find a B2B person profile based on the provided email.",
+      "properties": {
+        "operation": {
+          "const": "get_email_profile",
+          "default": "get_email_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "work_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide the Work Email of the person",
+          "title": "Work Email"
+        },
+        "personal_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provide the Personal Email of the person",
+          "title": "Personal Email"
+        }
+      },
+      "title": "GetEmailProfileConfig",
+      "type": "object"
+    },
+    "GetPersonProfileConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve comprehensive B2B person profile information including work history, education, certifications, and more.",
+      "properties": {
+        "operation": {
+          "const": "get_person_profile",
+          "default": "get_person_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_url": {
+          "description": "B2B person profile URL or slug",
+          "minLength": 1,
+          "title": "Profile Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_url"
+      ],
+      "title": "GetPersonProfileConfig",
+      "type": "object"
+    },
+    "GetTechnographicsConfig": {
+      "additionalProperties": false,
+      "description": "Get detailed technology stack information for any company by providing their domain.",
+      "properties": {
+        "operation": {
+          "const": "get_technographics",
+          "default": "get_technographics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_domain": {
+          "description": "The domain of the company to analyze",
+          "minLength": 1,
+          "title": "Company Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_domain"
+      ],
+      "title": "GetTechnographicsConfig",
+      "type": "object"
+    },
+    "LeadmagicAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "leadmagic_api_key",
+          "default": "leadmagic_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Leadmagic API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your LeadMagic API key from your account dashboard. NoClick sends it in the X-API-Key header. Enrichment and batch operations consume provider credits; checking credits is read-only.",
+      "x-credential-url": "https://app.leadmagic.io/"
+    },
+    "ListBatchesConfig": {
+      "additionalProperties": false,
+      "description": "List batches across all products for the authenticated organization.",
+      "properties": {
+        "operation": {
+          "const": "list_batches",
+          "default": "list_batches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        }
+      },
+      "title": "ListBatchesConfig",
+      "type": "object"
+    },
+    "ListClientsConfig": {
+      "additionalProperties": false,
+      "description": "List client records for the authenticated organization.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListClientsConfig",
+      "type": "object"
+    },
+    "SubmitBatchConfig": {
+      "additionalProperties": false,
+      "description": "Submit a batch containing items for one or more enrichment products.",
+      "properties": {
+        "operation": {
+          "const": "submit_batch",
+          "default": "submit_batch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/BatchItem"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "Batch items. Each item carries `product` (required for mixed-product batches), `input`, and optional `client_id`, `client_name`, and `metadata`.",
+          "title": "Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "idempotencyKey": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Submitting the same key twice returns the original batch instead of creating a duplicate.",
+          "title": "Idempotencykey"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Arbitrary metadata stored with the batch.",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associate the whole batch with a client record.",
+          "title": "Client Id"
+        },
+        "client_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client name recorded alongside the batch.",
+          "title": "Client Name"
+        },
+        "budget_user_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Charge the batch against this member's credit budget.",
+          "title": "Budget User Id"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTPS URL notified when the batch completes. SSRF-validated: must resolve to a public IP.",
+          "format": "uri",
+          "title": "Webhook Url"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "normal",
+                "low"
+              ],
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Queue priority for this batch.",
+          "title": "Priority",
+          "enum": [
+            "normal",
+            "low"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "SubmitBatchConfig",
+      "type": "object"
+    },
+    "ValidateEmailConfig": {
+      "additionalProperties": false,
+      "description": "Validate an email address for deliverability and get company enrichment data.",
+      "properties": {
+        "operation": {
+          "const": "validate_email",
+          "default": "validate_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Email address to validate",
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ValidateEmailConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_credits": "#/$defs/CheckCreditsConfig",
+          "create_client": "#/$defs/CreateClientConfig",
+          "detect_job_change": "#/$defs/DetectJobChangeConfig",
+          "find_competitors": "#/$defs/FindCompetitorsConfig",
+          "find_email": "#/$defs/FindEmailConfig",
+          "find_employees": "#/$defs/FindEmployeesConfig",
+          "find_mobile": "#/$defs/FindMobileConfig",
+          "find_personal_email": "#/$defs/FindPersonalEmailConfig",
+          "find_profile_email": "#/$defs/FindProfileEmailConfig",
+          "find_role": "#/$defs/FindRoleConfig",
+          "get_batch": "#/$defs/GetBatchConfig",
+          "get_company": "#/$defs/GetCompanyConfig",
+          "get_company_funding": "#/$defs/GetCompanyFundingConfig",
+          "get_email_profile": "#/$defs/GetEmailProfileConfig",
+          "get_person_profile": "#/$defs/GetPersonProfileConfig",
+          "get_technographics": "#/$defs/GetTechnographicsConfig",
+          "list_batches": "#/$defs/ListBatchesConfig",
+          "list_clients": "#/$defs/ListClientsConfig",
+          "submit_batch": "#/$defs/SubmitBatchConfig",
+          "validate_email": "#/$defs/ValidateEmailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/ValidateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FindEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FindPersonalEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FindProfileEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPersonProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEmailProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FindMobileConfig"
+        },
+        {
+          "$ref": "#/$defs/DetectJobChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCompanyFundingConfig"
+        },
+        {
+          "$ref": "#/$defs/FindCompetitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTechnographicsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindRoleConfig"
+        },
+        {
+          "$ref": "#/$defs/FindEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListBatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/SubmitBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/ListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateClientConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LeadmagicAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Leadmagic Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

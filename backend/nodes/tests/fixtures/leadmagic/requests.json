@@ -1,0 +1,209 @@
+[
+  {
+    "config": {
+      "operation": "check_credits"
+    },
+    "method": "GET",
+    "path": "/v1/credits",
+    "response": {
+      "credits": 2200
+    }
+  },
+  {
+    "config": {
+      "operation": "validate_email",
+      "email": "alex.rivera@example.com"
+    },
+    "method": "POST",
+    "path": "/v1/people/email-validation"
+  },
+  {
+    "config": {
+      "operation": "find_email",
+      "first_name": "Alex",
+      "last_name": "Rivera",
+      "domain": "leadmagic.io"
+    },
+    "method": "POST",
+    "path": "/v1/people/email-finder"
+  },
+  {
+    "config": {
+      "operation": "find_personal_email",
+      "profile_url": "alex-rivera"
+    },
+    "method": "POST",
+    "path": "/v1/people/personal-email-finder"
+  },
+  {
+    "config": {
+      "operation": "find_profile_email",
+      "profile_url": "alex-rivera"
+    },
+    "method": "POST",
+    "path": "/v1/people/b2b-profile-email"
+  },
+  {
+    "config": {
+      "operation": "get_person_profile",
+      "profile_url": "alex-rivera"
+    },
+    "method": "POST",
+    "path": "/v1/people/profile-search"
+  },
+  {
+    "config": {
+      "operation": "get_email_profile",
+      "work_email": "alex.rivera@example.com"
+    },
+    "method": "POST",
+    "path": "/v1/people/b2b-profile"
+  },
+  {
+    "config": {
+      "operation": "find_mobile",
+      "profile_url": "alex-rivera"
+    },
+    "method": "POST",
+    "path": "/v1/people/mobile-finder"
+  },
+  {
+    "config": {
+      "operation": "detect_job_change",
+      "profile_url": "alex-rivera",
+      "company_domain": "smartlead.ai"
+    },
+    "method": "POST",
+    "path": "/v1/people/job-change-detector"
+  },
+  {
+    "config": {
+      "operation": "get_company",
+      "company_domain": "leadmagic.io"
+    },
+    "method": "POST",
+    "path": "/v1/companies/company-search"
+  },
+  {
+    "config": {
+      "operation": "get_company_funding",
+      "company_domain": "leadmagic.io"
+    },
+    "method": "POST",
+    "path": "/v1/companies/company-funding"
+  },
+  {
+    "config": {
+      "operation": "find_competitors",
+      "company_domain": "leadmagic.io"
+    },
+    "method": "POST",
+    "path": "/v1/companies/competitors-search"
+  },
+  {
+    "config": {
+      "operation": "get_technographics",
+      "company_domain": "leadmagic.io"
+    },
+    "method": "POST",
+    "path": "/v1/companies/technographics"
+  },
+  {
+    "config": {
+      "operation": "find_role",
+      "company_domain": "leadmagic.io",
+      "job_title": "ceo"
+    },
+    "method": "POST",
+    "path": "/v1/people/role-finder"
+  },
+  {
+    "config": {
+      "operation": "find_employees",
+      "company_domain": "leadmagic.io",
+      "limit": 10
+    },
+    "method": "POST",
+    "path": "/v1/people/employee-finder"
+  },
+  {
+    "config": {
+      "operation": "list_batches",
+      "limit": 50,
+      "offset": 50
+    },
+    "method": "GET",
+    "path": "/v1/batch",
+    "query": {
+      "limit": "50",
+      "offset": "50"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_batch",
+      "batchId": "b1c2d3e4-f5a6-7890-bcde-f12345678901"
+    },
+    "method": "GET",
+    "path": "/v1/batch/b1c2d3e4-f5a6-7890-bcde-f12345678901"
+  },
+  {
+    "config": {
+      "operation": "submit_batch",
+      "items": "[{\"product\": \"email_validation\", \"input\": {\"email\": \"alex.rivera@example.com\"}}]",
+      "idempotencyKey": "fixture-unique-key",
+      "metadata": "{\"campaign\": \"synthetic-campaign\"}"
+    },
+    "method": "POST",
+    "path": "/v1/batch",
+    "status": 202,
+    "response": {
+      "batchId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "status": "accepted",
+      "items_count": 1
+    },
+    "body": {
+      "items": [
+        {
+          "product": "email_validation",
+          "input": {
+            "email": "alex.rivera@example.com"
+          }
+        }
+      ],
+      "idempotencyKey": "fixture-unique-key",
+      "metadata": {
+        "campaign": "synthetic-campaign"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_clients"
+    },
+    "method": "GET",
+    "path": "/v1/batch/clients"
+  },
+  {
+    "config": {
+      "operation": "create_client",
+      "name": "acme-corp",
+      "display_name": "Acme Corporation",
+      "custom_fields": "{\"region\": \"synthetic-region\"}"
+    },
+    "method": "POST",
+    "path": "/v1/batch/clients",
+    "status": 201,
+    "response": {
+      "id": "fixture-client",
+      "name": "acme-corp"
+    },
+    "body": {
+      "name": "acme-corp",
+      "display_name": "Acme Corporation",
+      "custom_fields": {
+        "region": "synthetic-region"
+      }
+    }
+  }
+]
