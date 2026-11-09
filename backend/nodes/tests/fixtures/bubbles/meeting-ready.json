@@ -1,0 +1,13 @@
+{
+  "id": "evt_4c2f\u2026",
+  "type": "meeting_recording.ready",
+  "created_at": "2026-07-03T15:45:50.193Z",
+  "data": {
+    "bubble": {
+      "id": "1dd21223-\u2026",
+      "type": "meeting_recording",
+      "title": "Weekly sync",
+      "url": "https://app.usebubbles.com/\u2026"
+    }
+  }
+}
