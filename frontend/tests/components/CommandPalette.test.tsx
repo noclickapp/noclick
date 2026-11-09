@@ -154,12 +154,12 @@ describe('the command palette', () => {
         openPalette();
         expect(sectionTitles()).not.toContain('Recent');
         search('skills');
-        expect(rows()[0]).toBe('Skills · Settings');
+        expect(rows()[0]).toBe('Skills · Resources');
         fireEvent.keyDown(screen.getByTestId('command-palette'), { key: 'Enter' });
         expect(screen.queryByTestId('command-palette')).toBeNull();
 
         openPalette();
         expect(sectionTitles()[0]).toBe('Recent');
-        expect(rows()[0]).toBe('Skills · Settings');
+        expect(rows()[0]).toBe('Skills · Resources');
     });
 });
