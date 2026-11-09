@@ -1,0 +1,735 @@
+{
+  "$defs": {
+    "CouponCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Soundee's documented condition flag; see the update endpoint for inclusion semantics.",
+          "title": "Exclude"
+        },
+        "list": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "IDs"
+        }
+      },
+      "title": "CouponCondition",
+      "type": "object"
+    },
+    "CouponConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "stores": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CouponCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entityTypes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CouponCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity Types"
+        },
+        "entities": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CouponCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "licenses": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CouponCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "CouponConditions",
+      "type": "object"
+    },
+    "CreateCoupon": {
+      "additionalProperties": false,
+      "description": "Create a coupon with Soundee's defaults; use Update Coupon to set its fields.",
+      "properties": {
+        "operation": {
+          "const": "create_coupon",
+          "default": "create_coupon",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CreateCoupon",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read the account associated with this API key.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCartAbandonment": {
+      "additionalProperties": false,
+      "description": "Get an abandoned cart by ID or token.",
+      "properties": {
+        "operation": {
+          "const": "get_cart_abandonment",
+          "default": "get_cart_abandonment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id_or_token": {
+          "title": "Cart ID or Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_or_token"
+      ],
+      "title": "GetCartAbandonment",
+      "type": "object"
+    },
+    "GetCoupon": {
+      "additionalProperties": false,
+      "description": "Get one coupon by its numeric ID.",
+      "properties": {
+        "operation": {
+          "const": "get_coupon",
+          "default": "get_coupon",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Coupon ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCoupon",
+      "type": "object"
+    },
+    "GetTransaction": {
+      "additionalProperties": false,
+      "description": "Get one transaction by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "title": "Transaction ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTransaction",
+      "type": "object"
+    },
+    "ListCartAbandonments": {
+      "additionalProperties": false,
+      "description": "List abandoned carts by state or customer search.",
+      "properties": {
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Pagination is documented at https://soundee.readme.io/reference/pagination.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "description": "Maximum records on this page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_cart_abandonments",
+          "default": "list_cart_abandonments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_type": {
+          "default": "all",
+          "enum": [
+            "all",
+            "recoverable",
+            "ghost",
+            "recovered",
+            "converted"
+          ],
+          "title": "Cart State",
+          "type": "string"
+        }
+      },
+      "title": "ListCartAbandonments",
+      "type": "object"
+    },
+    "ListCoupons": {
+      "additionalProperties": false,
+      "description": "List or search coupon codes.",
+      "properties": {
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Pagination is documented at https://soundee.readme.io/reference/pagination.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "description": "Maximum records on this page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_coupons",
+          "default": "list_coupons",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "expired",
+                "scheduled",
+                "unactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coupon State",
+          "enum": [
+            "active",
+            "expired",
+            "scheduled",
+            "unactive"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListCoupons",
+      "type": "object"
+    },
+    "ListEmailCaptures": {
+      "additionalProperties": false,
+      "description": "List captured emails from downloads, transactions and store opt-ins.",
+      "properties": {
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Pagination is documented at https://soundee.readme.io/reference/pagination.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "description": "Maximum records on this page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_email_captures",
+          "default": "list_email_captures",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "download",
+                "transaction",
+                "store-email-opt-in",
+                "exit-intent-opt-in"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capture Source",
+          "enum": [
+            "download",
+            "transaction",
+            "store-email-opt-in",
+            "exit-intent-opt-in"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListEmailCaptures",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "additionalProperties": false,
+      "description": "List sales or refunds and search transaction details.",
+      "properties": {
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Pagination is documented at https://soundee.readme.io/reference/pagination.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "description": "Maximum records on this page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "new-sale",
+                "refund"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transaction Type",
+          "enum": [
+            "new-sale",
+            "refund"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "SoundeeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "soundee_api_key",
+          "default": "soundee_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Soundee API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Soundee Dashboard and paste it here. NoClick sends it in the X-API-KEY header to Soundee. Connecting reads your account details.",
+      "x-credential-url": "https://soundee.readme.io/reference/authentication"
+    },
+    "UpdateCoupon": {
+      "additionalProperties": false,
+      "description": "Update only the supplied coupon fields; omitted fields are not sent.",
+      "properties": {
+        "operation": {
+          "const": "update_coupon",
+          "default": "update_coupon",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Coupon ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coupon Code"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Percentage for rate discounts; price for fixed discounts.",
+          "title": "Amount"
+        },
+        "upgrades": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1",
+                "2"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0: no upgrades; 1: upgrades included; 2: upgrades only.",
+          "title": "Upgrades",
+          "enum": [
+            "0",
+            "1",
+            "2"
+          ],
+          "x-enum-searchable": true
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "maxUsage": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Uses"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "rate",
+                "fixed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Discount Type",
+          "enum": [
+            "rate",
+            "fixed"
+          ],
+          "x-enum-searchable": true
+        },
+        "minCartItems": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Cart Items"
+        },
+        "minCartAmount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Cart Amount"
+        },
+        "stopBulkDiscounts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Further Bulk Discounts"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "neverEnd": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Never Expire"
+        },
+        "conditions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CouponConditions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateCoupon",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_coupon": "#/$defs/CreateCoupon",
+          "get_account": "#/$defs/GetAccount",
+          "get_cart_abandonment": "#/$defs/GetCartAbandonment",
+          "get_coupon": "#/$defs/GetCoupon",
+          "get_transaction": "#/$defs/GetTransaction",
+          "list_cart_abandonments": "#/$defs/ListCartAbandonments",
+          "list_coupons": "#/$defs/ListCoupons",
+          "list_email_captures": "#/$defs/ListEmailCaptures",
+          "list_transactions": "#/$defs/ListTransactions",
+          "update_coupon": "#/$defs/UpdateCoupon"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListCoupons"
+        },
+        {
+          "$ref": "#/$defs/GetCoupon"
+        },
+        {
+          "$ref": "#/$defs/CreateCoupon"
+        },
+        {
+          "$ref": "#/$defs/UpdateCoupon"
+        },
+        {
+          "$ref": "#/$defs/ListEmailCaptures"
+        },
+        {
+          "$ref": "#/$defs/ListCartAbandonments"
+        },
+        {
+          "$ref": "#/$defs/GetCartAbandonment"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/GetTransaction"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoundeeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Soundee Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
