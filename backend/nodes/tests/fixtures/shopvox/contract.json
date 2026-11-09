@@ -1,0 +1,121 @@
+{
+  "source": "https://developers.shopvox.com/openapi.yaml",
+  "version": "1.0.0",
+  "connection": {
+    "status": "ok",
+    "name": "Jane",
+    "account": "Example Signs"
+  },
+  "stats": {
+    "page": 1,
+    "perPage": 5,
+    "totalCount": 6,
+    "totalPages": 2,
+    "nextPage": 2,
+    "prevPage": null,
+    "outOfRange": false
+  },
+  "routes": {
+    "get_connection": [
+      "GET",
+      "/connections"
+    ],
+    "list_companies": [
+      "GET",
+      "/companies"
+    ],
+    "get_company": [
+      "GET",
+      "/companies/{id}"
+    ],
+    "create_company": [
+      "POST",
+      "/companies"
+    ],
+    "update_company": [
+      "PUT",
+      "/companies/{id}"
+    ],
+    "list_contacts": [
+      "GET",
+      "/contacts"
+    ],
+    "get_contact": [
+      "GET",
+      "/contacts/{id}"
+    ],
+    "create_contact": [
+      "POST",
+      "/contacts"
+    ],
+    "update_contact": [
+      "PUT",
+      "/contacts/{id}"
+    ],
+    "list_quotes": [
+      "GET",
+      "/quotes"
+    ],
+    "get_quote": [
+      "GET",
+      "/quotes/{id}"
+    ],
+    "list_sales_orders": [
+      "GET",
+      "/sales_orders"
+    ],
+    "get_sales_order": [
+      "GET",
+      "/sales_orders/{id}"
+    ],
+    "create_sales_order": [
+      "POST",
+      "/sales_orders"
+    ],
+    "update_sales_order": [
+      "PUT",
+      "/sales_orders/{id}"
+    ],
+    "list_invoices": [
+      "GET",
+      "/invoices"
+    ],
+    "get_invoice": [
+      "GET",
+      "/invoices/{id}"
+    ],
+    "list_jobs": [
+      "GET",
+      "/jobs"
+    ],
+    "get_job": [
+      "GET",
+      "/jobs/{id}"
+    ],
+    "create_job": [
+      "POST",
+      "/jobs"
+    ],
+    "list_sales_leads": [
+      "GET",
+      "/sales_leads"
+    ],
+    "get_sales_lead": [
+      "GET",
+      "/sales_leads/{id}"
+    ],
+    "create_sales_lead": [
+      "POST",
+      "/sales_leads"
+    ],
+    "update_sales_lead": [
+      "PUT",
+      "/sales_leads/{id}"
+    ],
+    "list_payments": [
+      "GET",
+      "/payments"
+    ]
+  },
+  "synthetic_responses": true
+}
