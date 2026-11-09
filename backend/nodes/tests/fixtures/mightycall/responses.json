@@ -1,0 +1,580 @@
+{
+  "source": "https://api.mightycall.com/v4/api/swagger/docs/v4",
+  "responses": {
+    "GET /calls": {
+      "status": 200,
+      "body": {
+        "data": {
+          "calls": [
+            {
+              "id": "7e734dc1-544d-4f04-8ccc-8bd5b197a88c",
+              "caller": {
+                "name": "u2 u2",
+                "extension": "101"
+              },
+              "called": [
+                {
+                  "isConnected": true,
+                  "name": "John Doe",
+                  "extension": "100"
+                },
+                {
+                  "isConnected": false,
+                  "name": "u3 u3",
+                  "extension": "102",
+                  "phone": "+15551112235"
+                }
+              ],
+              "businessNumber": "+15550152729",
+              "dateTimeUtc": "2018-06-05T13:38:29.522+00:00",
+              "duration": "23066",
+              "direction": "Outgoing",
+              "callStatus": "Connected",
+              "callRecord": {
+                "fileName": "records/T1U9YWttaWdodHljYWxfRjk1MjJFM0RFQjJGNDJBM0JDRDk2MjdCNTFBNDM0QTksT1U9WWFuZGV4LE9VPUluZnJhdGVsLERDPXJ1LERDPW1pZ2h0eWNhbGwsREM9ZGV20/7e734dc1-544d-4f04-8ccc-8bd5b197a88c.wav",
+                "uri": "http://localhost/Mightycall/Files/callrecord_20180605_1338_u2 u2.wav?recordid=fdaqSwNP4TGQT_1Zq-j8_AY2uKfTk-D3Vn2JFYdw4gogE54biOue4TYCdKL7EZvD8QXPeTwAiElxZqfOQ5Hw1fP1TFfYwR-FgODHtICfFOz7qSMTUPBoMekix2oE3aNUggIiYfsISKwzgtE-bgbpmczJf-cPLqWm4_V8WckFEMUBLIqQqI0g3XqIvVw_1EGmzp5hi7hPs-GqDneQwcGNg2LA7qGbl-eQ07LqeDW_qtEeTrWDDzv-G_FrjboX6U52ivtDdsJJnp7785rSvIp17gfjBMely9UI1B2M2Y8AsgTpgAmY7PhCfg2&id=T1U9YWttaWdodHljYWxfRjk1MjJFM0RFQjJGNDJBM0JDRDk2MjdCNTFBNDM0QTksT1U9WWFuZGV4LE9VPUluZnJhdGVsLERDPXJ1LERDPW1pZ2h0eWNhbGwsREM9ZGV20"
+              }
+            }
+          ],
+          "total": 1
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /calls/{id}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "id": "7e734dc1-544d-4f04-8ccc-8bd5b197a88c",
+          "caller": {
+            "name": "u2 u2",
+            "extension": "101"
+          },
+          "called": [
+            {
+              "isConnected": true,
+              "name": "John Doe",
+              "extension": "100"
+            },
+            {
+              "isConnected": false,
+              "name": "u3 u3",
+              "extension": "102",
+              "phone": "+15551112235"
+            }
+          ],
+          "businessNumber": "+15550152729",
+          "dateTimeUtc": "2018-06-05T13:38:29.522+00:00",
+          "duration": "23066",
+          "direction": "Outgoing",
+          "callStatus": "Connected",
+          "callRecord": {
+            "fileName": "records/T1U9YWttaWdodHljYWxfRjk1MjJFM0RFQjJGNDJBM0JDRDk2MjdCNTFBNDM0QTksT1U9WWFuZGV4LE9VPUluZnJhdGVsLERDPXJ1LERDPW1pZ2h0eWNhbGwsREM9ZGV20/7e734dc1-544d-4f04-8ccc-8bd5b197a88c.wav",
+            "uri": "http://localhost/Mightycall/Files/callrecord_20180605_1338_u2 u2.wav?recordid=fdaqSwNP4TGQT_1Zq-j8_AY2uKfTk-D3Vn2JFYdw4gogE54biOue4TYCdKL7EZvD8QXPeTwAiElxZqfOQ5Hw1fP1TFfYwR-FgODHtICfFOz7qSMTUPBoMekix2oE3aNUggIiYfsISKwzgtE-bgbpmczJf-cPLqWm4_V8WckFEMUBLIqQqI0g3XqIvVw_1EGmzp5hi7hPs-GqDneQwcGNg2LA7qGbl-eQ07LqeDW_qtEeTrWDDzv-G_FrjboX6U52ivtDdsJJnp7785rSvIp17gfjBMely9UI1B2M2Y8AsgTpgAmY7PhCfg2&id=T1U9YWttaWdodHljYWxfRjk1MjJFM0RFQjJGNDJBM0JDRDk2MjdCNTFBNDM0QTksT1U9WWFuZGV4LE9VPUluZnJhdGVsLERDPXJ1LERDPW1pZ2h0eWNhbGwsREM9ZGV20"
+          }
+        },
+        "isSuccess": true
+      }
+    },
+    "POST /calls/makecall": {
+      "status": 200,
+      "body": {
+        "data": {
+          "id": "66e8ad78-7baa-4f9f-b3e8-d259a425db9a",
+          "caller": {
+            "name": "John Doe"
+          },
+          "called": [
+            {
+              "isConnected": false,
+              "phone": "+15550152729"
+            }
+          ],
+          "businessNumber": "+15551112233",
+          "dateTimeUtc": "2019-05-07T07:59:59.2848358+00:00",
+          "duration": null,
+          "direction": "Outgoing",
+          "callStatus": null,
+          "callRecord": null
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /contacts": {
+      "status": 200,
+      "body": {
+        "data": {
+          "contacts": [
+            {
+              "etag": "48d6e9031aa435be",
+              "contactId": null,
+              "firstName": "John",
+              "lastName": "Doe",
+              "patronymic": "F.",
+              "created": "2026-11-09T20:13:30.170609Z",
+              "updated": "2026-11-09T20:13:30.170609Z",
+              "comment": "Some comment here",
+              "tags": [
+                "tag1",
+                "tag2"
+              ],
+              "channels": [
+                {
+                  "labels": [
+                    "Work-email"
+                  ],
+                  "email": "john.doe@mghtyc.co"
+                },
+                {
+                  "labels": [
+                    "Work-phone"
+                  ],
+                  "phone": "+1300555112230"
+                }
+              ]
+            },
+            {
+              "etag": "58d6e9031aa435be",
+              "contactId": null,
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "patronymic": "J.",
+              "created": "2026-11-09T20:13:30.170609Z",
+              "updated": "2026-11-09T20:13:30.170609Z",
+              "comment": "Some comment here",
+              "tags": [
+                "tag10",
+                "tag20"
+              ],
+              "channels": [
+                {
+                  "labels": [
+                    "Work-email"
+                  ],
+                  "email": "jane.doe@mghtyc.co"
+                },
+                {
+                  "labels": [
+                    "Work-phone"
+                  ],
+                  "phone": "+1255555356992"
+                }
+              ]
+            },
+            {
+              "etag": "58d6e9031aa435be",
+              "contactId": null,
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "patronymic": "J.",
+              "created": "2026-11-09T20:13:30.170609Z",
+              "updated": "2026-11-09T20:13:30.170609Z",
+              "comment": "Deleted contact",
+              "tags": [
+                "tag10",
+                "tag20"
+              ],
+              "channels": [
+                {
+                  "labels": [
+                    "Work-email"
+                  ],
+                  "email": "deleted.jane.doe@mghtyc.co"
+                },
+                {
+                  "labels": [
+                    "Work-phone"
+                  ],
+                  "phone": "+1255555356992"
+                }
+              ],
+              "state": "deleted"
+            }
+          ],
+          "pages": 11,
+          "records": 55,
+          "currentPage": 2
+        }
+      }
+    },
+    "POST /contacts": {
+      "status": 201,
+      "body": {
+        "data": {
+          "etag": "48d6e9031aa435be",
+          "contactId": "1cbec7858558ea749cd955be",
+          "firstName": "John",
+          "lastName": "Doe",
+          "patronymic": "W.",
+          "created": "2026-11-09T20:13:30.170609Z",
+          "updated": "2026-11-09T20:13:30.170609Z",
+          "comment": "West coast",
+          "tags": [
+            "VIP-client"
+          ],
+          "channels": [
+            {
+              "channelId": "5cbec7858558ea749cd955bf",
+              "labels": [
+                "Work-email"
+              ],
+              "email": "john.doe@mghtyc.co"
+            },
+            {
+              "channelId": "5cbec7858558ea749cd955ba",
+              "labels": [
+                "Work-phone"
+              ],
+              "phone": "+1700555112233"
+            }
+          ]
+        },
+        "message": "Created"
+      }
+    },
+    "GET /contacts/{contactId}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "contacts": [
+            {
+              "etag": "48d6e9031aa435be",
+              "contactId": null,
+              "firstName": "John",
+              "lastName": "NEW LAST NAME",
+              "patronymic": "F.",
+              "created": "2026-11-09T20:13:30.170609Z",
+              "updated": "2026-11-09T20:13:30.170609Z",
+              "comment": "Some comment here",
+              "tags": [
+                "tag1",
+                "tag2"
+              ],
+              "channels": [
+                {
+                  "channelId": "5cbec7858558ea749cd955bf",
+                  "email": "john.doe@mghtyc.co"
+                },
+                {
+                  "channelId": "5cbec7858558ea749cd955ba",
+                  "labels": [
+                    "Work-phone"
+                  ],
+                  "phone": "+1700555112230"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "PUT /contacts/{contactId}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "etag": "48d6e9031aa435be",
+          "contactId": null,
+          "firstName": "John",
+          "lastName": "Doe",
+          "patronymic": "F.",
+          "created": "2026-11-09T20:13:30.170609Z",
+          "updated": "2026-11-09T20:13:30.170609Z",
+          "comment": "Some comment here",
+          "tags": [
+            "tag1",
+            "tag2"
+          ],
+          "channels": [
+            {
+              "channelId": "5cbec7858558ea749cd955bf",
+              "labels": [
+                "Work-email"
+              ],
+              "email": "john.doe@mghtyc.co"
+            },
+            {
+              "channelId": "5cbec7858558ea749cd955ba",
+              "labels": [
+                "Work-phone"
+              ],
+              "phone": "+1700555112230"
+            }
+          ]
+        },
+        "message": "Updated"
+      }
+    },
+    "DELETE /contacts/{contactId}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "contacts": [
+            {
+              "etag": "48d6e9031aa435be",
+              "contactId": null,
+              "firstName": "John",
+              "lastName": "NEW LAST NAME",
+              "patronymic": "F.",
+              "comment": "Some comment here",
+              "tags": [
+                "tag1",
+                "tag2"
+              ],
+              "channels": [
+                {
+                  "channelId": "5cbec7858558ea749cd955bf",
+                  "email": "john.doe@mghtyc.co"
+                },
+                {
+                  "channelId": "5cbec7858558ea749cd955ba",
+                  "labels": [
+                    "Work-phone"
+                  ],
+                  "phone": "+1700555112230"
+                }
+              ]
+            }
+          ]
+        },
+        "message": "Deleted"
+      }
+    },
+    "GET /contacts/limits": {
+      "status": 200,
+      "body": {
+        "limitsState": "Ok",
+        "contactsCount": 10,
+        "limit": 20
+      }
+    },
+    "POST /contacts/{contactId}/tags": {
+      "status": 200,
+      "body": {
+        "data": {
+          "tags": [
+            "new_tag-1",
+            "new_tag-2"
+          ],
+          "etag": "48d6e9031aa435be"
+        },
+        "message": "Created"
+      }
+    },
+    "GET /contacts/tags": {
+      "status": 200,
+      "body": {
+        "data": [
+          "tag-1",
+          "tag-2"
+        ]
+      }
+    },
+    "POST /messages/send": {
+      "status": 200,
+      "body": {
+        "message": "SMS message sent successfully.",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "sourcePhoneNumber": "+12345678910",
+        "destinationPhoneNumbers": [
+          "+12345678901"
+        ],
+        "sendTime": "0001-01-01T00:00:00",
+        "attachments": null
+      }
+    },
+    "GET /phonenumbers": {
+      "status": 200,
+      "body": {
+        "data": {
+          "phoneNumbers": [
+            {
+              "number": "+12564553184",
+              "isEnabled": true,
+              "isPrimary": false,
+              "isTollFree": false,
+              "isInternational": false,
+              "smsMode": "Enabled",
+              "numberMessagingVerified": true,
+              "isMmsEnabled": false,
+              "callRecordingMode": "Both, OutgoingBeepDisabled",
+              "description": null,
+              "label": null,
+              "mayText": false,
+              "mayCall": false
+            },
+            {
+              "number": "+13233326248",
+              "isEnabled": true,
+              "isPrimary": false,
+              "isTollFree": false,
+              "isInternational": false,
+              "smsMode": "Capable",
+              "numberMessagingVerified": true,
+              "isMmsEnabled": false,
+              "callRecordingMode": "Both, OutgoingBeepDisabled",
+              "description": null,
+              "label": null,
+              "mayText": false,
+              "mayCall": false
+            }
+          ],
+          "deletedPhoneNumbers": [],
+          "total": 2
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /phonenumbers/{phoneNumber}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "number": "+17775556678",
+          "isEnabled": true,
+          "isPrimary": false,
+          "isTollFree": false,
+          "isInternational": false,
+          "smsMode": "Enabled",
+          "numberMessagingVerified": true,
+          "isMmsEnabled": false,
+          "callRecordingMode": "Both, OutgoingBeepDisabled",
+          "description": null,
+          "label": "Work phone",
+          "mayText": false,
+          "mayCall": false
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /profile/status": {
+      "status": 200,
+      "body": {
+        "data": {
+          "status": "available"
+        },
+        "isSuccess": true
+      }
+    },
+    "PUT /profile/status/{status}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "status": "dnd"
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /profile": {
+      "status": 200,
+      "body": {
+        "data": {
+          "firstName": "John",
+          "lastName": "Doe",
+          "email": "john.doe@mghtyc.co",
+          "extension": "100",
+          "role": "admin"
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /team": {
+      "status": 200,
+      "body": {
+        "users": [
+          {
+            "fullName": "John Doe",
+            "id": "aa8add2a-88dc-4fe2-a58b-a478ec187663",
+            "role": null,
+            "avatarUrl": null
+          },
+          {
+            "fullName": "Angela Smith",
+            "id": "b2301dc3-fd10-454a-a5c5-c664edc69fc3",
+            "role": null,
+            "avatarUrl": null
+          },
+          {
+            "fullName": "Arcady Malkovich",
+            "id": "00e10070-9bf8-4d2b-9633-f25a9b685a32",
+            "role": null,
+            "avatarUrl": null
+          }
+        ],
+        "groups": [
+          {
+            "name": "Group 1",
+            "id": "4bb8ea50-bae9-4881-8bb8-4c31d14934b5"
+          },
+          {
+            "name": "Group 2",
+            "id": "a180955d-2ab8-428a-a12f-1b7d3fdea3b5"
+          }
+        ],
+        "vmboxes": [
+          {
+            "name": "General Voicemail Box",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      }
+    },
+    "GET /voicemails": {
+      "status": 200,
+      "body": {
+        "data": {
+          "voicemails": [
+            {
+              "id": "a123b456-78bc-4976-8075-b2941d553b7b",
+              "from": "+15554567890",
+              "to": "+15554567891",
+              "assignedTo": "John Doe",
+              "dateTimeUtc": "2017-01-14T08:40:51.62+00:00",
+              "duration": "185",
+              "voicemailStatus": "UnRead",
+              "voicemailRecord": {
+                "fileName": "voicemail/.../20170124_083933_073_0009.wav",
+                "uri": "https://panel.mightycall.com/Mightycall/Files/voicemail.wav?vmrecordid=..."
+              },
+              "storageId": null
+            },
+            {
+              "id": "a123b456-78bc-4976-8075-b2941d553b7b",
+              "from": "+11235557890",
+              "to": "+15554567892",
+              "assignedTo": "Jane Doe",
+              "dateTimeUtc": "2017-01-10T09:31:11.12+00:00",
+              "duration": "185",
+              "voicemailStatus": "UnRead",
+              "voicemailRecord": {
+                "fileName": "voicemail/.../20170124_083933_073_0010.wav",
+                "uri": "https://panel.mightycall.com/Mightycall/Files/voicemail.wav?vmrecordid=..."
+              },
+              "storageId": null
+            }
+          ],
+          "total": 2
+        },
+        "isSuccess": true
+      }
+    },
+    "GET /voicemails/{id}": {
+      "status": 200,
+      "body": {
+        "data": {
+          "id": "a123b456-78bc-4976-8075-b2941d553b7b",
+          "from": "+15554567890",
+          "to": "+15554567891",
+          "assignedTo": "John Doe",
+          "dateTimeUtc": "2017-01-14T08:40:51.62+00:00",
+          "duration": "185",
+          "voicemailStatus": "UnRead",
+          "voicemailRecord": {
+            "fileName": "voicemail/.../20170124_083933_073_0009.wav",
+            "uri": "https://panel.mightycall.com/Mightycall/Files/voicemail.wav?vmrecordid=..."
+          },
+          "storageId": null
+        },
+        "isSuccess": true
+      }
+    }
+  }
+}
