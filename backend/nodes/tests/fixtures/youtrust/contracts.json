@@ -1,0 +1,10 @@
+{
+  "source": "https://developers.youtrust.com/openapi/public-api-v3.json",
+  "version": "3.0",
+  "signature_request_id": "89120884-d29a-4b1a-ac7b-a9e73a872795",
+  "signer_id": "9a93d3b5-fb3b-4abf-9e70-26315b33506c",
+  "document_id": "3a93d3b5-fb3b-4abf-9e70-26315b33506b",
+  "contact_id": "69120884-d29a-4b1a-ac7b-a9e73a872795",
+  "template_id": "9a93d3b5-fb3b-4abf-9e70-26315b33506c",
+  "person": {"first_name": "John", "last_name": "Doe", "email": "john.doe@example.com", "locale": "en"}
+}
