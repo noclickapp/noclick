@@ -1,4 +1,4 @@
-"""HTTP boundary tests using SMTP2GO's published v3.0.4 examples."""
+"""HTTP boundary tests using v3.0.4 examples with synthetic pagination tokens."""
 import json
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -130,3 +130,16 @@ async def test_scheduled_cancellation_bodyless_contract(transport):
     assert result["status"] == "success" and result["acknowledged"] is True
     assert result["removal_verified"] is False
     assert json.loads(transport[0][0].content) == ARGUMENTS["remove_scheduled_email"]
+
+
+def test_smtp2go_fixtures_contain_no_real_shaped_credentials():
+    # Published examples can contain signed pagination JWTs. The public export
+    # scans fixtures too; preserve their wire shape with visibly synthetic data.
+    import runpy
+    root = Path(__file__).resolve().parents[3]
+    scanner_path = root / "oss/scan_real_secrets.py"
+    if not scanner_path.exists():
+        scanner_path = root / "scripts/scan_real_secrets.py"
+    scanner = runpy.run_path(str(scanner_path))
+    fixture = Path(__file__).parent / "fixtures/smtp2go/responses.json"
+    assert scanner["find_secrets"](fixture.read_bytes()) == {}

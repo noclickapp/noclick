@@ -40,10 +40,13 @@
             "email_ts": "2016-06-27 01:06:37.039400+00:00"
           }
         ],
-        "continue_token": "REDACTED.SAMPLE.JWT"
+        "continue_token": "smtp2go-example-next-page"
       }
     },
-    "source": "https://developers.smtp2go.com/reference/view-sent-emails"
+    "source": "https://developers.smtp2go.com/reference/view-sent-emails",
+    "redactions": {
+      "data.continue_token": "The published signed JWT is replaced with a visibly synthetic opaque continuation token."
+    }
   },
   "get_email_summary": {
     "body": {
