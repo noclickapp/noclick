@@ -1,0 +1,2697 @@
+{
+  "$defs": {
+    "CompleteTask": {
+      "additionalProperties": false,
+      "description": "Complete task.",
+      "properties": {
+        "operation": {
+          "const": "complete_task",
+          "default": "complete_task",
+          "title": "Complete task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Identifier of the task to complete",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CompleteTask",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PebbleAddressParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "buyer",
+                "seller",
+                "attorney",
+                "banker",
+                "builder",
+                "contractor",
+                "developer",
+                "funder",
+                "municipal_officer",
+                "notary",
+                "photographer",
+                "real_estate_agent",
+                "surveyor",
+                "title_agent",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role the contact plays in the account's deals",
+          "title": "Category",
+          "enum": [
+            "buyer",
+            "seller",
+            "attorney",
+            "banker",
+            "builder",
+            "contractor",
+            "developer",
+            "funder",
+            "municipal_officer",
+            "notary",
+            "photographer",
+            "real_estate_agent",
+            "surveyor",
+            "title_agent",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free form notes about the contact",
+          "title": "Description"
+        },
+        "do_not_mail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Excludes the contact from future mail campaigns",
+          "title": "Do Not Mail"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address, which must be unique across the contacts in the account",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Given name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Family name",
+          "title": "Last Name"
+        },
+        "name": {
+          "description": "Full name of the contact",
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number",
+          "title": "Phone"
+        },
+        "phone_secondary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional phone number",
+          "title": "Phone Secondary"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateDeal": {
+      "additionalProperties": false,
+      "description": "Create deal.",
+      "properties": {
+        "operation": {
+          "const": "create_deal",
+          "default": "create_deal",
+          "title": "Create deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "board_id": {
+          "description": "Identifier of the board to place the deal on",
+          "minLength": 1,
+          "title": "Board Id",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifier of the campaign the deal came out of",
+          "title": "Campaign Id"
+        },
+        "contact_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifiers of the contacts to attach to the deal",
+          "title": "Contact Ids"
+        },
+        "property_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifiers of the properties to attach to the deal",
+          "title": "Property Ids"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "direct_mail",
+                "cold_call",
+                "text",
+                "email",
+                "paid_ads",
+                "lead_form",
+                "social_media",
+                "referral",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the deal originated",
+          "title": "Source",
+          "enum": [
+            "direct_mail",
+            "cold_call",
+            "text",
+            "email",
+            "paid_ads",
+            "lead_form",
+            "social_media",
+            "referral",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "stage_id": {
+          "description": "Identifier of the stage to place the deal in",
+          "minLength": 1,
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the deal is still being worked",
+          "title": "Status",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "title": {
+          "description": "Display name of the deal",
+          "title": "Title",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value of the deal in cents",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "board_id",
+        "stage_id",
+        "title"
+      ],
+      "title": "CreateDeal",
+      "type": "object"
+    },
+    "CreateProperty": {
+      "additionalProperties": false,
+      "description": "Create property.",
+      "properties": {
+        "operation": {
+          "const": "create_property",
+          "default": "create_property",
+          "title": "Create property",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "acreage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size of the parcel in acres",
+          "title": "Acreage"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PebbleAddressParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "apn": {
+          "description": "Assessor's parcel number. Must be unique within the county for the account.",
+          "title": "Apn",
+          "type": "string"
+        },
+        "county_id": {
+          "description": "Identifier of the county the parcel sits in, such as `harris_tx`. The `/api/counties` endpoint lists the valid values.",
+          "minLength": 1,
+          "title": "County Id",
+          "type": "string"
+        },
+        "geometry_collection": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parcel boundary as a GeoJSON `GeometryCollection`",
+          "title": "Geometry Collection"
+        },
+        "legal_desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Legal description of the parcel",
+          "title": "Legal Desc"
+        },
+        "structure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PebbleStructureInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The building on the parcel"
+        }
+      },
+      "required": [
+        "apn",
+        "county_id"
+      ],
+      "title": "CreateProperty",
+      "type": "object"
+    },
+    "CreateRemark": {
+      "additionalProperties": false,
+      "description": "Create remark.",
+      "properties": {
+        "operation": {
+          "const": "create_remark",
+          "default": "create_remark",
+          "title": "Create remark",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "Identifier of the deal to leave the remark on",
+          "minLength": 1,
+          "title": "Deal Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Plain text body of the remark",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "deal_id",
+        "text"
+      ],
+      "title": "CreateRemark",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "description": "Create tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "context": {
+          "description": "The kind of record the tag can be applied to",
+          "enum": [
+            "property",
+            "contact"
+          ],
+          "title": "Context",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name of the tag",
+          "title": "Name",
+          "type": "string"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "enum": [
+                "gray",
+                "green",
+                "azure",
+                "purple",
+                "pink",
+                "red",
+                "orange",
+                "yellow",
+                "iris",
+                "brown",
+                "mustard",
+                "teal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color the tag renders in. Defaults to `gray`.",
+          "title": "Variant",
+          "enum": [
+            "gray",
+            "green",
+            "azure",
+            "purple",
+            "pink",
+            "red",
+            "orange",
+            "yellow",
+            "iris",
+            "brown",
+            "mustard",
+            "teal"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "context",
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "description": "Create task.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the task is due",
+          "title": "Due Date"
+        },
+        "membership_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifier of the member to assign the task to",
+          "title": "Membership Id"
+        },
+        "task_list_id": {
+          "description": "Identifier of the task list to add the task to",
+          "minLength": 1,
+          "title": "Task List Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Plain text body of the task",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "text"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "CreateTaskList": {
+      "additionalProperties": false,
+      "description": "Create task list.",
+      "properties": {
+        "operation": {
+          "const": "create_task_list",
+          "default": "create_task_list",
+          "title": "Create task list",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "Identifier of the deal to add the task list to",
+          "minLength": 1,
+          "title": "Deal Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name of the task list",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "deal_id",
+        "name"
+      ],
+      "title": "CreateTaskList",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Show current user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Show current user",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "ListBoards": {
+      "additionalProperties": false,
+      "description": "List boards.",
+      "properties": {
+        "operation": {
+          "const": "list_boards",
+          "default": "list_boards",
+          "title": "List boards",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the board name",
+          "title": "Term"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListBoards",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List campaigns",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the campaign name",
+          "title": "Name"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "name",
+                "inserted_at",
+                "amount_spent",
+                "records_count",
+                "deals_count",
+                "offers_count",
+                "purchases_count",
+                "sales_count",
+                "response_rate"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to order the results by. Defaults to descending.\n\nAlongside the campaign's own fields, the results can be ordered by figures from\nits stats \u2014 `records_count`, `deals_count`, `offers_count`, `purchases_count`,\n`sales_count` and `response_rate` (deals per campaign).",
+          "title": "Sort",
+          "enum": [
+            "name",
+            "inserted_at",
+            "amount_spent",
+            "records_count",
+            "deals_count",
+            "offers_count",
+            "purchases_count",
+            "sales_count",
+            "response_rate"
+          ],
+          "x-enum-searchable": true
+        },
+        "dir": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Direction to apply `sort` in. Defaults to `desc`.",
+          "title": "Dir",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the contact name. A value shorter than\nthree characters is ignored and every contact is returned.",
+          "title": "Name"
+        },
+        "has_phone": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to return only contacts that have a primary phone number. Sending\n`false` has no effect.",
+          "title": "Has Phone"
+        },
+        "has_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to return only contacts that have an email address. Sending\n`false` has no effect.",
+          "title": "Has Email"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the contact's email address. A value\nshorter than three characters is ignored and every contact is returned.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Partial match against the contact's phone numbers. A value shorter than three\ncharacters is ignored and every contact is returned.",
+          "title": "Phone"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "buyer",
+                "seller",
+                "attorney",
+                "banker",
+                "builder",
+                "contractor",
+                "developer",
+                "funder",
+                "municipal_officer",
+                "notary",
+                "photographer",
+                "real_estate_agent",
+                "surveyor",
+                "title_agent",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only contacts with this category",
+          "title": "Category",
+          "enum": [
+            "buyer",
+            "seller",
+            "attorney",
+            "banker",
+            "builder",
+            "contractor",
+            "developer",
+            "funder",
+            "municipal_officer",
+            "notary",
+            "photographer",
+            "real_estate_agent",
+            "surveyor",
+            "title_agent",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "tag_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only contacts tagged with any of these tags. Accepts either a single\nidentifier or the `tag_ids[]=a&tag_ids[]=b` form.",
+          "title": "Tag Ids"
+        },
+        "do_not_mail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to return only contacts who have opted out of mail, `false` for\nonly those who have not.",
+          "title": "Do Not Mail"
+        },
+        "has_deal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` for only contacts with an associated deal, `false` for only those without",
+          "title": "Has Deal"
+        },
+        "deal_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only contacts with a deal in this status",
+          "title": "Deal Status",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "has_property": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` for only contacts with an associated property, `false` for only those without",
+          "title": "Has Property"
+        },
+        "property_county_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only contacts with a property in these counties, given as county\nidentifiers such as `harris_tx`. Accepts either a single value or the\n`property_county_ids[]=` form.",
+          "title": "Property County Ids"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only contacts with a campaign record on this campaign",
+          "title": "Campaign Id"
+        },
+        "campaign_record_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive prefix match against the contact's campaign record code",
+          "title": "Campaign Record Code"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "const": "name",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to order the results by",
+          "title": "Sort"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListCounties": {
+      "additionalProperties": false,
+      "description": "List counties.",
+      "properties": {
+        "operation": {
+          "const": "list_counties",
+          "default": "list_counties",
+          "title": "List counties",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches against the county *identifier*, not its display name. The term is\ndowncased and split on non word characters, and every resulting token must\nmatch the identifier.\n\nSo `harris` matches `harris_tx`, but `Harris County` matches nothing,\nbecause no county identifier contains `county`.",
+          "title": "Term"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListCounties",
+      "type": "object"
+    },
+    "ListDeals": {
+      "additionalProperties": false,
+      "description": "List deals.",
+      "properties": {
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List deals",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "board_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the deals on this board",
+          "title": "Board Id"
+        },
+        "stage_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the deals in this stage",
+          "title": "Stage Id"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the deal title",
+          "title": "Term"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the deals with this status",
+          "title": "Status",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "hot",
+                "warm",
+                "cold",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the deals with this priority. `none` matches the deals that have no\npriority set.",
+          "title": "Priority",
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "last_activity_after": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the deals last active on or after this date",
+          "title": "Last Activity After"
+        },
+        "last_activity_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the deals last active on or before this date",
+          "title": "Last Activity Before"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "title",
+                "stage",
+                "position",
+                "value",
+                "priority",
+                "last_activity_at"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to order the results by. Requires `dir` to be supplied as well.",
+          "title": "Sort",
+          "enum": [
+            "title",
+            "stage",
+            "position",
+            "value",
+            "priority",
+            "last_activity_at"
+          ],
+          "x-enum-searchable": true
+        },
+        "dir": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Direction to apply `sort` in. Required whenever `sort` is supplied.",
+          "title": "Dir",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListDeals",
+      "type": "object"
+    },
+    "ListProperties": {
+      "additionalProperties": false,
+      "description": "List properties.",
+      "properties": {
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "List properties",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only these properties. Accepts either a single identifier or the\n`ids[]=a&ids[]=b` form. A malformed identifier \u2014 including an empty value \u2014\nis rejected with a `400`.",
+          "title": "Ids"
+        },
+        "county_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the properties in these counties, given as county identifiers such as\n`harris_tx`. Accepts either a single value or the `county_ids[]=` form.",
+          "title": "County Ids"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the parcel number, street address and\nowner name. A term shorter than three characters is ignored and every property is\nreturned.",
+          "title": "Term"
+        },
+        "has_campaign": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` for only the properties that have been mailed, `false` for only those that have not",
+          "title": "Has Campaign"
+        },
+        "campaign_record_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the properties whose campaign record code starts with this value, matched case sensitively in lower case",
+          "title": "Campaign Record Code"
+        },
+        "campaign_record_date_after": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the properties mailed on or after this date",
+          "title": "Campaign Record Date After"
+        },
+        "campaign_record_date_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the properties mailed on or before this date",
+          "title": "Campaign Record Date Before"
+        },
+        "campaign_record_price_low": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the properties offered at or above this price, in cents",
+          "title": "Campaign Record Price Low"
+        },
+        "campaign_record_price_high": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the properties offered at or below this price, in cents",
+          "title": "Campaign Record Price High"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "owner",
+                "county",
+                "campaign_record_price",
+                "offer_price",
+                "purchase_price",
+                "sale_price",
+                "apn",
+                "acreage",
+                "legal_desc",
+                "inserted_at",
+                "id"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to order the results by. Requires `dir` to be supplied as well.",
+          "title": "Sort",
+          "enum": [
+            "owner",
+            "county",
+            "campaign_record_price",
+            "offer_price",
+            "purchase_price",
+            "sale_price",
+            "apn",
+            "acreage",
+            "legal_desc",
+            "inserted_at",
+            "id"
+          ],
+          "x-enum-searchable": true
+        },
+        "dir": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Direction to apply `sort` in. Required whenever `sort` is supplied.",
+          "title": "Dir",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListProperties",
+      "type": "object"
+    },
+    "ListStages": {
+      "additionalProperties": false,
+      "description": "List stages.",
+      "properties": {
+        "operation": {
+          "const": "list_stages",
+          "default": "list_stages",
+          "title": "List stages",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "board_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the stages on this board. A malformed identifier is ignored\nrather than rejected, and every stage is returned.",
+          "title": "Board Id"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the stage name",
+          "title": "Term"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListStages",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "List tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List tags",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "context": {
+          "anyOf": [
+            {
+              "enum": [
+                "property",
+                "contact"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the tags that apply to this kind of record.",
+          "title": "Context",
+          "enum": [
+            "property",
+            "contact"
+          ],
+          "x-enum-searchable": true
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the tag name",
+          "title": "Term"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListTaskLists": {
+      "additionalProperties": false,
+      "description": "List task lists.",
+      "properties": {
+        "operation": {
+          "const": "list_task_lists",
+          "default": "list_task_lists",
+          "title": "List task lists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the task lists on this deal",
+          "title": "Deal Id"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the task list name",
+          "title": "Term"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListTaskLists",
+      "type": "object"
+    },
+    "ListTasks": {
+      "additionalProperties": false,
+      "description": "List tasks.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List tasks",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case insensitive partial match against the task text",
+          "title": "Term"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "done",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the tasks in this state. Defaults to `all`.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "done",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "enum": [
+                "overdue",
+                "this_week",
+                "today",
+                "all_time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the tasks due in this window",
+          "title": "Due Date",
+          "enum": [
+            "overdue",
+            "this_week",
+            "today",
+            "all_time"
+          ],
+          "x-enum-searchable": true
+        },
+        "membership_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the tasks assigned to this member",
+          "title": "Membership Id"
+        },
+        "unassigned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the tasks with no member assigned",
+          "title": "Unassigned"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "due_date",
+                "deal_title"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to order the results by. Requires `dir` to be supplied as well.",
+          "title": "Sort",
+          "enum": [
+            "due_date",
+            "deal_title"
+          ],
+          "x-enum-searchable": true
+        },
+        "dir": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Direction to apply `sort` in. Required whenever `sort` is supplied.",
+          "title": "Dir",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page of results to return, starting at 1",
+          "title": "Page"
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "PebbleAddressParams": {
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City",
+          "title": "City"
+        },
+        "line1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First street line",
+          "title": "Line1"
+        },
+        "line2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Second street line, such as a unit or suite number",
+          "title": "Line2"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State",
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal code",
+          "title": "Zip"
+        }
+      },
+      "title": "PebbleAddressParams",
+      "type": "object"
+    },
+    "PebbleStructureInput": {
+      "additionalProperties": false,
+      "properties": {
+        "bathrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of bathrooms",
+          "title": "Bathrooms"
+        },
+        "bedrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of bedrooms",
+          "title": "Bedrooms"
+        },
+        "floors": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of storeys",
+          "title": "Floors"
+        },
+        "square_feet": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Finished floor area in square feet",
+          "title": "Square Feet"
+        },
+        "year_built": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Year of construction",
+          "title": "Year Built"
+        }
+      },
+      "title": "PebbleStructureInput",
+      "type": "object"
+    },
+    "REIPebbleAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "rei_pebble_api_key",
+          "default": "rei_pebble_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "REI Pebble API Key",
+      "type": "object",
+      "x-credential-instructions": "An account admin can generate a key in Account Settings \u2192 Integrations \u2192 API \u2192 Add API Key. Paste the key here without the Bearer prefix.",
+      "x-credential-url": "https://kb.pebblerei.com/article/449-pebble-api"
+    },
+    "TagContact": {
+      "additionalProperties": false,
+      "description": "Tag a contact.",
+      "properties": {
+        "operation": {
+          "const": "tag_contact",
+          "default": "tag_contact",
+          "title": "Tag a contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Identifier of the contact",
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "Identifier of the tag",
+          "minLength": 1,
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "TagContact",
+      "type": "object"
+    },
+    "TagProperty": {
+      "additionalProperties": false,
+      "description": "Tag a property.",
+      "properties": {
+        "operation": {
+          "const": "tag_property",
+          "default": "tag_property",
+          "title": "Tag a property",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "property_id": {
+          "description": "Identifier of the property",
+          "minLength": 1,
+          "title": "Property Id",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "Identifier of the tag",
+          "minLength": 1,
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "property_id",
+        "tag_id"
+      ],
+      "title": "TagProperty",
+      "type": "object"
+    },
+    "UncompleteTask": {
+      "additionalProperties": false,
+      "description": "Uncomplete task.",
+      "properties": {
+        "operation": {
+          "const": "uncomplete_task",
+          "default": "uncomplete_task",
+          "title": "Uncomplete task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Identifier of the task to uncomplete",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UncompleteTask",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Identifier of the contact to update",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PebbleAddressParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "buyer",
+                "seller",
+                "attorney",
+                "banker",
+                "builder",
+                "contractor",
+                "developer",
+                "funder",
+                "municipal_officer",
+                "notary",
+                "photographer",
+                "real_estate_agent",
+                "surveyor",
+                "title_agent",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role the contact plays in the account's deals",
+          "title": "Category",
+          "enum": [
+            "buyer",
+            "seller",
+            "attorney",
+            "banker",
+            "builder",
+            "contractor",
+            "developer",
+            "funder",
+            "municipal_officer",
+            "notary",
+            "photographer",
+            "real_estate_agent",
+            "surveyor",
+            "title_agent",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free form notes about the contact",
+          "title": "Description"
+        },
+        "do_not_mail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Excludes the contact from future mail campaigns",
+          "title": "Do Not Mail"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address, which must be unique across the contacts in the account",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Given name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Family name",
+          "title": "Last Name"
+        },
+        "name": {
+          "description": "Full name of the contact",
+          "maxLength": 255,
+          "title": "Name",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number",
+          "title": "Phone"
+        },
+        "phone_secondary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional phone number",
+          "title": "Phone Secondary"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateDeal": {
+      "additionalProperties": false,
+      "description": "Update deal.",
+      "properties": {
+        "operation": {
+          "const": "update_deal",
+          "default": "update_deal",
+          "title": "Update deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Identifier of the deal to update",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "board_id": {
+          "description": "Identifier of the board to place the deal on",
+          "minLength": 1,
+          "title": "Board Id",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifier of the campaign the deal came out of",
+          "title": "Campaign Id"
+        },
+        "contact_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifiers of the contacts to attach to the deal",
+          "title": "Contact Ids"
+        },
+        "property_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifiers of the properties to attach to the deal",
+          "title": "Property Ids"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "direct_mail",
+                "cold_call",
+                "text",
+                "email",
+                "paid_ads",
+                "lead_form",
+                "social_media",
+                "referral",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the deal originated",
+          "title": "Source",
+          "enum": [
+            "direct_mail",
+            "cold_call",
+            "text",
+            "email",
+            "paid_ads",
+            "lead_form",
+            "social_media",
+            "referral",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "stage_id": {
+          "description": "Identifier of the stage to place the deal in",
+          "minLength": 1,
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the deal is still being worked",
+          "title": "Status",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "title": {
+          "description": "Display name of the deal",
+          "title": "Title",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value of the deal in cents",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "id",
+        "board_id",
+        "stage_id",
+        "title"
+      ],
+      "title": "UpdateDeal",
+      "type": "object"
+    },
+    "UpdateProperty": {
+      "additionalProperties": false,
+      "description": "Update property.",
+      "properties": {
+        "operation": {
+          "const": "update_property",
+          "default": "update_property",
+          "title": "Update property",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Identifier of the property to update",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "acreage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size of the parcel in acres",
+          "title": "Acreage"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PebbleAddressParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "apn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assessor's parcel number. Must be unique within the county for the account.",
+          "title": "Apn"
+        },
+        "county_id": {
+          "description": "Identifier of the county the parcel sits in, such as `harris_tx`. The `/api/counties` endpoint lists the valid values.",
+          "minLength": 1,
+          "title": "County Id",
+          "type": "string"
+        },
+        "geometry_collection": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parcel boundary as a GeoJSON `GeometryCollection`",
+          "title": "Geometry Collection"
+        },
+        "legal_desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Legal description of the parcel",
+          "title": "Legal Desc"
+        },
+        "structure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PebbleStructureInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The building on the parcel"
+        }
+      },
+      "required": [
+        "id",
+        "county_id"
+      ],
+      "title": "UpdateProperty",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "complete_task": "#/$defs/CompleteTask",
+          "create_contact": "#/$defs/CreateContact",
+          "create_deal": "#/$defs/CreateDeal",
+          "create_property": "#/$defs/CreateProperty",
+          "create_remark": "#/$defs/CreateRemark",
+          "create_tag": "#/$defs/CreateTag",
+          "create_task": "#/$defs/CreateTask",
+          "create_task_list": "#/$defs/CreateTaskList",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "list_boards": "#/$defs/ListBoards",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_counties": "#/$defs/ListCounties",
+          "list_deals": "#/$defs/ListDeals",
+          "list_properties": "#/$defs/ListProperties",
+          "list_stages": "#/$defs/ListStages",
+          "list_tags": "#/$defs/ListTags",
+          "list_task_lists": "#/$defs/ListTaskLists",
+          "list_tasks": "#/$defs/ListTasks",
+          "tag_contact": "#/$defs/TagContact",
+          "tag_property": "#/$defs/TagProperty",
+          "uncomplete_task": "#/$defs/UncompleteTask",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_deal": "#/$defs/UpdateDeal",
+          "update_property": "#/$defs/UpdateProperty"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListDeals"
+        },
+        {
+          "$ref": "#/$defs/CreateDeal"
+        },
+        {
+          "$ref": "#/$defs/UpdateDeal"
+        },
+        {
+          "$ref": "#/$defs/ListProperties"
+        },
+        {
+          "$ref": "#/$defs/CreateProperty"
+        },
+        {
+          "$ref": "#/$defs/UpdateProperty"
+        },
+        {
+          "$ref": "#/$defs/ListBoards"
+        },
+        {
+          "$ref": "#/$defs/ListStages"
+        },
+        {
+          "$ref": "#/$defs/ListCounties"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/ListTaskLists"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/CompleteTask"
+        },
+        {
+          "$ref": "#/$defs/UncompleteTask"
+        },
+        {
+          "$ref": "#/$defs/CreateTaskList"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/TagContact"
+        },
+        {
+          "$ref": "#/$defs/TagProperty"
+        },
+        {
+          "$ref": "#/$defs/CreateRemark"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/REIPebbleAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rei-pebble Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
