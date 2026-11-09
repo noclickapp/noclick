@@ -1,0 +1,84 @@
+{
+  "check_connection": {
+    "workspaceId": "workspace_123",
+    "workspaceName": "Acme",
+    "createdBy": "user_1"
+  },
+  "list_projects": [
+    {
+      "projectId": "project_1234567890",
+      "projectName": "Launch",
+      "name": "Launch"
+    }
+  ],
+  "get_project": {
+    "projectId": "project_1234567890",
+    "projectName": "Launch",
+    "name": "Launch"
+  },
+  "create_project": {
+    "projectId": "project_1234567890",
+    "projectName": "Launch",
+    "name": "Launch"
+  },
+  "update_project": {
+    "projectId": "project_1234567890",
+    "projectName": "Launch",
+    "name": "Launch"
+  },
+  "delete_project": null,
+  "get_project_details": {
+    "_id": "project_1234567890",
+    "Name": "Launch",
+    "Status": [
+      {
+        "_id": "status_2",
+        "Name": "Done"
+      }
+    ]
+  },
+  "list_project_groups": [
+    {
+      "groupId": "group_1",
+      "groupName": "Backlog",
+      "projectId": "project_1234567890"
+    }
+  ],
+  "list_users": {
+    "id": "user_1",
+    "name": "Ada"
+  },
+  "list_customers": {
+    "customerId": "customer_1",
+    "companyName": "Acme"
+  },
+  "list_tasks": [
+    {
+      "taskId": "task_1234567890",
+      "taskName": "Ship",
+      "name": "Ship",
+      "projectId": "project_1234567890"
+    }
+  ],
+  "get_task": {
+    "taskId": "task_1234567890",
+    "taskName": "Ship",
+    "name": "Ship",
+    "projectId": "project_1234567890"
+  },
+  "create_task": {
+    "taskId": "task_1234567890",
+    "taskName": "Ship",
+    "name": "Ship",
+    "projectId": "project_1234567890"
+  },
+  "update_task": {
+    "_id": "task_1234567890",
+    "Name": "Ship",
+    "StatusId": "status_2"
+  },
+  "post_comment": {
+    "commentId": "comment_1",
+    "content": "Ready to ship"
+  }
+}

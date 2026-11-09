@@ -1,0 +1,998 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "description": "Verify the API key and return its workspace name and ID.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateProject": {
+      "description": "Create a project, optionally from a template.",
+      "properties": {
+        "customerId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer ID"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Start date"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Due date"
+        },
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Project name",
+          "type": "string"
+        },
+        "templateId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template ID"
+        }
+      },
+      "required": [
+        "projectName"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "CreateTask": {
+      "description": "Create a task in a project.",
+      "properties": {
+        "projectId": {
+          "description": "Required by Teamcamp for both task creation and update",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0 none, 1 urgent, 2 high, 3 medium, 4 low",
+          "title": "Priority"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Due date"
+        },
+        "groupId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group ID"
+        },
+        "taskUsers": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee user IDs"
+        },
+        "files": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TaskFile"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing file metadata; this operation does not upload files",
+          "title": "Files"
+        },
+        "estimateTime": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated hours"
+        },
+        "milestoneId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Milestone ID"
+        },
+        "statusId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status ID"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Task name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId",
+        "name"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DeleteProject": {
+      "description": "Permanently delete the selected project.",
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The project to permanently delete",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "DeleteProject",
+      "type": "object"
+    },
+    "GetProject": {
+      "description": "Read a project by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectId": {
+          "maxLength": 256,
+          "minLength": 10,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetProjectDetails": {
+      "description": "Read current project details, including statuses, labels and settings.",
+      "properties": {
+        "operation": {
+          "const": "get_project_details",
+          "default": "get_project_details",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectId": {
+          "maxLength": 256,
+          "minLength": 10,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "GetProjectDetails",
+      "type": "object"
+    },
+    "GetTask": {
+      "description": "Read one task's details.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "taskId": {
+          "maxLength": 256,
+          "minLength": 10,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "description": "Read workspace customers and their clients.",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListProjectGroups": {
+      "description": "List the task groups in a project.",
+      "properties": {
+        "operation": {
+          "const": "list_project_groups",
+          "default": "list_project_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectId": {
+          "maxLength": 256,
+          "minLength": 10,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "ListProjectGroups",
+      "type": "object"
+    },
+    "ListProjects": {
+      "description": "List the projects accessible to this key. No pagination is documented.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListTasks": {
+      "description": "List a project's tasks, optionally filtered by completion.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "complete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to return both completed and incomplete tasks",
+          "title": "Complete"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "ListUsers": {
+      "description": "Read workspace users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "PostComment": {
+      "description": "Post a comment on a task.",
+      "properties": {
+        "operation": {
+          "const": "post_comment",
+          "default": "post_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "taskId": {
+          "maxLength": 256,
+          "minLength": 10,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId",
+        "content"
+      ],
+      "title": "PostComment",
+      "type": "object"
+    },
+    "TaskFile": {
+      "properties": {
+        "fileType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filetype"
+        },
+        "href": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Href"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        }
+      },
+      "title": "TaskFile",
+      "type": "object"
+    },
+    "TeamcampAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "teamcamp_api_key",
+          "default": "teamcamp_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Teamcamp API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Teamcamp Account Settings and paste it here. NoClick sends it in the apiKey header. Connect reads your projects and can verify the key's workspace; write permissions are checked by Teamcamp when an action runs.",
+      "x-credential-url": "https://api.teamcamp.app/api-reference/introduction"
+    },
+    "UpdateProject": {
+      "description": "Update only the project fields you supply.",
+      "properties": {
+        "customerId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer ID"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Start date"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Due date"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "projectId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "projectName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable task priority"
+        },
+        "defaultPriority": {
+          "anyOf": [
+            {
+              "enum": [
+                "No Priority",
+                "Urgent",
+                "High",
+                "Medium",
+                "Low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default task priority",
+          "enum": [
+            "No Priority",
+            "Urgent",
+            "High",
+            "Medium",
+            "Low"
+          ],
+          "x-enum-searchable": true
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable time estimates"
+        },
+        "milestone": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable milestones"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "description": "Update a task using Teamcamp's task-update API server.",
+      "properties": {
+        "projectId": {
+          "description": "Required by Teamcamp for both task creation and update",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0 none, 1 urgent, 2 high, 3 medium, 4 low",
+          "title": "Priority"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Due date"
+        },
+        "groupId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group ID"
+        },
+        "taskUsers": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee user IDs"
+        },
+        "files": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TaskFile"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing file metadata; this operation does not upload files",
+          "title": "Files"
+        },
+        "estimateTime": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimated hours"
+        },
+        "milestoneId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Milestone ID"
+        },
+        "statusId": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status ID"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "taskId": {
+          "maxLength": 256,
+          "minLength": 10,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task name"
+        }
+      },
+      "required": [
+        "projectId",
+        "taskId"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "create_project": "#/$defs/CreateProject",
+          "create_task": "#/$defs/CreateTask",
+          "delete_project": "#/$defs/DeleteProject",
+          "get_project": "#/$defs/GetProject",
+          "get_project_details": "#/$defs/GetProjectDetails",
+          "get_task": "#/$defs/GetTask",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_project_groups": "#/$defs/ListProjectGroups",
+          "list_projects": "#/$defs/ListProjects",
+          "list_tasks": "#/$defs/ListTasks",
+          "list_users": "#/$defs/ListUsers",
+          "post_comment": "#/$defs/PostComment",
+          "update_project": "#/$defs/UpdateProject",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/GetProjectDetails"
+        },
+        {
+          "$ref": "#/$defs/ListProjectGroups"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/DeleteProject"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/PostComment"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TeamcampAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Teamcamp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
