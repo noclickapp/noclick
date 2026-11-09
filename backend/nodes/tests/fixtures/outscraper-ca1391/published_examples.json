@@ -1,0 +1,1662 @@
+{
+  "source": "https://app.outscraper.cloud/api-docs-data.json",
+  "version": "0.4.3",
+  "responses": {
+    "GET /profile/balance 200": {
+      "balance": 1905.01,
+      "account_status": "valid",
+      "upcoming_invoice": {
+        "amount_due": 0.0,
+        "applied_balance": 0.0,
+        "total": 0.0,
+        "subtotal": 0.0,
+        "currency": "usd",
+        "total_discount": 0.0,
+        "period_start": 1654784241,
+        "period_end": 1657376241,
+        "collection_method": "charge_automatically",
+        "products_lines": [
+          {
+            "product_name": "Google Maps Data",
+            "unit": "place",
+            "quantity": 382,
+            "amount": 0.0,
+            "lines": [
+              {
+                "quantity": 382,
+                "amount": 0.0,
+                "currency": "usd",
+                "unit_price": "$0.00"
+              }
+            ]
+          },
+          {
+            "product_name": "Domains",
+            "unit": "domain",
+            "quantity": 316,
+            "amount": 0.0,
+            "lines": [
+              {
+                "quantity": 316,
+                "amount": 0.0,
+                "currency": "usd",
+                "unit_price": "$0.00"
+              }
+            ]
+          }
+        ],
+        "subscription_id": "sub_ID"
+      },
+      "coupon": {},
+      "id": "cus_ID"
+    },
+    "GET /requests 200": [
+      {
+        "id": "79e6d350-c6c9-449c-a890-7fe14f821ebe",
+        "usage": "3"
+      },
+      {
+        "id": "15188338-029a-4d0c-afdd-318e8808d8fe",
+        "usage": "10"
+      },
+      {
+        "id": "fd96b82c-6b37-49f0-b69f-b5c793d28284",
+        "usage": "12"
+      }
+    ],
+    "GET /requests/{requestId} 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        [
+          {
+            "query": "restaurants, Manhattan, NY, USA",
+            "name": "Upland",
+            "place_id": "ChIJWVD7FadZwokRs_pS6XY7VOU",
+            "google_id": "0x89c259a715fb5059:0xe5543b76e952fab3",
+            "full_address": "345 Park Ave S, New York, NY 10010",
+            "borough": "Manhattan",
+            "street": "345 Park Ave S",
+            "postal_code": "10010",
+            "area_service": false,
+            "country_code": "US",
+            "country": "United States of America",
+            "city": "New York",
+            "us_state": "New York",
+            "state": "New York",
+            "plus_code": null,
+            "latitude": 40.7419313,
+            "longitude": -73.984644,
+            "time_zone": "America/New_York",
+            "popular_times": null,
+            "site": "https://uplandnyc.com/?utm_source=Google+My+Business&utm_medium=Website+Button",
+            "phone": "+1 212-686-1006",
+            "type": "Californian restaurant",
+            "logo": "https://lh4.googleusercontent.com/-zvSnhN_Mek4/AAAAAAAAAAI/AAAAAAAAAAA/XHbA606mawk/s44-p-k-no-ns-nd/photo.jpg",
+            "description": "Spacious, casually chic brasserie with hearty dishes featuring Californian & Italian influences.",
+            "located_in": null,
+            "located_google_id": null,
+            "category": "Californian restaurant",
+            "subtypes": "Californian restaurant, American restaurant, Bar, Italian restaurant, Takeout Restaurant, Restaurant",
+            "posts": null,
+            "reviews_tags": null,
+            "rating": 4.5,
+            "reviews": 1766,
+            "photos_count": 4255,
+            "cid": "16524898314635901619",
+            "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJWVD7FadZwokRs_pS6XY7VOU&q=restaurants,+Manhattan,+NY,+USA&authuser=0&hl=en&gl=US",
+            "reviews_id": "-1921845759073649997",
+            "photo": "https://lh5.googleusercontent.com/p/AF1QipPFzGn4Ie2huHtDmrAmxl0GkSIp5rrXipoxPF55=w800-h500-k-no",
+            "street_view": "https://lh5.googleusercontent.com/p/AF1QipPFzGn4Ie2huHtDmrAmxl0GkSIp5rrXipoxPF55=w1600-h1000-k-no",
+            "working_hours_old_format": "Monday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Tuesday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Wednesday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Thursday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Friday: 11:30\u202fAM-3\u202fPM,5-11\u202fPM | Saturday: 10\u202fAM-3\u202fPM,5-11\u202fPM | Sunday: 10\u202fAM-3\u202fPM,5-9\u202fPM",
+            "working_hours": {
+              "Monday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Tuesday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Wednesday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Thursday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Friday": "11:30\u202fAM-3\u202fPM,5-11\u202fPM",
+              "Saturday": "10\u202fAM-3\u202fPM,5-11\u202fPM",
+              "Sunday": "10\u202fAM-3\u202fPM,5-9\u202fPM"
+            },
+            "other_hours": [
+              {
+                "lunch": {
+                  "Monday": "11:30\u202fAM-3\u202fPM",
+                  "Tuesday": "11:30\u202fAM-3\u202fPM",
+                  "Wednesday": "11:30\u202fAM-3\u202fPM",
+                  "Thursday": "11:30\u202fAM-3\u202fPM",
+                  "Friday": "11:30\u202fAM-3\u202fPM",
+                  "Saturday": "Closed",
+                  "Sunday": "Closed"
+                }
+              },
+              {
+                "dinner": {
+                  "Monday": "5-10\u202fPM",
+                  "Tuesday": "5-10\u202fPM",
+                  "Wednesday": "5-10\u202fPM",
+                  "Thursday": "5-10\u202fPM",
+                  "Friday": "5-10\u202fPM",
+                  "Saturday": "5-10\u202fPM",
+                  "Sunday": "5-9\u202fPM"
+                }
+              },
+              {
+                "delivery": {
+                  "Monday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Tuesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Wednesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Thursday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Friday": "Closed",
+                  "Saturday": "Closed",
+                  "Sunday": "11\u202fAM-3\u202fPM,5-10\u202fPM"
+                }
+              },
+              {
+                "takeout": {
+                  "Monday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Tuesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Wednesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Thursday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Friday": "Closed",
+                  "Saturday": "Closed",
+                  "Sunday": "11\u202fAM-3\u202fPM,5-10\u202fPM"
+                }
+              },
+              {
+                "brunch": {
+                  "Monday": "Closed",
+                  "Tuesday": "Closed",
+                  "Wednesday": "Closed",
+                  "Thursday": "Closed",
+                  "Friday": "Closed",
+                  "Saturday": "10\u202fAM-3\u202fPM",
+                  "Sunday": "10\u202fAM-3\u202fPM"
+                }
+              }
+            ],
+            "business_status": "OPERATIONAL",
+            "about": {
+              "Service options": {
+                "Delivery": true,
+                "Takeout": true,
+                "Dine-in": true
+              },
+              "Highlights": {
+                "Great coffee": true,
+                "Great dessert": true,
+                "Great tea selection": true
+              },
+              "Popular for": {
+                "Lunch": true,
+                "Dinner": true,
+                "Solo dining": true
+              },
+              "Accessibility": {
+                "Wheelchair accessible entrance": true,
+                "Wheelchair accessible restroom": true,
+                "Wheelchair accessible seating": true,
+                "Wheelchair accessible parking lot": false
+              },
+              "Offerings": {
+                "Alcohol": true,
+                "Beer": true,
+                "Cocktails": true,
+                "Coffee": true,
+                "Comfort food": true,
+                "Hard liquor": true,
+                "Healthy options": true,
+                "Late-night food": true,
+                "Small plates": true,
+                "Vegetarian options": true,
+                "Wine": true
+              },
+              "Dining options": {
+                "Brunch": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Dessert": true,
+                "Seating": true
+              },
+              "Amenities": {
+                "Bar onsite": true,
+                "High chairs": true,
+                "Restroom": true,
+                "Wi-Fi": true
+              },
+              "Atmosphere": {
+                "Romantic": true,
+                "Upscale": true
+              },
+              "Crowd": {
+                "Family-friendly": true,
+                "Groups": true,
+                "LGBTQ+ friendly": true,
+                "Tourists": true,
+                "Transgender safespace": true
+              },
+              "Planning": {
+                "Lunch reservations recommended": true,
+                "Dinner reservations recommended": true,
+                "Accepts reservations": true,
+                "Usually a wait": true
+              },
+              "Payments": {
+                "Debit cards": true,
+                "Credit cards": true
+              },
+              "Other": {
+                "LGBTQ+ friendly": true
+              }
+            },
+            "range": "$$$",
+            "reviews_per_score": {
+              "1": 50,
+              "2": 35,
+              "3": 113,
+              "4": 394,
+              "5": 1174
+            },
+            "reservation_links": [
+              "https://resy.com/cities/ny/upland",
+              "https://uplandnyc.com/?utm_source=Google%20My%20Business&utm_medium=Reservation%20Button"
+            ],
+            "booking_appointment_link": "https://resy.com/cities/ny/upland",
+            "menu_link": null,
+            "order_links": null,
+            "owner_id": "111762591187585073824",
+            "verified": true,
+            "owner_title": "Upland",
+            "owner_link": "https://www.google.com/maps/contrib/111762591187585073824",
+            "location_link": "https://www.google.com/maps/place/Upland/@40.7419313,-73.984644,14z/data=!4m8!1m2!2m1!1sUpland!3m4!1s0x89c259a715fb5059:0xe5543b76e952fab3!8m2!3d40.7419313!4d-73.984644"
+          },
+          {
+            "query": "restaurants, Manhattan, NY, USA",
+            "name": "Scarpetta",
+            "place_id": "ChIJt8W7n79ZwokRsyXs3QDbE3o",
+            "google_id": "0x89c259bf9fbbc5b7:0x7a13db00ddec25b3",
+            "full_address": "88 Madison Ave, New York, NY 10016",
+            "borough": "Manhattan",
+            "street": "88 Madison Ave",
+            "postal_code": "10016",
+            "area_service": false,
+            "country_code": "US",
+            "country": "United States of America",
+            "city": "New York",
+            "us_state": "New York",
+            "state": "New York",
+            "plus_code": null,
+            "latitude": 40.7445818,
+            "longitude": -73.9856202,
+            "time_zone": "America/New_York",
+            "popular_times": null,
+            "site": "https://www.scarpettarestaurants.com/location/scarpetta-new-york-city/",
+            "phone": "+1 212-691-0555",
+            "type": "Italian restaurant",
+            "logo": "https://lh3.googleusercontent.com/-PlU2AkPmFYA/AAAAAAAAAAI/AAAAAAAAAAA/Ecs5bmGchRU/s44-p-k-no-ns-nd/photo.jpg",
+            "description": "Handmade pastas headline a sophisticated Italian menu at this upscale locale with a cool vibe.",
+            "located_in": null,
+            "located_google_id": null,
+            "category": "restaurants",
+            "subtypes": "Italian restaurant, Bar, Cocktail bar, Meat dish restaurant, Restaurant, Seafood restaurant, Vegetarian restaurant, Wine bar",
+            "posts": null,
+            "reviews_tags": null,
+            "rating": 4.4,
+            "reviews": 1734,
+            "photos_count": 2511,
+            "cid": "8796615293954434483",
+            "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJt8W7n79ZwokRsyXs3QDbE3o&q=restaurants,+Manhattan,+NY,+USA&authuser=0&hl=en&gl=US",
+            "reviews_id": "8796615293954434483",
+            "photo": "https://lh5.googleusercontent.com/p/AF1QipO1zbH5T9c9zf0OMsJP-8E5Ghwbm9cWlIo8ehqF=w800-h500-k-no",
+            "street_view": "https://lh5.googleusercontent.com/p/AF1QipO1zbH5T9c9zf0OMsJP-8E5Ghwbm9cWlIo8ehqF=w1600-h1000-k-no",
+            "working_hours_old_format": "Monday: 5:30-9:30\u202fPM | Tuesday: 5:30-10\u202fPM | Wednesday: 5:30-10\u202fPM | Thursday: 5:30-11\u202fPM | Friday: 5:30-11\u202fPM | Saturday: 5-11\u202fPM | Sunday: 5:30-9:30\u202fPM",
+            "working_hours": {
+              "Monday": "5:30-9:30\u202fPM",
+              "Tuesday": "5:30-10\u202fPM",
+              "Wednesday": "5:30-10\u202fPM",
+              "Thursday": "5:30-11\u202fPM",
+              "Friday": "5:30-11\u202fPM",
+              "Saturday": "5-11\u202fPM",
+              "Sunday": "5:30-9:30\u202fPM"
+            },
+            "other_hours": [
+              {
+                "lunch": {
+                  "Monday": "11:30\u202fAM-2:30\u202fPM",
+                  "Tuesday": "11:30\u202fAM-2:30\u202fPM",
+                  "Wednesday": "11:30\u202fAM-2:30\u202fPM",
+                  "Thursday": "11:30\u202fAM-2:30\u202fPM",
+                  "Friday": "11:30\u202fAM-2:30\u202fPM",
+                  "Saturday": "Closed",
+                  "Sunday": "Closed"
+                }
+              },
+              {
+                "brunch": {
+                  "Monday": "Closed",
+                  "Tuesday": "Closed",
+                  "Wednesday": "Closed",
+                  "Thursday": "Closed",
+                  "Friday": "Closed",
+                  "Saturday": "Closed",
+                  "Sunday": "11:30\u202fAM-3\u202fPM"
+                }
+              }
+            ],
+            "business_status": "OPERATIONAL",
+            "about": {
+              "Service options": {
+                "Outdoor seating": true,
+                "No-contact delivery": true,
+                "Delivery": true,
+                "Takeout": true,
+                "Dine-in": true
+              },
+              "Highlights": {
+                "Great coffee": true,
+                "Great dessert": true
+              },
+              "Popular for": {
+                "Lunch": true,
+                "Dinner": true,
+                "Solo dining": true
+              },
+              "Accessibility": {
+                "Wheelchair accessible elevator": true,
+                "Wheelchair accessible entrance": true,
+                "Wheelchair accessible restroom": true,
+                "Wheelchair accessible seating": true,
+                "Wheelchair accessible parking lot": false
+              },
+              "Offerings": {
+                "Alcohol": true,
+                "Beer": true,
+                "Cocktails": true,
+                "Coffee": true,
+                "Comfort food": true,
+                "Hard liquor": true,
+                "Late-night food": true,
+                "Small plates": true,
+                "Vegetarian options": true,
+                "Wine": true
+              },
+              "Dining options": {
+                "Brunch": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Dessert": true,
+                "Seating": true
+              },
+              "Amenities": {
+                "Bar onsite": true,
+                "High chairs": true,
+                "Restroom": true,
+                "Wi-Fi": true
+              },
+              "Atmosphere": {
+                "Cozy": true,
+                "Romantic": true,
+                "Trending": true,
+                "Upscale": true
+              },
+              "Crowd": {
+                "Groups": true,
+                "Tourists": true
+              },
+              "Planning": {
+                "Lunch reservations recommended": true,
+                "Reservations required": true,
+                "Dinner reservations recommended": true,
+                "Accepts reservations": true,
+                "Usually a wait": true
+              },
+              "Payments": {
+                "Debit cards": true
+              }
+            },
+            "range": "$$$",
+            "reviews_per_score": {
+              "1": 78,
+              "2": 48,
+              "3": 105,
+              "4": 311,
+              "5": 1192
+            },
+            "reservation_links": [
+              "https://www.sevenrooms.com/reservations/scarpettanyc/"
+            ],
+            "booking_appointment_link": "https://www.sevenrooms.com/reservations/scarpettanyc/",
+            "menu_link": null,
+            "order_links": null,
+            "owner_id": "109938846905004437020",
+            "verified": true,
+            "owner_title": "Scarpetta",
+            "owner_link": "https://www.google.com/maps/contrib/109938846905004437020",
+            "location_link": "https://www.google.com/maps/place/Scarpetta/@40.7445818,-73.9856202,14z/data=!4m8!1m2!2m1!1sScarpetta!3m4!1s0x89c259bf9fbbc5b7:0x7a13db00ddec25b3!8m2!3d40.7445818!4d-73.9856202"
+          },
+          {
+            "query": "restaurants, Manhattan, NY, USA",
+            "name": "The Smith",
+            "place_id": "ChIJbd5El_VYwokRFEtA5j2r7Ls",
+            "google_id": "0x89c258f59744de6d:0xbbecab3de6404b14",
+            "full_address": "1900 Broadway, New York, NY 10023",
+            "borough": "Manhattan",
+            "street": "1900 Broadway",
+            "postal_code": "10023",
+            "area_service": false,
+            "country_code": "US",
+            "country": "United States of America",
+            "city": "New York",
+            "us_state": "New York",
+            "state": "New York",
+            "plus_code": null,
+            "latitude": 40.7716564,
+            "longitude": -73.98164009999999,
+            "time_zone": "America/New_York",
+            "popular_times": null,
+            "site": "https://thesmithrestaurant.com/",
+            "phone": "+1 212-496-5700",
+            "type": "American restaurant",
+            "logo": "https://lh4.googleusercontent.com/-fqfbzlCALtQ/AAAAAAAAAAI/AAAAAAAAAAA/5juorAHeJbk/s44-p-k-no-ns-nd/photo.jpg",
+            "description": "Lively place for classic American fare & specialty cocktails in spacious digs with a hopping bar.",
+            "located_in": null,
+            "located_google_id": null,
+            "category": "restaurants",
+            "subtypes": "American restaurant, Breakfast restaurant, Brunch restaurant, Oyster bar restaurant",
+            "posts": null,
+            "reviews_tags": null,
+            "rating": 4.4,
+            "reviews": 4077,
+            "photos_count": 3173,
+            "cid": "13541386461940566804",
+            "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJbd5El_VYwokRFEtA5j2r7Ls&q=restaurants,+Manhattan,+NY,+USA&authuser=0&hl=en&gl=US",
+            "reviews_id": "-4905357611768984812",
+            "photo": "https://lh5.googleusercontent.com/p/AF1QipMso9TjAKjpXFNR917LF5Toz_WHj1I4MwsvUo7a=w800-h500-k-no",
+            "street_view": "https://lh5.googleusercontent.com/p/AF1QipMso9TjAKjpXFNR917LF5Toz_WHj1I4MwsvUo7a=w1600-h1000-k-no",
+            "working_hours_old_format": "Monday: 8\u202fAM-11\u202fPM | Tuesday: 8\u202fAM-11\u202fPM | Wednesday: 8\u202fAM-11\u202fPM | Thursday: 8\u202fAM-11\u202fPM | Friday: 8\u202fAM-12\u202fAM | Saturday: 9\u202fAM-12\u202fAM | Sunday: 9\u202fAM-11\u202fPM",
+            "working_hours": {
+              "Monday": "8\u202fAM-11\u202fPM",
+              "Tuesday": "8\u202fAM-11\u202fPM",
+              "Wednesday": "8\u202fAM-11\u202fPM",
+              "Thursday": "8\u202fAM-11\u202fPM",
+              "Friday": "8\u202fAM-12\u202fAM",
+              "Saturday": "9\u202fAM-12\u202fAM",
+              "Sunday": "9\u202fAM-11\u202fPM"
+            },
+            "other_hours": [
+              {
+                "brunch": {
+                  "Monday": "Closed",
+                  "Tuesday": "Closed",
+                  "Wednesday": "Closed",
+                  "Thursday": "Closed",
+                  "Friday": "Closed",
+                  "Saturday": "9\u202fAM-4\u202fPM",
+                  "Sunday": "9\u202fAM-4\u202fPM"
+                }
+              }
+            ],
+            "business_status": "OPERATIONAL",
+            "about": {
+              "Service options": {
+                "Outdoor seating": true,
+                "Curbside pickup": true,
+                "Delivery": true,
+                "Takeout": true,
+                "Dine-in": true
+              },
+              "Highlights": {
+                "Fast service": true,
+                "Great cocktails": true,
+                "Great coffee": true,
+                "Great dessert": true
+              },
+              "Popular for": {
+                "Breakfast": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Solo dining": true
+              },
+              "Accessibility": {
+                "Wheelchair accessible elevator": true,
+                "Wheelchair accessible entrance": true,
+                "Wheelchair accessible restroom": true,
+                "Wheelchair accessible seating": true
+              },
+              "Offerings": {
+                "Alcohol": true,
+                "Beer": true,
+                "Cocktails": true,
+                "Coffee": true,
+                "Comfort food": true,
+                "Happy hour drinks": true,
+                "Happy hour food": true,
+                "Hard liquor": true,
+                "Healthy options": true,
+                "Kids' menu": true,
+                "Late-night food": true,
+                "Organic dishes": true,
+                "Quick bite": true,
+                "Small plates": true,
+                "Wine": true
+              },
+              "Dining options": {
+                "Breakfast": true,
+                "Brunch": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Dessert": true,
+                "Seating": true
+              },
+              "Amenities": {
+                "Bar onsite": true,
+                "Good for kids": true,
+                "High chairs": true,
+                "Restroom": true,
+                "Wi-Fi": true
+              },
+              "Atmosphere": {
+                "Casual": true,
+                "Cozy": true
+              },
+              "Crowd": {
+                "Family-friendly": true,
+                "Groups": true,
+                "Tourists": true
+              },
+              "Planning": {
+                "Lunch reservations recommended": true,
+                "Dinner reservations recommended": true,
+                "Accepts reservations": true,
+                "Usually a wait": true
+              },
+              "Payments": {
+                "NFC mobile payments": true
+              }
+            },
+            "range": "$$",
+            "reviews_per_score": {
+              "1": 102,
+              "2": 96,
+              "3": 327,
+              "4": 1253,
+              "5": 2299
+            },
+            "reservation_links": [
+              "https://thesmithrestaurant.com/location/lincoln-square/",
+              "https://www.opentable.com/restaurant/profile/98185?ref=1068"
+            ],
+            "booking_appointment_link": "https://thesmithrestaurant.com/location/lincoln-square/",
+            "menu_link": null,
+            "order_links": null,
+            "owner_id": "103162007826525695972",
+            "verified": true,
+            "owner_title": "The Smith",
+            "owner_link": "https://www.google.com/maps/contrib/103162007826525695972",
+            "location_link": "https://www.google.com/maps/place/The+Smith/@40.7716564,-73.98164009999999,14z/data=!4m8!1m2!2m1!1sThe+Smith!3m4!1s0x89c258f59744de6d:0xbbecab3de6404b14!8m2!3d40.7716564!4d-73.98164009999999"
+          }
+        ]
+      ]
+    },
+    "GET /requests/{requestId} 204": {
+      "id": "your-request-id",
+      "status": "Failure"
+    },
+    "DELETE /requests/{requestId} 200": "Request 17dd74fc-242b-4fdc-b518-009502768cf3 terminated",
+    "GET /tasks 200": {
+      "tasks": [
+        {
+          "metadata": {
+            "service_name": "google_maps_service_v2",
+            "queries": [
+              "bars ny usa",
+              "restaurants ny usa"
+            ]
+          },
+          "updated": "2022-02-08T20:51:17.402668",
+          "user_id": "YOUR_USER_ID",
+          "status": "SUCCESS",
+          "created": "2022-02-08T20:49:06.879078",
+          "queue_task_id": "2b9aa187-281a-4d4e-a4c6-fbe941aaac34",
+          "results": [
+            {
+              "product_name": "Google Maps Data",
+              "file_url": "LINK_TO_RESULTS",
+              "quantity": 509.0
+            },
+            {
+              "product_name": "Domains",
+              "quantity": 509.0
+            }
+          ],
+          "id": "YOUR_TASK_ID"
+        }
+      ],
+      "has_more": true
+    },
+    "POST /tasks 200": {
+      "id": "your-task-id"
+    },
+    "GET /tasks/{taskId} 200": {
+      "metadata": {
+        "service_name": "google_maps_service_v2",
+        "queries": [
+          "bars ny usa",
+          "restaurants ny usa"
+        ]
+      },
+      "updated": "2022-02-08T20:51:17.402668",
+      "user_id": "YOUR_USER_ID",
+      "status": "SUCCESS",
+      "created": "2022-02-08T20:49:06.879078",
+      "queue_task_id": "2b9aa187-281a-4d4e-a4c6-fbe941aaac34",
+      "results": [
+        {
+          "product_name": "Google Maps Data",
+          "file_url": "LINK_TO_RESULTS",
+          "quantity": 509.0
+        },
+        {
+          "product_name": "Domains",
+          "quantity": 509.0
+        }
+      ],
+      "id": "YOUR_TASK_ID"
+    },
+    "PUT /tasks/{taskId} 200": "Task restarted",
+    "DELETE /tasks/{taskId} 200": "Task removed",
+    "GET /invoices 200": {
+      "items": [],
+      "has_more": false
+    },
+    "GET /webhook-calls 200": [
+      {
+        "status": "Status code: 404",
+        "date": 1722949581
+      }
+    ],
+    "GET /google-maps-search 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /google-maps-search 204": {
+      "id": "your-request-id",
+      "status": "Failure"
+    },
+    "GET /google-maps-search 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        [
+          {
+            "query": "restaurants, Manhattan, NY, USA",
+            "name": "Upland",
+            "place_id": "ChIJWVD7FadZwokRs_pS6XY7VOU",
+            "google_id": "0x89c259a715fb5059:0xe5543b76e952fab3",
+            "full_address": "345 Park Ave S, New York, NY 10010",
+            "borough": "Manhattan",
+            "street": "345 Park Ave S",
+            "postal_code": "10010",
+            "area_service": false,
+            "country_code": "US",
+            "country": "United States of America",
+            "city": "New York",
+            "us_state": "New York",
+            "state": "New York",
+            "plus_code": null,
+            "latitude": 40.7419313,
+            "longitude": -73.984644,
+            "time_zone": "America/New_York",
+            "popular_times": null,
+            "site": "https://uplandnyc.com/?utm_source=Google+My+Business&utm_medium=Website+Button",
+            "phone": "+1 212-686-1006",
+            "type": "Californian restaurant",
+            "logo": "https://lh4.googleusercontent.com/-zvSnhN_Mek4/AAAAAAAAAAI/AAAAAAAAAAA/XHbA606mawk/s44-p-k-no-ns-nd/photo.jpg",
+            "description": "Spacious, casually chic brasserie with hearty dishes featuring Californian & Italian influences.",
+            "located_in": null,
+            "located_google_id": null,
+            "category": "Californian restaurant",
+            "subtypes": "Californian restaurant, American restaurant, Bar, Italian restaurant, Takeout Restaurant, Restaurant",
+            "posts": null,
+            "reviews_tags": null,
+            "rating": 4.5,
+            "reviews": 1766,
+            "photos_count": 4255,
+            "cid": "16524898314635901619",
+            "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJWVD7FadZwokRs_pS6XY7VOU&q=restaurants,+Manhattan,+NY,+USA&authuser=0&hl=en&gl=US",
+            "reviews_id": "-1921845759073649997",
+            "photo": "https://lh5.googleusercontent.com/p/AF1QipPFzGn4Ie2huHtDmrAmxl0GkSIp5rrXipoxPF55=w800-h500-k-no",
+            "street_view": "https://lh5.googleusercontent.com/p/AF1QipPFzGn4Ie2huHtDmrAmxl0GkSIp5rrXipoxPF55=w1600-h1000-k-no",
+            "working_hours_old_format": "Monday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Tuesday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Wednesday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Thursday: 11:30\u202fAM-3\u202fPM,5-10\u202fPM | Friday: 11:30\u202fAM-3\u202fPM,5-11\u202fPM | Saturday: 10\u202fAM-3\u202fPM,5-11\u202fPM | Sunday: 10\u202fAM-3\u202fPM,5-9\u202fPM",
+            "working_hours": {
+              "Monday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Tuesday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Wednesday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Thursday": "11:30\u202fAM-3\u202fPM,5-10\u202fPM",
+              "Friday": "11:30\u202fAM-3\u202fPM,5-11\u202fPM",
+              "Saturday": "10\u202fAM-3\u202fPM,5-11\u202fPM",
+              "Sunday": "10\u202fAM-3\u202fPM,5-9\u202fPM"
+            },
+            "other_hours": [
+              {
+                "lunch": {
+                  "Monday": "11:30\u202fAM-3\u202fPM",
+                  "Tuesday": "11:30\u202fAM-3\u202fPM",
+                  "Wednesday": "11:30\u202fAM-3\u202fPM",
+                  "Thursday": "11:30\u202fAM-3\u202fPM",
+                  "Friday": "11:30\u202fAM-3\u202fPM",
+                  "Saturday": "Closed",
+                  "Sunday": "Closed"
+                }
+              },
+              {
+                "dinner": {
+                  "Monday": "5-10\u202fPM",
+                  "Tuesday": "5-10\u202fPM",
+                  "Wednesday": "5-10\u202fPM",
+                  "Thursday": "5-10\u202fPM",
+                  "Friday": "5-10\u202fPM",
+                  "Saturday": "5-10\u202fPM",
+                  "Sunday": "5-9\u202fPM"
+                }
+              },
+              {
+                "delivery": {
+                  "Monday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Tuesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Wednesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Thursday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Friday": "Closed",
+                  "Saturday": "Closed",
+                  "Sunday": "11\u202fAM-3\u202fPM,5-10\u202fPM"
+                }
+              },
+              {
+                "takeout": {
+                  "Monday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Tuesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Wednesday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Thursday": "11:30\u202fAM-3:30\u202fPM,5-10\u202fPM",
+                  "Friday": "Closed",
+                  "Saturday": "Closed",
+                  "Sunday": "11\u202fAM-3\u202fPM,5-10\u202fPM"
+                }
+              },
+              {
+                "brunch": {
+                  "Monday": "Closed",
+                  "Tuesday": "Closed",
+                  "Wednesday": "Closed",
+                  "Thursday": "Closed",
+                  "Friday": "Closed",
+                  "Saturday": "10\u202fAM-3\u202fPM",
+                  "Sunday": "10\u202fAM-3\u202fPM"
+                }
+              }
+            ],
+            "business_status": "OPERATIONAL",
+            "about": {
+              "Service options": {
+                "Delivery": true,
+                "Takeout": true,
+                "Dine-in": true
+              },
+              "Highlights": {
+                "Great coffee": true,
+                "Great dessert": true,
+                "Great tea selection": true
+              },
+              "Popular for": {
+                "Lunch": true,
+                "Dinner": true,
+                "Solo dining": true
+              },
+              "Accessibility": {
+                "Wheelchair accessible entrance": true,
+                "Wheelchair accessible restroom": true,
+                "Wheelchair accessible seating": true,
+                "Wheelchair accessible parking lot": false
+              },
+              "Offerings": {
+                "Alcohol": true,
+                "Beer": true,
+                "Cocktails": true,
+                "Coffee": true,
+                "Comfort food": true,
+                "Hard liquor": true,
+                "Healthy options": true,
+                "Late-night food": true,
+                "Small plates": true,
+                "Vegetarian options": true,
+                "Wine": true
+              },
+              "Dining options": {
+                "Brunch": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Dessert": true,
+                "Seating": true
+              },
+              "Amenities": {
+                "Bar onsite": true,
+                "High chairs": true,
+                "Restroom": true,
+                "Wi-Fi": true
+              },
+              "Atmosphere": {
+                "Romantic": true,
+                "Upscale": true
+              },
+              "Crowd": {
+                "Family-friendly": true,
+                "Groups": true,
+                "LGBTQ+ friendly": true,
+                "Tourists": true,
+                "Transgender safespace": true
+              },
+              "Planning": {
+                "Lunch reservations recommended": true,
+                "Dinner reservations recommended": true,
+                "Accepts reservations": true,
+                "Usually a wait": true
+              },
+              "Payments": {
+                "Debit cards": true,
+                "Credit cards": true
+              },
+              "Other": {
+                "LGBTQ+ friendly": true
+              }
+            },
+            "range": "$$$",
+            "reviews_per_score": {
+              "1": 50,
+              "2": 35,
+              "3": 113,
+              "4": 394,
+              "5": 1174
+            },
+            "reservation_links": [
+              "https://resy.com/cities/ny/upland",
+              "https://uplandnyc.com/?utm_source=Google%20My%20Business&utm_medium=Reservation%20Button"
+            ],
+            "booking_appointment_link": "https://resy.com/cities/ny/upland",
+            "menu_link": null,
+            "order_links": null,
+            "owner_id": "111762591187585073824",
+            "verified": true,
+            "owner_title": "Upland",
+            "owner_link": "https://www.google.com/maps/contrib/111762591187585073824",
+            "location_link": "https://www.google.com/maps/place/Upland/@40.7419313,-73.984644,14z/data=!4m8!1m2!2m1!1sUpland!3m4!1s0x89c259a715fb5059:0xe5543b76e952fab3!8m2!3d40.7419313!4d-73.984644"
+          },
+          {
+            "query": "restaurants, Manhattan, NY, USA",
+            "name": "Scarpetta",
+            "place_id": "ChIJt8W7n79ZwokRsyXs3QDbE3o",
+            "google_id": "0x89c259bf9fbbc5b7:0x7a13db00ddec25b3",
+            "full_address": "88 Madison Ave, New York, NY 10016",
+            "borough": "Manhattan",
+            "street": "88 Madison Ave",
+            "postal_code": "10016",
+            "area_service": false,
+            "country_code": "US",
+            "country": "United States of America",
+            "city": "New York",
+            "us_state": "New York",
+            "state": "New York",
+            "plus_code": null,
+            "latitude": 40.7445818,
+            "longitude": -73.9856202,
+            "time_zone": "America/New_York",
+            "popular_times": null,
+            "site": "https://www.scarpettarestaurants.com/location/scarpetta-new-york-city/",
+            "phone": "+1 212-691-0555",
+            "type": "Italian restaurant",
+            "logo": "https://lh3.googleusercontent.com/-PlU2AkPmFYA/AAAAAAAAAAI/AAAAAAAAAAA/Ecs5bmGchRU/s44-p-k-no-ns-nd/photo.jpg",
+            "description": "Handmade pastas headline a sophisticated Italian menu at this upscale locale with a cool vibe.",
+            "located_in": null,
+            "located_google_id": null,
+            "category": "restaurants",
+            "subtypes": "Italian restaurant, Bar, Cocktail bar, Meat dish restaurant, Restaurant, Seafood restaurant, Vegetarian restaurant, Wine bar",
+            "posts": null,
+            "reviews_tags": null,
+            "rating": 4.4,
+            "reviews": 1734,
+            "photos_count": 2511,
+            "cid": "8796615293954434483",
+            "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJt8W7n79ZwokRsyXs3QDbE3o&q=restaurants,+Manhattan,+NY,+USA&authuser=0&hl=en&gl=US",
+            "reviews_id": "8796615293954434483",
+            "photo": "https://lh5.googleusercontent.com/p/AF1QipO1zbH5T9c9zf0OMsJP-8E5Ghwbm9cWlIo8ehqF=w800-h500-k-no",
+            "street_view": "https://lh5.googleusercontent.com/p/AF1QipO1zbH5T9c9zf0OMsJP-8E5Ghwbm9cWlIo8ehqF=w1600-h1000-k-no",
+            "working_hours_old_format": "Monday: 5:30-9:30\u202fPM | Tuesday: 5:30-10\u202fPM | Wednesday: 5:30-10\u202fPM | Thursday: 5:30-11\u202fPM | Friday: 5:30-11\u202fPM | Saturday: 5-11\u202fPM | Sunday: 5:30-9:30\u202fPM",
+            "working_hours": {
+              "Monday": "5:30-9:30\u202fPM",
+              "Tuesday": "5:30-10\u202fPM",
+              "Wednesday": "5:30-10\u202fPM",
+              "Thursday": "5:30-11\u202fPM",
+              "Friday": "5:30-11\u202fPM",
+              "Saturday": "5-11\u202fPM",
+              "Sunday": "5:30-9:30\u202fPM"
+            },
+            "other_hours": [
+              {
+                "lunch": {
+                  "Monday": "11:30\u202fAM-2:30\u202fPM",
+                  "Tuesday": "11:30\u202fAM-2:30\u202fPM",
+                  "Wednesday": "11:30\u202fAM-2:30\u202fPM",
+                  "Thursday": "11:30\u202fAM-2:30\u202fPM",
+                  "Friday": "11:30\u202fAM-2:30\u202fPM",
+                  "Saturday": "Closed",
+                  "Sunday": "Closed"
+                }
+              },
+              {
+                "brunch": {
+                  "Monday": "Closed",
+                  "Tuesday": "Closed",
+                  "Wednesday": "Closed",
+                  "Thursday": "Closed",
+                  "Friday": "Closed",
+                  "Saturday": "Closed",
+                  "Sunday": "11:30\u202fAM-3\u202fPM"
+                }
+              }
+            ],
+            "business_status": "OPERATIONAL",
+            "about": {
+              "Service options": {
+                "Outdoor seating": true,
+                "No-contact delivery": true,
+                "Delivery": true,
+                "Takeout": true,
+                "Dine-in": true
+              },
+              "Highlights": {
+                "Great coffee": true,
+                "Great dessert": true
+              },
+              "Popular for": {
+                "Lunch": true,
+                "Dinner": true,
+                "Solo dining": true
+              },
+              "Accessibility": {
+                "Wheelchair accessible elevator": true,
+                "Wheelchair accessible entrance": true,
+                "Wheelchair accessible restroom": true,
+                "Wheelchair accessible seating": true,
+                "Wheelchair accessible parking lot": false
+              },
+              "Offerings": {
+                "Alcohol": true,
+                "Beer": true,
+                "Cocktails": true,
+                "Coffee": true,
+                "Comfort food": true,
+                "Hard liquor": true,
+                "Late-night food": true,
+                "Small plates": true,
+                "Vegetarian options": true,
+                "Wine": true
+              },
+              "Dining options": {
+                "Brunch": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Dessert": true,
+                "Seating": true
+              },
+              "Amenities": {
+                "Bar onsite": true,
+                "High chairs": true,
+                "Restroom": true,
+                "Wi-Fi": true
+              },
+              "Atmosphere": {
+                "Cozy": true,
+                "Romantic": true,
+                "Trending": true,
+                "Upscale": true
+              },
+              "Crowd": {
+                "Groups": true,
+                "Tourists": true
+              },
+              "Planning": {
+                "Lunch reservations recommended": true,
+                "Reservations required": true,
+                "Dinner reservations recommended": true,
+                "Accepts reservations": true,
+                "Usually a wait": true
+              },
+              "Payments": {
+                "Debit cards": true
+              }
+            },
+            "range": "$$$",
+            "reviews_per_score": {
+              "1": 78,
+              "2": 48,
+              "3": 105,
+              "4": 311,
+              "5": 1192
+            },
+            "reservation_links": [
+              "https://www.sevenrooms.com/reservations/scarpettanyc/"
+            ],
+            "booking_appointment_link": "https://www.sevenrooms.com/reservations/scarpettanyc/",
+            "menu_link": null,
+            "order_links": null,
+            "owner_id": "109938846905004437020",
+            "verified": true,
+            "owner_title": "Scarpetta",
+            "owner_link": "https://www.google.com/maps/contrib/109938846905004437020",
+            "location_link": "https://www.google.com/maps/place/Scarpetta/@40.7445818,-73.9856202,14z/data=!4m8!1m2!2m1!1sScarpetta!3m4!1s0x89c259bf9fbbc5b7:0x7a13db00ddec25b3!8m2!3d40.7445818!4d-73.9856202"
+          },
+          {
+            "query": "restaurants, Manhattan, NY, USA",
+            "name": "The Smith",
+            "place_id": "ChIJbd5El_VYwokRFEtA5j2r7Ls",
+            "google_id": "0x89c258f59744de6d:0xbbecab3de6404b14",
+            "full_address": "1900 Broadway, New York, NY 10023",
+            "borough": "Manhattan",
+            "street": "1900 Broadway",
+            "postal_code": "10023",
+            "area_service": false,
+            "country_code": "US",
+            "country": "United States of America",
+            "city": "New York",
+            "us_state": "New York",
+            "state": "New York",
+            "plus_code": null,
+            "latitude": 40.7716564,
+            "longitude": -73.98164009999999,
+            "time_zone": "America/New_York",
+            "popular_times": null,
+            "site": "https://thesmithrestaurant.com/",
+            "phone": "+1 212-496-5700",
+            "type": "American restaurant",
+            "logo": "https://lh4.googleusercontent.com/-fqfbzlCALtQ/AAAAAAAAAAI/AAAAAAAAAAA/5juorAHeJbk/s44-p-k-no-ns-nd/photo.jpg",
+            "description": "Lively place for classic American fare & specialty cocktails in spacious digs with a hopping bar.",
+            "located_in": null,
+            "located_google_id": null,
+            "category": "restaurants",
+            "subtypes": "American restaurant, Breakfast restaurant, Brunch restaurant, Oyster bar restaurant",
+            "posts": null,
+            "reviews_tags": null,
+            "rating": 4.4,
+            "reviews": 4077,
+            "photos_count": 3173,
+            "cid": "13541386461940566804",
+            "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJbd5El_VYwokRFEtA5j2r7Ls&q=restaurants,+Manhattan,+NY,+USA&authuser=0&hl=en&gl=US",
+            "reviews_id": "-4905357611768984812",
+            "photo": "https://lh5.googleusercontent.com/p/AF1QipMso9TjAKjpXFNR917LF5Toz_WHj1I4MwsvUo7a=w800-h500-k-no",
+            "street_view": "https://lh5.googleusercontent.com/p/AF1QipMso9TjAKjpXFNR917LF5Toz_WHj1I4MwsvUo7a=w1600-h1000-k-no",
+            "working_hours_old_format": "Monday: 8\u202fAM-11\u202fPM | Tuesday: 8\u202fAM-11\u202fPM | Wednesday: 8\u202fAM-11\u202fPM | Thursday: 8\u202fAM-11\u202fPM | Friday: 8\u202fAM-12\u202fAM | Saturday: 9\u202fAM-12\u202fAM | Sunday: 9\u202fAM-11\u202fPM",
+            "working_hours": {
+              "Monday": "8\u202fAM-11\u202fPM",
+              "Tuesday": "8\u202fAM-11\u202fPM",
+              "Wednesday": "8\u202fAM-11\u202fPM",
+              "Thursday": "8\u202fAM-11\u202fPM",
+              "Friday": "8\u202fAM-12\u202fAM",
+              "Saturday": "9\u202fAM-12\u202fAM",
+              "Sunday": "9\u202fAM-11\u202fPM"
+            },
+            "other_hours": [
+              {
+                "brunch": {
+                  "Monday": "Closed",
+                  "Tuesday": "Closed",
+                  "Wednesday": "Closed",
+                  "Thursday": "Closed",
+                  "Friday": "Closed",
+                  "Saturday": "9\u202fAM-4\u202fPM",
+                  "Sunday": "9\u202fAM-4\u202fPM"
+                }
+              }
+            ],
+            "business_status": "OPERATIONAL",
+            "about": {
+              "Service options": {
+                "Outdoor seating": true,
+                "Curbside pickup": true,
+                "Delivery": true,
+                "Takeout": true,
+                "Dine-in": true
+              },
+              "Highlights": {
+                "Fast service": true,
+                "Great cocktails": true,
+                "Great coffee": true,
+                "Great dessert": true
+              },
+              "Popular for": {
+                "Breakfast": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Solo dining": true
+              },
+              "Accessibility": {
+                "Wheelchair accessible elevator": true,
+                "Wheelchair accessible entrance": true,
+                "Wheelchair accessible restroom": true,
+                "Wheelchair accessible seating": true
+              },
+              "Offerings": {
+                "Alcohol": true,
+                "Beer": true,
+                "Cocktails": true,
+                "Coffee": true,
+                "Comfort food": true,
+                "Happy hour drinks": true,
+                "Happy hour food": true,
+                "Hard liquor": true,
+                "Healthy options": true,
+                "Kids' menu": true,
+                "Late-night food": true,
+                "Organic dishes": true,
+                "Quick bite": true,
+                "Small plates": true,
+                "Wine": true
+              },
+              "Dining options": {
+                "Breakfast": true,
+                "Brunch": true,
+                "Lunch": true,
+                "Dinner": true,
+                "Dessert": true,
+                "Seating": true
+              },
+              "Amenities": {
+                "Bar onsite": true,
+                "Good for kids": true,
+                "High chairs": true,
+                "Restroom": true,
+                "Wi-Fi": true
+              },
+              "Atmosphere": {
+                "Casual": true,
+                "Cozy": true
+              },
+              "Crowd": {
+                "Family-friendly": true,
+                "Groups": true,
+                "Tourists": true
+              },
+              "Planning": {
+                "Lunch reservations recommended": true,
+                "Dinner reservations recommended": true,
+                "Accepts reservations": true,
+                "Usually a wait": true
+              },
+              "Payments": {
+                "NFC mobile payments": true
+              }
+            },
+            "range": "$$",
+            "reviews_per_score": {
+              "1": 102,
+              "2": 96,
+              "3": 327,
+              "4": 1253,
+              "5": 2299
+            },
+            "reservation_links": [
+              "https://thesmithrestaurant.com/location/lincoln-square/",
+              "https://www.opentable.com/restaurant/profile/98185?ref=1068"
+            ],
+            "booking_appointment_link": "https://thesmithrestaurant.com/location/lincoln-square/",
+            "menu_link": null,
+            "order_links": null,
+            "owner_id": "103162007826525695972",
+            "verified": true,
+            "owner_title": "The Smith",
+            "owner_link": "https://www.google.com/maps/contrib/103162007826525695972",
+            "location_link": "https://www.google.com/maps/place/The+Smith/@40.7716564,-73.98164009999999,14z/data=!4m8!1m2!2m1!1sThe+Smith!3m4!1s0x89c258f59744de6d:0xbbecab3de6404b14!8m2!3d40.7716564!4d-73.98164009999999"
+          }
+        ]
+      ]
+    },
+    "GET /google-maps-reviews 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /google-maps-reviews 204": {
+      "id": "your-request-id",
+      "status": "Failure"
+    },
+    "GET /google-maps-reviews 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "name": "The NoMad Restaurant",
+          "full_address": "1170 Broadway, New York, NY 10001",
+          "rating": 4.7,
+          "reviews": 775,
+          "reviews_data": [
+            {
+              "google_id": "0x89c259a60b120b1d:0xec845e2f4e9ce9f0",
+              "author_link": "https://www.google.com/maps/contrib/104170839246363926920?hl=en-US",
+              "author_title": "Mohamed Alkhouri",
+              "author_id": "104170839246363926920",
+              "author_image": "https://lh3.googleusercontent.com/a-/AOh14Gia8pJbpg5di2qVBPl-TYOVq2ivAMsgkW9r5YKROFI=s120-c-c0x00000000-cc-rp-mo-ba6-br100",
+              "review_text": "This one of the best restaurants in NYC. They have the best food that no one can make like it. Professional services and staff. The chf is the best cooker at all. The drinks and the soft drinks are the best. In short cut, the are all what you looking for if you are hungry or with someone you love. I don't visit the restaurant, but my brother is student there and I trust his tastes. I download the photos from the Google. Thanks to everyone and have a nice meal in the best restaurant.",
+              "review_img_url": "https://lh5.googleusercontent.com/p/AF1QipMKASaZtgif3BpoPZ8zmWpOUxA8reNzG3Ukk4SW",
+              "review_img_urls": [
+                "https://lh5.googleusercontent.com/p/AF1QipMKASaZtgif3BpoPZ8zmWpOUxA8reNzG3Ukk4SW"
+              ],
+              "owner_answer": null,
+              "owner_answer_timestamp": null,
+              "owner_answer_timestamp_datetime_utc": null,
+              "review_link": "https://www.google.com/maps/reviews/data=!4m5!14m4!1m3!1m2!1s104170839246363926920!2s0x0:0xec845e2f4e9ce9f0?hl=en-US",
+              "review_rating": 5,
+              "review_timestamp": 1616000898,
+              "review_datetime_utc": "03/17/2021 17:08:18",
+              "review_likes": 0,
+              "reviews_id": "-1403893626557371920"
+            },
+            {
+              "google_id": "0x89c259a60b120b1d:0xec845e2f4e9ce9f0",
+              "author_link": "https://www.google.com/maps/contrib/100439884166244262419?hl=en-US",
+              "author_title": "Dong Kyu Kim",
+              "author_id": "100439884166244262419",
+              "author_image": "https://lh3.googleusercontent.com/a-/AOh14GjkEPOWpXjbS80IEt0brUantU33gb-TwoSmznqZUbA=s120-c-c0x00000000-cc-rp-mo-ba2-br100",
+              "review_text": "Great views with great heaters. I felt hot while eating even though they had a perfect outdoor setting with air flowing.\nThe food was great as well as the service.\nMy favorite part of the chicken dinner was the deviled eggs and thigh/leg part of the chicken.\nDessert was also really good!",
+              "review_img_url": "https://lh5.googleusercontent.com/p/AF1QipPXomo_OkXx4XD16VyRXBCKepoZ1djXYU01yY9O",
+              "review_img_urls": [
+                "https://lh5.googleusercontent.com/p/AF1QipPXomo_OkXx4XD16VyRXBCKepoZ1djXYU01yY9O"
+              ],
+              "owner_answer": null,
+              "owner_answer_timestamp": null,
+              "owner_answer_timestamp_datetime_utc": null,
+              "review_link": "https://www.google.com/maps/reviews/data=!4m5!14m4!1m3!1m2!1s100439884166244262419!2s0x0:0xec845e2f4e9ce9f0?hl=en-US",
+              "review_rating": 5,
+              "review_timestamp": 1611152718,
+              "review_datetime_utc": "01/20/2021 14:25:18",
+              "review_likes": 1,
+              "reviews_id": "-1403893626557371920"
+            },
+            {
+              "google_id": "0x89c259a60b120b1d:0xec845e2f4e9ce9f0",
+              "author_link": "https://www.google.com/maps/contrib/105269840870997446655?hl=en-US",
+              "author_title": "Roseanne Whiteley",
+              "author_id": "105269840870997446655",
+              "author_image": "https://lh3.googleusercontent.com/a-/AOh14GiaSTU86h8dauTbalOWLg6esfcyI9TfSg8s6Iw4=s120-c-c0x00000000-cc-rp-mo-br100",
+              "review_text": "I'm going to this restaurant for the third time, and I've always been pleased with the service they offer. The service was excellent, polite, competent, and knowledgeable. We had a sense of sincere concern from the workers. They were really professional and polite as well. Many thanks! Your restaurant should be strongly recommended! Cheer for your win!",
+              "review_img_url": "https://lh3.googleusercontent.com/a-/AOh14GiaSTU86h8dauTbalOWLg6esfcyI9TfSg8s6Iw4",
+              "review_img_urls": [
+                "https://lh5.googleusercontent.com/a-/AOh14GiaSTU86h8dauTbalOWLg6esfcyI9TfSg8s6Iw4"
+              ],
+              "owner_answer": null,
+              "owner_answer_timestamp": null,
+              "owner_answer_timestamp_datetime_utc": null,
+              "review_link": "https://www.google.com/maps/reviews/data=!4m5!14m4!1m3!1m2!1s105269840870997446655!2s0x0:0xec845e2f4e9ce9f0?hl=en-US",
+              "review_rating": 5,
+              "review_timestamp": 1615839713,
+              "review_datetime_utc": "03/15/2021 20:21:53",
+              "review_likes": 0,
+              "reviews_id": "-1403893626557371920"
+            }
+          ],
+          "google_id": "0x89c259a60b120b1d:0xec845e2f4e9ce9f0",
+          "place_id": "ChIJHQsSC6ZZwokR8OmcTi9ehOw",
+          "reviews_link": "https://search.google.com/local/reviews?placeid=ChIJHQsSC6ZZwokR8OmcTi9ehOw&q=The+NoMad+Restaurant,+NY,+USA&authuser=0&hl=en&gl=US",
+          "reviews_id": "-1403893626557371920",
+          "reviews_per_score": {
+            "1": 9,
+            "2": 9,
+            "3": 38,
+            "4": 124,
+            "5": 595
+          },
+          "location_link": "https://www.google.com/maps/place/The+NoMad+Restaurant/@40.7449586,-73.9884885,14z/data=!4m8!1m2!2m1!1sThe+NoMad+Restaurant!3m4!1s0x89c259a60b120b1d:0xec845e2f4e9ce9f0!8m2!3d40.7449586!4d-73.9884885"
+        }
+      ]
+    },
+    "GET /google-search 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /google-search 204": {
+      "id": "your-request-id",
+      "status": "Failure"
+    },
+    "GET /google-search 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "query": "buy iphone 13 TX",
+          "organic_results": [
+            {
+              "link": "https://www.apple.com/shop/buy-iphone/iphone-13-pro",
+              "title": "New Buy iPhone 13 Pro - Apple",
+              "description": "Get iPhone 13 Pro or iPhone 13 Pro Max for an amazing price with special carrier trade-in offers. Make low monthly payments at 0% APR. Free shipping."
+            },
+            {
+              "link": "https://www.att.com/stores/texas/dallas/new-iphone",
+              "title": "Get iPhone 13 Pro Max in Dallas - Texas - ATT",
+              "description": "Find the iPhone 13 Pro Max in Dallas from AT&T or shop online & choose a delivery option that suits your needs, including free express shipping & curbside\u00a0..."
+            },
+            {
+              "link": "https://www.verizon.com/stores/texas/houston/west-road-285138/smartphones/apple-iphone-13-pro-max/",
+              "title": "Apple Iphone 13 Pro Max in Houston Texas | Verizon",
+              "description": "Shop Apple Iphone 13 Pro Max at Verizon in Houston , Texas stores. Find updated store hours, deals and directions to Verizon stores in Houston."
+            },
+            {
+              "link": "https://www.bestbuy.com/site/iphone/shop-iphone-13-models/pcmcat1631714593943.c?id=pcmcat1631714593943",
+              "title": "Select iPhone 13 Save up to $800 - Best Buy",
+              "description": "Shop Best Buy and choose the iPhone model that's right for you. Select from the iPhone 13 mini, iPhone 13, iPhone 13 Pro and the iPhone 13 Pro Max."
+            },
+            {
+              "link": "https://www.metrobyt-mobile.com/shop/phones/details/Apple-iPhone-13-M1-128GB/194252838198",
+              "title": "New Apple iPhone 13 | 5G, Pink, 128GB | Metro by T-Mobile",
+              "description": "Switcher Instant Rebate: For a limited time at participating Metro\u00ae by T-Mobile stores, purchase an Phone 13 (128GB) and port-in an existing eligible wireless\u00a0...$629.99 to $829.99In stock"
+            },
+            {
+              "link": "https://www.target.com/p/apple-iphone-13-pro-max/-/A-84616123",
+              "title": "Apple Iphone 13 Pro Max - Target",
+              "description": "Read reviews and buy Apple iPhone 13 Pro Max at Target. Choose from Same Day Delivery, Drive Up or Order Pickup. Free standard shipping with $35 orders.Rating: 4.650 reviews"
+            },
+            {
+              "link": "https://www.walmart.com/browse/iphone-13/c2hlbGZfaWQ6NzUxNzk0NQieie",
+              "title": "iPhone 13 - Walmart",
+              "description": "Shop for iPhone 13. Buy products such as iPhone 13 Pro Max (AT&T & Verizon), iPhone 13 Pro (AT&T & Verizon), iPhone 13 (AT&T & Verizon) at Walmart and save."
+            }
+          ],
+          "ads": [
+            {
+              "link": "https://buy.gazelle.com/collections/iphone-13-pro-max",
+              "title": "iPhone 13 Pro Max Refurbished - iPhone 13 Pro Max Unlocked",
+              "description": "Choose Carriers, Colors, Conditions & More. Buy iPhone 13 pro max. Used iPhone 13 Pro Max for Sale From Gazelle\u00ae - Simple, Convenient, Works For Everyone."
+            }
+          ],
+          "shopping_results": [
+            {
+              "link": "https://www.verizon.com/smartphones/apple-iphone-13-pro-max/?sku=sku5230109",
+              "title": "Title of Apple iPhone 13 ProMax 128 GB in Alpine Green with installment",
+              "price": "$0.00",
+              "source": "Verizon"
+            },
+            {
+              "link": "https://www.apple.com/us/shop/go/product/MLMT3?cppart=UNLOCKED&cid=aos-us-seo-pla",
+              "title": "Title of iPhone 13 - 128GB Blue - Unlocked & SIM Free - Apple",
+              "price": "$829.00",
+              "source": "Apple"
+            },
+            {
+              "link": "https://www.t-mobile.com/cell-phone/apple-iphone-13-pro-max?sku=194252697719",
+              "title": "Title of Apple iPhone 13 Pro Max - Sierra Blue - 1TB (with 24 monthly payments)",
+              "price": "$499.99",
+              "source": "T-Mobile"
+            }
+          ],
+          "related_questions": [
+            {
+              "link": "https://www.apple.com/newsroom/2021/09/apple-offers-more-ways-to-shop-for-the-iphone-13-lineup-ipad-and-ipad-mini/",
+              "title": "Can you buy an iPhone 13 instore?",
+              "description": "The full iPhone 13 and iPad product lineups will be available in stores and delivered to customers beginning Friday, September 24. With an entirely redesigned online store, shopping with Apple online or in-store is simpler than ever.Sep 16, 2021"
+            },
+            {
+              "link": "https://www.macworld.com/article/540445/iphone-13-buy-now-or-wait.html",
+              "title": "Is iPhone 13 available to buy now?",
+              "description": "If you don't, there's an easy rule: Apple typically releases new iPhones in September, so don't buy a new iPhone shortly before that. 2021 was no exception\u2014Apple put the iPhone 13 series up for sale on September 24.Feb 4, 2022"
+            },
+            {
+              "link": "https://www.cnet.com/tech/mobile/the-best-iphone-13-deals-are-here-target-best-buy-verizon-and-more/",
+              "title": "How much does it cost to buy a iPhone 13?",
+              "description": "$799iPhone 13 starts at $799. iPhone 13 Mini starts at $699. iPhone 13 Pro starts at $999.Sep 28, 2021"
+            }
+          ]
+        }
+      ]
+    },
+    "GET /leads-and-contacts 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /leads-and-contacts 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "query": "outscraper.com",
+          "details": {
+            "industry": [
+              "Custom Software & IT Services",
+              "Business Services"
+            ],
+            "founded": "2018",
+            "name": "Outscraper",
+            "size": {
+              "f": 11,
+              "t": 50
+            },
+            "type": "Private",
+            "address": "Delaware state",
+            "city": "Middletown",
+            "employees": "<25",
+            "postal_code": "19709",
+            "state": "Texas",
+            "country": "US",
+            "sales": "< $5M"
+          },
+          "emails": [],
+          "phones": [
+            {
+              "value": "12812368208",
+              "source": "https://www.facebook.com/outscraper/"
+            }
+          ],
+          "site_data": {
+            "description": "Scrape Google Maps Places, Business Reviews, Photos, Play Market Reviews, and more. Get any public data from the internet by applying cutting-edge technologies.",
+            "generator": "All in One SEO Pro (AIOSEO) 4.7.0",
+            "title": "Outscraper - get any public data from the internet",
+            "has_fb_pixel": false,
+            "has_google_tag": false,
+            "keywords": "data extraction, web scraping, Google Maps, lead generation"
+          },
+          "socials": {
+            "facebook": "http://www.facebook.com/outscraper",
+            "github": "https://github.com/outscraper",
+            "linkedin": "http://www.linkedin.com/company/outscraper",
+            "twitter": "http://www.twitter.com/outscraper",
+            "whatsapp": "https://wa.me/12812368208",
+            "youtube": "https://www.youtube.com/channel/UCDYOuXSEenLpt5tKNq-0l9Q",
+            "discord": "https://discord.gg/kcQzJW7rYr",
+            "crunchbase": "https://www.crunchbase.com/organization/outscraper"
+          },
+          "domain": "outscraper.com",
+          "contacts": [
+            {
+              "full_name": "Vlad Sima",
+              "emails": [
+                {
+                  "value": "vlad.sima@outscraper.com",
+                  "source": "linkedin"
+                }
+              ],
+              "title": "data alchemist",
+              "socials": {
+                "linkedin": "simokhodsky"
+              },
+              "categories": [
+                "technical"
+              ]
+            },
+            {
+              "full_name": "kseniia maiesh",
+              "emails": [
+                {
+                  "value": "kseniia@outscraper.com",
+                  "source": "smtp"
+                }
+              ]
+            },
+            {
+              "emails": [
+                {
+                  "value": "vlad@outscraper.com",
+                  "first_seen": "08/12/2025 23:10:06",
+                  "last_seen": "08/13/2025 01:06:10",
+                  "source": "smtp"
+                }
+              ],
+              "full_name": "vlad may"
+            }
+          ]
+        }
+      ]
+    },
+    "GET /email-validator 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /email-validator 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "query": "support@outscraper.com",
+          "status": "RECEIVING",
+          "status_details": "SMTP validated"
+        }
+      ]
+    },
+    "GET /emails-finder 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /emails-finder 200": {},
+    "GET /phones-enricher 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /phones-enricher 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "query": "12812368208",
+          "carrier_name": "AERIAL COMMUNICATIONS",
+          "carrier_type": "mobile"
+        }
+      ]
+    },
+    "GET /company-insights 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /company-insights 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "query": "apple.com",
+          "address": "1 Apple Park Way",
+          "city": "Cupertino",
+          "country": "United States",
+          "description": "Apple is a multinational corporation known for designing, manufacturing, and marketing consumer electronics, personal computers, and software. Their innovative product development and world-class operations have made them a leader in the industry, with...",
+          "employees": "100000",
+          "facebook_company_page": "https://facebook.com/137947732957611",
+          "founded_year": "1976",
+          "industry": "COMPUTER_SOFTWARE",
+          "is_public": "true",
+          "linkedin_bio": "Apple is a multinational corporation known for designing, manufacturing, and marketing consumer electronics, personal computers, and software. Their innovative product development and world-class operations have made them a leader in the industry, with...",
+          "linkedin_company_page": "https://www.linkedin.com/company/apple",
+          "name": "Apple Inc.",
+          "phone": "+1 408-996-1010",
+          "revenue": "10000000000",
+          "state": "CA",
+          "timezone": "America/Los_Angeles",
+          "total_money_raised": "3.3B",
+          "zip": "95014",
+          "twitter_handle": "Apple"
+        }
+      ]
+    },
+    "GET /company-website-finder 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /company-website-finder 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        {
+          "query": "Apple Inc",
+          "company_name": "Apple Inc.",
+          "website": "https://www.apple.com",
+          "domain": "apple.com",
+          "confidence_score": 0.95
+        }
+      ]
+    },
+    "GET /trustpilot-reviews 202": {
+      "id": "your-request-id",
+      "status": "Pending",
+      "results_location": "https://api.outscraper.cloud/requests/your-request-id"
+    },
+    "GET /trustpilot-reviews 200": {
+      "id": "your-request-id",
+      "status": "Success",
+      "data": [
+        [
+          {
+            "query": "outscraper.com",
+            "total_reviews": 16,
+            "review_rating": 5,
+            "review_title": "Extremely easy to use API and very well documented",
+            "review_text": "Extremely easy to use API and very well documented - I've been using Outscraper for Google My Business review scraping to display reviews on our customers websites for the past two years with no issues whatsoever. Hope Facebook Page and Trustpilot reviews are added so that I can have everything within one place!",
+            "review_likes": 0,
+            "review_date": 1675562103,
+            "review_id": "63def0579b64b1bdaf4d4895",
+            "author_title": "James Morton",
+            "author_id": "570fd83f0000ff000a17730a",
+            "author_reviews_number": 7,
+            "author_reviews_number_same_domain": 1,
+            "author_country_code": "GB"
+          },
+          {
+            "query": "outscraper.com",
+            "total_reviews": 16,
+            "review_rating": 5,
+            "review_title": "Powerful tool",
+            "review_text": "Powerful tool, and a very responsive team. If used properly it produces excellent results. I have been using this service for 2 weeks since then their team has responded to all of my questions within 24 hours or faster.",
+            "review_likes": 0,
+            "review_date": 1674242416,
+            "review_id": "63cacd504b01fb3f5488166f",
+            "author_title": "John Kofax",
+            "author_id": "63cacc929e3a180012b87a70",
+            "author_reviews_number": 1,
+            "author_reviews_number_same_domain": 1,
+            "author_country_code": "US"
+          }
+        ]
+      ]
+    }
+  },
+  "completion_event": {
+    "id": "your-request-id",
+    "user_id": "your-user-id",
+    "status": "SUCCESS",
+    "api_task": true,
+    "results_location": "https://api.outscraper.cloud/requests/your-request-id",
+    "quota_usage": [
+      {
+        "product_name": "Google Maps Data",
+        "quantity": 1
+      }
+    ]
+  }
+}

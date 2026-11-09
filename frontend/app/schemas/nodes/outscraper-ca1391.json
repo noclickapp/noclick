@@ -1,0 +1,1259 @@
+{
+  "$defs": {
+    "OutscraperAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "outscraper_ca1391_api_key",
+          "default": "outscraper_ca1391_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Outscraper API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Outscraper API key. NoClick sends it in the X-API-KEY header and checks your account balance. Scraping and trigger activation can incur Outscraper charges.",
+      "x-credential-url": "https://app.outscraper.cloud/api-key"
+    },
+    "OutscraperCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "service_name": {
+          "description": "For example google_maps_service_v2 or google_maps_reviews_service_v3.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Service ID",
+          "type": "string"
+        },
+        "queries": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "minItems": 0,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags",
+          "ui:widget": "list"
+        },
+        "enrichments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "minItems": 0,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enrichments",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "service_name",
+        "queries"
+      ],
+      "title": "OutscraperCreateTaskConfig",
+      "type": "object"
+    },
+    "OutscraperEnrichPhonesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "enrich_phones",
+          "default": "enrich_phones",
+          "title": "Enrich Phone Numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enrichment",
+          "x-display-name": "Enrich Phone Numbers",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperEnrichPhonesConfig",
+      "type": "object"
+    },
+    "OutscraperFindCompanyWebsitesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_company_websites",
+          "default": "find_company_websites",
+          "title": "Find Company Websites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enrichment",
+          "x-display-name": "Find Company Websites",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperFindCompanyWebsitesConfig",
+      "type": "object"
+    },
+    "OutscraperFindEmailsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_emails",
+          "default": "find_emails",
+          "title": "Find Email Addresses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enrichment",
+          "x-display-name": "Find Email Addresses",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperFindEmailsConfig",
+      "type": "object"
+    },
+    "OutscraperFindLeadsContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_leads_contacts",
+          "default": "find_leads_contacts",
+          "title": "Find Leads and Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enrichment",
+          "x-display-name": "Find Leads and Contacts",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        },
+        "contactsPerCompany": {
+          "default": 3,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Contacts per company",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperFindLeadsContactsConfig",
+      "type": "object"
+    },
+    "OutscraperGetBalanceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Get Account Balance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account Balance",
+          "x-is-trigger": false
+        }
+      },
+      "title": "OutscraperGetBalanceConfig",
+      "type": "object"
+    },
+    "OutscraperGetCompanyInsightsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company_insights",
+          "default": "get_company_insights",
+          "title": "Get Company Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enrichment",
+          "x-display-name": "Get Company Insights",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperGetCompanyInsightsConfig",
+      "type": "object"
+    },
+    "OutscraperGetFailedWebhooksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_failed_webhooks",
+          "default": "get_failed_webhooks",
+          "title": "Get Failed Webhook Calls",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Failed Webhook Calls",
+          "x-is-trigger": false
+        }
+      },
+      "title": "OutscraperGetFailedWebhooksConfig",
+      "type": "object"
+    },
+    "OutscraperGetRequestResultsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_request_results",
+          "default": "get_request_results",
+          "title": "Get Request Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Get Request Results",
+          "x-is-trigger": false
+        },
+        "requestId": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Request ID",
+          "type": "string"
+        },
+        "flat": {
+          "default": false,
+          "title": "Flat",
+          "type": "boolean"
+        },
+        "convertFileResult": {
+          "default": true,
+          "title": "Convertfileresult",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "OutscraperGetRequestResultsConfig",
+      "type": "object"
+    },
+    "OutscraperGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "taskId": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "OutscraperGetTaskConfig",
+      "type": "object"
+    },
+    "OutscraperListInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Invoices",
+          "x-is-trigger": false
+        },
+        "lastId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Last invoice ID"
+        }
+      },
+      "title": "OutscraperListInvoicesConfig",
+      "type": "object"
+    },
+    "OutscraperListRequestsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "List Recent Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Recent Requests",
+          "x-is-trigger": false
+        },
+        "type": {
+          "default": "running",
+          "enum": [
+            "running",
+            "finished"
+          ],
+          "title": "Request status",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "title": "OutscraperListRequestsConfig",
+      "type": "object"
+    },
+    "OutscraperListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Tag search"
+        },
+        "lastId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Last task ID"
+        },
+        "pageSize": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "title": "OutscraperListTasksConfig",
+      "type": "object"
+    },
+    "OutscraperOnEmailVerificationFinishedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Activating this trigger submits one async job and may incur Outscraper charges. It fires once when that job finishes. Reconfigure to start another job; removal terminates the request.",
+          "title": "Completion webhook",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_verification_finished",
+          "default": "on_email_verification_finished",
+          "title": "On Email Verification Job Finished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Email Verification Job Finished",
+          "x-is-trigger": true
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Email addresses",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperOnEmailVerificationFinishedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutscraperOnGoogleMapsFinishedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Activating this trigger submits one async job and may incur Outscraper charges. It fires once when that job finishes. Reconfigure to start another job; removal terminates the request.",
+          "title": "Completion webhook",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_google_maps_finished",
+          "default": "on_google_maps_finished",
+          "title": "On Google Maps Job Finished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Google Maps Job Finished",
+          "x-is-trigger": true
+        },
+        "query": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Search query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Places per query",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperOnGoogleMapsFinishedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutscraperRestartTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restart_task",
+          "default": "restart_task",
+          "title": "Restart Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Restart Task",
+          "x-is-trigger": false
+        },
+        "taskId": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "OutscraperRestartTaskConfig",
+      "type": "object"
+    },
+    "OutscraperScrapeGoogleReviewsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scrape_google_reviews",
+          "default": "scrape_google_reviews",
+          "title": "Scrape Google Maps Reviews",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Scrape Google Maps Reviews",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Search query",
+          "type": "string"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        },
+        "reviewsLimit": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Reviews per place",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Places per query",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "newest",
+          "enum": [
+            "most_relevant",
+            "newest",
+            "highest_rating",
+            "lowest_rating"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "cutoff": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Oldest review Unix timestamp to include.",
+          "title": "Cutoff"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperScrapeGoogleReviewsConfig",
+      "type": "object"
+    },
+    "OutscraperScrapeTrustpilotReviewsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scrape_trustpilot_reviews",
+          "default": "scrape_trustpilot_reviews",
+          "title": "Scrape Trustpilot Reviews",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Scrape Trustpilot Reviews",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Reviews per query",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperScrapeTrustpilotReviewsConfig",
+      "type": "object"
+    },
+    "OutscraperSearchGoogleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_google",
+          "default": "search_google",
+          "title": "Search Google",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Search Google",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Search query",
+          "type": "string"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        },
+        "pagesPerQuery": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pages per query",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperSearchGoogleConfig",
+      "type": "object"
+    },
+    "OutscraperSearchGoogleMapsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_google_maps",
+          "default": "search_google_maps",
+          "title": "Search Google Maps Places",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Search Google Maps Places",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Search query",
+          "type": "string"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Places per query",
+          "type": "integer"
+        },
+        "skipPlaces": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Skip places",
+          "type": "integer"
+        },
+        "dropDuplicates": {
+          "default": false,
+          "title": "Dropduplicates",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperSearchGoogleMapsConfig",
+      "type": "object"
+    },
+    "OutscraperTerminateRequestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "terminate_request",
+          "default": "terminate_request",
+          "title": "Terminate Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Terminate Request",
+          "x-is-trigger": false
+        },
+        "requestId": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "OutscraperTerminateRequestConfig",
+      "type": "object"
+    },
+    "OutscraperTerminateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "terminate_task",
+          "default": "terminate_task",
+          "title": "Terminate Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Terminate Task",
+          "x-is-trigger": false
+        },
+        "taskId": {
+          "description": "",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "OutscraperTerminateTaskConfig",
+      "type": "object"
+    },
+    "OutscraperVerifyEmailsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "verify_emails",
+          "default": "verify_emails",
+          "title": "Verify Email Addresses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enrichment",
+          "x-display-name": "Verify Email Addresses",
+          "x-is-trigger": false
+        },
+        "query": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Queries",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "async_request": {
+          "default": true,
+          "description": "Returns a request ID. Fetch results within four hours after completion. Synchronous requests can time out; they are not retried.",
+          "title": "Run asynchronously",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OutscraperVerifyEmailsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_task": "#/$defs/OutscraperCreateTaskConfig",
+          "enrich_phones": "#/$defs/OutscraperEnrichPhonesConfig",
+          "find_company_websites": "#/$defs/OutscraperFindCompanyWebsitesConfig",
+          "find_emails": "#/$defs/OutscraperFindEmailsConfig",
+          "find_leads_contacts": "#/$defs/OutscraperFindLeadsContactsConfig",
+          "get_balance": "#/$defs/OutscraperGetBalanceConfig",
+          "get_company_insights": "#/$defs/OutscraperGetCompanyInsightsConfig",
+          "get_failed_webhooks": "#/$defs/OutscraperGetFailedWebhooksConfig",
+          "get_request_results": "#/$defs/OutscraperGetRequestResultsConfig",
+          "get_task": "#/$defs/OutscraperGetTaskConfig",
+          "list_invoices": "#/$defs/OutscraperListInvoicesConfig",
+          "list_requests": "#/$defs/OutscraperListRequestsConfig",
+          "list_tasks": "#/$defs/OutscraperListTasksConfig",
+          "on_email_verification_finished": "#/$defs/OutscraperOnEmailVerificationFinishedConfig",
+          "on_google_maps_finished": "#/$defs/OutscraperOnGoogleMapsFinishedConfig",
+          "restart_task": "#/$defs/OutscraperRestartTaskConfig",
+          "scrape_google_reviews": "#/$defs/OutscraperScrapeGoogleReviewsConfig",
+          "scrape_trustpilot_reviews": "#/$defs/OutscraperScrapeTrustpilotReviewsConfig",
+          "search_google": "#/$defs/OutscraperSearchGoogleConfig",
+          "search_google_maps": "#/$defs/OutscraperSearchGoogleMapsConfig",
+          "terminate_request": "#/$defs/OutscraperTerminateRequestConfig",
+          "terminate_task": "#/$defs/OutscraperTerminateTaskConfig",
+          "verify_emails": "#/$defs/OutscraperVerifyEmailsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OutscraperGetBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperListRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperGetRequestResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperTerminateRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperRestartTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperTerminateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperGetFailedWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperSearchGoogleMapsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperScrapeGoogleReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperSearchGoogleConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperFindLeadsContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperVerifyEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperFindEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperEnrichPhonesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperGetCompanyInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperFindCompanyWebsitesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperScrapeTrustpilotReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperOnGoogleMapsFinishedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutscraperOnEmailVerificationFinishedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OutscraperAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Outscraper-ca1391 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
