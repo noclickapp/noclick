@@ -1,0 +1,1310 @@
+{
+  "$defs": {
+    "StibeeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "stibee_api_key",
+          "default": "stibee_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Stibee API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an API key created after January 21, 2025 from Stibee Workspace settings > API keys. Subscriber operations require Standard or above; email and group operations require Pro or Enterprise, and address-book reads require Enterprise. Connection verification lists your emails and needs Pro or Enterprise. NoClick sends the key only to api.stibee.com in the AccessToken header.",
+      "x-credential-url": "https://help.stibee.com/api-webhook/api#id-1-api-2"
+    },
+    "StibeeAddSubscriberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_subscriber",
+          "default": "add_subscriber",
+          "description": "Add subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscriber": {
+          "$ref": "#/$defs/Subscriber"
+        },
+        "updateEnabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updateenabled"
+        }
+      },
+      "required": [
+        "list_id",
+        "subscriber"
+      ],
+      "title": "StibeeAddSubscriberConfig",
+      "type": "object"
+    },
+    "StibeeAssignGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "assign_group",
+          "default": "assign_group",
+          "description": "Assign group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscriber": {
+          "title": "Subscriber",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "group_id",
+        "subscriber"
+      ],
+      "title": "StibeeAssignGroupConfig",
+      "type": "object"
+    },
+    "StibeeCopyEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "copy_email",
+          "default": "copy_email",
+          "description": "Copy email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeCopyEmailConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeCreateEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "senderEmail": {
+          "title": "Senderemail",
+          "type": "string"
+        },
+        "senderName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Sendername",
+          "type": "string"
+        },
+        "listId": {
+          "exclusiveMinimum": 0,
+          "title": "Listid",
+          "type": "integer"
+        },
+        "segmentIds": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segmentids"
+        },
+        "groupIds": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groupids"
+        },
+        "operation": {
+          "const": "create_email",
+          "default": "create_email",
+          "description": "Create email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "subject",
+        "senderEmail",
+        "senderName",
+        "listId"
+      ],
+      "title": "StibeeCreateEmailConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeCreateGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "description": "Create group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "StibeeCreateGroupConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeDeleteEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_email",
+          "default": "delete_email",
+          "description": "Delete email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeDeleteEmailConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeDeleteGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "description": "Delete group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id",
+        "group_id"
+      ],
+      "title": "StibeeDeleteGroupConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeDeleteSubscribersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_subscribers",
+          "default": "delete_subscribers",
+          "description": "Delete subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscribers": {
+          "description": "Permanently delete these subscribers from this address book.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Subscribers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "list_id",
+        "subscribers"
+      ],
+      "title": "StibeeDeleteSubscribersConfig",
+      "type": "object"
+    },
+    "StibeeGetEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_email",
+          "default": "get_email",
+          "description": "Get email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeGetEmailConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeGetEmailContentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_email_content",
+          "default": "get_email_content",
+          "description": "Get email content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ab_test": {
+          "anyOf": [
+            {
+              "enum": [
+                "A",
+                "B"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ab Test",
+          "enum": [
+            "A",
+            "B"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeGetEmailContentConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeGetEmailLogsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Start offset; this operation returns one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_email_logs",
+          "default": "get_email_logs",
+          "description": "Get email logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "actions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated activity codes, such as O,C.",
+          "title": "Actions"
+        },
+        "subscribers": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to 30 comma-separated exact subscriber email addresses.",
+          "title": "Subscribers"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeGetEmailLogsConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeGetEmailStatsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_email_stats",
+          "default": "get_email_stats",
+          "description": "Get email stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "description": "One to ten comma-separated email IDs.",
+          "pattern": "^[1-9][0-9]*(,[1-9][0-9]*){0,9}$",
+          "title": "Ids",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "StibeeGetEmailStatsConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeGetListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "description": "Get list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "StibeeGetListConfig",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise"
+    },
+    "StibeeGetSubscriberCountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_subscriber_count",
+          "default": "get_subscriber_count",
+          "description": "Get subscriber count",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated subscribed, unsubscribed, archived or ready.",
+          "title": "Statuses"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "StibeeGetSubscriberCountConfig",
+      "type": "object"
+    },
+    "StibeeListEmailsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Start offset; this operation returns one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_emails",
+          "default": "list_emails",
+          "description": "List emails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List Id"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "pattern": "^[1-9][0-9]*(,[1-9][0-9]*)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ids"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Types"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdTime",
+                "modifiedTime",
+                "sentTime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "createdTime",
+            "modifiedTime",
+            "sentTime"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "StibeeListEmailsConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeListGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Start offset; this operation returns one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "description": "List groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "name"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "enum": [
+            "desc",
+            "asc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "StibeeListGroupsConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeListListsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Start offset; this operation returns one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "description": "List lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_order": {
+          "default": "desc",
+          "enum": [
+            "desc",
+            "asc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "title": "StibeeListListsConfig",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise"
+    },
+    "StibeeListSubscribersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Start offset; this operation returns one page only.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "description": "List subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated subscribed, unsubscribed, archived or ready.",
+          "title": "Statuses"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "StibeeListSubscribersConfig",
+      "type": "object"
+    },
+    "StibeeReleaseGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "release_group",
+          "default": "release_group",
+          "description": "Release group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscriber": {
+          "title": "Subscriber",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "group_id",
+        "subscriber"
+      ],
+      "title": "StibeeReleaseGroupConfig",
+      "type": "object"
+    },
+    "StibeeSendEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "description": "Send this normal email to its configured audience; acceptance does not prove delivery.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeSendEmailConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeUnsubscribeSubscriberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "subscriber": {
+          "title": "Subscriber",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unsubscribe_subscriber",
+          "default": "unsubscribe_subscriber",
+          "description": "Unsubscribe subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id",
+        "subscriber"
+      ],
+      "title": "StibeeUnsubscribeSubscriberConfig",
+      "type": "object"
+    },
+    "StibeeUpdateEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "senderEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Senderemail"
+        },
+        "senderName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendername"
+        },
+        "listId": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listid"
+        },
+        "segmentIds": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segmentids"
+        },
+        "groupIds": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groupids"
+        },
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_email",
+          "default": "update_email",
+          "description": "Update email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "StibeeUpdateEmailConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeUpdateEmailContentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "exclusiveMinimum": 0,
+          "title": "Email Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_email_content",
+          "default": "update_email_content",
+          "description": "Update email content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "html": {
+          "maxLength": 1000000,
+          "minLength": 1,
+          "title": "Html",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "html"
+        }
+      },
+      "required": [
+        "email_id",
+        "html"
+      ],
+      "title": "StibeeUpdateEmailContentConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeUpdateGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "description": "Update group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "group_id",
+        "name"
+      ],
+      "title": "StibeeUpdateGroupConfig",
+      "type": "object",
+      "x-requires-tier": "pro_or_enterprise",
+      "x-tier-label": "Pro or Enterprise"
+    },
+    "StibeeUpdateSubscriberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "Address book ID",
+          "type": "integer"
+        },
+        "subscriber": {
+          "title": "Subscriber",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_subscriber",
+          "default": "update_subscriber",
+          "description": "Update subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "additionalProperties": true,
+          "minProperties": 1,
+          "title": "Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "list_id",
+        "subscriber",
+        "fields"
+      ],
+      "title": "StibeeUpdateSubscriberConfig",
+      "type": "object"
+    },
+    "Subscriber": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "status": {
+          "description": "Use subscribed only when you have the subscriber's consent.",
+          "enum": [
+            "subscribed",
+            "unsubscribed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "marketingAllowed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marketingallowed"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values for existing Stibee custom fields, such as name and age.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "email",
+        "status"
+      ],
+      "title": "Subscriber",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_subscriber": "#/$defs/StibeeAddSubscriberConfig",
+          "assign_group": "#/$defs/StibeeAssignGroupConfig",
+          "copy_email": "#/$defs/StibeeCopyEmailConfig",
+          "create_email": "#/$defs/StibeeCreateEmailConfig",
+          "create_group": "#/$defs/StibeeCreateGroupConfig",
+          "delete_email": "#/$defs/StibeeDeleteEmailConfig",
+          "delete_group": "#/$defs/StibeeDeleteGroupConfig",
+          "delete_subscribers": "#/$defs/StibeeDeleteSubscribersConfig",
+          "get_email": "#/$defs/StibeeGetEmailConfig",
+          "get_email_content": "#/$defs/StibeeGetEmailContentConfig",
+          "get_email_logs": "#/$defs/StibeeGetEmailLogsConfig",
+          "get_email_stats": "#/$defs/StibeeGetEmailStatsConfig",
+          "get_list": "#/$defs/StibeeGetListConfig",
+          "get_subscriber_count": "#/$defs/StibeeGetSubscriberCountConfig",
+          "list_emails": "#/$defs/StibeeListEmailsConfig",
+          "list_groups": "#/$defs/StibeeListGroupsConfig",
+          "list_lists": "#/$defs/StibeeListListsConfig",
+          "list_subscribers": "#/$defs/StibeeListSubscribersConfig",
+          "release_group": "#/$defs/StibeeReleaseGroupConfig",
+          "send_email": "#/$defs/StibeeSendEmailConfig",
+          "unsubscribe_subscriber": "#/$defs/StibeeUnsubscribeSubscriberConfig",
+          "update_email": "#/$defs/StibeeUpdateEmailConfig",
+          "update_email_content": "#/$defs/StibeeUpdateEmailContentConfig",
+          "update_group": "#/$defs/StibeeUpdateGroupConfig",
+          "update_subscriber": "#/$defs/StibeeUpdateSubscriberConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/StibeeListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeListSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeAddSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeUpdateSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeUnsubscribeSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeGetSubscriberCountConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeDeleteSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeUpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeAssignGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeReleaseGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeListEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeGetEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeCreateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeUpdateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeDeleteEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeCopyEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeGetEmailStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeGetEmailLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeGetEmailContentConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeUpdateEmailContentConfig"
+        },
+        {
+          "$ref": "#/$defs/StibeeSendEmailConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StibeeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Stibee Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
