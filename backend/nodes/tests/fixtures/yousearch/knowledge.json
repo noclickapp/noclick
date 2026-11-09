@@ -1,0 +1,31 @@
+{
+  "results": {
+    "web": [
+      {
+        "url": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-first-quarter-fiscal-2027",
+        "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2027",
+        "description": "NVIDIA today reported revenue for the first quarter ended April 26, 2026.",
+        "favicon_url": "https://you.com/favicon?domain=nvidianews.nvidia.com&size=128"
+      }
+    ],
+    "knowledge": [
+      {
+        "type": "answer",
+        "title": "NVIDIA Corporation Total Revenues (Normalized) (Quarterly)",
+        "attribution": [
+          {
+            "name": "Fiscal.ai",
+            "source_description": "Fiscal.ai is a financial data provider that publishes as-reported and standardized company financials, segments, KPIs, and ratios extracted from filings."
+          }
+        ],
+        "description": "NVIDIA Corporation Total Revenues (Normalized) (Quarterly)'s latest value was $81,615,000,000 in Apr 2026, up 6,424.0% since Jan 2015. Quarterly data from Jan 2015 to Apr 2026, with a maximum of $81,615,000,000 in Apr 2026 and a minimum of $1,151,000,000 in Apr 2015.",
+        "as_of": "2026-04-26"
+      }
+    ]
+  },
+  "metadata": {
+    "search_uuid": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+    "query": "Nvidia latest quarterly revenue",
+    "latency": 0.8123
+  }
+}

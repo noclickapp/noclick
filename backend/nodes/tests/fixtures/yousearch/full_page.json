@@ -1,0 +1,35 @@
+{
+  "results": {
+    "web": [
+      {
+        "url": "https://blog.logto.io/token-based-authentication-vs-session-based-authentication",
+        "title": "JWT vs Session authentication \u00b7 Logto blog",
+        "description": "A comparison of token-based and session-based authentication, covering how each stores state and where each one fits.",
+        "snippets": [
+          "Session-based authentication stores user information on the server and hands the client a session ID, so every request costs a lookup in the session store.",
+          "JWT authentication is stateless. The token carries the claims and a signature, so the server verifies it without hitting a database."
+        ],
+        "page_age": "2024-12-18T00:00:00",
+        "contents": {
+          "markdown": "# JWT vs Session authentication\n\nSession-based authentication requires the server to query a session store on every request. JWT authentication is stateless: the token itself carries the claims, signed so the server can verify them without a lookup...\n"
+        },
+        "favicon_url": "https://you.com/favicon?domain=blog.logto.io&size=128"
+      },
+      {
+        "url": "https://www.infoworld.com/article/session-vs-token-auth-2026",
+        "title": "Session or token? Auth choices for 2026 architectures",
+        "description": "Why stateless tokens won the API tier and sessions never left the browser.",
+        "page_age": "2026-01-14T09:20:00",
+        "contents": {
+          "markdown": "# Session or token? Auth choices for 2026 architectures\n\nThe split is mostly about where revocation lives. A session can be deleted server-side the moment it is compromised, while a JWT stays valid until it expires unless you keep a denylist...\n"
+        },
+        "favicon_url": "https://you.com/favicon?domain=www.infoworld.com&size=128"
+      }
+    ]
+  },
+  "metadata": {
+    "search_uuid": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+    "query": "what is the difference between JWT and session authentication",
+    "latency": 3.184920310974121
+  }
+}

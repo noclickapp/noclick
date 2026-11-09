@@ -1,0 +1,435 @@
+{
+  "$defs": {
+    "YousearchAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "yousearch_api_key",
+          "default": "yousearch_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Yousearch API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the You.com platform and paste it here. Connecting makes one small search request, which may use API credits. Public search proves key acceptance, not account identity.",
+      "x-credential-url": "https://you.com/platform"
+    },
+    "YousearchSearchConfig": {
+      "additionalProperties": false,
+      "description": "Search web and news, optionally extracting highlights or full pages.",
+      "properties": {
+        "operation": {
+          "const": "search_web",
+          "default": "search_web",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search Web and News",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "research",
+            "news",
+            "highlights",
+            "web search"
+          ]
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "count": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Maximum Results",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page index in multiples of count, from 0 to 9. Set the next index explicitly; a full page does not guarantee more results.",
+          "maximum": 9,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "freshness": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "day, week, month, year, or YYYY-MM-DDtoYYYY-MM-DD",
+          "title": "Freshness"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "enum": [
+                "AR",
+                "AU",
+                "AT",
+                "BE",
+                "BR",
+                "CA",
+                "CL",
+                "DK",
+                "FI",
+                "FR",
+                "DE",
+                "HK",
+                "IN",
+                "ID",
+                "IT",
+                "JP",
+                "KR",
+                "MY",
+                "MX",
+                "NL",
+                "NZ",
+                "NO",
+                "CN",
+                "PL",
+                "PT",
+                "PH",
+                "RU",
+                "SA",
+                "ZA",
+                "ES",
+                "SE",
+                "CH",
+                "TW",
+                "TR",
+                "GB",
+                "US"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country",
+          "enum": [
+            "AR",
+            "AU",
+            "AT",
+            "BE",
+            "BR",
+            "CA",
+            "CL",
+            "DK",
+            "FI",
+            "FR",
+            "DE",
+            "HK",
+            "IN",
+            "ID",
+            "IT",
+            "JP",
+            "KR",
+            "MY",
+            "MX",
+            "NL",
+            "NZ",
+            "NO",
+            "CN",
+            "PL",
+            "PT",
+            "PH",
+            "RU",
+            "SA",
+            "ZA",
+            "ES",
+            "SE",
+            "CH",
+            "TW",
+            "TR",
+            "GB",
+            "US"
+          ],
+          "x-enum-searchable": true
+        },
+        "language": {
+          "default": "EN",
+          "enum": [
+            "AR",
+            "EU",
+            "BN",
+            "BG",
+            "CA",
+            "ZH-HANS",
+            "ZH-HANT",
+            "HR",
+            "CS",
+            "DA",
+            "NL",
+            "EN",
+            "EN-GB",
+            "ET",
+            "FI",
+            "FR",
+            "GL",
+            "DE",
+            "EL",
+            "GU",
+            "HE",
+            "HI",
+            "HU",
+            "IS",
+            "IT",
+            "JA",
+            "KN",
+            "KO",
+            "LV",
+            "LT",
+            "MS",
+            "ML",
+            "MR",
+            "NB",
+            "PL",
+            "PT-BR",
+            "PT-PT",
+            "PA",
+            "RO",
+            "RU",
+            "SR",
+            "SK",
+            "SL",
+            "ES",
+            "SV",
+            "TA",
+            "TE",
+            "TH",
+            "TR",
+            "UK",
+            "VI"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "safesearch": {
+          "default": "moderate",
+          "enum": [
+            "off",
+            "moderate",
+            "strict"
+          ],
+          "title": "Safesearch",
+          "type": "string"
+        },
+        "knowledge": {
+          "anyOf": [
+            {
+              "const": "core",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request licensed knowledge results. Omitted when no relevant results exist.",
+          "title": "Knowledge"
+        },
+        "include_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated domain allowlist, up to 500. Cannot combine with exclude or boost domains.",
+          "title": "Include Domains"
+        },
+        "exclude_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated domain denylist, up to 5000.",
+          "title": "Exclude Domains"
+        },
+        "boost_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated domains to boost, up to 500. May combine with exclude domains.",
+          "title": "Boost Domains"
+        },
+        "strict_operators": {
+          "default": false,
+          "description": "Enforce search operators exactly. Has no effect with highlights.",
+          "title": "Strict Operators",
+          "type": "boolean"
+        },
+        "extraction_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "highlights",
+                "full_page"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for snippets. Extraction may incur additional API charges.",
+          "title": "Extraction Mode",
+          "enum": [
+            "highlights",
+            "full_page"
+          ],
+          "x-enum-searchable": true
+        },
+        "extraction_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "blend",
+                "cache",
+                "fetch"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-page extraction only: cached and live, cache only, or always fetch.",
+          "title": "Extraction Source",
+          "enum": [
+            "blend",
+            "cache",
+            "fetch"
+          ],
+          "x-enum-searchable": true
+        },
+        "total_max_tokens": {
+          "anyOf": [
+            {
+              "maximum": 8192,
+              "minimum": 1024,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Highlights only: token budget shared across all results.",
+          "title": "Total Max Tokens"
+        },
+        "extraction_formats": {
+          "anyOf": [
+            {
+              "enum": [
+                "markdown",
+                "html",
+                "both"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-page extraction only; defaults to Markdown at the provider.",
+          "title": "Extraction Formats",
+          "enum": [
+            "markdown",
+            "html",
+            "both"
+          ],
+          "x-enum-searchable": true
+        },
+        "crawl_timeout": {
+          "anyOf": [
+            {
+              "maximum": 60,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum crawl wait in seconds; valid only for full-page extraction.",
+          "title": "Crawl Timeout"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "YousearchSearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/YousearchSearchConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YousearchAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Yousearch Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find recent news about a topic",
+    "Extract highlights from search results",
+    "Search within selected domains",
+    "Retrieve full pages as Markdown"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
