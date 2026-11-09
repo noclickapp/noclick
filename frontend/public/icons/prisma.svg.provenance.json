@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/prisma.svg",
+  "source": "https://raw.githubusercontent.com/prisma/presskit/main/Assets/logo-mark/logo-mark.svg",
+  "license": "Prisma brand mark, used nominatively under https://github.com/prisma/presskit guidelines; trademark rights remain with Prisma.",
+  "sha256": "55c618ce090b34530647a6760caaac3597b39f722034c9b0f9feb7e44a0debbb"
+}
