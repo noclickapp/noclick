@@ -1,0 +1,2719 @@
+{
+  "$defs": {
+    "ClubOSCreatePtBookingConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_pt_booking",
+          "default": "create_pt_booking",
+          "title": "Create PT Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Create PT Booking",
+          "x-is-trigger": false
+        },
+        "location_id": {
+          "description": "The Club OS ID for the location being queried",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "staff_id": {
+          "description": "The Club OS ID for the employee associated with the event",
+          "title": "Staff Id",
+          "type": "integer"
+        },
+        "customer_id": {
+          "description": "The Club OS ID for the customer",
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "The event start time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "duration": {
+          "description": "The duration of the member service in minutes",
+          "title": "Duration",
+          "type": "integer"
+        },
+        "service_id": {
+          "description": "The ID of the member service of the event",
+          "title": "Service Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "location_id",
+        "staff_id",
+        "customer_id",
+        "start_time",
+        "duration",
+        "service_id"
+      ],
+      "title": "ClubOSCreatePtBookingConfig",
+      "type": "object"
+    },
+    "ClubOSGetCustomerInventoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_customer_inventory",
+          "default": "get_customer_inventory",
+          "title": "Get Customer Inventory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Customer Inventory",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "description": "The Club OS ID for the customer being queried",
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "event_type_id": {
+          "description": "Include at least one Event Type ID for the available sessions; possible values are 2 (Personal Training), 3 (Group Class), 7 (Group Training), and 8 (Small Group Training)",
+          "title": "Event Type Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "event_type_id"
+      ],
+      "title": "ClubOSGetCustomerInventoryConfig",
+      "type": "object"
+    },
+    "ClubOSGetEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        },
+        "start_time_start_at": {
+          "description": "The start time of the event (in UTC). Is used to distinguish proxy repeat events from root events (which have the same eventId).",
+          "title": "Start Time Start At",
+          "type": "string"
+        },
+        "event_id": {
+          "description": "Club OS resource ID used in the URL.",
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_time_start_at",
+        "event_id"
+      ],
+      "title": "ClubOSGetEventConfig",
+      "type": "object"
+    },
+    "ClubOSGetKpisConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_kpis",
+          "default": "get_kpis",
+          "title": "Get KPIs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get KPIs",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The club OS ID of the club for which the query is being made",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "When retrieving KPI data within a given date range, this is the beginning of the range (formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "When retrieving KPI data within a given date range, this is the end of the range (formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "End Time",
+          "type": "string"
+        },
+        "group_by": {
+          "description": "The entity to group results by (location, user, or club). Inputting 'user' will group the results by employee.",
+          "title": "Group By",
+          "type": "string"
+        },
+        "kpis": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify which KPIs to return (the default is all)",
+          "title": "Kpis"
+        },
+        "location_ids": {
+          "description": "If retrieving data for more than one location, list them here; the format should be integers (comma separated) and the default is all locations in the club",
+          "title": "Location Ids",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "club_id",
+        "start_time",
+        "end_time",
+        "group_by",
+        "location_ids"
+      ],
+      "title": "ClubOSGetKpisConfig",
+      "type": "object"
+    },
+    "ClubOSListCreatedSalesEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_created_sales_events",
+          "default": "list_created_sales_events",
+          "title": "List Created Sales Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Created Sales Events",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The club OS ID of the club at which the sales event was created",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The Club OS ID of the location at which the sales event was created",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "created_at_start_at": {
+          "description": "When searching for sales events that were created in a given date range, this is the beginning of the date range (in UTC datetime, formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Created At Start At",
+          "type": "string"
+        },
+        "created_at_end_at": {
+          "description": "When searching for sales events that were created in a given date range, this is the end of the date range (in UTC datetime, formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Created At End At",
+          "type": "string"
+        },
+        "external_location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the location at which the event was created",
+          "title": "External Location Id"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location",
+          "title": "Location Name"
+        },
+        "external_event_owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the event owner",
+          "title": "External Event Owner Id"
+        },
+        "event_owner_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the event owner",
+          "title": "Event Owner First Name"
+        },
+        "event_owner_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the event owner",
+          "title": "Event Owner Last Name"
+        },
+        "external_attendee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the attendee",
+          "title": "External Attendee Id"
+        },
+        "attendee_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the attendee",
+          "title": "Attendee First Name"
+        },
+        "attendee_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the attendee",
+          "title": "Attendee Last Name"
+        },
+        "event_type_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the event type; possible values are Meeting, Personal Training, Group Class, Appointment, Orientation, Assessment, and Small Group Training",
+          "title": "Event Type Name"
+        },
+        "attendee_origin_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the attendee's origin type; possible values are Walk-In, TI, Web, Referral, Other, Outreach",
+          "title": "Attendee Origin Name"
+        },
+        "attendee_sales_event_status_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The attendee event status; possible values are ACTIVE, CONFIRMED, CANCELLED, CANCELLED_CHARGE, RESCHEDULED, NO_SHOW, NO_SHOW_CHARGE, COMPLETED",
+          "title": "Attendee Sales Event Status Name"
+        },
+        "attendee_outcome_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The attendee outcome status; possible values are 0 (No Outcome), 1 (Completed), or -1 (Incomplete)",
+          "title": "Attendee Outcome Status"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "created_at_start_at",
+        "created_at_end_at"
+      ],
+      "title": "ClubOSListCreatedSalesEventsConfig",
+      "type": "object"
+    },
+    "ClubOSListCustomerEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_customer_events",
+          "default": "list_customer_events",
+          "title": "List Customer Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Customer Events",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "description": "The Club OS ID for the customer",
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "start_time_start_at": {
+          "description": "When searching for events that begin within a given date range, this is the beginning of that range (in UTC)",
+          "title": "Start Time Start At",
+          "type": "string"
+        },
+        "start_time_end_at": {
+          "description": "When searching for events that begin within a given date range, this is the end of that range (in UTC)",
+          "title": "Start Time End At",
+          "type": "string"
+        },
+        "event_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include at least one Event Type ID for the available sessions; possible values are 2 (Personal Training), 3 (Group Class), 7 (Group Training), and 8 (Small Group Training)",
+          "title": "Event Type Id"
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicate whether you want deleted events included in the results; default is false",
+          "title": "Include Deleted"
+        }
+      },
+      "required": [
+        "customer_id",
+        "start_time_start_at",
+        "start_time_end_at"
+      ],
+      "title": "ClubOSListCustomerEventsConfig",
+      "type": "object"
+    },
+    "ClubOSListCustomerTrainersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_customer_trainers",
+          "default": "list_customer_trainers",
+          "title": "List Customer Trainers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Customer Trainers",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "description": "The Club OS ID for the customer being queried",
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ClubOSListCustomerTrainersConfig",
+      "type": "object"
+    },
+    "ClubOSListFollowupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_followups",
+          "default": "list_followups",
+          "title": "List Followups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Followups",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The club OS ID of the club for which the query is being made",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The Club OS ID of the location for which the query is being made",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "start_at": {
+          "description": "When retrieving follow-up events within a given date range, this is the beginning of the range (formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Start At",
+          "type": "string"
+        },
+        "end_at": {
+          "description": "When retrieving follow-up events within a given date range, this is the end of the range (formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "End At",
+          "type": "string"
+        },
+        "include_outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines whether to include information about followup outcomes in response",
+          "title": "Include Outcome"
+        },
+        "include_notes_and_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines whether to include information about followup notes and message body in response",
+          "title": "Include Notes And Message"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "start_at",
+        "end_at"
+      ],
+      "title": "ClubOSListFollowupsConfig",
+      "type": "object"
+    },
+    "ClubOSListLeadsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Leads",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The club OS ID of the club for which the query is being made",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The Club OS ID of the location for which the query is being made",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "start_at": {
+          "description": "When retrieving leads who were created within a given date range, this is the beginning of the range (formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Start At",
+          "type": "string"
+        },
+        "end_at": {
+          "description": "When retrieving leads who were created within a given date range, this is the end of the range (formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "End At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "start_at",
+        "end_at"
+      ],
+      "title": "ClubOSListLeadsConfig",
+      "type": "object"
+    },
+    "ClubOSListLocationEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_location_events",
+          "default": "list_location_events",
+          "title": "List Location Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Location Events",
+          "x-is-trigger": false
+        },
+        "location_id": {
+          "description": "The Club OS ID for the location being queried",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "start_time_start_at": {
+          "description": "When searching for events that begin within a given date range, this is the beginning of that range (in UTC)",
+          "title": "Start Time Start At",
+          "type": "string"
+        },
+        "start_time_end_at": {
+          "description": "When searching for events that begin within a given date range, this is the end of that range (in UTC)",
+          "title": "Start Time End At",
+          "type": "string"
+        },
+        "event_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include at least one Event Type ID for the available sessions; possible values are 2 (Personal Training), 3 (Group Class), 7 (Group Training), and 8 (Small Group Training)",
+          "title": "Event Type Id"
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicate whether you want deleted events included in the results; default is false",
+          "title": "Include Deleted"
+        }
+      },
+      "required": [
+        "location_id",
+        "start_time_start_at",
+        "start_time_end_at"
+      ],
+      "title": "ClubOSListLocationEventsConfig",
+      "type": "object"
+    },
+    "ClubOSListLocationTrainersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_location_trainers",
+          "default": "list_location_trainers",
+          "title": "List Location Trainers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Location Trainers",
+          "x-is-trigger": false
+        },
+        "location_id": {
+          "description": "The Club OS ID for the trainer's location",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicate whether you want deleted staff accounts included in the results; default is false",
+          "title": "Include Deleted"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "ClubOSListLocationTrainersConfig",
+      "type": "object"
+    },
+    "ClubOSListLocationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "List Locations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Locations",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ClubOSListLocationsConfig",
+      "type": "object"
+    },
+    "ClubOSListMembershipsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "List Memberships",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Memberships",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The club OS ID of the club at which the membership was sold",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The ID of the location at which the membership was sold",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "sale_date_start_at": {
+          "description": "When searching for membership agreements whose sale dates fall into a given date range, this is the beginning of the date range (expressed as a date in the current, logged-in user\u2019s local time and formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Sale Date Start At",
+          "type": "string"
+        },
+        "sale_date_end_at": {
+          "description": "When searching for membership agreements whose sale dates fall into a given date range, this is the end of the date range (expressed as a date in the current, logged-in user\u2019s local time and formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Sale Date End At",
+          "type": "string"
+        },
+        "external_location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the location at which the membership was sold",
+          "title": "External Location Id"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location",
+          "title": "Location Name"
+        },
+        "origin_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the user's origin type; possible values are Walk-In, TI, Web, Referral, Other, Outreach",
+          "title": "Origin Name"
+        },
+        "external_member_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the member",
+          "title": "External Member Id"
+        },
+        "member_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the member",
+          "title": "Member First Name"
+        },
+        "member_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the member",
+          "title": "Member Last Name"
+        },
+        "agreement_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status of the membership agreement; possible values are DRAFT (1), ACTIVE (2), PENDING_DOWNPAYMENT (3), COMPLETED (4), CANCELLED (5), INTEGRATING (6), AND DELETED_DRAFT (7)",
+          "title": "Agreement Status"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "sale_date_start_at",
+        "sale_date_end_at"
+      ],
+      "title": "ClubOSListMembershipsConfig",
+      "type": "object"
+    },
+    "ClubOSListOccurringSalesEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_occurring_sales_events",
+          "default": "list_occurring_sales_events",
+          "title": "List Occurring Sales Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Occurring Sales Events",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The ID of the club at which the sales event occurred",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The ID of the location at which the sales event occurred",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "occurring_at_start_at": {
+          "description": "When searching for sales events that occurred in a given date range, this is the beginning of the date range (in UTC datetime, formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Occurring At Start At",
+          "type": "string"
+        },
+        "occurring_at_end_at": {
+          "description": "When searching for sales events that occurred in a given date range, this is the end of the date range (in UTC datetime, formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Occurring At End At",
+          "type": "string"
+        },
+        "external_location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the location at which the event occurred",
+          "title": "External Location Id"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location where the event occurred",
+          "title": "Location Name"
+        },
+        "external_event_owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the event owner",
+          "title": "External Event Owner Id"
+        },
+        "event_owner_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the event owner",
+          "title": "Event Owner First Name"
+        },
+        "event_owner_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the event owner",
+          "title": "Event Owner Last Name"
+        },
+        "external_attendee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the attendee",
+          "title": "External Attendee Id"
+        },
+        "attendee_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the attendee",
+          "title": "Attendee First Name"
+        },
+        "attendee_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the attendee",
+          "title": "Attendee Last Name"
+        },
+        "event_type_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the event type; possible values are Meeting, Personal Training, Group Class, Appointment, Orientation, Assessment, and Small Group Training",
+          "title": "Event Type Name"
+        },
+        "attendee_origin_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the attendee's origin type; possible values are Walk-In, TI, Web, Referral, Other, Outreach",
+          "title": "Attendee Origin Name"
+        },
+        "attendee_sales_event_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The attendee event status; possible values are (A), (CF), (CN), (CC), ( R ), (NN), (NC), (CP)",
+          "title": "Attendee Sales Event Status"
+        },
+        "attendee_sales_event_status_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the attendee event status; possible values are ACTIVE, CONFIRMED, CANCELLED, CANCELLED_CHARGE, RESCHEDULED, NO_SHOW, NO_SHOW_CHARGE, COMPLETED",
+          "title": "Attendee Sales Event Status Name"
+        },
+        "attendee_outcome_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The attendee outcome status; possible values are 0 (No Outcome), 1 (Completed), or -1 (Incomplete)",
+          "title": "Attendee Outcome Status"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "occurring_at_start_at",
+        "occurring_at_end_at"
+      ],
+      "title": "ClubOSListOccurringSalesEventsConfig",
+      "type": "object"
+    },
+    "ClubOSListPtOpeningsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_pt_openings",
+          "default": "list_pt_openings",
+          "title": "List PT Openings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List PT Openings",
+          "x-is-trigger": false
+        },
+        "start_time_start_at": {
+          "description": "The earliest start time to get PT availability for",
+          "title": "Start Time Start At",
+          "type": "integer"
+        },
+        "start_time_end_at": {
+          "description": "The latest start time to get PT availability for",
+          "title": "Start Time End At",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Club OS resource ID used in the URL.",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "staff_id": {
+          "description": "Club OS resource ID used in the URL.",
+          "title": "Staff Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_time_start_at",
+        "start_time_end_at",
+        "location_id",
+        "staff_id"
+      ],
+      "title": "ClubOSListPtOpeningsConfig",
+      "type": "object"
+    },
+    "ClubOSListReferralsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_referrals",
+          "default": "list_referrals",
+          "title": "List Referrals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Referrals",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The ID of the club at which the referral was made",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The ID of the location at which the referral was made",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "referral_date_start_at": {
+          "description": "When searching for referrals that were made within a given date range, this is the beginning of the date range (in UTC datetime, formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Referral Date Start At",
+          "type": "string"
+        },
+        "referral_date_end_at": {
+          "description": "When searching for referrals that were made within a given date range, this is the end of the date range (in UTC datetime, formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Referral Date End At",
+          "type": "string"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location",
+          "title": "Location Name"
+        },
+        "employee_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the employee involved in the referral",
+          "title": "Employee First Name"
+        },
+        "employee_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the employee involved in the referral",
+          "title": "Employee Last Name"
+        },
+        "external_referring_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the member who made the referral",
+          "title": "External Referring User Id"
+        },
+        "referring_user_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The marketing source for the member who made the referral",
+          "title": "Referring User Source"
+        },
+        "referring_user_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the user who made the referral",
+          "title": "Referring User First Name"
+        },
+        "referring_user_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the user who made the referral",
+          "title": "Referring User Last Name"
+        },
+        "referring_user_origin_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the referring user's origin type",
+          "title": "Referring User Origin Name"
+        },
+        "external_referred_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the member who was referred",
+          "title": "External Referred User Id"
+        },
+        "referred_user_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The marketing source for the member who was referred",
+          "title": "Referred User Source"
+        },
+        "referred_user_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the member who was referred",
+          "title": "Referred User First Name"
+        },
+        "referred_user_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the member who was referred",
+          "title": "Referred User Last Name"
+        },
+        "referred_user_origin_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the origin type for the member who was referred",
+          "title": "Referred User Origin Name"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "referral_date_start_at",
+        "referral_date_end_at"
+      ],
+      "title": "ClubOSListReferralsConfig",
+      "type": "object"
+    },
+    "ClubOSListStaffEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_staff_events",
+          "default": "list_staff_events",
+          "title": "List Staff Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Staff Events",
+          "x-is-trigger": false
+        },
+        "staff_id": {
+          "description": "The Club OS ID for the staff person",
+          "title": "Staff Id",
+          "type": "integer"
+        },
+        "start_time_start_at": {
+          "description": "When searching for events that begin within a given date range, this is the beginning of that range (in UTC)",
+          "title": "Start Time Start At",
+          "type": "string"
+        },
+        "start_time_end_at": {
+          "description": "When searching for events that begin within a given date range, this is the end of that range (in UTC)",
+          "title": "Start Time End At",
+          "type": "string"
+        },
+        "event_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include at least one Event Type ID for the available sessions; possible values are 2 (Personal Training), 3 (Group Class), 7 (Group Training), and 8 (Small Group Training)",
+          "title": "Event Type Id"
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicate whether you want deleted events included in the results; default is false",
+          "title": "Include Deleted"
+        }
+      },
+      "required": [
+        "staff_id",
+        "start_time_start_at",
+        "start_time_end_at"
+      ],
+      "title": "ClubOSListStaffEventsConfig",
+      "type": "object"
+    },
+    "ClubOSListTrainingAgreementsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_training_agreements",
+          "default": "list_training_agreements",
+          "title": "List Training Agreements",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Training Agreements",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The ID of the club at which the agreement was sold",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The ID of the location at which the agreement was sold",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "sale_date_start_at": {
+          "description": "When searching for training agreements that were sold within a given date range, this is the beginning of the date range. Formatted as 2018-05-04T17:00:00.000Z; the date matches the local time zone and the time is always 00:00:00",
+          "title": "Sale Date Start At",
+          "type": "string"
+        },
+        "sale_date_end_at": {
+          "description": "When searching for training agreements that were sold within a given date range, this is the end of the date range. Formatted as 2018-05-04T17:00:00.000Z; the date matches the local time zone and the time is always 00:00:00",
+          "title": "Sale Date End At",
+          "type": "string"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location",
+          "title": "Location Name"
+        },
+        "external_location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the location at which the agreement was sold",
+          "title": "External Location Id"
+        },
+        "external_sales_person_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the person who sold the agreement",
+          "title": "External Sales Person Id"
+        },
+        "sales_person_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the person who sold the agreement",
+          "title": "Sales Person First Name"
+        },
+        "sales_person_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the person who sold the agreement",
+          "title": "Sales Person Last Name"
+        },
+        "member_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the person who bought the agreement",
+          "title": "Member First Name"
+        },
+        "member_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the person who bought the agreement",
+          "title": "Member Last Name"
+        },
+        "external_member_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the person who bought the agreement",
+          "title": "External Member Id"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "sale_date_start_at",
+        "sale_date_end_at"
+      ],
+      "title": "ClubOSListTrainingAgreementsConfig",
+      "type": "object"
+    },
+    "ClubOSListTrainingInvoicesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_training_invoices",
+          "default": "list_training_invoices",
+          "title": "List Training Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Training Invoices",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The ID of the club associated with the invoice",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The ID of the location associated with the invoice",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "invoice_date_start_at": {
+          "description": "When searching for invoices that are expected to be billed within a given date range, this is the beginning of the date range (expressed as a date in the current, logged-in user\u2019s local time and formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Invoice Date Start At",
+          "type": "string"
+        },
+        "invoice_date_end_at": {
+          "description": "When searching for invoices that are expected to be billed within a given date range, this is the end of the date range (expressed as a date in the current, logged-in user\u2019s local time and formatted as 2018-05-04T17:00:00.000Z)",
+          "title": "Invoice Date End At",
+          "type": "string"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location",
+          "title": "Location Name"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "invoice_date_start_at",
+        "invoice_date_end_at"
+      ],
+      "title": "ClubOSListTrainingInvoicesConfig",
+      "type": "object"
+    },
+    "ClubOSListTrainingPaymentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_training_payments",
+          "default": "list_training_payments",
+          "title": "List Training Payments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Training Payments",
+          "x-is-trigger": false
+        },
+        "club_id": {
+          "description": "The ID of the club associated with the payment",
+          "title": "Club Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The ID of the location associated with the payment",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "payment_attempt_date_start_at": {
+          "description": "When searching for training agreement payments that were made within a given date range, this is the beginning of the date range; it is based on origTransactionTime, expressed in UTC datetime, and formatted as 2018-05-04T17:00:00.000Z",
+          "title": "Payment Attempt Date Start At",
+          "type": "string"
+        },
+        "payment_attempt_date_end_at": {
+          "description": "When searching for training agreement payments that were made within a given date range, this is the end of the date range; it is based on origTransactionTime, expressed in UTC datetime, and formatted as 2018-05-04T17:00:00.000Z",
+          "title": "Payment Attempt Date End At",
+          "type": "string"
+        },
+        "external_location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billng partner's ID for the location",
+          "title": "External Location Id"
+        },
+        "location_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the location",
+          "title": "Location Name"
+        },
+        "invoice_status_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the invoice status",
+          "title": "Invoice Status Name"
+        },
+        "member_service_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Concatenated string wtih all the member services in the invoice",
+          "title": "Member Service Names"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email address of the person being billed",
+          "title": "Email"
+        },
+        "customer_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the person being billed",
+          "title": "Customer First Name"
+        },
+        "customer_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the person being billed",
+          "title": "Customer Last Name"
+        },
+        "time_zone_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The time zone for the person being billed",
+          "title": "Time Zone Id"
+        },
+        "customer_home_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The home phone number of the person being billed",
+          "title": "Customer Home Phone"
+        },
+        "customer_mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The mobile phone number of the person being billed",
+          "title": "Customer Mobile Phone"
+        },
+        "customer_work_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The work phone number of the person being billed",
+          "title": "Customer Work Phone"
+        },
+        "external_customer_location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the customer's location",
+          "title": "External Customer Location Id"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The formatted transaction ID received from the billing system; used to link notifications",
+          "title": "Transaction Id"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The error code received from the billing system",
+          "title": "Error Code"
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The error message received from the billing system",
+          "title": "Error Message"
+        },
+        "transaction_id_orig": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The transaction ID received from the billing system; used to link notifications",
+          "title": "Transaction Id Orig"
+        },
+        "payment_attempt_caller": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the payment attempt is ad-hoc or auto-billing",
+          "title": "Payment Attempt Caller"
+        },
+        "payment_attempt_raw_request": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The raw data for the payment attempt",
+          "title": "Payment Attempt Raw Request"
+        },
+        "salesperson_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the salesperson for the agreement against which the payment attempt is being made",
+          "title": "Salesperson First Name"
+        },
+        "salesperson_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the salesperson for the agreement against which the payment attempt is being made",
+          "title": "Salesperson Last Name"
+        },
+        "trainer_external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing partner's ID for the trainer",
+          "title": "Trainer External Id"
+        },
+        "trainer_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the trainer",
+          "title": "Trainer First Name"
+        },
+        "trainer_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the trainer",
+          "title": "Trainer Last Name"
+        },
+        "agreement_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the agreement against which the payment attempt is being made",
+          "title": "Agreement Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the agreement against which the payment attempt is being made",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id",
+        "payment_attempt_date_start_at",
+        "payment_attempt_date_end_at"
+      ],
+      "title": "ClubOSListTrainingPaymentsConfig",
+      "type": "object"
+    },
+    "ClubOSOnNewLeadConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "club_id": {
+          "description": "The Club OS ID of the club to monitor.",
+          "title": "Club ID",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The Club OS ID of the location to monitor.",
+          "title": "Location ID",
+          "type": "integer"
+        },
+        "lookback_hours": {
+          "default": 24,
+          "description": "Recheck this rolling creation-time window on every poll. The first poll establishes a baseline. Items outside this window are not monitored; choose a window longer than the schedule interval. The API documents no pagination.",
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Lookback hours",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "on_new_lead",
+          "default": "on_new_lead",
+          "title": "On New Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Lead",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id"
+      ],
+      "title": "ClubOSOnNewLeadConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ClubOSOnNewSalesEventConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "club_id": {
+          "description": "The Club OS ID of the club to monitor.",
+          "title": "Club ID",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "The Club OS ID of the location to monitor.",
+          "title": "Location ID",
+          "type": "integer"
+        },
+        "lookback_hours": {
+          "default": 24,
+          "description": "Recheck this rolling creation-time window on every poll. The first poll establishes a baseline. Items outside this window are not monitored; choose a window longer than the schedule interval. The API documents no pagination.",
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Lookback hours",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "on_new_sales_event",
+          "default": "on_new_sales_event",
+          "title": "On New Sales Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Sales Event",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "club_id",
+        "location_id"
+      ],
+      "title": "ClubOSOnNewSalesEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ClubOSTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "club_os_token",
+          "default": "club_os_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Club OS API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste the token returned by Club OS's authenticate endpoint using the API username and password supplied by Club OS. Tokens last 24 hours; replace the token here after it expires. Paste only the token, without an Authorization or Bearer prefix. NoClick verifies access by reading the locations this API user can access. The published v2 contract specifies HTTP, so requests send this token without transport encryption.",
+      "x-credential-url": "https://s3.amazonaws.com/clubos-docs/api/APIv2_Doc.yaml"
+    },
+    "ClubOSUpdateEventAttendeeConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_event_attendee",
+          "default": "update_event_attendee",
+          "title": "Update Event Attendee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Update Event Attendee",
+          "x-is-trigger": false
+        },
+        "customer_id": {
+          "description": "The Club OS ID for the customer",
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "series_start_time": {
+          "description": "The start time of the event. This field is used to distinguish proxy repeat events from root events.",
+          "title": "Series Start Time",
+          "type": "string"
+        },
+        "attendee_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "CONFIRM",
+                "CANCEL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Can be empty (which is interpreted as CONFIRM), 'CONFIRM', or'CANCEL'",
+          "title": "Attendee Status",
+          "enum": [
+            "CONFIRM",
+            "CANCEL"
+          ],
+          "x-enum-searchable": true
+        },
+        "location_id": {
+          "description": "Club OS resource ID used in the URL.",
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "event_id": {
+          "description": "Club OS resource ID used in the URL.",
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id",
+        "series_start_time",
+        "location_id",
+        "event_id"
+      ],
+      "title": "ClubOSUpdateEventAttendeeConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_pt_booking": "#/$defs/ClubOSCreatePtBookingConfig",
+          "get_customer_inventory": "#/$defs/ClubOSGetCustomerInventoryConfig",
+          "get_event": "#/$defs/ClubOSGetEventConfig",
+          "get_kpis": "#/$defs/ClubOSGetKpisConfig",
+          "list_created_sales_events": "#/$defs/ClubOSListCreatedSalesEventsConfig",
+          "list_customer_events": "#/$defs/ClubOSListCustomerEventsConfig",
+          "list_customer_trainers": "#/$defs/ClubOSListCustomerTrainersConfig",
+          "list_followups": "#/$defs/ClubOSListFollowupsConfig",
+          "list_leads": "#/$defs/ClubOSListLeadsConfig",
+          "list_location_events": "#/$defs/ClubOSListLocationEventsConfig",
+          "list_location_trainers": "#/$defs/ClubOSListLocationTrainersConfig",
+          "list_locations": "#/$defs/ClubOSListLocationsConfig",
+          "list_memberships": "#/$defs/ClubOSListMembershipsConfig",
+          "list_occurring_sales_events": "#/$defs/ClubOSListOccurringSalesEventsConfig",
+          "list_pt_openings": "#/$defs/ClubOSListPtOpeningsConfig",
+          "list_referrals": "#/$defs/ClubOSListReferralsConfig",
+          "list_staff_events": "#/$defs/ClubOSListStaffEventsConfig",
+          "list_training_agreements": "#/$defs/ClubOSListTrainingAgreementsConfig",
+          "list_training_invoices": "#/$defs/ClubOSListTrainingInvoicesConfig",
+          "list_training_payments": "#/$defs/ClubOSListTrainingPaymentsConfig",
+          "on_new_lead": "#/$defs/ClubOSOnNewLeadConfig",
+          "on_new_sales_event": "#/$defs/ClubOSOnNewSalesEventConfig",
+          "update_event_attendee": "#/$defs/ClubOSUpdateEventAttendeeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClubOSListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListFollowupsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSGetKpisConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListMembershipsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListCreatedSalesEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListOccurringSalesEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListReferralsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListTrainingAgreementsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListTrainingInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListTrainingPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListLocationTrainersConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListCustomerTrainersConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSGetCustomerInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListLocationEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListStaffEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListCustomerEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSListPtOpeningsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSCreatePtBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSUpdateEventAttendeeConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSOnNewLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/ClubOSOnNewSalesEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClubOSTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Club-os Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Watch for new Club OS leads",
+    "List Club OS training agreements",
+    "Book a personal training session",
+    "Cancel a customer's event attendance"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

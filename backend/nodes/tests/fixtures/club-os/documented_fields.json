@@ -1,0 +1,69 @@
+{
+  "source": {
+    "reports": "https://s3.amazonaws.com/clubos-docs/api/APIv2_Doc.yaml",
+    "calendar": "https://s3.amazonaws.com/clubos-docs/api/cal/Calendar.yaml"
+  },
+  "lead": {
+    "totalNumberOfResults": "72",
+    "clubId": "123",
+    "locationId": "2870",
+    "externalLocationId": "10361-Phu2abc",
+    "locationName": "Chicago Wicker Park",
+    "customerId": "129934079",
+    "externalCustomerId": "10361-Phu2abc",
+    "customerFirstName": "Richard",
+    "customerLastName": "Richardson",
+    "email": "lead@prospect.com",
+    "mobilePhone": "(123) 456-7890",
+    "homePhone": "(123) 456-7890",
+    "workPhone": "(123) 456-7890",
+    "timeZoneId": "America/Los_Angeles",
+    "employeeId": "129934079",
+    "externalEmployeeId": "100000456",
+    "employeeFirstName": "Andres",
+    "employeeLastName": "Frye",
+    "originName": "Referral",
+    "originId": "4",
+    "source": "Flyer",
+    "createdAt": "2017-05-17 19:22:11",
+    "followupAction": "2",
+    "deletedAt": "2017-05-17 19:22:11"
+  },
+  "sales_event": {
+    "createdAt": "2017-05-17 19:22:11",
+    "clubId": "2870",
+    "locationId": "2870",
+    "externalLocationId": "10361-Phu2abc",
+    "locationName": "Chicago Wicker Park",
+    "eventOwnerId": "129934079",
+    "externalEventOwnerId": "914412",
+    "eventOwnerFirstName": "Maggie",
+    "eventOwnerLastName": "Simpson",
+    "eventId": "53635",
+    "attendeeId": "129934079",
+    "externalAttendeeId": "914412",
+    "attendeeFirstName": "Waylon",
+    "attendeeLastName": "Smithers",
+    "eventTypeName": "Appointment",
+    "eventTypeId": "2",
+    "walkIn": "true",
+    "attendeeVisitNumber": "2",
+    "attendeeOriginId": "1",
+    "attendeeOriginName": "Referral",
+    "attendeeSource": "Flyer",
+    "attendeeSalesEventStatus": "CF",
+    "attendeeSalesEventStatusName": "RESCHEDULED",
+    "attendeeOutcomeStatus": "1"
+  },
+  "location": {
+    "id": "2870",
+    "externalId": "2006503B",
+    "name": "Chicago Wicker Park"
+  },
+  "booking_body": {
+    "customerId": "133165588",
+    "startTime": "2016-08-01T17:00:00.000Z",
+    "duration": 60,
+    "serviceId": 1234
+  }
+}
