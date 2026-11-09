@@ -1,0 +1,1318 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SmallImprovementsArchiveObjectiveCycleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "archive_objective_cycle",
+          "default": "archive_objective_cycle",
+          "title": "Archive Objective Cycle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Archive Objective Cycle",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cycle_id"
+      ],
+      "title": "SmallImprovementsArchiveObjectiveCycleConfig",
+      "type": "object"
+    },
+    "SmallImprovementsDeleteObjectiveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_objective",
+          "default": "delete_objective",
+          "title": "Delete Objective",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Objective",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        },
+        "objective_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Objective Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cycle_id",
+        "objective_id"
+      ],
+      "title": "SmallImprovementsDeleteObjectiveConfig",
+      "type": "object"
+    },
+    "SmallImprovementsDeletePraiseCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_praise_comment",
+          "default": "delete_praise_comment",
+          "title": "Delete Praise Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Praise Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "praise_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Praise Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id",
+        "praise_id"
+      ],
+      "title": "SmallImprovementsDeletePraiseCommentConfig",
+      "type": "object"
+    },
+    "SmallImprovementsDeletePraiseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_praise",
+          "default": "delete_praise",
+          "title": "Delete Praise",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Praise",
+          "x-is-trigger": false
+        },
+        "praise_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Praise Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "praise_id"
+      ],
+      "title": "SmallImprovementsDeletePraiseConfig",
+      "type": "object"
+    },
+    "SmallImprovementsGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SmallImprovementsGetCurrentUserConfig",
+      "type": "object"
+    },
+    "SmallImprovementsGetObjectiveConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_objective",
+          "default": "get_objective",
+          "title": "Get Objective",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Objective",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        },
+        "objective_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Objective Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cycle_id",
+        "objective_id"
+      ],
+      "title": "SmallImprovementsGetObjectiveConfig",
+      "type": "object"
+    },
+    "SmallImprovementsGetObjectiveCycleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_objective_cycle",
+          "default": "get_objective_cycle",
+          "title": "Get Objective Cycle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Objective Cycle",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cycle_id"
+      ],
+      "title": "SmallImprovementsGetObjectiveCycleConfig",
+      "type": "object"
+    },
+    "SmallImprovementsGetPraiseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_praise",
+          "default": "get_praise",
+          "title": "Get Praise",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Praise",
+          "x-is-trigger": false
+        },
+        "praise_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Praise Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "praise_id"
+      ],
+      "title": "SmallImprovementsGetPraiseConfig",
+      "type": "object"
+    },
+    "SmallImprovementsGetUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SmallImprovementsGetUserConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListObjectiveCyclesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_objective_cycles",
+          "default": "list_objective_cycles",
+          "title": "List Objective Cycles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Objective Cycles",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SmallImprovementsListObjectiveCyclesConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListObjectivesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_objectives",
+          "default": "list_objectives",
+          "title": "List Objectives",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Objectives",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        }
+      },
+      "required": [
+        "cycle_id"
+      ],
+      "title": "SmallImprovementsListObjectivesConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListPraiseCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_praise_comments",
+          "default": "list_praise_comments",
+          "title": "List Praise Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Praise Comments",
+          "x-is-trigger": false
+        },
+        "praise_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Praise Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "praise_id"
+      ],
+      "title": "SmallImprovementsListPraiseCommentsConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListPraiseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_praise",
+          "default": "list_praise",
+          "title": "List Praise",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Praise",
+          "x-is-trigger": false
+        },
+        "author_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author Id"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "End Date"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "recipient_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Id"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Start Date"
+        }
+      },
+      "title": "SmallImprovementsListPraiseConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListReviewCyclesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_review_cycles",
+          "default": "list_review_cycles",
+          "title": "List Review Cycles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Review Cycles",
+          "x-is-trigger": false
+        },
+        "only_manageable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Manageable"
+        }
+      },
+      "title": "SmallImprovementsListReviewCyclesConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListReviewsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_reviews",
+          "default": "list_reviews",
+          "title": "List Reviews",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Reviews",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        },
+        "manager_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manager Id"
+        }
+      },
+      "required": [
+        "cycle_id"
+      ],
+      "title": "SmallImprovementsListReviewsConfig",
+      "type": "object"
+    },
+    "SmallImprovementsListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "include_guests": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Guests"
+        },
+        "manager_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manager Id"
+        },
+        "show_locked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Show Locked"
+        }
+      },
+      "title": "SmallImprovementsListUsersConfig",
+      "type": "object"
+    },
+    "SmallImprovementsLockUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "lock_users",
+          "default": "lock_users",
+          "title": "Lock Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Lock Users",
+          "x-is-trigger": false
+        },
+        "user_ids": {
+          "description": "Employee IDs to lock or unlock.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Ids",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "user_ids"
+      ],
+      "title": "SmallImprovementsLockUsersConfig",
+      "type": "object"
+    },
+    "SmallImprovementsOnNewOrChangedPraise": {
+      "description": "Compare complete praise records, without assuming undocumented DTO fields.\n\nPolls the date window in full. A record emits once per distinct JSON value;\nreverting to an already seen value does not emit again. No hard deletes.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_changed_praise",
+          "default": "on_new_or_changed_praise",
+          "title": "On New or Changed Praise",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On New or Changed Praise",
+          "x-is-trigger": true
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO 8601 startDate for the monitored window, with timezone.",
+          "format": "date-time",
+          "title": "Start Date"
+        },
+        "author_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author Id"
+        },
+        "recipient_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Id"
+        }
+      },
+      "title": "SmallImprovementsOnNewOrChangedPraise",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "SmallImprovementsPersonalAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "small_improvements_personal_access_token",
+          "default": "small_improvements_personal_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "data_center": {
+          "default": "app",
+          "description": "Choose app for the US data center or eu for the EU data center.",
+          "enum": [
+            "app",
+            "eu"
+          ],
+          "title": "Data center",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Small Improvements Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Ask Small Improvements to enable API access for your company. Then open Profile \u2192 Manage \u2192 API Access Tokens and create a token. Paste it here and select your company's data center. The token has the permissions of its employee account.",
+      "x-credential-url": "https://resources.small-improvements.com/knowledge-base/small-improvements-rest-api/"
+    },
+    "SmallImprovementsSearchUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_users",
+          "default": "search_users",
+          "title": "Search Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Users",
+          "x-is-trigger": false
+        },
+        "email": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SmallImprovementsSearchUsersConfig",
+      "type": "object"
+    },
+    "SmallImprovementsSetManagerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_manager",
+          "default": "set_manager",
+          "title": "Set Manager",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set Manager",
+          "x-is-trigger": false
+        },
+        "manager_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Manager Id",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "manager_id",
+        "user_id"
+      ],
+      "title": "SmallImprovementsSetManagerConfig",
+      "type": "object"
+    },
+    "SmallImprovementsSetObjectiveCompletionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_objective_completion",
+          "default": "set_objective_completion",
+          "title": "Set Objective Completion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set Objective Completion",
+          "x-is-trigger": false
+        },
+        "completion_percentage": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Completion Percentage",
+          "type": "integer"
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        },
+        "objective_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Objective Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "completion_percentage",
+        "cycle_id",
+        "objective_id"
+      ],
+      "title": "SmallImprovementsSetObjectiveCompletionConfig",
+      "type": "object"
+    },
+    "SmallImprovementsSetSecondaryReviewerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_secondary_reviewer",
+          "default": "set_secondary_reviewer",
+          "title": "Set Secondary Reviewer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set Secondary Reviewer",
+          "x-is-trigger": false
+        },
+        "reviewer_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewer_id",
+        "user_id"
+      ],
+      "title": "SmallImprovementsSetSecondaryReviewerConfig",
+      "type": "object"
+    },
+    "SmallImprovementsUnarchiveObjectiveCycleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "unarchive_objective_cycle",
+          "default": "unarchive_objective_cycle",
+          "title": "Unarchive Objective Cycle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Unarchive Objective Cycle",
+          "x-is-trigger": false
+        },
+        "cycle_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Cycle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cycle_id"
+      ],
+      "title": "SmallImprovementsUnarchiveObjectiveCycleConfig",
+      "type": "object"
+    },
+    "SmallImprovementsUnlockUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "unlock_users",
+          "default": "unlock_users",
+          "title": "Unlock Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Unlock Users",
+          "x-is-trigger": false
+        },
+        "user_ids": {
+          "description": "Employee IDs to lock or unlock.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Ids",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "user_ids"
+      ],
+      "title": "SmallImprovementsUnlockUsersConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_objective_cycle": "#/$defs/SmallImprovementsArchiveObjectiveCycleConfig",
+          "delete_objective": "#/$defs/SmallImprovementsDeleteObjectiveConfig",
+          "delete_praise": "#/$defs/SmallImprovementsDeletePraiseConfig",
+          "delete_praise_comment": "#/$defs/SmallImprovementsDeletePraiseCommentConfig",
+          "get_current_user": "#/$defs/SmallImprovementsGetCurrentUserConfig",
+          "get_objective": "#/$defs/SmallImprovementsGetObjectiveConfig",
+          "get_objective_cycle": "#/$defs/SmallImprovementsGetObjectiveCycleConfig",
+          "get_praise": "#/$defs/SmallImprovementsGetPraiseConfig",
+          "get_user": "#/$defs/SmallImprovementsGetUserConfig",
+          "list_objective_cycles": "#/$defs/SmallImprovementsListObjectiveCyclesConfig",
+          "list_objectives": "#/$defs/SmallImprovementsListObjectivesConfig",
+          "list_praise": "#/$defs/SmallImprovementsListPraiseConfig",
+          "list_praise_comments": "#/$defs/SmallImprovementsListPraiseCommentsConfig",
+          "list_review_cycles": "#/$defs/SmallImprovementsListReviewCyclesConfig",
+          "list_reviews": "#/$defs/SmallImprovementsListReviewsConfig",
+          "list_users": "#/$defs/SmallImprovementsListUsersConfig",
+          "lock_users": "#/$defs/SmallImprovementsLockUsersConfig",
+          "on_new_or_changed_praise": "#/$defs/SmallImprovementsOnNewOrChangedPraise",
+          "search_users": "#/$defs/SmallImprovementsSearchUsersConfig",
+          "set_manager": "#/$defs/SmallImprovementsSetManagerConfig",
+          "set_objective_completion": "#/$defs/SmallImprovementsSetObjectiveCompletionConfig",
+          "set_secondary_reviewer": "#/$defs/SmallImprovementsSetSecondaryReviewerConfig",
+          "unarchive_objective_cycle": "#/$defs/SmallImprovementsUnarchiveObjectiveCycleConfig",
+          "unlock_users": "#/$defs/SmallImprovementsUnlockUsersConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SmallImprovementsGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsSearchUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsSetManagerConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsSetSecondaryReviewerConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsLockUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsUnlockUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListPraiseConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsGetPraiseConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsDeletePraiseConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListPraiseCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsDeletePraiseCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListObjectiveCyclesConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsGetObjectiveCycleConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListObjectivesConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsGetObjectiveConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsSetObjectiveCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsDeleteObjectiveConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsArchiveObjectiveCycleConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsUnarchiveObjectiveCycleConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListReviewCyclesConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsListReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmallImprovementsOnNewOrChangedPraise"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SmallImprovementsPersonalAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Small-improvements Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
