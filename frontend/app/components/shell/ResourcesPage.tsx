@@ -359,6 +359,8 @@ export function ResourcesView() {
     if (activeKind) {
         const kind = kindDef(activeKind);
         const error = errors[activeKind];
+        // Made here, over its list (a skill, a memory, a computer of yours): it opens once it's made.
+        const Create = params.get('new') === '1' ? platform?.Create?.[activeKind] : undefined;
         return (
             <PageFrame
                 title={kind.label}
@@ -394,6 +396,7 @@ export function ResourcesView() {
                 {!loading && platform?.trash[activeKind]?.length ? (
                     <TrashSection entries={platform.trash[activeKind]!} now={now} onRestore={platform.restore} onPurge={platform.purge} />
                 ) : null}
+                {Create && <Create onDone={(id) => go(activeKind, id)} />}
             </PageFrame>
         );
     }

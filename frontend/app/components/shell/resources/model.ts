@@ -31,6 +31,8 @@ export interface PlatformDetail {
     url?: string;
     /** An app NoClick publishes from an automation's interface: taken down by unpublishing it. */
     unpublish?: boolean;
+    /** Its body draws who uses it (with what each may do), so the page doesn't list them twice. */
+    usersInBody?: boolean;
 }
 
 /** What uses a platform resource: an app that binds it (as `binding`), or an agent with it in its tools. */
@@ -104,7 +106,7 @@ export function useResourceItems() {
     const platform = usePlatformResources();
 
     const items = useMemo(() => {
-        const byKind: Record<KindId, ResourceItem[]> = { numbers: [], domains: [], email: [], apps: [], databases: [], storage: [], repos: [], files: [] };
+        const byKind: Record<KindId, ResourceItem[]> = { numbers: [], domains: [], email: [], apps: [], databases: [], storage: [], skills: [], memories: [], machines: [], repos: [], files: [] };
         for (const c of overview?.credentials ?? []) {
             if (c.credentialType !== 'phone_number') continue;
             const dropped = c.health === 'disconnected' || c.health === 'revoked';

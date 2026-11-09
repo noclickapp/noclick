@@ -480,8 +480,10 @@ export function ResourceDetail({
         const p = item.platform;
         const removal = platform?.removal(item) ?? null;
         facts = p.facts;
+        const Actions = platform?.Actions;
         actions = (
             <>
+                {Actions && <Actions item={item} />}
                 {p.unpublish && <ConfirmAction label="Unpublish" confirm="Take it down" icon={Trash2} onConfirm={unpublish} />}
                 {removal && !removing && (
                     <button type="button" className={cn(BUTTON_SECONDARY, 'hover:text-red-600 dark:hover:text-red-400')} onClick={() => setRemoving(removal)}>
@@ -577,7 +579,7 @@ export function ResourceDetail({
                 )}
 
                 {(facts.length > 0 || cost) && <Facts rows={cost ? [...facts, ['Cost', cost]] : facts} />}
-                <UsedBy item={item} />
+                {!item.platform?.usersInBody && <UsedBy item={item} />}
                 <InnerBackContext.Provider value={setInner}>{body}</InnerBackContext.Provider>
             </div>
         </div>

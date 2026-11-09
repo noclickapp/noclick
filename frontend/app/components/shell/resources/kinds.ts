@@ -2,9 +2,9 @@
 // Kept apart from the model so the sidebar can list them without loading it.
 // An automation's published interface is one of its apps, and an automation's
 // tables are a database: there is one kind of each.
-import { AppWindow, Database, FileText, FolderGit2, Globe, HardDrive, Mail, Phone, type LucideIcon } from 'lucide-react';
+import { AppWindow, BookOpen, Brain, Database, FileText, FolderGit2, Globe, HardDrive, Mail, Phone, Server, type LucideIcon } from 'lucide-react';
 
-export type KindId = 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'repos' | 'files';
+export type KindId = 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'skills' | 'memories' | 'machines' | 'repos' | 'files';
 
 export interface KindDef {
     id: KindId;
@@ -95,6 +95,37 @@ export const KINDS: KindDef[] = [
         billed: 'use',
         platform: true,
         keywords: 'bucket buckets uploads s3 blobs object storage',
+    },
+    {
+        id: 'skills',
+        label: 'Skills',
+        icon: BookOpen,
+        empty: 'Ways of working any agent can follow: a SKILL.md and the scripts it uses. Each harness loads them its own way.',
+        noun: ['skill', 'skills'],
+        platform: true,
+        keywords: 'skill skills skill.md instructions playbooks how-to ways of working',
+        manual: { label: 'New skill', short: 'New', bought: false },
+    },
+    {
+        id: 'memories',
+        label: 'Memories',
+        icon: Brain,
+        empty: 'Notes agents read every turn and, where you let them, add to as they learn. One memory can be shared by many agents.',
+        noun: ['memory', 'memories'],
+        platform: true,
+        keywords: 'memory memories notes knowledge remember learned',
+        manual: { label: 'New memory', short: 'New', bought: false },
+    },
+    {
+        id: 'machines',
+        label: 'Machines',
+        icon: Server,
+        empty: 'Where your agents run: a machine kept on, the sandboxes up now, and computers of yours that run them.',
+        noun: ['machine', 'machines'],
+        billed: 'item',
+        platform: true,
+        keywords: 'machine machines sandbox sandboxes compute computer computers server servers vm laptop',
+        manual: { label: 'Add your computer', short: 'Add', bought: false },
     },
     {
         id: 'repos',

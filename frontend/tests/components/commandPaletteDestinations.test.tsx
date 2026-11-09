@@ -59,11 +59,11 @@ describe('every place the app has', () => {
     it('lists each resource kind the instance has, and the page for getting one where one can be got by hand', () => {
         const all = appDestinations(shell());
         for (const kind of KINDS) expect(ids(all)).toContain(`nav:resources:${kind.id}`);
-        expect(all.filter((e) => e.id.endsWith(':new')).map((e) => e.label)).toEqual(['Buy a number', 'Buy a domain', 'New address']);
+        expect(all.filter((e) => e.id.endsWith(':new')).map((e) => e.label)).toEqual(['Buy a number', 'Buy a domain', 'New address', 'New skill', 'New memory', 'Add your computer']);
 
-        // Nothing bought without billing; an address is made, not bought.
+        // Nothing bought without billing; an address, a skill, a memory and a computer of yours are made, not bought.
         const unbilled = appDestinations(shell({ billing: false }));
-        expect(unbilled.filter((e) => e.id.endsWith(':new')).map((e) => e.label)).toEqual(['New address']);
+        expect(unbilled.filter((e) => e.id.endsWith(':new')).map((e) => e.label)).toEqual(['New address', 'New skill', 'New memory', 'Add your computer']);
 
         // Without the platform, only its kinds go.
         const local = appDestinations(shell({ kinds: visibleKinds({ platform: false }) }));

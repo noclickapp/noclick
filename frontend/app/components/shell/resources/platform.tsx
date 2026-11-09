@@ -77,6 +77,10 @@ export interface PlatformResources {
     createAddress(localPart: string, domain: string | null): Promise<string>;
     /** A platform item's body on its page: a domain's records, an address's mail, a repo's files, a database's tables, an app's deployments. */
     Body: ComponentType<{ item: ResourceItem; now: string }>;
+    /** A platform item's own actions in its page's header, beside the removal (a skill's Attach to and ⋯). */
+    Actions?: ComponentType<{ item: ResourceItem }>;
+    /** Making one of a kind here (?kind=&new=1, over its list): `onDone` takes the new item's id, or null when it was left. */
+    Create?: Partial<Record<KindId, ComponentType<{ onDone: (id: string | null) => void }>>>;
     /** A live figure a platform item's row shows beside its price (a website's requests this week), or nothing. */
     RowFigure?: ComponentType<{ item: ResourceItem }>;
     /** How `item`'s page removes it, or null where it offers nothing. */
