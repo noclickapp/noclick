@@ -1,0 +1,932 @@
+{
+  "$defs": {
+    "Digistore24APIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "digistore24_api_key",
+          "default": "digistore24_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Digistore24 API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Digistore24 API key from Settings > Account access > API keys. The key needs permission for the operations you use. NoClick sends it in the X-DS-API-KEY header only to www.digistore24.com. Connecting reads the API key owner's user information; this does not prove write permissions.",
+      "x-credential-url": "https://help.digistore24.com/hc/en-us/articles/23658595845009-Create-API-key"
+    },
+    "Digistore24CreateVoucherConfig": {
+      "additionalProperties": false,
+      "description": "Create a discount voucher.",
+      "properties": {
+        "operation": {
+          "const": "create_voucher",
+          "default": "create_voucher",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "code": {
+          "description": "The voucher code",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": "all",
+          "description": "Comma-separated list of product IDs this voucher applies to",
+          "maxLength": 4096,
+          "title": "Product Ids",
+          "type": "string"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point in time from when the code becomes valid (e.g. 2017-12-31 12:00:00)",
+          "title": "Valid From"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point in time when the code becomes invalid",
+          "title": "Expires At"
+        },
+        "first_rate": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Discount percentage on first payment (subscriptions/installments) or single payment",
+          "title": "First Rate"
+        },
+        "other_rates": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Discount percentage on follow-up payments (subscriptions/installments)",
+          "title": "Other Rates"
+        },
+        "first_amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fixed discount amount on first/single payment",
+          "title": "First Amount"
+        },
+        "other_amounts": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fixed discount amount on follow-up payments",
+          "title": "Other Amounts"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Currency code for the fixed discount amounts",
+          "title": "Currency"
+        },
+        "is_count_limited": {
+          "default": false,
+          "description": "Whether the number of uses is limited",
+          "title": "Is Count Limited",
+          "type": "boolean"
+        },
+        "count_left": {
+          "default": 1,
+          "description": "Number of remaining uses if is_count_limited is true",
+          "minimum": 0,
+          "title": "Count Left",
+          "type": "integer"
+        },
+        "upgrade_policy": {
+          "default": "valid",
+          "description": "How the code is used for upgrades:\n* valid - voucher fully usable\n* other_only - only discount on follow-up installments\n* not_valid - voucher not usable\n",
+          "enum": [
+            "valid",
+            "other_only",
+            "not_valid"
+          ],
+          "title": "Upgrade Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Digistore24CreateVoucherConfig",
+      "type": "object"
+    },
+    "Digistore24DeleteVoucherConfig": {
+      "additionalProperties": false,
+      "description": "Delete a voucher.",
+      "properties": {
+        "operation": {
+          "const": "delete_voucher",
+          "default": "delete_voucher",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "code": {
+          "description": "The voucher code or voucher ID to delete",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Digistore24DeleteVoucherConfig",
+      "type": "object"
+    },
+    "Digistore24GetBuyerConfig": {
+      "additionalProperties": false,
+      "description": "Get buyer details.",
+      "properties": {
+        "operation": {
+          "const": "get_buyer",
+          "default": "get_buyer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "buyer_id": {
+          "description": "ID of the buyer to retrieve",
+          "minimum": 1,
+          "title": "Buyer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "buyer_id"
+      ],
+      "title": "Digistore24GetBuyerConfig",
+      "type": "object"
+    },
+    "Digistore24GetProductConfig": {
+      "additionalProperties": false,
+      "description": "Get product details.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_id": {
+          "description": "Numeric ID of the product to retrieve",
+          "minimum": 1,
+          "title": "Product Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "Digistore24GetProductConfig",
+      "type": "object"
+    },
+    "Digistore24GetPurchaseConfig": {
+      "additionalProperties": false,
+      "description": "Get purchase details.",
+      "properties": {
+        "operation": {
+          "const": "get_purchase",
+          "default": "get_purchase",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "purchase_id": {
+          "description": "Single Digistore24 order ID or comma-separated list of order IDs",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Purchase Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purchase_id"
+      ],
+      "title": "Digistore24GetPurchaseConfig",
+      "type": "object"
+    },
+    "Digistore24GetUserInfoConfig": {
+      "additionalProperties": false,
+      "description": "Get current user information.",
+      "properties": {
+        "operation": {
+          "const": "get_user_info",
+          "default": "get_user_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "Digistore24GetUserInfoConfig",
+      "type": "object"
+    },
+    "Digistore24GetVoucherConfig": {
+      "additionalProperties": false,
+      "description": "Get voucher details.",
+      "properties": {
+        "operation": {
+          "const": "get_voucher",
+          "default": "get_voucher",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "code": {
+          "description": "The voucher code that the buyer enters on the order form",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Digistore24GetVoucherConfig",
+      "type": "object"
+    },
+    "Digistore24ListBuyersConfig": {
+      "additionalProperties": false,
+      "description": "List buyers.",
+      "properties": {
+        "operation": {
+          "const": "list_buyers",
+          "default": "list_buyers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_no": {
+          "default": 1,
+          "description": "Page number for pagination (starts at 1)",
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Number of buyers per page",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "Digistore24ListBuyersConfig",
+      "type": "object"
+    },
+    "Digistore24ListProductsConfig": {
+      "additionalProperties": false,
+      "description": "List products.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "default": "name",
+          "description": "Sort products by name or product group",
+          "enum": [
+            "name",
+            "group"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "merchant_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Read the products of another account. Only permitted for API keys with cross-account read access (classes `network` and `network_ai`). Defaults to the account owning the API key.\n",
+          "title": "Merchant Id"
+        }
+      },
+      "title": "Digistore24ListProductsConfig",
+      "type": "object"
+    },
+    "Digistore24ListPurchasesConfig": {
+      "additionalProperties": false,
+      "description": "List purchases.",
+      "properties": {
+        "operation": {
+          "const": "list_purchases",
+          "default": "list_purchases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from": {
+          "default": "-24h",
+          "description": "Start time for purchase list (e.g. \"2014-02-28 23:11:24\", \"now\", \"-3d\", \"start\")",
+          "maxLength": 4096,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "default": "now",
+          "description": "End time for purchase list",
+          "maxLength": 4096,
+          "title": "To",
+          "type": "string"
+        },
+        "sort_by": {
+          "default": "date",
+          "description": "Sort criteria",
+          "enum": [
+            "date",
+            "earning",
+            "amount"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "asc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "load_transactions": {
+          "default": false,
+          "description": "Include transaction list for each purchase",
+          "title": "Load Transactions",
+          "type": "boolean"
+        },
+        "page_no": {
+          "default": 1,
+          "description": "Page number (starts at 1)",
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 500,
+          "description": "Number of items per page",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "merchant_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List the purchases of another account. Only permitted for API keys with cross-account read access (class `network`). Defaults to the account owning the API key.\n",
+          "title": "Merchant Id"
+        }
+      },
+      "title": "Digistore24ListPurchasesConfig",
+      "type": "object"
+    },
+    "Digistore24ListTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "List transactions (payments, returns, chargebacks).",
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from": {
+          "default": "-24h",
+          "description": "Point of time to filter transaction creation date from. Examples:\n- \"2014-02-28 23:11:24\"\n- \"2021-10-08T07:20:11-05:00\" (ISO 8601)\n- \"now\" for current time\n- \"-3d\" for 3 days ago\n- \"start\" for first available date\n",
+          "maxLength": 4096,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "default": "now",
+          "description": "Point of time to filter transaction creation date to",
+          "maxLength": 4096,
+          "title": "To",
+          "type": "string"
+        },
+        "sort_by": {
+          "default": "date",
+          "description": "Field to sort results by",
+          "enum": [
+            "date",
+            "earning",
+            "amount"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "asc",
+          "description": "Sort direction",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "page_no": {
+          "default": 1,
+          "description": "Page number (starts at 1)",
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 500,
+          "description": "Number of entries per page",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "Digistore24ListTransactionsConfig",
+      "type": "object"
+    },
+    "Digistore24ListVouchersConfig": {
+      "additionalProperties": false,
+      "description": "List voucher codes.",
+      "properties": {
+        "operation": {
+          "const": "list_vouchers",
+          "default": "list_vouchers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "Digistore24ListVouchersConfig",
+      "type": "object"
+    },
+    "Digistore24StartRebillingConfig": {
+      "additionalProperties": false,
+      "description": "Start rebilling.",
+      "properties": {
+        "operation": {
+          "const": "start_rebilling",
+          "default": "start_rebilling",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "purchase_id": {
+          "description": "The Digistore24 order ID",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Purchase Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purchase_id"
+      ],
+      "title": "Digistore24StartRebillingConfig",
+      "type": "object"
+    },
+    "Digistore24StopRebillingConfig": {
+      "additionalProperties": false,
+      "description": "Stop rebilling for a purchase.",
+      "properties": {
+        "operation": {
+          "const": "stop_rebilling",
+          "default": "stop_rebilling",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "purchase_id": {
+          "description": "The Digistore24 order ID",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Purchase Id",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "If possible, a rebilling is canceled immediately. If a minimum duration is specified, this will be adhered to by default (for force=false),\nmeaning that it will be canceled at the end of the minimum duration. If force=true, it will be canceled immediately.\n",
+          "title": "Force",
+          "type": "boolean"
+        },
+        "ignore_refund_possibility": {
+          "default": false,
+          "description": "If false (default), the purchase is cancelled effective immediately if a refund is possible.\nIf true, the cancellation becomes effective at the end of the regular cancellation period.\nThe parameter is ignored if force=true.\n",
+          "title": "Ignore Refund Possibility",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "purchase_id"
+      ],
+      "title": "Digistore24StopRebillingConfig",
+      "type": "object"
+    },
+    "Digistore24UpdateBuyerConfig": {
+      "additionalProperties": false,
+      "description": "Update a buyer.",
+      "properties": {
+        "operation": {
+          "const": "update_buyer",
+          "default": "update_buyer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "buyer_id": {
+          "description": "The buyer ID, as returned by e.g. getPurchase",
+          "minimum": 1,
+          "title": "Buyer Id",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Buyer's email address",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Buyer's first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Buyer's last name",
+          "title": "Last Name"
+        },
+        "salutation": {
+          "anyOf": [
+            {
+              "enum": [
+                "",
+                "M",
+                "F"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Buyer's salutation (empty, M or F)",
+          "title": "Salutation",
+          "enum": [
+            "",
+            "M",
+            "F"
+          ],
+          "x-enum-searchable": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Buyer's title",
+          "title": "Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Buyer's company name",
+          "title": "Company"
+        },
+        "street_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Street name",
+          "title": "Street Name"
+        },
+        "street_number": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Street number",
+          "title": "Street Number"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number (can be overwritten with an empty string)",
+          "title": "Phone Number"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City",
+          "title": "City"
+        },
+        "zipcode": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ZIP/Postal code",
+          "title": "Zipcode"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State/Province",
+          "title": "State"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-digit ISO country code (e.g., DE or AT)",
+          "title": "Country"
+        }
+      },
+      "required": [
+        "buyer_id"
+      ],
+      "title": "Digistore24UpdateBuyerConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_voucher": "#/$defs/Digistore24CreateVoucherConfig",
+          "delete_voucher": "#/$defs/Digistore24DeleteVoucherConfig",
+          "get_buyer": "#/$defs/Digistore24GetBuyerConfig",
+          "get_product": "#/$defs/Digistore24GetProductConfig",
+          "get_purchase": "#/$defs/Digistore24GetPurchaseConfig",
+          "get_user_info": "#/$defs/Digistore24GetUserInfoConfig",
+          "get_voucher": "#/$defs/Digistore24GetVoucherConfig",
+          "list_buyers": "#/$defs/Digistore24ListBuyersConfig",
+          "list_products": "#/$defs/Digistore24ListProductsConfig",
+          "list_purchases": "#/$defs/Digistore24ListPurchasesConfig",
+          "list_transactions": "#/$defs/Digistore24ListTransactionsConfig",
+          "list_vouchers": "#/$defs/Digistore24ListVouchersConfig",
+          "start_rebilling": "#/$defs/Digistore24StartRebillingConfig",
+          "stop_rebilling": "#/$defs/Digistore24StopRebillingConfig",
+          "update_buyer": "#/$defs/Digistore24UpdateBuyerConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Digistore24GetUserInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24ListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24GetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24ListBuyersConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24GetBuyerConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24UpdateBuyerConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24ListPurchasesConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24GetPurchaseConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24StopRebillingConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24StartRebillingConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24ListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24ListVouchersConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24GetVoucherConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24CreateVoucherConfig"
+        },
+        {
+          "$ref": "#/$defs/Digistore24DeleteVoucherConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Digistore24APIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Digistore24 Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my recent purchases",
+    "Update a buyer's contact details",
+    "Create a discount voucher"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
