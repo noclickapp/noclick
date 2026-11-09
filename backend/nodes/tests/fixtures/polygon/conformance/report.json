@@ -1,0 +1,377 @@
+[
+  {
+    "provider": "polygon",
+    "node_type": "automation-polygon",
+    "checked": 10,
+    "passed": 10,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 10,
+    "auth_checked": 10,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 10,
+      "total": 10
+    },
+    "operations": [
+      {
+        "operation": "list_companies",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/companies?sort=1&perpage=1&page=1&apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/companies",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "fc23d699247591d268a24fa99703659e5021925c528d2046fa8fe4f84a36580a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_companies",
+          "sort": "1",
+          "perpage": 1,
+          "page": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_currencies",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/currencies?apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/currencies",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_currencies"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_historic_aggregates",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/historic/agg/second/1/2024-01-01?offset=1&limit=100&apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/historic/agg/{size}/{symbol}/{date}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2becab15e1ffd8a1510d84910d7adeb0ed5511ca60611dc2203b6f3e7fde725b"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "date": "2024-01-01",
+          "offset": 1,
+          "limit": 100,
+          "symbol": "1",
+          "operation": "get_historic_aggregates",
+          "size": "second"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_historic_forex",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/historic/forex/1/1/2024-01-01?offset=1&limit=100&apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/historic/forex/{from}/{to}/{date}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "4644af492296614348adca2952c949d570f634fb3073a0ecaa9ce19547f7f7d3"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "date": "2024-01-01",
+          "offset": 1,
+          "limit": 100,
+          "from_currency": "1",
+          "to_currency": "1",
+          "operation": "get_historic_forex"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_historic_quotes",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/historic/quotes/1/2024-01-01?offset=1&limit=100&apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/historic/quotes/{symbol}/{date}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "6c1a2bd6698f5c2f6d2329ad206229f05edcc266a899d268310fadd16517e5ca"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "date": "2024-01-01",
+          "offset": 1,
+          "limit": 100,
+          "symbol": "1",
+          "operation": "get_historic_quotes"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_historic_trades",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/historic/trades/1/2024-01-01?offset=1&limit=100&apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/historic/trades/{symbol}/{date}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "47a024a26a9339aa4c0762da81eb1b4b23a61a59605ec2c0670cfda62a148e0d"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "date": "2024-01-01",
+          "offset": 1,
+          "limit": 100,
+          "symbol": "1",
+          "operation": "get_historic_trades"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_last_forex_trade",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/last/currencies/1/1?apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/last/currencies/{from}/{to}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "ea775349c0c450a074af569e7ccb16e2f3d5b9153743efc8ac80652e247dbdf2"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "from_currency": "1",
+          "to_currency": "1",
+          "operation": "get_last_forex_trade"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_last_stock_trade",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/last/stocks/1?apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/last/stocks/{symbol}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "bf8385906414e29c5ea7fedb18b9472c45641df79838fb00ea4c2111a52306c4"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "symbol": "1",
+          "operation": "get_last_stock_trade"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_last_forex_quote",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/last_quote/currencies/1/1?apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/last_quote/currencies/{from}/{to}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2a72a08e5e386e83e91dc434e988dda05adfc2fba3c2f3305d85ca5c8c0087ac"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "from_currency": "1",
+          "to_currency": "1",
+          "operation": "get_last_forex_quote"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_last_stock_quote",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.polygon.io/v1/last_quote/stocks/1?apiKey=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.polygon.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/last_quote/stocks/{symbol}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "648b4c8bd80d3f1367fc116e3accdf3792962ca849d78cf94daeb48146385603"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "symbol": "1",
+          "operation": "get_last_stock_quote"
+        },
+        "passed": true
+      }
+    ]
+  }
+]

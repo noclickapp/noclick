@@ -1,0 +1,167 @@
+{
+  "description": "Synthetic test values shaped by the pinned Swagger contract; not live or published response evidence.",
+  "cases": [
+    [
+      "list_companies",
+      {
+        "sort": "-marketcap",
+        "perpage": 10,
+        "page": 2
+      },
+      "/v1/companies",
+      [
+        {
+          "symbol": "AAPL",
+          "name": "Apple",
+          "marketcap": 1234.5
+        }
+      ]
+    ],
+    [
+      "list_currencies",
+      {},
+      "/v1/currencies",
+      [
+        "USD",
+        "JPY"
+      ]
+    ],
+    [
+      "get_historic_aggregates",
+      {
+        "symbol": "AAPL",
+        "date": "2017-06-22",
+        "size": "second",
+        "offset": 1498176000000,
+        "limit": 50
+      },
+      "/v1/historic/agg/second/AAPL/2017-06-22",
+      {
+        "status": "OK",
+        "symbol": "AAPL",
+        "day": "2017-06-22",
+        "ticks": [
+          {
+            "t": 1498176000000,
+            "c": 145.63,
+            "v": 400
+          }
+        ]
+      }
+    ],
+    [
+      "get_historic_forex",
+      {
+        "from_currency": "USD",
+        "to_currency": "JPY",
+        "date": "2017-06-22"
+      },
+      "/v1/historic/forex/USD/JPY/2017-06-22",
+      {
+        "status": "OK",
+        "symbol": "USD/JPY",
+        "ticks": [
+          {
+            "t": 1498176000000,
+            "a": 111.3,
+            "b": 111.2
+          }
+        ]
+      }
+    ],
+    [
+      "get_historic_quotes",
+      {
+        "symbol": "AAPL",
+        "date": "2017-06-22"
+      },
+      "/v1/historic/quotes/AAPL/2017-06-22",
+      {
+        "status": "OK",
+        "ticks": [
+          {
+            "t": 1498176000000,
+            "aP": 145.63,
+            "bP": 145.6
+          }
+        ]
+      }
+    ],
+    [
+      "get_historic_trades",
+      {
+        "symbol": "AAPL",
+        "date": "2017-06-22"
+      },
+      "/v1/historic/trades/AAPL/2017-06-22",
+      {
+        "status": "OK",
+        "ticks": [
+          {
+            "t": 1498176000000,
+            "p": 145.63,
+            "s": 100
+          }
+        ]
+      }
+    ],
+    [
+      "get_last_forex_trade",
+      {
+        "from_currency": "USD",
+        "to_currency": "JPY"
+      },
+      "/v1/last/currencies/USD/JPY",
+      {
+        "status": "OK",
+        "last": {
+          "price": 111.25,
+          "timestamp": 1498176000000
+        }
+      }
+    ],
+    [
+      "get_last_stock_trade",
+      {
+        "symbol": "AAPL"
+      },
+      "/v1/last/stocks/AAPL",
+      {
+        "status": "OK",
+        "last": {
+          "price": 145.63,
+          "size": 100
+        }
+      }
+    ],
+    [
+      "get_last_forex_quote",
+      {
+        "from_currency": "USD",
+        "to_currency": "JPY"
+      },
+      "/v1/last_quote/currencies/USD/JPY",
+      {
+        "status": "OK",
+        "last": {
+          "askprice": 111.3,
+          "bidprice": 111.2
+        }
+      }
+    ],
+    [
+      "get_last_stock_quote",
+      {
+        "symbol": "AAPL"
+      },
+      "/v1/last_quote/stocks/AAPL",
+      {
+        "status": "OK",
+        "last": {
+          "askprice": 145.63,
+          "bidprice": 145.6
+        }
+      }
+    ]
+  ]
+}
