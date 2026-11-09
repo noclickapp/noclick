@@ -1,0 +1,1136 @@
+{
+  "$defs": {
+    "ContactProperty": {
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 1000,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "ContactProperty",
+      "type": "object"
+    },
+    "ContactPropertyUpdate": {
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null clears the stored property value.",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "ContactPropertyUpdate",
+      "type": "object"
+    },
+    "CreateContact": {
+      "properties": {
+        "distinct_id": {
+          "maxLength": 55,
+          "minLength": 1,
+          "title": "External Contact ID",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 155,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 127,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 127,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email_consent": {
+          "anyOf": [
+            {
+              "enum": [
+                "subscribed",
+                "unsubscribed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Consent",
+          "enum": [
+            "subscribed",
+            "unsubscribed"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactProperty"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "distinct_id"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateTicket": {
+      "properties": {
+        "operation": {
+          "const": "create_ticket",
+          "default": "create_ticket",
+          "description": "Creates a support ticket with the contact's first message; Tidio may send notifications.",
+          "title": "Create Ticket as Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_email": {
+          "format": "email",
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "message_content": {
+          "minLength": 1,
+          "title": "Message Content",
+          "type": "string"
+        },
+        "assigned_department_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned Department Id"
+        },
+        "custom_channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Channel Id"
+        },
+        "tag_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Ids"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CustomFieldCreate"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "contact_email",
+        "subject",
+        "message_content"
+      ],
+      "title": "CreateTicket",
+      "type": "object"
+    },
+    "CustomFieldCreate": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 65535,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "value"
+      ],
+      "title": "CustomFieldCreate",
+      "type": "object"
+    },
+    "CustomFieldUpdate": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null removes the field value.",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "id",
+        "value"
+      ],
+      "title": "CustomFieldUpdate",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "description": "Permanently deletes this contact.",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteTicket": {
+      "properties": {
+        "ticket_id": {
+          "minimum": 1,
+          "title": "Ticket ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_ticket",
+          "default": "delete_ticket",
+          "description": "Deletes the ticket.",
+          "title": "Delete Ticket",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "DeleteTicket",
+      "type": "object"
+    },
+    "GetContact": {
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetProject": {
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetTicket": {
+      "properties": {
+        "ticket_id": {
+          "minimum": 1,
+          "title": "Ticket ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_ticket",
+          "default": "get_ticket",
+          "title": "Get Ticket",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "GetTicket",
+      "type": "object"
+    },
+    "ListContactMessages": {
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous response; omit for the first page. One page per execution.",
+          "title": "Cursor"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contact_messages",
+          "default": "list_contact_messages",
+          "title": "List Contact Messages",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListContactMessages",
+      "type": "object"
+    },
+    "ListContactProperties": {
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous response; omit for the first page. One page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_contact_properties",
+          "default": "list_contact_properties",
+          "title": "List Contact Properties",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContactProperties",
+      "type": "object"
+    },
+    "ListContacts": {
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous response; omit for the first page. One page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email Filter"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListDepartments": {
+      "properties": {
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "title": "List Departments",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDepartments",
+      "type": "object"
+    },
+    "ListOperators": {
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous response; omit for the first page. One page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_operators",
+          "default": "list_operators",
+          "title": "List Operators",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOperators",
+      "type": "object"
+    },
+    "ListTicketCustomFields": {
+      "properties": {
+        "operation": {
+          "const": "list_ticket_custom_fields",
+          "default": "list_ticket_custom_fields",
+          "title": "List Ticket Custom Fields",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTicketCustomFields",
+      "type": "object"
+    },
+    "ListTicketTags": {
+      "properties": {
+        "operation": {
+          "const": "list_ticket_tags",
+          "default": "list_ticket_tags",
+          "title": "List Ticket Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTicketTags",
+      "type": "object"
+    },
+    "ListTickets": {
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous response; omit for the first page. One page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_tickets",
+          "default": "list_tickets",
+          "title": "List Tickets",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTickets",
+      "type": "object"
+    },
+    "ListViewedPages": {
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy meta.cursor from the previous response; omit for the first page. One page per execution.",
+          "title": "Cursor"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_viewed_pages",
+          "default": "list_viewed_pages",
+          "title": "List Viewed Pages",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListViewedPages",
+      "type": "object"
+    },
+    "ReplyTicket": {
+      "properties": {
+        "ticket_id": {
+          "minimum": 1,
+          "title": "Ticket ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "reply_ticket",
+          "default": "reply_ticket",
+          "description": "Sends a public reply or internal note with the specified author.",
+          "title": "Reply to Ticket",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "author_type": {
+          "enum": [
+            "contact",
+            "operator"
+          ],
+          "title": "Author Type",
+          "type": "string"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "operator_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operator Id"
+        },
+        "message_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "internal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Type",
+          "enum": [
+            "public",
+            "internal"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "ticket_id",
+        "author_type",
+        "content"
+      ],
+      "title": "ReplyTicket",
+      "type": "object"
+    },
+    "SendContactMessage": {
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_contact_message",
+          "default": "send_contact_message",
+          "description": "Submits a message on behalf of the contact. Acceptance is asynchronous and does not prove delivery.",
+          "title": "Send Message as Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "message"
+      ],
+      "title": "SendContactMessage",
+      "type": "object"
+    },
+    "TicketAssignment": {
+      "properties": {
+        "type": {
+          "enum": [
+            "department",
+            "operator"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "title": "TicketAssignment",
+      "type": "object"
+    },
+    "TidioAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "tidio_api_key",
+          "default": "tidio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "client_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ],
+      "title": "Tidio API Key",
+      "type": "object",
+      "x-credential-instructions": "In Tidio, open Developer > OpenAPI and generate an API key as a project owner or admin. Paste both the client ID (ci_\u2026) and client secret (cs_\u2026). Enable OpenAPI and the permissions needed by your operations. NoClick verifies the authenticated project.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://www.tidio.com/panel/",
+      "x-help-url": "https://developers.tidio.com/docs/openapi-authorization"
+    },
+    "UpdateContact": {
+      "properties": {
+        "distinct_id": {
+          "anyOf": [
+            {
+              "maxLength": 55,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Contact ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 155,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 127,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 127,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email_consent": {
+          "anyOf": [
+            {
+              "enum": [
+                "subscribed",
+                "unsubscribed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Consent",
+          "enum": [
+            "subscribed",
+            "unsubscribed"
+          ],
+          "x-enum-searchable": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactPropertyUpdate"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateTicket": {
+      "properties": {
+        "ticket_id": {
+          "minimum": 1,
+          "title": "Ticket ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_ticket",
+          "default": "update_ticket",
+          "title": "Update Ticket",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "pending",
+                "solved"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "pending",
+            "solved"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "normal",
+                "urgent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "low",
+            "normal",
+            "urgent"
+          ],
+          "x-enum-searchable": true
+        },
+        "assigned": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TicketAssignment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Null unassigns the ticket; omit to keep the current assignment."
+        },
+        "tag_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the full tag set. An empty list removes all tags.",
+          "title": "Tag Ids"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CustomFieldUpdate"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Merges specified values; null values remove stored fields.",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "UpdateTicket",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_ticket": "#/$defs/CreateTicket",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_ticket": "#/$defs/DeleteTicket",
+          "get_contact": "#/$defs/GetContact",
+          "get_project": "#/$defs/GetProject",
+          "get_ticket": "#/$defs/GetTicket",
+          "list_contact_messages": "#/$defs/ListContactMessages",
+          "list_contact_properties": "#/$defs/ListContactProperties",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_departments": "#/$defs/ListDepartments",
+          "list_operators": "#/$defs/ListOperators",
+          "list_ticket_custom_fields": "#/$defs/ListTicketCustomFields",
+          "list_ticket_tags": "#/$defs/ListTicketTags",
+          "list_tickets": "#/$defs/ListTickets",
+          "list_viewed_pages": "#/$defs/ListViewedPages",
+          "reply_ticket": "#/$defs/ReplyTicket",
+          "send_contact_message": "#/$defs/SendContactMessage",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_ticket": "#/$defs/UpdateTicket"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListViewedPages"
+        },
+        {
+          "$ref": "#/$defs/SendContactMessage"
+        },
+        {
+          "$ref": "#/$defs/ListContactMessages"
+        },
+        {
+          "$ref": "#/$defs/ListContactProperties"
+        },
+        {
+          "$ref": "#/$defs/ListOperators"
+        },
+        {
+          "$ref": "#/$defs/CreateTicket"
+        },
+        {
+          "$ref": "#/$defs/ListTickets"
+        },
+        {
+          "$ref": "#/$defs/ListTicketTags"
+        },
+        {
+          "$ref": "#/$defs/ListTicketCustomFields"
+        },
+        {
+          "$ref": "#/$defs/GetTicket"
+        },
+        {
+          "$ref": "#/$defs/UpdateTicket"
+        },
+        {
+          "$ref": "#/$defs/DeleteTicket"
+        },
+        {
+          "$ref": "#/$defs/ReplyTicket"
+        },
+        {
+          "$ref": "#/$defs/ListDepartments"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TidioAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tidio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
