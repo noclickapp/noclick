@@ -1,0 +1,1052 @@
+{
+  "$defs": {
+    "CreateSchema": {
+      "additionalProperties": false,
+      "description": "Create a reusable schema with typed extraction fields.",
+      "properties": {
+        "operation": {
+          "const": "create_schema",
+          "default": "create_schema",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/DataField"
+          },
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "fields"
+      ],
+      "title": "CreateSchema",
+      "type": "object"
+    },
+    "CreateWorkflow": {
+      "additionalProperties": false,
+      "description": "Create a prompt-driven extraction workflow for a single website.",
+      "properties": {
+        "operation": {
+          "const": "create_workflow",
+          "default": "create_workflow",
+          "title": "Operation",
+          "type": "string"
+        },
+        "urls": {
+          "description": "Source URLs from one website, including its subdomains. Use a separate workflow for each website.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Urls",
+          "type": "array"
+        },
+        "user_prompt": {
+          "maxLength": 5000,
+          "minLength": 10,
+          "title": "User Prompt",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "schema_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema Id"
+        },
+        "bypass_preview": {
+          "default": false,
+          "description": "Skip preview and deploy immediately. This can start paid extraction.",
+          "title": "Bypass Preview",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "urls",
+        "user_prompt"
+      ],
+      "title": "CreateWorkflow",
+      "type": "object"
+    },
+    "DataField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[^.]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "fieldType": {
+          "const": "SCHEMA",
+          "default": "SCHEMA",
+          "title": "Fieldtype",
+          "type": "string"
+        },
+        "dataType": {
+          "enum": [
+            "STRING",
+            "NUMBER",
+            "BOOLEAN",
+            "DATE",
+            "DATETIME",
+            "MONEY",
+            "IMAGE",
+            "LINK",
+            "OBJECT",
+            "ARRAY"
+          ],
+          "title": "Datatype",
+          "type": "string"
+        },
+        "isKey": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iskey"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "dataType"
+      ],
+      "title": "DataField",
+      "type": "object"
+    },
+    "DeleteSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_schema",
+          "default": "delete_schema",
+          "title": "Operation",
+          "type": "string"
+        },
+        "schema_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Schema Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_id"
+      ],
+      "title": "DeleteSchema",
+      "type": "object"
+    },
+    "DeleteWorkflow": {
+      "additionalProperties": false,
+      "description": "Delete the selected workflow.",
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_workflow",
+          "default": "delete_workflow",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "DeleteWorkflow",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_schema",
+          "default": "get_schema",
+          "title": "Operation",
+          "type": "string"
+        },
+        "schema_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Schema Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_id"
+      ],
+      "title": "GetSchema",
+      "type": "object"
+    },
+    "GetWorkflow": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_workflow",
+          "default": "get_workflow",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "GetWorkflow",
+      "type": "object"
+    },
+    "GetWorkflowData": {
+      "additionalProperties": false,
+      "description": "Read a bounded JSON data page; pagination is returned by Kadoa.",
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_workflow_data",
+          "default": "get_workflow_data",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded array of Kadoa filter objects.",
+          "title": "Filters"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "GetWorkflowData",
+      "type": "object"
+    },
+    "GetWorkflowHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_workflow_history",
+          "default": "get_workflow_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "success",
+                "failed",
+                "in_progress",
+                "stopped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "success",
+            "failed",
+            "in_progress",
+            "stopped"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "GetWorkflowHistory",
+      "type": "object"
+    },
+    "GetWorkflowQualityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_workflow_quality_metrics",
+          "default": "get_workflow_quality_metrics",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "GetWorkflowQualityMetrics",
+      "type": "object"
+    },
+    "KadoaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kadoa_api_key",
+          "default": "kadoa_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Kadoa API Key",
+      "type": "object",
+      "x-credential-instructions": "An Admin or Owner can generate a team API key in Kadoa Settings > General. Paste it here. NoClick sends it in the x-api-key header to api.kadoa.com. Listing your workflows verifies read access; individual writes may need additional permissions.",
+      "x-credential-url": "https://docs.kadoa.com/docs/api-keys"
+    },
+    "ListSchemas": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_schemas",
+          "default": "list_schemas",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSchemas",
+      "type": "object"
+    },
+    "ListWorkflowConnectors": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_workflow_connectors",
+          "default": "list_workflow_connectors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ListWorkflowConnectors",
+      "type": "object"
+    },
+    "ListWorkflows": {
+      "additionalProperties": false,
+      "description": "List one page of workflows; advance skip by the returned page size.",
+      "properties": {
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "DRAFT",
+                "PAUSED",
+                "PREVIEW",
+                "QUEUED",
+                "SETUP",
+                "COMPLIANCE_REVIEW",
+                "COMPLIANCE_REJECTED",
+                "NOT_SUPPORTED",
+                "ERROR",
+                "DELETED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "ACTIVE",
+            "DRAFT",
+            "PAUSED",
+            "PREVIEW",
+            "QUEUED",
+            "SETUP",
+            "COMPLIANCE_REVIEW",
+            "COMPLIANCE_REJECTED",
+            "NOT_SUPPORTED",
+            "ERROR",
+            "DELETED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListWorkflows",
+      "type": "object"
+    },
+    "PauseWorkflow": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_workflow",
+          "default": "pause_workflow",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "PauseWorkflow",
+      "type": "object"
+    },
+    "ResumeWorkflow": {
+      "additionalProperties": false,
+      "description": "Resume or approve the workflow. Kadoa may start a new preview run.",
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resume_workflow",
+          "default": "resume_workflow",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ResumeWorkflow",
+      "type": "object"
+    },
+    "RunWorkflow": {
+      "additionalProperties": false,
+      "description": "Start extraction; the response acknowledges rather than finishes it.",
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "run_workflow",
+          "default": "run_workflow",
+          "title": "Operation",
+          "type": "string"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "RunWorkflow",
+      "type": "object"
+    },
+    "ScheduleWorkflow": {
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "schedule_workflow",
+          "default": "schedule_workflow",
+          "title": "Operation",
+          "type": "string"
+        },
+        "date": {
+          "description": "UTC ISO date, for example 2023-10-07T10:00:00.000Z.",
+          "title": "Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "date"
+      ],
+      "title": "ScheduleWorkflow",
+      "type": "object"
+    },
+    "StopWorkflow": {
+      "additionalProperties": false,
+      "description": "Request stopping the active extraction run.",
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_workflow",
+          "default": "stop_workflow",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "StopWorkflow",
+      "type": "object"
+    },
+    "UpdateSchema": {
+      "additionalProperties": false,
+      "description": "Rename a schema and optionally replace its extraction fields.",
+      "properties": {
+        "operation": {
+          "const": "update_schema",
+          "default": "update_schema",
+          "title": "Operation",
+          "type": "string"
+        },
+        "schema_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Schema Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/DataField"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "schema_id",
+        "name"
+      ],
+      "title": "UpdateSchema",
+      "type": "object"
+    },
+    "UpdateWorkflowMetadata": {
+      "additionalProperties": false,
+      "description": "Update descriptive metadata without replacing extraction settings.",
+      "properties": {
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_workflow_metadata",
+          "default": "update_workflow_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "name"
+      ],
+      "title": "UpdateWorkflowMetadata",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_schema": "#/$defs/CreateSchema",
+          "create_workflow": "#/$defs/CreateWorkflow",
+          "delete_schema": "#/$defs/DeleteSchema",
+          "delete_workflow": "#/$defs/DeleteWorkflow",
+          "get_job": "#/$defs/GetJob",
+          "get_schema": "#/$defs/GetSchema",
+          "get_workflow": "#/$defs/GetWorkflow",
+          "get_workflow_data": "#/$defs/GetWorkflowData",
+          "get_workflow_history": "#/$defs/GetWorkflowHistory",
+          "get_workflow_quality_metrics": "#/$defs/GetWorkflowQualityMetrics",
+          "list_schemas": "#/$defs/ListSchemas",
+          "list_workflow_connectors": "#/$defs/ListWorkflowConnectors",
+          "list_workflows": "#/$defs/ListWorkflows",
+          "pause_workflow": "#/$defs/PauseWorkflow",
+          "resume_workflow": "#/$defs/ResumeWorkflow",
+          "run_workflow": "#/$defs/RunWorkflow",
+          "schedule_workflow": "#/$defs/ScheduleWorkflow",
+          "stop_workflow": "#/$defs/StopWorkflow",
+          "update_schema": "#/$defs/UpdateSchema",
+          "update_workflow_metadata": "#/$defs/UpdateWorkflowMetadata"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListWorkflows"
+        },
+        {
+          "$ref": "#/$defs/GetWorkflow"
+        },
+        {
+          "$ref": "#/$defs/CreateWorkflow"
+        },
+        {
+          "$ref": "#/$defs/DeleteWorkflow"
+        },
+        {
+          "$ref": "#/$defs/GetWorkflowData"
+        },
+        {
+          "$ref": "#/$defs/GetWorkflowHistory"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/UpdateWorkflowMetadata"
+        },
+        {
+          "$ref": "#/$defs/PauseWorkflow"
+        },
+        {
+          "$ref": "#/$defs/ResumeWorkflow"
+        },
+        {
+          "$ref": "#/$defs/RunWorkflow"
+        },
+        {
+          "$ref": "#/$defs/StopWorkflow"
+        },
+        {
+          "$ref": "#/$defs/ScheduleWorkflow"
+        },
+        {
+          "$ref": "#/$defs/ListWorkflowConnectors"
+        },
+        {
+          "$ref": "#/$defs/GetWorkflowQualityMetrics"
+        },
+        {
+          "$ref": "#/$defs/ListSchemas"
+        },
+        {
+          "$ref": "#/$defs/GetSchema"
+        },
+        {
+          "$ref": "#/$defs/CreateSchema"
+        },
+        {
+          "$ref": "#/$defs/UpdateSchema"
+        },
+        {
+          "$ref": "#/$defs/DeleteSchema"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KadoaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kadoa Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

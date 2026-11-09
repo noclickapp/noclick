@@ -1,0 +1,299 @@
+{
+  "list_workflows": {
+    "config": {
+      "operation": "list_workflows",
+      "skip": 25,
+      "limit": 25,
+      "search": "Product & prices"
+    },
+    "method": "GET",
+    "path": "/v6/workflows",
+    "response": {
+      "workflows": [
+        {
+          "id": "workflow-123",
+          "name": "Products"
+        }
+      ],
+      "pagination": {
+        "skip": 25,
+        "limit": 25,
+        "total": 60
+      }
+    }
+  },
+  "get_workflow": {
+    "config": {
+      "operation": "get_workflow",
+      "workflow_id": "workflow-123"
+    },
+    "method": "GET",
+    "path": "/v6/workflows/workflow-123",
+    "response": {
+      "id": "workflow-123",
+      "name": "Products"
+    }
+  },
+  "create_workflow": {
+    "config": {
+      "operation": "create_workflow",
+      "urls": [
+        "https://sandbox.kadoa.com/ecommerce"
+      ],
+      "user_prompt": "Extract all product information",
+      "limit": 50
+    },
+    "method": "POST",
+    "path": "/v6/workflows",
+    "response": {
+      "error": false,
+      "success": true,
+      "workflowId": "workflow-123",
+      "message": "Created"
+    }
+  },
+  "delete_workflow": {
+    "config": {
+      "operation": "delete_workflow",
+      "workflow_id": "workflow-123"
+    },
+    "method": "DELETE",
+    "path": "/v6/workflows/workflow-123",
+    "response": "Workflow deleted"
+  },
+  "get_workflow_data": {
+    "config": {
+      "operation": "get_workflow_data",
+      "workflow_id": "workflow-123",
+      "page": 2,
+      "limit": 25,
+      "run_id": "run-456"
+    },
+    "method": "GET",
+    "path": "/v6/workflows/workflow-123/data",
+    "response": {
+      "workflowId": "workflow-123",
+      "data": [
+        {
+          "title": "Product"
+        }
+      ],
+      "pagination": {
+        "totalCount": 60,
+        "page": 2,
+        "totalPages": 3,
+        "limit": 25
+      }
+    }
+  },
+  "get_workflow_history": {
+    "config": {
+      "operation": "get_workflow_history",
+      "workflow_id": "workflow-123",
+      "page": 2,
+      "status": "failed"
+    },
+    "method": "GET",
+    "path": "/v6/workflows/workflow-123/history",
+    "response": {
+      "workflowId": "workflow-123",
+      "workflowRuns": [],
+      "totalCount": 0
+    }
+  },
+  "get_job": {
+    "config": {
+      "operation": "get_job",
+      "workflow_id": "workflow-123",
+      "job_id": "job_abc123"
+    },
+    "method": "GET",
+    "path": "/v6/workflows/workflow-123/jobs/job_abc123",
+    "response": {
+      "id": "job_abc123",
+      "state": "FINISHED"
+    }
+  },
+  "update_workflow_metadata": {
+    "config": {
+      "operation": "update_workflow_metadata",
+      "workflow_id": "workflow-123",
+      "name": "New name",
+      "tags": [
+        "products"
+      ]
+    },
+    "method": "PUT",
+    "path": "/v6/workflows/workflow-123/metadata",
+    "response": {
+      "success": true,
+      "message": "Updated"
+    }
+  },
+  "pause_workflow": {
+    "config": {
+      "operation": "pause_workflow",
+      "workflow_id": "workflow-123"
+    },
+    "method": "PUT",
+    "path": "/v6/workflows/workflow-123/pause",
+    "response": "Workflow paused"
+  },
+  "resume_workflow": {
+    "config": {
+      "operation": "resume_workflow",
+      "workflow_id": "workflow-123"
+    },
+    "method": "PUT",
+    "path": "/v6/workflows/workflow-123/resume",
+    "response": {
+      "message": "Workflow resumed"
+    }
+  },
+  "run_workflow": {
+    "config": {
+      "operation": "run_workflow",
+      "workflow_id": "workflow-123",
+      "variables": {
+        "country": "US"
+      },
+      "limit": 100,
+      "preview": false
+    },
+    "method": "PUT",
+    "path": "/v6/workflows/workflow-123/run",
+    "response": {
+      "message": "Workflow started",
+      "jobId": "job_abc123",
+      "status": "running"
+    }
+  },
+  "stop_workflow": {
+    "config": {
+      "operation": "stop_workflow",
+      "workflow_id": "workflow-123"
+    },
+    "method": "PUT",
+    "path": "/v6/workflows/workflow-123/stop",
+    "response": {
+      "message": "Workflow run is being stopped"
+    }
+  },
+  "schedule_workflow": {
+    "config": {
+      "operation": "schedule_workflow",
+      "workflow_id": "workflow-123",
+      "date": "2023-10-07T10:00:00.000Z"
+    },
+    "method": "PUT",
+    "path": "/v6/workflows/workflow-123/schedule",
+    "response": "Workflow scheduled"
+  },
+  "list_workflow_connectors": {
+    "config": {
+      "operation": "list_workflow_connectors",
+      "workflow_id": "workflow-123"
+    },
+    "method": "GET",
+    "path": "/v6/workflows/workflow-123/connectors",
+    "response": {
+      "connectors": []
+    }
+  },
+  "get_workflow_quality_metrics": {
+    "config": {
+      "operation": "get_workflow_quality_metrics",
+      "workflow_id": "workflow-123",
+      "job_id": "job_abc123"
+    },
+    "method": "GET",
+    "path": "/v6/workflows/workflow-123/quality-metrics",
+    "response": {
+      "results": null,
+      "issueCount": null
+    }
+  },
+  "list_schemas": {
+    "config": {
+      "operation": "list_schemas"
+    },
+    "method": "GET",
+    "path": "/v6/schemas/",
+    "response": {
+      "error": false,
+      "data": []
+    }
+  },
+  "get_schema": {
+    "config": {
+      "operation": "get_schema",
+      "schema_id": "schema-123"
+    },
+    "method": "GET",
+    "path": "/v6/schemas/schema-123",
+    "response": {
+      "error": false,
+      "data": {
+        "id": "schema-123",
+        "name": "Products",
+        "fields": []
+      }
+    }
+  },
+  "create_schema": {
+    "config": {
+      "operation": "create_schema",
+      "name": "Products",
+      "entity": "Product",
+      "fields": [
+        {
+          "name": "title",
+          "description": "Product name",
+          "dataType": "STRING"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/v6/schemas/",
+    "response": {
+      "error": false,
+      "success": true,
+      "schemaId": "schema-123",
+      "message": "Created"
+    }
+  },
+  "update_schema": {
+    "config": {
+      "operation": "update_schema",
+      "schema_id": "schema-123",
+      "name": "New name",
+      "fields": [
+        {
+          "name": "title",
+          "description": "Product name",
+          "dataType": "STRING"
+        }
+      ]
+    },
+    "method": "PUT",
+    "path": "/v6/schemas/schema-123",
+    "response": {
+      "error": false,
+      "success": true,
+      "message": "Updated"
+    }
+  },
+  "delete_schema": {
+    "config": {
+      "operation": "delete_schema",
+      "schema_id": "schema-123"
+    },
+    "method": "DELETE",
+    "path": "/v6/schemas/schema-123",
+    "response": {
+      "error": false,
+      "success": true,
+      "message": "Deleted"
+    }
+  }
+}
