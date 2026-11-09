@@ -14,7 +14,7 @@
         "batchId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Batchid",
+          "title": "Batch ID",
           "type": "string"
         }
       },
@@ -38,7 +38,7 @@
         "batchId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Batchid",
+          "title": "Batch ID",
           "type": "string"
         }
       },
@@ -102,7 +102,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -127,7 +127,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -152,7 +152,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -177,7 +177,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -202,7 +202,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -227,7 +227,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -253,12 +253,12 @@
         "processorId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Processorid",
+          "title": "Processor ID",
           "type": "string"
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -285,7 +285,7 @@
         "processorId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Processorid",
+          "title": "Processor ID",
           "type": "string"
         }
       },
@@ -309,7 +309,7 @@
         "processorId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Processorid",
+          "title": "Processor ID",
           "type": "string"
         }
       },
@@ -333,7 +333,7 @@
         "processorId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Processorid",
+          "title": "Processor ID",
           "type": "string"
         },
         "version": {
@@ -363,7 +363,7 @@
         "processorId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Processorid",
+          "title": "Processor ID",
           "type": "string"
         },
         "version": {
@@ -393,12 +393,12 @@
         "processorId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Processorid",
+          "title": "Processor ID",
           "type": "string"
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -424,7 +424,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -490,7 +490,7 @@
         "runId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Runid",
+          "title": "Run ID",
           "type": "string"
         }
       },
@@ -514,7 +514,7 @@
         "runId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Runid",
+          "title": "Run ID",
           "type": "string"
         }
       },
@@ -538,7 +538,7 @@
         "runId": {
           "maxLength": 256,
           "minLength": 1,
-          "title": "Runid",
+          "title": "Run ID",
           "type": "string"
         }
       },
@@ -561,7 +561,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -586,7 +586,7 @@
         },
         "body": {
           "additionalProperties": true,
-          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "description": "JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.",
           "title": "Request Body",
           "type": "object",
           "ui:widget": "json"
@@ -665,8 +665,8 @@
       ],
       "title": "Nutrient API Key",
       "type": "object",
-      "x-credential-instructions": "Create an API key in your Nutrient dashboard and paste it here.",
-      "x-credential-url": "https://dashboard.nutrient.io/api-keys"
+      "x-credential-instructions": "Create an API key in your Nutrient Data Extraction dashboard and paste it here.",
+      "x-credential-url": "https://www.nutrient.io/data-extraction/api_keys/"
     }
   },
   "properties": {

@@ -5,7 +5,6 @@ pagination cursors so workflows can explicitly request subsequent pages.
 """
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote
-import httpx
 from pydantic import BaseModel, ConfigDict, Field
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -14,8 +13,8 @@ from utils.ssrf import guarded_async_client
 
 class NutrientCredential(BaseModel):
     model_config = ConfigDict(title="Nutrient API Key", hide_input_in_errors=True,
-        json_schema_extra={"x-credential-url": "https://dashboard.nutrient.io/api-keys",
-        "x-credential-instructions": "Create an API key in your Nutrient dashboard and paste it here."})
+        json_schema_extra={"x-credential-url": "https://www.nutrient.io/data-extraction/api_keys/",
+        "x-credential-instructions": "Create an API key in your Nutrient Data Extraction dashboard and paste it here."})
     credential_type: Literal["nutrient_document_web_services_api_key"] = Field("nutrient_document_web_services_api_key", json_schema_extra={"ui:hidden": True})
     api_key: str = Field(..., min_length=1, title="API Key", description="Paste your Nutrient API key without the Bearer prefix.", repr=False, json_schema_extra={"ui:widget": "password"})
 
@@ -38,67 +37,67 @@ class GetAccountProductUsageConfig(_Input):
 class ExtractionParseConfig(_Input):
     """Parse document structure."""
     operation: Literal["extraction_parse"] = Field("extraction_parse", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionParseAsyncConfig(_Input):
     """Parse document structure asynchronously."""
     operation: Literal["extraction_parse_async"] = Field("extraction_parse_async", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionExtractConfig(_Input):
     """Extract structured data from documents."""
     operation: Literal["extraction_extract"] = Field("extraction_extract", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionExtractAsyncConfig(_Input):
     """Extract structured data from documents asynchronously."""
     operation: Literal["extraction_extract_async"] = Field("extraction_extract_async", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionRunsGetConfig(_Input):
     """Retrieve a stored processing run."""
     operation: Literal["extraction_runs_get"] = Field("extraction_runs_get", json_schema_extra={"ui:hidden": True})
-    runId: str = Field(..., title='Runid', min_length=1, max_length=256)
+    runId: str = Field(..., title='Run ID', min_length=1, max_length=256)
 
 
 class ExtractionRunsDeleteConfig(_Input):
     """Delete a stored processing run."""
     operation: Literal["extraction_runs_delete"] = Field("extraction_runs_delete", json_schema_extra={"ui:hidden": True})
-    runId: str = Field(..., title='Runid', min_length=1, max_length=256)
+    runId: str = Field(..., title='Run ID', min_length=1, max_length=256)
 
 
 class ExtractionRunsCancelConfig(_Input):
     """Cancel a queued or running processing run."""
     operation: Literal["extraction_runs_cancel"] = Field("extraction_runs_cancel", json_schema_extra={"ui:hidden": True})
-    runId: str = Field(..., title='Runid', min_length=1, max_length=256)
+    runId: str = Field(..., title='Run ID', min_length=1, max_length=256)
 
 
 class ExtractionSplitConfig(_Input):
     """Split a merged document into sub-documents."""
     operation: Literal["extraction_split"] = Field("extraction_split", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionSplitAsyncConfig(_Input):
     """Split a document asynchronously."""
     operation: Literal["extraction_split_async"] = Field("extraction_split_async", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionClassifyConfig(_Input):
     """Classify a document."""
     operation: Literal["extraction_classify"] = Field("extraction_classify", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionClassifyAsyncConfig(_Input):
     """Classify a document asynchronously."""
     operation: Literal["extraction_classify_async"] = Field("extraction_classify_async", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionBatchesListConfig(_Input):
@@ -111,13 +110,13 @@ class ExtractionBatchesListConfig(_Input):
 class ExtractionBatchesGetConfig(_Input):
     """Retrieve a batch."""
     operation: Literal["extraction_batches_get"] = Field("extraction_batches_get", json_schema_extra={"ui:hidden": True})
-    batchId: str = Field(..., title='Batchid', min_length=1, max_length=256)
+    batchId: str = Field(..., title='Batch ID', min_length=1, max_length=256)
 
 
 class ExtractionBatchesCancelConfig(_Input):
     """Cancel a batch."""
     operation: Literal["extraction_batches_cancel"] = Field("extraction_batches_cancel", json_schema_extra={"ui:hidden": True})
-    batchId: str = Field(..., title='Batchid', min_length=1, max_length=256)
+    batchId: str = Field(..., title='Batch ID', min_length=1, max_length=256)
 
 
 class ExtractionProcessorsListConfig(_Input):
@@ -129,46 +128,46 @@ class ExtractionProcessorsListConfig(_Input):
 class ExtractionProcessorsCreateConfig(_Input):
     """Create a processor."""
     operation: Literal["extraction_processors_create"] = Field("extraction_processors_create", json_schema_extra={"ui:hidden": True})
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionProcessorGetConfig(_Input):
     """Get a processor."""
     operation: Literal["extraction_processor_get"] = Field("extraction_processor_get", json_schema_extra={"ui:hidden": True})
-    processorId: str = Field(..., title='Processorid', min_length=1, max_length=256)
+    processorId: str = Field(..., title='Processor ID', min_length=1, max_length=256)
 
 
 class ExtractionProcessorRenameConfig(_Input):
     """Rename a processor."""
     operation: Literal["extraction_processor_rename"] = Field("extraction_processor_rename", json_schema_extra={"ui:hidden": True})
-    processorId: str = Field(..., title='Processorid', min_length=1, max_length=256)
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    processorId: str = Field(..., title='Processor ID', min_length=1, max_length=256)
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionProcessorDeleteConfig(_Input):
     """Delete a processor."""
     operation: Literal["extraction_processor_delete"] = Field("extraction_processor_delete", json_schema_extra={"ui:hidden": True})
-    processorId: str = Field(..., title='Processorid', min_length=1, max_length=256)
+    processorId: str = Field(..., title='Processor ID', min_length=1, max_length=256)
 
 
 class ExtractionProcessorCreateVersionConfig(_Input):
     """Create a processor version."""
     operation: Literal["extraction_processor_create_version"] = Field("extraction_processor_create_version", json_schema_extra={"ui:hidden": True})
-    processorId: str = Field(..., title='Processorid', min_length=1, max_length=256)
-    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.", json_schema_extra={"ui:widget": "json"})
+    processorId: str = Field(..., title='Processor ID', min_length=1, max_length=256)
+    body: dict[str, Any] = Field(..., title="Request Body", description="JSON request body for this operation from the Nutrient API reference. Document processing requests require a public document url and any processing settings.", json_schema_extra={"ui:widget": "json"})
 
 
 class ExtractionProcessorGetVersionConfig(_Input):
     """Get a processor version."""
     operation: Literal["extraction_processor_get_version"] = Field("extraction_processor_get_version", json_schema_extra={"ui:hidden": True})
-    processorId: str = Field(..., title='Processorid', min_length=1, max_length=256)
+    processorId: str = Field(..., title='Processor ID', min_length=1, max_length=256)
     version: int = Field(..., title='Version', ge=1)
 
 
 class ExtractionProcessorPublishVersionConfig(_Input):
     """Publish a processor version."""
     operation: Literal["extraction_processor_publish_version"] = Field("extraction_processor_publish_version", json_schema_extra={"ui:hidden": True})
-    processorId: str = Field(..., title='Processorid', min_length=1, max_length=256)
+    processorId: str = Field(..., title='Processor ID', min_length=1, max_length=256)
     version: int = Field(..., title='Version', ge=1)
 
 
