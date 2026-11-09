@@ -124,6 +124,8 @@ export interface Channel {
     /** Messages since you last read it. */
     unread: number;
     createdAt: string;
+    /** A DM's newest message, for its row in a list. */
+    lastMessage?: { text: string; at: string; author: ChannelAuthor } | null;
 }
 
 /** A company, a client or a community: its own agents and channels. Yours is the one that holds channels in no workspace. */
