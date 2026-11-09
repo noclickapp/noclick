@@ -1,0 +1,55 @@
+[
+  {
+    "operation": "validate_phone_number",
+    "config": {
+      "number": "14158586273"
+    },
+    "path": "/api/validate",
+    "response": {
+      "valid": true,
+      "number": "+14158586273",
+      "local_format": "4158586273",
+      "international_format": "+14158586273",
+      "country_prefix": "+1",
+      "country_code": "US",
+      "country_name": "United States of America",
+      "location": "Novato",
+      "carrier": "AT&T Mobility LLC",
+      "line_type": "mobile"
+    },
+    "source": "https://api.swaggerhub.com/apis/apilayer-863/numverify-api/1.0.0/swagger.json"
+  },
+  {
+    "operation": "validate_phone_number",
+    "config": {
+      "number": "12345"
+    },
+    "path": "/api/validate",
+    "response": {
+      "valid": false,
+      "number": "12345",
+      "local_format": "12345"
+    },
+    "source": "https://api.swaggerhub.com/apis/apilayer-863/numverify-api/1.0.0/swagger.json"
+  },
+  {
+    "operation": "list_supported_countries",
+    "config": {},
+    "path": "/api/countries",
+    "response": {
+      "US": {
+        "country_name": "United States of America",
+        "dialling_code": "+1"
+      },
+      "IN": {
+        "country_name": "India",
+        "dialling_code": "+91"
+      },
+      "GB": {
+        "country_name": "United Kingdom",
+        "dialling_code": "+44"
+      }
+    },
+    "source": "https://api.swaggerhub.com/apis/apilayer-863/numverify-api/1.0.0/swagger.json"
+  }
+]
