@@ -1,0 +1,1990 @@
+{
+  "$defs": {
+    "OpenAlexAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "openalex_api_key",
+          "default": "openalex_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "OpenAlex API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from OpenAlex Settings \u2192 API key. Paste only the key. NoClick sends it to api.openalex.org and checks your usage budget; this verifies key acceptance, not your personal identity.",
+      "x-credential-url": "https://openalex.org/settings/api"
+    },
+    "OpenAlexAutocompleteConfig": {
+      "additionalProperties": false,
+      "description": "Find up to ten entities by a partial name.",
+      "properties": {
+        "operation": {
+          "const": "autocomplete",
+          "default": "autocomplete",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entity_type": {
+          "default": "works",
+          "enum": [
+            "works",
+            "authors",
+            "sources",
+            "institutions",
+            "topics",
+            "keywords",
+            "publishers",
+            "funders"
+          ],
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "q": {
+          "description": "Partial name to search.",
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional OpenAlex filter expression.",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "OpenAlexAutocompleteConfig",
+      "type": "object"
+    },
+    "OpenAlexGetAuthorConfig": {
+      "additionalProperties": false,
+      "description": "Get author from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_author",
+          "default": "get_author",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetAuthorConfig",
+      "type": "object"
+    },
+    "OpenAlexGetDomainConfig": {
+      "additionalProperties": false,
+      "description": "Get domain from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_domain",
+          "default": "get_domain",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetDomainConfig",
+      "type": "object"
+    },
+    "OpenAlexGetFieldConfig": {
+      "additionalProperties": false,
+      "description": "Get field from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetFieldConfig",
+      "type": "object"
+    },
+    "OpenAlexGetFunderConfig": {
+      "additionalProperties": false,
+      "description": "Get funder from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_funder",
+          "default": "get_funder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetFunderConfig",
+      "type": "object"
+    },
+    "OpenAlexGetInstitutionConfig": {
+      "additionalProperties": false,
+      "description": "Get institution from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_institution",
+          "default": "get_institution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetInstitutionConfig",
+      "type": "object"
+    },
+    "OpenAlexGetKeywordConfig": {
+      "additionalProperties": false,
+      "description": "Get keyword from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_keyword",
+          "default": "get_keyword",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetKeywordConfig",
+      "type": "object"
+    },
+    "OpenAlexGetPublisherConfig": {
+      "additionalProperties": false,
+      "description": "Get publisher from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_publisher",
+          "default": "get_publisher",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetPublisherConfig",
+      "type": "object"
+    },
+    "OpenAlexGetRateLimitConfig": {
+      "additionalProperties": false,
+      "description": "Check this API key's current usage and remaining budget.",
+      "properties": {
+        "operation": {
+          "const": "get_rate_limit",
+          "default": "get_rate_limit",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexGetRateLimitConfig",
+      "type": "object"
+    },
+    "OpenAlexGetSourceConfig": {
+      "additionalProperties": false,
+      "description": "Get source from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_source",
+          "default": "get_source",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetSourceConfig",
+      "type": "object"
+    },
+    "OpenAlexGetSubfieldConfig": {
+      "additionalProperties": false,
+      "description": "Get subfield from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_subfield",
+          "default": "get_subfield",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetSubfieldConfig",
+      "type": "object"
+    },
+    "OpenAlexGetTopicConfig": {
+      "additionalProperties": false,
+      "description": "Get topic from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_topic",
+          "default": "get_topic",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetTopicConfig",
+      "type": "object"
+    },
+    "OpenAlexGetWorkConfig": {
+      "additionalProperties": false,
+      "description": "Get work from OpenAlex.",
+      "properties": {
+        "id": {
+          "description": "OpenAlex ID, canonical OpenAlex URL, or a supported external ID such as doi:10.7717/peerj.4375, ORCID, ROR or ISSN.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include.",
+          "title": "Select"
+        },
+        "operation": {
+          "const": "get_work",
+          "default": "get_work",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "OpenAlexGetWorkConfig",
+      "type": "object"
+    },
+    "OpenAlexListAuthorsConfig": {
+      "additionalProperties": false,
+      "description": "List authors from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_authors",
+          "default": "list_authors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListAuthorsConfig",
+      "type": "object"
+    },
+    "OpenAlexListDomainsConfig": {
+      "additionalProperties": false,
+      "description": "List domains from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListDomainsConfig",
+      "type": "object"
+    },
+    "OpenAlexListFieldsConfig": {
+      "additionalProperties": false,
+      "description": "List fields from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListFieldsConfig",
+      "type": "object"
+    },
+    "OpenAlexListFundersConfig": {
+      "additionalProperties": false,
+      "description": "List funders from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_funders",
+          "default": "list_funders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListFundersConfig",
+      "type": "object"
+    },
+    "OpenAlexListInstitutionsConfig": {
+      "additionalProperties": false,
+      "description": "List institutions from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_institutions",
+          "default": "list_institutions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListInstitutionsConfig",
+      "type": "object"
+    },
+    "OpenAlexListKeywordsConfig": {
+      "additionalProperties": false,
+      "description": "List keywords from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_keywords",
+          "default": "list_keywords",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListKeywordsConfig",
+      "type": "object"
+    },
+    "OpenAlexListPublishersConfig": {
+      "additionalProperties": false,
+      "description": "List publishers from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_publishers",
+          "default": "list_publishers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListPublishersConfig",
+      "type": "object"
+    },
+    "OpenAlexListSourcesConfig": {
+      "additionalProperties": false,
+      "description": "List sources from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_sources",
+          "default": "list_sources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListSourcesConfig",
+      "type": "object"
+    },
+    "OpenAlexListSubfieldsConfig": {
+      "additionalProperties": false,
+      "description": "List subfields from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_subfields",
+          "default": "list_subfields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListSubfieldsConfig",
+      "type": "object"
+    },
+    "OpenAlexListTopicsConfig": {
+      "additionalProperties": false,
+      "description": "List topics from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_topics",
+          "default": "list_topics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListTopicsConfig",
+      "type": "object"
+    },
+    "OpenAlexListWorksConfig": {
+      "additionalProperties": false,
+      "description": "List works from OpenAlex.",
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search, e.g. machine learning.",
+          "title": "Search"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OpenAlex field:value filters, combined with commas (AND) or pipes (OR).",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider sort expression, e.g. cited_by_count:desc.",
+          "title": "Sort"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group into counts by an entity field.",
+          "title": "Group By"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include in each result.",
+          "title": "Select"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Results per request, at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic page number; omit when using a cursor.",
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use * to begin deep pagination, then meta.next_cursor from the response. A null next_cursor means the last page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_works",
+          "default": "list_works",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OpenAlexListWorksConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "autocomplete": "#/$defs/OpenAlexAutocompleteConfig",
+          "get_author": "#/$defs/OpenAlexGetAuthorConfig",
+          "get_domain": "#/$defs/OpenAlexGetDomainConfig",
+          "get_field": "#/$defs/OpenAlexGetFieldConfig",
+          "get_funder": "#/$defs/OpenAlexGetFunderConfig",
+          "get_institution": "#/$defs/OpenAlexGetInstitutionConfig",
+          "get_keyword": "#/$defs/OpenAlexGetKeywordConfig",
+          "get_publisher": "#/$defs/OpenAlexGetPublisherConfig",
+          "get_rate_limit": "#/$defs/OpenAlexGetRateLimitConfig",
+          "get_source": "#/$defs/OpenAlexGetSourceConfig",
+          "get_subfield": "#/$defs/OpenAlexGetSubfieldConfig",
+          "get_topic": "#/$defs/OpenAlexGetTopicConfig",
+          "get_work": "#/$defs/OpenAlexGetWorkConfig",
+          "list_authors": "#/$defs/OpenAlexListAuthorsConfig",
+          "list_domains": "#/$defs/OpenAlexListDomainsConfig",
+          "list_fields": "#/$defs/OpenAlexListFieldsConfig",
+          "list_funders": "#/$defs/OpenAlexListFundersConfig",
+          "list_institutions": "#/$defs/OpenAlexListInstitutionsConfig",
+          "list_keywords": "#/$defs/OpenAlexListKeywordsConfig",
+          "list_publishers": "#/$defs/OpenAlexListPublishersConfig",
+          "list_sources": "#/$defs/OpenAlexListSourcesConfig",
+          "list_subfields": "#/$defs/OpenAlexListSubfieldsConfig",
+          "list_topics": "#/$defs/OpenAlexListTopicsConfig",
+          "list_works": "#/$defs/OpenAlexListWorksConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OpenAlexListWorksConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetWorkConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListAuthorsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetAuthorConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListInstitutionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetInstitutionConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListTopicsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetTopicConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetKeywordConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListPublishersConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetPublisherConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListFundersConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetFunderConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexListSubfieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetSubfieldConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexAutocompleteConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenAlexGetRateLimitConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenAlexAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Openalex Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find open access papers about machine learning",
+    "Look up an author by ORCID",
+    "Group works by publication year"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
