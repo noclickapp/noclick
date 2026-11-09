@@ -1,0 +1,1420 @@
+{
+  "source": "https://640808362-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F5jDaQI2dLzXe5VgQBNFE%2Fuploads%2F3FtnqOUUrTUWZTdae7UZ%2Fasset-swagger.yml?alt=media&token=ceaab1e7-648d-4da5-96f8-c6905e4c09ef",
+  "cases": {
+    "create_assets": {
+      "config": {
+        "operation": "create_assets",
+        "async_mode": false,
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "name": "Flat xyz",
+            "address": "Chicago, Illinois",
+            "locality": "Harbor Drive"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/asset",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "name": "Flat xyz",
+            "address": "Chicago, Illinois",
+            "locality": "Harbor Drive"
+          }
+        ]
+      },
+      "response_status": 201,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "assetType",
+          "data"
+        ],
+        "properties": {
+          "assetType": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        }
+      }
+    },
+    "upsert_assets": {
+      "config": {
+        "operation": "upsert_assets",
+        "async_mode": false,
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "name": "Flat xyz",
+            "address": "Chicago, Illinois",
+            "locality": "Harbor Drive"
+          }
+        ]
+      },
+      "method": "PUT",
+      "path": "/asset",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "name": "Flat xyz",
+            "address": "Chicago, Illinois",
+            "locality": "Harbor Drive"
+          }
+        ]
+      },
+      "response_status": 201,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "assetType",
+          "data"
+        ],
+        "properties": {
+          "assetType": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        }
+      }
+    },
+    "get_asset": {
+      "config": {
+        "operation": "get_asset",
+        "assetType": "Property",
+        "id": "Prop1"
+      },
+      "method": "GET",
+      "path": "/asset",
+      "query": {
+        "assetType": "Property",
+        "id": "Prop1"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "Prop1",
+        "assetType": "Property",
+        "data": {
+          "id": "Prop1",
+          "name": "Flat xyz",
+          "address": "Chicago, Illinois",
+          "locality": "Harbor Drive"
+        },
+        "owners": [
+          {
+            "orgId": "63c912fd5902d6c20ac43c89",
+            "userId": "123"
+          }
+        ],
+        "createdAt": "2023-02-15T15:47:00.027Z",
+        "createdBy": {
+          "orgId": "63c912fd5902d6c20ac43c89",
+          "userId": "123"
+        },
+        "updatedAt": "2023-02-17T12:10:24.156Z",
+        "updatedBy": {
+          "orgId": "63c912fd5902d6c20ac43c89",
+          "userId": "123"
+        }
+      },
+      "parameter_schemas": {
+        "assetType": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "depth": {
+          "type": "integer"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "update_assets": {
+      "config": {
+        "operation": "update_assets",
+        "async_mode": false,
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "name": "Flat xyz",
+            "address": "Chicago, Illinois",
+            "locality": "Harbor Drive"
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/asset",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "name": "Flat xyz",
+            "address": "Chicago, Illinois",
+            "locality": "Harbor Drive"
+          }
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "assetType",
+          "data"
+        ],
+        "properties": {
+          "assetType": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "delete_assets": {
+      "config": {
+        "operation": "delete_assets",
+        "async_mode": false,
+        "assetType": "Property",
+        "id": [
+          "Prop1"
+        ]
+      },
+      "method": "DELETE",
+      "path": "/asset",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "assetType": "Property",
+        "id": [
+          "Prop1"
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "assetType",
+          "id"
+        ],
+        "properties": {
+          "assetType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "update_asset_owners": {
+      "config": {
+        "operation": "update_asset_owners",
+        "async_mode": false,
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ]
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/asset/owners",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "assetType": "Property",
+        "data": [
+          {
+            "id": "Prop1",
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ]
+          }
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "assetType",
+          "data"
+        ],
+        "properties": {
+          "assetType": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "owners"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "owners": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "orgId"
+                    ],
+                    "properties": {
+                      "orgId": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "get_asset_history": {
+      "config": {
+        "operation": "get_asset_history",
+        "assetType": "Property",
+        "id": "Prop1"
+      },
+      "method": "GET",
+      "path": "/asset/history",
+      "query": {
+        "assetType": "Property",
+        "id": "Prop1"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "Prop1",
+        "assetType": "Property",
+        "count": 1,
+        "records": [
+          {
+            "trasactionType": "CREATED",
+            "transactionId": "6c94ff55155722c28611630e7d6795145e0282e9fabf10bf3460f396e2a6218b",
+            "transactionTime": "2023-02-16T11:55:07.776Z",
+            "data": {
+              "id": "Prop1",
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive"
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "assetType": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "depth": {
+          "type": "integer"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "list_assets": {
+      "config": {
+        "operation": "list_assets",
+        "assetType": "Property"
+      },
+      "method": "GET",
+      "path": "/asset/all",
+      "query": {
+        "assetType": "Property"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "count": 1,
+        "bookmark": "fixture-value",
+        "records": [
+          {
+            "id": "Prop1",
+            "assetType": "Property",
+            "data": {
+              "id": "Prop1",
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive"
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "assetType": {
+          "type": "string"
+        },
+        "pageSize": {
+          "type": "integer"
+        },
+        "bookmark": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "get_receipt": {
+      "config": {
+        "operation": "get_receipt",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "method": "GET",
+      "path": "/asset/receipt",
+      "query": {
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "transactionId": "6c94ff55155722c28611630e7d6795145e0282e9fabf10bf3460f396e2a6218b",
+        "status": "COMMITTED",
+        "message": "Success"
+      },
+      "parameter_schemas": {
+        "receiptId": {
+          "type": "string"
+        }
+      }
+    },
+    "get_asset_stats": {
+      "config": {
+        "operation": "get_asset_stats"
+      },
+      "method": "GET",
+      "path": "/asset/stats",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "totalCount": 100,
+        "countByType": [
+          {
+            "assetType": "Property",
+            "count": 30
+          }
+        ]
+      },
+      "parameter_schemas": {}
+    },
+    "get_transfer_request": {
+      "config": {
+        "operation": "get_transfer_request",
+        "id": "ea09a7ff705d69eb"
+      },
+      "method": "GET",
+      "path": "/asset/ownershipTransfer/request",
+      "query": {
+        "id": "ea09a7ff705d69eb"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+        "approvers": [
+          {}
+        ],
+        "numRequired": 1,
+        "status": "PENDING",
+        "timeout": 60,
+        "data": {
+          "name": "Flat xyz",
+          "address": "Chicago, Illinois",
+          "locality": "Harbor Drive",
+          "metadata": {
+            "assetType": "Property",
+            "id": [
+              "Prop1"
+            ],
+            "newOwner": {
+              "orgId": "641b0eb2623fc30540d70fa7",
+              "userId": "6002"
+            }
+          }
+        },
+        "owners": [
+          {
+            "orgId": "63c912fd5902d6c20ac43c89",
+            "userId": "123"
+          }
+        ],
+        "createdAt": "2023-02-15T15:47:00.027Z",
+        "createdBy": {
+          "orgId": "63c912fd5902d6c20ac43c89",
+          "userId": "123"
+        },
+        "updatedAt": "2023-02-17T12:10:24.156Z",
+        "updatedBy": {
+          "orgId": "63c912fd5902d6c20ac43c89",
+          "userId": "123"
+        }
+      },
+      "parameter_schemas": {
+        "id": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "approve_transfer_requests": {
+      "config": {
+        "operation": "approve_transfer_requests",
+        "async_mode": false,
+        "id": [
+          "641821e82c44573cb52c7d97"
+        ]
+      },
+      "method": "POST",
+      "path": "/asset/ownershipTransfer/approve",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "id": [
+          "641821e82c44573cb52c7d97"
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "reject_transfer_requests": {
+      "config": {
+        "operation": "reject_transfer_requests",
+        "async_mode": false,
+        "id": [
+          "641821e82c44573cb52c7d97"
+        ]
+      },
+      "method": "POST",
+      "path": "/asset/ownershipTransfer/reject",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "id": [
+          "641821e82c44573cb52c7d97"
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "list_my_transfer_requests": {
+      "config": {
+        "operation": "list_my_transfer_requests"
+      },
+      "method": "GET",
+      "path": "/asset/ownershipTransfer/request/my",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "count": 3,
+        "bookmark": "fixture-value",
+        "records": [
+          {
+            "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+            "approvers": [
+              {}
+            ],
+            "numRequired": 1,
+            "status": "PENDING",
+            "timeout": 60,
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive",
+              "metadata": {
+                "assetType": "Property",
+                "id": [
+                  "Prop1"
+                ],
+                "newOwner": {
+                  "orgId": "641b0eb2623fc30540d70fa7",
+                  "userId": "6002"
+                }
+              }
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "pageSize": {
+          "type": "integer"
+        },
+        "bookmark": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "list_transfer_approvals": {
+      "config": {
+        "operation": "list_transfer_approvals"
+      },
+      "method": "GET",
+      "path": "/asset/ownershipTransfer/request/approvals",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "count": 3,
+        "bookmark": "fixture-value",
+        "records": [
+          {
+            "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+            "approvers": [
+              {}
+            ],
+            "numRequired": 1,
+            "status": "PENDING",
+            "timeout": 60,
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive",
+              "metadata": {
+                "assetType": "Property",
+                "id": [
+                  "Prop1"
+                ],
+                "newOwner": {
+                  "orgId": "641b0eb2623fc30540d70fa7",
+                  "userId": "6002"
+                }
+              }
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "onlyPending": {
+          "type": "boolean"
+        },
+        "pageSize": {
+          "type": "integer"
+        },
+        "bookmark": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "create_approvals": {
+      "config": {
+        "operation": "create_approvals",
+        "async_mode": false,
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "approvers": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "numRequired": 1,
+            "timeout": 60,
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive"
+            }
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/approval",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "approvers": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "numRequired": 1,
+            "timeout": 60,
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive"
+            }
+          }
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "approvalType",
+          "approvals"
+        ],
+        "properties": {
+          "approvalType": {
+            "type": "string"
+          },
+          "approvals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "approvers"
+              ],
+              "properties": {
+                "approvers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "orgId"
+                    ],
+                    "properties": {
+                      "orgId": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "numRequired": {
+                  "type": "number"
+                },
+                "timeout": {
+                  "type": "number"
+                },
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "get_approval": {
+      "config": {
+        "operation": "get_approval",
+        "id": "ea09a7ff705d69eb",
+        "approvalType": "LoanRequestApproval"
+      },
+      "method": "GET",
+      "path": "/approval",
+      "query": {
+        "id": "ea09a7ff705d69eb",
+        "approvalType": "LoanRequestApproval"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+        "approvers": [
+          {}
+        ],
+        "numRequired": 1,
+        "timeout": 60,
+        "status": "PENDING",
+        "data": {
+          "name": "Flat xyz",
+          "address": "Chicago, Illinois",
+          "locality": "Harbor Drive"
+        },
+        "owners": [
+          {
+            "orgId": "63c912fd5902d6c20ac43c89",
+            "userId": "123"
+          }
+        ],
+        "createdAt": "2023-02-15T15:47:00.027Z",
+        "createdBy": {
+          "orgId": "63c912fd5902d6c20ac43c89",
+          "userId": "123"
+        },
+        "updatedAt": "2023-02-17T12:10:24.156Z",
+        "updatedBy": {
+          "orgId": "63c912fd5902d6c20ac43c89",
+          "userId": "123"
+        }
+      },
+      "parameter_schemas": {
+        "id": {
+          "type": "string"
+        },
+        "approvalType": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "accept_approvals": {
+      "config": {
+        "operation": "accept_approvals",
+        "async_mode": false,
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "id": "ea09a7ff705d69eb",
+            "comment": "Approved"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/approval/accept",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "id": "ea09a7ff705d69eb",
+            "comment": "Approved"
+          }
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "approvalType",
+          "approvals"
+        ],
+        "properties": {
+          "approvalType": {
+            "type": "string"
+          },
+          "approvals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "reject_approvals": {
+      "config": {
+        "operation": "reject_approvals",
+        "async_mode": false,
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "id": "ea09a7ff705d69eb",
+            "comment": "Rejected"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/approval/reject",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "id": "ea09a7ff705d69eb",
+            "comment": "Rejected"
+          }
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "approvalType",
+          "approvals"
+        ],
+        "properties": {
+          "approvalType": {
+            "type": "string"
+          },
+          "approvals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "cancel_approvals": {
+      "config": {
+        "operation": "cancel_approvals",
+        "async_mode": false,
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "id": "ea09a7ff705d69eb",
+            "comment": "Cancelling"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/approval/cancel",
+      "query": {
+        "async": "false"
+      },
+      "body": {
+        "approvalType": "LoanRequestApproval",
+        "approvals": [
+          {
+            "id": "ea09a7ff705d69eb",
+            "comment": "Cancelling"
+          }
+        ]
+      },
+      "response_status": 200,
+      "response": {
+        "transactionId": "dd7817b56429532ceea32e2111faa20a7af87c945e7d8163ae2384c560b565f2",
+        "receiptId": "643d316fa27b8c7dcdb31c49"
+      },
+      "body_schema": {
+        "type": "object",
+        "required": [
+          "approvalType",
+          "approvals"
+        ],
+        "properties": {
+          "approvalType": {
+            "type": "string"
+          },
+          "approvals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameter_schemas": {
+        "async": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "list_my_approvals": {
+      "config": {
+        "operation": "list_my_approvals",
+        "approvalType": "LoanRequestApproval"
+      },
+      "method": "GET",
+      "path": "/approval/my",
+      "query": {
+        "approvalType": "LoanRequestApproval"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "count": 3,
+        "bookmark": "fixture-value",
+        "records": [
+          {
+            "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+            "approvers": [
+              {}
+            ],
+            "numRequired": 1,
+            "timeout": 60,
+            "status": "PENDING",
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive"
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "approvalType": {
+          "type": "string"
+        },
+        "pageSize": {
+          "type": "integer"
+        },
+        "bookmark": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "list_approval_queue": {
+      "config": {
+        "operation": "list_approval_queue",
+        "approvalType": "LoanRequestApproval"
+      },
+      "method": "GET",
+      "path": "/approval/queue",
+      "query": {
+        "approvalType": "LoanRequestApproval"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "count": 3,
+        "bookmark": "fixture-value",
+        "records": [
+          {
+            "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+            "approvers": [
+              {}
+            ],
+            "numRequired": 1,
+            "status": "PENDING",
+            "timeout": 60,
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive",
+              "metadata": {
+                "assetType": "Property",
+                "id": [
+                  "Prop1"
+                ],
+                "newOwner": {
+                  "orgId": "641b0eb2623fc30540d70fa7",
+                  "userId": "6002"
+                }
+              }
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "approvalType": {
+          "type": "string"
+        },
+        "onlyPending": {
+          "type": "boolean"
+        },
+        "pageSize": {
+          "type": "integer"
+        },
+        "bookmark": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    },
+    "get_approval_history": {
+      "config": {
+        "operation": "get_approval_history",
+        "id": "ea09a7ff705d69eb",
+        "approvalType": "LoanRequestApproval"
+      },
+      "method": "GET",
+      "path": "/approval/history",
+      "query": {
+        "id": "ea09a7ff705d69eb",
+        "approvalType": "LoanRequestApproval"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "9a7b337324d807e3622c29aad435bf6e6ea1d14a8c4e3850c5627f3be4356d12_124134",
+        "count": 1,
+        "records": [
+          {
+            "trasactionType": "CREATED",
+            "transactionId": "6c94ff55155722c28611630e7d6795145e0282e9fabf10bf3460f396e2a6218b",
+            "transactionTime": "2023-02-16T11:55:07.776Z",
+            "approvers": [
+              {}
+            ],
+            "numRequired": 1,
+            "timeout": 60,
+            "status": "PENDING",
+            "data": {
+              "name": "Flat xyz",
+              "address": "Chicago, Illinois",
+              "locality": "Harbor Drive"
+            },
+            "owners": [
+              {
+                "orgId": "63c912fd5902d6c20ac43c89",
+                "userId": "123"
+              }
+            ],
+            "createdAt": "2023-02-15T15:47:00.027Z",
+            "createdBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            },
+            "updatedAt": "2023-02-17T12:10:24.156Z",
+            "updatedBy": {
+              "orgId": "63c912fd5902d6c20ac43c89",
+              "userId": "123"
+            }
+          }
+        ]
+      },
+      "parameter_schemas": {
+        "id": {
+          "type": "string"
+        },
+        "approvalType": {
+          "type": "string"
+        },
+        "actAs": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "version": "1.0.0",
+  "sha256": "32dab336170b47b5bd5f7bb38b2063fc5226721c569e106c5fef48774f7dd4c4"
+}

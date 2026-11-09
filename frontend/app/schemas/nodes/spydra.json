@@ -1,0 +1,1544 @@
+{
+  "$defs": {
+    "SpydraAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "spydra_api_key",
+          "default": "spydra_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_url": {
+          "description": "Your network deployment URL: https://<membership_id>.spydra.app/tokenize/<app_id>",
+          "title": "REST API base URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_url"
+      ],
+      "title": "Spydra API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Spydra Network, open API Keys and create or copy an API key. Paste the network's Asset Tokenization REST API base URL, including /tokenize/<chaincodeccid>, from the app's REST API page. The key is network-specific. NoClick sends it as X-API-KEY to this deployment; use only your trusted Spydra deployment URL.",
+      "x-credential-url": "https://docs.spydra.app/developers/api-key"
+    },
+    "SpydraAcceptApprovalsConfig": {
+      "additionalProperties": false,
+      "description": "Approve the request.",
+      "properties": {
+        "operation": {
+          "const": "accept_approvals",
+          "default": "accept_approvals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "approvals": {
+          "description": "The Approval request related data. Multiple approvals can be submitted together by providing an array here.",
+          "items": {
+            "$ref": "#/$defs/SpydraApprovalAction"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Approvals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "approvalType",
+        "approvals"
+      ],
+      "title": "SpydraAcceptApprovalsConfig",
+      "type": "object"
+    },
+    "SpydraApprovalAction": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Approval request ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SpydraApprovalAction",
+      "type": "object"
+    },
+    "SpydraApprovalRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "approvers": {
+          "items": {
+            "$ref": "#/$defs/SpydraEntity"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Approvers",
+          "type": "array"
+        },
+        "numRequired": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of approvers required.",
+          "title": "Numrequired"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeout in minutes.",
+          "title": "Timeout"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        }
+      },
+      "required": [
+        "approvers"
+      ],
+      "title": "SpydraApprovalRequest",
+      "type": "object"
+    },
+    "SpydraApproveTransferRequestsConfig": {
+      "additionalProperties": false,
+      "description": "Approve ownership transfer request.",
+      "properties": {
+        "operation": {
+          "const": "approve_transfer_requests",
+          "default": "approve_transfer_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "id": {
+          "description": "Id of the approval request. You can approve multiple ownership transfer requests together by providing an array of Ids here.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Id",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SpydraApproveTransferRequestsConfig",
+      "type": "object"
+    },
+    "SpydraCancelApprovalsConfig": {
+      "additionalProperties": false,
+      "description": "Cancel approval request.",
+      "properties": {
+        "operation": {
+          "const": "cancel_approvals",
+          "default": "cancel_approvals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "approvals": {
+          "description": "The Approval request related data. Multiple approvals can be submitted together by providing an array here.",
+          "items": {
+            "$ref": "#/$defs/SpydraApprovalAction"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Approvals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "approvalType",
+        "approvals"
+      ],
+      "title": "SpydraCancelApprovalsConfig",
+      "type": "object"
+    },
+    "SpydraCreateApprovalsConfig": {
+      "additionalProperties": false,
+      "description": "Create a new approval request.",
+      "properties": {
+        "operation": {
+          "const": "create_approvals",
+          "default": "create_approvals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "approvals": {
+          "description": "The Approval request related data. Multiple approvals can be submitted together by providing an array here.",
+          "items": {
+            "$ref": "#/$defs/SpydraApprovalRequest"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Approvals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "approvalType",
+        "approvals"
+      ],
+      "title": "SpydraCreateApprovalsConfig",
+      "type": "object"
+    },
+    "SpydraCreateAssetsConfig": {
+      "additionalProperties": false,
+      "description": "Create an asset or a list of assets.",
+      "properties": {
+        "operation": {
+          "const": "create_assets",
+          "default": "create_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "data": {
+          "description": "Custom JSON object representing an asset. You can submit a single asset or multiple assets in one request by providing an array of assets here.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assetType",
+        "data"
+      ],
+      "title": "SpydraCreateAssetsConfig",
+      "type": "object"
+    },
+    "SpydraDeleteAssetsConfig": {
+      "additionalProperties": false,
+      "description": "Delete one or more assets.",
+      "properties": {
+        "operation": {
+          "const": "delete_assets",
+          "default": "delete_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "id": {
+          "description": "Id of the asset. This is the Id that is maintained in your system and corresponds to the value of the Primary Key attribute defined in the Asset Tokenization App settings. You can submit a single id or multiple Ids in one request by providing an array here.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Id",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assetType",
+        "id"
+      ],
+      "title": "SpydraDeleteAssetsConfig",
+      "type": "object"
+    },
+    "SpydraEntity": {
+      "additionalProperties": true,
+      "properties": {
+        "orgId": {
+          "description": "Membership ID of the organization.",
+          "minLength": 1,
+          "title": "Orgid",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        }
+      },
+      "required": [
+        "orgId"
+      ],
+      "title": "SpydraEntity",
+      "type": "object"
+    },
+    "SpydraGetApprovalConfig": {
+      "additionalProperties": false,
+      "description": "Get approval request by id.",
+      "properties": {
+        "operation": {
+          "const": "get_approval",
+          "default": "get_approval",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the approval request.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.\n\n*Example:* LoanRequestApproval",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "id",
+        "approvalType"
+      ],
+      "title": "SpydraGetApprovalConfig",
+      "type": "object"
+    },
+    "SpydraGetApprovalHistoryConfig": {
+      "additionalProperties": false,
+      "description": "Get the approval requests for a particular asset.",
+      "properties": {
+        "operation": {
+          "const": "get_approval_history",
+          "default": "get_approval_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the approval request.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.\n\n*Example:* LoanRequestApproval",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "id",
+        "approvalType"
+      ],
+      "title": "SpydraGetApprovalHistoryConfig",
+      "type": "object"
+    },
+    "SpydraGetAssetConfig": {
+      "additionalProperties": false,
+      "description": "Query an asset.",
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "id": {
+          "description": "Id of the asset. This is the Id that is maintained in your system and corresponds to value of the Primary Key attribute defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For referenced objects, depth up to which references to be returned. For e.g. if depth=1, one level of references will be resolved.",
+          "title": "Depth"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "assetType",
+        "id"
+      ],
+      "title": "SpydraGetAssetConfig",
+      "type": "object"
+    },
+    "SpydraGetAssetHistoryConfig": {
+      "additionalProperties": false,
+      "description": "Get the asset along with history of changes.",
+      "properties": {
+        "operation": {
+          "const": "get_asset_history",
+          "default": "get_asset_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "id": {
+          "description": "Id of the asset. This is the Id that is maintained in your system and corresponds to the value of the Primary Key attribute defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For referenced objects, depth up to which references to be returned.",
+          "title": "Depth"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "assetType",
+        "id"
+      ],
+      "title": "SpydraGetAssetHistoryConfig",
+      "type": "object"
+    },
+    "SpydraGetAssetStatsConfig": {
+      "additionalProperties": false,
+      "description": "Get statistics about asset usage.",
+      "properties": {
+        "operation": {
+          "const": "get_asset_stats",
+          "default": "get_asset_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SpydraGetAssetStatsConfig",
+      "type": "object"
+    },
+    "SpydraGetReceiptConfig": {
+      "additionalProperties": false,
+      "description": "Get the status of an already submitted transaction using the returned receipt id.",
+      "properties": {
+        "operation": {
+          "const": "get_receipt",
+          "default": "get_receipt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "receiptId": {
+          "description": "The receipt id returned while submitting the transaction.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Receiptid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiptId"
+      ],
+      "title": "SpydraGetReceiptConfig",
+      "type": "object"
+    },
+    "SpydraGetTransferRequestConfig": {
+      "additionalProperties": false,
+      "description": "Get ownership transfer request by id.",
+      "properties": {
+        "operation": {
+          "const": "get_transfer_request",
+          "default": "get_transfer_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the ownership approval request.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SpydraGetTransferRequestConfig",
+      "type": "object"
+    },
+    "SpydraListApprovalQueueConfig": {
+      "additionalProperties": false,
+      "description": "Get the approval requests in queue for approval.",
+      "properties": {
+        "operation": {
+          "const": "list_approval_queue",
+          "default": "list_approval_queue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.\n\n*Example:* LoanRequestApproval",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "onlyPending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get only pending requests. The default is true.",
+          "title": "Onlypending"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of records to be returned in a page. The default is 25.",
+          "title": "Pagesize"
+        },
+        "bookmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The bookmark returned by previous request.",
+          "title": "Bookmark"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "approvalType"
+      ],
+      "title": "SpydraListApprovalQueueConfig",
+      "type": "object"
+    },
+    "SpydraListAssetsConfig": {
+      "additionalProperties": false,
+      "description": "Get all assets.",
+      "properties": {
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of records to be returned in a page. The default is 25.",
+          "title": "Pagesize"
+        },
+        "bookmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The bookmark returned by previous request.",
+          "title": "Bookmark"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "assetType"
+      ],
+      "title": "SpydraListAssetsConfig",
+      "type": "object"
+    },
+    "SpydraListMyApprovalsConfig": {
+      "additionalProperties": false,
+      "description": "Get the status of approval requests submitted by an entity.",
+      "properties": {
+        "operation": {
+          "const": "list_my_approvals",
+          "default": "list_my_approvals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.\n\n*Example:* LoanRequestApproval",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of records to be returned in a page. The default is 25.",
+          "title": "Pagesize"
+        },
+        "bookmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The bookmark returned by previous request.",
+          "title": "Bookmark"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "required": [
+        "approvalType"
+      ],
+      "title": "SpydraListMyApprovalsConfig",
+      "type": "object"
+    },
+    "SpydraListMyTransferRequestsConfig": {
+      "additionalProperties": false,
+      "description": "Get the status of ownership transfer requests submitted by an entity.",
+      "properties": {
+        "operation": {
+          "const": "list_my_transfer_requests",
+          "default": "list_my_transfer_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of records to be returned in a page. The default is 25.",
+          "title": "Pagesize"
+        },
+        "bookmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The bookmark returned by previous request.",
+          "title": "Bookmark"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "title": "SpydraListMyTransferRequestsConfig",
+      "type": "object"
+    },
+    "SpydraListTransferApprovalsConfig": {
+      "additionalProperties": false,
+      "description": "Get the ownership transfer requests in queue for approval.",
+      "properties": {
+        "operation": {
+          "const": "list_transfer_approvals",
+          "default": "list_transfer_approvals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "onlyPending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get only pending requests. The default is true.",
+          "title": "Onlypending"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of records to be returned in a page. The default is 25.",
+          "title": "Pagesize"
+        },
+        "bookmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The bookmark returned by previous request.",
+          "title": "Bookmark"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        }
+      },
+      "title": "SpydraListTransferApprovalsConfig",
+      "type": "object"
+    },
+    "SpydraOwnershipChange": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Asset ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "owners": {
+          "items": {
+            "$ref": "#/$defs/SpydraEntity"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Owners",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "owners"
+      ],
+      "title": "SpydraOwnershipChange",
+      "type": "object"
+    },
+    "SpydraRejectApprovalsConfig": {
+      "additionalProperties": false,
+      "description": "Reject approval request.",
+      "properties": {
+        "operation": {
+          "const": "reject_approvals",
+          "default": "reject_approvals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "approvalType": {
+          "description": "A unique name that represents this type of approval. The type is used to distinguish between different types of approvals in the systems. For e.g. LoanRequestApproval and LoanDisbursementApproval can be different approval types in the system. The type is also required while making other Approval API related calls.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Approvaltype",
+          "type": "string"
+        },
+        "approvals": {
+          "description": "The Approval request related data. Multiple approvals can be submitted together by providing an array here.",
+          "items": {
+            "$ref": "#/$defs/SpydraApprovalAction"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Approvals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "approvalType",
+        "approvals"
+      ],
+      "title": "SpydraRejectApprovalsConfig",
+      "type": "object"
+    },
+    "SpydraRejectTransferRequestsConfig": {
+      "additionalProperties": false,
+      "description": "Reject ownership transfer request.",
+      "properties": {
+        "operation": {
+          "const": "reject_transfer_requests",
+          "default": "reject_transfer_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "id": {
+          "description": "Id of the approval request. You can approve multiple ownership transfer requests together by providing an array of Ids here.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Id",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SpydraRejectTransferRequestsConfig",
+      "type": "object"
+    },
+    "SpydraUpdateAssetOwnersConfig": {
+      "additionalProperties": false,
+      "description": "Update owners of an asset. This method replaces the current owners with the new owner array provided.",
+      "properties": {
+        "operation": {
+          "const": "update_asset_owners",
+          "default": "update_asset_owners",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "data": {
+          "description": "Ownership change data. Supports ownership change for single asset or bulk change for an array of assets.",
+          "items": {
+            "$ref": "#/$defs/SpydraOwnershipChange"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assetType",
+        "data"
+      ],
+      "title": "SpydraUpdateAssetOwnersConfig",
+      "type": "object"
+    },
+    "SpydraUpdateAssetsConfig": {
+      "additionalProperties": false,
+      "description": "Update an asset or a list of assets.",
+      "properties": {
+        "operation": {
+          "const": "update_assets",
+          "default": "update_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "actAs": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The entity (like user, suborg etc) within the org on behalf of which the request is being made.\n\n*Example:* userId:123",
+          "title": "Actas"
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "data": {
+          "description": "Custom JSON object representing an asset. You can submit a single asset or multiple assets in one request by providing an array of assets here.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assetType",
+        "data"
+      ],
+      "title": "SpydraUpdateAssetsConfig",
+      "type": "object"
+    },
+    "SpydraUpsertAssetsConfig": {
+      "additionalProperties": false,
+      "description": "Create or update an asset or a list of assets. If an asset with the same id exists, the existing asset will be updated.",
+      "properties": {
+        "operation": {
+          "const": "upsert_assets",
+          "default": "upsert_assets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "async_mode": {
+          "default": false,
+          "description": "Return a receipt immediately instead of waiting for ledger commit.",
+          "title": "Async Mode",
+          "type": "boolean"
+        },
+        "assetType": {
+          "description": "The type of asset defined in the Asset Tokenization App settings.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Assettype",
+          "type": "string"
+        },
+        "data": {
+          "description": "Custom JSON object representing an asset. You can submit a single asset or multiple assets in one request by providing an array of assets here.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assetType",
+        "data"
+      ],
+      "title": "SpydraUpsertAssetsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "accept_approvals": "#/$defs/SpydraAcceptApprovalsConfig",
+          "approve_transfer_requests": "#/$defs/SpydraApproveTransferRequestsConfig",
+          "cancel_approvals": "#/$defs/SpydraCancelApprovalsConfig",
+          "create_approvals": "#/$defs/SpydraCreateApprovalsConfig",
+          "create_assets": "#/$defs/SpydraCreateAssetsConfig",
+          "delete_assets": "#/$defs/SpydraDeleteAssetsConfig",
+          "get_approval": "#/$defs/SpydraGetApprovalConfig",
+          "get_approval_history": "#/$defs/SpydraGetApprovalHistoryConfig",
+          "get_asset": "#/$defs/SpydraGetAssetConfig",
+          "get_asset_history": "#/$defs/SpydraGetAssetHistoryConfig",
+          "get_asset_stats": "#/$defs/SpydraGetAssetStatsConfig",
+          "get_receipt": "#/$defs/SpydraGetReceiptConfig",
+          "get_transfer_request": "#/$defs/SpydraGetTransferRequestConfig",
+          "list_approval_queue": "#/$defs/SpydraListApprovalQueueConfig",
+          "list_assets": "#/$defs/SpydraListAssetsConfig",
+          "list_my_approvals": "#/$defs/SpydraListMyApprovalsConfig",
+          "list_my_transfer_requests": "#/$defs/SpydraListMyTransferRequestsConfig",
+          "list_transfer_approvals": "#/$defs/SpydraListTransferApprovalsConfig",
+          "reject_approvals": "#/$defs/SpydraRejectApprovalsConfig",
+          "reject_transfer_requests": "#/$defs/SpydraRejectTransferRequestsConfig",
+          "update_asset_owners": "#/$defs/SpydraUpdateAssetOwnersConfig",
+          "update_assets": "#/$defs/SpydraUpdateAssetsConfig",
+          "upsert_assets": "#/$defs/SpydraUpsertAssetsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SpydraCreateAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraUpsertAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraUpdateAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraDeleteAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraUpdateAssetOwnersConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetAssetHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetReceiptConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetAssetStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetTransferRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraApproveTransferRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraRejectTransferRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraListMyTransferRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraListTransferApprovalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraCreateApprovalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetApprovalConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraAcceptApprovalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraRejectApprovalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraCancelApprovalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraListMyApprovalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraListApprovalQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/SpydraGetApprovalHistoryConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SpydraAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Spydra Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
