@@ -1,0 +1,670 @@
+{
+  "$defs": {
+    "CreateBookmark": {
+      "additionalProperties": false,
+      "description": "Save a URL or supplied private article content.",
+      "properties": {
+        "operation": {
+          "const": "create_bookmark",
+          "default": "create_bookmark",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "archived": {
+          "default": false,
+          "title": "Archived",
+          "type": "boolean"
+        },
+        "canonicalize": {
+          "default": true,
+          "title": "Canonicalize",
+          "type": "boolean"
+        },
+        "tags": {
+          "items": {
+            "$ref": "#/$defs/TagName"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "private_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Source"
+        }
+      },
+      "title": "CreateBookmark",
+      "type": "object"
+    },
+    "DeleteBookmark": {
+      "additionalProperties": false,
+      "description": "Permanently delete the selected bookmark.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_bookmark",
+          "default": "delete_bookmark",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "DeleteBookmark",
+      "type": "object"
+    },
+    "GetBookmarkContent": {
+      "additionalProperties": false,
+      "description": "Retrieve parsed article HTML and metadata.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_bookmark_content",
+          "default": "get_bookmark_content",
+          "title": "Operation",
+          "type": "string"
+        },
+        "use_cache": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Use Cache",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "x-enum-searchable": true
+        },
+        "force": {
+          "anyOf": [
+            {
+              "const": "1",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Force"
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "GetBookmarkContent",
+      "type": "object"
+    },
+    "InstapaperTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "instapaper_access_token",
+          "default": "instapaper_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "instaparser_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instaparser API key",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Instapaper Access Token",
+      "type": "object",
+      "x-credential-instructions": "Generate a personal access token on Instapaper's Applications page and paste it here. Use your own account's token. Article content access by non-personal applications also requires an Instaparser API key; leave that field empty for personal use.",
+      "x-credential-url": "https://www.instapaper.com/developers/applications"
+    },
+    "LikeBookmark": {
+      "additionalProperties": false,
+      "description": "Like the selected bookmark.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "like_bookmark",
+          "default": "like_bookmark",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "LikeBookmark",
+      "type": "object"
+    },
+    "ListBookmarks": {
+      "additionalProperties": false,
+      "description": "Read one page of account bookmarks, optionally changed since a timestamp.",
+      "properties": {
+        "operation": {
+          "const": "list_bookmarks",
+          "default": "list_bookmarks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "section": {
+          "default": "home",
+          "enum": [
+            "home",
+            "archive",
+            "liked",
+            "folder",
+            "tag"
+          ],
+          "title": "Section",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Since"
+        }
+      },
+      "title": "ListBookmarks",
+      "type": "object"
+    },
+    "MoveBookmark": {
+      "additionalProperties": false,
+      "description": "Move to home, archive, or a folder ID written as a string.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "move_bookmark",
+          "default": "move_bookmark",
+          "title": "Operation",
+          "type": "string"
+        },
+        "section": {
+          "description": "archive, home, or a folder ID such as 12345.",
+          "pattern": "^(archive|home|[0-9]+)$",
+          "title": "Section",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bookmark_id",
+        "section"
+      ],
+      "title": "MoveBookmark",
+      "type": "object"
+    },
+    "ParseBookmarkContent": {
+      "additionalProperties": false,
+      "description": "Parse a bookmark, optionally using supplied article HTML.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "parse_bookmark_content",
+          "default": "parse_bookmark_content",
+          "title": "Operation",
+          "type": "string"
+        },
+        "use_cache": {
+          "default": true,
+          "title": "Use Cache",
+          "type": "boolean"
+        },
+        "force": {
+          "default": false,
+          "title": "Force",
+          "type": "boolean"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "ParseBookmarkContent",
+      "type": "object"
+    },
+    "Progress": {
+      "additionalProperties": false,
+      "properties": {
+        "percentage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Percentage",
+          "type": "number"
+        },
+        "timestamp": {
+          "minimum": 1,
+          "title": "Timestamp",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "percentage",
+        "timestamp"
+      ],
+      "title": "Progress",
+      "type": "object"
+    },
+    "TagId": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TagId",
+      "type": "object"
+    },
+    "TagName": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TagName",
+      "type": "object"
+    },
+    "TagReference": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "TagReference",
+      "type": "object"
+    },
+    "UnlikeBookmark": {
+      "additionalProperties": false,
+      "description": "Remove the selected bookmark's like.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unlike_bookmark",
+          "default": "unlike_bookmark",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "UnlikeBookmark",
+      "type": "object"
+    },
+    "UpdateBookmark": {
+      "additionalProperties": false,
+      "description": "Update title, description or timestamped reading progress.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_bookmark",
+          "default": "update_bookmark",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "progress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Progress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "UpdateBookmark",
+      "type": "object"
+    },
+    "UpdateBookmarkTags": {
+      "additionalProperties": false,
+      "description": "Add tags by ID or name and remove tags by ID.",
+      "properties": {
+        "bookmark_id": {
+          "description": "Instapaper bookmark ID.",
+          "exclusiveMinimum": 0,
+          "title": "Bookmark Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_bookmark_tags",
+          "default": "update_bookmark_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "add_tags": {
+          "items": {
+            "$ref": "#/$defs/TagReference"
+          },
+          "title": "Add Tags",
+          "type": "array"
+        },
+        "remove_tags": {
+          "items": {
+            "$ref": "#/$defs/TagId"
+          },
+          "title": "Remove Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "bookmark_id"
+      ],
+      "title": "UpdateBookmarkTags",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_bookmark": "#/$defs/CreateBookmark",
+          "delete_bookmark": "#/$defs/DeleteBookmark",
+          "get_bookmark_content": "#/$defs/GetBookmarkContent",
+          "like_bookmark": "#/$defs/LikeBookmark",
+          "list_bookmarks": "#/$defs/ListBookmarks",
+          "move_bookmark": "#/$defs/MoveBookmark",
+          "parse_bookmark_content": "#/$defs/ParseBookmarkContent",
+          "unlike_bookmark": "#/$defs/UnlikeBookmark",
+          "update_bookmark": "#/$defs/UpdateBookmark",
+          "update_bookmark_tags": "#/$defs/UpdateBookmarkTags"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBookmarks"
+        },
+        {
+          "$ref": "#/$defs/CreateBookmark"
+        },
+        {
+          "$ref": "#/$defs/UpdateBookmark"
+        },
+        {
+          "$ref": "#/$defs/DeleteBookmark"
+        },
+        {
+          "$ref": "#/$defs/MoveBookmark"
+        },
+        {
+          "$ref": "#/$defs/LikeBookmark"
+        },
+        {
+          "$ref": "#/$defs/UnlikeBookmark"
+        },
+        {
+          "$ref": "#/$defs/UpdateBookmarkTags"
+        },
+        {
+          "$ref": "#/$defs/GetBookmarkContent"
+        },
+        {
+          "$ref": "#/$defs/ParseBookmarkContent"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InstapaperTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Instapaper Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

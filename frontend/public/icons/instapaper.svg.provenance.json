@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/instapaper.svg",
+  "source": "https://www.instapaper.com/static/img/icon.svg",
+  "license": "Instapaper brand mark, used nominatively to identify the connected service; trademark rights remain with Instapaper.",
+  "sha256": "76cad010e8226ba3545f8b4c6f42a5f7ea02f083757bd07638475f08e5193679",
+  "modifications": "Normalized CRLF line endings to LF."
+}

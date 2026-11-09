@@ -1,0 +1,28 @@
+{
+  "id": 12345,
+  "url": "https://example.com/article",
+  "title": "An Article",
+  "description": "The opening lines, or the description you supplied.",
+  "image": "https://example.com/image.jpg",
+  "progress": {
+    "percentage": 0.42,
+    "timestamp": 1755000000
+  },
+  "liked": false,
+  "archived": false,
+  "time": 1755000000,
+  "pubtime": 1705276800,
+  "author": "Jane Doe",
+  "folder_id": 99,
+  "tags": [
+    {
+      "id": 9,
+      "name": "Recipes",
+      "slug": "recipes",
+      "count": 12,
+      "baton": null
+    }
+  ],
+  "private_source": null,
+  "category": 0
+}

@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "title": "An Article",
+    "author": {
+      "name": "Jane Doe",
+      "url": "https://example.com/jane"
+    },
+    "pubtime": 1705276800,
+    "thumbnail": "https://example.com/image.jpg",
+    "description": "The opening lines of the article.",
+    "private_source": null,
+    "category": 0
+  },
+  "content": {
+    "body": "<p>The article, as HTML.</p>",
+    "images": [
+      "https://example.com/image.jpg"
+    ],
+    "words": 1234,
+    "paywalled": false,
+    "direction": "ltr"
+  }
+}
