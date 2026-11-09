@@ -1,0 +1,1129 @@
+{
+  "get_account_overview": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_account_overview"
+    },
+    "method": "GET",
+    "path": "/v1/account",
+    "body": {},
+    "response": {
+      "shop": {
+        "name": "Lena Berg Yoga",
+        "url": "https://lena-yoga.mytentary.com",
+        "online": true
+      },
+      "plan": {
+        "name": "Grow",
+        "status": "active",
+        "cancels_on": null,
+        "changes_to": null
+      },
+      "currency": "EUR",
+      "timezone": "Europe/Berlin",
+      "country": "DE",
+      "language": "en_US.utf8",
+      "payment_providers": [
+        {
+          "name": "Stripe",
+          "status": "connected",
+          "used_at_checkout": true
+        },
+        {
+          "name": "PayPal",
+          "status": "connected",
+          "used_at_checkout": true
+        },
+        {
+          "name": "Mollie",
+          "status": "not_connected",
+          "used_at_checkout": false
+        }
+      ],
+      "can_take_payments": true,
+      "counts": {
+        "products": 4,
+        "customers": 4,
+        "orders": 3
+      },
+      "links": {
+        "dashboard": "https://app.tentary.com/dashboard",
+        "products": "https://app.tentary.com/products",
+        "customers": "https://app.tentary.com/customers",
+        "orders": "https://app.tentary.com/orders",
+        "payment_settings": "https://app.tentary.com/settings/payments",
+        "plan": "https://app.tentary.com/settings/user/subscription"
+      }
+    }
+  },
+  "list_products": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "list_products",
+      "status": "live",
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/v1/products",
+    "body": {},
+    "response": {
+      "currency": "EUR",
+      "products": [
+        {
+          "id": 103,
+          "name": "Yoga Club",
+          "type": "link",
+          "status": "live",
+          "price": "19.00",
+          "current_price": "19.00",
+          "price_is_from": false,
+          "billing": "subscription",
+          "billing_interval_months": 1,
+          "hide_in_shop": false,
+          "sales": 1,
+          "paid_sales": 1,
+          "url": "https://lena-yoga.mytentary.com/p/yoga-club",
+          "checkout_url": "https://lena-yoga.mytentary.com/p/yoga-club/checkout",
+          "admin_url": "https://app.tentary.com/products/edit/103"
+        },
+        {
+          "id": 102,
+          "name": "Morning Yoga in 30 Days",
+          "type": "course",
+          "status": "live",
+          "price": "49.00",
+          "current_price": "39.00",
+          "price_is_from": false,
+          "billing": "one_time",
+          "billing_interval_months": null,
+          "hide_in_shop": false,
+          "sales": 1,
+          "paid_sales": 1,
+          "url": "https://lena-yoga.mytentary.com/p/morning-yoga",
+          "checkout_url": "https://lena-yoga.mytentary.com/p/morning-yoga/checkout",
+          "admin_url": "https://app.tentary.com/products/edit/102"
+        }
+      ],
+      "next_cursor": "aWQ6MTAy",
+      "links": {
+        "products": "https://app.tentary.com/products"
+      }
+    }
+  },
+  "get_product": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_product",
+      "product_id": 101
+    },
+    "method": "GET",
+    "path": "/v1/products/{product_id}",
+    "body": {},
+    "response": {
+      "id": 101,
+      "name": "Yoga Basics E-Book",
+      "type": "download",
+      "status": "live",
+      "price": "19.00",
+      "current_price": "19.00",
+      "price_is_from": false,
+      "billing": "one_time",
+      "billing_interval_months": null,
+      "hide_in_shop": false,
+      "sales": 1,
+      "paid_sales": 1,
+      "url": "https://lena-yoga.mytentary.com/p/yoga-basics",
+      "checkout_url": "https://lena-yoga.mytentary.com/p/yoga-basics/checkout",
+      "admin_url": "https://app.tentary.com/products/edit/101",
+      "description_html": "<p>Learn the 20 most important poses, step by step.</p>",
+      "checkout_description_html": "",
+      "checkout_banner_url": null,
+      "buy_button_text": "",
+      "images": [
+        "https://img.tentary.com/demo-ebook-cover.jpg"
+      ],
+      "currency": "EUR",
+      "compare_at_price": null,
+      "intro_price": null,
+      "installment_plans": [
+        {
+          "count": 2,
+          "amount": "9.50"
+        }
+      ],
+      "limited_offer": null,
+      "variants": [],
+      "content": [
+        {
+          "type": "file",
+          "file_id": 501,
+          "name": "Yoga Basics",
+          "description": "The e-book as PDF, 84 pages.",
+          "file_type": "pdf",
+          "size_bytes": 4812330,
+          "folder": null
+        },
+        {
+          "type": "video",
+          "file_id": 502,
+          "name": "Welcome",
+          "file_type": "mp4",
+          "size_bytes": 91204117,
+          "folder": null
+        }
+      ],
+      "course": null,
+      "bundle_items": [],
+      "custom_fields": [
+        {
+          "label": "Your yoga level",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "stock_limit": null,
+      "available_from": null,
+      "available_until": null,
+      "access_days": null,
+      "access_starts_on": null,
+      "lead_magnet": false,
+      "withdrawal_days": 14,
+      "url_slug": "yoga-basics",
+      "marketing_emails": true,
+      "ebook": true,
+      "pdf_stamp": true,
+      "login_protection": false,
+      "show_in_search": true,
+      "coupon_field": true
+    }
+  },
+  "create_product": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "create_product",
+      "type": "download",
+      "name": "Yoga Workbook",
+      "price": 24,
+      "description_html": "<p>Plan your practice for 12 weeks.</p>"
+    },
+    "method": "POST",
+    "path": "/v1/products",
+    "body": {
+      "type": "download",
+      "name": "Yoga Workbook",
+      "price": 24,
+      "description_html": "<p>Plan your practice for 12 weeks.</p>"
+    },
+    "response": {
+      "id": 105,
+      "name": "Yoga Workbook",
+      "type": "download",
+      "status": "draft",
+      "url": "https://lena-yoga.mytentary.com/p/BbUGy8",
+      "admin_url": "https://app.tentary.com/products/edit/105",
+      "note": "The product is a draft: buyers cannot see it. Set status live to publish it."
+    }
+  },
+  "update_product": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "update_product",
+      "product_id": 105,
+      "price": 19,
+      "show_in_search": true
+    },
+    "method": "PATCH",
+    "path": "/v1/products/{product_id}",
+    "body": {
+      "price": 19,
+      "show_in_search": true
+    },
+    "response": {
+      "id": 105,
+      "name": "Yoga Workbook",
+      "type": "download",
+      "status": "draft",
+      "url": "https://lena-yoga.mytentary.com/p/BbUGy8",
+      "admin_url": "https://app.tentary.com/products/edit/105",
+      "note": "The product is a draft: buyers cannot see it. Set status live to publish it."
+    }
+  },
+  "list_courses": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "list_courses"
+    },
+    "method": "GET",
+    "path": "/v1/courses",
+    "body": {},
+    "response": {
+      "courses": [
+        {
+          "id": 201,
+          "name": "Morning Yoga in 30 Days",
+          "lessons": 3,
+          "products": [
+            {
+              "id": 102,
+              "name": "Morning Yoga in 30 Days",
+              "status": "live"
+            },
+            {
+              "id": 104,
+              "name": "Retreat Bundle",
+              "status": "draft"
+            }
+          ],
+          "admin_url": "https://app.tentary.com/courses/edit/201"
+        }
+      ],
+      "legacy_courses": [],
+      "truncated": false,
+      "links": {
+        "courses": "https://app.tentary.com/courses"
+      }
+    }
+  },
+  "get_course_outline": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_course_outline",
+      "course_id": 201
+    },
+    "method": "GET",
+    "path": "/v1/courses/{course_id}",
+    "body": {},
+    "response": {
+      "id": 201,
+      "name": "Morning Yoga in 30 Days",
+      "description_html": "<p>Ten minutes every morning.</p>",
+      "cover_image_url": "https://img.tentary.com/demo-course-banner.jpg",
+      "layout": "classic",
+      "tracks_progress": true,
+      "lessons": 3,
+      "participants": 1,
+      "drip_release_hour": {
+        "hour": 7,
+        "time_zone": "Europe/Berlin"
+      },
+      "products": [
+        {
+          "id": 102,
+          "name": "Morning Yoga in 30 Days",
+          "status": "live"
+        },
+        {
+          "id": 104,
+          "name": "Retreat Bundle",
+          "status": "draft"
+        }
+      ],
+      "items": [
+        {
+          "id": 301,
+          "kind": "module",
+          "title": "Week 1: Arrive",
+          "cover_image_url": null,
+          "position": 1,
+          "draft": false,
+          "free_preview": false,
+          "release": null,
+          "items": [
+            {
+              "id": 302,
+              "kind": "lesson",
+              "title": "Welcome and setup",
+              "position": 1,
+              "draft": false,
+              "free_preview": true,
+              "release": null,
+              "items": []
+            },
+            {
+              "id": 303,
+              "kind": "lesson",
+              "title": "Sun salutation",
+              "position": 2,
+              "draft": false,
+              "free_preview": false,
+              "release": {
+                "type": "days_after_purchase",
+                "days": 1
+              },
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": 304,
+          "kind": "module",
+          "title": "Week 2: Balance",
+          "cover_image_url": null,
+          "position": 2,
+          "draft": false,
+          "free_preview": false,
+          "release": null,
+          "items": [
+            {
+              "id": 306,
+              "kind": "module",
+              "title": "Standing poses",
+              "cover_image_url": null,
+              "position": 1,
+              "draft": false,
+              "free_preview": false,
+              "release": null,
+              "items": [
+                {
+                  "id": 307,
+                  "kind": "module",
+                  "title": "Day 8",
+                  "cover_image_url": null,
+                  "position": 1,
+                  "draft": false,
+                  "free_preview": false,
+                  "release": null,
+                  "items": [
+                    {
+                      "id": 305,
+                      "kind": "lesson",
+                      "title": "Tree pose",
+                      "position": 1,
+                      "draft": false,
+                      "free_preview": false,
+                      "release": {
+                        "type": "after_lesson",
+                        "lesson_id": 303,
+                        "lesson_title": "Sun salutation",
+                        "enforced": true
+                      },
+                      "items": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "admin_url": "https://app.tentary.com/courses/edit/201"
+    }
+  },
+  "create_course": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "create_course",
+      "name": "Yoga for Runners",
+      "description_html": "<p>Stretch and recover after every run.</p>",
+      "layout": "cards"
+    },
+    "method": "POST",
+    "path": "/v1/courses",
+    "body": {
+      "name": "Yoga for Runners",
+      "description_html": "<p>Stretch and recover after every run.</p>",
+      "layout": "cards"
+    },
+    "response": {
+      "id": 202,
+      "name": "Yoga for Runners",
+      "description_html": "<p>Stretch and recover after every run.</p>",
+      "cover_image_url": null,
+      "layout": "cards",
+      "tracks_progress": true,
+      "lessons": 0,
+      "participants": 0,
+      "drip_release_hour": {
+        "hour": 7,
+        "time_zone": "Europe/Berlin"
+      },
+      "products": [],
+      "items": [],
+      "admin_url": "https://app.tentary.com/courses/edit/202"
+    }
+  },
+  "update_course": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "update_course",
+      "course_id": 202,
+      "tracks_progress": true
+    },
+    "method": "PATCH",
+    "path": "/v1/courses/{course_id}",
+    "body": {
+      "tracks_progress": true
+    },
+    "response": {
+      "id": 202,
+      "name": "Yoga for Runners",
+      "description_html": "<p>Stretch and recover after every run.</p>",
+      "cover_image_url": null,
+      "layout": "cards",
+      "tracks_progress": true,
+      "lessons": 0,
+      "participants": 0,
+      "drip_release_hour": {
+        "hour": 7,
+        "time_zone": "Europe/Berlin"
+      },
+      "products": [],
+      "items": [],
+      "admin_url": "https://app.tentary.com/courses/edit/202"
+    }
+  },
+  "list_orders": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "list_orders",
+      "status": "paid",
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/v1/orders",
+    "body": {},
+    "response": {
+      "orders": [
+        {
+          "id": 1003,
+          "order_number": "R5D7-H2B8",
+          "created_at": "2026-10-27T07:45:03Z",
+          "status": "paid",
+          "refund": "none",
+          "amount": "31.20",
+          "currency": "EUR",
+          "billing": "one_time",
+          "offer": "main",
+          "product": {
+            "id": 102,
+            "name": "Morning Yoga in 30 Days",
+            "variant": null
+          },
+          "has_access": true,
+          "customer_id": 401,
+          "email_problem": false,
+          "admin_url": "https://app.tentary.com/orders/view/1003",
+          "buyer_data": {
+            "name": "Anna Weber",
+            "email": "anna.weber@example.com"
+          }
+        },
+        {
+          "id": 1002,
+          "order_number": "P3T8-W1N6",
+          "created_at": "2026-08-20T18:02:10Z",
+          "status": "paid",
+          "refund": "none",
+          "amount": "9.00",
+          "currency": "EUR",
+          "billing": "subscription",
+          "subscription_status": "active",
+          "offer": "main",
+          "product": {
+            "id": 103,
+            "name": "Yoga Club",
+            "variant": null
+          },
+          "has_access": true,
+          "customer_id": 402,
+          "email_problem": false,
+          "admin_url": "https://app.tentary.com/orders/view/1002",
+          "buyer_data": {
+            "name": "Tom Becker",
+            "email": "tom.becker@example.com"
+          }
+        }
+      ],
+      "next_cursor": "aWQ6MTAwMg",
+      "links": {
+        "orders": "https://app.tentary.com/orders"
+      }
+    }
+  },
+  "get_order": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_order",
+      "order_id": 1001
+    },
+    "method": "GET",
+    "path": "/v1/orders/{order_id}",
+    "body": {},
+    "response": {
+      "id": 1001,
+      "order_number": "K7M2-Q9X4",
+      "created_at": "2026-09-19T09:14:22Z",
+      "status": "paid",
+      "refund": "none",
+      "amount": "19.00",
+      "currency": "EUR",
+      "billing": "one_time",
+      "offer": "main",
+      "product": {
+        "id": 101,
+        "name": "Yoga Basics E-Book",
+        "variant": null
+      },
+      "has_access": true,
+      "customer_id": 401,
+      "email_problem": false,
+      "admin_url": "https://app.tentary.com/orders/view/1001",
+      "paid_at": "2026-09-19T09:14:31Z",
+      "payment": {
+        "provider": "stripe",
+        "method": "card"
+      },
+      "amounts": {
+        "net": "15.97",
+        "vat": "3.03",
+        "vat_rate_percent": "19.00",
+        "before_coupon": "19.00",
+        "checkout_total": "19.00"
+      },
+      "coupon_discount": null,
+      "refunded_at": null,
+      "refunded_outside_tentary": false,
+      "chargeback": false,
+      "payment_recovery": null,
+      "access_starts_at": null,
+      "access_ends_at": null,
+      "withdrawal_days": 14,
+      "business_purchase": false,
+      "appointment_end": null,
+      "invoice": {
+        "requested": true,
+        "number": "2026101001147",
+        "credit_notes": []
+      },
+      "subscription": null,
+      "checkout_lines": [],
+      "upsell_of_order_id": null,
+      "affiliate": {
+        "id": 900,
+        "admin_url": "https://app.tentary.com/affiliates/affiliate/900"
+      },
+      "in_debt_collection": false,
+      "customer_admin_url": "https://app.tentary.com/customers/view/401",
+      "history": [
+        {
+          "event": "invoice_created",
+          "at": "2026-09-19T09:14:40Z"
+        }
+      ],
+      "buyer_data": {
+        "name": "Anna Weber",
+        "email": "anna.weber@example.com",
+        "first_name": "Anna",
+        "last_name": "Weber",
+        "company": "",
+        "vat_id": "",
+        "address": "Gartenweg 4",
+        "zip": "50667",
+        "city": "Cologne",
+        "country": "DE",
+        "invoice_note": "",
+        "coupon_code": "",
+        "custom_fields": [
+          {
+            "label": "Your yoga level",
+            "value": "Beginner"
+          }
+        ]
+      }
+    }
+  },
+  "search_customers": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "search_customers",
+      "query": "anna"
+    },
+    "method": "GET",
+    "path": "/v1/customers",
+    "body": {},
+    "response": {
+      "customers": [
+        {
+          "id": 401,
+          "created_at": "2026-09-19T10:00:00Z",
+          "source": "checkout",
+          "newsletter": "subscribed",
+          "imported": false,
+          "deactivated": false,
+          "total_paid": [
+            {
+              "currency": "EUR",
+              "amount": "50.20"
+            }
+          ],
+          "products_with_access": [
+            {
+              "id": 102,
+              "name": "Morning Yoga in 30 Days",
+              "status": "live"
+            },
+            {
+              "id": 101,
+              "name": "Yoga Basics E-Book",
+              "status": "live"
+            }
+          ],
+          "admin_url": "https://app.tentary.com/customers/view/401",
+          "buyer_data": {
+            "name": "Anna Weber",
+            "email": "anna.weber@example.com"
+          }
+        }
+      ],
+      "next_cursor": null,
+      "links": {
+        "customers": "https://app.tentary.com/customers"
+      }
+    }
+  },
+  "get_customer": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_customer",
+      "customer_id": 401
+    },
+    "method": "GET",
+    "path": "/v1/customers/{customer_id}",
+    "body": {},
+    "response": {
+      "id": 401,
+      "created_at": "2026-09-19T10:00:00Z",
+      "source": "checkout",
+      "newsletter": "subscribed",
+      "imported": false,
+      "deactivated": false,
+      "total_paid": [
+        {
+          "currency": "EUR",
+          "amount": "50.20"
+        }
+      ],
+      "products_with_access": [
+        {
+          "id": 102,
+          "name": "Morning Yoga in 30 Days",
+          "status": "live"
+        },
+        {
+          "id": 101,
+          "name": "Yoga Basics E-Book",
+          "status": "live"
+        }
+      ],
+      "admin_url": "https://app.tentary.com/customers/view/401",
+      "email_language": "de",
+      "orders": [
+        {
+          "id": 1003,
+          "order_number": "R5D7-H2B8",
+          "created_at": "2026-10-27T07:45:03Z",
+          "status": "paid",
+          "refund": "none",
+          "amount": "31.20",
+          "currency": "EUR",
+          "billing": "one_time",
+          "offer": "main",
+          "product": {
+            "id": 102,
+            "name": "Morning Yoga in 30 Days",
+            "variant": null
+          },
+          "has_access": true,
+          "email_problem": false,
+          "admin_url": "https://app.tentary.com/orders/view/1003"
+        },
+        {
+          "id": 1001,
+          "order_number": "K7M2-Q9X4",
+          "created_at": "2026-09-19T09:14:22Z",
+          "status": "paid",
+          "refund": "none",
+          "amount": "19.00",
+          "currency": "EUR",
+          "billing": "one_time",
+          "offer": "main",
+          "product": {
+            "id": 101,
+            "name": "Yoga Basics E-Book",
+            "variant": null
+          },
+          "has_access": true,
+          "email_problem": false,
+          "admin_url": "https://app.tentary.com/orders/view/1001"
+        }
+      ],
+      "more_orders": false,
+      "subscriptions": [],
+      "more_subscriptions": false,
+      "access_grants": [],
+      "more_access_grants": false,
+      "buyer_data": {
+        "name": "Anna Weber",
+        "email": "anna.weber@example.com",
+        "first_name": "Anna",
+        "last_name": "Weber"
+      }
+    }
+  },
+  "list_coupons": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "list_coupons"
+    },
+    "method": "GET",
+    "path": "/v1/coupons",
+    "body": {},
+    "response": {
+      "coupons": [
+        {
+          "id": 701,
+          "code": "SPRING20",
+          "status": "active",
+          "state": "valid",
+          "percent": 20,
+          "amount": null,
+          "currency": "EUR",
+          "used": 12,
+          "max_uses": 100,
+          "reserved_in_open_checkouts": 0,
+          "starts_on": null,
+          "ends_on": "2026-11-28",
+          "product_ids": null,
+          "products": [],
+          "created_at": "2026-09-29T10:00:00Z",
+          "admin_url": "https://app.tentary.com/discounts/edit/701"
+        }
+      ],
+      "next_cursor": null,
+      "links": {
+        "coupons": "https://app.tentary.com/discounts",
+        "new_coupon": "https://app.tentary.com/discounts/new"
+      }
+    }
+  },
+  "create_coupon": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "create_coupon",
+      "code": "RUNNER15",
+      "percent": 15,
+      "max_uses": 50,
+      "product_ids": [
+        102
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/coupons",
+    "body": {
+      "code": "RUNNER15",
+      "percent": 15,
+      "max_uses": 50,
+      "product_ids": [
+        102
+      ]
+    },
+    "response": {
+      "id": 702,
+      "code": "RUNNER15",
+      "status": "active",
+      "state": "valid",
+      "percent": 15,
+      "amount": null,
+      "currency": "EUR",
+      "used": 0,
+      "max_uses": 50,
+      "reserved_in_open_checkouts": 0,
+      "starts_on": null,
+      "ends_on": null,
+      "product_ids": [
+        102
+      ],
+      "products": [
+        {
+          "id": 102,
+          "name": "Morning Yoga in 30 Days",
+          "status": "live"
+        }
+      ],
+      "created_at": null,
+      "admin_url": "https://app.tentary.com/discounts/edit/702"
+    }
+  },
+  "update_coupon": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "update_coupon",
+      "coupon_id": 702,
+      "ends_on": "2026-11-28"
+    },
+    "method": "PATCH",
+    "path": "/v1/coupons/{coupon_id}",
+    "body": {
+      "ends_on": "2026-11-28"
+    },
+    "response": {
+      "id": 702,
+      "code": "RUNNER15",
+      "status": "active",
+      "state": "valid",
+      "percent": 15,
+      "amount": null,
+      "currency": "EUR",
+      "used": 0,
+      "max_uses": 50,
+      "reserved_in_open_checkouts": 0,
+      "starts_on": null,
+      "ends_on": "2026-11-28",
+      "product_ids": [
+        102
+      ],
+      "products": [
+        {
+          "id": 102,
+          "name": "Morning Yoga in 30 Days",
+          "status": "live"
+        }
+      ],
+      "created_at": null,
+      "admin_url": "https://app.tentary.com/discounts/edit/702"
+    }
+  },
+  "grant_access": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "grant_access",
+      "email": "lisa.hahn@example.com",
+      "product_id": 101,
+      "first_name": "Lisa",
+      "last_name": "Hahn",
+      "reason": "complimentary"
+    },
+    "method": "POST",
+    "path": "/v1/access/grant",
+    "body": {
+      "email": "lisa.hahn@example.com",
+      "product_id": 101,
+      "first_name": "Lisa",
+      "last_name": "Hahn",
+      "reason": "complimentary"
+    },
+    "response": {
+      "status": "created",
+      "message": "Access granted.",
+      "grant_id": 2,
+      "customer": {
+        "id": 405,
+        "email": "lisa.hahn@example.com",
+        "created": true,
+        "reactivated": false
+      },
+      "product": {
+        "id": 101,
+        "name": "Yoga Basics E-Book",
+        "variant_id": null
+      },
+      "access_email": "queued"
+    }
+  },
+  "revoke_access": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "revoke_access",
+      "email": "jonas.wolf@example.com",
+      "product_id": 101
+    },
+    "method": "POST",
+    "path": "/v1/access/revoke",
+    "body": {
+      "email": "jonas.wolf@example.com",
+      "product_id": 101
+    },
+    "response": {
+      "status": "revoked",
+      "message": "Access revoked. Access from purchases stays: use refund_order, or cancel_subscription with access now, for that.",
+      "revoked_grants": 1,
+      "customer_id": 404
+    }
+  },
+  "list_email_campaigns": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "list_email_campaigns",
+      "limit": 1
+    },
+    "method": "GET",
+    "path": "/v1/email/campaigns",
+    "body": {},
+    "response": {
+      "campaigns": [
+        {
+          "id": 801,
+          "name": "October newsletter",
+          "subject": "New: Morning Yoga in 30 Days",
+          "status": "sent",
+          "created_at": "2026-10-20T10:00:00Z",
+          "send_at": "2026-10-21T08:00:00Z",
+          "sent_at": "2026-10-21T08:00:05Z",
+          "recipients": 3,
+          "emails_sent": 3,
+          "delivery": {
+            "waiting": 0,
+            "skipped": 0,
+            "failed": 0,
+            "soft_bounces": 1,
+            "hard_bounces": 0,
+            "spam_complaints": 0
+          },
+          "admin_url": "https://app.tentary.com/emails/campaign/view/801"
+        }
+      ],
+      "next_cursor": null,
+      "newsletter_subscribers": 3,
+      "links": {
+        "campaigns": "https://app.tentary.com/emails/campaigns"
+      }
+    }
+  },
+  "get_email_campaign": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_email_campaign",
+      "campaign_id": 801
+    },
+    "method": "GET",
+    "path": "/v1/email/campaigns/{campaign_id}",
+    "body": {},
+    "response": {
+      "id": 801,
+      "name": "October newsletter",
+      "subject": "New: Morning Yoga in 30 Days",
+      "body_html": "<p>Hi %FIRST_NAME%, my new course is live.</p>",
+      "audience": "all_subscribers",
+      "product_ids": [],
+      "status": "sent",
+      "send_at": "2026-10-21T08:00:00Z",
+      "problems_before_sending": [],
+      "admin_url": "https://app.tentary.com/emails/campaign/view/801"
+    }
+  },
+  "get_subscription_summary": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "get_subscription_summary",
+      "from_date": "2026-08-01",
+      "to_date": "2026-10-29"
+    },
+    "method": "GET",
+    "path": "/v1/reports/subscriptions",
+    "body": {},
+    "response": {
+      "today": "2026-10-29",
+      "product": null,
+      "subscriptions": {
+        "active": 1,
+        "cancelling": 0,
+        "with_access": 1,
+        "past_due": 0,
+        "renewal_overdue": 0,
+        "mrr": [
+          {
+            "currency": "EUR",
+            "amount": "19.00"
+          }
+        ],
+        "active_by_interval": [
+          {
+            "interval_months": 1,
+            "active": 1
+          }
+        ]
+      },
+      "installment_plans": {
+        "running": 0,
+        "cancelling": 0,
+        "past_due": 0,
+        "renewal_overdue": 0,
+        "failed": 0,
+        "failed_in_debt_collection": 0,
+        "open_amount": [],
+        "failed_open_amount": []
+      },
+      "products": [
+        {
+          "product": {
+            "id": 103,
+            "name": "Yoga Club"
+          },
+          "active": 1,
+          "cancelling": 0,
+          "mrr": [
+            {
+              "currency": "EUR",
+              "amount": "19.00"
+            }
+          ]
+        }
+      ],
+      "more_products": false,
+      "from": "2026-08-01",
+      "to": "2026-10-29",
+      "periods": [
+        {
+          "period": "2026-08",
+          "new": 1,
+          "ended_cancelled": 0,
+          "ended_payment_failed": 0
+        },
+        {
+          "period": "2026-09",
+          "new": 0,
+          "ended_cancelled": 0,
+          "ended_payment_failed": 0
+        },
+        {
+          "period": "2026-10",
+          "new": 0,
+          "ended_cancelled": 0,
+          "ended_payment_failed": 0
+        }
+      ],
+      "warnings": [],
+      "links": {
+        "orders": "https://app.tentary.com/orders"
+      }
+    }
+  },
+  "list_email_automations": {
+    "source": "https://api.tentary.com/v1/openapi.json",
+    "config": {
+      "operation": "list_email_automations"
+    },
+    "method": "GET",
+    "path": "/v1/email/automations",
+    "body": {},
+    "response": {
+      "automations": [
+        {
+          "id": 851,
+          "name": "Welcome series",
+          "status": "active",
+          "trigger": "new_subscriber",
+          "trigger_products": [],
+          "active_emails": 1,
+          "contacts_in_automation": 0,
+          "active_since": "2026-08-31T10:00:00Z",
+          "admin_url": "https://app.tentary.com/emails/automation/view/851"
+        }
+      ],
+      "next_cursor": null,
+      "links": {
+        "automations": "https://app.tentary.com/emails/automations"
+      }
+    }
+  }
+}
