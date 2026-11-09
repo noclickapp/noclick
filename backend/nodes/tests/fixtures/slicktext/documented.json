@@ -1,0 +1,948 @@
+{
+  "note": "Provider documentation examples. Typographic JSON quotes in list examples are normalized. The malformed campaign collection example is represented by the valid documented campaign detail plus a paging envelope.",
+  "cases": [
+    {
+      "operation": "get_brand",
+      "method": "GET",
+      "path": "/v1/brands",
+      "config": {
+        "operation": "get_brand"
+      },
+      "response": {
+        "brand_id": 1234567890,
+        "name": "SlickText",
+        "website": "http://www.slicktext.com",
+        "industry": "retailEcommerce",
+        "prohibited_content": "0",
+        "use_case": "mixed",
+        "address": "301 E 2nd St #304",
+        "city": "Jamestown",
+        "state": "NY",
+        "zip": "14701",
+        "country": "US",
+        "contact_first_name": "Johnny",
+        "contact_last_name": "SlickText",
+        "contact_email": "johnny@slicktext.com",
+        "contact_phone": "+17165551212",
+        "_account_id": "987654321",
+        "created": "2024-01-17 20:25:52",
+        "last_updated": "2024-01-17 20:25:53"
+      },
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/overview#the-response"
+    },
+    {
+      "operation": "get_brand_usage",
+      "method": "GET",
+      "path": "/v1/brands/123456789/usage",
+      "config": {
+        "operation": "get_brand_usage",
+        "brand_id": 123456789
+      },
+      "response": {
+        "brand_id": 123456789,
+        "brand_name": "SlickText",
+        "total_credits": 10000,
+        "credits_used": 750,
+        "credits_available": 9250,
+        "message_credit_limit": null,
+        "message_credit_limit_percentage": 100
+      },
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/brands#retrieve-credit-usage-from-brand"
+    },
+    {
+      "operation": "list_contacts",
+      "method": "GET",
+      "path": "/v1/brands/123456789/contacts",
+      "config": {
+        "operation": "list_contacts",
+        "brand_id": 123456789
+      },
+      "response": {
+        "data": [
+          {
+            "contact_id": 5320593,
+            "_brand_id": 123456789,
+            "first_name": "Marty",
+            "last_name": "McFly",
+            "mobile_number": "+16155553338",
+            "mobile_number_carrier": null,
+            "email": "mcfly@slicktext.com",
+            "birthdate": "1968-06-12",
+            "address": "9303 Lyon Drive",
+            "city": "Hill Valley",
+            "state": "CA",
+            "zip": "95420",
+            "country": "US",
+            "source": "api",
+            "_source_id": null,
+            "sub_source": null,
+            "_sub_source_id": null,
+            "custom_fields": {
+              "favorite_color": "blue"
+            },
+            "timezone": "America/Los_Angeles",
+            "language": "en",
+            "opt_in_status": "subscribed",
+            "last_opt_in_status_change": "2025-02-12 18:56:12",
+            "created": "2025-02-12 18:56:12",
+            "last_updated": null
+          }
+        ],
+        "pagingData": {
+          "prevPage": null,
+          "currentPage": null,
+          "nextPage": null,
+          "currentPageString": null,
+          "hasMore": false
+        }
+      },
+      "request": null,
+      "query": {
+        "limit": "50",
+        "offset": "0"
+      },
+      "source": "https://api.slicktext.com/docs/v2/contacts"
+    },
+    {
+      "operation": "get_contact",
+      "method": "GET",
+      "path": "/v1/brands/123456789/contacts/5320593",
+      "config": {
+        "operation": "get_contact",
+        "brand_id": 123456789,
+        "contact_id": 5320593
+      },
+      "response": {
+        "contact_id": 5320593,
+        "_brand_id": 123456789,
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "mobile_number_carrier": null,
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": "95420",
+        "country": "US",
+        "source": "api",
+        "_source_id": null,
+        "sub_source": null,
+        "_sub_source_id": null,
+        "custom_fields": null,
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "last_opt_in_status_change": "2025-02-12 18:56:12",
+        "created": "2025-02-12 18:56:12",
+        "last_updated": null
+      },
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/contacts"
+    },
+    {
+      "operation": "create_contact",
+      "method": "POST",
+      "path": "/v1/brands/123456789/contacts",
+      "config": {
+        "operation": "create_contact",
+        "brand_id": 123456789,
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": "95420",
+        "country": "US",
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "custom_fields": {
+          "examplecustomfield": "examplevalue"
+        }
+      },
+      "response": {
+        "_brand_id": 123456789,
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": 95420,
+        "country": "US",
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "source": "api",
+        "last_opt_in_status_change": "2025-02-12 18:56:12",
+        "contact_id": 5320593,
+        "created": "2025-02-12 18:56:12",
+        "custom_fields": {
+          "examplecustomfield": "examplevalue"
+        }
+      },
+      "request": {
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": "95420",
+        "country": "US",
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "examplecustomfield": "examplevalue"
+      },
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/contacts"
+    },
+    {
+      "operation": "update_contact",
+      "method": "PUT",
+      "path": "/v1/brands/123456789/contacts/5320593",
+      "config": {
+        "operation": "update_contact",
+        "brand_id": 123456789,
+        "contact_id": 5320593,
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": "95420",
+        "country": "US",
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "custom_fields": {
+          "examplecustomfield": "examplevalue"
+        }
+      },
+      "response": {
+        "contact_id": 5320593,
+        "_brand_id": 123456789,
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "mobile_number_carrier": null,
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": 95420,
+        "country": "US",
+        "source": "api",
+        "_source_id": null,
+        "sub_source": null,
+        "_sub_source_id": null,
+        "custom_fields": {
+          "examplecustomfield": "examplevalue"
+        },
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "last_opt_in_status_change": "2025-02-12 18:56:12",
+        "created": "2025-02-12 18:56:12",
+        "last_updated": "2025-02-12 19:02:46"
+      },
+      "request": {
+        "first_name": "Marty",
+        "last_name": "McFly",
+        "mobile_number": "+16155553338",
+        "email": "mcfly@slicktext.com",
+        "birthdate": "1968-06-12",
+        "address": "9303 Lyon Drive",
+        "city": "Hill Valley",
+        "state": "CA",
+        "zip": "95420",
+        "country": "US",
+        "timezone": "America/Los_Angeles",
+        "language": "en",
+        "opt_in_status": "subscribed",
+        "examplecustomfield": "examplevalue"
+      },
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/contacts"
+    },
+    {
+      "operation": "delete_contact",
+      "method": "DELETE",
+      "path": "/v1/brands/123456789/contacts/5320593",
+      "config": {
+        "operation": "delete_contact",
+        "brand_id": 123456789,
+        "contact_id": 5320593
+      },
+      "response": [],
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/contacts"
+    },
+    {
+      "operation": "list_lists",
+      "method": "GET",
+      "path": "/v1/brands/123456789/lists",
+      "config": {
+        "operation": "list_lists",
+        "brand_id": 123456789
+      },
+      "response": {
+        "data": [
+          {
+            "contact_list_id": 2222,
+            "_brand_id": 123456789,
+            "name": "Join",
+            "description": "Join the VIP list",
+            "created": "2024-01-01 15:36:40"
+          }
+        ],
+        "pagingData": {
+          "prevPage": null,
+          "currentPage": null,
+          "nextPage": null,
+          "currentPageString": null,
+          "hasMore": true
+        }
+      },
+      "request": null,
+      "query": {
+        "limit": "50",
+        "offset": "0"
+      },
+      "source": "https://api.slicktext.com/docs/v2/lists"
+    },
+    {
+      "operation": "get_list",
+      "method": "GET",
+      "path": "/v1/brands/123456789/lists/2222",
+      "config": {
+        "operation": "get_list",
+        "brand_id": 123456789,
+        "list_id": 2222
+      },
+      "response": {
+        "contact_list_id": 2222,
+        "_brand_id": 123456789,
+        "name": "Join",
+        "description": "Join the VIP list",
+        "created": "2024-01-01 15:36:40"
+      },
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists"
+    },
+    {
+      "operation": "create_list",
+      "method": "POST",
+      "path": "/v1/brands/123456789/lists",
+      "config": {
+        "operation": "create_list",
+        "brand_id": 123456789,
+        "name": "Join",
+        "description": "Join the VIP list"
+      },
+      "response": {
+        "contact_list_id": 2222,
+        "_brand_id": 123456789,
+        "name": "Join",
+        "description": "Join the VIP list",
+        "created": "2024-01-01 15:36:40"
+      },
+      "request": {
+        "name": "Join",
+        "description": "Join the VIP list"
+      },
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists"
+    },
+    {
+      "operation": "update_list",
+      "method": "PUT",
+      "path": "/v1/brands/123456789/lists/2222",
+      "config": {
+        "operation": "update_list",
+        "brand_id": 123456789,
+        "list_id": 2222,
+        "name": "Join",
+        "description": "Join the VIP list"
+      },
+      "response": {
+        "contact_list_id": 2222,
+        "_brand_id": 123456789,
+        "name": "Join",
+        "description": "Join the VIP list",
+        "created": "2024-01-01 15:36:40"
+      },
+      "request": {
+        "name": "Join",
+        "description": "Join the VIP list"
+      },
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists"
+    },
+    {
+      "operation": "delete_list",
+      "method": "DELETE",
+      "path": "/v1/brands/123456789/lists/2222",
+      "config": {
+        "operation": "delete_list",
+        "brand_id": 123456789,
+        "list_id": 2222
+      },
+      "response": [],
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists"
+    },
+    {
+      "operation": "list_campaigns",
+      "method": "GET",
+      "path": "/v1/brands/123456789/campaigns",
+      "config": {
+        "operation": "list_campaigns",
+        "brand_id": 123456789
+      },
+      "response": {
+        "data": [
+          {
+            "campaign_id": 3333,
+            "_brand_id": 123456789,
+            "_created_by_user_id": null,
+            "name": "Send From API",
+            "body": "Welcome to ACME",
+            "media_url": null,
+            "audience_size": 107,
+            "status": "sent",
+            "status_detail": null,
+            "status_date": "2024-12-05 20:27:22",
+            "completion_percentage": 32,
+            "created": "2024-12-05 20:27:20",
+            "scheduled": "2024-12-31 10:00:00",
+            "started": "2024-12-05 20:27:20",
+            "finished": "2024-12-05 20:27:22",
+            "last_updated": "2024-12-05 20:27:22",
+            "audience": [
+              {
+                "campaign_audience_id": 119,
+                "_campaign_id": 3333,
+                "all_contacts": 0,
+                "_contact_list_id": null,
+                "_segment_id": 25,
+                "size": 107,
+                "created": "2024-12-05 20:27:20"
+              }
+            ]
+          }
+        ],
+        "pagingData": {
+          "hasMore": false
+        }
+      },
+      "request": null,
+      "query": {
+        "limit": "50",
+        "offset": "0"
+      },
+      "source": "https://api.slicktext.com/docs/v2/campaigns"
+    },
+    {
+      "operation": "get_campaign",
+      "method": "GET",
+      "path": "/v1/brands/123456789/campaigns/3333",
+      "config": {
+        "operation": "get_campaign",
+        "brand_id": 123456789,
+        "campaign_id": 3333
+      },
+      "response": {
+        "campaign_id": 3333,
+        "_brand_id": 123456789,
+        "_created_by_user_id": null,
+        "name": "Send From API",
+        "body": "Welcome to ACME",
+        "media_url": null,
+        "audience_size": 107,
+        "status": "sent",
+        "status_detail": null,
+        "status_date": "2024-12-05 20:27:22",
+        "completion_percentage": 32,
+        "created": "2024-12-05 20:27:20",
+        "scheduled": "2024-12-31 10:00:00",
+        "started": "2024-12-05 20:27:20",
+        "finished": "2024-12-05 20:27:22",
+        "last_updated": "2024-12-05 20:27:22",
+        "audience": [
+          {
+            "campaign_audience_id": 119,
+            "_campaign_id": 3333,
+            "all_contacts": 0,
+            "_contact_list_id": null,
+            "_segment_id": 25,
+            "size": 107,
+            "created": "2024-12-05 20:27:20"
+          }
+        ]
+      },
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/campaigns"
+    },
+    {
+      "operation": "create_campaign",
+      "method": "POST",
+      "path": "/v1/brands/123456789/campaigns",
+      "config": {
+        "operation": "create_campaign",
+        "brand_id": 123456789,
+        "name": "Send From API",
+        "body": "Welcome to ACME",
+        "status": "send",
+        "scheduled": "2024-12-31 10:00:00",
+        "audience": {
+          "segments": [
+            25
+          ],
+          "contact_lists": [
+            21
+          ]
+        }
+      },
+      "response": {
+        "_brand_id": 123456789,
+        "_created_by_user_id": null,
+        "name": "Send from API",
+        "body": "Welcome to ACME",
+        "media_url": null,
+        "status": "queued",
+        "scheduled": "2024-12-31 10:00:00",
+        "status_date": "2024-12-05 20:22:30",
+        "status_detail": "This campaign is queued for send.",
+        "campaign_id": 110,
+        "created": "2024-12-05 20:22:30",
+        "last_updated": "2024-12-05 20:22:30",
+        "audience": [
+          {
+            "_campaign_id": 3333,
+            "all_contacts": 0,
+            "_contact_list_id": 25,
+            "_segment_id": 21,
+            "campaign_audience_id": 116,
+            "created": "2024-12-05 20:22:30"
+          }
+        ]
+      },
+      "request": {
+        "name": "Send From API",
+        "body": "Welcome to ACME",
+        "status": "send",
+        "scheduled": "2024-12-31 10:00:00",
+        "audience": {
+          "segments": [
+            25
+          ],
+          "contact_lists": [
+            21
+          ]
+        }
+      },
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/campaigns"
+    },
+    {
+      "operation": "update_campaign",
+      "method": "PUT",
+      "path": "/v1/brands/123456789/campaigns/3333",
+      "config": {
+        "operation": "update_campaign",
+        "brand_id": 123456789,
+        "campaign_id": 3333,
+        "name": "Edit Campaign from API",
+        "body": "Welcome to ACME",
+        "status": "draft",
+        "scheduled": "2024-12-31 10:00:00",
+        "audience": {
+          "segments": [
+            25
+          ],
+          "contact_lists": [
+            21
+          ]
+        }
+      },
+      "response": {
+        "campaign_id": 3333,
+        "_brand_id": 123456789,
+        "_created_by_user_id": null,
+        "name": "Edit Campaign from API",
+        "body": "Welcome to ACME",
+        "media_url": null,
+        "audience_size": 107,
+        "status": "draft",
+        "status_detail": null,
+        "status_date": "2024-12-05 18:23:12",
+        "completion_percentage": null,
+        "created": "2024-12-05 18:21:06",
+        "scheduled": "2024-12-31 10:00:00",
+        "started": null,
+        "finished": null,
+        "last_updated": "2024-12-05 18:23:12",
+        "audience": [
+          {
+            "campaign_audience_id": 119,
+            "_campaign_id": 3333,
+            "all_contacts": 0,
+            "_contact_list_id": 21,
+            "_segment_id": 25,
+            "size": 107,
+            "created": "2024-12-05 18:21:06"
+          }
+        ]
+      },
+      "request": {
+        "name": "Edit Campaign from API",
+        "body": "Welcome to ACME",
+        "status": "draft",
+        "scheduled": "2024-12-31 10:00:00",
+        "audience": {
+          "segments": [
+            25
+          ],
+          "contact_lists": [
+            21
+          ]
+        }
+      },
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/campaigns"
+    },
+    {
+      "operation": "delete_campaign",
+      "method": "DELETE",
+      "path": "/v1/brands/123456789/campaigns/3333",
+      "config": {
+        "operation": "delete_campaign",
+        "brand_id": 123456789,
+        "campaign_id": 3333
+      },
+      "response": [],
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/campaigns"
+    },
+    {
+      "operation": "get_list_contact_count",
+      "method": "GET",
+      "path": "/v1/brands/123456789/lists/2222/contacts/count",
+      "config": {
+        "operation": "get_list_contact_count",
+        "brand_id": 123456789,
+        "list_id": 2222
+      },
+      "response": 1200,
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists#retrieve-count-contacts-specific-list"
+    },
+    {
+      "operation": "list_list_contacts",
+      "method": "GET",
+      "path": "/v1/brands/123456789/lists/2222/contacts",
+      "config": {
+        "operation": "list_list_contacts",
+        "brand_id": 123456789,
+        "list_id": 2222
+      },
+      "response": {
+        "data": [
+          {
+            "contact_id": 7778,
+            "_brand_id": 123456789,
+            "first_name": "Marty",
+            "last_name": "McFly",
+            "mobile_number": "+16155553338",
+            "mobile_number_carrier": null,
+            "email": "marty@slicktext.com",
+            "birthdate": "1968-06-12",
+            "address": "9303 Lyon Drive",
+            "city": "Hill Valley",
+            "state": "CA",
+            "zip": 95420,
+            "country": "US",
+            "source": "keyword",
+            "_source_id": "1111",
+            "sub_source": null,
+            "_sub_source_id": null,
+            "custom_fields": {
+              "member": 1,
+              "member_number": 12345,
+              "membership_date": "1985-10-26"
+            },
+            "timezone": "America/Los_Angeles",
+            "language": "en",
+            "opt_in_status": "subscribed",
+            "last_opt_in_status_change": "1955-11-12 06:38:00",
+            "created": "1955-11-12 06:38:00",
+            "last_updated": "2015-10-15 07:28:00"
+          }
+        ],
+        "pagingData": {
+          "prevPage": null,
+          "currentPage": null,
+          "nextPage": null,
+          "currentPageString": null,
+          "hasMore": true
+        }
+      },
+      "request": null,
+      "query": {
+        "limit": "50",
+        "offset": "0"
+      },
+      "source": "https://api.slicktext.com/docs/v2/lists#retrieve-contacts-specific-list"
+    },
+    {
+      "operation": "add_contacts_to_lists",
+      "method": "POST",
+      "path": "/v1/brands/123456789/lists/contacts",
+      "config": {
+        "operation": "add_contacts_to_lists",
+        "brand_id": 123456789,
+        "contacts": [
+          {
+            "contact_id": 1111,
+            "lists": [
+              1000
+            ]
+          },
+          {
+            "contact_id": 2222,
+            "lists": [
+              1000,
+              1001
+            ]
+          }
+        ]
+      },
+      "response": {
+        "count": 3
+      },
+      "request": [
+        {
+          "contact_id": 1111,
+          "lists": [
+            1000
+          ]
+        },
+        {
+          "contact_id": 2222,
+          "lists": [
+            1000,
+            1001
+          ]
+        }
+      ],
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists#add-contacts-to-lists"
+    },
+    {
+      "operation": "remove_contacts_from_lists",
+      "method": "DELETE",
+      "path": "/v1/brands/123456789/lists/contacts",
+      "config": {
+        "operation": "remove_contacts_from_lists",
+        "brand_id": 123456789,
+        "contacts": [
+          {
+            "contact_id": 1111,
+            "lists": [
+              1000
+            ]
+          },
+          {
+            "contact_id": 2222,
+            "lists": [
+              1000,
+              1001
+            ]
+          }
+        ]
+      },
+      "response": {
+        "count": 3
+      },
+      "request": [
+        {
+          "contact_id": 1111,
+          "lists": [
+            1000
+          ]
+        },
+        {
+          "contact_id": 2222,
+          "lists": [
+            1000,
+            1001
+          ]
+        }
+      ],
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/lists#remove-contacts-from-lists"
+    },
+    {
+      "operation": "list_messages",
+      "method": "GET",
+      "path": "/v1/brands/123456789/messages",
+      "config": {
+        "operation": "list_messages",
+        "brand_id": 123456789
+      },
+      "response": {
+        "data": [
+          {
+            "_id": "675c4b6b7ffc11b8b1044bf2",
+            "to": "+16155553338",
+            "from": "+16255553331",
+            "body": "This is a test message.",
+            "direction": "outgoing",
+            "channel": "sms",
+            "source": "Campaign",
+            "_source_id": 115,
+            "is_gsm": 1,
+            "message_credits": 1,
+            "campaign_completion_percentage": 50,
+            "text_number": {
+              "_brand_id": 16,
+              "text_number_id": 12,
+              "type": "tollFree",
+              "registration_status": "registered"
+            },
+            "brand": {
+              "brand_id": 123456789
+            },
+            "contact": {
+              "contact_id": 5320593
+            },
+            "user": {
+              "user_id": 123643
+            },
+            "status": "delivered",
+            "created": "2024-12-13 14:57:47",
+            "created_micro": 1734101867.4758,
+            "updated": "2024-12-13 14:57:49"
+          }
+        ],
+        "pagingData": {
+          "prevPage": null,
+          "currentPage": null,
+          "nextPage": null,
+          "currentPageString": null,
+          "hasMore": false
+        }
+      },
+      "request": null,
+      "query": {
+        "limit": "50",
+        "offset": "0"
+      },
+      "source": "https://api.slicktext.com/docs/v2/messages"
+    },
+    {
+      "operation": "list_keywords",
+      "method": "GET",
+      "path": "/v1/brands/123456789/keywords",
+      "config": {
+        "operation": "list_keywords",
+        "brand_id": 123456789
+      },
+      "response": {
+        "data": [
+          {
+            "keyword_id": 2222,
+            "_brand_id": 123456789,
+            "word": "Join",
+            "description": "Allows contacts to join my brand",
+            "create_contacts": 1,
+            "use_alternate_responses": 0,
+            "double_opt_in": 0,
+            "auto_response_message": "Thanks for subscribing to SlickText text alerts.",
+            "auto_response_message_media_url": null,
+            "opt_in_exists_message": "You're already subscribed to SlickText text alerts.",
+            "re_opt_in_message": "You've resubscribed to SlickText text alerts.",
+            "double_opt_in_message": "To complete your subscription to SlickText text alerts, reply YES.",
+            "active": 1,
+            "created": "2024-01-01 18:53:04",
+            "last_updated": "2024-01-02 20:18:49",
+            "deleted": null
+          }
+        ],
+        "pagingData": {
+          "prevPage": null,
+          "currentPage": null,
+          "nextPage": null,
+          "currentPageString": null,
+          "hasMore": false
+        }
+      },
+      "request": null,
+      "query": {
+        "limit": "50",
+        "offset": "0"
+      },
+      "source": "https://api.slicktext.com/docs/v2/keywords"
+    },
+    {
+      "operation": "get_keyword",
+      "method": "GET",
+      "path": "/v1/brands/123456789/keywords/2222",
+      "config": {
+        "operation": "get_keyword",
+        "brand_id": 123456789,
+        "keyword_id": 2222
+      },
+      "response": {
+        "keyword_id": 2222,
+        "_brand_id": 123456789,
+        "deleted": null,
+        "word": "Join",
+        "description": null,
+        "create_contacts": 1,
+        "use_alternate_responses": 1,
+        "double_opt_in": 0,
+        "auto_response_message": "Thanks for subscribing to SlickText-BK text alerts.",
+        "auto_response_message_media_url": null,
+        "opt_in_exists_message": "You're already subscribed to SlickText-BK text alerts.",
+        "re_opt_in_message": "Welcome Back!  You've resubscribed to SlickText-BK text alerts.",
+        "double_opt_in_message": "To complete your subscription to SlickText text alerts, reply YES.",
+        "active": 1,
+        "created": "2024-10-30 13:13:03",
+        "last_updated": "2024-10-30 13:13:08",
+        "contact_list_ids": [
+          10
+        ]
+      },
+      "request": null,
+      "query": {},
+      "source": "https://api.slicktext.com/docs/v2/keywords#retrieve-specific-keyword"
+    }
+  ]
+}
