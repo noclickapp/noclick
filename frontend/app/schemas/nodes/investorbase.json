@@ -1,0 +1,1160 @@
+{
+  "$defs": {
+    "CreateUser": {
+      "additionalProperties": false,
+      "description": "Create a user.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Create a user",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Your own identifier for the end user. Send the same value as `x-user-id` on data requests.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "CreateUser",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise key"
+    },
+    "CreateUserSubscription": {
+      "additionalProperties": false,
+      "description": "Assign a plan to a user.",
+      "properties": {
+        "operation": {
+          "const": "create_user_subscription",
+          "default": "create_user_subscription",
+          "title": "Assign a plan to a user",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Your identifier for an active end user.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "plan_id": {
+          "description": "The plan to assign, taken from `available_plans` in `GET /v1/api-credentials`.",
+          "minLength": 1,
+          "title": "Plan Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "plan_id"
+      ],
+      "title": "CreateUserSubscription",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise key"
+    },
+    "GetAccountDetails": {
+      "additionalProperties": false,
+      "description": "Get account details.",
+      "properties": {
+        "operation": {
+          "const": "get_account_details",
+          "default": "get_account_details",
+          "title": "Get account details",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccountDetails",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise key"
+    },
+    "GetBuyerHistory": {
+      "additionalProperties": false,
+      "description": "Get a buyer's deal history.",
+      "properties": {
+        "operation": {
+          "const": "get_buyer_history",
+          "default": "get_buyer_history",
+          "title": "Get a buyer's deal history",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_string": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The buyer's entity name, or their full mailing address as one string. For an address, pass the `address` value returned by `/v1/autocomplete` for the best match.",
+          "title": "Search String"
+        },
+        "search_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter US state code of the entity. Required when `is_entity_name` is true or omitted, ignored for mailing address and property lookups.",
+          "title": "Search State"
+        },
+        "is_entity_name": {
+          "default": true,
+          "description": "`true` when `search_string` is an entity or owner name, `false` when it is a mailing address.",
+          "title": "Is Entity Name",
+          "type": "boolean"
+        },
+        "strict_matches_only": {
+          "default": true,
+          "description": "`true` matches only on the dimension you searched. `false` also follows the buyer's other key (their mailing address for a name search, their name for an address search), which returns more deals with a higher risk of false positives.",
+          "title": "Strict Matches Only",
+          "type": "boolean"
+        },
+        "property_address": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The address of a property the buyer bought, exactly as it came back: the `address` of a `/v1/buyer-search` result, or of a purchase on a CRM deal. Pass it with `buyer_type` instead of `search_string` to get exactly that buyer, with no name to match.",
+          "title": "Property Address"
+        },
+        "buyer_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "flipper",
+                "landlord"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The buyer type that came with `property_address`.",
+          "title": "Buyer Type",
+          "enum": [
+            "flipper",
+            "landlord"
+          ],
+          "x-enum-searchable": true
+        },
+        "deal_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "flip",
+                "rental"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only the buyer's flips, or only their rentals.",
+          "title": "Deal Type",
+          "enum": [
+            "flip",
+            "rental"
+          ],
+          "x-enum-searchable": true
+        },
+        "lookback_months": {
+          "anyOf": [
+            {
+              "maximum": 120,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only deals the buyer bought within this many months, from 1 to 120. A flip counts from its purchase, not its sale.",
+          "title": "Lookback Months"
+        }
+      },
+      "title": "GetBuyerHistory",
+      "type": "object"
+    },
+    "GetBuyerSearchResults": {
+      "additionalProperties": false,
+      "description": "Get async search results.",
+      "properties": {
+        "operation": {
+          "const": "get_buyer_search_results",
+          "default": "get_buyer_search_results",
+          "title": "Get async search results",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_id": {
+          "description": "The `search_id` an async `POST /v1/buyer-search` returned.",
+          "minLength": 1,
+          "title": "Search Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search_id"
+      ],
+      "title": "GetBuyerSearchResults",
+      "type": "object"
+    },
+    "GetInvestorComps": {
+      "additionalProperties": false,
+      "description": "Find investor comps.",
+      "properties": {
+        "operation": {
+          "const": "get_investor_comps",
+          "default": "get_investor_comps",
+          "title": "Find investor comps",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "latitude": {
+          "description": "Latitude of the subject property, in decimal degrees.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "Longitude of the subject property, in decimal degrees.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "property_types": {
+          "default": [
+            "SFR"
+          ],
+          "description": "Property types to include: `SFR` single family, `MFR` multifamily, `CONDO` condominium, `MOBILE` mobile or manufactured home, `LAND` vacant land, `OTHER` commercial and other properties. Omitted, null or empty means `SFR`.",
+          "items": {
+            "enum": [
+              "SFR",
+              "MFR",
+              "LAND",
+              "CONDO",
+              "MOBILE",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "title": "Property Types",
+          "type": "array"
+        },
+        "subject_property_details": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SubjectPropertyDetails"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Describe the subject property to get ranked comps. Every field is optional: send what you know, even `{}`. When this object is omitted, results are not ranked."
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GetInvestorComps",
+      "type": "object"
+    },
+    "GetMarketSummary": {
+      "additionalProperties": false,
+      "description": "Summarize the investor market near a location.",
+      "properties": {
+        "operation": {
+          "const": "get_market_summary",
+          "default": "get_market_summary",
+          "title": "Summarize the investor market near a location",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "latitude": {
+          "description": "Latitude of the search center, in decimal degrees.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "Longitude of the search center, in decimal degrees.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "property_types": {
+          "default": [
+            "SFR"
+          ],
+          "description": "Property types to include: `SFR` single family, `MFR` multifamily, `CONDO` condominium, `MOBILE` mobile or manufactured home, `LAND` vacant land, `OTHER` commercial and other properties. Omitted, null or empty means `SFR`.",
+          "items": {
+            "enum": [
+              "SFR",
+              "MFR",
+              "LAND",
+              "CONDO",
+              "MOBILE",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "title": "Property Types",
+          "type": "array"
+        },
+        "lookback_months": {
+          "default": 24,
+          "description": "Months of transaction history to include.",
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Lookback Months",
+          "type": "integer"
+        },
+        "metrics_radius_mi": {
+          "default": 2,
+          "description": "Radius in miles for `flipper_metrics` and `landlord_metrics`. Values below 0.1 are treated as 0.1. `radius_counts` always covers 1, 2, 5 and 10 miles.",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Metrics Radius Mi",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GetMarketSummary",
+      "type": "object"
+    },
+    "GetRetailComps": {
+      "additionalProperties": false,
+      "description": "Get retail comps for a property.",
+      "properties": {
+        "operation": {
+          "const": "get_retail_comps",
+          "default": "get_retail_comps",
+          "title": "Get retail comps for a property",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "Full street address of the subject property, in the same format `/v1/autocomplete` returns. Required.",
+          "title": "Address",
+          "type": "string"
+        },
+        "max_radius_miles": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum distance from the subject property, in miles.",
+          "title": "Max Radius Miles"
+        },
+        "max_days_back": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How many days back to look for sales, for example 90, 180 or 365.",
+          "title": "Max Days Back"
+        },
+        "living_square_feet_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum interior living area, in square feet.",
+          "title": "Living Square Feet Min"
+        },
+        "living_square_feet_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum interior living area, in square feet.",
+          "title": "Living Square Feet Max"
+        },
+        "bedrooms_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of bedrooms.",
+          "title": "Bedrooms Min"
+        },
+        "bedrooms_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of bedrooms. Must not be lower than `bedrooms_min`.",
+          "title": "Bedrooms Max"
+        },
+        "bathrooms_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum number of bathrooms.",
+          "title": "Bathrooms Min"
+        },
+        "bathrooms_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of bathrooms.",
+          "title": "Bathrooms Max"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "GetRetailComps",
+      "type": "object"
+    },
+    "GetUsage": {
+      "additionalProperties": false,
+      "description": "Get your usage.",
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Get your usage",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetUsage",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Get a user and their usage.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get a user and their usage",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Your identifier for the end user.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise key"
+    },
+    "InvestorBaseAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "investorbase_api_key",
+          "default": "investorbase_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "key_kind": {
+          "default": "subscriber",
+          "enum": [
+            "subscriber",
+            "enterprise"
+          ],
+          "title": "Key kind",
+          "type": "string"
+        },
+        "enterprise_user_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your registered user_id. Required for property data calls with an enterprise key; omitted for subscriber keys and account management.",
+          "title": "Enterprise end-user ID"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "InvestorBase API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your subscriber API key from Account \u2192 Integrations. For an enterprise key issued by InvestorBase, choose Enterprise and enter your registered end-user ID for property data requests. Enterprise account management needs an enterprise key. NoClick reads usage (subscriber) or account details (enterprise) to verify the connection.",
+      "x-credential-url": "https://www.investorbase.com/api-docs"
+    },
+    "ResolveAddress": {
+      "additionalProperties": false,
+      "description": "Autocomplete a location.",
+      "properties": {
+        "operation": {
+          "const": "resolve_address",
+          "default": "resolve_address",
+          "title": "Autocomplete a location",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_string": {
+          "description": "The partial address or location to search for.",
+          "minLength": 3,
+          "title": "Search String",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search_string"
+      ],
+      "title": "ResolveAddress",
+      "type": "object"
+    },
+    "SearchBuyers": {
+      "additionalProperties": false,
+      "description": "Search for buyers.",
+      "properties": {
+        "operation": {
+          "const": "search_buyers",
+          "default": "search_buyers",
+          "title": "Search for buyers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full street address of the subject property, in the same format `/v1/autocomplete` returns. Preferred over coordinates: we resolve it to the property, which keeps repeat detection and usage tracking accurate. When both are sent, the address wins, and the coordinates are used only if the address cannot be resolved.",
+          "title": "Address"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude of the subject, in decimal degrees. Send it together with `longitude`. Required when no `address` is sent.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude of the subject, in decimal degrees. Send it together with `latitude`. Required when no `address` is sent.",
+          "title": "Longitude"
+        },
+        "property_types": {
+          "default": [
+            "SFR",
+            "CONDO",
+            "MOBILE",
+            "MFR"
+          ],
+          "description": "Property types to include: `SFR` single family, `MFR` multifamily, `CONDO` condominium, `MOBILE` mobile or manufactured home, `LAND` vacant land, `OTHER` commercial and other properties. Omitted, null or empty means `SFR`, `CONDO`, `MOBILE` and `MFR`, as in the app.",
+          "items": {
+            "enum": [
+              "SFR",
+              "MFR",
+              "LAND",
+              "CONDO",
+              "MOBILE",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "title": "Property Types",
+          "type": "array"
+        },
+        "buyer_types": {
+          "default": [
+            "flipper",
+            "landlord"
+          ],
+          "description": "Buyer types to include. Omitted, null or empty means both.",
+          "items": {
+            "enum": [
+              "flipper",
+              "landlord"
+            ],
+            "type": "string"
+          },
+          "title": "Buyer Types",
+          "type": "array"
+        },
+        "radius_miles": {
+          "default": 2,
+          "description": "How far from the subject to look, in miles, up to 10. Omitted or null means 2 miles.",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Radius Miles",
+          "type": "number"
+        },
+        "lookback_years": {
+          "default": 2,
+          "description": "How far back to look for purchases, in years, up to 5. Fractions work: `0.25` is 3 months. Omitted or null means 2 years.",
+          "exclusiveMinimum": 0,
+          "maximum": 5,
+          "title": "Lookback Years",
+          "type": "number"
+        },
+        "min_bedrooms": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fewest bedrooms on the buyer's property. Omitted or null means no minimum.",
+          "title": "Min Bedrooms"
+        },
+        "max_bedrooms": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Most bedrooms on the buyer's property. Omitted or null means no maximum.",
+          "title": "Max Bedrooms"
+        },
+        "min_bathrooms": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fewest bathrooms on the buyer's property. Omitted or null means no minimum.",
+          "title": "Min Bathrooms"
+        },
+        "max_bathrooms": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Most bathrooms on the buyer's property. Omitted or null means no maximum.",
+          "title": "Max Bathrooms"
+        },
+        "min_purchase_price": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lowest price, in dollars, the buyer paid for the property. Omitted or null means no minimum.",
+          "title": "Min Purchase Price"
+        },
+        "max_purchase_price": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Highest price, in dollars, the buyer paid for the property. Omitted or null means no maximum.",
+          "title": "Max Purchase Price"
+        },
+        "hide_non_arms_length": {
+          "default": true,
+          "description": "Leaves out purchases that were not made on the open market, such as transfers between relatives. Omitted or null means `true`.",
+          "title": "Hide Non Arms Length",
+          "type": "boolean"
+        },
+        "hide_hedge_fund": {
+          "default": true,
+          "description": "Leaves out large institutional landlords. Omitted or null means `true`.",
+          "title": "Hide Hedge Fund",
+          "type": "boolean"
+        },
+        "hide_no_phone": {
+          "default": false,
+          "description": "Leaves out buyers without a phone number after skiptracing. Omitted or null means `false`.",
+          "title": "Hide No Phone",
+          "type": "boolean"
+        },
+        "min_portfolio_size": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only buyers who still hold at least this many properties, as `portfolio_size` reports, so it also leaves out buyers with no portfolio on record and most flippers. A high minimum can return fewer buyers than `limit`. Omitted or null means no minimum.",
+          "title": "Min Portfolio Size"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Most buyers to return, from 1 to 100: the nearest ones, ranked among themselves. The search may return fewer. A smaller limit comes back faster and still counts as one search.",
+          "title": "Limit"
+        },
+        "create_deal": {
+          "default": true,
+          "description": "Creates the deal for the searched property in your CRM and attaches the buyers found, the same as a search in the app. Searching the same address again reuses its deal. Only applies to a search by `address`. Omitted or null means `true`; send `false` to skip it.",
+          "title": "Create Deal",
+          "type": "boolean"
+        },
+        "async": {
+          "default": false,
+          "description": "When true, the request returns `202` with a `search_id` right away and the search runs in the background. Get the outcome from `GET /v1/buyer-search` or `webhook_url`.",
+          "title": "Async",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An https URL we POST the outcome to when the search completes or fails. Works in sync and async modes.",
+          "title": "Webhook Url"
+        },
+        "webhook_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent back as the `x-webhook-secret` header on webhook calls, so you can verify they came from InvestorBase.",
+          "title": "Webhook Secret"
+        },
+        "results_in_webhook": {
+          "default": false,
+          "description": "When true, the completed webhook includes the full results array.",
+          "title": "Results In Webhook",
+          "type": "boolean"
+        }
+      },
+      "title": "SearchBuyers",
+      "type": "object"
+    },
+    "SearchInvestorActivity": {
+      "additionalProperties": false,
+      "description": "Search investor activity near a location.",
+      "properties": {
+        "operation": {
+          "const": "search_investor_activity",
+          "default": "search_investor_activity",
+          "title": "Search investor activity near a location",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "latitude": {
+          "description": "Latitude of the search center, in decimal degrees.",
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "Longitude of the search center, in decimal degrees.",
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "property_types": {
+          "default": [
+            "SFR"
+          ],
+          "description": "Property types to include: `SFR` single family, `MFR` multifamily, `CONDO` condominium, `MOBILE` mobile or manufactured home, `LAND` vacant land, `OTHER` commercial and other properties. Omitted, null or empty means `SFR`.",
+          "items": {
+            "enum": [
+              "SFR",
+              "MFR",
+              "LAND",
+              "CONDO",
+              "MOBILE",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "title": "Property Types",
+          "type": "array"
+        },
+        "flipper_weight": {
+          "default": 0.5,
+          "description": "Target share of results that are flippers: `1` returns only flippers and `0` only landlords. Values outside 0 to 1 are clamped. Omitted or null means `0.5`.",
+          "title": "Flipper Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "SearchInvestorActivity",
+      "type": "object"
+    },
+    "SubjectPropertyDetails": {
+      "additionalProperties": false,
+      "properties": {
+        "bedrooms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bedrooms"
+        },
+        "bathrooms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bathrooms"
+        },
+        "square_feet": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Square Feet"
+        }
+      },
+      "title": "SubjectPropertyDetails",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "description": "Activate or deactivate a user.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Activate or deactivate a user",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Your own identifier for the end user. Send the same value as `x-user-id` on data requests.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "active": {
+          "description": "`false` deactivates the user and every one of their subscriptions. `true` reactivates the user only; reactivate subscriptions through `PATCH /v1/api-user-subscriptions`.",
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "user_id",
+        "active"
+      ],
+      "title": "UpdateUser",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise key"
+    },
+    "UpdateUserSubscription": {
+      "additionalProperties": false,
+      "description": "Activate or deactivate a subscription.",
+      "properties": {
+        "operation": {
+          "const": "update_user_subscription",
+          "default": "update_user_subscription",
+          "title": "Activate or deactivate a subscription",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "description": "The `id` returned when the subscription was created.",
+          "minLength": 1,
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "active": {
+          "description": "`true` reactivates the subscription, `false` deactivates it.",
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "active"
+      ],
+      "title": "UpdateUserSubscription",
+      "type": "object",
+      "x-requires-tier": "enterprise",
+      "x-tier-label": "Enterprise key"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_user": "#/$defs/CreateUser",
+          "create_user_subscription": "#/$defs/CreateUserSubscription",
+          "get_account_details": "#/$defs/GetAccountDetails",
+          "get_buyer_history": "#/$defs/GetBuyerHistory",
+          "get_buyer_search_results": "#/$defs/GetBuyerSearchResults",
+          "get_investor_comps": "#/$defs/GetInvestorComps",
+          "get_market_summary": "#/$defs/GetMarketSummary",
+          "get_retail_comps": "#/$defs/GetRetailComps",
+          "get_usage": "#/$defs/GetUsage",
+          "get_user": "#/$defs/GetUser",
+          "resolve_address": "#/$defs/ResolveAddress",
+          "search_buyers": "#/$defs/SearchBuyers",
+          "search_investor_activity": "#/$defs/SearchInvestorActivity",
+          "update_user": "#/$defs/UpdateUser",
+          "update_user_subscription": "#/$defs/UpdateUserSubscription"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ResolveAddress"
+        },
+        {
+          "$ref": "#/$defs/SearchBuyers"
+        },
+        {
+          "$ref": "#/$defs/GetBuyerSearchResults"
+        },
+        {
+          "$ref": "#/$defs/GetRetailComps"
+        },
+        {
+          "$ref": "#/$defs/SearchInvestorActivity"
+        },
+        {
+          "$ref": "#/$defs/GetMarketSummary"
+        },
+        {
+          "$ref": "#/$defs/GetInvestorComps"
+        },
+        {
+          "$ref": "#/$defs/GetBuyerHistory"
+        },
+        {
+          "$ref": "#/$defs/GetUsage"
+        },
+        {
+          "$ref": "#/$defs/GetAccountDetails"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUserSubscription"
+        },
+        {
+          "$ref": "#/$defs/UpdateUserSubscription"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InvestorBaseAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Investorbase Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
