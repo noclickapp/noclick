@@ -1,0 +1,1509 @@
+{
+  "$defs": {
+    "LinkupAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "linkup_api_key",
+          "default": "linkup_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Linkup API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Linkup dashboard and paste it here. NoClick sends it as a Bearer token to api.linkup.so. Extract is a closed-beta feature that requires access from Linkup.",
+      "x-credential-url": "https://app.linkup.so"
+    },
+    "LinkupCreateExtractConfig": {
+      "description": "Create a closed-beta extraction task returning structured rows.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Extraction query",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Seed URL",
+          "type": "string"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row schema"
+        },
+        "verifyUrls": {
+          "default": false,
+          "title": "Verify URLs",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_extract",
+          "default": "create_extract",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "url"
+      ],
+      "title": "LinkupCreateExtractConfig",
+      "type": "object"
+    },
+    "LinkupCreateResearchConfig": {
+      "description": "Start an asynchronous web research task; poll with Get Research.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "outputType": {
+          "default": "sourcedAnswer",
+          "enum": [
+            "sourcedAnswer",
+            "structured"
+          ],
+          "title": "Output type",
+          "type": "string"
+        },
+        "structuredOutputSchema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON schema string with an object root; required for structured output.",
+          "title": "Structured output schema",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "includeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include domains"
+        },
+        "excludeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude domains"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From date"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To date"
+        },
+        "mode": {
+          "default": "auto",
+          "enum": [
+            "answer",
+            "auto",
+            "investigate",
+            "research"
+          ],
+          "title": "Research mode",
+          "type": "string"
+        },
+        "reasoningDepth": {
+          "default": "L",
+          "enum": [
+            "L",
+            "M",
+            "S",
+            "XL"
+          ],
+          "title": "Reasoning depth",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_research",
+          "default": "create_research",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "LinkupCreateResearchConfig",
+      "type": "object"
+    },
+    "LinkupCreateResponseConfig": {
+      "description": "Generate a web-grounded answer using Linkup's Responses-compatible API.",
+      "properties": {
+        "operation": {
+          "const": "create_response",
+          "default": "create_response",
+          "title": "Operation",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/LinkupResponseMessage"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Input"
+        },
+        "model": {
+          "default": "linkup-standard",
+          "enum": [
+            "linkup-deep",
+            "linkup-standard"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LinkupResponseText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response text format"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "LinkupCreateResponseConfig",
+      "type": "object"
+    },
+    "LinkupCreateTasksConfig": {
+      "description": "Submit up to 100 search, fetch, research or extract tasks in one batch.",
+      "properties": {
+        "operation": {
+          "const": "create_tasks",
+          "default": "create_tasks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tasks": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "extract": "#/$defs/LinkupExtractTask",
+                "fetch": "#/$defs/LinkupFetchTask",
+                "research": "#/$defs/LinkupResearchTask",
+                "search": "#/$defs/LinkupSearchTask"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/LinkupSearchTask"
+              },
+              {
+                "$ref": "#/$defs/LinkupFetchTask"
+              },
+              {
+                "$ref": "#/$defs/LinkupResearchTask"
+              },
+              {
+                "$ref": "#/$defs/LinkupExtractTask"
+              }
+            ]
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Tasks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "tasks"
+      ],
+      "title": "LinkupCreateTasksConfig",
+      "type": "object"
+    },
+    "LinkupExtractInput": {
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Extraction query",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Seed URL",
+          "type": "string"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row schema"
+        },
+        "verifyUrls": {
+          "default": false,
+          "title": "Verify URLs",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "q",
+        "url"
+      ],
+      "title": "LinkupExtractInput",
+      "type": "object"
+    },
+    "LinkupExtractTask": {
+      "properties": {
+        "type": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Type",
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/$defs/LinkupExtractInput"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "LinkupExtractTask",
+      "type": "object"
+    },
+    "LinkupFetchConfig": {
+      "description": "Fetch a public web page as markdown with optional structured extraction.",
+      "properties": {
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Page URL",
+          "type": "string"
+        },
+        "mode": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "pro"
+          ],
+          "title": "Fetch mode",
+          "type": "string"
+        },
+        "renderJs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Render JavaScript"
+        },
+        "extractImages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extract images"
+        },
+        "includeRawContent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include raw content"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction instructions"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction schema"
+        },
+        "operation": {
+          "const": "fetch",
+          "default": "fetch",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "LinkupFetchConfig",
+      "type": "object"
+    },
+    "LinkupFetchInput": {
+      "properties": {
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Page URL",
+          "type": "string"
+        },
+        "mode": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "pro"
+          ],
+          "title": "Fetch mode",
+          "type": "string"
+        },
+        "renderJs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Render JavaScript"
+        },
+        "extractImages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extract images"
+        },
+        "includeRawContent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include raw content"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction instructions"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction schema"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "LinkupFetchInput",
+      "type": "object"
+    },
+    "LinkupFetchTask": {
+      "properties": {
+        "type": {
+          "const": "fetch",
+          "default": "fetch",
+          "title": "Type",
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/$defs/LinkupFetchInput"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "LinkupFetchTask",
+      "type": "object"
+    },
+    "LinkupGetCreditBalanceConfig": {
+      "description": "Read the current account's remaining credits without spending credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credit_balance",
+          "default": "get_credit_balance",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "LinkupGetCreditBalanceConfig",
+      "type": "object"
+    },
+    "LinkupGetExtractConfig": {
+      "description": "Retrieve one extraction task and its output download information.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_extract",
+          "default": "get_extract",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LinkupGetExtractConfig",
+      "type": "object"
+    },
+    "LinkupGetResearchConfig": {
+      "description": "Retrieve one research task, including its status and completed output.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_research",
+          "default": "get_research",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LinkupGetResearchConfig",
+      "type": "object"
+    },
+    "LinkupGetTaskConfig": {
+      "description": "Retrieve a batch task's status and output without polling in a loop.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LinkupGetTaskConfig",
+      "type": "object"
+    },
+    "LinkupListExtractConfig": {
+      "description": "List the organization's extraction tasks, one page at a time.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdAt",
+                "updatedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort by",
+          "enum": [
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortDirection": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_extract",
+          "default": "list_extract",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "LinkupListExtractConfig",
+      "type": "object"
+    },
+    "LinkupListResearchConfig": {
+      "description": "List the organization's research tasks, one page at a time.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdAt",
+                "updatedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort by",
+          "enum": [
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortDirection": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_research",
+          "default": "list_research",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "LinkupListResearchConfig",
+      "type": "object"
+    },
+    "LinkupListTasksConfig": {
+      "description": "List the organization's tasks with optional type and status filters.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdAt",
+                "updatedAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort by",
+          "enum": [
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortDirection": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "extract",
+                  "fetch",
+                  "research",
+                  "search"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task types"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "completed",
+                  "failed",
+                  "pending",
+                  "processing"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task statuses"
+        }
+      },
+      "title": "LinkupListTasksConfig",
+      "type": "object"
+    },
+    "LinkupResearchInput": {
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "outputType": {
+          "default": "sourcedAnswer",
+          "enum": [
+            "sourcedAnswer",
+            "structured"
+          ],
+          "title": "Output type",
+          "type": "string"
+        },
+        "structuredOutputSchema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON schema string with an object root; required for structured output.",
+          "title": "Structured output schema",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "includeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include domains"
+        },
+        "excludeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude domains"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From date"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To date"
+        },
+        "mode": {
+          "default": "auto",
+          "enum": [
+            "answer",
+            "auto",
+            "investigate",
+            "research"
+          ],
+          "title": "Research mode",
+          "type": "string"
+        },
+        "reasoningDepth": {
+          "default": "L",
+          "enum": [
+            "L",
+            "M",
+            "S",
+            "XL"
+          ],
+          "title": "Reasoning depth",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "LinkupResearchInput",
+      "type": "object"
+    },
+    "LinkupResearchTask": {
+      "properties": {
+        "type": {
+          "const": "research",
+          "default": "research",
+          "title": "Type",
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/$defs/LinkupResearchInput"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "LinkupResearchTask",
+      "type": "object"
+    },
+    "LinkupResponseMessage": {
+      "properties": {
+        "role": {
+          "enum": [
+            "user",
+            "assistant",
+            "developer"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "LinkupResponseMessage",
+      "type": "object"
+    },
+    "LinkupResponseText": {
+      "properties": {
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "title": "Format"
+        }
+      },
+      "required": [
+        "format"
+      ],
+      "title": "LinkupResponseText",
+      "type": "object"
+    },
+    "LinkupRewindFetchConfig": {
+      "description": "Retrieve a URL's stored revision visible on a specific UTC day.",
+      "properties": {
+        "operation": {
+          "const": "rewind_fetch",
+          "default": "rewind_fetch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Exact stored URL",
+          "type": "string"
+        },
+        "asOf": {
+          "format": "date",
+          "title": "As of date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "asOf"
+      ],
+      "title": "LinkupRewindFetchConfig",
+      "type": "object"
+    },
+    "LinkupRewindSearchConfig": {
+      "description": "Search web revisions visible on a specific UTC day.",
+      "properties": {
+        "operation": {
+          "const": "rewind_search",
+          "default": "rewind_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "asOf": {
+          "format": "date",
+          "title": "As of date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "asOf"
+      ],
+      "title": "LinkupRewindSearchConfig",
+      "type": "object"
+    },
+    "LinkupSearchConfig": {
+      "description": "Search the web and return sources, a sourced answer or structured data.",
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "outputType": {
+          "default": "searchResults",
+          "enum": [
+            "searchResults",
+            "sourcedAnswer",
+            "structured"
+          ],
+          "title": "Output type",
+          "type": "string"
+        },
+        "structuredOutputSchema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON schema string with an object root; required for structured output.",
+          "title": "Structured output schema",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "includeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include domains"
+        },
+        "excludeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude domains"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From date"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To date"
+        },
+        "depth": {
+          "default": "fast",
+          "enum": [
+            "deep",
+            "fast",
+            "flash",
+            "standard"
+          ],
+          "title": "Search depth",
+          "type": "string"
+        },
+        "includeImages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include images"
+        },
+        "includeInlineCitations": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include inline citations"
+        },
+        "includeSources": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include sources"
+        },
+        "maxResults": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum results"
+        },
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "LinkupSearchConfig",
+      "type": "object"
+    },
+    "LinkupSearchInput": {
+      "properties": {
+        "q": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "outputType": {
+          "default": "searchResults",
+          "enum": [
+            "searchResults",
+            "sourcedAnswer",
+            "structured"
+          ],
+          "title": "Output type",
+          "type": "string"
+        },
+        "structuredOutputSchema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON schema string with an object root; required for structured output.",
+          "title": "Structured output schema",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "includeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include domains"
+        },
+        "excludeDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude domains"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From date"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To date"
+        },
+        "depth": {
+          "default": "fast",
+          "enum": [
+            "deep",
+            "fast",
+            "flash",
+            "standard"
+          ],
+          "title": "Search depth",
+          "type": "string"
+        },
+        "includeImages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include images"
+        },
+        "includeInlineCitations": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include inline citations"
+        },
+        "includeSources": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include sources"
+        },
+        "maxResults": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum results"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "LinkupSearchInput",
+      "type": "object"
+    },
+    "LinkupSearchTask": {
+      "properties": {
+        "type": {
+          "const": "search",
+          "default": "search",
+          "title": "Type",
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/$defs/LinkupSearchInput"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "LinkupSearchTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_extract": "#/$defs/LinkupCreateExtractConfig",
+          "create_research": "#/$defs/LinkupCreateResearchConfig",
+          "create_response": "#/$defs/LinkupCreateResponseConfig",
+          "create_tasks": "#/$defs/LinkupCreateTasksConfig",
+          "fetch": "#/$defs/LinkupFetchConfig",
+          "get_credit_balance": "#/$defs/LinkupGetCreditBalanceConfig",
+          "get_extract": "#/$defs/LinkupGetExtractConfig",
+          "get_research": "#/$defs/LinkupGetResearchConfig",
+          "get_task": "#/$defs/LinkupGetTaskConfig",
+          "list_extract": "#/$defs/LinkupListExtractConfig",
+          "list_research": "#/$defs/LinkupListResearchConfig",
+          "list_tasks": "#/$defs/LinkupListTasksConfig",
+          "rewind_fetch": "#/$defs/LinkupRewindFetchConfig",
+          "rewind_search": "#/$defs/LinkupRewindSearchConfig",
+          "search": "#/$defs/LinkupSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LinkupGetCreditBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupFetchConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupCreateExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupListExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupGetExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupCreateTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupCreateResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupCreateResearchConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupListResearchConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupGetResearchConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupRewindSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkupRewindFetchConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinkupAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linkup Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

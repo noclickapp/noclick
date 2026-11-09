@@ -1,0 +1,60 @@
+{
+  "source": "https://api.linkup.so/v1/openapi.json",
+  "search": {
+    "q": "What is Microsoft's 2024 revenue?",
+    "depth": "deep",
+    "outputType": "sourcedAnswer",
+    "excludeDomains": [
+      "wikipedia.org"
+    ],
+    "includeDomains": [
+      "microsoft.com",
+      "agolution.com"
+    ]
+  },
+  "fetch": {
+    "url": "https://docs.linkup.so",
+    "extractImages": false,
+    "includeRawContent": false,
+    "renderJs": false
+  },
+  "extract": {
+    "q": "All engineering team members with their name, role, and profile page",
+    "url": "https://example.com/team",
+    "verifyUrls": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name"
+        },
+        "profileUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "profileUrl"
+      ]
+    }
+  },
+  "balance": {
+    "balance": 123.456
+  },
+  "sourced_answer": {
+    "answer": "Microsoft's revenue for fiscal year 2024 was $245.1 billion, reflecting a 16% increase from the previous year.",
+    "sources": [
+      {
+        "name": "Microsoft 2024 Annual Report",
+        "url": "https://www.microsoft.com/investor/reports/ar24/index.html",
+        "snippet": "Highlights from fiscal year 2024 compared with fiscal year 2023 included: Microsoft Cloud revenue increased 23% to $137.4 billion."
+      }
+    ]
+  },
+  "sourced_answer_source": "https://docs.linkup.so/pages/documentation/endpoints/search/overview.md"
+}
