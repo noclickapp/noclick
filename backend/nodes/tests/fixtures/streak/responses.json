@@ -1,0 +1,297 @@
+{
+  "list_teams": {
+    "results": [
+      {
+        "creationDate": 1490042016548,
+        "creator": "agxzfm1hgLzluZUKDA",
+        "members": [
+          {
+            "role": "Owner",
+            "inviteDate": 1490042016548,
+            "inviteStatus": "Accepted",
+            "orgKey": "agxzrLmNvbQw",
+            "displayName": "Opera Ghost",
+            "fullName": "The Phantom of the Opera",
+            "email": "og@streak.com",
+            "image": "https://lh5.googleusercontent.com/photo.jpg",
+            "userKey": "agxzfm1hgLzluZUKDA"
+          }
+        ],
+        "name": "og@streak.coms Team",
+        "sharingRestrictedToTeam": false,
+        "key": "agxzfm1haWxmb29nYWVyEQsSBFRlYW0YgICIvJO1pQgM",
+        "lastSavedTimestamp": 1490042016549
+      }
+    ]
+  },
+  "get_team": {
+    "creationDate": 1490042016548,
+    "creator": "agxzfm1uZUKDA",
+    "members": [
+      {
+        "role": "Owner",
+        "inviteDate": 1490042016548,
+        "inviteStatus": "Accepted",
+        "orgKey": "agxrLmNvbQw",
+        "displayName": "Oscar",
+        "fullName": "Oscar The Grouch",
+        "email": "oscar@streak.com",
+        "image": "https://lh5.googleusercontent.com/photo.jpg",
+        "userKey": "agxzfm1uZUKDA"
+      }
+    ],
+    "name": "oscar@streak.com's Team",
+    "sharingRestrictedToTeam": false,
+    "key": "agxzfCIvJO1pQgM",
+    "lastSavedTimestamp": 1490042016549
+  },
+  "create_box": {
+    "pipelineKey": "agptYWl3cYPww",
+    "creatorKey": "agptXNlchgBDA",
+    "creationTimestamp": 1348436318347,
+    "lastUpdatedTimestamp": 1348436318347,
+    "name": "NewBox",
+    "stageKey": "5001",
+    "fields": {},
+    "followerKeys": [
+      "agptXNlchgBDA"
+    ],
+    "followerCount": 1,
+    "commentCount": 0,
+    "taskTotal": 0,
+    "gmailThreadCount": 1,
+    "fileCount": 0,
+    "boxKey": "agptYWRiZAQw",
+    "key": "agptYWRiZAQw"
+  },
+  "get_contact": {
+    "teamKey": "agxzfm1haWxmb29nYWVyDgsSBFRlYW0Y2b2FiBYM",
+    "emailAddresses": [
+      "sushiritto@gmail.com"
+    ],
+    "lastEnrichmentTimestamp": 1500496120500,
+    "lastSavedUserKey": "agxzfm1haWxmb29nYWVyLQsSDE9yZ2FuaXphdGlvbiIKc3RyZWFrLmNvbQwLEgRVc2VyGICAgLzluZUKDA",
+    "creatorKey": "agxzfm1haWxmb29nYWVyLQsSDE9yZ2FuaXphdGlvbiIKc3RyZWFrLmNvbQwLEgRVc2VyGICAgLzluZUKDA",
+    "creationDate": 1500496093244,
+    "key": "VGVhbUNvbnRhY3Qsfn5zdHJlYWtsb25naWR-fjc1MDI1NzcxMzk",
+    "versionTimestamp": 1500496120500,
+    "lastSavedTimestamp": 1500496120501
+  },
+  "create_contact": {
+    "teamKey": "agxzfm1haWxmb29nYWVyEQsSBFRlYW0YgICIvJO1pQgM",
+    "givenName": "Billie",
+    "familyName": "Jean",
+    "title": "Not my lover",
+    "emailAddresses": [
+      "mjackson@gmail.com"
+    ],
+    "phoneNumbers": [
+      "919.989.9909"
+    ],
+    "addresses": [
+      "1005 Cherry Street"
+    ],
+    "creationDate": 1501633590512,
+    "key": "VGVhbUNvbnRhY3Qsfn5zdHJlYWtsb25naWR-fjc1MTg3NDcyMDY",
+    "lastSavedTimestamp": 1501633590850
+  },
+  "update_contact": {
+    "teamKey": "agxzfm1haWxmb29nYWVyEQsSBFRlYW0YgICIvJO1pQgM",
+    "givenName": "Billie",
+    "familyName": "Jean",
+    "title": "Not my lover",
+    "emailAddresses": [
+      "mike.jackson@gmail.com",
+      "mjackson@gmail.com"
+    ],
+    "phoneNumbers": [
+      "919.989.9909"
+    ],
+    "addresses": [
+      "4406 W Beach Park Drive",
+      "1005 Cherry Street",
+      "3030 Castro Street"
+    ],
+    "twitterHandle": "@justagirlwhothinksthatIamtheone",
+    "creationDate": 1501633590512,
+    "key": "VGVhbUNvbnRhY3Qsfn5zdHJlYWtsb25naWR-fjc1MTg3NDcyMDY"
+  },
+  "delete_contact": {
+    "success": true
+  },
+  "get_contact_boxes": {},
+  "get_organization": {
+    "teamKey": "agxzfm1haWxmb29nYWVyEQsSBFRlYW0YgICIvJO1pQgM",
+    "name": "Kittens r Us",
+    "other": "Spay and Neuter your pets!",
+    "domains": [
+      "kittensrus.com"
+    ],
+    "industry": "KITTIES",
+    "phoneNumbers": [],
+    "addresses": [
+      "101 Kitten Lane"
+    ],
+    "employeeCount": "42",
+    "logoURL": "http://www.pngmart.com/files/4/Kitten-Transparent-Background.png",
+    "twitterHandle": "www.twitterHandle.com",
+    "facebookHandle": "www.facebookHandle.com",
+    "linkedinHandle": "www.linkedInHandle.com",
+    "lastSavedUserKey": "agxzfm1hauZUKDA",
+    "creatorKey": "agxzfm1hauZUKDA",
+    "creationDate": 1506639583680,
+    "key": "VGV2xvb-Nz3A",
+    "versionTimestamp": 1506639583680,
+    "lastSavedTimestamp": 1506639583936
+  },
+  "update_organization": {
+    "teamKey": "agxzfm1haWxmb29nYWVyEQsSBFRlYW0YgICIvJO1pQgM",
+    "name": "Kittens r Us",
+    "other": "Spay and Neuter your pets!",
+    "domains": [
+      "kittensrus.com"
+    ],
+    "industry": "KITTIES",
+    "phoneNumbers": [],
+    "addresses": [
+      "101 Kitten Lane"
+    ],
+    "employeeCount": "42",
+    "logoURL": "http://www.pngmart.com/files/4/Kitten-Transparent-Background.png",
+    "twitterHandle": "www.twitterHandle.com",
+    "facebookHandle": "www.facebookHandle.com",
+    "linkedinHandle": "www.linkedInHandle.com",
+    "lastSavedUserKey": "agxzfm1hauZUKDA",
+    "creatorKey": "agxzfm1hauZUKDA",
+    "creationDate": 1506639583680,
+    "key": "VGV2xvb-Nz3A",
+    "versionTimestamp": 1506639583680,
+    "lastSavedTimestamp": 1506639583936
+  },
+  "delete_organization": {
+    "success": true
+  },
+  "get_task": {
+    "boxKey": "agxzfm1haJq3iOsIDA",
+    "pipelineKey": "agxzfm1hirZaXCgw",
+    "creatorKey": "agxzfm1hagLzluZUKDA",
+    "creationDate": 1504139600683,
+    "lastStatusChangeDate": 1504139600683,
+    "text": "Wake me up before you go go",
+    "status": "NOT_DONE",
+    "assignedToSharingEntries": [
+      {
+        "displayName": "Becca S",
+        "fullName": "Becca Saines",
+        "userKey": "agxzfm1CAgLzluZUKDA"
+      }
+    ],
+    "key": "agxzfmWxmPK9xZsKDA",
+    "lastSavedTimestamp": 1504199083804
+  },
+  "list_box_tasks": {
+    "results": [
+      {
+        "boxKey": "agxzfm1q3iOsIDA",
+        "pipelineKey": "agxzfm1hrZaXCgw",
+        "lastStatusChangeDate": 1504211088721,
+        "text": "All the things!",
+        "status": "NOT_DONE",
+        "assignedToSharingEntries": [
+          {
+            "displayName": "Becca S",
+            "userKey": "agxzfm1hluZUKDA"
+          }
+        ],
+        "key": "agxzfmPKd5Y8JDA",
+        "lastSavedTimestamp": 1504211088820
+      },
+      {
+        "boxKey": "agxzfm1hGJq3iOsIDA",
+        "pipelineKey": "agxzCirZaXCgw",
+        "lastStatusChangeDate": 1504139600683,
+        "text": "Moar things!",
+        "status": "NOT_DONE",
+        "assignedToSharingEntries": [
+          {
+            "displayName": "Becca S",
+            "userKey": "agxzfm1hgLzluZUKDA"
+          }
+        ],
+        "key": "agxzfm1CAgPK9xZsKDA",
+        "lastSavedTimestamp": 1504199083804
+      }
+    ]
+  },
+  "create_task": {
+    "boxKey": "agxzfm1haJq3iOsIDA",
+    "pipelineKey": "agxzfm1hirZaXCgw",
+    "creatorKey": "agxzfm1hagLzluZUKDA",
+    "creationDate": 1504139600683,
+    "lastStatusChangeDate": 1504139600683,
+    "text": "Walk 500 miles",
+    "status": "NOT_DONE",
+    "assignedToSharingEntries": [
+      {
+        "displayName": "Becca S",
+        "fullName": "Becca Saines",
+        "userKey": "agxzfm1CAgLzluZUKDA"
+      }
+    ],
+    "key": "agxzfmWxmPK9xZsKDA",
+    "lastSavedTimestamp": 1504199083804
+  },
+  "update_task": {
+    "boxKey": "agxzfm1haJq3iOsIDA",
+    "pipelineKey": "agxzfm1hirZaXCgw",
+    "creatorKey": "agxzfm1hagLzluZUKDA",
+    "creationDate": 1504139600683,
+    "lastStatusChangeDate": 1504139600683,
+    "text": "Walk 500 miles",
+    "status": "DONE",
+    "assignedToSharingEntries": [
+      {
+        "displayName": "Becca S",
+        "fullName": "Becca Saines",
+        "userKey": "agxzfm1CAgLzluZUKDA"
+      }
+    ],
+    "key": "agxzfmWxmPK9xZsKDA",
+    "lastSavedTimestamp": 1504199083804
+  },
+  "delete_task": {
+    "success": true
+  },
+  "get_comment": {
+    "boxKey": "agxzf7aoKDA",
+    "pipelineKey": "agxzfmICirZaXCgw",
+    "creatorKey": "agxzfzluZUKDA",
+    "newsfeedEntryKey": "agxzfmSOhAsM",
+    "timestamp": 1516238421169,
+    "message": "do you feel lucky?",
+    "commentKey": "agxzfm1nPtqsKDA",
+    "key": "agxzfm1nPtqsKDA",
+    "lastSavedTimestamp": 1516238545102
+  },
+  "create_comment": {
+    "boxKey": "agptYWlsZRjJBAw",
+    "pipelineKey": "agptYWls2Zsb3cYjgIM",
+    "timestamp": 1369697984568,
+    "creatorKey": "agptYWlsZchgBDA",
+    "message": "bar",
+    "commentKey": "agptYWludBjTBAw",
+    "key": "agptYWldBjTBAw"
+  },
+  "update_comment": {
+    "boxKey": "agptYWlsZRjJBAw",
+    "pipelineKey": "agptYWls2Zsb3cYjgIM",
+    "timestamp": 1369697984568,
+    "creatorKey": "agptYWlsZchgBDA",
+    "message": "bar",
+    "commentKey": "agptYWludBjTBAw",
+    "key": "agptYWldBjTBAw"
+  },
+  "delete_comment": {
+    "success": true
+  }
+}

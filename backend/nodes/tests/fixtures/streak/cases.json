@@ -1,0 +1,91 @@
+{
+  "list_teams": {
+    "operation": "list_teams"
+  },
+  "get_team": {
+    "operation": "get_team",
+    "teamKey": "agxzfm1haW"
+  },
+  "create_box": {
+    "operation": "create_box",
+    "pipelineKey": "agxzfm1haW",
+    "name": "bar"
+  },
+  "get_contact": {
+    "operation": "get_contact",
+    "contactKey": "agxzfm1haW"
+  },
+  "create_contact": {
+    "operation": "create_contact",
+    "teamKey": "agxzfm1haW",
+    "emailAddresses": [
+      "sushiritto@gmail.com"
+    ]
+  },
+  "update_contact": {
+    "operation": "update_contact",
+    "contactKey": "agxzfm1haW",
+    "givenName": "Billie"
+  },
+  "delete_contact": {
+    "operation": "delete_contact",
+    "contactKey": "agxzfm1haW"
+  },
+  "get_contact_boxes": {
+    "operation": "get_contact_boxes",
+    "contactKey": "agxzfm1haW"
+  },
+  "get_organization": {
+    "operation": "get_organization",
+    "organizationKey": "agxzfm1haW"
+  },
+  "update_organization": {
+    "operation": "update_organization",
+    "organizationKey": "agxzfm1haW",
+    "name": "Kittens r Us"
+  },
+  "delete_organization": {
+    "operation": "delete_organization",
+    "organizationKey": "agxzfm1haW"
+  },
+  "get_task": {
+    "operation": "get_task",
+    "taskKey": "agxzfm1haW"
+  },
+  "list_box_tasks": {
+    "operation": "list_box_tasks",
+    "boxKey": "agxzfm1haW"
+  },
+  "create_task": {
+    "operation": "create_task",
+    "boxKey": "agxzfm1haW",
+    "text": "Walk 500 miles"
+  },
+  "update_task": {
+    "operation": "update_task",
+    "taskKey": "agxzfm1haW",
+    "status": "DONE"
+  },
+  "delete_task": {
+    "operation": "delete_task",
+    "taskKey": "agxzfm1haW"
+  },
+  "get_comment": {
+    "operation": "get_comment",
+    "commentKey": "agxzfm1haW"
+  },
+  "create_comment": {
+    "operation": "create_comment",
+    "boxKey": "agxzfm1haW",
+    "message": "bar"
+  },
+  "update_comment": {
+    "operation": "update_comment",
+    "commentKey": "agxzfm1haW",
+    "message": "bar"
+  },
+  "delete_comment": {
+    "operation": "delete_comment",
+    "commentKey": "agxzfm1haW"
+  }
+}

@@ -1,0 +1,1228 @@
+{
+  "$defs": {
+    "Assignee": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Assignee Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Assignee",
+      "type": "object"
+    },
+    "CreateBox": {
+      "additionalProperties": false,
+      "description": "Create a box.",
+      "properties": {
+        "operation": {
+          "const": "create_box",
+          "default": "create_box",
+          "title": "Create Box",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pipelineKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pipeline Key",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of this box",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "stageKey": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The stage of this box",
+          "title": "Stagekey"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The notes on the box",
+          "title": "Notes"
+        },
+        "assignedToSharingEntries": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded array of objects with email properties. Assignees must have pipeline access.",
+          "title": "Assignedtosharingentries"
+        }
+      },
+      "required": [
+        "pipelineKey",
+        "name"
+      ],
+      "title": "CreateBox",
+      "type": "object"
+    },
+    "CreateComment": {
+      "additionalProperties": false,
+      "description": "Create a comment.",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Create Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "boxKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Box Key",
+          "type": "string"
+        },
+        "message": {
+          "description": "The text of the comment.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "boxKey",
+        "message"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Team Key",
+          "type": "string"
+        },
+        "emailAddresses": {
+          "description": "The only email addresses associated with the contact will be the ones you include here; make sure to include any previously associated addresses as well as the new one(s).",
+          "items": {
+            "type": "string"
+          },
+          "title": "Emailaddresses",
+          "type": "array"
+        },
+        "givenName": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name",
+          "title": "Givenname"
+        },
+        "familyName": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Familyname"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's title/description",
+          "title": "Title"
+        },
+        "other": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes or other uncategorized information.",
+          "title": "Other"
+        },
+        "addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The only addresses associated with the contact will be the ones you include here; make sure to include any previously associated addresses as well as the new one(s).",
+          "title": "Addresses"
+        },
+        "phoneNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The only phone numbers associated with the contact will be the ones you include here; make sure to include any previously associated numbers as well as the new one(s).",
+          "title": "Phonenumbers"
+        },
+        "twitterHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "twitterHandle",
+          "title": "Twitterhandle"
+        },
+        "facebookHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "facebookHandle",
+          "title": "Facebookhandle"
+        },
+        "linkedinHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "linkedinHandle",
+          "title": "Linkedinhandle"
+        },
+        "photoUrl": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "photoUrl",
+          "title": "Photourl"
+        }
+      },
+      "required": [
+        "teamKey",
+        "emailAddresses"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateTask": {
+      "additionalProperties": false,
+      "description": "Create a task.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "boxKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Box Key",
+          "type": "string"
+        },
+        "text": {
+          "description": "Task description",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Milliseconds since epoch (eg `1504213700003`)",
+          "title": "Duedate"
+        },
+        "assignedToSharingEntries": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Assignee"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Each object needs a key of `email` and a value of the assignee's email.",
+          "title": "Assignedtosharingentries"
+        }
+      },
+      "required": [
+        "boxKey",
+        "text"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DeleteComment": {
+      "additionalProperties": false,
+      "description": "Delete a comment.",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "commentKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "commentKey"
+      ],
+      "title": "DeleteComment",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete a contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactKey"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteOrganization": {
+      "additionalProperties": false,
+      "description": "Delete an organization.",
+      "properties": {
+        "operation": {
+          "const": "delete_organization",
+          "default": "delete_organization",
+          "title": "Delete Organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organizationKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organizationKey"
+      ],
+      "title": "DeleteOrganization",
+      "type": "object"
+    },
+    "DeleteTask": {
+      "additionalProperties": false,
+      "description": "Delete a task.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taskKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskKey"
+      ],
+      "title": "DeleteTask",
+      "type": "object"
+    },
+    "GetComment": {
+      "additionalProperties": false,
+      "description": "Get a comment.",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Get Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "commentKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "commentKey"
+      ],
+      "title": "GetComment",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Get a contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactKey"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetContactBoxes": {
+      "additionalProperties": false,
+      "description": "Get contact boxes.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_boxes",
+          "default": "get_contact_boxes",
+          "title": "Get Contact Boxes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactKey"
+      ],
+      "title": "GetContactBoxes",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "description": "Get an Organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organizationKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organizationKey"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "description": "Get a task.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taskKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskKey"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "description": "Get a team.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teamKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Team Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamKey"
+      ],
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "ListBoxTasks": {
+      "additionalProperties": false,
+      "description": "Get tasks in a box.",
+      "properties": {
+        "operation": {
+          "const": "list_box_tasks",
+          "default": "list_box_tasks",
+          "title": "List Box Tasks",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "boxKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Box Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "boxKey"
+      ],
+      "title": "ListBoxTasks",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "description": "Get my teams.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "StreakAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "streak_api_key",
+          "default": "streak_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Streak API Key",
+      "type": "object",
+      "x-credential-instructions": "In Gmail, open Streak in the right sidebar, choose Integrations, then create a key under Streak API. Paste the API key here. It has the same permissions as your Streak account.",
+      "x-credential-url": "https://streak.readme.io/docs/authentication"
+    },
+    "UpdateComment": {
+      "additionalProperties": false,
+      "description": "Update a comment.",
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Update Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "commentKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Key",
+          "type": "string"
+        },
+        "message": {
+          "description": "The updated message text",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "commentKey",
+        "message"
+      ],
+      "title": "UpdateComment",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contactKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Key",
+          "type": "string"
+        },
+        "givenName": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name",
+          "title": "Givenname"
+        },
+        "familyName": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Familyname"
+        },
+        "emailAddresses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The only email addresses associated with the contact will be the ones you include here; make sure to include any previously associated addresses as well as the new one(s).",
+          "title": "Emailaddresses"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's title/description",
+          "title": "Title"
+        },
+        "other": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes or other uncategorized information.",
+          "title": "Other"
+        },
+        "addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The only addresses associated with the contact will be the ones you include here; make sure to include any previously associated addresses as well as the new one(s).",
+          "title": "Addresses"
+        },
+        "phoneNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The only phone numbers associated with the contact will be the ones you include here; make sure to include any previously associated numbers as well as the new one(s).",
+          "title": "Phonenumbers"
+        },
+        "twitterHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "twitterHandle",
+          "title": "Twitterhandle"
+        },
+        "facebookHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "facebookHandle",
+          "title": "Facebookhandle"
+        },
+        "linkedinHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "linkedinHandle",
+          "title": "Linkedinhandle"
+        },
+        "photoUrl": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "photoUrl",
+          "title": "Photourl"
+        }
+      },
+      "required": [
+        "contactKey"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateOrganization": {
+      "additionalProperties": false,
+      "description": "Update an organization.",
+      "properties": {
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Update Organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organizationKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Key",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Organization name",
+          "title": "Name"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Organization industry",
+          "title": "Industry"
+        },
+        "employeeCount": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Employee count at the organization",
+          "title": "Employeecount"
+        },
+        "other": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes or other uncategorized information.",
+          "title": "Other"
+        },
+        "twitterHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "twitterHandle",
+          "title": "Twitterhandle"
+        },
+        "facebookHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "facebookHandle",
+          "title": "Facebookhandle"
+        },
+        "linkedinHandle": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "linkedinHandle",
+          "title": "Linkedinhandle"
+        }
+      },
+      "required": [
+        "organizationKey"
+      ],
+      "title": "UpdateOrganization",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "additionalProperties": false,
+      "description": "Update a task.",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taskKey": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Key",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated task description",
+          "title": "Text"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated dueDate (in MS since epoch)",
+          "title": "Duedate"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DONE",
+                "NOT_DONE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Either `DONE` or `NOT_DONE`",
+          "title": "Status",
+          "enum": [
+            "DONE",
+            "NOT_DONE"
+          ],
+          "x-enum-searchable": true
+        },
+        "assignedToSharingEntries": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Assignee"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Each object needs a key of `email` and a value of the assignee's email.",
+          "title": "Assignedtosharingentries"
+        }
+      },
+      "required": [
+        "taskKey"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_box": "#/$defs/CreateBox",
+          "create_comment": "#/$defs/CreateComment",
+          "create_contact": "#/$defs/CreateContact",
+          "create_task": "#/$defs/CreateTask",
+          "delete_comment": "#/$defs/DeleteComment",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_organization": "#/$defs/DeleteOrganization",
+          "delete_task": "#/$defs/DeleteTask",
+          "get_comment": "#/$defs/GetComment",
+          "get_contact": "#/$defs/GetContact",
+          "get_contact_boxes": "#/$defs/GetContactBoxes",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_task": "#/$defs/GetTask",
+          "get_team": "#/$defs/GetTeam",
+          "list_box_tasks": "#/$defs/ListBoxTasks",
+          "list_teams": "#/$defs/ListTeams",
+          "update_comment": "#/$defs/UpdateComment",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_organization": "#/$defs/UpdateOrganization",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/CreateBox"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/GetContactBoxes"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/UpdateOrganization"
+        },
+        {
+          "$ref": "#/$defs/DeleteOrganization"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/ListBoxTasks"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/DeleteTask"
+        },
+        {
+          "$ref": "#/$defs/GetComment"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        },
+        {
+          "$ref": "#/$defs/UpdateComment"
+        },
+        {
+          "$ref": "#/$defs/DeleteComment"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StreakAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Streak Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
