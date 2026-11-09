@@ -1,0 +1,1848 @@
+{
+  "$defs": {
+    "SMSGlobalCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "given_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Given Name"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Name"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "msisdn": {
+          "description": "Mobile number in international format, digits only.",
+          "maxLength": 15,
+          "minLength": 3,
+          "title": "Msisdn",
+          "type": "string"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact"
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "msisdn",
+        "group_id"
+      ],
+      "title": "SMSGlobalCreateContactConfig",
+      "type": "object"
+    },
+    "SMSGlobalCreateGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        },
+        "is_global": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Global"
+        },
+        "default_origin": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Origin"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create Group"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SMSGlobalCreateGroupConfig",
+      "type": "object"
+    },
+    "SMSGlobalCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smsglobal_api_key",
+          "default": "smsglobal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "SMSGlobal API Key",
+      "type": "object",
+      "x-credential-instructions": "In your SMSGlobal MXT account, create a REST API key and secret. Paste both values here. NoClick signs requests with MAC SHA-256; these are not your MXT login details.",
+      "x-credential-url": "https://mxt.smsglobal.com/integrations"
+    },
+    "SMSGlobalDeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SMSGlobalDeleteContactConfig",
+      "type": "object"
+    },
+    "SMSGlobalDeleteGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Delete Group"
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "SMSGlobalDeleteGroupConfig",
+      "type": "object"
+    },
+    "SMSGlobalDeleteScheduledMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_scheduled_message",
+          "default": "delete_scheduled_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Delete Scheduled Message"
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "SMSGlobalDeleteScheduledMessageConfig",
+      "type": "object"
+    },
+    "SMSGlobalGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SMSGlobalGetContactConfig",
+      "type": "object"
+    },
+    "SMSGlobalGetContactDetailsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact_details",
+          "default": "get_contact_details",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Contact Details"
+        }
+      },
+      "title": "SMSGlobalGetContactDetailsConfig",
+      "type": "object"
+    },
+    "SMSGlobalGetCreditBalanceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_credit_balance",
+          "default": "get_credit_balance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Credit Balance"
+        }
+      },
+      "title": "SMSGlobalGetCreditBalanceConfig",
+      "type": "object"
+    },
+    "SMSGlobalGetGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get Group"
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "SMSGlobalGetGroupConfig",
+      "type": "object"
+    },
+    "SMSGlobalGetIncomingMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_incoming_message",
+          "default": "get_incoming_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Get Incoming Message"
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "SMSGlobalGetIncomingMessageConfig",
+      "type": "object"
+    },
+    "SMSGlobalGetOutgoingMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_outgoing_message",
+          "default": "get_outgoing_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Get Outgoing Message"
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "SMSGlobalGetOutgoingMessageConfig",
+      "type": "object"
+    },
+    "SMSGlobalListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "Pagination offset; SMSGlobal defaults to 1.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts"
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "id",
+                "-id",
+                "msisdn",
+                "-msisdn"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "id",
+            "-id",
+            "msisdn",
+            "-msisdn"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "SMSGlobalListContactsConfig",
+      "type": "object"
+    },
+    "SMSGlobalListDedicatedNumbersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "Pagination offset; SMSGlobal defaults to 1.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_dedicated_numbers",
+          "default": "list_dedicated_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Dedicated Numbers"
+        }
+      },
+      "title": "SMSGlobalListDedicatedNumbersConfig",
+      "type": "object"
+    },
+    "SMSGlobalListGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "Pagination offset; SMSGlobal defaults to 1.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups"
+        }
+      },
+      "title": "SMSGlobalListGroupsConfig",
+      "type": "object"
+    },
+    "SMSGlobalListIncomingMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "Pagination offset; SMSGlobal defaults to 1.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD HH:MM:SS in the account timezone.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD HH:MM:SS in the account timezone.",
+          "title": "End Date"
+        },
+        "destination": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_incoming_messages",
+          "default": "list_incoming_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "List Incoming Messages"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin"
+        }
+      },
+      "title": "SMSGlobalListIncomingMessagesConfig",
+      "type": "object"
+    },
+    "SMSGlobalListOptOutsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "Pagination offset; SMSGlobal defaults to 1.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_opt_outs",
+          "default": "list_opt_outs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opt Outs",
+          "x-display-name": "List Opt Outs"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        }
+      },
+      "title": "SMSGlobalListOptOutsConfig",
+      "type": "object"
+    },
+    "SMSGlobalListOutgoingMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 1,
+          "description": "Pagination offset; SMSGlobal defaults to 1.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD HH:MM:SS in the account timezone.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD HH:MM:SS in the account timezone.",
+          "title": "End Date"
+        },
+        "destination": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_outgoing_messages",
+          "default": "list_outgoing_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "List Outgoing Messages"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "delivered",
+                "sent",
+                "scheduled",
+                "noCredits",
+                "invalidNumber",
+                "undelivered"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "delivered",
+            "sent",
+            "scheduled",
+            "noCredits",
+            "invalidNumber",
+            "undelivered"
+          ],
+          "x-enum-searchable": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "title": "SMSGlobalListOutgoingMessagesConfig",
+      "type": "object"
+    },
+    "SMSGlobalOnNewIncomingConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_incoming_message",
+          "default": "on_new_incoming_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Incoming Message",
+          "x-is-trigger": true
+        },
+        "start_date": {
+          "description": "Only watch messages received since this YYYY-MM-DD HH:MM:SS in your SMSGlobal account timezone. Choose a recent date to keep the poll under 9999 records.",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "destination": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin"
+        }
+      },
+      "required": [
+        "start_date"
+      ],
+      "title": "SMSGlobalOnNewIncomingConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "SMSGlobalOnOutgoingStatusConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_outgoing_message",
+          "default": "on_new_or_updated_outgoing_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Outgoing Message",
+          "x-is-trigger": true
+        },
+        "start_date": {
+          "description": "Watch messages created since this YYYY-MM-DD HH:MM:SS in your account timezone. Detects new messages and previously unseen statuses; narrow the date if more than 9999 messages match.",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "destination": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "start_date"
+      ],
+      "title": "SMSGlobalOnOutgoingStatusConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "SMSGlobalOptInNumberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "opt_in_number",
+          "default": "opt_in_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opt Outs",
+          "x-display-name": "Opt In Number"
+        },
+        "number": {
+          "description": "International mobile number to remove from opt outs.",
+          "minimum": 1,
+          "title": "Number",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "SMSGlobalOptInNumberConfig",
+      "type": "object"
+    },
+    "SMSGlobalOptOutNumbersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "opt_out_numbers",
+          "default": "opt_out_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opt Outs",
+          "x-display-name": "Opt Out Numbers"
+        },
+        "optouts": {
+          "description": "International mobile numbers to opt out.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Optouts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "optouts"
+      ],
+      "title": "SMSGlobalOptOutNumbersConfig",
+      "type": "object"
+    },
+    "SMSGlobalSendSmsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send Sms"
+        },
+        "destination": {
+          "description": "International mobile number, digits only.",
+          "maxLength": 15,
+          "minLength": 3,
+          "title": "Destination",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin"
+        },
+        "shared_pool": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shared Pool"
+        },
+        "scheduled_date_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD HH:MM:SS in UTC.",
+          "title": "Scheduled Date Time"
+        },
+        "expiry_date_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD HH:MM:SS in UTC.",
+          "title": "Expiry Date Time"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        }
+      },
+      "required": [
+        "destination",
+        "message"
+      ],
+      "title": "SMSGlobalSendSmsConfig",
+      "type": "object"
+    },
+    "SMSGlobalUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "given_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Given Name"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Name"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "msisdn": {
+          "description": "Mobile number in international format, digits only.",
+          "maxLength": 15,
+          "minLength": 3,
+          "title": "Msisdn",
+          "type": "string"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "msisdn",
+        "contact_id"
+      ],
+      "title": "SMSGlobalUpdateContactConfig",
+      "type": "object"
+    },
+    "SMSGlobalUpdateGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        },
+        "is_global": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Global"
+        },
+        "default_origin": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Origin"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Update Group"
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "group_id"
+      ],
+      "title": "SMSGlobalUpdateGroupConfig",
+      "type": "object"
+    },
+    "SMSGlobalValidateOptOutsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_opt_outs",
+          "default": "validate_opt_outs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opt Outs",
+          "x-display-name": "Validate Opt Outs"
+        },
+        "optouts": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Optouts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "optouts"
+      ],
+      "title": "SMSGlobalValidateOptOutsConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/SMSGlobalCreateContactConfig",
+          "create_group": "#/$defs/SMSGlobalCreateGroupConfig",
+          "delete_contact": "#/$defs/SMSGlobalDeleteContactConfig",
+          "delete_group": "#/$defs/SMSGlobalDeleteGroupConfig",
+          "delete_scheduled_message": "#/$defs/SMSGlobalDeleteScheduledMessageConfig",
+          "get_contact": "#/$defs/SMSGlobalGetContactConfig",
+          "get_contact_details": "#/$defs/SMSGlobalGetContactDetailsConfig",
+          "get_credit_balance": "#/$defs/SMSGlobalGetCreditBalanceConfig",
+          "get_group": "#/$defs/SMSGlobalGetGroupConfig",
+          "get_incoming_message": "#/$defs/SMSGlobalGetIncomingMessageConfig",
+          "get_outgoing_message": "#/$defs/SMSGlobalGetOutgoingMessageConfig",
+          "list_contacts": "#/$defs/SMSGlobalListContactsConfig",
+          "list_dedicated_numbers": "#/$defs/SMSGlobalListDedicatedNumbersConfig",
+          "list_groups": "#/$defs/SMSGlobalListGroupsConfig",
+          "list_incoming_messages": "#/$defs/SMSGlobalListIncomingMessagesConfig",
+          "list_opt_outs": "#/$defs/SMSGlobalListOptOutsConfig",
+          "list_outgoing_messages": "#/$defs/SMSGlobalListOutgoingMessagesConfig",
+          "on_new_incoming_message": "#/$defs/SMSGlobalOnNewIncomingConfig",
+          "on_new_or_updated_outgoing_message": "#/$defs/SMSGlobalOnOutgoingStatusConfig",
+          "opt_in_number": "#/$defs/SMSGlobalOptInNumberConfig",
+          "opt_out_numbers": "#/$defs/SMSGlobalOptOutNumbersConfig",
+          "send_sms": "#/$defs/SMSGlobalSendSmsConfig",
+          "update_contact": "#/$defs/SMSGlobalUpdateContactConfig",
+          "update_group": "#/$defs/SMSGlobalUpdateGroupConfig",
+          "validate_opt_outs": "#/$defs/SMSGlobalValidateOptOutsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SMSGlobalSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalListOutgoingMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalGetOutgoingMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalDeleteScheduledMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalListIncomingMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalGetIncomingMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalUpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalListOptOutsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalOptOutNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalValidateOptOutsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalOptInNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalGetContactDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalGetCreditBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalListDedicatedNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalOnNewIncomingConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSGlobalOnOutgoingStatusConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SMSGlobalCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smsglobal Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
