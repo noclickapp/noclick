@@ -1,0 +1,739 @@
+{
+  "GET /me": {
+    "body": {
+      "businessPhones": [
+        "+1 425 555 0109"
+      ],
+      "displayName": "Adele Vance",
+      "givenName": "Adele",
+      "jobTitle": "Retail Manager",
+      "mail": "AdeleV@contoso.com",
+      "mobilePhone": "+1 425 555 0109",
+      "officeLocation": "18/2111",
+      "preferredLanguage": "en-US",
+      "surname": "Vance",
+      "userPrincipalName": "AdeleV@contoso.com",
+      "id": "87d349ed-44d7-43e1-9a83-5f2406dee5bd"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-get.md"
+  },
+  "GET /me/messages": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('bb8775a4-4d8c-42cf-a1d4-4d58c2bb668f')/messages(sender,subject)",
+      "value": [
+        {
+          "@odata.etag": "W/\"CQAAABYAAADHcgC8Hl9tRZ/hc1wEUs1TAAAwR4Hg\"",
+          "id": "AAMkAGUAAAwTW09AAA=",
+          "subject": "You have late tasks!",
+          "sender": {
+            "emailAddress": {
+              "name": "Microsoft Planner",
+              "address": "noreply@Planner.Office365.com"
+            }
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-list-messages.md"
+  },
+  "GET /me/messages/{message-id}": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('7f180cbb-a5ae-457c-b7e8-6f5b42ba33e7')/messages/$entity",
+      "@odata.etag": "W/\"CQAAABYAAAC4ofQHEIqCSbQPot83AFcbAAAnjjuZ\"",
+      "id": "AAMkADhMGAAA=",
+      "createdDateTime": "2018-09-09T03:15:05Z",
+      "lastModifiedDateTime": "2018-09-09T03:15:08Z",
+      "changeKey": "CQAAABYAAAC4ofQHEIqCSbQPot83AFcbAAAnjjuZ",
+      "categories": [],
+      "receivedDateTime": "2018-09-09T03:15:08Z",
+      "sentDateTime": "2018-09-09T03:15:06Z",
+      "hasAttachments": false,
+      "internetMessageId": "<MWHPR6E1BE060@MWHPR1120.namprd22.prod.outlook.com>",
+      "subject": "9/9/2018: concert",
+      "bodyPreview": "The group represents Nevada.",
+      "importance": "normal",
+      "parentFolderId": "AAMkADcbAAAAAAEJAAA=",
+      "conversationId": "AAQkADOUpag6yWs=",
+      "isDeliveryReceiptRequested": false,
+      "isReadReceiptRequested": false,
+      "isRead": true,
+      "isDraft": false,
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADMGAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+      "inferenceClassification": "focused",
+      "body": {
+        "contentType": "html",
+        "content": "<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta content=\"text/html; charset=us-ascii\">\r\n</head>\r\n<body>\r\nThe group represents Nevada.\r\n</body>\r\n</html>\r\n"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Adele Vance",
+          "address": "adelev@contoso.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Adele Vance",
+          "address": "adelev@contoso.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Alex Wilber",
+            "address": "AlexW@contoso.com"
+          }
+        }
+      ],
+      "ccRecipients": [],
+      "bccRecipients": [],
+      "replyTo": [],
+      "flag": {
+        "flagStatus": "notFlagged"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/message-get.md"
+  },
+  "POST /me/messages": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('94447c6e-ea4c-494c-a9ed-d905e366c5cb')/messages/$entity",
+      "@odata.etag": "W/\"CQAAABYAAABK4UfANE/UR5clSilZtIuWAAC1vdti\"",
+      "id": "AAMkADNlNYjSAAA=",
+      "createdDateTime": "2017-07-22T01:53:56Z",
+      "lastModifiedDateTime": "2017-07-22T01:53:57Z",
+      "changeKey": "CQAAABYAAABK4UfANE/UR5clSilZtIuWAAC1vdti",
+      "categories": [],
+      "receivedDateTime": "2017-07-22T01:53:57Z",
+      "sentDateTime": "2017-07-22T01:53:57Z",
+      "hasAttachments": false,
+      "internetMessageId": "<MWHPR1301MB@MWHPR1301MB.namprd13.prod.outlook.com>",
+      "subject": "Did you see last night's game?",
+      "bodyPreview": "They were awesome!",
+      "importance": "low",
+      "parentFolderId": "AAMkADNlNWAAAAAAEPAAA=",
+      "conversationId": "AAQkADNlNFdXGBnqtY=",
+      "conversationIndex": "AQHTe7/VAniOJVgCxEmtF1z6ZY1rFQ==",
+      "isDeliveryReceiptRequested": false,
+      "isReadReceiptRequested": false,
+      "isRead": true,
+      "isDraft": true,
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlNYjSAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+      "inferenceClassification": "focused",
+      "body": {
+        "contentType": "html",
+        "content": "<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta content=\"text/html; charset=us-ascii\">\r\n</head>\r\n<body>\r\nThey were <b>awesome</b>!\r\n</body>\r\n</html>\r\n"
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Adele Vance",
+            "address": "AdeleV@contoso.com"
+          }
+        }
+      ],
+      "ccRecipients": [],
+      "bccRecipients": [],
+      "replyTo": []
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-post-messages.md"
+  },
+  "PATCH /me/messages/{message-id}": {
+    "body": {
+      "receivedDateTime": "datetime-value",
+      "sentDateTime": "datetime-value",
+      "hasAttachments": true,
+      "subject": "subject-value",
+      "body": {
+        "contentType": "",
+        "content": "content-value"
+      },
+      "bodyPreview": "bodyPreview-value",
+      "inferenceClassification": "other"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/message-update.md"
+  },
+  "POST /me/messages/{message-id}/move": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#message",
+      "@odata.type": "#microsoft.graph.message",
+      "@odata.etag": "W/\"FwAAABYAAAC4ofQHEIqCSbQPot83AFcbAAAW/0tB\"",
+      "id": "AAMkADhAAAW-VPeAAA=",
+      "createdDateTime": "2018-08-12T08:43:22Z",
+      "lastModifiedDateTime": "2018-08-15T19:47:54Z",
+      "changeKey": "FwAAABYAAAC4ofQHEIqCSbQPot83AFcbAAAW/0tB",
+      "categories": [],
+      "receivedDateTime": "2018-08-12T08:43:22Z",
+      "sentDateTime": "2018-08-12T08:43:20Z",
+      "hasAttachments": false,
+      "internetMessageId": "<00535324-5988-4b6a-b9af-d44cf2d0b691@MWHPR2201MB1022.namprd22.prod.outlook.com>",
+      "subject": "Undeliverable: Meet for lunch?",
+      "bodyPreview": "Delivery has failed to these recipients or groups:\r\n\r\nfannyd@contoso.com (fannyd@contoso.com)\r\nYour message couldn't be delivered. Despite repeated attempts to deliver your message, querying the Domain Name System (DNS) for the rec",
+      "importance": "normal",
+      "parentFolderId": "AAMkADhAAAAAAEKAAA=",
+      "conversationId": "AAQkADhJzfbkARFhe5kKhjihSA=",
+      "isDeliveryReceiptRequested": null,
+      "isReadReceiptRequested": false,
+      "isRead": false,
+      "isDraft": false,
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADhAAAW%2FVPeAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+      "inferenceClassification": "focused",
+      "body": {
+        "contentType": "html",
+        "content": "<html></html>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Microsoft Outlook",
+          "address": "MicrosoftExchange329e71ec88ae4615bbc36ab6ce41109e@contoso.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Microsoft Outlook",
+          "address": "MicrosoftExchange329e71ec88ae4615bbc36ab6ce41109e@contoso.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "fannyd@contoso.com",
+            "address": "fannyd@contoso.com"
+          }
+        },
+        {
+          "emailAddress": {
+            "name": "danas@contoso.com",
+            "address": "danas@contoso.com"
+          }
+        }
+      ],
+      "ccRecipients": [],
+      "bccRecipients": [],
+      "replyTo": [],
+      "flag": {
+        "flagStatus": "notFlagged"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/message-move.md"
+  },
+  "GET /me/mailFolders": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('68ca8ec0-11f8-456b-a785-70d9936650d5')/mailFolders",
+      "value": [
+        {
+          "id": "AQMkADYAAAIBXQAAAA==",
+          "displayName": "Archive",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        },
+        {
+          "id": "AQMkADYAAAIBFQAAAA==",
+          "displayName": "Conversation History",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 1,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        },
+        {
+          "id": "AQMkADYAAAIBCgAAAA==",
+          "displayName": "Deleted Items",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        },
+        {
+          "id": "AQMkADYAAAIBDwAAAA==",
+          "displayName": "Drafts",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        },
+        {
+          "id": "AQMkADYAAAIBDAAAAA==",
+          "displayName": "Inbox",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 1,
+          "unreadItemCount": 70,
+          "totalItemCount": 71,
+          "isHidden": false
+        },
+        {
+          "@odata.type": "#microsoft.graph.mailSearchFolder",
+          "id": "AAMkADYRAAAZg1yTAAA=",
+          "displayName": "Weekly digests",
+          "parentFolderId": "AQMkADYAAAIBDAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 4,
+          "totalItemCount": 5,
+          "isHidden": false,
+          "isSupported": true,
+          "filterQuery": "contains(subject, 'weekly digest')"
+        },
+        {
+          "id": "AQMkADYAAAIBGQAAAA==",
+          "displayName": "Junk Email",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        },
+        {
+          "id": "AQMkADYAAAIBCwAAAA==",
+          "displayName": "Outbox",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        },
+        {
+          "id": "AQMkADYAAAIBCQAAAA==",
+          "displayName": "Sent Items",
+          "parentFolderId": "AQMkADYAAAIBCAAAAA==",
+          "childFolderCount": 0,
+          "unreadItemCount": 0,
+          "totalItemCount": 0,
+          "isHidden": false
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-list-mailfolders.md"
+  },
+  "GET /me/calendars": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#me/calendars",
+      "value": [
+        {
+          "@odata.id": "https://graph.microsoft.com/v1.0/users('ddfcd489-628b-40d7-b48b-57002df800e5@1717622f-1d94-4d0c-9d74-709fad664b77')/calendars('AAMkAGI2TGuLAAA=')",
+          "id": "AAMkAGI2TGuLAAA=",
+          "name": "Calendar",
+          "color": "auto",
+          "changeKey": "nfZyf7VcrEKLNoU37KWlkQAAA0x0+w==",
+          "canShare": true,
+          "canViewPrivateItems": true,
+          "hexColor": "",
+          "isSharedWithMe": false,
+          "canEdit": true,
+          "allowedOnlineMeetingProviders": [
+            "teamsForBusiness"
+          ],
+          "defaultOnlineMeetingProvider": "teamsForBusiness",
+          "isTallyingResponses": true,
+          "isRemovable": false,
+          "owner": {
+            "name": "Samantha Booth",
+            "address": "samanthab@contoso.com"
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-list-calendars.md"
+  },
+  "GET /me/events": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('cd209b0b-3f83-4c35-82d2-d88a61820480')/events(subject,body,bodyPreview,organizer,attendees,start,end,location)",
+      "value": [
+        {
+          "@odata.etag": "W/\"ZlnW4RIAV06KYYwlrfNZvQAAKGWwbw==\"",
+          "id": "AAMkAGIAAAoZDOFAAA=",
+          "subject": "Orientation ",
+          "bodyPreview": "Dana, this is the time you selected for our orientation. Please bring the notes I sent you.",
+          "body": {
+            "contentType": "html",
+            "content": "<html><head></head><body><p>Dana, this is the time you selected for our orientation. Please bring the notes I sent you.</p></body></html>"
+          },
+          "start": {
+            "dateTime": "2017-04-21T10:00:00.0000000",
+            "timeZone": "Pacific Standard Time"
+          },
+          "end": {
+            "dateTime": "2017-04-21T12:00:00.0000000",
+            "timeZone": "Pacific Standard Time"
+          },
+          "location": {
+            "displayName": "Assembly Hall",
+            "locationType": "default",
+            "uniqueId": "Assembly Hall",
+            "uniqueIdType": "private"
+          },
+          "locations": [
+            {
+              "displayName": "Assembly Hall",
+              "locationType": "default",
+              "uniqueIdType": "unknown"
+            }
+          ],
+          "attendees": [
+            {
+              "type": "required",
+              "status": {
+                "response": "none",
+                "time": "0001-01-01T00:00:00Z"
+              },
+              "emailAddress": {
+                "name": "Samantha Booth",
+                "address": "samanthab@contoso.com"
+              }
+            },
+            {
+              "type": "required",
+              "status": {
+                "response": "none",
+                "time": "0001-01-01T00:00:00Z"
+              },
+              "emailAddress": {
+                "name": "Dana Swope",
+                "address": "danas@contoso.com"
+              }
+            }
+          ],
+          "organizer": {
+            "emailAddress": {
+              "name": "Samantha Booth",
+              "address": "samanthab@contoso.com"
+            }
+          }
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-list-events.md"
+  },
+  "GET /me/events/{event-id}": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('48d31887-5fad-4d73-a9f5-3c356e68a038')/events(subject,body,bodyPreview,organizer,attendees,start,end,location,hideAttendees)/$entity",
+      "@odata.etag": "W/\"IiLKjG2I7E+Xv0+ys6MD0wAEd5/kNQ==\"",
+      "id": "AAMkAGVmMDEzMTM4LTZmYWUtNDdkNC1hMDZiLTU1OGY5OTZhYmY4OABGAAAAAAAiQ8W967B7TKBjgx9rVEURBwAiIsqMbYjsT5e-T7KzowPTAAAAAAENAAAiIsqMbYjsT5e-T7KzowPTAAAa_WKzAAA=",
+      "subject": "New Product Regulations Touchpoint",
+      "bodyPreview": "New Product Regulations Strategy Online Touchpoint MeetingYou're receiving this message because you're a member of the Engineering group. If you don't want to receive any messages or events from this group, stop following it in your inbox.View g",
+      "hideAttendees": false,
+      "body": {
+        "contentType": "html",
+        "content": "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>New Product Regulations Strategy Online Touchpoint Meeting<div id=\"a59ada49-a492-4f1d-ac57-74be3a4194fc\" style=\"display:inline-block\"><table cellspacing=\"0\" style=\"table-layout:fixed; width:50px; border:0 none black\"><tbody><tr><td style=\"height:18px; padding:0; border-width:0 0 1px 0; border-style:none none solid none; border-color:#EAEAEA\">&nbsp;</td></tr></tbody></table><table cellspacing=\"0\" style=\"table-layout:fixed; width:90%; line-height:17px; border:0 none black\"><tbody><tr><td style=\"height:17px; padding:0; border:0 none black\">&nbsp;</td></tr><tr><td style=\"padding:0; border:0 none black; color:#666666; font-size:12px; font-family:'Segoe UI','Segoe WP',sans-serif\">You're receiving this message because you're a member of the <a href=\"https://outlook.office365.com/owa/engineering@contoso.com/groupsubscription.ashx?realm=contoso.com&amp;source=EscalatedMessage&amp;action=conversations\" style=\"color:#0072C6; text-decoration:none; font-size:12px; font-family:'Segoe UI Semibold','Segoe WP Semibold','Segoe UI','Segoe WP',sans-serif\">Engineering</a> group. If you don't want to receive any messages or events from this group,<a href=\"https://outlook.office365.com/owa/engineering@contoso.com/groupsubscription.ashx?realm=contoso.com&amp;source=EscalatedMessage&amp;action=unsubscribe\" id=\"BD5134C6-8D33-4ABA-A0C4-08581FDF89DB\" style=\"color:#0072C6; text-decoration:none; font-size:12px; font-family:'Segoe UI Semibold','Segoe WP Semibold','Segoe UI','Segoe WP',sans-serif\">stop following it in your inbox</a>.</td></tr><tr><td style=\"height:17px; padding:0; border:0 none black\">&nbsp;</td></tr><tr><td style=\"padding:0; border:0 none black; font-size:12px; font-family:'Segoe UI','Segoe WP',sans-serif\"><span style=\"display:inline-block\"><a href=\"https://outlook.office365.com/owa/engineering@contoso.com/groupsubscription.ashx?realm=contoso.com&amp;source=EscalatedMessage&amp;action=conversations\" style=\"color:#666666; text-decoration:none; font-size:12px; font-family:'Segoe UI','Segoe WP',sans-serif\">View group conversations</a></span><span style=\"color:#C8C8C8\">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><span style=\"display:inline-block\"><a href=\"https://outlook.office365.com/owa/engineering@contoso.com/groupsubscription.ashx?realm=contoso.com&amp;source=EscalatedMessage&amp;action=files\" style=\"color:#666666; text-decoration:none; font-size:12px; font-family:'Segoe UI','Segoe WP',sans-serif\">View group files</a></span></td></tr><tr><td style=\"height:17px; padding:0; border:0 none black\">&nbsp;</td></tr></tbody></table></div></body></html>"
+      },
+      "start": {
+        "dateTime": "2014-11-03T17:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2014-11-03T17:30:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "Conf Room Rainier",
+        "locationType": "default",
+        "uniqueId": "Conf Room Rainier",
+        "uniqueIdType": "private"
+      },
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "Engineering",
+            "address": "engineering@contoso.com"
+          }
+        },
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "Irvin Sayers",
+            "address": "IrvinS@contoso.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "Engineering",
+          "address": "engineering@contoso.com"
+        }
+      },
+      "calendar@odata.associationLink": "https://graph.microsoft.com/v1.0/users('48d31887-5fad-4d73-a9f5-3c356e68a038')/calendars('AAMkAGVmMDEzMTM4LTZmYWUtNDdkNC1hMDZiLTU1OGY5OTZhYmY4OAAuAAAAAAAiQ8W967B7TKBjgx9rVEURAQAiIsqMbYjsT5e-T7KzowPTAAAAAAENAAA=')/$ref",
+      "calendar@odata.navigationLink": "https://graph.microsoft.com/v1.0/users('48d31887-5fad-4d73-a9f5-3c356e68a038')/calendars('AAMkAGVmMDEzMTM4LTZmYWUtNDdkNC1hMDZiLTU1OGY5OTZhYmY4OAAuAAAAAAAiQ8W967B7TKBjgx9rVEURAQAiIsqMbYjsT5e-T7KzowPTAAAAAAENAAA=')"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/event-get.md"
+  },
+  "POST /me/events": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('cd209b0b-3f83-4c35-82d2-d88a61820480')/events/$entity",
+      "@odata.etag": "W/\"ZlnW4RIAV06KYYwlrfNZvQAALfZeRQ==\"",
+      "id": "AAMkAGI1AAAt9AHjAAA=",
+      "createdDateTime": "2017-04-15T03:00:50.7579581Z",
+      "lastModifiedDateTime": "2017-04-15T03:00:51.245372Z",
+      "changeKey": "ZlnW4RIAV06KYYwlrfNZvQAALfZeRQ==",
+      "categories": [],
+      "originalStartTimeZone": "Pacific Standard Time",
+      "originalEndTimeZone": "Pacific Standard Time",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000DA2B357D94B5D201000000000000000010000000EC4597557F0CB34EA4CC2887EA7B17C3",
+      "reminderMinutesBeforeStart": 15,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "hideAttendees": false,
+      "subject": "Let's go brunch",
+      "bodyPreview": "Does noon work for you?",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": false,
+      "isCancelled": false,
+      "isDraft": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "transactionId": "7E163156-7762-4BEB-A1C6-729EA81755A7",
+      "showAs": "busy",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/owa/?itemid=AAMkAGI1AAAt9AHjAAA%3D&exvsurl=1&path=/calendar/item",
+      "onlineMeetingUrl": null,
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "onlineMeeting": null,
+      "allowNewTimeProposals": true,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": "<html><head></head><body>Does late morning work for you?</body></html>"
+      },
+      "start": {
+        "dateTime": "2017-04-15T11:00:00.0000000",
+        "timeZone": "Pacific Standard Time"
+      },
+      "end": {
+        "dateTime": "2017-04-15T12:00:00.0000000",
+        "timeZone": "Pacific Standard Time"
+      },
+      "location": {
+        "displayName": "Harry's Bar",
+        "locationType": "default",
+        "uniqueId": "Harry's Bar",
+        "uniqueIdType": "private"
+      },
+      "locations": [
+        {
+          "displayName": "Harry's Bar",
+          "locationType": "default",
+          "uniqueIdType": "unknown"
+        }
+      ],
+      "recurrence": null,
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "Samantha Booth",
+            "address": "samanthab@contoso.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "Dana Swope",
+          "address": "danas@contoso.com"
+        }
+      }
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-post-events.md"
+  },
+  "PATCH /me/events/{event-id}": {
+    "body": {
+      "originalStartTimeZone": "originalStartTimeZone-value",
+      "originalEndTimeZone": "originalEndTimeZone-value",
+      "responseStatus": {
+        "response": "",
+        "time": "datetime-value"
+      },
+      "recurrence": null,
+      "reminderMinutesBeforeStart": 99,
+      "isOnlineMeeting": true,
+      "onlineMeetingProvider": "teamsForBusiness",
+      "isReminderOn": true,
+      "hideAttendees": false,
+      "onlineMeeting": {
+        "joinUrl": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_NzIyNzhlMGEtM2YyZC00ZmY0LTlhNzUtZmZjNWFmZGNlNzE2%40thread.v2/0?context=%7b%22Tid%22%3a%2272f988bf-86f1-41af-91ab-2d7cd011db47%22%2c%22Oid%22%3a%22bc55b173-cff6-457d-b7a1-64bda7d7581a%22%7d",
+        "conferenceId": "177513992",
+        "tollNumber": "+91 22 6241 6885"
+      }
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/event-update.md"
+  },
+  "GET /me/contacts": {
+    "body": {
+      "value": [
+        {
+          "parentFolderId": "parentFolderId-value",
+          "birthday": "datetime-value",
+          "fileAs": "fileAs-value",
+          "displayName": "displayName-value",
+          "givenName": "givenName-value",
+          "initials": "initials-value"
+        }
+      ]
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-list-contacts.md"
+  },
+  "GET /me/contacts/{contact-id}": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('48d31887-5fad-4d73-a9f5-3c356e68a038')/contacts/$entity",
+      "@odata.etag": "W/\"EQAAABYAAAAiIsqMbYjsT5e/T7KzowPTAAAYc8Bf\"",
+      "id": "AAMkAGVmMDEzMTM4LTZmYWUtNDdkNC1hMDZiLTU1OGY5OTZhYmY4OABGAAAAAAAiQ8W967B7TKBjgx9rVEURBwAiIsqMbYjsT5e-T7KzowPTAAAAAAEOAAAiIsqMbYjsT5e-T7KzowPTAAAYbuK-AAA=",
+      "createdDateTime": "2017-09-04T15:54:01Z",
+      "lastModifiedDateTime": "2017-09-04T15:54:02Z",
+      "changeKey": "EQAAABYAAAAiIsqMbYjsT5e/T7KzowPTAAAYc8Bf",
+      "categories": [],
+      "parentFolderId": "AAMkAGVmMDEzMTM4LTZmYWUtNDdkNC1hMDZiLTU1OGY5OTZhYmY4OAAuAAAAAAAiQ8W967B7TKBjgx9rVEURAQAiIsqMbYjsT5e-T7KzowPTAAAAAAEOAAA=",
+      "birthday": null,
+      "fileAs": "",
+      "displayName": "Alex Wilber",
+      "givenName": "Alex",
+      "initials": null,
+      "middleName": null,
+      "nickName": null,
+      "surname": "Wilber",
+      "title": null,
+      "yomiGivenName": null,
+      "yomiSurname": null,
+      "yomiCompanyName": null,
+      "generation": null,
+      "emailAddresses": [
+        {
+          "name": "Alex Wilber",
+          "address": "alexw@contoso.com",
+          "type": "unknown"
+        },
+        {
+          "name": "Alex Wilber",
+          "address": "alex.wilber@outlook.com",
+          "type": "personal"
+        }
+      ],
+      "primaryEmailAddress": {
+        "name": "Alex Wilber",
+        "address": "alexw@contoso.com"
+      },
+      "secondaryEmailAddress": {
+        "name": "Alex Wilber",
+        "address": "alex.wilber@outlook.com"
+      },
+      "tertiaryEmailAddress": null,
+      "imAddresses": [
+        "sip:alexw@contoso.com"
+      ],
+      "jobTitle": "Web Marketing Manager",
+      "companyName": null,
+      "department": null,
+      "officeLocation": null,
+      "profession": null,
+      "businessHomePage": null,
+      "assistantName": null,
+      "manager": null,
+      "homePhones": [],
+      "mobilePhone": null,
+      "businessPhones": [],
+      "spouseName": null,
+      "personalNotes": "",
+      "children": [],
+      "homeAddress": {},
+      "businessAddress": {},
+      "otherAddress": {}
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/contact-get.md"
+  },
+  "POST /me/contacts": {
+    "body": {
+      "id": "id-value",
+      "createdDateTime": "2015-11-09T02:14:32Z",
+      "lastModifiedDateTime": "2015-11-09T02:14:32Z",
+      "displayName": "Pavel Bansky"
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/user-post-contacts.md"
+  },
+  "PATCH /me/contacts/{contact-id}": {
+    "body": {
+      "id": "AAMkAGI2THk0AAA=",
+      "createdDateTime": "2014-10-19T23:08:24Z",
+      "lastModifiedDateTime": "2014-10-19T23:08:24Z",
+      "changeKey": "EQAAABYAAACd9nJ/tVysQos2hTfspaWRAAADTIa4",
+      "categories": [],
+      "parentFolderId": "AAMkAGI2AAEOAAA=",
+      "birthday": "1974-07-22",
+      "fileAs": "Fort, Garth",
+      "displayName": "Garth Fort",
+      "givenName": "Garth",
+      "initials": "G.F.",
+      "middleName": null,
+      "nickName": "Garth",
+      "surname": "Fort",
+      "title": null,
+      "yomiGivenName": null,
+      "yomiSurname": null,
+      "yomiCompanyName": null,
+      "generation": null,
+      "emailAddresses": [
+        {
+          "name": "Garth",
+          "address": "garth@contoso.com"
+        }
+      ],
+      "primaryEmailAddress": {
+        "name": "Garth",
+        "address": "garth@contoso.com"
+      },
+      "secondaryEmailAddress": null,
+      "tertiaryEmailAddress": null,
+      "imAddresses": [
+        "sip:garthf@contoso.com"
+      ],
+      "jobTitle": "Web Marketing Manager",
+      "companyName": "Contoso, Inc.",
+      "department": "Sales & Marketing",
+      "officeLocation": "20/1101",
+      "profession": null,
+      "businessHomePage": "https://www.contoso.com",
+      "assistantName": null,
+      "manager": null,
+      "homePhones": [],
+      "mobilePhone": null,
+      "businessPhones": [
+        "+1 918 555 0101"
+      ],
+      "homeAddress": {
+        "street": "123 Some street",
+        "city": "Seattle",
+        "state": "WA",
+        "postalCode": "98121"
+      },
+      "businessAddress": {
+        "street": "10 Contoso Way",
+        "city": "Redmond",
+        "state": "WA",
+        "countryOrRegion": "USA",
+        "postalCode": "98075"
+      },
+      "otherAddress": {},
+      "spouseName": null,
+      "personalNotes": null,
+      "children": []
+    },
+    "source": "https://raw.githubusercontent.com/microsoftgraph/microsoft-graph-docs-contrib/main/api-reference/v1.0/api/contact-update.md"
+  }
+}

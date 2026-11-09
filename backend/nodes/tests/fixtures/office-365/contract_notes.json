@@ -1,0 +1,55 @@
+{
+  "contract": "https://raw.githubusercontent.com/microsoftgraph/msgraph-metadata/master/openapi/v1.0/openapi.yaml",
+  "version": "v1.0",
+  "sha256": "eed44b45dd36f8489aabdffedd9de6e2f4e7613c1c7b2d884845e59652d489ff",
+  "spec_defects": [
+    {
+      "operation": "create_draft",
+      "kind": "d",
+      "defect": "Pinned Graph schemas require @odata.type on resource bodies (including nested complex types), whereas Microsoft documents successful JSON requests without those annotations. The node follows the documented JSON shape.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/user-post-messages?view=graph-rest-1.0"
+    },
+    {
+      "operation": "update_message",
+      "kind": "d",
+      "defect": "Pinned Graph schemas require @odata.type on resource bodies (including nested complex types), whereas Microsoft documents successful JSON requests without those annotations. The node follows the documented JSON shape.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/message-update?view=graph-rest-1.0"
+    },
+    {
+      "operation": "create_event",
+      "kind": "d",
+      "defect": "Pinned Graph schemas require @odata.type on resource bodies (including nested complex types), whereas Microsoft documents successful JSON requests without those annotations. The node follows the documented JSON shape.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0"
+    },
+    {
+      "operation": "update_event",
+      "kind": "d",
+      "defect": "Pinned Graph schemas require @odata.type on resource bodies (including nested complex types), whereas Microsoft documents successful JSON requests without those annotations. The node follows the documented JSON shape.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0"
+    },
+    {
+      "operation": "create_contact",
+      "kind": "d",
+      "defect": "Pinned Graph schemas require @odata.type on resource bodies (including nested complex types), whereas Microsoft documents successful JSON requests without those annotations. The node follows the documented JSON shape.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/user-post-contacts?view=graph-rest-1.0"
+    },
+    {
+      "operation": "update_contact",
+      "kind": "d",
+      "defect": "Pinned Graph schemas require @odata.type on resource bodies (including nested complex types), whereas Microsoft documents successful JSON requests without those annotations. The node follows the documented JSON shape.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/contact-update?view=graph-rest-1.0"
+    },
+    {
+      "operation": "send_mail",
+      "kind": "d",
+      "defect": "Microsoft documents HTTP 202; the pin declares 204. The node accepts both published success forms and does not claim delivery.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0"
+    },
+    {
+      "operation": "reply_message",
+      "kind": "d",
+      "defect": "Microsoft documents HTTP 202; the pin declares 204. The node accepts both published success forms and does not claim delivery.",
+      "source": "https://learn.microsoft.com/en-us/graph/api/message-reply?view=graph-rest-1.0"
+    }
+  ]
+}

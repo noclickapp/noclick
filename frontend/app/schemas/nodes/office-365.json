@@ -1,0 +1,961 @@
+{
+  "$defs": {
+    "Office365CreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "given_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Given name",
+          "type": "string"
+        },
+        "surname": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Surname",
+          "type": "string"
+        },
+        "email_address": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "given_name",
+        "surname",
+        "email_address"
+      ],
+      "title": "Office365CreateContactConfig",
+      "type": "object"
+    },
+    "Office365CreateDraftConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_draft",
+          "default": "create_draft",
+          "title": "Create Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Create Draft",
+          "x-is-trigger": false
+        },
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "body_text": {
+          "description": "Plain text content.",
+          "maxLength": 100000,
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "to_recipients": {
+          "items": {
+            "maxLength": 320,
+            "minLength": 3,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "To email addresses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject",
+        "body_text",
+        "to_recipients"
+      ],
+      "title": "Office365CreateDraftConfig",
+      "type": "object"
+    },
+    "Office365CreateEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Create Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Create Event",
+          "x-is-trigger": false
+        },
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "body_text": {
+          "description": "Plain text content.",
+          "maxLength": 100000,
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "start": {
+          "description": "Local ISO date and time, e.g. 2026-11-10T09:00:00, in the specified time zone.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Local ISO date and time in the specified time zone.",
+          "title": "End",
+          "type": "string"
+        },
+        "time_zone": {
+          "default": "UTC",
+          "description": "Mailbox-supported zone, e.g. UTC or Pacific Standard Time.",
+          "maxLength": 128,
+          "title": "Time zone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject",
+        "body_text",
+        "start",
+        "end"
+      ],
+      "title": "Office365CreateEventConfig",
+      "type": "object"
+    },
+    "Office365DeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "Office365DeleteContactConfig",
+      "type": "object"
+    },
+    "Office365DeleteEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_event",
+          "default": "delete_event",
+          "title": "Delete Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Delete Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "Office365DeleteEventConfig",
+      "type": "object"
+    },
+    "Office365DeleteMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Delete Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "Office365DeleteMessageConfig",
+      "type": "object"
+    },
+    "Office365GetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "Office365GetContactConfig",
+      "type": "object"
+    },
+    "Office365GetEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "Office365GetEventConfig",
+      "type": "object"
+    },
+    "Office365GetMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Get Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Get Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "Office365GetMessageConfig",
+      "type": "object"
+    },
+    "Office365GetProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Office365GetProfileConfig",
+      "type": "object"
+    },
+    "Office365ListCalendarsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_calendars",
+          "default": "list_calendars",
+          "title": "List Calendars",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Calendars",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_url": {
+          "anyOf": [
+            {
+              "maxLength": 16000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from this same list operation; overrides page size and filter.",
+          "title": "Next page URL"
+        }
+      },
+      "title": "Office365ListCalendarsConfig",
+      "type": "object"
+    },
+    "Office365ListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Graph OData $filter expression, for example isRead eq false.",
+          "title": "Filter"
+        },
+        "page_url": {
+          "anyOf": [
+            {
+              "maxLength": 16000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from this same list operation; overrides page size and filter.",
+          "title": "Next page URL"
+        }
+      },
+      "title": "Office365ListContactsConfig",
+      "type": "object"
+    },
+    "Office365ListEventsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Events",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Graph OData $filter expression, for example isRead eq false.",
+          "title": "Filter"
+        },
+        "page_url": {
+          "anyOf": [
+            {
+              "maxLength": 16000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from this same list operation; overrides page size and filter.",
+          "title": "Next page URL"
+        }
+      },
+      "title": "Office365ListEventsConfig",
+      "type": "object"
+    },
+    "Office365ListMailFoldersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_mail_folders",
+          "default": "list_mail_folders",
+          "title": "List Mail Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "List Mail Folders",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_url": {
+          "anyOf": [
+            {
+              "maxLength": 16000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from this same list operation; overrides page size and filter.",
+          "title": "Next page URL"
+        }
+      },
+      "title": "Office365ListMailFoldersConfig",
+      "type": "object"
+    },
+    "Office365ListMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "List Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "List Messages",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Graph OData $filter expression, for example isRead eq false.",
+          "title": "Filter"
+        },
+        "page_url": {
+          "anyOf": [
+            {
+              "maxLength": 16000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste next_page_url from this same list operation; overrides page size and filter.",
+          "title": "Next page URL"
+        }
+      },
+      "title": "Office365ListMessagesConfig",
+      "type": "object"
+    },
+    "Office365MoveMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "move_message",
+          "default": "move_message",
+          "title": "Move Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Move Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "destination_id": {
+          "description": "A mail folder ID or well-known name such as archive or deleteditems.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Destination folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "destination_id"
+      ],
+      "title": "Office365MoveMessageConfig",
+      "type": "object"
+    },
+    "Office365OAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_outlook_oauth",
+          "default": "microsoft_outlook_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry returned by Microsoft OAuth.",
+          "title": "Token expiry"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Microsoft Office 365 OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Microsoft work, school or personal account. Your account needs an Exchange Online mailbox for mail, calendar and contact operations. Your organization may require administrator consent.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://learn.microsoft.com/en-us/graph/auth-v2-user",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Calendars.ReadWrite",
+        "https://graph.microsoft.com/Contacts.ReadWrite",
+        "https://graph.microsoft.com/Mail.ReadWrite",
+        "https://graph.microsoft.com/Mail.Send",
+        "https://graph.microsoft.com/User.Read",
+        "offline_access"
+      ]
+    },
+    "Office365ReplyMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "reply_message",
+          "default": "reply_message",
+          "title": "Reply Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Reply Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "comment": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Reply text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "comment"
+      ],
+      "title": "Office365ReplyMessageConfig",
+      "type": "object"
+    },
+    "Office365SendMailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_mail",
+          "default": "send_mail",
+          "title": "Send Mail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Send Mail",
+          "x-is-trigger": false
+        },
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "body_text": {
+          "description": "Plain text content.",
+          "maxLength": 100000,
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "to_recipients": {
+          "items": {
+            "maxLength": 320,
+            "minLength": 3,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "To email addresses",
+          "type": "array"
+        },
+        "save_to_sent_items": {
+          "default": true,
+          "title": "Save to Sent Items",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "subject",
+        "body_text",
+        "to_recipients"
+      ],
+      "title": "Office365SendMailConfig",
+      "type": "object"
+    },
+    "Office365UpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "given_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Given name",
+          "type": "string"
+        },
+        "surname": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Surname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "given_name",
+        "surname"
+      ],
+      "title": "Office365UpdateContactConfig",
+      "type": "object"
+    },
+    "Office365UpdateEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_event",
+          "default": "update_event",
+          "title": "Update Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Update Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Event ID",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "subject"
+      ],
+      "title": "Office365UpdateEventConfig",
+      "type": "object"
+    },
+    "Office365UpdateMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Update Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail",
+          "x-display-name": "Update Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "is_read": {
+          "title": "Mark as read",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id",
+        "is_read"
+      ],
+      "title": "Office365UpdateMessageConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/Office365CreateContactConfig",
+          "create_draft": "#/$defs/Office365CreateDraftConfig",
+          "create_event": "#/$defs/Office365CreateEventConfig",
+          "delete_contact": "#/$defs/Office365DeleteContactConfig",
+          "delete_event": "#/$defs/Office365DeleteEventConfig",
+          "delete_message": "#/$defs/Office365DeleteMessageConfig",
+          "get_contact": "#/$defs/Office365GetContactConfig",
+          "get_event": "#/$defs/Office365GetEventConfig",
+          "get_message": "#/$defs/Office365GetMessageConfig",
+          "get_profile": "#/$defs/Office365GetProfileConfig",
+          "list_calendars": "#/$defs/Office365ListCalendarsConfig",
+          "list_contacts": "#/$defs/Office365ListContactsConfig",
+          "list_events": "#/$defs/Office365ListEventsConfig",
+          "list_mail_folders": "#/$defs/Office365ListMailFoldersConfig",
+          "list_messages": "#/$defs/Office365ListMessagesConfig",
+          "move_message": "#/$defs/Office365MoveMessageConfig",
+          "reply_message": "#/$defs/Office365ReplyMessageConfig",
+          "send_mail": "#/$defs/Office365SendMailConfig",
+          "update_contact": "#/$defs/Office365UpdateContactConfig",
+          "update_event": "#/$defs/Office365UpdateEventConfig",
+          "update_message": "#/$defs/Office365UpdateMessageConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Office365GetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365ListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365GetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365SendMailConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365CreateDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365UpdateMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365DeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365ReplyMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365MoveMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365ListMailFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365ListCalendarsConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365ListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365GetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365CreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365UpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365DeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365CreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365UpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365DeleteContactConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Office365OAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Office-365 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
