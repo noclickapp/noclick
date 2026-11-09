@@ -1,0 +1,1015 @@
+{
+  "$defs": {
+    "Base44TokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "base44_token",
+          "default": "base44_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Base44 Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create a personal access token in workspace Settings \u2192 Secrets. Choose Full access for writes, or Read-only for reads, and include the apps you want to automate. Paste only the token below. Base44's Apps API is in beta.",
+      "x-credential-url": "https://docs.base44.com/Workspaces/Personal-access-tokens"
+    },
+    "CountRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "count_records",
+          "default": "count_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name"
+      ],
+      "title": "CountRecords",
+      "type": "object"
+    },
+    "CreateApp": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_app",
+          "default": "create_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "user_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateApp",
+      "type": "object"
+    },
+    "CreateRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "Flat object matching your entity's schema.",
+          "title": "Record fields",
+          "type": "object",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "data"
+      ],
+      "title": "CreateRecord",
+      "type": "object"
+    },
+    "CreateRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_records",
+          "default": "create_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "records"
+      ],
+      "title": "CreateRecords",
+      "type": "object"
+    },
+    "DeleteAppUser": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App user ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_app_user",
+          "default": "delete_app_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "user_id"
+      ],
+      "title": "DeleteAppUser",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "entity_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "entity_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "GetApp": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_app",
+          "default": "get_app",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "GetApp",
+      "type": "object"
+    },
+    "GetAppUser": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App user ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_app_user",
+          "default": "get_app_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "user_id"
+      ],
+      "title": "GetAppUser",
+      "type": "object"
+    },
+    "GetEntitySchema": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_entity_schema",
+          "default": "get_entity_schema",
+          "title": "Operation",
+          "type": "string"
+        },
+        "entity_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name"
+      ],
+      "title": "GetEntitySchema",
+      "type": "object"
+    },
+    "GetRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "entity_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "entity_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "ListAppUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items on this page.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Offset; add limit to fetch the next page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One field, optionally prefixed with - for descending.",
+          "title": "Sort"
+        },
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_app_users",
+          "default": "list_app_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "ListAppUsers",
+      "type": "object"
+    },
+    "ListApps": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items on this page.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Offset; add limit to fetch the next page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One field, optionally prefixed with - for descending.",
+          "title": "Sort"
+        },
+        "operation": {
+          "const": "list_apps",
+          "default": "list_apps",
+          "title": "Operation",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the token's workspace.",
+          "title": "Workspace Id"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListApps",
+      "type": "object"
+    },
+    "ListDeletedRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items on this page.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Offset; add limit to fetch the next page.",
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One field, optionally prefixed with - for descending.",
+          "title": "Sort"
+        },
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_deleted_records",
+          "default": "list_deleted_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name"
+      ],
+      "title": "ListDeletedRecords",
+      "type": "object"
+    },
+    "ListEntitySchemas": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_entity_schemas",
+          "default": "list_entity_schemas",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "ListEntitySchemas",
+      "type": "object"
+    },
+    "ListRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Cursor"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base44 filter object, for example {\"status\": \"paid\"}.",
+          "title": "Filter",
+          "ui:widget": "state_editor"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated record fields.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "RestoreRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "entity_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "restore_record",
+          "default": "restore_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "entity_id"
+      ],
+      "title": "RestoreRecord",
+      "type": "object"
+    },
+    "UpdateApp": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_app",
+          "default": "update_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "user_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to keep the description. Send an empty string to clear it.",
+          "title": "User Description"
+        }
+      },
+      "required": [
+        "app_id",
+        "name"
+      ],
+      "title": "UpdateApp",
+      "type": "object"
+    },
+    "UpdateAppUser": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App user ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_app_user",
+          "default": "update_app_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "Fields to change; role can be user, admin, or an app-defined role.",
+          "title": "User fields",
+          "type": "object",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "user_id",
+        "data"
+      ],
+      "title": "UpdateAppUser",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "entity_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "Only fields to change, matching your entity's schema.",
+          "title": "Record fields",
+          "type": "object",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "entity_id",
+        "data"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    },
+    "UpdateRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "app_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "App ID",
+          "type": "string"
+        },
+        "entity_name": {
+          "description": "Exact entity name from List entity schemas. Use the separate app user operations for User.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_records",
+          "default": "update_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "records": {
+          "description": "Each object needs id and the fields to change.",
+          "items": {
+            "$ref": "#/$defs/_RecordUpdate"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "app_id",
+        "entity_name",
+        "records"
+      ],
+      "title": "UpdateRecords",
+      "type": "object"
+    },
+    "_RecordUpdate": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "_RecordUpdate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "count_records": "#/$defs/CountRecords",
+          "create_app": "#/$defs/CreateApp",
+          "create_record": "#/$defs/CreateRecord",
+          "create_records": "#/$defs/CreateRecords",
+          "delete_app_user": "#/$defs/DeleteAppUser",
+          "delete_record": "#/$defs/DeleteRecord",
+          "get_app": "#/$defs/GetApp",
+          "get_app_user": "#/$defs/GetAppUser",
+          "get_entity_schema": "#/$defs/GetEntitySchema",
+          "get_record": "#/$defs/GetRecord",
+          "list_app_users": "#/$defs/ListAppUsers",
+          "list_apps": "#/$defs/ListApps",
+          "list_deleted_records": "#/$defs/ListDeletedRecords",
+          "list_entity_schemas": "#/$defs/ListEntitySchemas",
+          "list_records": "#/$defs/ListRecords",
+          "restore_record": "#/$defs/RestoreRecord",
+          "update_app": "#/$defs/UpdateApp",
+          "update_app_user": "#/$defs/UpdateAppUser",
+          "update_record": "#/$defs/UpdateRecord",
+          "update_records": "#/$defs/UpdateRecords"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListApps"
+        },
+        {
+          "$ref": "#/$defs/GetApp"
+        },
+        {
+          "$ref": "#/$defs/CreateApp"
+        },
+        {
+          "$ref": "#/$defs/UpdateApp"
+        },
+        {
+          "$ref": "#/$defs/ListEntitySchemas"
+        },
+        {
+          "$ref": "#/$defs/GetEntitySchema"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/CountRecords"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateRecords"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecords"
+        },
+        {
+          "$ref": "#/$defs/ListDeletedRecords"
+        },
+        {
+          "$ref": "#/$defs/RestoreRecord"
+        },
+        {
+          "$ref": "#/$defs/ListAppUsers"
+        },
+        {
+          "$ref": "#/$defs/GetAppUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateAppUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteAppUser"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Base44TokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Base44 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
