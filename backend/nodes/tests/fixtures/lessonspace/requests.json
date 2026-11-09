@@ -1,0 +1,65 @@
+[
+  {
+    "operation": "list_sessions",
+    "search": "Algebra + Geometry",
+    "page": 2,
+    "include_single_user": false
+  },
+  {
+    "operation": "get_session",
+    "session": "12345678-1234-4234-8234-123456789abc"
+  },
+  {
+    "operation": "update_session",
+    "session": "12345678-1234-4234-8234-123456789abc",
+    "name": "Algebra"
+  },
+  {
+    "operation": "delete_session_recordings",
+    "session": "12345678-1234-4234-8234-123456789abc",
+    "force_delete_custom_buckets": true
+  },
+  {
+    "operation": "get_session_playback",
+    "session": "12345678-1234-4234-8234-123456789abc"
+  },
+  {
+    "operation": "get_session_transcript",
+    "session": "12345678-1234-4234-8234-123456789abc"
+  },
+  {
+    "operation": "list_spaces",
+    "search": "Algebra",
+    "page": 2
+  },
+  {
+    "operation": "delete_space_recordings",
+    "space": "12345678-1234-4234-8234-123456789abc"
+  },
+  {
+    "operation": "list_users",
+    "role": "teacher",
+    "page": 2
+  },
+  {
+    "operation": "delete_user",
+    "user_id": 42
+  },
+  {
+    "operation": "launch_space",
+    "id": "algebra-class",
+    "user": {
+      "name": "Teacher",
+      "leader": true
+    },
+    "record_av": null,
+    "space_tags": {
+      "course": "Algebra"
+    }
+  },
+  {
+    "operation": "list_space_sessions",
+    "space": "12345678-1234-4234-8234-123456789abc",
+    "page": 2
+  }
+]
