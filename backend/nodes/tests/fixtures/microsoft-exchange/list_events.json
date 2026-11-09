@@ -1,0 +1,66 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('cd209b0b-3f83-4c35-82d2-d88a61820480')/events(subject,body,bodyPreview,organizer,attendees,start,end,location)",
+  "value": [
+    {
+      "@odata.etag": "W/\"ZlnW4RIAV06KYYwlrfNZvQAAKGWwbw==\"",
+      "id": "AAMkAGIAAAoZDOFAAA=",
+      "subject": "Orientation ",
+      "bodyPreview": "Dana, this is the time you selected for our orientation. Please bring the notes I sent you.",
+      "body": {
+        "contentType": "html",
+        "content": "<html><head></head><body><p>Dana, this is the time you selected for our orientation. Please bring the notes I sent you.</p></body></html>"
+      },
+      "start": {
+        "dateTime": "2017-04-21T10:00:00.0000000",
+        "timeZone": "Pacific Standard Time"
+      },
+      "end": {
+        "dateTime": "2017-04-21T12:00:00.0000000",
+        "timeZone": "Pacific Standard Time"
+      },
+      "location": {
+        "displayName": "Assembly Hall",
+        "locationType": "default",
+        "uniqueId": "Assembly Hall",
+        "uniqueIdType": "private"
+      },
+      "locations": [
+        {
+          "displayName": "Assembly Hall",
+          "locationType": "default",
+          "uniqueIdType": "unknown"
+        }
+      ],
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "Samantha Booth",
+            "address": "samanthab@contoso.com"
+          }
+        },
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "Dana Swope",
+            "address": "danas@contoso.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "Samantha Booth",
+          "address": "samanthab@contoso.com"
+        }
+      }
+    }
+  ]
+}
