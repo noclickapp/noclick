@@ -1,0 +1,806 @@
+{
+  "$defs": {
+    "CreateGroupChannel": {
+      "additionalProperties": false,
+      "description": "Create group channel in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "create_group_channel",
+          "default": "create_group_channel",
+          "title": "Create Group Channel",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "user_ids": {
+          "description": "Existing users to invite; sent as the documented users objects.",
+          "items": {
+            "description": "Sendbird ID; copied exactly from your application.",
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[^/\\\\?#\\s]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Ids",
+          "type": "array"
+        },
+        "is_distinct": {
+          "default": false,
+          "description": "Reuse a channel for the same members when true.",
+          "title": "Is Distinct",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "user_ids"
+      ],
+      "title": "CreateGroupChannel",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "description": "Create user in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Create User",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Sendbird ID; copied exactly from your application.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\s]+$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "nickname": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Nickname",
+          "type": "string"
+        },
+        "profile_url": {
+          "default": "",
+          "description": "Profile image URL; empty uses no image.",
+          "maxLength": 2048,
+          "title": "Profile Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "nickname"
+      ],
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "DeleteGroupChannel": {
+      "additionalProperties": false,
+      "description": "Delete group channel in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "delete_group_channel",
+          "default": "delete_group_channel",
+          "description": "Delete this channel and its messages permanently.",
+          "title": "Delete Group Channel",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url"
+      ],
+      "title": "DeleteGroupChannel",
+      "type": "object"
+    },
+    "DeleteMessage": {
+      "additionalProperties": false,
+      "description": "Delete message in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_type": {
+          "default": "group_channels",
+          "enum": [
+            "group_channels",
+            "open_channels"
+          ],
+          "title": "Channel Type",
+          "type": "string"
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "channel_url",
+        "message_id"
+      ],
+      "title": "DeleteMessage",
+      "type": "object"
+    },
+    "DeleteUser": {
+      "additionalProperties": false,
+      "description": "Delete user in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "description": "Permanently delete this user from the application.",
+          "title": "Delete User",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Sendbird ID; copied exactly from your application.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\s]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DeleteUser",
+      "type": "object"
+    },
+    "GetGroupChannel": {
+      "additionalProperties": false,
+      "description": "Get group channel in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "get_group_channel",
+          "default": "get_group_channel",
+          "title": "Get Group Channel",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url"
+      ],
+      "title": "GetGroupChannel",
+      "type": "object"
+    },
+    "GetMessage": {
+      "additionalProperties": false,
+      "description": "Get message in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Get Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_type": {
+          "default": "group_channels",
+          "enum": [
+            "group_channels",
+            "open_channels"
+          ],
+          "title": "Channel Type",
+          "type": "string"
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "channel_url",
+        "message_id"
+      ],
+      "title": "GetMessage",
+      "type": "object"
+    },
+    "GetOpenChannel": {
+      "additionalProperties": false,
+      "description": "Get open channel in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "get_open_channel",
+          "default": "get_open_channel",
+          "title": "Get Open Channel",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url"
+      ],
+      "title": "GetOpenChannel",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Get user in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Sendbird ID; copied exactly from your application.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\s]+$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "InviteMembers": {
+      "additionalProperties": false,
+      "description": "Invite members in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "invite_members",
+          "default": "invite_members",
+          "title": "Invite Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        },
+        "user_ids": {
+          "items": {
+            "description": "Sendbird ID; copied exactly from your application.",
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[^/\\\\?#\\s]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "User Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "channel_url",
+        "user_ids"
+      ],
+      "title": "InviteMembers",
+      "type": "object"
+    },
+    "ListGroupChannels": {
+      "additionalProperties": false,
+      "description": "List group channels in the connected Sendbird application.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only; use the returned next token to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The previous response's next token, for the same application and query.",
+          "title": "Token"
+        },
+        "operation": {
+          "const": "list_group_channels",
+          "default": "list_group_channels",
+          "title": "List Group Channels",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGroupChannels",
+      "type": "object"
+    },
+    "ListMembers": {
+      "additionalProperties": false,
+      "description": "List members in the connected Sendbird application.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only; use the returned next token to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The previous response's next token, for the same application and query.",
+          "title": "Token"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url"
+      ],
+      "title": "ListMembers",
+      "type": "object"
+    },
+    "ListOpenChannels": {
+      "additionalProperties": false,
+      "description": "List open channels in the connected Sendbird application.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only; use the returned next token to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The previous response's next token, for the same application and query.",
+          "title": "Token"
+        },
+        "operation": {
+          "const": "list_open_channels",
+          "default": "list_open_channels",
+          "title": "List Open Channels",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOpenChannels",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users in the connected Sendbird application.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "One page only; use the returned next token to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The previous response's next token, for the same application and query.",
+          "title": "Token"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "description": "Send message in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "description": "Send as an existing user; Sendbird push-notification settings apply.",
+          "title": "Send Text Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_type": {
+          "default": "group_channels",
+          "enum": [
+            "group_channels",
+            "open_channels"
+          ],
+          "title": "Channel Type",
+          "type": "string"
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Sendbird ID; copied exactly from your application.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\s]+$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url",
+        "user_id",
+        "message"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "SendbirdAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sendbird_api_token",
+          "default": "sendbird_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "app_id": {
+          "description": "The application ID, without a URL or api- prefix.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,99}$",
+          "title": "Application ID",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "app_id",
+        "api_token"
+      ],
+      "title": "Sendbird API Token",
+      "type": "object",
+      "x-credential-instructions": "In Sendbird Dashboard, select your application and open Settings > Application > General. Copy its case-sensitive Application ID and a master or secondary API token. Prefer a secondary token with the permissions your operations need. NoClick sends it only to that application's Sendbird Chat API. This is not a user access token. A user-list read checks access; write permissions are not verified.",
+      "x-credential-url": "https://dashboard.sendbird.com/"
+    },
+    "UpdateGroupChannel": {
+      "additionalProperties": false,
+      "description": "Update group channel in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "update_group_channel",
+          "default": "update_group_channel",
+          "title": "Update Group Channel",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url",
+        "name"
+      ],
+      "title": "UpdateGroupChannel",
+      "type": "object"
+    },
+    "UpdateMessage": {
+      "additionalProperties": false,
+      "description": "Update message in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Update Text Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_type": {
+          "default": "group_channels",
+          "enum": [
+            "group_channels",
+            "open_channels"
+          ],
+          "title": "Channel Type",
+          "type": "string"
+        },
+        "channel_url": {
+          "description": "Channel URL identifier, not a full web URL.",
+          "maxLength": 100,
+          "minLength": 4,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Channel Url",
+          "type": "string"
+        },
+        "message_id": {
+          "minimum": 1,
+          "title": "Message Id",
+          "type": "integer"
+        },
+        "message": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_url",
+        "message_id",
+        "message"
+      ],
+      "title": "UpdateMessage",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "description": "Update user in the connected Sendbird application.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Update User",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Sendbird ID; copied exactly from your application.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\s]+$",
+          "title": "User Id",
+          "type": "string"
+        },
+        "nickname": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Nickname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "nickname"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_group_channel": "#/$defs/CreateGroupChannel",
+          "create_user": "#/$defs/CreateUser",
+          "delete_group_channel": "#/$defs/DeleteGroupChannel",
+          "delete_message": "#/$defs/DeleteMessage",
+          "delete_user": "#/$defs/DeleteUser",
+          "get_group_channel": "#/$defs/GetGroupChannel",
+          "get_message": "#/$defs/GetMessage",
+          "get_open_channel": "#/$defs/GetOpenChannel",
+          "get_user": "#/$defs/GetUser",
+          "invite_members": "#/$defs/InviteMembers",
+          "list_group_channels": "#/$defs/ListGroupChannels",
+          "list_members": "#/$defs/ListMembers",
+          "list_open_channels": "#/$defs/ListOpenChannels",
+          "list_users": "#/$defs/ListUsers",
+          "send_message": "#/$defs/SendMessage",
+          "update_group_channel": "#/$defs/UpdateGroupChannel",
+          "update_message": "#/$defs/UpdateMessage",
+          "update_user": "#/$defs/UpdateUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUser"
+        },
+        {
+          "$ref": "#/$defs/ListGroupChannels"
+        },
+        {
+          "$ref": "#/$defs/GetGroupChannel"
+        },
+        {
+          "$ref": "#/$defs/CreateGroupChannel"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupChannel"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroupChannel"
+        },
+        {
+          "$ref": "#/$defs/ListMembers"
+        },
+        {
+          "$ref": "#/$defs/InviteMembers"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/GetMessage"
+        },
+        {
+          "$ref": "#/$defs/UpdateMessage"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessage"
+        },
+        {
+          "$ref": "#/$defs/ListOpenChannels"
+        },
+        {
+          "$ref": "#/$defs/GetOpenChannel"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SendbirdAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sendbird Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
