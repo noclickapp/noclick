@@ -1,0 +1,17 @@
+{
+  "items": [
+    {
+      "id": "6886b8d390dc7e2f4a2c91b3",
+      "created_date": "2026-06-01T09:23:41.481000",
+      "updated_date": "2026-06-04T14:07:02.115000",
+      "created_by": "jane@acme.com",
+      "created_by_id": "6874b0c2e1a94d0031bb77de",
+      "is_sample": false,
+      "amount": 4200,
+      "status": "draft",
+      "customer_email": "jane@acme.com"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null
+}

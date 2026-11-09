@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -182,7 +183,26 @@ class DeleteAppUser(_User):
     operation: Literal["delete_app_user"] = "delete_app_user"
 
 
+class OnNewRecord(PollTriggerConfigBase, _Entity):
+    model_config = ConfigDict(extra="ignore")
+    operation: Literal["on_new_record"] = Field("on_new_record", title="New record", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New record", "ui:hidden": True,
+    })
+    limit: int = Field(500, ge=1, le=5000, title="Poll window", description="Watch this many most recent matching records. Bursts exceeding this window between polls may be missed; increase it, narrow the filter, or poll more frequently.")
+    q: dict[str, Any] | None = Field(None, title="Filter", description="Optional entity filter. Existing matching records are baselined when activated.", json_schema_extra={"ui:widget": "state_editor"})
+
+
+class OnNewOrUpdatedRecord(PollTriggerConfigBase, _Entity):
+    model_config = ConfigDict(extra="ignore")
+    operation: Literal["on_new_or_updated_record"] = Field("on_new_or_updated_record", title="New or updated record", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New or updated record", "ui:hidden": True,
+    })
+    limit: int = Field(500, ge=1, le=5000, title="Poll window", description="Watch this many most recent matching records. Bursts exceeding this window between polls may be missed; increase it, narrow the filter, or poll more frequently.")
+    q: dict[str, Any] | None = Field(None, title="Filter", description="Optional entity filter. Fires once per observed updated_date; intermediate changes between polls are combined.", json_schema_extra={"ui:widget": "state_editor"})
+
+
 Base44Operation = Annotated[Union[
+    OnNewRecord, OnNewOrUpdatedRecord,
     ListApps, GetApp, CreateApp, UpdateApp, ListEntitySchemas, GetEntitySchema,
     ListRecords, CountRecords, GetRecord, CreateRecord, UpdateRecord, DeleteRecord,
     CreateRecords, UpdateRecords, ListDeletedRecords, RestoreRecord,
@@ -214,7 +234,7 @@ ROUTES = {
 }
 
 
-class Base44Node(WorkflowNode):
+class Base44Node(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-base44"
     connection_evidence = ConnectionEvidence(noun="apps", operation="list_apps")
 
@@ -222,10 +242,57 @@ class Base44Node(WorkflowNode):
     def get_config_model(cls):
         return Base44Config
 
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "records" not in output:
+            return super().resolve_agent_event(output)
+        records = output["records"]
+        if not records:
+            return None
+        action = "new or updated" if output["operation"] == "on_new_or_updated_record" else "new"
+        lines = [f"Base44: {len(records)} {action} {output['entity_name']} record(s) in app {output['app_id']}."]
+        for record in records[:10]:
+            lines.append(json.dumps(record, ensure_ascii=False, default=str))
+        if len(records) > 10:
+            lines.append(f"{len(records) - 10} more records are available in the trigger output.")
+        return {"text": "\n".join(lines), "conversation_key": None}
+
+    async def _poll_records(self, config):
+        # Watch the most recent matching records, within an explicit window.
+        # A burst larger than this window between polls may skip records.
+        path = ENTITY.format(app_id=quote(config.app_id, safe=""), entity_name=quote(config.entity_name, safe="")) + "/v2/list"
+        updated = isinstance(config, OnNewOrUpdatedRecord)
+        params = {"limit": config.limit, "sort": "-updated_date" if updated else "-created_date"}
+        if config.q is not None:
+            params["q"] = json.dumps(config.q, separators=(",", ":"), allow_nan=False)
+        token = self.config.credentials.access_token
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            response = await client.request("GET", "https://app.base44.com" + path,
+                params=params, headers={"Authorization": "Bearer " + token, "Accept": "application/json"})
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Base44 poll failed (HTTP {response.status_code})")
+        page = response.json()
+        if not isinstance(page, dict) or not isinstance(page.get("items"), list):
+            raise ValueError("Expected a Base44 record page")
+        records = page["items"]
+        for record in records:
+            if not isinstance(record, dict) or not record.get("id"):
+                raise ValueError("Base44 record is missing its ID")
+            if updated and not record.get("updated_date"):
+                raise ValueError("Base44 record is missing updated_date")
+        fresh = await self._filter_unseen(records, lambda record:
+            json.dumps([record["id"], record["updated_date"]]) if updated else str(record["id"]))
+        output = {"status": "success", "operation": config.operation, "app_id": config.app_id,
+                  "entity_name": config.entity_name, "records": fresh, "record_count": len(fresh), "has_more": bool(page.get("has_more"))}
+        await self.emit(output)
+        return output
+
     async def execute(self, inputs):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a Base44 personal access token")
         config = self.config.config
+        if isinstance(config, (OnNewRecord, OnNewOrUpdatedRecord)):
+            return await self._poll_records(config)
         values = config.model_dump(exclude_none=True)
         operation = values.pop("operation")
         method, template = ROUTES[operation]

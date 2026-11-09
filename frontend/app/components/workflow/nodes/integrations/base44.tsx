@@ -15,9 +15,9 @@ Base44Icon.displayName = 'Base44Icon';
 export const Base44Node: NodeDefinition = {
     type: 'automation-base44',
     label: 'Base44',
-    description: 'Automate app records, schemas, metadata, and users',
+    description: 'Watch new or updated records and automate apps, schemas, and users',
     category: 'developer-tools',
-    keywords: ['database', 'entities', 'records', 'apps'],
+    keywords: ['database', 'entities', 'records', 'apps', 'triggers', 'polling'],
     Icon: Base44Icon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

@@ -5,7 +5,9 @@ cases ensure provider errors and malformed responses cannot appear successful.
 """
 import json
 from copy import deepcopy
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
+from pathlib import Path
+from nodes.core.poll_trigger import poll_scope
 import httpx
 import pytest
 from pydantic import ValidationError
@@ -133,3 +135,86 @@ def test_manual_credential_type_defaults():
     assert base44.Base44TokenCredential(access_token=AUTH["access_token"]).credential_type == "base44_token"
     with pytest.raises(ValidationError):
         base44.Base44TokenCredential(access_token="Bearer some-token")
+
+# Record fields are copied from the published contract's EntityRecordPage
+# items example; the completed page uses its documented pagination fields.
+PAGE = json.loads((Path(__file__).parent / "fixtures/base44/record_page.json").read_text())
+
+
+def poll_node(operation, state, **fields):
+    raw = {"operation": operation, **ENTITY, **fields}
+    node = base44.Base44Node(node_id="base44-poll", node_type="automation-base44",
+        node_data={"config": raw}, config=base44.Base44Config.model_validate({"config": raw, "credentials": AUTH}), sio=Mock())
+    node.emit = AsyncMock()
+
+    async def update(mutator, **kwargs):
+        updated, result = mutator(deepcopy(state))
+        if updated is not None:
+            state.clear()
+            state.update(updated)
+        return result
+
+    node._update_node_state = update
+    return node
+
+
+@pytest.mark.parametrize("operation", ["on_new_record", "on_new_or_updated_record"])
+async def test_record_poll_baseline_fresh_dedup_and_agent(wire, operation):
+    state = {}
+    node = poll_node(operation, state)
+    wire[1].append(httpx.Response(200, json=deepcopy(PAGE)))
+    baseline = await node.execute({})
+    assert baseline["records"] == [] and node.trigger_produced_no_event(baseline)
+    assert base44.Base44Node.resolve_agent_event(baseline) is None
+    # An already-armed empty scope sees the provider's example record as new.
+    state["seen_ids"] = []
+    wire[1].append(httpx.Response(200, json=deepcopy(PAGE)))
+    output = await node.execute({})
+    assert output["records"] == PAGE["items"] and node.trigger_emitted_event(output)
+    text = base44.Base44Node.resolve_agent_event(output)["text"]
+    for value in (APP, "Invoice", ID, "jane@acme.com", "draft", "4200"):
+        assert value in text
+    wire[1].append(httpx.Response(200, json=deepcopy(PAGE)))
+    assert (await node.execute({}))["records"] == []
+    assert wire[0][0].url.params["sort"] == ("-updated_date" if "updated" in operation else "-created_date")
+    assert base44.Base44Node.resolve_trigger_payload({"tick": True}, {"operation": operation}) is None
+
+
+@pytest.mark.parametrize("operation,fires", [("on_new_record", False), ("on_new_or_updated_record", True)])
+async def test_only_updated_trigger_fires_for_changed_timestamp(wire, operation, fires):
+    state = {}
+    node = poll_node(operation, state)
+    before = deepcopy(PAGE)
+    before["items"][0]["updated_date"] = before["items"][0]["created_date"]
+    wire[1].extend([httpx.Response(200, json=before), httpx.Response(200, json=deepcopy(PAGE))])
+    await node.execute({})
+    result = await node.execute({})
+    assert bool(result["records"]) is fires
+
+
+async def test_poll_window_filter_and_scope_change(wire):
+    state = {"seen_ids": []}
+    node = poll_node("on_new_record", state, q={"status": "paid"})
+    first = {**deepcopy(PAGE), "has_more": True, "next_cursor": "gAAAAABn7vJ..."}
+    wire[1].append(httpx.Response(200, json=first))
+    assert (await node.execute({}))["records"] == PAGE["items"]
+    assert json.loads(wire[0][0].url.params["q"]) == {"status": "paid"}
+    assert len(wire[0]) == 1 and wire[0][0].url.params["limit"] == "500"
+    other = poll_node("on_new_record", state, q={"status": "draft"})
+    wire[1].append(httpx.Response(200, json=deepcopy(PAGE)))
+    assert (await other.execute({}))["records"] == []
+    cfg = {"operation": "on_new_record", **ENTITY}
+    assert poll_scope(base44.Base44Node, cfg) == poll_scope(base44.Base44Node, {**cfg, "label": "Renamed", "schedule": {"frequency": "minutes", "interval": 10}})
+
+
+@pytest.mark.parametrize("response", [httpx.Response(403, json={"error": "denied"}),
+    httpx.Response(200, json={"items": "bad"}),
+    httpx.Response(200, json={"items": [{}], "has_more": False})])
+async def test_failed_poll_preserves_state(wire, response):
+    state = {"seen_ids": [ID]}
+    node = poll_node("on_new_or_updated_record", state)
+    wire[1].append(response)
+    with pytest.raises(ValueError):
+        await node.execute({})
+    assert state == {"seen_ids": [ID]}
+    node.emit.assert_not_awaited()
