@@ -1,0 +1,826 @@
+{
+  "$defs": {
+    "AddStamps": {
+      "additionalProperties": false,
+      "description": "Add stamps to a card; a negative number deducts stamps.",
+      "properties": {
+        "scan_latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Latitude"
+        },
+        "scan_longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Longitude"
+        },
+        "card_id": {
+          "description": "Card ID returned by list cards or enrol customer.",
+          "minLength": 1,
+          "title": "Card Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_stamps",
+          "default": "add_stamps",
+          "title": "Operation",
+          "type": "string"
+        },
+        "stamps": {
+          "title": "Stamps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "card_id",
+        "stamps"
+      ],
+      "title": "AddStamps",
+      "type": "object"
+    },
+    "AddStampsByUniqueId": {
+      "additionalProperties": false,
+      "description": "Add or deduct stamps using the customer's unique identifier.",
+      "properties": {
+        "scan_latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Latitude"
+        },
+        "scan_longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Longitude"
+        },
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "unique_id_type": {
+          "enum": [
+            "email",
+            "phone",
+            "text"
+          ],
+          "title": "Unique Id Type",
+          "type": "string"
+        },
+        "unique_id_value": {
+          "minLength": 1,
+          "title": "Unique Id Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_stamps_by_unique_id",
+          "default": "add_stamps_by_unique_id",
+          "title": "Operation",
+          "type": "string"
+        },
+        "stamps": {
+          "title": "Stamps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "unique_id_type",
+        "unique_id_value",
+        "stamps"
+      ],
+      "title": "AddStampsByUniqueId",
+      "type": "object"
+    },
+    "EnrolCustomer": {
+      "additionalProperties": false,
+      "description": "Enrol a customer using the campaign's configured data field names.",
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "enrol_customer",
+          "default": "enrol_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Keys are the field names from Edit design data in Loopy Loyalty.",
+          "title": "Customer Data",
+          "type": "object"
+        },
+        "data_consent_opt_in": {
+          "description": "The customer's actual consent choice.",
+          "title": "Data Consent Opt In",
+          "type": "boolean"
+        },
+        "time_zone_offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone offset used by campaign expiry settings.",
+          "title": "Time Zone Offset"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "customer_data",
+        "data_consent_opt_in"
+      ],
+      "title": "EnrolCustomer",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "description": "Get a campaign by its ID.",
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignByName": {
+      "additionalProperties": false,
+      "description": "Get a campaign by its exact name.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_by_name",
+          "default": "get_campaign_by_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GetCampaignByName",
+      "type": "object"
+    },
+    "GetCard": {
+      "additionalProperties": false,
+      "description": "Get a card, optionally including events and rewards.",
+      "properties": {
+        "card_id": {
+          "description": "Card ID returned by list cards or enrol customer.",
+          "minLength": 1,
+          "title": "Card Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_card",
+          "default": "get_card",
+          "title": "Operation",
+          "type": "string"
+        },
+        "include_events": {
+          "default": false,
+          "title": "Include Events",
+          "type": "boolean"
+        },
+        "include_rewards": {
+          "default": false,
+          "title": "Include Rewards",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "GetCard",
+      "type": "object"
+    },
+    "GetCardByUniqueId": {
+      "additionalProperties": false,
+      "description": "Find a card using the campaign's unique customer identifier.",
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "unique_id_type": {
+          "enum": [
+            "email",
+            "phone",
+            "text"
+          ],
+          "title": "Unique Id Type",
+          "type": "string"
+        },
+        "unique_id_value": {
+          "minLength": 1,
+          "title": "Unique Id Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_card_by_unique_id",
+          "default": "get_card_by_unique_id",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "unique_id_type",
+        "unique_id_value"
+      ],
+      "title": "GetCardByUniqueId",
+      "type": "object"
+    },
+    "GetLocation": {
+      "additionalProperties": false,
+      "description": "Get a location by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string"
+        },
+        "location_id": {
+          "minLength": 1,
+          "title": "Location Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "location_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GetLocation",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "description": "List the connected account's campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListCards": {
+      "additionalProperties": false,
+      "description": "List one page of cards in a campaign.",
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "default": 0,
+          "description": "Zero-based row offset; this operation returns one page.",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "length": {
+          "default": 50,
+          "description": "Rows requested per page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_cards",
+          "default": "list_cards",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ListCards",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "description": "List one page of campaign transaction events.",
+      "properties": {
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "default": 0,
+          "description": "Zero-based row offset; this operation returns one page.",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "length": {
+          "default": 50,
+          "description": "Rows requested per page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListLocations": {
+      "additionalProperties": false,
+      "description": "List the connected account's locations.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLocations",
+      "type": "object"
+    },
+    "LoopyLoyaltyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "loopy_loyalty_api_key",
+          "default": "loopy_loyalty_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "username": {
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret",
+        "username"
+      ],
+      "title": "Loopy Loyalty API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key, API secret and account username from Loopy Loyalty Settings. NoClick signs a short-lived JWT for each request. Use an account with permission to manage the campaigns you automate.",
+      "x-credential-url": "https://app.loopyloyalty.com/settings"
+    },
+    "RedeemReward": {
+      "additionalProperties": false,
+      "description": "Redeem rewards by card ID, using a one-based reward type.",
+      "properties": {
+        "scan_latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Latitude"
+        },
+        "scan_longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Longitude"
+        },
+        "card_id": {
+          "description": "Card ID returned by list cards or enrol customer.",
+          "minLength": 1,
+          "title": "Card Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "redeem_reward",
+          "default": "redeem_reward",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reward_type": {
+          "minimum": 1,
+          "title": "Reward Type",
+          "type": "integer"
+        },
+        "rewards_to_redeem": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Rewards To Redeem",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "card_id",
+        "reward_type"
+      ],
+      "title": "RedeemReward",
+      "type": "object"
+    },
+    "RedeemRewardByUniqueId": {
+      "additionalProperties": false,
+      "description": "Redeem rewards using the customer's unique identifier.",
+      "properties": {
+        "scan_latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Latitude"
+        },
+        "scan_longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Longitude"
+        },
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste Loopy Loyalty ID",
+            "field_name": "campaign_id",
+            "placeholder": "Choose a record",
+            "auto_select_sole_option": true
+          }
+        },
+        "unique_id_type": {
+          "enum": [
+            "email",
+            "phone",
+            "text"
+          ],
+          "title": "Unique Id Type",
+          "type": "string"
+        },
+        "unique_id_value": {
+          "minLength": 1,
+          "title": "Unique Id Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "redeem_reward_by_unique_id",
+          "default": "redeem_reward_by_unique_id",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reward_type": {
+          "minimum": 1,
+          "title": "Reward Type",
+          "type": "integer"
+        },
+        "rewards_to_redeem": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Rewards To Redeem",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "unique_id_type",
+        "unique_id_value",
+        "reward_type"
+      ],
+      "title": "RedeemRewardByUniqueId",
+      "type": "object"
+    },
+    "ResyncCard": {
+      "additionalProperties": false,
+      "description": "Request a card resync with the mobile wallet.",
+      "properties": {
+        "card_id": {
+          "description": "Card ID returned by list cards or enrol customer.",
+          "minLength": 1,
+          "title": "Card Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resync_card",
+          "default": "resync_card",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "ResyncCard",
+      "type": "object"
+    },
+    "SendCardMessage": {
+      "additionalProperties": false,
+      "description": "Send a message to one card; delivery depends on the mobile wallet.",
+      "properties": {
+        "card_id": {
+          "description": "Card ID returned by list cards or enrol customer.",
+          "minLength": 1,
+          "title": "Card Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_card_message",
+          "default": "send_card_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id",
+        "message"
+      ],
+      "title": "SendCardMessage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_stamps": "#/$defs/AddStamps",
+          "add_stamps_by_unique_id": "#/$defs/AddStampsByUniqueId",
+          "enrol_customer": "#/$defs/EnrolCustomer",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_by_name": "#/$defs/GetCampaignByName",
+          "get_card": "#/$defs/GetCard",
+          "get_card_by_unique_id": "#/$defs/GetCardByUniqueId",
+          "get_location": "#/$defs/GetLocation",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_cards": "#/$defs/ListCards",
+          "list_events": "#/$defs/ListEvents",
+          "list_locations": "#/$defs/ListLocations",
+          "redeem_reward": "#/$defs/RedeemReward",
+          "redeem_reward_by_unique_id": "#/$defs/RedeemRewardByUniqueId",
+          "resync_card": "#/$defs/ResyncCard",
+          "send_card_message": "#/$defs/SendCardMessage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignByName"
+        },
+        {
+          "$ref": "#/$defs/ListCards"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetCard"
+        },
+        {
+          "$ref": "#/$defs/GetCardByUniqueId"
+        },
+        {
+          "$ref": "#/$defs/EnrolCustomer"
+        },
+        {
+          "$ref": "#/$defs/AddStamps"
+        },
+        {
+          "$ref": "#/$defs/RedeemReward"
+        },
+        {
+          "$ref": "#/$defs/AddStampsByUniqueId"
+        },
+        {
+          "$ref": "#/$defs/RedeemRewardByUniqueId"
+        },
+        {
+          "$ref": "#/$defs/SendCardMessage"
+        },
+        {
+          "$ref": "#/$defs/ResyncCard"
+        },
+        {
+          "$ref": "#/$defs/ListLocations"
+        },
+        {
+          "$ref": "#/$defs/GetLocation"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LoopyLoyaltyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Loopy-loyalty Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

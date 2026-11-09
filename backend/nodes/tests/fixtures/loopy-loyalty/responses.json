@@ -1,0 +1,11 @@
+{
+  "campaigns": {"rows": [{"value": {"id": "campaign-1", "name": "Coffee Club"}}]},
+  "campaign": {"id": "campaign-1", "name": "Coffee Club"},
+  "cards": {"recordsTotal": "3", "recordsFiltered": "3", "data": [{"id": "card-1", "campaignId": "campaign-1"}]},
+  "card": {"card": {"id": "card-1", "campaignId": "campaign-1"}, "events": [], "rewards": []},
+  "enrol": {"pid": "card-1", "url": "https://loyalty.is/fixture"},
+  "success": {"success": true},
+  "events": {"recordsTotal": "0", "recordsFiltered": "0", "data": []},
+  "locations": {"rows": [{"value": {"id": "location-1", "name": "Main Street"}}]},
+  "location": {"id": "location-1", "name": "Main Street", "lat": 22.3, "lon": 114.2}
+}
