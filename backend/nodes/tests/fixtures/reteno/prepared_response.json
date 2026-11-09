@@ -1,0 +1,17 @@
+{
+  "id": 0,
+  "results": [
+    {
+      "id": 0,
+      "locator": "example@mail.com",
+      "status": "OK",
+      "requestId": "8b2e65d9-060b-4c61-bbd7-73c6796fa504"
+    },
+    {
+      "id": 0,
+      "locator": "new.example@mail.com",
+      "status": "OK",
+      "requestId": "458f3533-51d9-439e-a5d0-5fb7c2490c41"
+    }
+  ]
+}
