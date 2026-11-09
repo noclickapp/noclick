@@ -1,0 +1,231 @@
+{
+  "source": "https://api.swaggerhub.com/apis/usersnap6/usersnap-api/0.1",
+  "responses": {
+    "submitFeedback": {
+      "status": true,
+      "data": {
+        "feedback": {
+          "feedback_id": "caf0bb21-2047-4dd8-809c-9970b951bb33"
+        }
+      }
+    },
+    "getProjectMetrics": {
+      "status": true,
+      "data": {
+        "metrics": [
+          {
+            "name": "Client",
+            "help_text": "informations about the client.",
+            "metric_type": "CLIENT"
+          },
+          {
+            "name": "Comment",
+            "help_text": "A comment field where users describe what they like or dislike on the page.",
+            "metric_type": "TEXT"
+          },
+          {
+            "name": "Console log",
+            "help_text": "Data captured by the console recorder",
+            "metric_type": "CONSOLE_LOG"
+          },
+          {
+            "name": "Custom Data",
+            "help_text": "Custom JSON data provided by customers in the widget.",
+            "metric_type": "JSON"
+          },
+          {
+            "name": "Geo",
+            "help_text": "Geolocation (Country, City) of the client.",
+            "metric_type": "GEO"
+          },
+          {
+            "name": "Screenshot",
+            "help_text": "A screenshot with annotations.",
+            "metric_type": "SCREENSHOT"
+          },
+          {
+            "name": "State",
+            "help_text": "The state of this Feedback",
+            "metric_type": "ENUM"
+          },
+          {
+            "name": "Text",
+            "help_text": "A text field with optional calculated sentiment.",
+            "metric_type": "TEXT"
+          },
+          {
+            "name": "Visitor",
+            "help_text": "A visitor field for the email address",
+            "metric_type": "VISITOR"
+          }
+        ]
+      }
+    },
+    "getProjects": {
+      "status": true,
+      "data": {
+        "has_more": false,
+        "count": 62,
+        "projects": [
+          {
+            "project_id": "1d41f014-6331-4523-a45a-3782348d0a17",
+            "api_key": "79baa410-b3dd-4e03-86e5-8849d841473e",
+            "company_id": "695f0023-36ff-42dd-85a7-13afcd6a239d",
+            "space_id": "1da0d970-ec2a-4644-8eff-07a35b8c13e9",
+            "created_at": "2022-03-16T15:24:52.453839Z",
+            "updated_at": "2022-11-28T11:29:22.261195Z",
+            "archived_at": null,
+            "owner_id": "66e13ff6-509b-4385-9ef7-660167e972ba",
+            "default_assignee_id": null,
+            "name": "Bug Tracking (Jira)",
+            "is_live": true,
+            "feedback_count": 1,
+            "open_feedback_count": 0
+          }
+        ]
+      }
+    },
+    "getProjectFeedbacks": {
+      "status": true,
+      "data": {
+        "has_more": false,
+        "count": 10,
+        "feedbacks": [
+          {
+            "feedback_id": "f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32",
+            "feedback_number": 10,
+            "public_link": "https://app.usersnap.best/l/feedback/f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32",
+            "project_id": "03e7f4ec-7fa5-4783-b4b1-2da96ab2ba69",
+            "created_at": "2022-08-04T10:22:34.127599Z",
+            "updated_at": "2022-08-04T10:22:34.153671Z",
+            "status_type": "in_progress",
+            "priority": "high",
+            "assignee_id": "66e13ff6-509b-4385-9ef7-660167e972ba",
+            "is_demo": false,
+            "email": "someone@somewhere.com",
+            "client": {
+              "url": "https://app.usersnap.best/widget-preview/?apikey=51934445-7273-4a87-bc7f-813fe88046bb",
+              "client_type": "browser",
+              "city_name": "Linz",
+              "country_name": "Austria",
+              "screen_width": 1728,
+              "screen_height": 1117,
+              "browser_full_name": "Firefox 103 (macOS Catalina)",
+              "browser_os": "Macintosh",
+              "browser_name": "Firefox",
+              "browser_version": "103.0"
+            },
+            "custom_data": {
+              "System": "Staging",
+              "Release Version": "0.2"
+            },
+            "screenshot": {
+              "annotated_image_url": "https://resources.usersnap.best/company/695f0023-36ff-42dd-85a7-13afcd6a239d/datapoint_screenshot/e257c490-69c1-4395-a81a-6be61d31812c-all_31f70d0f-94e0-412a-9cf9-6e9b439af0e0.png?etag=XT1oelEoouts6k6/YCVFpQ==",
+              "comments": []
+            },
+            "screen_recording": null,
+            "ordered_inputs": [
+              {
+                "order": 0,
+                "label": "Comment",
+                "boolean_value": null,
+                "text_value": "[Sample Feedback] The login button is not working",
+                "value": "[Sample Feedback] The login button is not working"
+              }
+            ],
+            "labels": [
+              {
+                "company_label_id": "5392d1a5-925a-49a1-9168-d03cc60c7ec5",
+                "identifier": "bug",
+                "name": "Bug",
+                "color": "#f71007"
+              }
+            ]
+          }
+        ],
+        "next": {
+          "query_string": "limit=1&after=f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32",
+          "limit": 1,
+          "after": "f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32"
+        }
+      }
+    },
+    "getProjectFeedbacksCount": {
+      "status": true,
+      "data": {
+        "total_count": 10
+      }
+    },
+    "filterProjectFeedbacks": {
+      "status": true,
+      "data": {
+        "has_more": false,
+        "count": 10,
+        "feedbacks": [
+          {
+            "feedback_id": "f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32",
+            "feedback_number": 10,
+            "public_link": "https://app.usersnap.best/l/feedback/f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32",
+            "project_id": "03e7f4ec-7fa5-4783-b4b1-2da96ab2ba69",
+            "created_at": "2022-08-04T10:22:34.127599Z",
+            "updated_at": "2022-08-04T10:22:34.153671Z",
+            "status_type": "in_progress",
+            "priority": "high",
+            "assignee_id": "66e13ff6-509b-4385-9ef7-660167e972ba",
+            "is_demo": false,
+            "email": "someone@somewhere.com",
+            "client": {
+              "url": "https://app.usersnap.best/widget-preview/?apikey=51934445-7273-4a87-bc7f-813fe88046bb",
+              "client_type": "browser",
+              "city_name": "Linz",
+              "country_name": "Austria",
+              "screen_width": 1728,
+              "screen_height": 1117,
+              "browser_full_name": "Firefox 103 (macOS Catalina)",
+              "browser_os": "Macintosh",
+              "browser_name": "Firefox",
+              "browser_version": "103.0"
+            },
+            "custom_data": {
+              "System": "Staging",
+              "Release Version": "0.2"
+            },
+            "screenshot": {
+              "annotated_image_url": "https://resources.usersnap.best/company/695f0023-36ff-42dd-85a7-13afcd6a239d/datapoint_screenshot/e257c490-69c1-4395-a81a-6be61d31812c-all_31f70d0f-94e0-412a-9cf9-6e9b439af0e0.png?etag=XT1oelEoouts6k6/YCVFpQ==",
+              "comments": []
+            },
+            "screen_recording": null,
+            "ordered_inputs": [
+              {
+                "order": 0,
+                "label": "Comment",
+                "boolean_value": null,
+                "text_value": "[Sample Feedback] The login button is not working",
+                "value": "[Sample Feedback] The login button is not working"
+              }
+            ],
+            "labels": [
+              {
+                "company_label_id": "5392d1a5-925a-49a1-9168-d03cc60c7ec5",
+                "identifier": "bug",
+                "name": "Bug",
+                "color": "#f71007"
+              }
+            ]
+          }
+        ],
+        "next": {
+          "query_string": "limit=1&after=f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32",
+          "limit": 1,
+          "after": "f5150fc1-a7c9-4e33-8bd5-7a9cf3423e32"
+        }
+      }
+    },
+    "filterProjectFeedbacksCount": {
+      "status": true,
+      "data": {
+        "total_count": 10
+      }
+    }
+  }
+}
