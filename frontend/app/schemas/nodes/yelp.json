@@ -1,0 +1,1499 @@
+{
+  "$defs": {
+    "ChatLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "ChatLocation",
+      "type": "object"
+    },
+    "ChatRequestContext": {
+      "additionalProperties": false,
+      "properties": {
+        "skip_text_generation": {
+          "default": false,
+          "title": "Skip Text Generation",
+          "type": "boolean"
+        }
+      },
+      "title": "ChatRequestContext",
+      "type": "object"
+    },
+    "YelpAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "yelp_api_key",
+          "default": "yelp_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Yelp API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Yelp Places API key from Manage API Access. Yelp must enable partner endpoints such as engagement for your key. NoClick sends it only to api.yelp.com. Connecting checks key reachability using the public category catalog; it does not verify business ownership.",
+      "x-credential-url": "https://www.yelp.com/developers/v3/manage_app"
+    },
+    "YelpAutocompleteConfig": {
+      "additionalProperties": false,
+      "description": "Autocomplete. https://docs.developer.yelp.com/reference/v3_autocomplete",
+      "properties": {
+        "operation": {
+          "const": "autocomplete",
+          "default": "autocomplete",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "YelpAutocompleteConfig",
+      "type": "object"
+    },
+    "YelpChatConfig": {
+      "additionalProperties": false,
+      "description": "Yelp AI API (Search & Chat). https://docs.developer.yelp.com/reference/v2_ai_chat",
+      "properties": {
+        "operation": {
+          "const": "chat",
+          "default": "chat",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "chat_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chat Id"
+        },
+        "user_context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChatLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "request_context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChatRequestContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "YelpChatConfig",
+      "type": "object"
+    },
+    "YelpGetBusinessConfig": {
+      "additionalProperties": false,
+      "description": "Business Details. https://docs.developer.yelp.com/reference/v3_business_info",
+      "properties": {
+        "operation": {
+          "const": "get_business",
+          "default": "get_business",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id_or_alias": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Business Id Or Alias",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "device_platform": {
+          "anyOf": [
+            {
+              "enum": [
+                "android",
+                "ios",
+                "mobile-generic"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Platform",
+          "enum": [
+            "android",
+            "ios",
+            "mobile-generic"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "business_id_or_alias"
+      ],
+      "title": "YelpGetBusinessConfig",
+      "type": "object"
+    },
+    "YelpGetBusinessEngagementConfig": {
+      "additionalProperties": false,
+      "description": "Engagement Metrics. https://docs.developer.yelp.com/reference/v3_get_businesses_engagement",
+      "properties": {
+        "operation": {
+          "const": "get_business_engagement",
+          "default": "get_business_engagement",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Business Ids",
+          "type": "array"
+        },
+        "date_range_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Range Start"
+        },
+        "date_range_end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Range End"
+        }
+      },
+      "required": [
+        "business_ids"
+      ],
+      "title": "YelpGetBusinessEngagementConfig",
+      "type": "object"
+    },
+    "YelpGetCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Category Details. https://docs.developer.yelp.com/reference/v3_categories",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "alias": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Alias",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "YelpGetCategoryConfig",
+      "type": "object"
+    },
+    "YelpGetEventConfig": {
+      "additionalProperties": false,
+      "description": "Event Details. https://docs.developer.yelp.com/reference/v3_event",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "YelpGetEventConfig",
+      "type": "object"
+    },
+    "YelpGetFeaturedEventConfig": {
+      "additionalProperties": false,
+      "description": "Featured Event. https://docs.developer.yelp.com/reference/v3_featured_event",
+      "properties": {
+        "operation": {
+          "const": "get_featured_event",
+          "default": "get_featured_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "title": "YelpGetFeaturedEventConfig",
+      "type": "object"
+    },
+    "YelpGetReviewHighlightsConfig": {
+      "additionalProperties": false,
+      "description": "Review Highlights. https://docs.developer.yelp.com/reference/v3_business_review_highlights",
+      "properties": {
+        "operation": {
+          "const": "get_review_highlights",
+          "default": "get_review_highlights",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id_or_alias": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Business Id Or Alias",
+          "type": "string"
+        },
+        "count": {
+          "default": 3,
+          "title": "Count",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "business_id_or_alias"
+      ],
+      "title": "YelpGetReviewHighlightsConfig",
+      "type": "object"
+    },
+    "YelpGetReviewsConfig": {
+      "additionalProperties": false,
+      "description": "Reviews. https://docs.developer.yelp.com/reference/v3_business_reviews",
+      "properties": {
+        "operation": {
+          "const": "get_reviews",
+          "default": "get_reviews",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id_or_alias": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Business Id Or Alias",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort_by": {
+          "const": "yelp_sort",
+          "default": "yelp_sort",
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id_or_alias"
+      ],
+      "title": "YelpGetReviewsConfig",
+      "type": "object"
+    },
+    "YelpGetServiceOfferingsConfig": {
+      "additionalProperties": false,
+      "description": "Service Offerings. https://docs.developer.yelp.com/reference/v3_business_service_offerings",
+      "properties": {
+        "operation": {
+          "const": "get_service_offerings",
+          "default": "get_service_offerings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id_or_alias": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Business Id Or Alias",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "business_id_or_alias"
+      ],
+      "title": "YelpGetServiceOfferingsConfig",
+      "type": "object"
+    },
+    "YelpListCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "All Categories. https://docs.developer.yelp.com/reference/v3_all_categories",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "title": "YelpListCategoriesConfig",
+      "type": "object"
+    },
+    "YelpMatchBusinessesConfig": {
+      "additionalProperties": false,
+      "description": "Business Match. https://docs.developer.yelp.com/reference/v3_business_match",
+      "properties": {
+        "operation": {
+          "const": "match_businesses",
+          "default": "match_businesses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 64,
+          "title": "Name",
+          "type": "string"
+        },
+        "address1": {
+          "maxLength": 64,
+          "title": "Address1",
+          "type": "string"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address2"
+        },
+        "address3": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address3"
+        },
+        "city": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "maxLength": 3,
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "pattern": "[A-Z]{2}",
+          "title": "Country",
+          "type": "string"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 12,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "pattern": "^[0-9 +()-.x/]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "yelp_business_id": {
+          "anyOf": [
+            {
+              "maxLength": 22,
+              "minLength": 22,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yelp Business Id"
+        },
+        "limit": {
+          "default": 3,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "match_threshold": {
+          "default": "default",
+          "enum": [
+            "none",
+            "default",
+            "strict"
+          ],
+          "title": "Match Threshold",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "address1",
+        "city",
+        "state",
+        "country"
+      ],
+      "title": "YelpMatchBusinessesConfig",
+      "type": "object"
+    },
+    "YelpSearchBusinessesByPhoneConfig": {
+      "additionalProperties": false,
+      "description": "Phone Search. https://docs.developer.yelp.com/reference/v3_business_phone_search",
+      "properties": {
+        "operation": {
+          "const": "search_businesses_by_phone",
+          "default": "search_businesses_by_phone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone": {
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[0-9 +()-.x/]+$",
+          "title": "Phone",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "YelpSearchBusinessesByPhoneConfig",
+      "type": "object"
+    },
+    "YelpSearchBusinessesConfig": {
+      "additionalProperties": false,
+      "description": "Search. https://docs.developer.yelp.com/reference/v3_business_search",
+      "properties": {
+        "operation": {
+          "const": "search_businesses",
+          "default": "search_businesses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "maximum": 40000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Radius"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "items": {
+                "maximum": 4,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "open_now": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Open Now"
+        },
+        "open_at": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Open At"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "sort_by": {
+          "default": "best_match",
+          "enum": [
+            "best_match",
+            "rating",
+            "review_count",
+            "distance"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "device_platform": {
+          "anyOf": [
+            {
+              "enum": [
+                "android",
+                "ios",
+                "mobile-generic"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Platform",
+          "enum": [
+            "android",
+            "ios",
+            "mobile-generic"
+          ],
+          "x-enum-searchable": true
+        },
+        "reservation_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reservation Date"
+        },
+        "reservation_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reservation Time"
+        },
+        "reservation_covers": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reservation Covers"
+        },
+        "matches_party_size_param": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matches Party Size Param"
+        },
+        "job_alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Alias"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        }
+      },
+      "title": "YelpSearchBusinessesConfig",
+      "type": "object"
+    },
+    "YelpSearchDeliveryConfig": {
+      "additionalProperties": false,
+      "description": "Food Delivery Search. https://docs.developer.yelp.com/reference/v3_transaction_search",
+      "properties": {
+        "operation": {
+          "const": "search_delivery",
+          "default": "search_delivery",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "transaction_type": {
+          "const": "delivery",
+          "default": "delivery",
+          "title": "Transaction Type",
+          "type": "string"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "items": {
+                "maximum": 4,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        }
+      },
+      "title": "YelpSearchDeliveryConfig",
+      "type": "object"
+    },
+    "YelpSearchEventsConfig": {
+      "additionalProperties": false,
+      "description": "Event Search. https://docs.developer.yelp.com/reference/v3_events_search",
+      "properties": {
+        "operation": {
+          "const": "search_events",
+          "default": "search_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}_[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "limit": {
+          "default": 3,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort_by": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_on": {
+          "default": "popularity",
+          "enum": [
+            "popularity",
+            "time_start"
+          ],
+          "title": "Sort On",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "maximum": 221845420800,
+              "minimum": -2208960000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "maximum": 221845420800,
+              "minimum": -2208960000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "is_free": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Free"
+        },
+        "excluded_events": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excluded Events"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "maximum": 40000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Radius"
+        }
+      },
+      "title": "YelpSearchEventsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "autocomplete": "#/$defs/YelpAutocompleteConfig",
+          "chat": "#/$defs/YelpChatConfig",
+          "get_business": "#/$defs/YelpGetBusinessConfig",
+          "get_business_engagement": "#/$defs/YelpGetBusinessEngagementConfig",
+          "get_category": "#/$defs/YelpGetCategoryConfig",
+          "get_event": "#/$defs/YelpGetEventConfig",
+          "get_featured_event": "#/$defs/YelpGetFeaturedEventConfig",
+          "get_review_highlights": "#/$defs/YelpGetReviewHighlightsConfig",
+          "get_reviews": "#/$defs/YelpGetReviewsConfig",
+          "get_service_offerings": "#/$defs/YelpGetServiceOfferingsConfig",
+          "list_categories": "#/$defs/YelpListCategoriesConfig",
+          "match_businesses": "#/$defs/YelpMatchBusinessesConfig",
+          "search_businesses": "#/$defs/YelpSearchBusinessesConfig",
+          "search_businesses_by_phone": "#/$defs/YelpSearchBusinessesByPhoneConfig",
+          "search_delivery": "#/$defs/YelpSearchDeliveryConfig",
+          "search_events": "#/$defs/YelpSearchEventsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/YelpChatConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpSearchBusinessesConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpSearchBusinessesByPhoneConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpMatchBusinessesConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetBusinessConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpSearchDeliveryConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetBusinessEngagementConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetServiceOfferingsConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpSearchEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetFeaturedEventConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpAutocompleteConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/YelpGetReviewHighlightsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YelpAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Yelp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

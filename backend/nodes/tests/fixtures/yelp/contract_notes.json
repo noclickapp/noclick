@@ -1,0 +1,16 @@
+[
+  {
+    "operation": "search_businesses",
+    "kind": "d",
+    "issue": "The pinned OpenAPI response schema declares rating with type decimal, which is not an OpenAPI primitive. Yelp publishes a numeric rating (4) in the response example. The node preserves this numeric response; dedicated tests execute both full documented examples successfully.",
+    "source": "https://docs.developer.yelp.com/reference/v3_business_search.md",
+    "node_test": "backend/nodes/tests/test_yelp_node_mock.py::test_yelp_documented_business_responses"
+  },
+  {
+    "operation": "get_business",
+    "kind": "d",
+    "issue": "The pinned OpenAPI response schema declares rating with type decimal, which is not an OpenAPI primitive. Yelp publishes a numeric rating (4) in the response example. The node preserves this numeric response; dedicated tests execute both full documented examples successfully.",
+    "source": "https://docs.developer.yelp.com/reference/v3_business_info.md",
+    "node_test": "backend/nodes/tests/test_yelp_node_mock.py::test_yelp_documented_business_responses"
+  }
+]
