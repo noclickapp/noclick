@@ -1,0 +1,1051 @@
+{
+  "$defs": {
+    "MailerLiteClassicAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mailerlite_classic_api_key",
+          "default": "mailerlite_classic_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "MailerLite Classic API Key",
+      "type": "object",
+      "x-credential-instructions": "In your MailerLite Classic account, open Integrations and copy the API key. Paste it here. This connection uses the Classic v2 API; keys from the new MailerLite are not compatible.",
+      "x-credential-url": "https://developers-classic.mailerlite.com/docs/authentication"
+    },
+    "MailerLiteClassicAddGroupSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Add group subscriber.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom field keys mapped to values, for example company or city.",
+          "title": "Fields"
+        },
+        "resubscribe": {
+          "default": false,
+          "description": "Explicitly reactivate an unsubscribed subscriber.",
+          "title": "Resubscribe",
+          "type": "boolean"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed",
+                "unconfirmed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "active",
+            "unsubscribed",
+            "unconfirmed"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "add_group_subscriber",
+          "default": "add_group_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "autoresponders": {
+          "default": true,
+          "description": "Allow MailerLite to send group autoresponders.",
+          "title": "Autoresponders",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email",
+        "id"
+      ],
+      "title": "MailerLiteClassicAddGroupSubscriberConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicAssignSubscriberGroupsConfig": {
+      "additionalProperties": false,
+      "description": "Assign subscriber groups.",
+      "properties": {
+        "operation": {
+          "const": "assign_subscriber_groups",
+          "default": "assign_subscriber_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "groups": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647,
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "identifier",
+        "groups"
+      ],
+      "title": "MailerLiteClassicAssignSubscriberGroupsConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicCreateFieldConfig": {
+      "additionalProperties": false,
+      "description": "Create field.",
+      "properties": {
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "default": "TEXT",
+          "enum": [
+            "TEXT",
+            "NUMBER",
+            "DATE"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "MailerLiteClassicCreateFieldConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicCreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create group.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MailerLiteClassicCreateGroupConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicCreateSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Create subscriber.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom field keys mapped to values, for example company or city.",
+          "title": "Fields"
+        },
+        "resubscribe": {
+          "default": false,
+          "description": "Explicitly reactivate an unsubscribed subscriber.",
+          "title": "Resubscribe",
+          "type": "boolean"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed",
+                "unconfirmed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "active",
+            "unsubscribed",
+            "unconfirmed"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_subscriber",
+          "default": "create_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MailerLiteClassicCreateSubscriberConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicDeleteFieldConfig": {
+      "additionalProperties": false,
+      "description": "Delete field.",
+      "properties": {
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Field ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MailerLiteClassicDeleteFieldConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicDeleteGroupConfig": {
+      "additionalProperties": false,
+      "description": "Delete group.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MailerLiteClassicDeleteGroupConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get account.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MailerLiteClassicGetAccountConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicGetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get group.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MailerLiteClassicGetGroupConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicGetStatsConfig": {
+      "additionalProperties": false,
+      "description": "Get stats.",
+      "properties": {
+        "operation": {
+          "const": "get_stats",
+          "default": "get_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timestamp"
+        }
+      },
+      "title": "MailerLiteClassicGetStatsConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicGetSubscriberActivityConfig": {
+      "additionalProperties": false,
+      "description": "Get subscriber activity.",
+      "properties": {
+        "operation": {
+          "const": "get_subscriber_activity",
+          "default": "get_subscriber_activity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "MailerLiteClassicGetSubscriberActivityConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicGetSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Get subscriber.",
+      "properties": {
+        "operation": {
+          "const": "get_subscriber",
+          "default": "get_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "MailerLiteClassicGetSubscriberConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; use next_offset to request the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "default": "sent",
+          "enum": [
+            "sent",
+            "draft",
+            "outbox"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "title": "MailerLiteClassicListCampaignsConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicListFieldsConfig": {
+      "additionalProperties": false,
+      "description": "List fields.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MailerLiteClassicListFieldsConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicListGroupSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "List group subscribers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; use next_offset to request the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_group_subscribers",
+          "default": "list_group_subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed",
+                "unconfirmed",
+                "bounced",
+                "junk"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "active",
+            "unsubscribed",
+            "unconfirmed",
+            "bounced",
+            "junk"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MailerLiteClassicListGroupSubscribersConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List groups.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; use next_offset to request the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MailerLiteClassicListGroupsConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicListSubscriberGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List subscriber groups.",
+      "properties": {
+        "operation": {
+          "const": "list_subscriber_groups",
+          "default": "list_subscriber_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "MailerLiteClassicListSubscriberGroupsConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicListSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "List subscribers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; use next_offset to request the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed",
+                "unconfirmed",
+                "bounced",
+                "junk"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "active",
+            "unsubscribed",
+            "unconfirmed",
+            "bounced",
+            "junk"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "MailerLiteClassicListSubscribersConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicRemoveGroupSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Remove group subscriber.",
+      "properties": {
+        "operation": {
+          "const": "remove_group_subscriber",
+          "default": "remove_group_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "subscriber_identifier": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Subscriber Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "subscriber_identifier"
+      ],
+      "title": "MailerLiteClassicRemoveGroupSubscriberConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicRenameGroupConfig": {
+      "additionalProperties": false,
+      "description": "Rename group.",
+      "properties": {
+        "operation": {
+          "const": "rename_group",
+          "default": "rename_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group ID",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "MailerLiteClassicRenameGroupConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicSearchSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "Search subscribers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; use next_offset to request the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_subscribers",
+          "default": "search_subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "minimized": {
+          "default": false,
+          "title": "Minimized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "MailerLiteClassicSearchSubscribersConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicUpdateFieldConfig": {
+      "additionalProperties": false,
+      "description": "Update field.",
+      "properties": {
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Field ID",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "title": "MailerLiteClassicUpdateFieldConfig",
+      "type": "object"
+    },
+    "MailerLiteClassicUpdateSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Update subscriber.",
+      "properties": {
+        "operation": {
+          "const": "update_subscriber",
+          "default": "update_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "active",
+            "unsubscribed"
+          ],
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "resend_autoresponders": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resend Autoresponders"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "MailerLiteClassicUpdateSubscriberConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_subscriber": "#/$defs/MailerLiteClassicAddGroupSubscriberConfig",
+          "assign_subscriber_groups": "#/$defs/MailerLiteClassicAssignSubscriberGroupsConfig",
+          "create_field": "#/$defs/MailerLiteClassicCreateFieldConfig",
+          "create_group": "#/$defs/MailerLiteClassicCreateGroupConfig",
+          "create_subscriber": "#/$defs/MailerLiteClassicCreateSubscriberConfig",
+          "delete_field": "#/$defs/MailerLiteClassicDeleteFieldConfig",
+          "delete_group": "#/$defs/MailerLiteClassicDeleteGroupConfig",
+          "get_account": "#/$defs/MailerLiteClassicGetAccountConfig",
+          "get_group": "#/$defs/MailerLiteClassicGetGroupConfig",
+          "get_stats": "#/$defs/MailerLiteClassicGetStatsConfig",
+          "get_subscriber": "#/$defs/MailerLiteClassicGetSubscriberConfig",
+          "get_subscriber_activity": "#/$defs/MailerLiteClassicGetSubscriberActivityConfig",
+          "list_campaigns": "#/$defs/MailerLiteClassicListCampaignsConfig",
+          "list_fields": "#/$defs/MailerLiteClassicListFieldsConfig",
+          "list_group_subscribers": "#/$defs/MailerLiteClassicListGroupSubscribersConfig",
+          "list_groups": "#/$defs/MailerLiteClassicListGroupsConfig",
+          "list_subscriber_groups": "#/$defs/MailerLiteClassicListSubscriberGroupsConfig",
+          "list_subscribers": "#/$defs/MailerLiteClassicListSubscribersConfig",
+          "remove_group_subscriber": "#/$defs/MailerLiteClassicRemoveGroupSubscriberConfig",
+          "rename_group": "#/$defs/MailerLiteClassicRenameGroupConfig",
+          "search_subscribers": "#/$defs/MailerLiteClassicSearchSubscribersConfig",
+          "update_field": "#/$defs/MailerLiteClassicUpdateFieldConfig",
+          "update_subscriber": "#/$defs/MailerLiteClassicUpdateSubscriberConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MailerLiteClassicGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicListSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicSearchSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicGetSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicCreateSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicUpdateSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicGetSubscriberActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicListSubscriberGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicAssignSubscriberGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicRenameGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicListGroupSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicAddGroupSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicRemoveGroupSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicDeleteFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailerLiteClassicGetStatsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MailerLiteClassicAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mailerlite-classic Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

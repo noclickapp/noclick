@@ -1,0 +1,237 @@
+{
+  "get_account": {
+    "method": "GET",
+    "path": "/me",
+    "query": [],
+    "body": [],
+    "kind": "account",
+    "docs": "https://developers-classic.mailerlite.com/reference/account"
+  },
+  "list_subscribers": {
+    "method": "GET",
+    "path": "/subscribers",
+    "query": [
+      "limit",
+      "offset",
+      "type"
+    ],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/subscribers"
+  },
+  "search_subscribers": {
+    "method": "GET",
+    "path": "/subscribers/search",
+    "query": [
+      "query",
+      "limit",
+      "offset",
+      "minimized"
+    ],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/search-for-subscribers"
+  },
+  "get_subscriber": {
+    "method": "GET",
+    "path": "/subscribers/{identifier}",
+    "query": [],
+    "body": [],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/single-subscriber"
+  },
+  "create_subscriber": {
+    "method": "POST",
+    "path": "/subscribers",
+    "query": [],
+    "body": [
+      "email",
+      "name",
+      "fields",
+      "resubscribe",
+      "type"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/create-a-subscriber"
+  },
+  "update_subscriber": {
+    "method": "PUT",
+    "path": "/subscribers/{identifier}",
+    "query": [],
+    "body": [
+      "name",
+      "type",
+      "fields",
+      "resend_autoresponders"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/update-subscriber"
+  },
+  "get_subscriber_activity": {
+    "method": "GET",
+    "path": "/subscribers/{identifier}/activity",
+    "query": [],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/activity-of-single-subscriber"
+  },
+  "list_subscriber_groups": {
+    "method": "GET",
+    "path": "/subscribers/{identifier}/groups",
+    "query": [],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/groups-subscriber-belongs-to"
+  },
+  "assign_subscriber_groups": {
+    "method": "POST",
+    "path": "/subscribers/{identifier}/groups",
+    "query": [],
+    "body": [
+      "groups"
+    ],
+    "kind": "confirmation",
+    "docs": "https://developers-classic.mailerlite.com/reference/subscribersid-or-emailgroups"
+  },
+  "list_groups": {
+    "method": "GET",
+    "path": "/groups",
+    "query": [
+      "limit",
+      "offset"
+    ],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/groups"
+  },
+  "get_group": {
+    "method": "GET",
+    "path": "/groups/{id}",
+    "query": [],
+    "body": [],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/single-group"
+  },
+  "create_group": {
+    "method": "POST",
+    "path": "/groups",
+    "query": [],
+    "body": [
+      "name"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/create-group"
+  },
+  "rename_group": {
+    "method": "PUT",
+    "path": "/groups/{id}",
+    "query": [],
+    "body": [
+      "name"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/rename-group"
+  },
+  "delete_group": {
+    "method": "DELETE",
+    "path": "/groups/{id}",
+    "query": [],
+    "body": [],
+    "kind": "confirmation",
+    "docs": "https://developers-classic.mailerlite.com/reference/delete-group"
+  },
+  "list_group_subscribers": {
+    "method": "GET",
+    "path": "/groups/{id}/subscribers",
+    "query": [
+      "limit",
+      "offset",
+      "type"
+    ],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/subscribers-in-a-group"
+  },
+  "add_group_subscriber": {
+    "method": "POST",
+    "path": "/groups/{id}/subscribers",
+    "query": [],
+    "body": [
+      "email",
+      "name",
+      "fields",
+      "resubscribe",
+      "autoresponders",
+      "type"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/add-single-subscriber"
+  },
+  "remove_group_subscriber": {
+    "method": "DELETE",
+    "path": "/groups/{id}/subscribers/{subscriber_identifier}",
+    "query": [],
+    "body": [],
+    "kind": "empty",
+    "docs": "https://developers-classic.mailerlite.com/reference/remove-subscriber"
+  },
+  "list_fields": {
+    "method": "GET",
+    "path": "/fields",
+    "query": [],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/all-fields"
+  },
+  "create_field": {
+    "method": "POST",
+    "path": "/fields",
+    "query": [],
+    "body": [
+      "title",
+      "type"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/create-field"
+  },
+  "update_field": {
+    "method": "PUT",
+    "path": "/fields/{id}",
+    "query": [],
+    "body": [
+      "title"
+    ],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/update-field"
+  },
+  "delete_field": {
+    "method": "DELETE",
+    "path": "/fields/{id}",
+    "query": [],
+    "body": [],
+    "kind": "empty",
+    "docs": "https://developers-classic.mailerlite.com/reference/remove-field"
+  },
+  "list_campaigns": {
+    "method": "GET",
+    "path": "/campaigns/{status}",
+    "query": [
+      "limit",
+      "offset",
+      "order"
+    ],
+    "body": [],
+    "kind": "list",
+    "docs": "https://developers-classic.mailerlite.com/reference/campaigns-by-type"
+  },
+  "get_stats": {
+    "method": "GET",
+    "path": "/stats",
+    "query": [
+      "timestamp"
+    ],
+    "body": [],
+    "kind": "object",
+    "docs": "https://developers-classic.mailerlite.com/reference/stats"
+  }
+}
