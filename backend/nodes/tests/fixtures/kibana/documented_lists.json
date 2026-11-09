@@ -1,0 +1,182 @@
+{
+  "/api/spaces/space": {
+    "body": [
+      {
+        "id": "default",
+        "name": "Default",
+        "description": "This is the Default Space",
+        "disabledFeatures": [],
+        "imageUrl": "",
+        "_reserved": true
+      },
+      {
+        "id": "marketing",
+        "name": "Marketing",
+        "description": "This is the Marketing Space",
+        "color": null,
+        "disabledFeatures": [
+          "apm"
+        ],
+        "initials": "MK",
+        "imageUrl": "data:image/png;base64,iVBORw0KGgoAAAANSU"
+      },
+      {
+        "id": "sales",
+        "name": "Sales",
+        "initials": "MK",
+        "disabledFeatures": [
+          "discover"
+        ],
+        "imageUr\"": "",
+        "solution": "oblt"
+      }
+    ],
+    "source": "https://www.elastic.co/docs/api/doc/kibana/operation/operation-get-spaces-space"
+  },
+  "/api/data_views": {
+    "body": {
+      "data_view": [
+        {
+          "id": "ff959d40-b880-11e8-a6d9-e546fe2bba5f",
+          "name": "Kibana Sample Data eCommerce",
+          "namespaces": [
+            "default"
+          ],
+          "title": "kibana_sample_data_ecommerce",
+          "typeMeta": {}
+        },
+        {
+          "id": "d3d7af60-4c81-11e8-b3d7-01146121b73d",
+          "name": "Kibana Sample Data Flights",
+          "namespaces": [
+            "default"
+          ],
+          "title": "kibana_sample_data_flights"
+        },
+        {
+          "id": "90943e30-9a47-11e8-b64d-95841ca0b247",
+          "name": "Kibana Sample Data Logs",
+          "namespaces": [
+            "default"
+          ],
+          "title": "kibana_sample_data_logs"
+        }
+      ]
+    },
+    "source": "https://www.elastic.co/docs/api/doc/kibana/operation/operation-getalldataviewsdefault"
+  },
+  "/api/alerting/rules/_find": {
+    "body": {
+      "data": [
+        {
+          "actions": [
+            {
+              "frequency": {
+                "notify_when": "onActionGroupChange",
+                "summary": false,
+                "throttle": null
+              },
+              "group": "threshold met",
+              "id": "9dca3e00-74f5-11ed-9801-35303b735aef",
+              "params": {
+                "connector_type_id": ".server-log",
+                "level": "info",
+                "message": "Rule {{rule.name}} is active for group {{context.group}}:\n\n- Value: {{context.value}}\n- Conditions Met: {{context.conditions}} over {{rule.params.timeWindowSize}}{{rule.params.timeWindowUnit}}\n- Timestamp: {{context.date}}"
+              },
+              "uuid": "1c7a1280-f28c-4e06-96b2-e4e5f05d1d61"
+            }
+          ],
+          "api_key_created_by_user": false,
+          "api_key_owner": "elastic",
+          "consumer": "alerts",
+          "created_at": "2022-12-05T23:40:33.132Z",
+          "created_by": "elastic",
+          "enabled": true,
+          "execution_status": {
+            "last_duration": 48,
+            "last_execution_date": "2022-12-06T01:44:23.983Z",
+            "status": "ok"
+          },
+          "id": "3583a470-74f6-11ed-9801-35303b735aef",
+          "last_run": {
+            "alerts_count": {
+              "active": 0,
+              "ignored": 0,
+              "new": 0,
+              "recovered": 0
+            },
+            "outcome": "succeeded",
+            "outcome_msg": null,
+            "warning": null
+          },
+          "mute_all": false,
+          "muted_alert_ids": [],
+          "name": "my alert",
+          "next_run": "2022-12-06T01:45:23.912Z",
+          "params": {
+            "aggField": "sheet.version",
+            "aggType": "avg",
+            "groupBy": "top",
+            "index": [
+              "test-index"
+            ],
+            "termField": "name.keyword",
+            "termSize": 6,
+            "threshold": [
+              1000
+            ],
+            "thresholdComparator": ">",
+            "timeField": "@timestamp",
+            "timeWindowSize": 5,
+            "timeWindowUnit": "m"
+          },
+          "revision": 1,
+          "rule_type_id": ".index-threshold",
+          "schedule": {
+            "interval": "1m"
+          },
+          "scheduled_task_id": "3583a470-74f6-11ed-9801-35303b735aef",
+          "tags": [
+            "cpu"
+          ],
+          "throttle": null,
+          "updated_at": "2022-12-05T23:40:33.132Z",
+          "updated_by": "elastic"
+        }
+      ],
+      "page": 1,
+      "per_page": 10,
+      "total": 1
+    },
+    "source": "https://www.elastic.co/docs/api/doc/kibana/operation/operation-get-alerting-rules-find"
+  },
+  "/api/actions/connectors": {
+    "body": [
+      {
+        "id": "preconfigured-email-connector",
+        "name": "my-preconfigured-email-notification",
+        "connector_type_id": ".email",
+        "is_preconfigured": true,
+        "is_deprecated": false,
+        "referenced_by_count": 0,
+        "is_system_action": false
+      },
+      {
+        "id": "e07d0c80-8b8b-11ed-a780-3b746c987a81",
+        "name": "my-index-connector",
+        "config": {
+          "index": "test-index",
+          "refresh": false,
+          "executionTimeField": null
+        },
+        "connector_type_id": ".index",
+        "is_preconfigured": false,
+        "is_deprecated": false,
+        "referenced_by_count": 2,
+        "is_missing_secrets": false,
+        "is_system_action": false
+      }
+    ],
+    "source": "https://www.elastic.co/docs/api/doc/kibana/operation/operation-get-actions-connectors"
+  }
+}

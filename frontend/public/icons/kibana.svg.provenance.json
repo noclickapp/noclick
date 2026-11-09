@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/kibana.svg",
+  "source": "https://raw.githubusercontent.com/elastic/eui/5c4031565d1f0fef7e08e2377ea5b29bf8963b54/packages/eui/src/components/icon/svgs/logo_kibana.svg",
+  "license": "Elastic License 2.0 or Server Side Public License v1, per https://github.com/elastic/eui/blob/main/LICENSE.txt. Kibana trademark belongs to Elastic; used to identify the service.",
+  "sha256": "f42c4ca7298788d5f3c28d9cf78ab41d1d2c4b57ef60d4dfd88979189e4da140"
+}
