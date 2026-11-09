@@ -1110,6 +1110,173 @@
       "title": "ListVendors",
       "type": "object"
     },
+    "OnResourceEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "Company to act in; also sent as Procore-Company-Id.",
+          "exclusiveMinimum": 0,
+          "title": "Company ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "on_resource_event",
+          "default": "on_resource_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Resource Event",
+          "x-is-trigger": true
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to this project; leave empty for company-level events.",
+          "title": "Project ID"
+        },
+        "resource_name": {
+          "default": "RFIs",
+          "description": "Exact supported Procore webhook resource name, for example RFIs. See https://developers.procore.com/documentation/webhooks-api. Requires Webhooks API Standard permission.",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "event_type": {
+          "default": "update",
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Procore automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "OnResourceEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "ProcoreOAuthCredential": {
       "properties": {
         "credential_type": {
@@ -1497,6 +1664,7 @@
           "list_rfis": "#/$defs/ListRFIs",
           "list_submittals": "#/$defs/ListSubmittals",
           "list_vendors": "#/$defs/ListVendors",
+          "on_resource_event": "#/$defs/OnResourceEvent",
           "update_project": "#/$defs/UpdateProject",
           "update_rfi": "#/$defs/UpdateRFI",
           "update_vendor": "#/$defs/UpdateVendor"
@@ -1504,6 +1672,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnResourceEvent"
+        },
         {
           "$ref": "#/$defs/GetCurrentUser"
         },

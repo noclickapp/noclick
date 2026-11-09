@@ -1,17 +1,21 @@
 """Procore company, project, directory and project-management automation.
 
-Each operation makes one request to the published REST contract. Lists return
+Each action makes one request to the published REST contract. Lists return
 one page; next_page comes from Procore's Link header, never fetched here.
+The resource-event trigger registers a hook and subscription through the API.
 """
+import hmac
+import secrets
 from datetime import date as Date
 from typing import Annotated, Any, Literal, Optional, Union
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, quote, urlsplit
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.procore_operations import PROCORE_OPERATIONS
 from nodes.scopes.procore import PROCORE_SCOPES
 
@@ -216,7 +220,24 @@ class CreateLocation(_Project):
     parent_id: Optional[int] = Field(None, gt=0, title="Parent Location ID")
 
 
+class OnResourceEvent(_Company, WebhookTriggerConfigBase):
+    operation: Literal["on_resource_event"] = Field("on_resource_event", json_schema_extra={
+        "ui:hidden": True, "x-display-name": "On Resource Event", "x-category": "Triggers", "x-is-trigger": True})
+    project_id: Optional[int] = Field(None, gt=0, title="Project ID", description="Limit events to this project; leave empty for company-level events.")
+    resource_name: str = Field("RFIs", title="Resource Name", description="Exact supported Procore webhook resource name, for example RFIs. See https://developers.procore.com/documentation/webhooks-api. Requires Webhooks API Standard permission.")
+    event_type: Literal["create", "update", "delete"] = Field("update", title="Event")
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with Procore automatically", json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+    @field_validator("resource_name")
+    @classmethod
+    def resource(cls, value):
+        if not value.strip():
+            raise ValueError("Choose a Procore webhook resource")
+        return value.strip()
+
+
 ProcoreConfig = Annotated[Union[
+    OnResourceEvent,
     GetCurrentUser,
     ListCompanies,
     ListProjects,
@@ -246,8 +267,9 @@ class ProcoreNodeConfig(NodeConfig[ProcoreConfig, ProcoreOAuthCredential]):
     pass
 
 
-class ProcoreNode(WorkflowNode):
+class ProcoreNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-procore"
+    webhook_replace_stale_endpoint = True
     scope_registry = PROCORE_SCOPES
     connection_evidence = ConnectionEvidence(operation="list_companies", noun="companies", identity_operation="get_current_user")
 
@@ -263,6 +285,108 @@ class ProcoreNode(WorkflowNode):
         from nodes.oauth.procore_oauth import refresh_access_token
         return await freshen_oauth_credential(credential_data, pool=pool, user_id=user_id,
             credential_id=credential_id, refresh=refresh_access_token, provider="procore")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: (config or {}).get(key) for key in ("company_id", "project_id", "resource_name", "event_type")}
+
+    @staticmethod
+    def _hook_path(config):
+        company_id = int(config["company_id"])
+        if company_id <= 0:
+            raise ValueError("Company ID must be positive")
+        path = f"/rest/v2.0/companies/{company_id}"
+        if config.get("project_id") is not None:
+            project_id = int(config["project_id"])
+            if project_id <= 0:
+                raise ValueError("Project ID must be positive")
+            path += f"/projects/{project_id}"
+        return path + "/webhooks/hooks"
+
+    @classmethod
+    async def _webhook_request(cls, credential, config, method, path, body=None):
+        if not credential or not credential.get("access_token"):
+            raise ValueError("Connect Procore before activating this trigger")
+        headers = {"Authorization": f"Bearer {credential['access_token']}",
+                   "Procore-Company-Id": str(config["company_id"]), "Accept": "application/json"}
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, API_BASE + path, headers=headers, json=body)
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Procore webhook API {response.status_code}")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        # The v2 API registers the documented v2.0 delivery format.
+        # Procore forwards our Authorization secret, rather than signing a body.
+        op = OnResourceEvent.model_validate(config)
+        path = cls._hook_path(config)
+        secret = secrets.token_urlsafe(32)
+        data = await cls._webhook_request(credential, config, "POST", path, {
+            "payload_version": "v2.0", "namespace": "noclick", "destination_url": webhook_url,
+            "destination_headers": {"Authorization": f"Bearer {secret}"}})
+        hook_id = (data.get("data") or {}).get("id")
+        if not isinstance(hook_id, (str, int)) or not str(hook_id):
+            raise ValueError("Procore did not return a webhook ID")
+        hook_path = f"{path}/{quote(str(hook_id), safe='')}"
+        try:
+            await cls._webhook_request(credential, config, "POST", f"{hook_path}/triggers", {
+                "resource_name": op.resource_name, "event_type": op.event_type})
+        except Exception:
+            await cls._webhook_request(credential, config, "DELETE", hook_path)
+            raise
+        # Keep the original scope with the ID so changing company/project can
+        # still remove the old hook before the mixin creates its replacement.
+        external_id = f"{op.company_id}:{op.project_id or ''}:{hook_id}"
+        return {"external_webhook_id": external_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        hook_id = (config or {}).get("external_webhook_id")
+        if not hook_id:
+            return
+        parts = str(hook_id).split(":", 2)
+        if len(parts) == 3:
+            company_id, project_id, hook_id = parts
+            config = {**config, "company_id": company_id, "project_id": project_id or None}
+        if not isinstance(hook_id, (str, int)) or not str(hook_id):
+            raise ValueError("Invalid Procore webhook ID")
+        await cls._webhook_request(credential, config, "DELETE", f"{cls._hook_path(config)}/{quote(str(hook_id), safe='')}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://developers.procore.com/documentation/content/webhooks-api
+        secret = (config or {}).get("signing_secret")
+        actual = next((v for k, v in headers.items() if k.lower() == "authorization"), "")
+        return bool(secret and isinstance(actual, str) and hmac.compare_digest(
+            actual.encode(), f"Bearer {secret}".encode()))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return (payload.get("api_version") == "v2.0"
+                and payload.get("resource_name") == str(config.get("resource_name") or "RFIs").strip()
+                and payload.get("event_type") == config.get("event_type", "update")
+                and str(payload.get("company_id")) == str(config.get("company_id"))
+                and (config.get("project_id") is None or str(payload.get("project_id")) == str(config["project_id"])))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or not output.get("resource_id") or not output.get("resource_name"):
+            return super().resolve_agent_event(output)
+        resource, rid = output["resource_name"], output["resource_id"]
+        company, project = output.get("company_id"), output.get("project_id")
+        kind = output.get("event_type")
+        text = (f"Procore {resource} {kind}: resource {rid}.\n"
+                f"Company {company}, project {project}; initiated by user {output.get('user_id')} "
+                f"at {output.get('timestamp')}.\nEvent ID: {output.get('id')}.\n"
+                "This notification contains resource identifiers; fetch the record for its content. "
+                "Deleted records may no longer be available.")
+        operation = {"RFIs": ("get_rfi", "rfi_id"), "Submittals": ("get_submittal", "submittal_id")}.get(resource)
+        if operation and kind != "delete":
+            text += f"\nTo read it: {operation[0]} company_id={company} project_id={project} {operation[1]}={rid}."
+        return {"text": text, "conversation_key": f"{company}:{project}:{resource}:{rid}", "title": f"Procore {resource} {rid}"}
 
     async def _token(self, credential):
         data = credential.model_dump(exclude_none=True)
@@ -283,6 +407,8 @@ class ProcoreNode(WorkflowNode):
         if credential is None:
             raise ValueError("Connect a Procore account")
         self.scope_registry.require(op.operation)
+        if isinstance(op, OnResourceEvent):
+            return self.no_event_output(op.operation)
         method, template, wrapper = PROCORE_OPERATIONS[op.operation]
         fields = op.model_dump(mode="json", exclude_none=True)
         path = template.format(**fields)

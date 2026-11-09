@@ -1,0 +1,24 @@
+{
+  "rfi.updated": {
+    "body": {
+      "id": 123456789,
+      "ulid": "0A1B2C3D4F5G6H7I8J9K0LMN",
+      "timestamp": "2025-02-06T23:34:12.246562Z",
+      "metadata": {
+        "source_user_id": 987654321,
+        "source_project_id": 2468013579,
+        "source_operation_id": null,
+        "source_company_id": 1357908642,
+        "source_application_id": null
+      },
+      "user_id": 987654321,
+      "company_id": 1357908642,
+      "project_id": 2468013579,
+      "api_version": "v2.0",
+      "event_type": "update",
+      "resource_name": "RFIs",
+      "resource_id": 54321
+    },
+    "source": "https://developers.procore.com/documentation/content/webhooks"
+  }
+}

@@ -13,7 +13,7 @@ const ProcoreIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const ProcoreNode: NodeDefinition = {
     type: 'automation-procore', category: 'industry', label: 'Procore',
-    description: 'Automate projects, vendors, RFIs, submittals, daily logs and locations',
+    description: 'React to Procore events and automate projects, vendors, RFIs, submittals, daily logs and locations',
     Icon: ProcoreIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={ProcoreIcon} iconColor="" />),
